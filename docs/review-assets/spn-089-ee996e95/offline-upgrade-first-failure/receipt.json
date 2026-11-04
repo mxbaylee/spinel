@@ -1,0 +1,282 @@
+{
+  "ticket": "SPN-089",
+  "source_sha": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+  "base_sha": "7679351822caaa9535d73d656191f2a6597a3380",
+  "tested_merge": "39a9b6227e0eb4339adbe1b9e99606318e90ef21",
+  "tree": "dca595ca8ef725b5f51af4732d7499af2346f4cc",
+  "run_id": 41927434953,
+  "run_attempt": 1,
+  "job_id": 126915583844,
+  "job_name": "Playwright smoke (offline-upgrade)",
+  "job_url": "https://github.com/mxbaylee/spinel/actions/runs/41927434953/job/126915583844",
+  "job_conclusion": "failure",
+  "project": "offline-upgrade",
+  "artifact": {
+    "id": 13369013743,
+    "name": "theme-screenshots-offline-upgrade",
+    "bytes": 18715661,
+    "sha256": "17999c68faf55bb4ada8b4aa6f242beeba093e80e053f3d0135c20b55038e67f",
+    "expires_at": "2026-11-11T22:46:13Z"
+  },
+  "failed_contract": {
+    "test": "the actual SPN-054 eager client keeps its pending Doc and lazy files during new-host adoption",
+    "test_file": "e2e/offline-upgrade.spec.ts",
+    "test_line": 202,
+    "call_line": 257,
+    "helper_line": 486,
+    "expected": "activated",
+    "context": "Second updateWorker call, after intentionally missing lazy asset fault was cleared.",
+    "error": "The emitted worker did not finish installing.",
+    "first_attempt": {
+      "retry": 0,
+      "status": "failed",
+      "duration_ms": 129085,
+      "start_time": "2026-11-04T22:43:02.328Z"
+    },
+    "retry": {
+      "retry": 1,
+      "status": "passed",
+      "duration_ms": 13252,
+      "start_time": "2026-11-04T22:45:19.357Z"
+    },
+    "test_disposition": "flaky; existing failOnFlakyTests correctly failed the job"
+  },
+  "second_test": {
+    "test": "interrupted emitted updates preserve exact native work, a live old client and cold offline startup",
+    "test_line": 576,
+    "first_attempt": {
+      "retry": 0,
+      "status": "skipped",
+      "duration_ms": 0
+    },
+    "retry": {
+      "retry": 1,
+      "status": "passed",
+      "duration_ms": 31419
+    },
+    "disposition": "The serial first attempt did not run this scenario; retry success does not replace first-attempt acceptance."
+  },
+  "worker_state_observations": [
+    {
+      "event": "entry",
+      "elapsedMs": 0,
+      "updateState": "pending",
+      "installing": null,
+      "waiting": null,
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": null
+    },
+    {
+      "event": "update-fulfilled",
+      "elapsedMs": 21,
+      "updateState": "fulfilled",
+      "installing": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": false
+      },
+      "waiting": null,
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": null
+    },
+    {
+      "event": "updatefound",
+      "elapsedMs": 21,
+      "updateState": "fulfilled",
+      "installing": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      },
+      "waiting": null,
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      }
+    },
+    {
+      "event": "statechange",
+      "elapsedMs": 21,
+      "updateState": "fulfilled",
+      "installing": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      },
+      "waiting": null,
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      }
+    },
+    {
+      "event": "updatefound",
+      "elapsedMs": 21,
+      "updateState": "fulfilled",
+      "installing": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      },
+      "waiting": null,
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      }
+    },
+    {
+      "event": "statechange",
+      "elapsedMs": 21,
+      "updateState": "fulfilled",
+      "installing": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      },
+      "waiting": null,
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": {
+        "state": "installing",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      }
+    },
+    {
+      "event": "statechange",
+      "elapsedMs": 534,
+      "updateState": "fulfilled",
+      "installing": null,
+      "waiting": {
+        "state": "installed",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      },
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": {
+        "state": "installed",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      }
+    },
+    {
+      "event": "timeout",
+      "elapsedMs": 120000,
+      "updateState": "fulfilled",
+      "installing": null,
+      "waiting": {
+        "state": "installed",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      },
+      "active": {
+        "state": "activated",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": true,
+        "observed": false
+      },
+      "observed": {
+        "state": "installed",
+        "url": "http://localhost:3110/service-worker.js",
+        "originalActive": false,
+        "observed": true
+      }
+    }
+  ],
+  "bounded_analysis": {
+    "observed": "The update promise fulfilled at21ms; the observed new worker reached installed/waiting at534ms and remained there at120000ms. The old active worker stayed activated. No activated/redundant terminal state was observed.",
+    "causal_status": "unknown",
+    "not_established": [
+      "CSS/title change caused this outcome",
+      "resource exhaustion or infrastructure failure caused it",
+      "a missed installed event caused it",
+      "SPN-141 storage-deletion failure recurred"
+    ],
+    "source_overlap": "The full SPN-089 diff does not change e2e/offline-upgrade.spec.ts, e2e/offline-fixture.ts or web/service-worker.ts. Runtime delta from previous source ef899b is controls.css/theme.css; assertion/story changes are Storybook-only. New build assets/manifests naturally differ, so unchanged worker source alone cannot prove zero timing/build influence.",
+    "implementation_observation": "The unchanged production install handler calls and awaits self.skipWaiting(); the retained trace does not explain why activation remained unobserved.",
+    "historical_context": "docs/implementation/SPN-052.md retains an earlier120s worker-update timeout with retry success. That old result lacks worker-state observations; same underlying cause is not established.",
+    "ownership": "Distinct from SPN-141 deletion/quiescence. No new causal repair owner has been conclusively established; preserve first failure and investigate a bounded activation hypothesis before assigning a product repair.",
+    "readiness": "Current required offline-upgrade worker failed. PR must remain draft/not ready; no workflow rerun or waiver performed."
+  },
+  "evidence_limits": {
+    "first_failure_playwright_trace_zip_present": false,
+    "trace_zip_files": "Only retry1 traces are in the artifact. First-failure evidence is its result JSON, screenshot, error context, sync diagnostics and eight-event worker timeline.",
+    "raw_report_embedded_content": "Original ZIP retained locally; no full report body, credentials, cookies or embedded unrelated image bytes copied into this sanitized receipt."
+  },
+  "source_hashes": {
+    "e2e/offline-upgrade.spec.ts": "cc136b7302b2509e3b886ec8b2839f465361ce3e93ca3fe70d3a3f75ef7c01a1",
+    "e2e/offline-fixture.ts": "c3ff136c22192eaee37facf4221a39e21c16d1fac9ddcaf6d207932cafbcdc8c",
+    "web/service-worker.ts": "21a61a1c07ef4b50ed9e2430f3ffc4922dd06de56b4daac4d35ff42e0de44045"
+  },
+  "retained_files": {
+    "first-failure.png": {
+      "bytes": 38586,
+      "sha256": "874917c2ba43685d885eaf3fb0799feeb1c2e3cff7f31d0063e43ff970789a40"
+    },
+    "first-failure-context.md": {
+      "bytes": 3735,
+      "sha256": "bab3f93ed037e9565e9fe21073c87065941c15cadf5acac1d1d604e485255578"
+    },
+    "first-failure-log-excerpt.txt": {
+      "bytes": 5526,
+      "sha256": "f6c8ce4c50668af9518933e1735d99265f4438041497a155e1a001a70ace4d3b",
+      "normalization": "Trailing whitespace removed; all log content, timestamps and worker observations preserved.",
+      "original": {
+        "bytes": 5528,
+        "sha256": "2f88659414ef758f3554f81be9986d40d1f38ee2c2388fb67b6eac5e21bd3370"
+      }
+    }
+  }
+}

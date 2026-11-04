@@ -1,0 +1,36 @@
+{
+  "source": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+  "tree": "dca595ca8ef725b5f51af4732d7499af2346f4cc",
+  "parent": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+  "base": "7679351822caaa9535d73d656191f2a6597a3380",
+  "reviewMode": "agent review only",
+  "reviews": [
+    {
+      "reviewer": "/root/dialog_audit",
+      "score": 97,
+      "rubric": {
+        "scope": 35,
+        "correctnessAccessibility": 25,
+        "regressionEvidence": 17,
+        "ciOperations": 10,
+        "maintainabilityDocumentationComplexity": 10
+      },
+      "findings": "Previous P2 title offset, Profile cascade override and regression gap repaired in source; no new blocking source findings. Inspected 15 candidate diagnostic screenshots and old-rule phone comparison.",
+      "withheld": "Three points withheld pending actual new-source hosted checks, captures and renewed independent visual approval."
+    },
+    {
+      "reviewer": "/root/verification_plan",
+      "score": 97,
+      "rubric": {
+        "scope": 35,
+        "correctnessAccessibility": 25,
+        "regressionEvidence": 17,
+        "ciOperations": 10,
+        "maintainabilityDocumentationComplexity": 10
+      },
+      "findings": "Previous P2 shared offset, Profile whole-heading centering and geometry coverage gap addressed. No additional source blocker, unnecessary abstraction or weakened assertion. Independently checked full retained production diff, 45-owner inventory, 114 story IDs, landing bookkeeping and local receipts.",
+      "withheld": "Three points withheld pending actual new-source hosted rendering, current-head acceptance and renewed visual inspection."
+    }
+  ],
+  "boundary": "Both reviews completed read-only on the exact clean committed candidate before PR branch publication. Validation-push approval only; no current CI, final visual or merge approval inferred."
+}
