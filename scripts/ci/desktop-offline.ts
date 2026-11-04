@@ -414,7 +414,10 @@ async function main() {
           browser.evaluate<string>(
             'document.querySelector(\'[role="dialog"][aria-labelledby]\')?.textContent || Array.from(document.querySelectorAll(\'[role="dialog"]\')).map(node => node.textContent).join(" ")',
           ),
-        (value) => value.includes(`${item.name} is available offline on this device.`),
+        // The download no longer waits for the storage answer, so wait for both.
+        (value) =>
+          value.includes(`${item.name} is available offline on this device.`) &&
+          !value.includes('still deciding on storage protection'),
         'Complete image-backed download',
         120_000,
       );

@@ -24,7 +24,10 @@ import {
 export { readCapabilityScope, type CapabilityScope } from './browserstack-scope.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 import type { PhoneAcceptanceCases, PhoneAcceptanceDriver } from './browserstack-acceptance.ts';
-import { prepareDashboardItemOffline } from './browserstack-offline-preparation.ts';
+import {
+  failureDiagnosis,
+  prepareDashboardItemOffline,
+} from './browserstack-offline-preparation.ts';
 import { ledgerClient } from './browserstack-ledger.ts';
 import {
   clientFor,
@@ -34,6 +37,7 @@ import {
   type Target,
 } from './browserstack.ts';
 import {
+  chromeMenuLabel,
   createNativeTap,
   installMenuLabel,
   installConfirmationLabels,
@@ -41,6 +45,7 @@ import {
   type NativeAction,
 } from './browserstack-native-controls.ts';
 export {
+  chromeMenuLabel,
   installCandidateDiagnostics,
   installMenuLabel,
   installConfirmationLabels,
@@ -1581,17 +1586,7 @@ export async function runCapability(
     });
     return environment;
   }
-  // Failure-only evidence keeps the stalled page's screenshot first and leaves
-  // the command that failed as the lane's command.
-  async function diagnose<T>(work: () => Promise<T>): Promise<T> {
-    const failedCommand = result.command;
-    try {
-      await screenshot('download-stalled');
-      return await work();
-    } finally {
-      result.command = failedCommand;
-    }
-  }
+  const diagnose = failureDiagnosis(result, () => screenshot('download-stalled'));
   async function clickWeb(selector: string, label: string, waitForControl = false) {
     const find = () =>
       execute(
@@ -2040,10 +2035,7 @@ export async function runCapability(
       await record('initial-native-contexts', initialContexts);
       await context('NATIVE_APP');
       if (target.browser === 'safari') await openNativeShare(tap);
-      else
-        await tap(
-          /^(?:More options|Menu|Open menu|Customize and control Google Chrome)$|(?:^|:)menu_button$/i,
-        );
+      else await tap(chromeMenuLabel);
       let installed = await tap(installMenuLabel, false, false, target.browser === 'safari');
       for (let count = 0; !installed && count < 2; count++) {
         await scroll();
@@ -2101,6 +2093,7 @@ export async function runCapability(
           record,
           failure: (code) => new Error(`capability-${code}`),
           diagnose,
+          left: () => activeDeadline() - Date.now(),
         },
         item,
       );

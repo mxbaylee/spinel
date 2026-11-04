@@ -9,6 +9,7 @@ import {
   capabilityRunOutcome,
   captureRequiredPngScreenshot,
   chromeItemNavigationScript,
+  chromeMenuLabel,
   installMenuLabel,
   installCandidateDiagnostics,
   installationAssetsScript,
@@ -365,6 +366,30 @@ test('native XML retains unavailable and unlabeled parents while matching only a
     '<hierarchy><!-- unfinished',
   ])
     assert.throws(() => nativeControls(malformed), /capability-native-source-invalid/);
+});
+
+test('the Chrome menu button is found in either spelling or by its Appium resource id', () => {
+  const pick = (xml: string) => matchingNativeControl(nativeControls(xml), chromeMenuLabel);
+  // Run 41733180670's en-GB phone: neither the old label nor the old id rule matched.
+  const british = pick(
+    '<hierarchy><android.widget.ImageButton content-desc="Open the homepage" resource-id="com.android.chrome:id/home_button"/><android.widget.ImageButton content-desc="Customise and control Google Chrome" resource-id="com.android.chrome:id/menu_button"/></hierarchy>',
+  );
+  assert.equal(british?.label, 'Customise and control Google Chrome');
+  assert.equal(british?.control.attributes['resource-id'], 'com.android.chrome:id/menu_button');
+  assert.equal(
+    pick('<android.widget.ImageButton content-desc="Customize and control Google Chrome"/>')?.label,
+    'Customize and control Google Chrome',
+  );
+  const byId = pick(
+    '<android.widget.ImageButton resource-id="com.android.chrome:id/menu_button"/>',
+  );
+  assert.equal(byId?.attribute, 'resource-id');
+  for (const other of [
+    '<android.widget.ImageButton resource-id="com.android.chrome:id/menu_button_wrapper"/>',
+    '<android.widget.ImageButton content-desc="Open the homepage"/>',
+    '<android.widget.ImageButton content-desc="See 1 tab"/>',
+  ])
+    assert.equal(pick(other), null);
 });
 
 test('the observed Chrome universal-install label is selected from native XML without accepting unrelated text', () => {

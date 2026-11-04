@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fireEvent, fn, userEvent, waitFor, within } from 'storybook/test';
 import { OfflineAvailability } from './OfflineAvailability.tsx';
+import { protectionDetail } from './protection.ts';
 
 const itemId = '11111111-1111-4111-8111-111111111155';
 const meta = {
@@ -10,8 +11,8 @@ const meta = {
   args: {
     message: {
       text: 'Trip journal is available offline on this device.',
-      detail: 'Your browser granted storage protection. This is not a backup or a guarantee.',
       failed: false,
+      ...protectionDetail('granted'),
     },
     onDismiss: fn(),
     allowNavigation: fn(() => false),
@@ -50,6 +51,27 @@ export const ProtectionDenied: Story = {
     await expect(body.getByRole('dialog', { name: 'Offline availability' })).toBeVisible();
     await expect(args.onDismiss).not.toHaveBeenCalled();
     await expect(args.allowNavigation).not.toHaveBeenCalled();
+  },
+};
+// Firefox can leave persist() unanswered; the copy is ready before the browser decides.
+export const ProtectionPending: Story = {
+  args: {
+    message: {
+      text: 'Trip journal is available offline on this device.',
+      failed: false,
+      ...protectionDetail(null),
+    },
+  },
+  play: async () => {
+    const result = within(document.body).getByRole('dialog', { name: 'Offline availability' });
+    await expect(within(result).getByText(/still deciding on storage protection/)).toHaveAttribute(
+      'aria-live',
+      'polite',
+    );
+    await userEvent.click(within(result).getByRole('button', { name: 'How to keep them' }));
+    await expect(
+      within(document.body).getByRole('dialog', { name: 'About device storage' }),
+    ).toBeVisible();
   },
 };
 export const ProtectionUnsupported: Story = {

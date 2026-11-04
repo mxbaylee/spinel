@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash, webcrypto } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { createContext, runInContext } from 'node:vm';
 import {
@@ -24,6 +25,7 @@ import {
   phoneNativeSnapshotScript,
   assertPhoneImageCheckpoint,
   observePhoneAcceptance,
+  openFolder,
   preparePhoneAcceptance,
   boundedPhoneFixtureOperation,
   readPhoneOpenedCopy,
@@ -722,4 +724,43 @@ test('acceptance prepares its Space page through the shared Offline copies flow'
     ['[role="dialog"] button', 'Make Phone prepared page available offline on this device'],
     ['[role="dialog"] button', 'Close dialog'],
   ]);
+});
+
+test('every Shared with me visit on a phone goes through the Browse files drawer', async () => {
+  const steps: string[] = [];
+  const driver = {
+    navigate: async (path: string) => void steps.push(`navigate ${path}`),
+    click: async (selector: string, label: string) => void steps.push(`click ${selector} ${label}`),
+    execute: async () => true,
+    remaining: (maximum = 15_000) => maximum,
+  } as unknown as PhoneAcceptanceDriver;
+  await openFolder(driver, { name: 'Phone shared folder' }, true);
+  await openFolder(driver, { name: 'Phone owned folder' }, false);
+  assert.deepEqual(steps, [
+    'navigate /',
+    'click button Browse files',
+    'click [role="dialog"] button Shared with me',
+    'click button Phone shared folder Folder',
+    'navigate /',
+    'click button Phone owned folder Folder',
+  ]);
+  // No other step clicks a Shared with me button the phone layout hides.
+  const acceptance = readFileSync(new URL('./browserstack-acceptance.ts', import.meta.url), 'utf8');
+  assert.deepEqual(
+    acceptance.match(/'Shared with me'/g),
+    ["'Shared with me'"],
+    'Only openSharedWithMe names Shared with me',
+  );
+  assert.match(
+    acceptance,
+    /async function openSharedWithMe\([^)]*\) \{\s*await driver\.click\('button', 'Browse files'\);\s*await driver\.click\('\[role="dialog"\] button', 'Shared with me'\);/,
+  );
+  // Both labels are the ones the phone layout renders.
+  const rail = readFileSync(new URL('../../web/Rail.tsx', import.meta.url), 'utf8');
+  assert.match(rail, /aria-label="Browse files"/);
+  assert.match(
+    rail,
+    /<Modal title="Browse files"[^>]*>\s*<div className="file-rail-drawer">\s*\{places\(\)\}/,
+  );
+  assert.match(rail, /aria-label=\{shared \? 'Shared with me' : 'My files'\}/);
 });

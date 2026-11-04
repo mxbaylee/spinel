@@ -110,6 +110,11 @@ function nativeExplicitlyAvailable(control: NativeControl) {
     !nativeUnavailable(control, true)
   );
 }
+// Chrome's ⋮ button, by label in either spelling (an en-GB phone says
+// "Customise", run 41733180670) or by its resource id, which Appium reports as
+// `com.android.chrome:id/menu_button`.
+export const chromeMenuLabel =
+  /^(?:More options|Menu|Open menu|Customi[sz]e and control Google Chrome)$|(?:^|[:/])menu_button$/i;
 export const installMenuLabel =
   /^(?:Install|Install app|Install and create shortcut|Add to Home screen|Add page to)$/i;
 // Google's documented universal menu offers Install, or Create shortcut followed by Add.

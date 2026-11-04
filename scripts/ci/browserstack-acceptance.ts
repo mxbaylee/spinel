@@ -638,13 +638,24 @@ async function bodyIncludes(driver: PhoneAcceptanceDriver, text: string) {
     'production-message-unavailable',
   );
 }
-async function openFolder(
+/**
+ * At phone width the file places are only in the Browse files drawer
+ * (web/Rail.tsx); its Shared with me button closes the drawer (run 41736478986).
+ * Every Shared with me visit goes through here.
+ */
+async function openSharedWithMe(driver: PhoneAcceptanceDriver) {
+  await driver.click('button', 'Browse files');
+  await driver.click('[role="dialog"] button', 'Shared with me');
+}
+
+/** Exported for its test: a phone reaches a shared folder through openSharedWithMe. */
+export async function openFolder(
   driver: PhoneAcceptanceDriver,
   folder: { name: string },
   shared: boolean,
 ) {
   await driver.navigate('/');
-  if (shared) await driver.click('button', 'Shared with me');
+  if (shared) await openSharedWithMe(driver);
   await driver.click('button', `${folder.name} Folder`);
   await until(
     driver,
@@ -713,6 +724,7 @@ export async function preparePhoneAcceptance(
       record: (stage, value) => driver.record(stage, value),
       failure: (code) => new Error(`capability-acceptance-${code}`),
       diagnose: driver.diagnose && ((work) => driver.diagnose!(work)),
+      left: () => driver.remaining(Number.MAX_SAFE_INTEGER),
     },
     { kind: 'doc', name: cases.spaceChild.name },
   );
@@ -1254,7 +1266,7 @@ export async function runPhoneAcceptance(
   );
   const removed = fixture.items.find((item) => item.kind === 'doc' && item.outcome === 'normal')!;
   await driver.navigate('/');
-  await driver.click('button', 'Shared with me');
+  await openSharedWithMe(driver);
   await driver.click('button', `More actions for ${removed.name}`);
   await driver.click('[role="menuitem"]', 'Remove from device');
   await bodyIncludes(driver, `${removed.name} was removed from this device.`);

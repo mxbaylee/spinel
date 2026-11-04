@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { createContext, runInContext } from 'node:vm';
 import {
+  failureDiagnosis,
+  offlineDiagnosisReserveMilliseconds,
   offlinePreparationMilliseconds,
   offlineResultScript,
   offlineStateScript,
@@ -20,7 +22,7 @@ const updating = { menu: [{ text: 'Updating offline copy…', disabled: true }],
 function harness(
   name: string,
   results: unknown[],
-  options: { states?: unknown[]; reopenFails?: boolean; diagnose?: boolean } = {},
+  options: { states?: unknown[]; reopenFails?: boolean; diagnose?: boolean; left?: number } = {},
 ) {
   const calls: string[] = [];
   const records: [string, unknown][] = [];
@@ -52,6 +54,7 @@ function harness(
     },
     record: async (stage, value) => void records.push([stage, value]),
     failure: (code) => new Error(`test-${code}`),
+    ...(options.left === undefined ? {} : { left: () => options.left! }),
     ...(options.diagnose
       ? {
           diagnose: async <T>(work: () => Promise<T>) => {
@@ -244,4 +247,43 @@ test('the page scripts read only dialog roles and bounded visible labels', () =>
       dialog: [{ text: 'Downloading…', disabled: false }],
     },
   );
+});
+
+test('the wait leaves the phase room to record its diagnosis', async () => {
+  const done = { dialogs: 1, done: true, alert: null };
+  const waits = async (left: number) => {
+    const run = harness(item.name, [done], { left });
+    await prepareDashboardItemOffline(run.driver, item);
+    return run.calls.find((call) => call.startsWith('poll'));
+  };
+  assert.equal(offlineDiagnosisReserveMilliseconds, 20_000);
+  assert.equal(await waits(200_000), `poll download-incomplete ${offlinePreparationMilliseconds}`);
+  assert.equal(await waits(50_000), 'poll download-incomplete 30000');
+  // Too little left still waits one second, longer than a read takes.
+  assert.equal(await waits(5_000), 'poll download-incomplete 1000');
+});
+
+test('the runner diagnosis screenshots first and keeps the failed command', async () => {
+  const result = { command: 'POST session/{sessionId}/execute/sync (download-incomplete)' };
+  const steps: string[] = [];
+  const diagnose = failureDiagnosis(result, async () => {
+    steps.push('screenshot');
+    result.command = 'GET session/{sessionId}/screenshot';
+  });
+  const value = await diagnose(async () => {
+    steps.push('labels');
+    result.command = 'POST session/{sessionId}/element/click';
+    return 'read';
+  });
+  assert.equal(value, 'read');
+  assert.deepEqual(steps, ['screenshot', 'labels']);
+  assert.equal(result.command, 'POST session/{sessionId}/execute/sync (download-incomplete)');
+  await assert.rejects(
+    diagnose(async () => {
+      result.command = 'later';
+      throw new Error('labels-gone');
+    }),
+    /labels-gone/,
+  );
+  assert.equal(result.command, 'POST session/{sessionId}/execute/sync (download-incomplete)');
 });

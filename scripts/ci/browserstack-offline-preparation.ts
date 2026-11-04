@@ -20,6 +20,9 @@ return {
 // A first download fetches the runtime and every image, so it may outlast the
 // few seconds Chrome measured; e2e allows 120 s for the same dialog.
 export const offlinePreparationMilliseconds = 60_000;
+// Kept back from the wait so a timed-out preparation can still screenshot,
+// read the labels and record them inside its phase.
+export const offlineDiagnosisReserveMilliseconds = 20_000;
 
 export type OfflinePreparationDriver = {
   /** Waits for one enabled control with this label, then clicks it once. */
@@ -39,7 +42,25 @@ export type OfflinePreparationDriver = {
    * screenshot and the command that failed, which the reads must not replace.
    */
   diagnose?<T>(work: () => Promise<T>): Promise<T>;
+  /** Milliseconds left in the caller's phase; the wait leaves the diagnosis reserve. */
+  left?(): number;
 };
+
+/**
+ * The runner's diagnose hook: the stalled page's screenshot comes first, and
+ * the command that failed stays the lane's command after the evidence reads.
+ */
+export function failureDiagnosis(result: { command: string }, screenshot: () => Promise<void>) {
+  return async <T>(work: () => Promise<T>): Promise<T> => {
+    const failedCommand = result.command;
+    try {
+      await screenshot();
+      return await work();
+    } finally {
+      result.command = failedCommand;
+    }
+  };
+}
 
 function row(value: unknown): Row {
   if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -60,7 +81,17 @@ async function settle(
       async () => (last = row(await driver.execute(offlineResultScript, [message]))),
       (value) => value.done === true || typeof value.alert === 'string',
       'download-incomplete',
-      offlinePreparationMilliseconds,
+      driver.left
+        ? // Both real polls stop at their deadline before accepting a read, so
+          // a floor shorter than one read could discard a finished result.
+          Math.max(
+            1_000,
+            Math.min(
+              offlinePreparationMilliseconds,
+              driver.left() - offlineDiagnosisReserveMilliseconds,
+            ),
+          )
+        : offlinePreparationMilliseconds,
     );
   } catch (failure) {
     // Evidence only, on failure: the visible labels say whether the download
