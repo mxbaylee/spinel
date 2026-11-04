@@ -1,0 +1,317 @@
+{
+  "original": "/tmp/spn142-hosted/callback-desktop.zip",
+  "filtered": "/tmp/spn142-hosted/callback-desktop-evidence.zip",
+  "omitted": "Only *.sqlite* disposable fixture files",
+  "members": {
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json": {
+      "bytes": 23885572,
+      "sha256": "9ac9648c9a25744d5c27e1a06d271c67dd6c4c95d4b78c5044f79acfeb1c6f5c"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js": {
+      "bytes": 2630,
+      "sha256": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map": {
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-application-DPLxUtGb.js": {
+      "bytes": 266306,
+      "sha256": "1cdc49ac34968b878ed2c85dc1df743ce9c3de53b9edc5e2613b4d5c22406ee5"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-application-DPLxUtGb.js.map": {
+      "bytes": 901126,
+      "sha256": "87dc5edf3b7b1998365df08df0c3e14af11bd477085de5c41587830657291c4b"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-download-TzfxHqpV.js": {
+      "bytes": 3379,
+      "sha256": "53681751161b117b49984d4a3d6767166d4495ed380616c4143aeac2b842edcc"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-download-TzfxHqpV.js.map": {
+      "bytes": 11959,
+      "sha256": "5e259db05feb8d96f3b8ba9ddca4a9f6ba855bf18aa0aadd99e1d15cb3fd316b"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-useDiagnostics-B9casXj5.js": {
+      "bytes": 13163,
+      "sha256": "8b757580ef0aeaa96ae9920a8b03df5a87f619b03b2baa42b0439ea1ff97c36c"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-useDiagnostics-B9casXj5.js.map": {
+      "bytes": 47294,
+      "sha256": "f56dd56ad26578009f53860c051f8abdc0302d2f38a92866659d6e6949f77fc7"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-portable-C-R3TxbO.js": {
+      "bytes": 633002,
+      "sha256": "a12d25901ce9e2b0d5df2805808e7cb58b0ce8409c19d7bebf036dd0fc6bf99c"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-portable-C-R3TxbO.js.map": {
+      "bytes": 206684,
+      "sha256": "7d0314b7e070dc6ebe2e34eb50d482e55175ec281dd297cd99d3e64cd69603ea"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-nativeSyncPermissions-CmnRMl9r.js": {
+      "bytes": 3805503,
+      "sha256": "8623b2fa519ab21957e0a58a07d900e82fec1e937871b7275fc087167211d13c"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-nativeSyncPermissions-CmnRMl9r.js.map": {
+      "bytes": 12091335,
+      "sha256": "bbabbc5ba5e5fcaaedb677a0ed95bc59a87757bb80bea5f227935b4cd389c07a"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js": {
+      "bytes": 15364,
+      "sha256": "af7a9f3548d2297b47f29c73dac5d70fc7d7653e8480ca137ea828b7628a59da"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-univer-renderer-Cqyj3Y79.js": {
+      "bytes": 5916007,
+      "sha256": "9d7e0ecfd029bf41605ce931cda85c1747eec94ed1ddd3cc51feab4ff202506f"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-univer-renderer-Cqyj3Y79.js.map": {
+      "bytes": 13418035,
+      "sha256": "67a8b0011690f55e9153b7213c686f210aa0c559be49936e794b9b0bb297e09f"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-docs-ui.js": {
+      "bytes": 1447161,
+      "sha256": "82ff8f5bb6a16cb52a0d7b10de81cebf5a1e004bb4c7fd629ddfc993d55913cf"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-documentReady-C8PJ1AWy.js": {
+      "bytes": 178236,
+      "sha256": "2c5bf157878efda55a058991168edd6d1e5a9b0e575844056a26f2a5ced359cb"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-documentReady-C8PJ1AWy.js.map": {
+      "bytes": 648596,
+      "sha256": "7de944711597097388514325ece7b51bed6229c71ead353020d9d27ff258df16"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-DocEditor-DW6gOGY5.js": {
+      "bytes": 25488,
+      "sha256": "2722368c60e2ed5f605e4b19930946244887284cfa898eb06a32da65ba0a6c18"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-DocEditor-DW6gOGY5.js.map": {
+      "bytes": 105141,
+      "sha256": "a56c8f39a5b775db0adc5ef2c2a302febdad00964f11262e887f380082a87fe3"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-guestPendingBuffer-Bmh2jA94.js": {
+      "bytes": 118539,
+      "sha256": "01a9132650267dd20795fc48f2ad08ad9234a2d1cd0403203b8d44a6606f7293"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-guestPendingBuffer-Bmh2jA94.js.map": {
+      "bytes": 501517,
+      "sha256": "68f2e71f61dc968d2c0af4a78b6e2f923a30db091cf50e4e43ad56a830403ccc"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-model-ljnzhaIx.js": {
+      "bytes": 113797,
+      "sha256": "b6e9ef38f9002e119e9076bb66640067cfd2106742bb01eea151ca5f232885e4"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map": {
+      "bytes": 46566,
+      "sha256": "07cbb1a8bfd3d4acce73dc7f152c708bb0f617aba23859d2624e3bff2085f20f"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-model-ljnzhaIx.js.map": {
+      "bytes": 451475,
+      "sha256": "4b6f44b0b5e64c1f998d62324ef64c363fae89b04a66af9846e89836fbac618b"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-es-QsSEw2iP.js": {
+      "bytes": 1166054,
+      "sha256": "eca07f3346de0702bc4261237dcf8e97b3e19c40a8463a8c55f547c12f293629"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-es-QsSEw2iP.js.map": {
+      "bytes": 4025072,
+      "sha256": "b9c1d3f391514965725113c4652068bd1aaf6b91d0883d512256ae144c5fe99e"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js": {
+      "bytes": 8292,
+      "sha256": "0a9b1f8d524aec5186d46e91b5e6c1d9bb2a062f0e9e09e2ed47a6de4fe0715e"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map": {
+      "bytes": 19181,
+      "sha256": "bc3ffdc7d9972e80a79b5345c82132d09e460a1d9962725592fab22faeec1483"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-2a_vsjPx.js": {
+      "bytes": 3722,
+      "sha256": "1ee70a0c84fa177dfd76d41281d65e71d89b5c7e4bfac7692614a0970401827e"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-2a_vsjPx.js.map": {
+      "bytes": 7918,
+      "sha256": "ec6745e653c80bda8705a9db07b002c9af88cb20dd486a8e58fbab83e6780692"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-CUsnFDt0.js.map": {
+      "bytes": 1061580,
+      "sha256": "c02a4c8361db4cb7271f702f0a74778b4df69e3e4848f268b6ddafa6e5b24d95"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-CUsnFDt0.js": {
+      "bytes": 222152,
+      "sha256": "3267ebe92199e056723fc573b0049c56d7ee4bed6454b230fdfd7d0b0f0a55bc"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz": {
+      "bytes": 36573148,
+      "sha256": "24b3997fc838feec8ed3336f7cd1bf0835c65c50c2deb439ef8df11d5334d544"
+    },
+    "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json": {
+      "bytes": 8578,
+      "sha256": "ed053c5d97b8e5df850d21a7b13ae097943899e3d8f5ed5c28cad462cbac7100"
+    },
+    "baseline-callback-source/playwright-report/doc-callback-lifetimes.json": {
+      "bytes": 1354198,
+      "sha256": "5527b067ae73a57a1e6719413105127f55f3ca21a46421d2840de798eef37bdf"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json": {
+      "bytes": 18095011,
+      "sha256": "1cdb654baa216676e24559699954b3527646e889f7722b44cf0c914fb817e3af"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map": {
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js": {
+      "bytes": 2630,
+      "sha256": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-documentAccess-BpTD8alm.js": {
+      "bytes": 3543,
+      "sha256": "e82196b4dadcbcec0a88ffe775e55898c57862e1ee3585df7067c9705b3b2035"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-documentAccess-BpTD8alm.js.map": {
+      "bytes": 12434,
+      "sha256": "1c0832139b3566d9de4d9856f488b53049ebfef98112115f69448f8a4d25904c"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-application-J3GpZne0.js": {
+      "bytes": 341507,
+      "sha256": "6e770747b0eba773a3058d09f7f323a5043c21c7721878495488719b2ed1dabe"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-application-J3GpZne0.js.map": {
+      "bytes": 1132137,
+      "sha256": "e048a49e8741f45abc7e75bf20878e8e5adab5111f64280622c652423b97e8bd"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-download-BPGf4w79.js": {
+      "bytes": 3481,
+      "sha256": "570752f32765f636f82c347910c6bde324c51d8b707e5e958e4bb45f6f8b66f5"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-download-BPGf4w79.js.map": {
+      "bytes": 12275,
+      "sha256": "67db225ce30b7689379d2e8710d821755cdab2de48274508ebaf886d0a34cebe"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-useDiagnostics-DuPOOcXt.js": {
+      "bytes": 13208,
+      "sha256": "2cf868e1c96b1950048c992c0d64b61e3565d7a53a0c9d673e0036558601c776"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-useDiagnostics-DuPOOcXt.js.map": {
+      "bytes": 47338,
+      "sha256": "81a379920b78fad5c612120d050c8abd014655d568a7824f5a626e83a0e4f3e6"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-CopyFile-qR382OFY.js": {
+      "bytes": 637505,
+      "sha256": "ad8dd97fcb8b38fae1ccf7673425ad1e45252eb0762ba1ec0bf580a63745073a"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-CopyFile-qR382OFY.js.map": {
+      "bytes": 222275,
+      "sha256": "985d91134450f7bef519aa87f8fac4aa38c0332e4915308d6d2ad0225ed600a8"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js": {
+      "bytes": 15370,
+      "sha256": "ad5fd4547f2a21e92f6b403d955a7b657c2d5c067b1fc4db1a0cd9e865f54970"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-nativeSyncPermissions-B-XsuKb2.js.map": {
+      "bytes": 12092734,
+      "sha256": "4a92f57e1878aa4a9ebe5040c67b83bfaf115edc969a2a3ef91f1faf093aed70"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-nativeSyncPermissions-B-XsuKb2.js": {
+      "bytes": 3806095,
+      "sha256": "cec9a0b022d25d8f6776433d53bad49829248603701410defc211f7aadc49513"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-univer-renderer-Cqyj3Y79.js": {
+      "bytes": 5916007,
+      "sha256": "9d7e0ecfd029bf41605ce931cda85c1747eec94ed1ddd3cc51feab4ff202506f"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-univer-renderer-Cqyj3Y79.js.map": {
+      "bytes": 13418035,
+      "sha256": "67a8b0011690f55e9153b7213c686f210aa0c559be49936e794b9b0bb297e09f"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-docs-ui.js": {
+      "bytes": 1447887,
+      "sha256": "635dced08421d4f9710af399cd84224678d1fbd3cb11ac7bd37510d9d99d40bc"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-documentReady-D9wxjrii.js": {
+      "bytes": 178333,
+      "sha256": "5005ea07842b299d3c56cd747dc297f0ddee2bdbe99a907ae378f0dcf25d3daa"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-documentReady-D9wxjrii.js.map": {
+      "bytes": 649015,
+      "sha256": "5bcf1436d208ada1a5b9c95c246336d07a17070a8a21c81d90e355fbb5e5cd16"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-DocEditor-BZBtWxHA.js": {
+      "bytes": 26083,
+      "sha256": "84be518778f6cf7ed78ba1736c872e7db0a9a4519b8630714632f7797bad3418"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-DocEditor-BZBtWxHA.js.map": {
+      "bytes": 108756,
+      "sha256": "08c631cdcc3310ff72fa79dddf6b92419779d8dbf7f33e27cc834d3a9449a3d6"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-nativeCopy-LpiB8s4B.js": {
+      "bytes": 124524,
+      "sha256": "f05203c737b46af25d487079c27fc8a9e5e0d33d0146edd7149937a6dcddf7f2"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map": {
+      "bytes": 46566,
+      "sha256": "07cbb1a8bfd3d4acce73dc7f152c708bb0f617aba23859d2624e3bff2085f20f"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-nativeCopy-LpiB8s4B.js.map": {
+      "bytes": 526289,
+      "sha256": "09eec7d8243decf92852092a507b3a7953ab81dae4a63828cf69a4bfc0be7fba"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-model-BkjcqjnV.js": {
+      "bytes": 119647,
+      "sha256": "37b3ba90b662747ccb7708bfc4ab3f60343d676d734abb70c8ed9404948f0664"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-model-BkjcqjnV.js.map": {
+      "bytes": 470961,
+      "sha256": "2127fa9c118c4e472736f300d55c08f5b25bfbdf483c6fb534fff00a5e23c9ac"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/33-es-QsSEw2iP.js": {
+      "bytes": 1166054,
+      "sha256": "eca07f3346de0702bc4261237dcf8e97b3e19c40a8463a8c55f547c12f293629"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/34-es-QsSEw2iP.js.map": {
+      "bytes": 4025072,
+      "sha256": "b9c1d3f391514965725113c4652068bd1aaf6b91d0883d512256ae144c5fe99e"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js": {
+      "bytes": 8292,
+      "sha256": "0a9b1f8d524aec5186d46e91b5e6c1d9bb2a062f0e9e09e2ed47a6de4fe0715e"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map": {
+      "bytes": 19181,
+      "sha256": "bc3ffdc7d9972e80a79b5345c82132d09e460a1d9962725592fab22faeec1483"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-Do7OYp5S.js": {
+      "bytes": 3752,
+      "sha256": "4bfb6bf67ddda0feed0326990d096520bfe97a7da8e01316abca8497a966a4d1"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-Do7OYp5S.js.map": {
+      "bytes": 7918,
+      "sha256": "acb78aa8ca99e8aa82f7b75a2967e08b44dec14fad90644e30e9f9feac1af357"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-BtIrzXdr.js": {
+      "bytes": 214315,
+      "sha256": "487dad52f87342f5bcd543dbdd070226af9019e1aa296bd0fb075adcc56ca6f2"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-BtIrzXdr.js.map": {
+      "bytes": 1031396,
+      "sha256": "5a249df0eca1e44d593e7a7c6794ca06b58bfdbdfcc97925e961ca515a57ce43"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz": {
+      "bytes": 35049112,
+      "sha256": "ea1ae3b37e4ead40632b33a9c8814b5f9d56997d10844f5bcf379a14ffe41d8a"
+    },
+    "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json": {
+      "bytes": 8567,
+      "sha256": "bc6678dfa0d0dad767f99921613c34654e218b761b915216ce4f28c21cf92a0c"
+    },
+    "test-results/spn113-comparison-desktop.json": {
+      "bytes": 968497,
+      "sha256": "ac26905f4ed6347ec8ad9cdb4a69a54bff3b64428967218b3f5d3a47170bb45f"
+    },
+    "playwright-report/doc-callback-lifetimes.json": {
+      "bytes": 974938,
+      "sha256": "7606dbcfe5a91291f07569449371f9e9cf9c8bdc3f6eea0025851db8189c5cd0"
+    }
+  },
+  "count": 77,
+  "verified": true
+}

@@ -1,0 +1,29 @@
+# 🔎 SPN-142 mobile callback acceptance — independent review B
+
+## Disposition
+
+**Accepted for the selected mobile callback lifetime gate only.** No actionable blocker found in the retained first-attempt pair. This is not overall merge approval and does not establish the separately selected unprofiled mobile responsiveness budgets, desktop acceptance, browser/access gates, or native desktop-offline prerequisites.
+
+Reviewed source `2b173b29b3c0894a45b8d48d92073c3645110673`, base `7679351822caaa9535d73d656191f2a6597a3380`, tested merge `3b11e1e7469b2d3fc59ac95195bf4da6333c16c4`. Source and tested merge independently resolve to the same tree `eac584b6bb8e9a377e69ae58551df67df5b7bcde`. CI `41916623281`, attempt 1, mobile callback job `126878185130`, artifact `13367493301`.
+
+## Evidence and identity
+
+Original ZIP `/tmp/spn142-hosted/callback-mobile.zip` SHA-256 `571cdc623ed70cd7c4ed5919270391ce3a1203f9adfc26ab3710e3fafc58601c` matches the supplied identity. Its directory contains 89 members. All seven extracted JSON records match their ZIP bytes. I streamed the outer ZIP entries with bounded buffers and verified every manifest-listed compressed trace and runtime/source-map member against its recorded size and SHA-256: baseline 34 members (one trace plus 33 source artifacts), candidate 36 (one trace plus 35 source artifacts). I did not inflate or reparse either inner trace gzip or repeat a browser execution.
+
+Both manifests use the same 12 harness hashes, each independently verified against this exact candidate's files. Baseline source is `0e1df4725d9eccb77574d25e3eecdf678fe6ff44`; its dirty paths reflect the explicitly copied current harness, observer, config and lockfile, corroborated by the job log. Candidate source is the tested merge and its dirty paths are empty. Both identify run attempt 1 on the same runner, case attempt 0, Chromium `156.0.8078.4`, Playwright `1.64.1`, Node `26.12.1`, mobile 390×844, touch/device scale 1, and CPU throttling 4×. Each Playwright report has one expected pass, zero unexpected, skipped or flaky results, and no report errors. The job log confirms the pair and accepted comparator result; this is not a successful retry replacing an earlier case failure.
+
+## Observed contract
+
+Both cases record 2,086 native keydowns, corresponding frame observations, exactly 2,088 characters with expected content hash `6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44`, drained history/collaboration queues (0/0, high-water 32/32), 66 undo records and zero redo records, and collapsed selection at 2,086. Both have 133 visible caret observations covering the transparent and themed stroke states. Ordinary control-wheel commands reach zoom ratios 1.14 and 1, preserve exact text and final selection, and retain scale 1 as explicitly expected for the mobile viewport; this is not evidence of a mobile scale increase.
+
+The checked harness makes route disposal mandatory: Back to files, zero Doc regions, null selection/responsiveness observers, unchanged performance time origin, then the explicit 1,200 ms post-disposal observation. Both manifests reached behavior-complete with no browser errors and passed these assertions.
+
+Candidate cursor pending high-water is 4, zoom-init 1, zoom-update 1, matching the unchanged 4/1/1 caps. At final key the three pending counts are 2/0/1; at disposal and trace end all are zero. No target-family callbacks or installations occur after disposal. Analysis is complete, bounded and accepted, with no evidence failures, candidate violations or orphans. Baseline remains an observation: cursor high-water 8,352, zoom-update 2,085, and eight cursor callbacks after disposal; it is not falsely subjected to or credited with candidate boundedness. The paired comparator accepts with no failures.
+
+## Completion, cleanup and limits
+
+Both retained traces declare JSON/gzip completion with `dataLossOccurred: false`. Baseline compressed bytes 32,556,712 (SHA `5e4eb36be8be53658a70b7997c1bc5a5cd28fe14d0c5730884ebbbdddf343e08`); candidate 30,799,811 (SHA `749e031f26a8e3cee9f19e728f2c5078bc0aa1de7fd49ea9f8ec0ce2f67de9ad`). Hosted parser records retain all source events: baseline 960,994, candidate 827,928. Progress journals record stream completion/read/one close, parse, source attribution, analysis, CDP detach, fixture cleanup, expected page/context closure, and terminal passed. Neither journal has a first failure, persistence failure, or dropped event. Baseline behavior completed at 262.5 s and terminal at 361.2 s; candidate at 181.9 s and 284.8 s. These phases distinguish behavior from later trace collection without imputing the exact interrupted operation in the historical SPN-134 failure.
+
+The evidence includes ten unmapped source positions per run; complete target-family analysis does not mean exhaustive attribution of all application callbacks. Heap snapshots without forced GC do not establish retained-object ownership or absence of every leak. Large inner trace structure was not independently re-parsed in this review; completion/analysis judgments combine the retained hosted parser, mandatory assertions, progress journals and byte-verified compressed evidence. Tracing is intrusive and latency budgets are explicitly disabled here. The observed typing wall times (244.9 s baseline, 169.6 s candidate) are descriptive, not an unprofiled performance verdict or proof of the historical 102.4 ms capacity-flush cause.
+
+Operator gets accountable source and cleanup evidence; Owner and Collaborator retain exact native content, selection, caret and lifecycle behavior; Link guest permissions are outside this fixture and remain owned by the selected access checks. No screenshot was required or supplied for this callback-only gate. Synthetic fixture content and retained source assets support the prescribed evidence record, without a claim of a separate full-archive secrets audit.

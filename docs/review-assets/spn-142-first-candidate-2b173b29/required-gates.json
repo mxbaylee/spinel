@@ -1,0 +1,51 @@
+[
+  {
+    "id": 126877920671,
+    "name": "Pull request",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126877920671"
+  },
+  {
+    "id": 126878183943,
+    "name": "Backlog",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126878183943"
+  },
+  {
+    "id": 126878184068,
+    "name": "Lint",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126878184068"
+  },
+  {
+    "id": 126878184206,
+    "name": "Typecheck",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126878184206"
+  },
+  {
+    "id": 126895799015,
+    "name": "Unit tests",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126895799015"
+  },
+  {
+    "id": 126897061706,
+    "name": "Lib tests",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126897061706"
+  },
+  {
+    "id": 126907233504,
+    "name": "Playwright smoke",
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41916623281/job/126907233504"
+  }
+]

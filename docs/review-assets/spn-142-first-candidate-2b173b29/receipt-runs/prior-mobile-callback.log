@@ -1,0 +1,949 @@
+﻿2026-11-04T20:04:10.4548098Z Current runner version: '2.338.2'
+2026-11-04T20:04:10.4579687Z ##[group]Runner Image Provisioner
+2026-11-04T20:04:10.4581064Z Hosted Compute Agent
+2026-11-04T20:04:10.4581756Z Version: 20261021.618
+2026-11-04T20:04:10.4582440Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-04T20:04:10.4583293Z Build Date: 2026-10-21T00:45:21Z
+2026-11-04T20:04:10.4584007Z Worker ID: {ee95caa9-181b-44fe-a0fa-89fd965365da}
+2026-11-04T20:04:10.4584788Z Region: centralus
+2026-11-04T20:04:10.4585437Z Cloud: Azure
+2026-11-04T20:04:10.4585988Z ##[endgroup]
+2026-11-04T20:04:10.4588443Z ##[group]Operating System
+2026-11-04T20:04:10.4589201Z Ubuntu
+2026-11-04T20:04:10.4589727Z 24.04.5
+2026-11-04T20:04:10.4590415Z LTS
+2026-11-04T20:04:10.4590990Z ##[endgroup]
+2026-11-04T20:04:10.4591614Z ##[group]Runner Image
+2026-11-04T20:04:10.4592246Z Image: ubuntu-24.04
+2026-11-04T20:04:10.4592825Z Version: 20261025.353.1
+2026-11-04T20:04:10.4594368Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-04T20:04:10.4596468Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-04T20:04:10.4597476Z ##[endgroup]
+2026-11-04T20:04:10.4599547Z ##[group]GITHUB_TOKEN Permissions
+2026-11-04T20:04:10.4602271Z Contents: read
+2026-11-04T20:04:10.4602880Z Metadata: read
+2026-11-04T20:04:10.4603586Z ##[endgroup]
+2026-11-04T20:04:10.4606349Z Secret source: Actions
+2026-11-04T20:04:10.4608125Z Cache mode: read
+2026-11-04T20:04:10.4609149Z Prepare workflow directory
+2026-11-04T20:04:10.5379676Z Prepare all required actions
+2026-11-04T20:04:10.5465227Z Getting action download info
+2026-11-04T20:04:10.9147333Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-04T20:04:11.0539005Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-04T20:04:11.1400477Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-04T20:04:11.3243587Z Complete job name: Doc callback lifetimes (mobile)
+2026-11-04T20:04:11.4132689Z ##[group]Run case "$PAIRED" in true|false) ;; *) echo 'Missing comparison decision.' >&2; exit 1 ;; esac
+2026-11-04T20:04:11.4134004Z [36;1mcase "$PAIRED" in true|false) ;; *) echo 'Missing comparison decision.' >&2; exit 1 ;; esac[0m
+2026-11-04T20:04:11.4160734Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:04:11.4161610Z env:
+2026-11-04T20:04:11.4162060Z   PRESET: mobile
+2026-11-04T20:04:11.4162524Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:04:11.4163063Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:04:11.4163625Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:04:11.4164235Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:04:11.4164827Z   PAIRED: true
+2026-11-04T20:04:11.4165254Z ##[endgroup]
+2026-11-04T20:04:11.4653660Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-04T20:04:11.4654545Z with:
+2026-11-04T20:04:11.4655037Z   persist-credentials: false
+2026-11-04T20:04:11.4655620Z   repository: mxbaylee/spinel
+2026-11-04T20:04:11.4660344Z   token: ***
+2026-11-04T20:04:11.4660807Z   ssh-strict: true
+2026-11-04T20:04:11.4661267Z   ssh-user: git
+2026-11-04T20:04:11.4661710Z   clean: true
+2026-11-04T20:04:11.4662186Z   sparse-checkout-cone-mode: true
+2026-11-04T20:04:11.4662746Z   fetch-depth: 1
+2026-11-04T20:04:11.4663205Z   fetch-tags: false
+2026-11-04T20:04:11.4663671Z   show-progress: true
+2026-11-04T20:04:11.4664142Z   lfs: false
+2026-11-04T20:04:11.4664571Z   submodules: false
+2026-11-04T20:04:11.4665043Z   set-safe-directory: true
+2026-11-04T20:04:11.4665577Z   allow-unsafe-pr-checkout: false
+2026-11-04T20:04:11.4666120Z env:
+2026-11-04T20:04:11.4666533Z   PRESET: mobile
+2026-11-04T20:04:11.4666985Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:04:11.4667522Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:04:11.4668439Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:04:11.4669696Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:04:11.4670296Z ##[endgroup]
+2026-11-04T20:04:11.8361692Z Syncing repository: mxbaylee/spinel
+2026-11-04T20:04:11.8365051Z ##[group]Getting Git version info
+2026-11-04T20:04:11.8365886Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-04T20:04:11.8366975Z [command]/usr/bin/git version
+2026-11-04T20:04:11.8468714Z git version 2.56.0
+2026-11-04T20:04:11.8498318Z ##[endgroup]
+2026-11-04T20:04:11.8519361Z Temporarily overriding HOME='/home/runner/work/_temp/caf11b97-7402-4c50-be2c-7647d749ecc1' before making global git config changes
+2026-11-04T20:04:11.8521894Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T20:04:11.8528333Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-04T20:04:11.8612201Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-04T20:04:11.8617000Z ##[group]Determining repository object format
+2026-11-04T20:04:11.8619097Z ##[endgroup]
+2026-11-04T20:04:11.8620487Z ##[group]Initializing the repository
+2026-11-04T20:04:11.8624501Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-04T20:04:11.8783967Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-04T20:04:11.8786065Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-04T20:04:11.8787986Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-04T20:04:11.8789486Z hint: call:
+2026-11-04T20:04:11.8790396Z hint:
+2026-11-04T20:04:11.8791317Z hint: 	git config --global init.defaultBranch <name>
+2026-11-04T20:04:11.8792386Z hint:
+2026-11-04T20:04:11.8793425Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-04T20:04:11.8795143Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-04T20:04:11.8796549Z hint:
+2026-11-04T20:04:11.8797336Z hint: 	git branch -m <name>
+2026-11-04T20:04:11.8798590Z hint:
+2026-11-04T20:04:11.8800583Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-04T20:04:11.8802275Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-04T20:04:11.8815586Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-04T20:04:11.8886086Z ##[endgroup]
+2026-11-04T20:04:11.8887684Z ##[group]Disabling automatic garbage collection
+2026-11-04T20:04:11.8890475Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-04T20:04:11.8943009Z ##[endgroup]
+2026-11-04T20:04:11.8944606Z ##[group]Setting up auth
+2026-11-04T20:04:11.8950403Z Removing SSH command configuration
+2026-11-04T20:04:11.8951950Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:04:11.9012334Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:04:11.9539532Z Removing HTTP extra header
+2026-11-04T20:04:11.9547353Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:04:11.9615326Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:04:11.9898482Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:04:11.9905806Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:04:12.0051651Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:04:12.0302966Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-04T20:04:12.0370517Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:12.0426235Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:12.0481932Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:12.0537586Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:12.0590198Z ##[endgroup]
+2026-11-04T20:04:12.0591899Z ##[group]Fetching the repository
+2026-11-04T20:04:12.0599145Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +13b74ecea5f2552627ff638be9413ad4754ef581:refs/remotes/origin/main
+2026-11-04T20:04:14.8772428Z From https://github.com/mxbaylee/spinel
+2026-11-04T20:04:14.8774643Z  * [new ref]         13b74ecea5f2552627ff638be9413ad4754ef581 -> origin/main
+2026-11-04T20:04:14.8784518Z [command]/usr/bin/git branch --list --remote origin/main
+2026-11-04T20:04:14.8832522Z   origin/main
+2026-11-04T20:04:14.8848629Z [command]/usr/bin/git rev-parse refs/remotes/origin/main
+2026-11-04T20:04:14.8894085Z 13b74ecea5f2552627ff638be9413ad4754ef581
+2026-11-04T20:04:14.8909939Z ##[endgroup]
+2026-11-04T20:04:14.8911060Z ##[group]Determining the checkout info
+2026-11-04T20:04:14.8912225Z ##[endgroup]
+2026-11-04T20:04:14.8912928Z [command]/usr/bin/git sparse-checkout disable
+2026-11-04T20:04:14.8997351Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-04T20:04:14.9062700Z ##[group]Checking out the ref
+2026-11-04T20:04:14.9066933Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-11-04T20:04:15.4629303Z Switched to a new branch 'main'
+2026-11-04T20:04:15.4633888Z branch 'main' set up to track 'origin/main'.
+2026-11-04T20:04:15.4741398Z ##[endgroup]
+2026-11-04T20:04:15.4755583Z [command]/usr/bin/git log -1 --format=%H
+2026-11-04T20:04:15.4794645Z 13b74ecea5f2552627ff638be9413ad4754ef581
+2026-11-04T20:04:15.4810134Z ##[group]Removing auth
+2026-11-04T20:04:15.4810700Z Removing SSH command configuration
+2026-11-04T20:04:15.4829061Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:04:15.4869951Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:04:15.5144025Z Removing HTTP extra header
+2026-11-04T20:04:15.5149910Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:04:15.5206938Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:04:15.5491099Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:04:15.5497503Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:04:15.5562512Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-04T20:04:15.5563942Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-04T20:04:15.5589772Z includeif.gitdir:/github/workspace/.git.path
+2026-11-04T20:04:15.5591159Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-04T20:04:15.5594252Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-04T20:04:15.5622299Z /home/runner/work/_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:15.5636886Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-201ac4c6\-8d99\-4d3c\-9157\-fa0ed91a5829\.config
+2026-11-04T20:04:15.5702160Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-04T20:04:15.5748754Z /home/runner/work/_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:15.5761948Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-201ac4c6\-8d99\-4d3c\-9157\-fa0ed91a5829\.config
+2026-11-04T20:04:15.5819667Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-04T20:04:15.5864519Z /github/runner_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:15.5875254Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-201ac4c6\-8d99\-4d3c\-9157\-fa0ed91a5829\.config
+2026-11-04T20:04:15.5933222Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-04T20:04:15.5976221Z /github/runner_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config
+2026-11-04T20:04:15.5987088Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-201ac4c6\-8d99\-4d3c\-9157\-fa0ed91a5829\.config
+2026-11-04T20:04:15.6047631Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:04:15.6339722Z Removing credentials config '/home/runner/work/_temp/git-credentials-201ac4c6-8d99-4d3c-9157-fa0ed91a5829.config'
+2026-11-04T20:04:15.6350574Z ##[endgroup]
+2026-11-04T20:04:15.6590651Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-04T20:04:15.6591127Z with:
+2026-11-04T20:04:15.6591348Z   node-version-file: .nvmrc
+2026-11-04T20:04:15.6591625Z   package-manager-cache: false
+2026-11-04T20:04:15.6591930Z   check-latest: false
+2026-11-04T20:04:15.6594767Z   token: ***
+2026-11-04T20:04:15.6595080Z env:
+2026-11-04T20:04:15.6595399Z   PRESET: mobile
+2026-11-04T20:04:15.6595737Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:04:15.6596123Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:04:15.6596548Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:04:15.6597145Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:04:15.6597675Z ##[endgroup]
+2026-11-04T20:04:15.8013415Z Node version file is not JSON file
+2026-11-04T20:04:15.8018762Z Node version file is not TOML file
+2026-11-04T20:04:15.8019417Z Resolved .nvmrc as 26.12.1
+2026-11-04T20:04:15.8040011Z Attempting to download 26.12.1...
+2026-11-04T20:04:16.5872662Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-04T20:04:17.2239902Z Extracting ...
+2026-11-04T20:04:17.2415381Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/12ca3fef-a8ac-423b-8c89-20b132500004 -f /home/runner/work/_temp/5d54a28e-fded-48c2-99d6-87ee534b352e
+2026-11-04T20:04:18.6141250Z Adding to the cache ...
+2026-11-04T20:04:20.5134009Z ##[group]Environment details
+2026-11-04T20:04:20.7686902Z node: v26.12.1
+2026-11-04T20:04:20.7687475Z npm: 11.20.0
+2026-11-04T20:04:20.7688032Z yarn: 1.22.22
+2026-11-04T20:04:20.7688707Z ##[endgroup]
+2026-11-04T20:04:20.7887371Z ##[group]Run npm ci
+2026-11-04T20:04:20.7887672Z [36;1mnpm ci[0m
+2026-11-04T20:04:20.7912075Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:04:20.7912376Z env:
+2026-11-04T20:04:20.7912610Z   PRESET: mobile
+2026-11-04T20:04:20.7912867Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:04:20.7913146Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:04:20.7913465Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:04:20.7914019Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:04:20.7914362Z ##[endgroup]
+2026-11-04T20:04:35.7510925Z 
+2026-11-04T20:04:35.7521275Z > postinstall
+2026-11-04T20:04:35.7523653Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-04T20:04:35.7525259Z 
+2026-11-04T20:04:36.3692192Z 
+2026-11-04T20:04:36.3693413Z added 501 packages, and audited 509 packages in 16s
+2026-11-04T20:04:36.3693995Z 
+2026-11-04T20:04:36.3694398Z 136 packages are looking for funding
+2026-11-04T20:04:36.3695037Z   run `npm fund` for details
+2026-11-04T20:04:36.3888337Z 
+2026-11-04T20:04:36.3889393Z 4 moderate severity vulnerabilities
+2026-11-04T20:04:36.3889710Z 
+2026-11-04T20:04:36.3890056Z To address all issues (including breaking changes), run:
+2026-11-04T20:04:36.3890588Z   npm audit fix --force
+2026-11-04T20:04:36.3890863Z 
+2026-11-04T20:04:36.3891029Z Run `npm audit` for details.
+2026-11-04T20:04:36.3900720Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-04T20:04:36.3902030Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-04T20:04:36.3903236Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-04T20:04:36.3904119Z npm warn install-scripts
+2026-11-04T20:04:36.3905325Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-04T20:04:36.4756219Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-04T20:04:36.4756916Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-04T20:04:36.4757481Z [36;1mnpx playwright install --with-deps chromium[0m
+2026-11-04T20:04:36.4788247Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:04:36.4788542Z env:
+2026-11-04T20:04:36.4788752Z   PRESET: mobile
+2026-11-04T20:04:36.4789001Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:04:36.4789236Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:04:36.4789500Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:04:36.4789809Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:04:36.4790101Z ##[endgroup]
+2026-11-04T20:04:36.5678336Z {
+2026-11-04T20:04:36.5678829Z   "kind": "ubuntu-mirror-input",
+2026-11-04T20:04:36.5679309Z   "imageOS": "ubuntu24",
+2026-11-04T20:04:36.5679748Z   "imageVersion": "20261026.354.1",
+2026-11-04T20:04:36.5680171Z   "bytes": 144,
+2026-11-04T20:04:36.5680931Z   "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+2026-11-04T20:04:36.5681629Z   "lines": [
+2026-11-04T20:04:36.5681936Z     {
+2026-11-04T20:04:36.5682239Z       "line": 1,
+2026-11-04T20:04:36.5682798Z       "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+2026-11-04T20:04:36.5683380Z     },
+2026-11-04T20:04:36.5683685Z     {
+2026-11-04T20:04:36.5684087Z       "line": 2,
+2026-11-04T20:04:36.5684645Z       "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+2026-11-04T20:04:36.5685455Z     },
+2026-11-04T20:04:36.5685790Z     {
+2026-11-04T20:04:36.5686167Z       "line": 3,
+2026-11-04T20:04:36.5686832Z       "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+2026-11-04T20:04:36.5687500Z     },
+2026-11-04T20:04:36.5688272Z     {
+2026-11-04T20:04:36.5688596Z       "line": 4,
+2026-11-04T20:04:36.5688943Z       "text": ""
+2026-11-04T20:04:36.5689283Z     }
+2026-11-04T20:04:36.5689594Z   ]
+2026-11-04T20:04:36.5689896Z }
+2026-11-04T20:04:36.5801476Z Preferred the official Ubuntu archive; the hosted mirror remains the fallback.
+2026-11-04T20:04:37.3821613Z Installing dependencies...
+2026-11-04T20:04:37.3920738Z Switching to root user to install dependencies...
+2026-11-04T20:04:37.4954322Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-04T20:04:37.5210529Z Get:6 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-11-04T20:04:37.6150032Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [721 kB]
+2026-11-04T20:04:37.6341134Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [652 kB]
+2026-11-04T20:04:38.3497180Z Hit:2 https://archive.ubuntu.com/ubuntu noble InRelease
+2026-11-04T20:04:38.5064826Z Get:3 https://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-11-04T20:04:39.0579723Z Get:4 https://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-11-04T20:04:39.3033468Z Get:5 https://archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-11-04T20:04:39.5334171Z Get:9 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1409 kB]
+2026-11-04T20:04:40.1646431Z Get:10 https://archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2026-11-04T20:04:40.3322255Z Get:11 https://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1707 kB]
+2026-11-04T20:04:40.6020482Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [343 kB]
+2026-11-04T20:04:40.7656145Z Get:13 https://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1813 kB]
+2026-11-04T20:04:41.0113738Z Get:14 https://archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [412 kB]
+2026-11-04T20:04:41.1756655Z Get:15 https://archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [14.3 kB]
+2026-11-04T20:04:41.3257091Z Get:16 https://archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1156 kB]
+2026-11-04T20:04:41.5286668Z Get:17 https://archive.ubuntu.com/ubuntu noble-security/main Translation-en [233 kB]
+2026-11-04T20:04:41.7333807Z Get:18 https://archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1225 kB]
+2026-11-04T20:04:41.9863753Z Get:19 https://archive.ubuntu.com/ubuntu noble-security/universe Translation-en [247 kB]
+2026-11-04T20:04:42.3611586Z Get:20 https://archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1721 kB]
+2026-11-04T20:04:42.5884272Z Get:21 https://archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [394 kB]
+2026-11-04T20:04:42.7508077Z Get:22 https://archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [12.4 kB]
+2026-11-04T20:04:46.3096121Z Fetched 12.8 MB in 5s (2399 kB/s)
+2026-11-04T20:04:47.6121997Z Reading package lists...
+2026-11-04T20:04:47.6509678Z Reading package lists...
+2026-11-04T20:04:47.9860170Z Building dependency tree...
+2026-11-04T20:04:47.9868184Z Reading state information...
+2026-11-04T20:04:48.3350409Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-11-04T20:04:48.3351743Z libasound2t64 set to manually installed.
+2026-11-04T20:04:48.3353275Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-04T20:04:48.3354842Z libatk-bridge2.0-0t64 set to manually installed.
+2026-11-04T20:04:48.3356123Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-04T20:04:48.3357203Z libatk1.0-0t64 set to manually installed.
+2026-11-04T20:04:48.3358587Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-11-04T20:04:48.3359662Z libatspi2.0-0t64 set to manually installed.
+2026-11-04T20:04:48.3360969Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-11-04T20:04:48.3361986Z libcairo2 set to manually installed.
+2026-11-04T20:04:48.3363380Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-11-04T20:04:48.3364792Z libcups2t64 set to manually installed.
+2026-11-04T20:04:48.3365744Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-11-04T20:04:48.3366620Z libdbus-1-3 set to manually installed.
+2026-11-04T20:04:48.3367560Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-11-04T20:04:48.3368676Z libdrm2 set to manually installed.
+2026-11-04T20:04:48.3369535Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.4).
+2026-11-04T20:04:48.3370377Z libgbm1 set to manually installed.
+2026-11-04T20:04:48.3371347Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.10).
+2026-11-04T20:04:48.3372758Z libglib2.0-0t64 set to manually installed.
+2026-11-04T20:04:48.3373671Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-11-04T20:04:48.3374457Z libnspr4 set to manually installed.
+2026-11-04T20:04:48.3375235Z libnss3 is already the newest version (2:3.98-1ubuntu0.3).
+2026-11-04T20:04:48.3375923Z libnss3 set to manually installed.
+2026-11-04T20:04:48.3376671Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-11-04T20:04:48.3377420Z libpango-1.0-0 set to manually installed.
+2026-11-04T20:04:48.3378470Z libx11-6 is already the newest version (2:1.8.7-1ubuntu0.1).
+2026-11-04T20:04:48.3379168Z libx11-6 set to manually installed.
+2026-11-04T20:04:48.3379854Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-11-04T20:04:48.3380483Z libxcb1 set to manually installed.
+2026-11-04T20:04:48.3381272Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-11-04T20:04:48.3382077Z libxcomposite1 set to manually installed.
+2026-11-04T20:04:48.3382838Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-11-04T20:04:48.3383604Z libxdamage1 set to manually installed.
+2026-11-04T20:04:48.3384335Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-11-04T20:04:48.3385040Z libxext6 set to manually installed.
+2026-11-04T20:04:48.3385775Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-11-04T20:04:48.3386506Z libxfixes3 set to manually installed.
+2026-11-04T20:04:48.3387256Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-11-04T20:04:48.3388310Z libxkbcommon0 set to manually installed.
+2026-11-04T20:04:48.3389654Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-11-04T20:04:48.3390430Z libxrandr2 set to manually installed.
+2026-11-04T20:04:48.3391149Z xvfb is already the newest version (2:21.1.12-1ubuntu1.9).
+2026-11-04T20:04:48.3392133Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-11-04T20:04:48.3393170Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-11-04T20:04:48.3393967Z libfontconfig1 set to manually installed.
+2026-11-04T20:04:48.3394790Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.2).
+2026-11-04T20:04:48.3395599Z libfreetype6 set to manually installed.
+2026-11-04T20:04:48.3396346Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-11-04T20:04:48.3397107Z fonts-liberation set to manually installed.
+2026-11-04T20:04:48.3398141Z The following additional packages will be installed:
+2026-11-04T20:04:48.3398806Z   xfonts-encodings xfonts-utils
+2026-11-04T20:04:48.3399333Z Recommended packages:
+2026-11-04T20:04:48.3399881Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-11-04T20:04:48.3662105Z The following NEW packages will be installed:
+2026-11-04T20:04:48.3663424Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-11-04T20:04:48.3678615Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-11-04T20:04:48.3679364Z   xfonts-utils
+2026-11-04T20:04:48.3993548Z 0 upgraded, 9 newly installed, 0 to remove and 23 not upgraded.
+2026-11-04T20:04:48.3994200Z Need to get 21.1 MB of archives.
+2026-11-04T20:04:48.3994773Z After this operation, 79.5 MB of additional disk space will be used.
+2026-11-04T20:04:48.3995420Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-04T20:04:48.9615231Z Get:2 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-11-04T20:04:50.0222799Z Get:3 https://archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-11-04T20:04:50.3152050Z Get:4 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-11-04T20:04:50.4381744Z Get:5 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-11-04T20:04:50.5953839Z Get:6 https://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-11-04T20:04:50.8072575Z Get:7 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-11-04T20:04:50.9339635Z Get:8 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-11-04T20:04:51.0563159Z Get:9 https://archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-11-04T20:04:51.1811179Z Get:10 https://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-11-04T20:04:51.5322908Z Fetched 21.1 MB in 3s (7530 kB/s)
+2026-11-04T20:04:51.5662962Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-11-04T20:04:51.6013471Z (Reading database ... 
+2026-11-04T20:04:51.6014446Z (Reading database ... 5%
+2026-11-04T20:04:51.6015439Z (Reading database ... 10%
+2026-11-04T20:04:51.6015967Z (Reading database ... 15%
+2026-11-04T20:04:51.6016495Z (Reading database ... 20%
+2026-11-04T20:04:51.6016878Z (Reading database ... 25%
+2026-11-04T20:04:51.6017195Z (Reading database ... 30%
+2026-11-04T20:04:51.6017537Z (Reading database ... 35%
+2026-11-04T20:04:51.6018215Z (Reading database ... 40%
+2026-11-04T20:04:51.6018542Z (Reading database ... 45%
+2026-11-04T20:04:51.6018871Z (Reading database ... 50%
+2026-11-04T20:04:51.6090858Z (Reading database ... 55%
+2026-11-04T20:04:51.7856616Z (Reading database ... 60%
+2026-11-04T20:04:51.9410691Z (Reading database ... 65%
+2026-11-04T20:04:52.1816192Z (Reading database ... 70%
+2026-11-04T20:04:52.3548527Z (Reading database ... 75%
+2026-11-04T20:04:52.5331453Z (Reading database ... 80%
+2026-11-04T20:04:52.6870442Z (Reading database ... 85%
+2026-11-04T20:04:52.8481610Z (Reading database ... 90%
+2026-11-04T20:04:53.0424639Z (Reading database ... 95%
+2026-11-04T20:04:53.0425374Z (Reading database ... 100%
+2026-11-04T20:04:53.0426319Z (Reading database ... 215504 files and directories currently installed.)
+2026-11-04T20:04:53.0483860Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-11-04T20:04:53.0616435Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-04T20:04:53.3234253Z Selecting previously unselected package fonts-freefont-ttf.
+2026-11-04T20:04:53.3396436Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-11-04T20:04:53.3405360Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-04T20:04:53.4511480Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-11-04T20:04:53.4674063Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-11-04T20:04:53.4682310Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-04T20:04:53.4994399Z Selecting previously unselected package fonts-unifont.
+2026-11-04T20:04:53.5157350Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-11-04T20:04:53.5164652Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-11-04T20:04:53.6496406Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-11-04T20:04:53.6660333Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-11-04T20:04:53.6808704Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-04T20:04:54.1988195Z Selecting previously unselected package xfonts-encodings.
+2026-11-04T20:04:54.2148877Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-11-04T20:04:54.2156865Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-04T20:04:54.2543921Z Selecting previously unselected package xfonts-utils.
+2026-11-04T20:04:54.2706970Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-11-04T20:04:54.2714881Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-11-04T20:04:54.3205165Z Selecting previously unselected package xfonts-cyrillic.
+2026-11-04T20:04:54.3368226Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-11-04T20:04:54.3375982Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-04T20:04:54.3809054Z Selecting previously unselected package xfonts-scalable.
+2026-11-04T20:04:54.3973355Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-11-04T20:04:54.3981864Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-04T20:04:54.4535934Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-11-04T20:04:54.4674961Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-11-04T20:04:54.4692829Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-11-04T20:04:54.4714759Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-11-04T20:04:54.4731591Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-11-04T20:04:54.4806187Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-11-04T20:04:54.4823733Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-11-04T20:04:54.4841787Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-11-04T20:04:54.4902199Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-11-04T20:04:54.5246045Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-11-04T20:04:54.5572192Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-11-04T20:04:54.5598917Z Not building database; man-db/auto-update is not 'true'.
+2026-11-04T20:04:54.5617566Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-11-04T20:04:55.4190387Z 
+2026-11-04T20:04:55.4193429Z Running kernel seems to be up-to-date.
+2026-11-04T20:04:55.4194002Z 
+2026-11-04T20:04:55.4194339Z No services need to be restarted.
+2026-11-04T20:04:55.4194637Z 
+2026-11-04T20:04:55.4194874Z No containers need to be restarted.
+2026-11-04T20:04:55.4195174Z 
+2026-11-04T20:04:55.4195460Z No user sessions are running outdated binaries.
+2026-11-04T20:04:55.4196324Z 
+2026-11-04T20:04:55.4196812Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-04T20:04:56.9755241Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip
+2026-11-04T20:04:57.4845222Z |                                                                                |   0% of 191.1 MiB
+2026-11-04T20:04:57.7754866Z |■■■■■■■■                                                                        |  10% of 191.1 MiB
+2026-11-04T20:04:57.8614504Z |■■■■■■■■■■■■■■■■                                                                |  20% of 191.1 MiB
+2026-11-04T20:04:57.9510747Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 191.1 MiB
+2026-11-04T20:04:58.0165715Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 191.1 MiB
+2026-11-04T20:04:58.1110527Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 191.1 MiB
+2026-11-04T20:04:58.1891236Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 191.1 MiB
+2026-11-04T20:04:58.2693573Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 191.1 MiB
+2026-11-04T20:04:58.3571256Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 191.1 MiB
+2026-11-04T20:04:58.4420962Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 191.1 MiB
+2026-11-04T20:04:58.5220586Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 191.1 MiB
+2026-11-04T20:05:02.0408371Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248
+2026-11-04T20:05:02.0413025Z Downloading FFmpeg (playwright ffmpeg v1013) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1013/ffmpeg-linux.zip
+2026-11-04T20:05:02.5495050Z |                                                                                |   0% of 2.2 MiB
+2026-11-04T20:05:02.5788307Z |■■■■■■■■                                                                        |  10% of 2.2 MiB
+2026-11-04T20:05:02.5939470Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.2 MiB
+2026-11-04T20:05:02.6021955Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.2 MiB
+2026-11-04T20:05:02.6187033Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.2 MiB
+2026-11-04T20:05:02.6231035Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.2 MiB
+2026-11-04T20:05:02.6284248Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.2 MiB
+2026-11-04T20:05:02.6317530Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.2 MiB
+2026-11-04T20:05:02.6356680Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.2 MiB
+2026-11-04T20:05:02.6395018Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.2 MiB
+2026-11-04T20:05:02.6458837Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.2 MiB
+2026-11-04T20:05:02.7078470Z FFmpeg (playwright ffmpeg v1013) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1013
+2026-11-04T20:05:02.7083142Z Downloading Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip
+2026-11-04T20:05:03.2129571Z |                                                                                |   0% of 120 MiB
+2026-11-04T20:05:03.4519778Z |■■■■■■■■                                                                        |  10% of 120 MiB
+2026-11-04T20:05:03.5098706Z |■■■■■■■■■■■■■■■■                                                                |  20% of 120 MiB
+2026-11-04T20:05:03.5670878Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 120 MiB
+2026-11-04T20:05:03.6378153Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 120 MiB
+2026-11-04T20:05:03.6752188Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 120 MiB
+2026-11-04T20:05:03.7175147Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 120 MiB
+2026-11-04T20:05:03.7744261Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 120 MiB
+2026-11-04T20:05:03.8128157Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 120 MiB
+2026-11-04T20:05:03.8514277Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 120 MiB
+2026-11-04T20:05:03.9050210Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 120 MiB
+2026-11-04T20:05:06.3699929Z Chrome Headless Shell 156.0.8078.4 (playwright chromium-headless-shell v1248) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1248
+2026-11-04T20:05:06.4136136Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-04T20:05:06.4136559Z with:
+2026-11-04T20:05:06.4136997Z   ref: 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+2026-11-04T20:05:06.4137321Z   path: baseline-callback-source
+2026-11-04T20:05:06.4137592Z   persist-credentials: false
+2026-11-04T20:05:06.4138146Z   repository: mxbaylee/spinel
+2026-11-04T20:05:06.4140882Z   token: ***
+2026-11-04T20:05:06.4141086Z   ssh-strict: true
+2026-11-04T20:05:06.4141286Z   ssh-user: git
+2026-11-04T20:05:06.4141503Z   clean: true
+2026-11-04T20:05:06.4141715Z   sparse-checkout-cone-mode: true
+2026-11-04T20:05:06.4141974Z   fetch-depth: 1
+2026-11-04T20:05:06.4142178Z   fetch-tags: false
+2026-11-04T20:05:06.4142398Z   show-progress: true
+2026-11-04T20:05:06.4142617Z   lfs: false
+2026-11-04T20:05:06.4142807Z   submodules: false
+2026-11-04T20:05:06.4143026Z   set-safe-directory: true
+2026-11-04T20:05:06.4143279Z   allow-unsafe-pr-checkout: false
+2026-11-04T20:05:06.4143529Z env:
+2026-11-04T20:05:06.4143767Z   PRESET: mobile
+2026-11-04T20:05:06.4143972Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:05:06.4144199Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:05:06.4144469Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:05:06.4144758Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:05:06.4145036Z ##[endgroup]
+2026-11-04T20:05:06.5098830Z Syncing repository: mxbaylee/spinel
+2026-11-04T20:05:06.5108187Z ##[group]Getting Git version info
+2026-11-04T20:05:06.5109661Z Working directory is '/home/runner/work/spinel/spinel/baseline-callback-source'
+2026-11-04T20:05:06.5152536Z [command]/usr/bin/git version
+2026-11-04T20:05:06.5209808Z git version 2.56.0
+2026-11-04T20:05:06.5236296Z ##[endgroup]
+2026-11-04T20:05:06.5248239Z Temporarily overriding HOME='/home/runner/work/_temp/17baa8c8-94e6-4437-ad3d-e64947bec523' before making global git config changes
+2026-11-04T20:05:06.5250062Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T20:05:06.5257431Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel/baseline-callback-source
+2026-11-04T20:05:06.5309089Z ##[group]Determining repository object format
+2026-11-04T20:05:06.5312026Z ##[endgroup]
+2026-11-04T20:05:06.5313321Z ##[group]Initializing the repository
+2026-11-04T20:05:06.5320059Z [command]/usr/bin/git init /home/runner/work/spinel/spinel/baseline-callback-source
+2026-11-04T20:05:06.5380219Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-04T20:05:06.5381301Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-04T20:05:06.5382302Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-04T20:05:06.5382952Z hint: call:
+2026-11-04T20:05:06.5383253Z hint:
+2026-11-04T20:05:06.5383759Z hint: 	git config --global init.defaultBranch <name>
+2026-11-04T20:05:06.5384259Z hint:
+2026-11-04T20:05:06.5384912Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-04T20:05:06.5385904Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-04T20:05:06.5386854Z hint:
+2026-11-04T20:05:06.5387204Z hint: 	git branch -m <name>
+2026-11-04T20:05:06.5387573Z hint:
+2026-11-04T20:05:06.5388480Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-04T20:05:06.5389848Z Initialized empty Git repository in /home/runner/work/spinel/spinel/baseline-callback-source/.git/
+2026-11-04T20:05:06.5393332Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-04T20:05:06.5443395Z ##[endgroup]
+2026-11-04T20:05:06.5444019Z ##[group]Disabling automatic garbage collection
+2026-11-04T20:05:06.5449245Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-04T20:05:06.5530855Z ##[endgroup]
+2026-11-04T20:05:06.5531678Z ##[group]Setting up auth
+2026-11-04T20:05:06.5532555Z Removing SSH command configuration
+2026-11-04T20:05:06.5540224Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:05:06.5588339Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:05:06.5909244Z Removing HTTP extra header
+2026-11-04T20:05:06.5916751Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:05:06.5989469Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:05:06.6301643Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:05:06.6308466Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:05:06.6364715Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:05:06.6642708Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-04T20:05:06.6704613Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git.path /home/runner/work/_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:06.6760192Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:06.6814365Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/baseline-callback-source/.git.path /github/runner_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:06.6866203Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/baseline-callback-source/.git/worktrees/*.path /github/runner_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:06.6914788Z ##[endgroup]
+2026-11-04T20:05:06.6915621Z ##[group]Fetching the repository
+2026-11-04T20:05:06.6926885Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+2026-11-04T20:05:08.1748617Z From https://github.com/mxbaylee/spinel
+2026-11-04T20:05:08.1750100Z  * branch            0e1df4725d9eccb77574d25e3eecdf678fe6ff44 -> FETCH_HEAD
+2026-11-04T20:05:08.1762093Z [command]/usr/bin/git rev-parse --verify --quiet 0e1df4725d9eccb77574d25e3eecdf678fe6ff44^{object}
+2026-11-04T20:05:08.1812797Z 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+2026-11-04T20:05:08.1828365Z ##[endgroup]
+2026-11-04T20:05:08.1829006Z ##[group]Determining the checkout info
+2026-11-04T20:05:08.1829688Z ##[endgroup]
+2026-11-04T20:05:08.1832058Z [command]/usr/bin/git sparse-checkout disable
+2026-11-04T20:05:08.1920533Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-04T20:05:08.1986218Z ##[group]Checking out the ref
+2026-11-04T20:05:08.1993469Z [command]/usr/bin/git checkout --progress --force 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+2026-11-04T20:05:08.5038986Z Note: switching to '0e1df4725d9eccb77574d25e3eecdf678fe6ff44'.
+2026-11-04T20:05:08.5040205Z 
+2026-11-04T20:05:08.5040862Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-04T20:05:08.5042619Z changes and commit them, and you can discard any commits you make in this
+2026-11-04T20:05:08.5043702Z state without impacting any branches by switching back to a branch.
+2026-11-04T20:05:08.5044192Z 
+2026-11-04T20:05:08.5044747Z If you want to create a new branch to retain commits you create, you may
+2026-11-04T20:05:08.5045742Z do so (now or later) by using -c with the switch command. Example:
+2026-11-04T20:05:08.5046286Z 
+2026-11-04T20:05:08.5046548Z   git switch -c <new-branch-name>
+2026-11-04T20:05:08.5047396Z 
+2026-11-04T20:05:08.5047693Z Or undo this operation with:
+2026-11-04T20:05:08.5048381Z 
+2026-11-04T20:05:08.5048620Z   git switch -
+2026-11-04T20:05:08.5048872Z 
+2026-11-04T20:05:08.5049463Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-04T20:05:08.5050053Z 
+2026-11-04T20:05:08.5070449Z HEAD is now at 0e1df47 ⌨️ SPN-108 Keep Docs responsive after sustained typing
+2026-11-04T20:05:08.5072079Z ##[endgroup]
+2026-11-04T20:05:08.5123504Z [command]/usr/bin/git log -1 --format=%H
+2026-11-04T20:05:08.5167613Z 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+2026-11-04T20:05:08.5178051Z ##[group]Removing auth
+2026-11-04T20:05:08.5178641Z Removing SSH command configuration
+2026-11-04T20:05:08.5183005Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:05:08.5237240Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:05:08.5518907Z Removing HTTP extra header
+2026-11-04T20:05:08.5524973Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:05:08.5585468Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:05:08.5871392Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:05:08.5877139Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:05:08.5925053Z includeif.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git.path
+2026-11-04T20:05:08.5926694Z includeif.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git/worktrees/*.path
+2026-11-04T20:05:08.5928433Z includeif.gitdir:/github/workspace/baseline-callback-source/.git.path
+2026-11-04T20:05:08.5929564Z includeif.gitdir:/github/workspace/baseline-callback-source/.git/worktrees/*.path
+2026-11-04T20:05:08.5940073Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git.path
+2026-11-04T20:05:08.5996889Z /home/runner/work/_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:08.6011682Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-240774e9\-dd4d\-4bdc\-9b0d\-17e1840fa597\.config
+2026-11-04T20:05:08.6072680Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git/worktrees/*.path
+2026-11-04T20:05:08.6117168Z /home/runner/work/_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:08.6130005Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/baseline-callback-source/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-240774e9\-dd4d\-4bdc\-9b0d\-17e1840fa597\.config
+2026-11-04T20:05:08.6191985Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/baseline-callback-source/.git.path
+2026-11-04T20:05:08.6235821Z /github/runner_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:08.6246378Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/baseline-callback-source/.git.path \/github\/runner_temp\/git\-credentials\-240774e9\-dd4d\-4bdc\-9b0d\-17e1840fa597\.config
+2026-11-04T20:05:08.6305726Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/baseline-callback-source/.git/worktrees/*.path
+2026-11-04T20:05:08.6350845Z /github/runner_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config
+2026-11-04T20:05:08.6365285Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/baseline-callback-source/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-240774e9\-dd4d\-4bdc\-9b0d\-17e1840fa597\.config
+2026-11-04T20:05:08.6436064Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:05:08.6719246Z Removing credentials config '/home/runner/work/_temp/git-credentials-240774e9-dd4d-4bdc-9b0d-17e1840fa597.config'
+2026-11-04T20:05:08.6730784Z ##[endgroup]
+2026-11-04T20:05:08.6880274Z ##[group]Run cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
+2026-11-04T20:05:08.6882902Z [36;1mcp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/[0m
+2026-11-04T20:05:08.6884539Z [36;1mcp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/[0m
+2026-11-04T20:05:08.6885249Z [36;1mcp web/docResponsivenessEvidence.ts baseline-callback-source/web/[0m
+2026-11-04T20:05:08.6885962Z [36;1mcp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts baseline-callback-source/src/ui/[0m
+2026-11-04T20:05:08.6886744Z [36;1mcp playwright.config.ts baseline-callback-source/playwright.config.ts[0m
+2026-11-04T20:05:08.6887322Z [36;1mcp package-lock.json baseline-callback-source/package-lock.json[0m
+2026-11-04T20:05:08.6908962Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:05:08.6909236Z env:
+2026-11-04T20:05:08.6909449Z   PRESET: mobile
+2026-11-04T20:05:08.6909682Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:05:08.6909940Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:05:08.6910230Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:05:08.6910554Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:05:08.6910863Z ##[endgroup]
+2026-11-04T20:05:08.7114369Z ##[group]Run npm ci
+2026-11-04T20:05:08.7114692Z [36;1mnpm ci[0m
+2026-11-04T20:05:08.7114997Z [36;1mnpm run build -- --sourcemap hidden[0m
+2026-11-04T20:05:08.7136412Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:05:08.7136706Z env:
+2026-11-04T20:05:08.7136936Z   PRESET: mobile
+2026-11-04T20:05:08.7137182Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:05:08.7137472Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:05:08.7138093Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:05:08.7138497Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:05:08.7138841Z ##[endgroup]
+2026-11-04T20:05:20.4939166Z 
+2026-11-04T20:05:20.4939754Z > postinstall
+2026-11-04T20:05:20.4940931Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts
+2026-11-04T20:05:20.4941696Z 
+2026-11-04T20:05:20.8919161Z 
+2026-11-04T20:05:20.8920253Z added 501 packages, and audited 509 packages in 12s
+2026-11-04T20:05:20.8921051Z 
+2026-11-04T20:05:20.8921449Z 136 packages are looking for funding
+2026-11-04T20:05:20.8922195Z   run `npm fund` for details
+2026-11-04T20:05:20.9175712Z 
+2026-11-04T20:05:20.9176383Z 4 moderate severity vulnerabilities
+2026-11-04T20:05:20.9176819Z 
+2026-11-04T20:05:20.9177240Z To address all issues (including breaking changes), run:
+2026-11-04T20:05:20.9178217Z   npm audit fix --force
+2026-11-04T20:05:20.9178493Z 
+2026-11-04T20:05:20.9178697Z Run `npm audit` for details.
+2026-11-04T20:05:20.9199145Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-04T20:05:20.9200390Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-04T20:05:20.9202105Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-04T20:05:20.9202857Z npm warn install-scripts
+2026-11-04T20:05:20.9203840Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-04T20:05:21.1429763Z 
+2026-11-04T20:05:21.1430342Z > build
+2026-11-04T20:05:21.1430915Z > vite build --sourcemap hidden
+2026-11-04T20:05:21.1431244Z 
+2026-11-04T20:05:21.3899786Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-04T20:05:21.4045712Z transforming...
+2026-11-04T20:05:22.3090559Z ✓ 4345 modules transformed.
+2026-11-04T20:05:22.7578768Z rendering chunks...
+2026-11-04T20:05:25.9418311Z computing gzip size...
+2026-11-04T20:05:26.1084296Z dist/index.html                                    3.49 kB │ gzip:     1.29 kB
+2026-11-04T20:05:26.1086105Z dist/assets/guestPendingBuffer-mVcC3r32.css        2.53 kB │ gzip:     0.88 kB
+2026-11-04T20:05:26.1088026Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-04T20:05:26.1089207Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-04T20:05:26.1090277Z dist/assets/portable-BInvlx1S.css                 16.40 kB │ gzip:     3.55 kB
+2026-11-04T20:05:26.1091388Z dist/assets/application-cWkKAjc1.css              49.30 kB │ gzip:     9.22 kB
+2026-11-04T20:05:26.1092478Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-04T20:05:26.1093538Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-04T20:05:26.1094654Z dist/assets/documentAccess-DlrFGGWB.js             0.47 kB │ gzip:     0.31 kB │ map:      1.58 kB
+2026-11-04T20:05:26.1095718Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-04T20:05:26.1096805Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB │ map:      6.33 kB
+2026-11-04T20:05:26.1098072Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-04T20:05:26.1099457Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB │ map:      6.02 kB
+2026-11-04T20:05:26.1101647Z dist/assets/OfflineViewer-wztEAzJd.js              1.93 kB │ gzip:     0.99 kB │ map:      5.89 kB
+2026-11-04T20:05:26.1103315Z dist/assets/rendering-DbQ8XjoI.js                  2.48 kB │ gzip:     1.14 kB │ map:      8.22 kB
+2026-11-04T20:05:26.1104805Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB │ map:     10.29 kB
+2026-11-04T20:05:26.1106228Z dist/assets/OfflineAccess-BlNYUkme.js              2.95 kB │ gzip:     1.45 kB │ map:     11.65 kB
+2026-11-04T20:05:26.1108143Z dist/assets/download-TzfxHqpV.js                   3.37 kB │ gzip:     1.65 kB │ map:     11.95 kB
+2026-11-04T20:05:26.1109683Z dist/assets/main-2a_vsjPx.js                       3.72 kB │ gzip:     1.83 kB │ map:      7.91 kB
+2026-11-04T20:05:26.1111245Z dist/assets/spaceNavigation-hsChalBr.js            3.95 kB │ gzip:     1.64 kB │ map:     15.86 kB
+2026-11-04T20:05:26.1112861Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB │ map:     25.07 kB
+2026-11-04T20:05:26.1114493Z dist/assets/SheetEditor-K4IxoHgu.js                5.66 kB │ gzip:     2.64 kB │ map:     24.24 kB
+2026-11-04T20:05:26.1115917Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB │ map:     24.66 kB
+2026-11-04T20:05:26.1117560Z dist/assets/native-CAhr5Usu.js                     7.10 kB │ gzip:     3.11 kB │ map:     27.90 kB
+2026-11-04T20:05:26.1119220Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB │ map:     19.18 kB
+2026-11-04T20:05:26.1120652Z dist/assets/useDiagnostics-B9casXj5.js            13.16 kB │ gzip:     4.29 kB │ map:     47.29 kB
+2026-11-04T20:05:26.1121979Z dist/service-worker.js                            15.36 kB │ gzip:     5.88 kB │ map:     46.56 kB
+2026-11-04T20:05:26.1123279Z dist/assets/HistoryBrowser-Cnfvc4_Z.js            20.94 kB │ gzip:     7.44 kB │ map:     89.82 kB
+2026-11-04T20:05:26.1124637Z dist/assets/DocEditor-DW6gOGY5.js                 25.48 kB │ gzip:     9.47 kB │ map:    105.14 kB
+2026-11-04T20:05:26.1125988Z dist/assets/offlineStore-qSjuTdR_.js              25.51 kB │ gzip:     7.76 kB │ map:     93.56 kB
+2026-11-04T20:05:26.1127329Z dist/assets/model-ljnzhaIx.js                    113.79 kB │ gzip:    32.74 kB │ map:    451.47 kB
+2026-11-04T20:05:26.1128940Z dist/assets/guestPendingBuffer-Bmh2jA94.js       118.53 kB │ gzip:    37.92 kB │ map:    501.51 kB
+2026-11-04T20:05:26.1130374Z dist/assets/documentReady-C8PJ1AWy.js            178.23 kB │ gzip:    48.42 kB │ map:    648.59 kB
+2026-11-04T20:05:26.1131829Z dist/assets/floating-ui.react-dom-CUsnFDt0.js    222.15 kB │ gzip:    69.53 kB │ map:  1,061.58 kB
+2026-11-04T20:05:26.1133242Z dist/assets/application-DPLxUtGb.js              266.30 kB │ gzip:    76.43 kB │ map:    901.12 kB
+2026-11-04T20:05:26.1134601Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB │ map:    356.22 kB
+2026-11-04T20:05:26.1135963Z dist/assets/lib-CbXuJfJL.js                      378.16 kB │ gzip:   104.36 kB │ map:  1,429.25 kB
+2026-11-04T20:05:26.1137257Z dist/assets/theme-BJ37HFwI.js                    590.24 kB │ gzip:   151.09 kB │ map:  2,638.99 kB
+2026-11-04T20:05:26.1138769Z dist/assets/portable-C-R3TxbO.js                 633.00 kB │ gzip:   108.97 kB │ map:    206.68 kB
+2026-11-04T20:05:26.1140074Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB │ map:  4,025.07 kB
+2026-11-04T20:05:26.1141464Z dist/assets/nativeSyncPermissions-CmnRMl9r.js  3,805.50 kB │ gzip: 1,017.64 kB │ map: 12,091.33 kB
+2026-11-04T20:05:26.1142876Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB │ map: 13,418.03 kB
+2026-11-04T20:05:26.1143478Z 
+2026-11-04T20:05:26.1180203Z [33m[plugin builtin:vite-reporter] 
+2026-11-04T20:05:26.1181008Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-04T20:05:26.1181770Z - Using dynamic import() to code-split the application
+2026-11-04T20:05:26.1183118Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-04T20:05:26.1185241Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-04T20:05:26.1308131Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-04T20:05:26.1310001Z [39m
+2026-11-04T20:05:26.1318550Z [32m✓ built in 4.74s[39m
+2026-11-04T20:05:26.2701765Z ##[group]Run npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+2026-11-04T20:05:26.2702580Z [36;1mnpx playwright test --project=doc-callback-lifetimes --grep "$PRESET "[0m
+2026-11-04T20:05:26.2724672Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:05:26.2724967Z env:
+2026-11-04T20:05:26.2725189Z   PRESET: mobile
+2026-11-04T20:05:26.2725437Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:05:26.2725711Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:05:26.2726027Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:05:26.2726383Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:05:26.2726727Z   SPN113_BASELINE: 1
+2026-11-04T20:05:26.2726968Z ##[endgroup]
+2026-11-04T20:05:33.0516976Z 
+2026-11-04T20:05:33.0518498Z Running 1 test using 1 worker
+2026-11-04T20:05:33.0518955Z 
+2026-11-04T20:05:33.9102725Z [1/1] [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:99:3 › mobile native callback lifetimes
+2026-11-04T20:12:34.6511997Z   1) [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:99:3 › mobile native callback lifetimes 
+2026-11-04T20:12:34.6513240Z 
+2026-11-04T20:12:34.6513620Z     Test timeout of 420000ms exceeded.
+2026-11-04T20:12:34.6513882Z 
+2026-11-04T20:12:34.6514718Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-04T20:12:34.6516136Z     test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-1.png
+2026-11-04T20:12:34.6517615Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-04T20:12:34.6518650Z 
+2026-11-04T20:12:34.6519918Z     attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-04T20:12:34.6522501Z     test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-2.png
+2026-11-04T20:12:34.6525116Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-04T20:12:34.6526013Z 
+2026-11-04T20:12:34.6527529Z     Error Context: test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/error-context.md
+2026-11-04T20:12:34.6530240Z 
+2026-11-04T20:12:34.6530462Z 
+2026-11-04T20:12:34.6919997Z   Slow test file: [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts (7.0m)
+2026-11-04T20:12:34.6921758Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+2026-11-04T20:12:34.6922484Z   1 failed
+2026-11-04T20:12:34.6923635Z     [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:99:3 › mobile native callback lifetimes 
+2026-11-04T20:12:34.7338298Z ##[error]Process completed with exit code 1.
+2026-11-04T20:12:34.7414051Z ##[group]Run npm run build -- --sourcemap hidden
+2026-11-04T20:12:34.7414479Z [36;1mnpm run build -- --sourcemap hidden[0m
+2026-11-04T20:12:34.7435127Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:12:34.7435385Z env:
+2026-11-04T20:12:34.7435576Z   PRESET: mobile
+2026-11-04T20:12:34.7435798Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:12:34.7436039Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:12:34.7436314Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:12:34.7436625Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:12:34.7436919Z ##[endgroup]
+2026-11-04T20:12:34.8517524Z 
+2026-11-04T20:12:34.8518476Z > build
+2026-11-04T20:12:34.8519002Z > vite build --sourcemap hidden
+2026-11-04T20:12:34.8519315Z 
+2026-11-04T20:12:35.0827157Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-04T20:12:35.0942251Z transforming...
+2026-11-04T20:12:35.9569314Z ✓ 4368 modules transformed.
+2026-11-04T20:12:36.3567993Z rendering chunks...
+2026-11-04T20:12:39.3739488Z computing gzip size...
+2026-11-04T20:12:39.5278836Z dist/index.html                                    3.50 kB │ gzip:     1.29 kB
+2026-11-04T20:12:39.5279597Z dist/assets/nativeCopy-mVcC3r32.css                2.53 kB │ gzip:     0.88 kB
+2026-11-04T20:12:39.5280327Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-04T20:12:39.5281029Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-04T20:12:39.5281707Z dist/assets/CopyFile-Bp41xbsr.css                 16.91 kB │ gzip:     3.69 kB
+2026-11-04T20:12:39.5282394Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-04T20:12:39.5283089Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-04T20:12:39.5283761Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-04T20:12:39.5284478Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-04T20:12:39.5285315Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB │ map:      6.33 kB
+2026-11-04T20:12:39.5286070Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-04T20:12:39.5286877Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB │ map:      6.02 kB
+2026-11-04T20:12:39.5288021Z dist/assets/OfflineViewer-DAG15JmB.js              1.96 kB │ gzip:     1.00 kB │ map:      5.89 kB
+2026-11-04T20:12:39.5289439Z dist/assets/rendering-EjkMmL5e.js                  2.48 kB │ gzip:     1.14 kB │ map:      8.22 kB
+2026-11-04T20:12:39.5290317Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB │ map:     10.29 kB
+2026-11-04T20:12:39.5291175Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB │ map:     11.74 kB
+2026-11-04T20:12:39.5292033Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB │ map:     12.27 kB
+2026-11-04T20:12:39.5292918Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB │ map:     12.43 kB
+2026-11-04T20:12:39.5293765Z dist/assets/main-BW1c_BfL.js                       3.75 kB │ gzip:     1.85 kB │ map:      7.91 kB
+2026-11-04T20:12:39.5294644Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB │ map:     15.86 kB
+2026-11-04T20:12:39.5295518Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB │ map:     25.38 kB
+2026-11-04T20:12:39.5296379Z dist/assets/SheetEditor-DhfwtS22.js                6.14 kB │ gzip:     2.85 kB │ map:     26.67 kB
+2026-11-04T20:12:39.5297259Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB │ map:     24.66 kB
+2026-11-04T20:12:39.5298378Z dist/assets/native-BtwWErrt.js                     7.10 kB │ gzip:     3.11 kB │ map:     27.90 kB
+2026-11-04T20:12:39.5299147Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB │ map:     30.71 kB
+2026-11-04T20:12:39.5300433Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB │ map:     19.18 kB
+2026-11-04T20:12:39.5301248Z dist/assets/useDiagnostics-DuPOOcXt.js            13.20 kB │ gzip:     4.32 kB │ map:     47.33 kB
+2026-11-04T20:12:39.5301981Z dist/service-worker.js                            15.37 kB │ gzip:     5.88 kB │ map:     46.56 kB
+2026-11-04T20:12:39.5302725Z dist/assets/HistoryBrowser-HUV2y-1R.js            20.97 kB │ gzip:     7.44 kB │ map:     89.82 kB
+2026-11-04T20:12:39.5303480Z dist/assets/DocEditor-CW57GSNJ.js                 26.08 kB │ gzip:     9.66 kB │ map:    108.75 kB
+2026-11-04T20:12:39.5304224Z dist/assets/offlineStore-CNblyHxf.js              31.15 kB │ gzip:     9.16 kB │ map:    115.03 kB
+2026-11-04T20:12:39.5304959Z dist/assets/model-DWEfXdLO.js                    119.57 kB │ gzip:    34.38 kB │ map:    470.48 kB
+2026-11-04T20:12:39.5305685Z dist/assets/nativeCopy-amasZBXe.js               124.52 kB │ gzip:    40.05 kB │ map:    526.28 kB
+2026-11-04T20:12:39.5306641Z dist/assets/documentReady-DpOTl1QL.js            178.33 kB │ gzip:    48.46 kB │ map:    649.01 kB
+2026-11-04T20:12:39.5307422Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB │ map:  1,031.39 kB
+2026-11-04T20:12:39.5308377Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB │ map:    356.22 kB
+2026-11-04T20:12:39.5309119Z dist/assets/application-D4k19R7J.js              341.50 kB │ gzip:    96.86 kB │ map:  1,132.13 kB
+2026-11-04T20:12:39.5309853Z dist/assets/lib-BlpfjB0n.js                      378.77 kB │ gzip:   104.54 kB │ map:  1,432.15 kB
+2026-11-04T20:12:39.5310557Z dist/assets/theme-CqYTemgo.js                    590.29 kB │ gzip:   151.12 kB │ map:  2,639.02 kB
+2026-11-04T20:12:39.5311275Z dist/assets/CopyFile-qR382OFY.js                 637.50 kB │ gzip:   110.32 kB │ map:    222.27 kB
+2026-11-04T20:12:39.5312034Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB │ map:  4,025.07 kB
+2026-11-04T20:12:39.5312805Z dist/assets/nativeSyncPermissions--oYkcOTJ.js  3,806.09 kB │ gzip: 1,017.73 kB │ map: 12,092.73 kB
+2026-11-04T20:12:39.5313610Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB │ map: 13,418.03 kB
+2026-11-04T20:12:39.5313964Z 
+2026-11-04T20:12:39.5336484Z [33m[plugin builtin:vite-reporter] 
+2026-11-04T20:12:39.5337264Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-04T20:12:39.5338029Z - Using dynamic import() to code-split the application
+2026-11-04T20:12:39.5339150Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-04T20:12:39.5340228Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-04T20:12:39.5459250Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-04T20:12:39.5460432Z [39m
+2026-11-04T20:12:39.5468728Z [32m✓ built in 4.46s[39m
+2026-11-04T20:12:39.6916173Z ##[group]Run npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+2026-11-04T20:12:39.6916846Z [36;1mnpx playwright test --project=doc-callback-lifetimes --grep "$PRESET "[0m
+2026-11-04T20:12:39.6938303Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:12:39.6938561Z env:
+2026-11-04T20:12:39.6938754Z   PRESET: mobile
+2026-11-04T20:12:39.6938970Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:12:39.6939204Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:12:39.6939500Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:12:39.6939801Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:12:39.6940099Z   SPN113_BASELINE: 0
+2026-11-04T20:12:39.6940320Z ##[endgroup]
+2026-11-04T20:12:43.7033535Z 
+2026-11-04T20:12:43.7034191Z Running 1 test using 1 worker
+2026-11-04T20:12:43.7034660Z 
+2026-11-04T20:12:44.5302396Z [1/1] [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:99:3 › mobile native callback lifetimes
+2026-11-04T20:18:06.9545671Z   Slow test file: [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts (5.4m)
+2026-11-04T20:18:06.9547279Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+2026-11-04T20:18:06.9548540Z   1 passed (5.4m)
+2026-11-04T20:18:06.9989740Z ##[group]Run comparison_status=0
+2026-11-04T20:18:06.9990101Z [36;1mcomparison_status=0[0m
+2026-11-04T20:18:06.9990345Z [36;1mbaseline=-[0m
+2026-11-04T20:18:06.9990569Z [36;1mexpected_baseline=skipped[0m
+2026-11-04T20:18:06.9991177Z [36;1mif [ "$PAIRED" = true ]; then baseline=baseline-callback-source/test-results/doc-callback-lifetimes; expected_baseline=success; fi[0m
+2026-11-04T20:18:06.9991886Z [36;1mnode scripts/ci/doc-callback-comparison.ts "$PRESET" \[0m
+2026-11-04T20:18:06.9992245Z [36;1m  "$baseline" \[0m
+2026-11-04T20:18:06.9992732Z [36;1m  test-results/doc-callback-lifetimes \[0m
+2026-11-04T20:18:06.9993171Z [36;1m  "test-results/spn113-comparison-$PRESET.json" || comparison_status=$?[0m
+2026-11-04T20:18:06.9993765Z [36;1mif [ "$BASELINE_OUTCOME" != "$expected_baseline" ] || [ "$CANDIDATE_OUTCOME" != success ]; then[0m
+2026-11-04T20:18:06.9994516Z [36;1m  echo "::error::Callback browser run failed or was skipped: baseline=$BASELINE_OUTCOME candidate=$CANDIDATE_OUTCOME"[0m
+2026-11-04T20:18:06.9995038Z [36;1m  exit 1[0m
+2026-11-04T20:18:06.9995233Z [36;1mfi[0m
+2026-11-04T20:18:06.9995433Z [36;1mexit "$comparison_status"[0m
+2026-11-04T20:18:07.0015484Z shell: /usr/bin/bash -e {0}
+2026-11-04T20:18:07.0015735Z env:
+2026-11-04T20:18:07.0015926Z   PRESET: mobile
+2026-11-04T20:18:07.0016141Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:18:07.0016372Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:18:07.0016634Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:18:07.0016938Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:18:07.0017230Z   PAIRED: true
+2026-11-04T20:18:07.0017428Z   BASELINE_OUTCOME: failure
+2026-11-04T20:18:07.0017663Z   CANDIDATE_OUTCOME: success
+2026-11-04T20:18:07.0018214Z ##[endgroup]
+2026-11-04T20:18:16.3309395Z {
+2026-11-04T20:18:16.3322753Z   "accepted": false,
+2026-11-04T20:18:16.3325642Z   "failures": [
+2026-11-04T20:18:16.3327015Z     "baseline: Retained source attribution artifacts are missing.",
+2026-11-04T20:18:16.3338975Z     "baseline: callback collection or native behavior did not complete successfully.",
+2026-11-04T20:18:16.3339503Z     "baseline: browser errors remain.",
+2026-11-04T20:18:16.3340089Z     "baseline: trace completion reports missing/lost data.",
+2026-11-04T20:18:16.3340814Z     "baseline: trace completion did not confirm gzip JSON.",
+2026-11-04T20:18:16.3341559Z     "baseline: unmapped source observations were not retained.",
+2026-11-04T20:18:16.3342388Z     "baseline: recomputed callback evidence is incomplete or rejected."
+2026-11-04T20:18:16.3343011Z   ]
+2026-11-04T20:18:16.3343320Z }
+2026-11-04T20:18:16.3872980Z ##[error]Callback browser run failed or was skipped: baseline=failure candidate=success
+2026-11-04T20:18:16.3875366Z ##[error]Process completed with exit code 1.
+2026-11-04T20:18:16.4012409Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-04T20:18:16.4012854Z with:
+2026-11-04T20:18:16.4013086Z   name: doc-callback-lifetimes-mobile
+2026-11-04T20:18:16.4014099Z   path: baseline-callback-source/test-results/doc-callback-lifetimes/
+baseline-callback-source/playwright-report/*.json
+test-results/doc-callback-lifetimes/
+test-results/spn113-comparison-*.json
+playwright-report/*.json
+
+2026-11-04T20:18:16.4015124Z   retention-days: 7
+2026-11-04T20:18:16.4015344Z   if-no-files-found: error
+2026-11-04T20:18:16.4015593Z   compression-level: 6
+2026-11-04T20:18:16.4015820Z   overwrite: false
+2026-11-04T20:18:16.4016043Z   include-hidden-files: false
+2026-11-04T20:18:16.4016295Z   archive: true
+2026-11-04T20:18:16.4016492Z env:
+2026-11-04T20:18:16.4016691Z   PRESET: mobile
+2026-11-04T20:18:16.4016899Z   VITE_SYNC_EVIDENCE: 0
+2026-11-04T20:18:16.4017133Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-04T20:18:16.4017459Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-04T20:18:16.4018046Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-04T20:18:16.4018353Z ##[endgroup]
+2026-11-04T20:18:16.5812794Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-04T20:18:16.5815799Z The least common ancestor is /home/runner/work/spinel/spinel. This will be the root directory of the artifact
+2026-11-04T20:18:16.5817248Z With the provided path, there will be 58 files uploaded
+2026-11-04T20:18:16.5822782Z Artifact name is valid!
+2026-11-04T20:18:16.5823555Z Root directory input is valid!
+2026-11-04T20:18:16.8762912Z Uploading artifact: doc-callback-lifetimes-mobile.zip
+2026-11-04T20:18:16.8800893Z Beginning upload of artifact content to blob storage
+2026-11-04T20:18:18.7462380Z Uploaded bytes 8388608
+2026-11-04T20:18:19.1647353Z Uploaded bytes 16777216
+2026-11-04T20:18:19.4128545Z Uploaded bytes 25165824
+2026-11-04T20:18:19.7674866Z Uploaded bytes 33554432
+2026-11-04T20:18:20.0116699Z Uploaded bytes 41943040
+2026-11-04T20:18:20.0485511Z Uploaded bytes 41984525
+2026-11-04T20:18:20.0898686Z Finished uploading artifact content to blob storage!
+2026-11-04T20:18:20.0906194Z SHA256 digest of uploaded artifact is dab3dbf42fd5cbb8c2f90b796636d3a61b608f1f948e06f40cf3c3ffeae0b463
+2026-11-04T20:18:20.0908450Z Finalizing artifact upload
+2026-11-04T20:18:20.6565067Z Artifact doc-callback-lifetimes-mobile successfully finalized. Artifact ID 13359363775
+2026-11-04T20:18:20.6566885Z Artifact doc-callback-lifetimes-mobile has been successfully uploaded! Final size is 41984525 bytes. Artifact ID is 13359363775
+2026-11-04T20:18:20.6572235Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41899145584/artifacts/13359363775
+2026-11-04T20:18:20.6819896Z Post job cleanup.
+2026-11-04T20:18:20.7760510Z [command]/usr/bin/git version
+2026-11-04T20:18:20.7848752Z git version 2.56.0
+2026-11-04T20:18:20.7894936Z Temporarily overriding HOME='/home/runner/work/_temp/a7d84191-9c03-4811-9837-799d5cb0b930' before making global git config changes
+2026-11-04T20:18:20.7896558Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T20:18:20.7901696Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel/baseline-callback-source
+2026-11-04T20:18:20.7954260Z Removing SSH command configuration
+2026-11-04T20:18:20.7956428Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:18:20.8010478Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:18:20.8286234Z Removing HTTP extra header
+2026-11-04T20:18:20.8294133Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:18:20.8345897Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:18:20.8640465Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:18:20.8647589Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:18:20.8704263Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:18:20.9184713Z Post job cleanup.
+2026-11-04T20:18:21.0114118Z [command]/usr/bin/git version
+2026-11-04T20:18:21.0175556Z git version 2.56.0
+2026-11-04T20:18:21.0267250Z Temporarily overriding HOME='/home/runner/work/_temp/23074957-247f-4e69-a98a-d237ec1dfaa4' before making global git config changes
+2026-11-04T20:18:21.0269435Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-04T20:18:21.0272626Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-04T20:18:21.0334634Z Removing SSH command configuration
+2026-11-04T20:18:21.0343677Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-04T20:18:21.0403935Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-04T20:18:21.0789780Z Removing HTTP extra header
+2026-11-04T20:18:21.0795200Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-04T20:18:21.0931423Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-04T20:18:21.1179534Z Removing includeIf entries pointing to credentials config files
+2026-11-04T20:18:21.1192088Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-04T20:18:21.1244466Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-04T20:18:21.1666538Z Cleaning up orphan processes
+

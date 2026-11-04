@@ -1,0 +1,86 @@
+{
+  "root": 99317,
+  "started": 1793831919760,
+  "elapsedMs": 1024,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92304,
+  "peakKiB": 222960,
+  "live": [
+    {
+      "pid": 99317,
+      "parent": 99278,
+      "group": 99317,
+      "rssKiB": 90720,
+      "started": "Wed Nov  4 14:38:39 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn142-hosted/receipt-runs/prior-callback-package-watchdog.json node /tmp/spn142-hosted/verify-package.ts /tmp/spn142-hosted/receipt-runs/prior-callback-mobile.zip /tmp/spn142-hosted/receipt-runs/prior-callback-mobile-evidence.zip /tmp/spn142-hosted/receipt-runs/prior-callback-mobile-members.json"
+    },
+    {
+      "pid": 99419,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 14:38:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 99317,
+      "parent": 99278,
+      "group": 99317,
+      "rssKiB": 90720,
+      "started": "Wed Nov  4 14:38:39 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn142-hosted/receipt-runs/prior-callback-package-watchdog.json node /tmp/spn142-hosted/verify-package.ts /tmp/spn142-hosted/receipt-runs/prior-callback-mobile.zip /tmp/spn142-hosted/receipt-runs/prior-callback-mobile-evidence.zip /tmp/spn142-hosted/receipt-runs/prior-callback-mobile-members.json"
+    },
+    {
+      "pid": 99336,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 14:38:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99362,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 131088,
+      "started": "Wed Nov  4 14:38:39 2026",
+      "command": "node /tmp/spn142-hosted/verify-package.ts /tmp/spn142-hosted/receipt-runs/prior-callback-mobile.zip /tmp/spn142-hosted/receipt-runs/prior-callback-mobile-evidence.zip /tmp/spn142-hosted/receipt-runs/prior-callback-mobile-members.json"
+    },
+    {
+      "pid": 99368,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 14:38:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99381,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 14:38:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99406,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 14:38:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99419,
+      "parent": 99317,
+      "group": 99317,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 14:38:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
