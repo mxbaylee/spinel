@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { createHash } from 'node:crypto';
 
 export type SafariTarget = {
   pid: number;
@@ -27,8 +28,7 @@ phase('running-application-class-begin');
 var runningApplication = $.NSClassFromString($('NSRunningApplication'));
 if (runningApplication.isNil()) throw new Error('The NSRunningApplication class is unavailable.');
 phase('running-application-class-end');
-function run(argv) {
-  var pid = Number(argv[0]);
+function readIdentity(pid, launchedAt, executablePath) {
   phase('process-lookup-begin');
   var running = runningApplication.runningApplicationWithProcessIdentifier(pid);
   phase('process-lookup-end');
@@ -51,14 +51,44 @@ function run(argv) {
   phase('identity-validation-begin');
   if (identity.pid !== pid || identity.bundleIdentifier !== 'com.apple.Safari' || !Number.isFinite(identity.launchedAt) || identity.launchedAt <= 0)
     throw new Error('The observed PID is not the expected Safari process: ' + JSON.stringify(identity));
-  if (argv[1] && identity.launchedAt !== Number(argv[1]))
+  if (launchedAt && identity.launchedAt !== Number(launchedAt))
     throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));
+  if (typeof identity.executablePath !== 'string' || identity.executablePath.charAt(0) !== '/' ||
+      (executablePath && identity.executablePath !== executablePath))
+    throw new Error('The observed Safari executable changed: ' + JSON.stringify(identity));
   phase('identity-validation-end');
+  return identity;
+}
+function run(argv) {
+  var pid = Number(argv[0]);
+  var identity = readIdentity(pid, argv[1], argv[5]);
   if (argv[2] === 'identify') return JSON.stringify(identity);
   console.log('Safari request target: ' + JSON.stringify(identity));
   phase('application-constructor-begin');
-  var app = Application(pid);
+  var app;
+  try {
+    app = Application(pid);
+  } catch (first) {
+    console.log('Safari constructor failure: ' + JSON.stringify({ attempt: 1, errorNumber: first.errorNumber, message: String(first) }));
+    // Only this constructor has run: no property read or requested action has
+    // been dispatched. Do not recover errors from any subsequent command.
+    if (first.errorNumber !== -2700 || first.message !== "Application can't be found.") throw first;
+    try {
+      phase('constructor-revalidation-begin');
+      readIdentity(pid, identity.launchedAt, identity.executablePath);
+      phase('constructor-revalidation-end');
+      phase('application-constructor-second-begin');
+      app = Application(pid);
+      phase('application-constructor-second-end');
+    } catch (second) {
+      console.log('Safari constructor recovery failure: ' + JSON.stringify({ errorNumber: second.errorNumber, message: String(second) }));
+      throw first;
+    }
+  }
   phase('application-constructor-end');
+  // Resolution is not authority to address a replacement process.
+  readIdentity(pid, identity.launchedAt, identity.executablePath);
+  phase('action-dispatch-begin');
   var seconds = Number(argv[4]);
   if (argv[2] === 'title') {
     var name = app.documents[0].name;
@@ -82,6 +112,67 @@ function run(argv) {
 }`;
 
 const run = promisify(execFile);
+
+export async function requestSafari(
+  target: SafariTarget,
+  mode: 'title' | 'evaluate' | 'quit' | 'baseline',
+  source: string,
+  timeout: number,
+  entry: Record<string, unknown>,
+  execute: (
+    file: string,
+    args: readonly string[],
+    options: { timeout: number; maxBuffer: number; encoding: 'utf8' },
+  ) => Promise<{ stdout: string; stderr: string }> = run,
+) {
+  Object.assign(entry, {
+    mode,
+    target,
+    timeoutMs: timeout,
+    startedAt: new Date().toISOString(),
+    sourceSha256: createHash('sha256').update(source).digest('hex'),
+  });
+  const started = performance.now();
+  try {
+    const { stdout, stderr } = await execute(
+      '/usr/bin/osascript',
+      [
+        '-l',
+        'JavaScript',
+        '-e',
+        safariRequestScript,
+        String(target.pid),
+        String(target.launchedAt),
+        mode,
+        source,
+        String(Math.max(1, Math.floor(timeout / 1000))),
+        target.executablePath,
+      ],
+      { timeout, maxBuffer: 1024 * 1024, encoding: 'utf8' },
+    );
+    entry.trace = stderr;
+    entry.status = 'passed';
+    return stdout.trim();
+  } catch (error) {
+    const detail = error as Error & {
+      code?: unknown;
+      signal?: unknown;
+      killed?: unknown;
+      stderr?: unknown;
+    };
+    entry.status = 'failed';
+    entry.trace = String(detail.stderr ?? '');
+    entry.error = {
+      message: String(error).split('\n')[0],
+      code: detail.code,
+      signal: detail.signal,
+      killed: detail.killed,
+    };
+    throw error;
+  } finally {
+    entry.elapsedMs = Math.round(performance.now() - started);
+  }
+}
 
 // Keep the original deadline, and retain stderr on success as well as failure.
 export async function identifySafari(

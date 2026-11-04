@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   identifySafari as readSafariIdentity,
-  safariRequestScript,
+  requestSafari,
   type SafariTarget,
 } from './desktop-safari-identity.ts';
 import { execFile } from 'node:child_process';
@@ -34,6 +34,8 @@ async function command(file: string, args: string[], timeout = 30_000) {
 let target: SafariTarget | null = null;
 const targets: Record<string, unknown>[] = [];
 report.safariTargets = targets;
+const requestEvidence: Record<string, unknown>[] = [];
+report.safariRequests = requestEvidence;
 async function identifySafari(pid: string, stage: string) {
   const entry: Record<string, unknown> = {
     stage,
@@ -50,27 +52,15 @@ function safariRequest(
   trace?: (stderr: string) => void,
 ) {
   assert.ok(target, 'Identify the observed Safari process before sending it Apple Events.');
-  return run(
-    '/usr/bin/osascript',
-    [
-      '-l',
-      'JavaScript',
-      '-e',
-      safariRequestScript,
-      String(target.pid),
-      String(target.launchedAt),
-      mode,
-      source,
-      String(Math.max(1, Math.floor(timeout / 1000))),
-    ],
-    { timeout, maxBuffer: 1024 * 1024 },
-  ).then(
-    ({ stdout, stderr }) => {
-      trace?.(stderr);
-      return stdout.trim();
+  const entry: Record<string, unknown> = {};
+  requestEvidence.push(entry);
+  return requestSafari(target, mode, source, timeout, entry).then(
+    (value) => {
+      trace?.(String(entry.trace ?? ''));
+      return value;
     },
     (error) => {
-      trace?.(String(error.stderr ?? ''));
+      trace?.(String(entry.trace ?? ''));
       throw error;
     },
   );
