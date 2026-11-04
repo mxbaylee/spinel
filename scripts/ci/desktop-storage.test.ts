@@ -2,7 +2,12 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { setImmediate } from 'node:timers/promises';
-import { clearDesktopStorage, unregisterDesktopStorageWorkers } from './desktop-storage.ts';
+import {
+  clearDesktopStorage,
+  unregisterDesktopStorageWorkers,
+  safariStorageLossTabsScript,
+  validateStorageLossTabs,
+} from './desktop-storage.ts';
 
 const preparationURL = 'https://localhost/_desktop-storage-loss';
 
@@ -230,4 +235,81 @@ test('reported cache deletion success cannot conceal recreation or cause another
   assert.equal(report.status, 'failed');
   assert.match(report.error!, /Storage remains after deletion/);
   assert.equal(f.calls.filter((name) => name === 'cache-delete').length, 1);
+});
+
+for (const urls of [
+  [],
+  ['about:blank'],
+  [preparationURL, 'https://localhost/?item=background'],
+  [preparationURL, ''],
+])
+  test(`tab inventory rejects incomplete or active fixture clients: ${JSON.stringify(urls)}`, () => {
+    assert.throws(() => validateStorageLossTabs(preparationURL, urls));
+  });
+
+test('inert fixture tabs and unrelated origins are explicitly accounted for', () => {
+  const urls = [preparationURL, 'about:blank', 'http://localhost:8175/probe', preparationURL];
+  assert.deepEqual(validateStorageLossTabs(preparationURL, urls), urls);
+});
+
+function safariTabs(prepare: boolean, pending = false) {
+  const current = [preparationURL, 'https://localhost/?item=background', 'https://example.test/'];
+  const writes: Array<{ index: number; url: string }> = [];
+  let time = 0;
+  const tabs = current.map((_url, index) => ({
+    get url() {
+      return () => current[index];
+    },
+    set url(value: unknown) {
+      assert.equal(typeof value, 'string');
+      writes.push({ index, url: value as string });
+      if (!pending) current[index] = value as string;
+    },
+  }));
+  return {
+    current,
+    writes,
+    execute() {
+      return JSON.parse(
+        runInNewContext(
+          safariStorageLossTabsScript + '; run(args)',
+          {
+            args: ['42', preparationURL, 'https://localhost/', prepare ? 'prepare' : 'verify'],
+            Application(pid: number) {
+              assert.equal(pid, 42);
+              return {
+                windows: () => [{ tabs: () => tabs.slice(0, 1) }, { tabs: () => tabs.slice(1) }],
+              };
+            },
+            Date: { now: () => time },
+            delay: () => {
+              time += 50;
+            },
+          },
+          { timeout: 100 },
+        ),
+      );
+    },
+  };
+}
+
+test('native Safari preparation moves background fixture tabs once and preserves unrelated tabs', () => {
+  const f = safariTabs(true);
+  const inventory = f.execute();
+  assert.equal(inventory.before[1], 'https://localhost/?item=background');
+  assert.deepEqual(f.writes, [{ index: 1, url: preparationURL }]);
+  assert.deepEqual(inventory.after, [preparationURL, preparationURL, 'https://example.test/']);
+  validateStorageLossTabs(preparationURL, inventory.after);
+});
+
+test('post-restart Safari inventory refuses a restored producer without navigating it again', () => {
+  const f = safariTabs(false);
+  assert.throws(() => f.execute(), /Another fixture tab remains active/);
+  assert.deepEqual(f.writes, []);
+});
+
+test('a background navigation that never settles fails within its bound without another mutation', () => {
+  const f = safariTabs(true, true);
+  assert.throws(() => f.execute(), /Another fixture tab remains active/);
+  assert.deepEqual(f.writes, [{ index: 1, url: preparationURL }]);
 });

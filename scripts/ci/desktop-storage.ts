@@ -1,4 +1,51 @@
 import type { DesktopBrowser } from './desktop-browser.ts';
+import assert from 'node:assert/strict';
+
+export function validateStorageLossTabs(preparationURL: string, tabs: string[]) {
+  assert.ok(tabs.length > 0, 'Storage preparation requires an observed browser tab.');
+  const origin = new URL(preparationURL).origin;
+  for (const url of tabs) {
+    assert.equal(typeof url, 'string');
+    assert.ok(url, 'An unreadable tab cannot establish storage quiescence.');
+    if (new URL(url).origin === origin)
+      assert.equal(url, preparationURL, 'Another fixture tab can still produce offline storage.');
+  }
+  assert.ok(tabs.includes(preparationURL), 'The inert fixture tab is missing.');
+  return tabs;
+}
+
+// Serialized native Safari tab inventory. Only the owned fixture origin may be
+// navigated, once per tab; subsequent observations never repeat navigation.
+export const safariStorageLossTabsScript = String.raw`
+function run(argv) {
+  var app = Application(Number(argv[0]));
+  var preparationURL = argv[1];
+  var originPrefix = argv[2];
+  function tabs() {
+    var result = [];
+    app.windows().forEach(function(window) {
+      window.tabs().forEach(function(tab) { result.push(tab); });
+    });
+    return result;
+  }
+  var before = tabs().map(function(tab) { return tab.url(); });
+  if (argv[3] === 'prepare') {
+    tabs().forEach(function(tab) {
+      var url = tab.url();
+      if (url.indexOf(originPrefix) === 0 && url !== preparationURL) tab.url = preparationURL;
+    });
+  }
+  var deadline = Date.now() + 2000;
+  var after;
+  do {
+    after = tabs().map(function(tab) { return tab.url(); });
+    if (after.every(function(url) { return url.indexOf(originPrefix) !== 0 || url === preparationURL; }))
+      return JSON.stringify({ before: before, after: after });
+    if (argv[3] !== 'prepare') break;
+    delay(0.05);
+  } while (Date.now() < deadline);
+  throw new Error('Another fixture tab remains active: ' + JSON.stringify({ before: before, after: after }));
+}`;
 
 export function unregisterDesktopStorageWorkers(
   browser: Pick<DesktopBrowser, 'evaluate'>,

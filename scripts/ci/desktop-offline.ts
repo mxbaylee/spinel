@@ -709,6 +709,7 @@ async function main() {
     // unregister from a script-free document, then witness a same-profile exit
     // and restart before touching storage. Never race the app's shell refresh.
     await browser.goto(f.storageLossURL);
+    stage('storage-loss-tabs-prepared', await browser.storageLossTabs(f.storageLossURL, true));
     const privateDatabase = `spinel-offline-${f.actor.id}`;
     const preparation = await unregisterDesktopStorageWorkers(
       browser,
@@ -719,6 +720,7 @@ async function main() {
     assert.equal(preparation.status, 'passed', JSON.stringify(preparation));
     stage('browser-stop-before-storage-loss', await browser.stop());
     await launch(f.storageLossURL);
+    stage('storage-loss-tabs-restarted', await browser.storageLossTabs(f.storageLossURL, false));
     const deletion = await clearDesktopStorage(browser, privateDatabase, f.storageLossURL);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));

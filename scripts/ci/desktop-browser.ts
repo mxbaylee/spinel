@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { safariStorageLossTabsScript, validateStorageLossTabs } from './desktop-storage.ts';
 import {
   clickSafariPointer,
   safariPointerIdentityScript,
@@ -72,6 +73,7 @@ export type DesktopBrowser = {
     errors: string[];
   }>;
   stop(): Promise<DesktopBrowserStop>;
+  storageLossTabs(url: string, prepare: boolean): Promise<{ before: string[]; after: string[] }>;
 };
 
 const run = promisify(execFile);
@@ -1127,6 +1129,52 @@ export function createDesktopBrowser(
     },
     goto,
     evaluate,
+    async storageLossTabs(url, prepare) {
+      assert.ok(browserPid && browserIdentity, 'Start the owned browser first.');
+      assert.equal(await processIdentity(browserPid), browserIdentity, 'Browser identity changed.');
+      let inventory: { before: string[]; after: string[] };
+      if (kind === 'safari') {
+        inventory = JSON.parse(
+          await command(
+            '/usr/bin/osascript',
+            [
+              '-l',
+              'JavaScript',
+              '-e',
+              safariStorageLossTabsScript,
+              String(browserPid),
+              url,
+              new URL(url).origin + '/',
+              prepare ? 'prepare' : 'verify',
+            ],
+            5000,
+          ),
+        );
+      } else {
+        const selected = (await session('window')) as string;
+        const handles = await session('window/handles');
+        assert.ok(Array.isArray(handles) && handles.length > 0);
+        const before: string[] = [];
+        const after: string[] = [];
+        for (const handle of handles) {
+          assert.equal(typeof handle, 'string');
+          await session('window', 'POST', { handle });
+          const current = (await session('url')) as string;
+          before.push(current);
+          if (prepare && new URL(current).origin === new URL(url).origin && current !== url)
+            await goto(url);
+          after.push((await session('url')) as string);
+        }
+        // On failure the existing outer teardown closes this owned browser;
+        // do not mask the first inventory/navigation error with a restore error.
+        await session('window', 'POST', { handle: selected });
+        // A tab created during inventory is unaccounted for, not quiescent.
+        assert.deepEqual(await session('window/handles'), handles);
+        inventory = { before, after };
+      }
+      validateStorageLossTabs(url, inventory.after);
+      return inventory;
+    },
     focus: (selector) => focusAt(selector, 0),
     press,
     clickAt,
