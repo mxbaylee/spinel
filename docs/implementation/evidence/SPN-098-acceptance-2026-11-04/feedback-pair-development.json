@@ -1,0 +1,247 @@
+{
+  "project": "development",
+  "attempt": 0,
+  "initialPreparations": 1,
+  "pairedMembershipVerified": true,
+  "user": {
+    "manifest": {
+      "schemaVersion": 1,
+      "diagnosticsSchemaVersion": 1,
+      "snapshotId": "b9f9adee-3a53-4d1d-8579-4b35fab05e78",
+      "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+      "createdAt": 1793809229717,
+      "selectedActorId": "76a84fb3-8c0f-46d5-b939-5da653ba6427",
+      "scope": "user",
+      "window": {
+        "start": 1793809226895,
+        "end": 1793809228611
+      },
+      "timeBasis": "received_at; trusted server receipt; both endpoints inclusive",
+      "inclusion": "every retained row attributed to selectedActorId",
+      "completeRetainedSelection": true,
+      "historicalCompleteness": "unknown",
+      "rowCount": 2,
+      "counts": {
+        "user": 2,
+        "system": 3,
+        "userObservations": 0,
+        "systemObservations": 0
+      },
+      "context": "feedback-only",
+      "snapshotWatermark": {
+        "recordCount": 15,
+        "latestReceivedAt": 1793809228611
+      },
+      "build": "development",
+      "dropped": {
+        "scope": "global process lifetime before preparation",
+        "values": {
+          "invalid": 0,
+          "queue": 0,
+          "storage": 0,
+          "unavailable": 0,
+          "stale": 0
+        }
+      },
+      "retention": {
+        "feedback": "until explicit truncate",
+        "observationAgeTargetDays": null,
+        "observations": "no automatic expiry configured; prior deletion history unknown"
+      },
+      "limits": {
+        "sourceBytes": 67108864,
+        "artifactBytes": 69206016,
+        "rowCap": null
+      },
+      "limitations": [
+        "All means matching rows retained in this snapshot. Unsent browser queues and discarded observations are not included.",
+        "Historical completeness and expired or never-collected context are unknown.",
+        "Drop counters are global process-lifetime counters sampled before preparation, not loss measured for this user or time span.",
+        "Feedback survives observation expiry; an old report does not guarantee its original metrics still exist."
+      ]
+    },
+    "rows": [
+      {
+        "id": "1de8eb04-2527-4d5c-b9a3-6b1a669e6b01",
+        "schema_version": 1,
+        "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+        "occurred_at": 1793809226895,
+        "received_at": 1793809226895,
+        "name": "feedback",
+        "kind": "event",
+        "source": "frontend",
+        "component": "feedback",
+        "build": "development",
+        "actor_id": "76a84fb3-8c0f-46d5-b939-5da653ba6427",
+        "file_id": "96f6deeb-9ca0-4157-9d8c-3a05a0a6ddd8",
+        "space_id": null,
+        "route": "/files/:id",
+        "run_id": "5cd60319-4f75-4bed-aed2-9081dcef9479",
+        "level": null,
+        "message": "The toolbar was slow after opening my document.",
+        "metric_kind": null,
+        "metric_unit": null,
+        "metric_value": null,
+        "details": "{\"submission\":\"explicit\"}",
+        "byte_size": 233
+      },
+      {
+        "id": "2709ee4f-5060-4c4b-a85d-b3184cdadade",
+        "schema_version": 1,
+        "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+        "occurred_at": 1793809228611,
+        "received_at": 1793809228611,
+        "name": "feedback",
+        "kind": "event",
+        "source": "frontend",
+        "component": "feedback",
+        "build": "development",
+        "actor_id": "76a84fb3-8c0f-46d5-b939-5da653ba6427",
+        "file_id": "96f6deeb-9ca0-4157-9d8c-3a05a0a6ddd8",
+        "space_id": null,
+        "route": "/files/:id",
+        "run_id": "b9727ee4-0e9a-4259-a0c0-087976f47649",
+        "level": null,
+        "message": "The problem stopped after reconnecting.",
+        "metric_kind": null,
+        "metric_unit": null,
+        "metric_value": null,
+        "details": "{\"submission\":\"explicit\"}",
+        "byte_size": 225
+      }
+    ]
+  },
+  "system": {
+    "manifest": {
+      "schemaVersion": 1,
+      "diagnosticsSchemaVersion": 1,
+      "snapshotId": "b9f9adee-3a53-4d1d-8579-4b35fab05e78",
+      "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+      "createdAt": 1793809229717,
+      "selectedActorId": "76a84fb3-8c0f-46d5-b939-5da653ba6427",
+      "scope": "system",
+      "window": {
+        "start": 1793809226895,
+        "end": 1793809228611
+      },
+      "timeBasis": "received_at; trusted server receipt; both endpoints inclusive",
+      "inclusion": "every retained row of every actor, including unattributed system rows, within window",
+      "completeRetainedSelection": true,
+      "historicalCompleteness": "unknown",
+      "rowCount": 3,
+      "counts": {
+        "user": 2,
+        "system": 3,
+        "userObservations": 0,
+        "systemObservations": 0
+      },
+      "context": "feedback-only",
+      "snapshotWatermark": {
+        "recordCount": 15,
+        "latestReceivedAt": 1793809228611
+      },
+      "build": "development",
+      "dropped": {
+        "scope": "global process lifetime before preparation",
+        "values": {
+          "invalid": 0,
+          "queue": 0,
+          "storage": 0,
+          "unavailable": 0,
+          "stale": 0
+        }
+      },
+      "retention": {
+        "feedback": "until explicit truncate",
+        "observationAgeTargetDays": null,
+        "observations": "no automatic expiry configured; prior deletion history unknown"
+      },
+      "limits": {
+        "sourceBytes": 67108864,
+        "artifactBytes": 69206016,
+        "rowCap": null
+      },
+      "limitations": [
+        "All means matching rows retained in this snapshot. Unsent browser queues and discarded observations are not included.",
+        "Historical completeness and expired or never-collected context are unknown.",
+        "Drop counters are global process-lifetime counters sampled before preparation, not loss measured for this user or time span.",
+        "Feedback survives observation expiry; an old report does not guarantee its original metrics still exist."
+      ]
+    },
+    "rows": [
+      {
+        "id": "1a55e02d-a111-4279-820f-b8c474e90919",
+        "schema_version": 1,
+        "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+        "occurred_at": 1793809228308,
+        "received_at": 1793809228308,
+        "name": "feedback",
+        "kind": "event",
+        "source": "frontend",
+        "component": "feedback",
+        "build": "development",
+        "actor_id": "ed3845cc-eed2-4404-9d8b-b22cedd23629",
+        "file_id": null,
+        "space_id": null,
+        "route": "/files",
+        "run_id": "9e590269-569c-453f-903c-8e2b3c784df4",
+        "level": null,
+        "message": "A collaborator can report an issue too.",
+        "metric_kind": null,
+        "metric_unit": null,
+        "metric_value": null,
+        "details": "{\"submission\":\"explicit\"}",
+        "byte_size": 173
+      },
+      {
+        "id": "1de8eb04-2527-4d5c-b9a3-6b1a669e6b01",
+        "schema_version": 1,
+        "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+        "occurred_at": 1793809226895,
+        "received_at": 1793809226895,
+        "name": "feedback",
+        "kind": "event",
+        "source": "frontend",
+        "component": "feedback",
+        "build": "development",
+        "actor_id": "76a84fb3-8c0f-46d5-b939-5da653ba6427",
+        "file_id": "96f6deeb-9ca0-4157-9d8c-3a05a0a6ddd8",
+        "space_id": null,
+        "route": "/files/:id",
+        "run_id": "5cd60319-4f75-4bed-aed2-9081dcef9479",
+        "level": null,
+        "message": "The toolbar was slow after opening my document.",
+        "metric_kind": null,
+        "metric_unit": null,
+        "metric_value": null,
+        "details": "{\"submission\":\"explicit\"}",
+        "byte_size": 233
+      },
+      {
+        "id": "2709ee4f-5060-4c4b-a85d-b3184cdadade",
+        "schema_version": 1,
+        "generation": "d5496e51-645b-4aee-a8ab-48205aa101ae",
+        "occurred_at": 1793809228611,
+        "received_at": 1793809228611,
+        "name": "feedback",
+        "kind": "event",
+        "source": "frontend",
+        "component": "feedback",
+        "build": "development",
+        "actor_id": "76a84fb3-8c0f-46d5-b939-5da653ba6427",
+        "file_id": "96f6deeb-9ca0-4157-9d8c-3a05a0a6ddd8",
+        "space_id": null,
+        "route": "/files/:id",
+        "run_id": "b9727ee4-0e9a-4259-a0c0-087976f47649",
+        "level": null,
+        "message": "The problem stopped after reconnecting.",
+        "metric_kind": null,
+        "metric_unit": null,
+        "metric_value": null,
+        "details": "{\"submission\":\"explicit\"}",
+        "byte_size": 225
+      }
+    ]
+  },
+  "excludedLaterReportId": "e56b1e44-4062-444b-baf3-2ce5dc7d08c9"
+}

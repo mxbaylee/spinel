@@ -1,0 +1,146 @@
+{
+  "observedAt": "2026-11-04 16:34:03 UTC",
+  "head": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+  "base": "642eb32bb52dd7dd13b6582869ef9482910e04ec",
+  "tested": "6e6d5e9ab543d9c30ba6d760dbeb7485af9ffce9",
+  "requiredChecks": [
+    {
+      "id": 126703198450,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T16:24:20Z",
+      "completedAt": "2026-11-04T16:24:37Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864509068/job/126703198450"
+    },
+    {
+      "id": 126699795021,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T16:18:46Z",
+      "completedAt": "2026-11-04T16:18:59Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864509068/job/126699795021"
+    },
+    {
+      "id": 126695998719,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T16:12:14Z",
+      "completedAt": "2026-11-04T16:12:26Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864509068/job/126695998719"
+    },
+    {
+      "id": 126695998630,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T16:10:53Z",
+      "completedAt": "2026-11-04T16:11:24Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864509068/job/126695998630"
+    },
+    {
+      "id": 126695998592,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T16:10:53Z",
+      "completedAt": "2026-11-04T16:11:41Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864509068/job/126695998592"
+    },
+    {
+      "id": 126695826456,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T16:10:32Z",
+      "completedAt": "2026-11-04T16:10:53Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864509068/job/126695826456"
+    }
+  ],
+  "nativeRun": {
+    "id": 41864508996,
+    "status": "completed",
+    "conclusion": "failure",
+    "attempt": 1,
+    "head": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41864508996",
+    "updatedAt": "2026-11-04T16:28:28Z"
+  },
+  "nativeJobs": [
+    {
+      "id": 126695132962,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "startedAt": "2026-11-04T16:09:03Z",
+      "completedAt": "2026-11-04T16:26:16Z",
+      "runnerId": 0,
+      "runnerName": "",
+      "steps": [],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864508996/job/126695132962"
+    },
+    {
+      "id": 126695133221,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "startedAt": "2026-11-04T16:09:03Z",
+      "completedAt": "2026-11-04T16:28:20Z",
+      "runnerId": 0,
+      "runnerName": "",
+      "steps": [],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864508996/job/126695133221"
+    },
+    {
+      "id": 126695133226,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "startedAt": "2026-11-04T16:09:03Z",
+      "completedAt": "2026-11-04T16:25:44Z",
+      "runnerId": 0,
+      "runnerName": "",
+      "steps": [],
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41864508996/job/126695133226"
+    }
+  ],
+  "nativeChecks": [
+    {
+      "id": 126695133226,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "annotations": 4,
+      "title": null,
+      "summary": null,
+      "text": null
+    },
+    {
+      "id": 126695133221,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "annotations": 1,
+      "title": null,
+      "summary": null,
+      "text": null
+    },
+    {
+      "id": 126695132962,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "annotations": 4,
+      "title": null,
+      "summary": null,
+      "text": null
+    }
+  ],
+  "blocker": "Current native workflow is failure; Chrome, Firefox and Safari are cancelled with no recorded steps, assigned runners or artifacts. Logs unavailable; failure annotations are outside the connector's supported endpoints and public web retrieval is disabled. Cause is unverified. Browser fallback permission is required before using Browser to diagnose.",
+  "mergeDisposition": "Not merged; current selected acceptance is incomplete. No retry or gate override performed.",
+  "missingRequiredChecks": [
+    "Playwright smoke"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "head": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+  "tree": "f2b1ad947a6d88129c206951c4f76b1aa3182163",
+  "base": "642eb32bb52dd7dd13b6582869ef9482910e04ec",
+  "prepublication": [
+    {
+      "reviewer": "/root/feedback_acceptance_audit",
+      "score": 98,
+      "rubric": {
+        "scope": 35,
+        "correctness": 25,
+        "regression": 19,
+        "ci": 9,
+        "maintainability": 10
+      },
+      "sourceApproved": true,
+      "conditionsAtPublication": [
+        "Independent current image approval",
+        "Fresh current-head CI and native acceptance"
+      ]
+    },
+    {
+      "reviewer": "/root/feedback_security_review",
+      "score": 99,
+      "rubric": {
+        "scope": 35,
+        "correctness": 25,
+        "regression": 20,
+        "ci": 9,
+        "maintainability": 10
+      },
+      "sourceApproved": true,
+      "conditionsAtPublication": [
+        "Fresh current-head CI and native acceptance"
+      ]
+    }
+  ],
+  "publicationReviewComment": "https://github.com/mxbaylee/spinel/pull/227#issuecomment-6635588906",
+  "visual": {
+    "reviewer": "/root/feedback_acceptance_audit",
+    "approved": true,
+    "agentReviewOnly": true,
+    "reviewedHead": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+    "captureSource": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+    "captureTested": "6e6d5e9ab543d9c30ba6d760dbeb7485af9ffce9",
+    "run": 41864508992,
+    "checkedStates": 5380,
+    "imagesInReviewedSet": 18,
+    "changedImagesInspected": 5,
+    "byteIdenticalToPriorReviewed": 13,
+    "failures": 0,
+    "openFindings": []
+  },
+  "browser": {
+    "reviewer": "/root/feedback_acceptance_audit",
+    "approved": true,
+    "run": 41864509068,
+    "attempt": 1,
+    "diagnosticsCases": 8,
+    "allRetryZero": true,
+    "flaky": 0,
+    "unexpected": 0,
+    "scope": "Four diagnostics cases in each ordinary development/production mode; complete paired real SQLite exports, one preparation, frozen snapshot, exact rows and later-row exclusion. These particular pairs are feedback-only; store suites own observation and unattributed rows."
+  },
+  "nativeArtifactReview": {
+    "reviewer": "/root/feedback_security_review",
+    "accepted": [
+      "Desktop callback lifetimes",
+      "Mobile callback lifetimes",
+      "Desktop responsiveness",
+      "Sized restore",
+      "Plan-bound unit aggregate",
+      "Plan-bound library aggregate"
+    ],
+    "pending": [
+      "Mobile responsiveness",
+      "Native desktop offline",
+      "Final required check conclusions"
+    ]
+  },
+  "mergeApproved": false,
+  "blocker": "Current native desktop workflow failed without recorded execution/artifacts; cause unavailable through connector annotations. Fresh remaining checks required."
+}

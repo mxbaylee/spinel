@@ -1,206 +1,135 @@
 {
   "schemaVersion": 1,
-  "capturedSourceHead": "066c5353b466f9371759aee52e47d169bc0d5e9a",
-  "testedMerge": "4502630f58905baabbd62479c6c50fce40a6e544",
+  "capturedSourceHead": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+  "testedMerge": "6e6d5e9ab543d9c30ba6d760dbeb7485af9ffce9",
   "reviewedHead": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
   "reviewedTree": "f2b1ad947a6d88129c206951c4f76b1aa3182163",
-  "sourceEquivalence": "All non-docs paths are byte-identical; exact full commit delta is documentation/evidence only. Captures are not relabeled as execution of the refreshed head.",
-  "workflowRun": 41861311243,
+  "workflowRun": 41864508992,
   "attempt": 1,
   "independentReviewer": "/root/feedback_acceptance_audit",
-  "visualApproval": "approved for unchanged application/UI source; agent review only; fresh current-head CI/native acceptance required separately",
+  "visualApproval": "approved for exact captured/reviewed head; agent review only; current-head CI/native acceptance verified separately",
   "rendering": "Production components and story interactions with synthetic fixture data; phone/tablet browser emulation, not physical devices",
   "sourceIdentityFile": "storybook-source.json",
   "partitions": [
     {
       "artifact": {
-        "id": 13341970741,
-        "node_id": "MDg6QXJ0aWZhY3QxMzM0MTk3MDc0MQ==",
+        "id": 13343025096,
+        "node_id": "MDg6QXJ0aWZhY3QxMzM0MzAyNTA5Ng==",
         "name": "design-review-mobile-light",
-        "size_in_bytes": 42234745,
-        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341970741",
-        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341970741/zip",
+        "size_in_bytes": 42234858,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13343025096",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13343025096/zip",
         "expired": false,
-        "digest": "sha256:27be1c01e360d81185790193037c1b587347e4fc8e82112802529383536d3c57",
-        "created_at": "2026-11-04T16:04:28Z",
-        "updated_at": "2026-11-04T16:04:28Z",
-        "expires_at": "2026-11-18T16:04:25Z",
+        "digest": "sha256:2786fec80eeaee9073e5f80e2be50a8d08f79beabc6fbf51785a1a6272c75e89",
+        "created_at": "2026-11-04T16:19:53Z",
+        "updated_at": "2026-11-04T16:19:53Z",
+        "expires_at": "2026-11-18T16:19:51Z",
         "workflow_run": {
-          "id": 41861311243,
+          "id": 41864508992,
           "repository_id": 1423484121,
           "head_repository_id": 1423484121,
           "head_branch": "codex/spn-098-feedback-diagnostics",
-          "head_sha": "066c5353b466f9371759aee52e47d169bc0d5e9a"
+          "head_sha": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
         }
       },
       "manifestFile": "storybook-design-review-mobile-light-manifest.json.gz",
-      "rawSha256": "bfdda84034550cb69ed27d7f5efc3154a24ce045b6fa33c8df83c33dfa9469dd",
-      "manifestKeys": [
-        "reviewedAt",
-        "durationMs",
-        "captureScreenshots",
-        "fixtureTime",
-        "viewport",
-        "theme",
-        "variants",
-        "requested",
-        "checked",
-        "captures",
-        "verifications",
-        "failures"
-      ]
+      "rawSha256": "b874aeff1854723d9f01c859bf5d9865349cbf2981c1466aadc4bb9093c2535b"
     },
     {
       "artifact": {
-        "id": 13340532878,
-        "node_id": "MDg6QXJ0aWZhY3QxMzM0MDUzMjg3OA==",
-        "name": "design-review-mobile-dark",
-        "size_in_bytes": 42710747,
-        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13340532878",
-        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13340532878/zip",
-        "expired": false,
-        "digest": "sha256:0d9529fb7f0ea4b6ba69fe3ff967e19f78db5efd9e3e1e35b7668d0d10ab0c0d",
-        "created_at": "2026-11-04T16:03:08Z",
-        "updated_at": "2026-11-04T16:03:08Z",
-        "expires_at": "2026-11-18T16:03:06Z",
-        "workflow_run": {
-          "id": 41861311243,
-          "repository_id": 1423484121,
-          "head_repository_id": 1423484121,
-          "head_branch": "codex/spn-098-feedback-diagnostics",
-          "head_sha": "066c5353b466f9371759aee52e47d169bc0d5e9a"
-        }
-      },
-      "manifestFile": "storybook-design-review-mobile-dark-manifest.json.gz",
-      "rawSha256": "2b3bf2a169aac80f2baa350796796b6ad13b7962ec55434c98a16a69a61c2771",
-      "manifestKeys": [
-        "reviewedAt",
-        "durationMs",
-        "captureScreenshots",
-        "fixtureTime",
-        "viewport",
-        "theme",
-        "variants",
-        "requested",
-        "checked",
-        "captures",
-        "verifications",
-        "failures"
-      ]
-    },
-    {
-      "artifact": {
-        "id": 13340064332,
-        "node_id": "MDg6QXJ0aWZhY3QxMzM0MDA2NDMzMg==",
+        "id": 13342321768,
+        "node_id": "MDg6QXJ0aWZhY3QxMzM0MjMyMTc2OA==",
         "name": "design-review-desktop-dark",
-        "size_in_bytes": 51170182,
-        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13340064332",
-        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13340064332/zip",
+        "size_in_bytes": 51165208,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13342321768",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13342321768/zip",
         "expired": false,
-        "digest": "sha256:c4ad6fc9789bc7fbebc8971096a2522487578593445ebf015d8814fff5193098",
-        "created_at": "2026-11-04T16:04:46Z",
-        "updated_at": "2026-11-04T16:04:46Z",
-        "expires_at": "2026-11-18T16:04:43Z",
+        "digest": "sha256:96e16dab63ef7b27466833300a177ab3dcb2308df459daacee89dd6f5bbbe92b",
+        "created_at": "2026-11-04T16:19:11Z",
+        "updated_at": "2026-11-04T16:19:11Z",
+        "expires_at": "2026-11-18T16:19:09Z",
         "workflow_run": {
-          "id": 41861311243,
+          "id": 41864508992,
           "repository_id": 1423484121,
           "head_repository_id": 1423484121,
           "head_branch": "codex/spn-098-feedback-diagnostics",
-          "head_sha": "066c5353b466f9371759aee52e47d169bc0d5e9a"
+          "head_sha": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
         }
       },
       "manifestFile": "storybook-design-review-desktop-dark-manifest.json.gz",
-      "rawSha256": "70dd3edb997b967c75e76cc4652011a0871a88517175b4474e15fb4368198519",
-      "manifestKeys": [
-        "reviewedAt",
-        "durationMs",
-        "captureScreenshots",
-        "fixtureTime",
-        "viewport",
-        "theme",
-        "variants",
-        "requested",
-        "checked",
-        "captures",
-        "verifications",
-        "failures"
-      ]
+      "rawSha256": "cd7f5b2324093f552e5f3eeb6bcfed75092edaedc0f86a85f8b2fb552f7d9faa"
     },
     {
       "artifact": {
-        "id": 13339989387,
-        "node_id": "MDg6QXJ0aWZhY3QxMzMzOTk4OTM4Nw==",
+        "id": 13341928133,
+        "node_id": "MDg6QXJ0aWZhY3QxMzM0MTkyODEzMw==",
         "name": "design-review-desktop-light",
-        "size_in_bytes": 50490823,
-        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13339989387",
-        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13339989387/zip",
+        "size_in_bytes": 50485728,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341928133",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341928133/zip",
         "expired": false,
-        "digest": "sha256:6db84f8d2f7ce36b466bb38bfafa29bbe0a41478105a5f6d13d5732a67182fcc",
-        "created_at": "2026-11-04T16:04:36Z",
-        "updated_at": "2026-11-04T16:04:36Z",
-        "expires_at": "2026-11-18T16:04:34Z",
+        "digest": "sha256:22f6f34b50d0d46c8cb3d0166e12790054913e5a4bba719da1b0f17194c1efde",
+        "created_at": "2026-11-04T16:18:41Z",
+        "updated_at": "2026-11-04T16:18:41Z",
+        "expires_at": "2026-11-18T16:18:39Z",
         "workflow_run": {
-          "id": 41861311243,
+          "id": 41864508992,
           "repository_id": 1423484121,
           "head_repository_id": 1423484121,
           "head_branch": "codex/spn-098-feedback-diagnostics",
-          "head_sha": "066c5353b466f9371759aee52e47d169bc0d5e9a"
+          "head_sha": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
         }
       },
       "manifestFile": "storybook-design-review-desktop-light-manifest.json.gz",
-      "rawSha256": "bd66af494cb8bc4a8674071096594a89ffee163a5f284a723d5e9d1dd60036ff",
-      "manifestKeys": [
-        "reviewedAt",
-        "durationMs",
-        "captureScreenshots",
-        "fixtureTime",
-        "viewport",
-        "theme",
-        "variants",
-        "requested",
-        "checked",
-        "captures",
-        "verifications",
-        "failures"
-      ]
+      "rawSha256": "04fb1f21080b5550c166410c824b485139d000cc59f2290aca0b5112659264e0"
     },
     {
       "artifact": {
-        "id": 13339894523,
-        "node_id": "MDg6QXJ0aWZhY3QxMzMzOTg5NDUyMw==",
-        "name": "design-review-tablet",
-        "size_in_bytes": 46738988,
-        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13339894523",
-        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13339894523/zip",
+        "id": 13341624270,
+        "node_id": "MDg6QXJ0aWZhY3QxMzM0MTYyNDI3MA==",
+        "name": "design-review-mobile-dark",
+        "size_in_bytes": 42701322,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341624270",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341624270/zip",
         "expired": false,
-        "digest": "sha256:718b8f6f5459bcc8e1207d799590fdce2b5ea4ba916b2d24950cc529eaf05dff",
-        "created_at": "2026-11-04T16:03:58Z",
-        "updated_at": "2026-11-04T16:03:58Z",
-        "expires_at": "2026-11-18T16:03:55Z",
+        "digest": "sha256:45d36b99ac41887f4fac6c93bb223f41cbd86af90cc1c5de62b757070d442590",
+        "created_at": "2026-11-04T16:19:35Z",
+        "updated_at": "2026-11-04T16:19:35Z",
+        "expires_at": "2026-11-18T16:19:32Z",
         "workflow_run": {
-          "id": 41861311243,
+          "id": 41864508992,
           "repository_id": 1423484121,
           "head_repository_id": 1423484121,
           "head_branch": "codex/spn-098-feedback-diagnostics",
-          "head_sha": "066c5353b466f9371759aee52e47d169bc0d5e9a"
+          "head_sha": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+        }
+      },
+      "manifestFile": "storybook-design-review-mobile-dark-manifest.json.gz",
+      "rawSha256": "c6b9888f3fca8ee495f798f2c23a44fd2aada9f3dabd877e45f32192e1a4f162"
+    },
+    {
+      "artifact": {
+        "id": 13341103780,
+        "node_id": "MDg6QXJ0aWZhY3QxMzM0MTEwMzc4MA==",
+        "name": "design-review-tablet",
+        "size_in_bytes": 46739585,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341103780",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13341103780/zip",
+        "expired": false,
+        "digest": "sha256:32238f8b666f21e1f518b950b74b07028b831f94b24c642d0f8bc0efc9888a91",
+        "created_at": "2026-11-04T16:17:59Z",
+        "updated_at": "2026-11-04T16:17:59Z",
+        "expires_at": "2026-11-18T16:17:57Z",
+        "workflow_run": {
+          "id": 41864508992,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-098-feedback-diagnostics",
+          "head_sha": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
         }
       },
       "manifestFile": "storybook-design-review-tablet-manifest.json.gz",
-      "rawSha256": "8fd5bb6f0fa9bd643ec8706b479dce9399c87dc40284ac976554f7851a198044",
-      "manifestKeys": [
-        "reviewedAt",
-        "durationMs",
-        "captureScreenshots",
-        "fixtureTime",
-        "viewport",
-        "theme",
-        "variants",
-        "requested",
-        "checked",
-        "captures",
-        "verifications",
-        "failures"
-      ]
+      "rawSha256": "057122c5f2a7c4bd95ac9b339b64829afe6df3f02bb41569a016029a55060fca"
     }
   ],
   "images": [
@@ -211,7 +140,7 @@
       "title": "Current production/Account/Feedback / Draft",
       "originalFilename": "current-production-account-feedback--draft-light.png",
       "captureArtifact": "design-review-desktop-light",
-      "artifactId": 13339989387,
+      "artifactId": 13341928133,
       "sha256": "518bcd8a989a7dbc26c1b28bc0d72d4cec1aca96cec241f354b5b5f434282c7d",
       "bytes": 48063,
       "pixelWidth": 1280,
@@ -219,7 +148,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/account-draft-light.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "account-draft-dark.png",
@@ -228,7 +158,7 @@
       "title": "Current production/Account/Feedback / Draft",
       "originalFilename": "current-production-account-feedback--draft-dark.png",
       "captureArtifact": "design-review-desktop-dark",
-      "artifactId": 13340064332,
+      "artifactId": 13342321768,
       "sha256": "2e03dd4a3b499647e028a83844537e170e97abcb880243066044eb458e19d3d2",
       "bytes": 53174,
       "pixelWidth": 1280,
@@ -236,7 +166,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/account-draft-dark.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "account-draft-phone.png",
@@ -245,7 +176,7 @@
       "title": "Current production/Account/Feedback / Draft",
       "originalFilename": "current-production-account-feedback--draft-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
+      "artifactId": 13343025096,
       "sha256": "3abc3a59142cac551ec4e438c6068204cbaedbf2d8136eb465b62f041d901332",
       "bytes": 39034,
       "pixelWidth": 390,
@@ -253,7 +184,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/account-draft-phone.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "account-failed-draft-phone-dark.png",
@@ -262,7 +194,7 @@
       "title": "Current production/Account/Feedback / Failed Draft",
       "originalFilename": "current-production-account-feedback--failed-draft-phone-dark.png",
       "captureArtifact": "design-review-mobile-dark",
-      "artifactId": 13340532878,
+      "artifactId": 13341624270,
       "sha256": "027ca08ae2d10fbce1faa6149efce0a5d6c890a30c89dc03ee82279110ea7d8d",
       "bytes": 57730,
       "pixelWidth": 390,
@@ -270,7 +202,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/account-failed-draft-phone-dark.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "account-long-message-phone.png",
@@ -279,7 +212,7 @@
       "title": "Current production/Account/Feedback / Long Message",
       "originalFilename": "current-production-account-feedback--long-message-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
+      "artifactId": 13343025096,
       "sha256": "8f55660ff8d8edad2b977dc9d69c1ce6c87bd7924eb715c3c40c0ebb1e9bada8",
       "bytes": 46894,
       "pixelWidth": 390,
@@ -287,7 +220,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/account-long-message-phone.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "account-access-changed-phone.png",
@@ -296,7 +230,7 @@
       "title": "Current production/Account/Feedback / Access Changed",
       "originalFilename": "current-production-account-feedback--access-changed-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
+      "artifactId": 13343025096,
       "sha256": "9d048725de3fe1d65f01d60b556a8ddfa68ce39e6d7a672418a598a7b6e63d1a",
       "bytes": 53707,
       "pixelWidth": 390,
@@ -304,7 +238,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/account-access-changed-phone.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-feedback-flag-light.png",
@@ -313,7 +248,7 @@
       "title": "Current production/Admin/Feedback / Flag",
       "originalFilename": "current-production-admin-feedback--flag-light.png",
       "captureArtifact": "design-review-desktop-light",
-      "artifactId": 13339989387,
+      "artifactId": 13341928133,
       "sha256": "ecce3da59b0b92c4bf2ea3a220b1a01f9ae268a1eecb498528ac72256341201b",
       "bytes": 33400,
       "pixelWidth": 1280,
@@ -321,7 +256,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/admin-feedback-flag-light.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-paired-downloads-light.png",
@@ -330,15 +266,16 @@
       "title": "Current production/Admin/Feedback / Paired Downloads",
       "originalFilename": "current-production-admin-feedback--paired-downloads-light.png",
       "captureArtifact": "design-review-desktop-light",
-      "artifactId": 13339989387,
-      "sha256": "c85a4c74bc2467349e7c6fa8295e17d36e4604bc3fe27ffbb92f29830fd08826",
-      "bytes": 99561,
+      "artifactId": 13341928133,
+      "sha256": "954e78365fc5ac660602d0e28855fd091c741cf07b7cc9c2ee16642fccb2718f",
+      "bytes": 99938,
       "pixelWidth": 1280,
       "pixelHeight": 900,
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-paired-downloads-light.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": false
     },
     {
       "file": "admin-paired-downloads-dark.png",
@@ -347,15 +284,16 @@
       "title": "Current production/Admin/Feedback / Paired Downloads",
       "originalFilename": "current-production-admin-feedback--paired-downloads-dark.png",
       "captureArtifact": "design-review-desktop-dark",
-      "artifactId": 13340064332,
-      "sha256": "f1885b099dd4d70af14ee258b96570b23aac20b2ed0c88ab8bcd9c9ace368d43",
-      "bytes": 105389,
+      "artifactId": 13342321768,
+      "sha256": "f394ad8e6fa381e6b6c49e644d3983dcfe773cd04b09d759d643715a3cb4b05e",
+      "bytes": 105191,
       "pixelWidth": 1280,
       "pixelHeight": 900,
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-paired-downloads-dark.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": false
     },
     {
       "file": "admin-paired-downloads-phone-dark.png",
@@ -364,7 +302,7 @@
       "title": "Current production/Admin/Feedback / Paired Downloads",
       "originalFilename": "current-production-admin-feedback--paired-downloads-phone-dark.png",
       "captureArtifact": "design-review-mobile-dark",
-      "artifactId": 13340532878,
+      "artifactId": 13341624270,
       "sha256": "1807b06b5bd422929f63b1c090c442b9bb625b4ffe536df99f8534e559867ff1",
       "bytes": 64651,
       "pixelWidth": 390,
@@ -372,7 +310,8 @@
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-paired-downloads-phone-dark.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-download-failed-phone.png",
@@ -381,7 +320,7 @@
       "title": "Current production/Admin/Feedback / Download Failed",
       "originalFilename": "current-production-admin-feedback--download-failed-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
+      "artifactId": 13343025096,
       "sha256": "4b2a1ff283f93826768d7e1b2106f449f2c379f3e4e7e4b3bd6fd3a4448ad44a",
       "bytes": 56158,
       "pixelWidth": 390,
@@ -389,7 +328,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/admin-download-failed-phone.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-expanded-limits-phone.png",
@@ -398,15 +338,16 @@
       "title": "Current production/Admin/Feedback / Expanded Limits",
       "originalFilename": "current-production-admin-feedback--expanded-limits-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
-      "sha256": "64e34d2f5c8be8f9b3906063bca9a88dbc2502046494efa7abd5a20af66adabe",
-      "bytes": 76445,
+      "artifactId": 13343025096,
+      "sha256": "1388ccd712ef1c3de8b8846deb4bec358e956434f74ca618c1638c6a5a062531",
+      "bytes": 76323,
       "pixelWidth": 390,
       "pixelHeight": 900,
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-expanded-limits-phone.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": false
     },
     {
       "file": "admin-access-changed-phone-dark.png",
@@ -415,7 +356,7 @@
       "title": "Current production/Admin/Feedback / Access Changed",
       "originalFilename": "current-production-admin-feedback--access-changed-phone-dark.png",
       "captureArtifact": "design-review-mobile-dark",
-      "artifactId": 13340532878,
+      "artifactId": 13341624270,
       "sha256": "7a9d64a2b3e53d3f363ca23bbd65bca6c09bebfa0b7d07115950cfb5f9dcce5d",
       "bytes": 52306,
       "pixelWidth": 390,
@@ -423,7 +364,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/admin-access-changed-phone-dark.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-old-feedback-only-phone.png",
@@ -432,15 +374,16 @@
       "title": "Current production/Admin/Feedback / Old Feedback Only",
       "originalFilename": "current-production-admin-feedback--old-feedback-only-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
-      "sha256": "637cd6e70e022a931f81cbf2d775ef11eada0d04ac5e9299f32ea55bb4cbb3c4",
-      "bytes": 70802,
+      "artifactId": 13343025096,
+      "sha256": "b02812d08bea257540852ec677f29e3591a9aef228ff0166b537b61bfcb4f5ba",
+      "bytes": 70660,
       "pixelWidth": 390,
       "pixelHeight": 900,
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-old-feedback-only-phone.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": false
     },
     {
       "file": "editor-guest-phone.png",
@@ -449,7 +392,7 @@
       "title": "Current production/Editor/Frame / Guest",
       "originalFilename": "editor-frame--guest-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
+      "artifactId": 13343025096,
       "sha256": "8639970399ce2fbaa68a1cce64223968d9ab76966fcc0f6fd44e59ebb8f904d3",
       "bytes": 20821,
       "pixelWidth": 390,
@@ -457,7 +400,8 @@
       "matchesHistoricalBytes": true,
       "matchesHistoricalPixels": true,
       "retainedPath": "docs/review-assets/spn-098/editor-guest-phone.png",
-      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5"
+      "retainedCommit": "ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-diagnostics-clear-phone.png",
@@ -466,7 +410,7 @@
       "title": "Current production/Admin/Administration / Diagnostics Clear Blocks Navigation",
       "originalFilename": "admin-page--diagnostics-clear-blocks-navigation-phone.png",
       "captureArtifact": "design-review-mobile-light",
-      "artifactId": 13341970741,
+      "artifactId": 13343025096,
       "sha256": "f797d26bc6962ea7ad0da91917b1b2dffe3a37455b78f94e140a7585ca5c4b69",
       "bytes": 332323,
       "pixelWidth": 390,
@@ -474,7 +418,8 @@
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-diagnostics-clear-phone.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "account-draft-tablet.png",
@@ -483,7 +428,7 @@
       "title": "Current production/Account/Feedback / Draft",
       "originalFilename": "current-production-account-feedback--draft-tablet.png",
       "captureArtifact": "design-review-tablet",
-      "artifactId": 13339894523,
+      "artifactId": 13341103780,
       "sha256": "b1207be516336a93b09d6dbff781d780ef85fb791e61796fa397a92cfc175d2b",
       "bytes": 45664,
       "pixelWidth": 768,
@@ -491,7 +436,8 @@
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/account-draft-tablet.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": true
     },
     {
       "file": "admin-paired-downloads-tablet.png",
@@ -500,15 +446,16 @@
       "title": "Current production/Admin/Feedback / Paired Downloads",
       "originalFilename": "current-production-admin-feedback--paired-downloads-tablet.png",
       "captureArtifact": "design-review-tablet",
-      "artifactId": 13339894523,
-      "sha256": "713106810a5de5bdcd0118e9ff4acbc7f8c7fc092cc99a2a11ff0db82220f9f9",
-      "bytes": 92615,
+      "artifactId": 13341103780,
+      "sha256": "71e3621c95723936449b4e8742f140e0fc2eb3888b5a8eb49bd430d590972b27",
+      "bytes": 92550,
       "pixelWidth": 768,
       "pixelHeight": 900,
       "matchesHistoricalBytes": false,
       "matchesHistoricalPixels": false,
       "retainedPath": "images/admin-paired-downloads-tablet.png",
-      "retainedStorage": "this-evidence-commit"
+      "retainedStorage": "this-evidence-commit",
+      "matchesPriorReviewedCaptureBytes": false
     }
   ],
   "visualApprovalDetails": {
@@ -519,5 +466,17 @@
     "recordedCaptureFailures": 0,
     "openBlockingFindings": [],
     "scope": "Production component stories; synthetic fixtures; phone/tablet emulation. Interactions and server behavior have separate checks."
+  },
+  "priorEvidenceCommit": "00f1e4143bb662b33536315ec3e391020d9d6884",
+  "comparisonToPriorReviewedImages": {
+    "byteAndPixelIdentical": 13,
+    "changedImages": [
+      "admin-paired-downloads-light.png",
+      "admin-paired-downloads-dark.png",
+      "admin-expanded-limits-phone.png",
+      "admin-old-feedback-only-phone.png",
+      "admin-paired-downloads-tablet.png"
+    ],
+    "changeScope": "Displayed timestamp seconds only; all image dimensions, layout, focus, copy and state unchanged; reviewer inspected all five changed captures."
   }
 }

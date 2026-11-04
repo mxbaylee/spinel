@@ -9,8 +9,15 @@ Its current tested merge is `6e6d5e9ab543d9c30ba6d760dbeb7485af9ffce9`.
 This evidence archive does not alter the implementation candidate.
 
 At this checkpoint, the candidate has independent prepublication grades of
-98/100 and 99/100 and independent current-source visual approval.
-**Fresh current-head CI/native acceptance remains pending.** The final
+98/100 and 99/100 and independent direct-head visual and diagnostics-browser
+approval. Current callback, desktop responsiveness, restore, unit and library
+artifacts also pass their reviewed contracts. **Merge remains blocked:** the
+current native desktop workflow failed without recorded Firefox runner/test
+execution or artifacts; its failure annotations are unavailable through the
+connector. Browser fallback permission is needed for diagnosis. Mobile
+responsiveness and final remaining check conclusions are pending. See
+[the timestamped blocker snapshot](checkpoint-native-blocker.json) and
+[the independent review record](reviews.json). The final
 [PR #227](https://github.com/mxbaylee/spinel/pull/227) description and the completed
 record in this archive will identify the actual final outcome.
 
@@ -23,12 +30,15 @@ capture failures; 160 are feedback states. Only the selected 18 were manually
 inspected. These are production components with synthetic story data and browser
 phone/tablet emulation, not physical-device or server-persistence proof.
 
-The capture source is `066c5353b466f9371759aee52e47d169bc0d5e9a`, tested as
-`4502630f58905baabbd62479c6c50fce40a6e544` in Storybook run 41861311243.
-All non-documentation paths are byte-identical on the reviewed `ed7ef3da` head.
-Reviewer `/root/feedback_acceptance_audit` inspected all 18 current images and
-approved that unchanged source, with no blocking finding. **Agent review only.**
-This is not a claim that the captures executed at the refreshed commit.
+The current capture source is the exact reviewed head
+`ed7ef3da5e8d57fcef4b098064a6e8eba052b1b5`, tested as
+`6e6d5e9ab543d9c30ba6d760dbeb7485af9ffce9` in Storybook run 41864508992.
+Reviewer `/root/feedback_acceptance_audit` approved all 18 source-equivalent
+preceding images, then verified the direct-head artifacts: 13 images are exactly
+byte/pixel-identical and five differ only in timestamp seconds. All five changes
+were independently inspected and approved. **Agent review only.** The prior
+[archive checkpoint](https://github.com/mxbaylee/spinel/tree/00f1e4143bb662b33536315ec3e391020d9d6884/docs/implementation/evidence/SPN-098-acceptance-2026-11-04)
+preserves the preceding capture identities and original PNG bytes.
 
 Ten images exactly match already retained assets; their manifest entries pin the
 retained commit and path. Six changed PNGs and both tablet PNGs are stored under
@@ -54,6 +64,27 @@ The retained raw log records cancellation at 2026-11-04 16:10:09 UTC.
 The old browser aggregate then correctly failed because selected responsiveness
 was cancelled. Its failed result and plan digest are retained. No incomplete
 mobile acceptance or failed aggregate is represented as a pass.
+
+## 🧬 Current native evidence and limits
+
+Current desktop/mobile callback records include both full original lifecycle
+manifests, both browser reports, and the paired comparison. Their traced callback
+acceptance does not replace unprofiled latency checks. Mobile uses throttled touch
+emulation; neither preset is physical-device evidence.
+
+The complete desktop responsiveness ZIP is retained with its directly readable
+comparison. Three unprofiled candidate samples satisfy the registered budgets;
+the profile is supporting analysis. Historical baseline capacity refusal is an
+accepted observation, not a successful redo. The candidate profile has one negative
+time delta and two reordered samples, and a 343.8 ms clock bracket prevents certain
+containing-task attribution; raw reducers and the conservative whole-task bound
+remain available. Do not attribute historical performance differences to feedback.
+
+Current sized restore passed in 283,211 ms, with 155,291.178 ms from preparation
+click through committed/running. The serving peak equals the configured 1 GiB
+ceiling; it establishes no spare-memory margin. Response-body observation was
+unavailable during preparation, and the public-status path completed acceptance.
+The full evidence retains the exact profile, integrity and cleanup boundaries.
 
 ## 📎 Retention and limits
 
