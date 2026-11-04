@@ -14,13 +14,23 @@ export type SafariTarget = {
 // Apple Events timed out, and it does not bypass normal automation consent.
 export const safariRequestScript = String.raw`
 function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }
-phase('appkit-import-begin');
-ObjC.import('AppKit');
-phase('appkit-import-end');
+// Foundation is available by default. Retain the bundle for this helper's
+// lifetime while using its executable's class, without importing AppKit symbols.
+phase('appkit-bundle-create-begin');
+var appkitBundle = $.NSBundle.bundleWithPath('/System/Library/Frameworks/AppKit.framework');
+if (appkitBundle.isNil()) throw new Error('The system AppKit bundle is unavailable.');
+phase('appkit-bundle-create-end');
+phase('appkit-executable-load-begin');
+if (!appkitBundle.load) throw new Error('The system AppKit executable could not be loaded.');
+phase('appkit-executable-load-end');
+phase('running-application-class-begin');
+var runningApplication = $.NSClassFromString($('NSRunningApplication'));
+if (runningApplication.isNil()) throw new Error('The NSRunningApplication class is unavailable.');
+phase('running-application-class-end');
 function run(argv) {
   var pid = Number(argv[0]);
   phase('process-lookup-begin');
-  var running = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);
+  var running = runningApplication.runningApplicationWithProcessIdentifier(pid);
   phase('process-lookup-end');
   phase('process-liveness-begin');
   if (running.isNil() || running.terminated) throw new Error('The observed Safari process exited.');
