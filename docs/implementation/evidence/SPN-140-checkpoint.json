@@ -1,0 +1,876 @@
+{
+  "date": "2026-11-04",
+  "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+  "purpose": "Owner-requested draft checkpoint after local verification. No hosted acceptance; trigger cancellation required. Accepted SPN-141 integration and both fresh exact-head reviews still pending.",
+  "sourceFiles": [
+    {
+      "path": "scripts/ci/desktop-safari-identity.ts",
+      "sha256": "d89b63aff19b9c2d644cd1542410f0d62e3d98f2002727bed6c262c703849202",
+      "unchangedFrom": "3c3fc7d8751da18beb401c59e1cf89a40ff86aa3"
+    },
+    {
+      "path": "scripts/ci/desktop-safari-identity.test.ts",
+      "sha256": "55bf1df38dadc4b0dab114c9c2a7e6a3f3a551efff61599bead8a212fca32d1b",
+      "unchangedFrom": "3c3fc7d8751da18beb401c59e1cf89a40ff86aa3"
+    },
+    {
+      "path": "scripts/ci/desktop-profile-probe.ts",
+      "sha256": "6019c8a76ef2882d497d704a719ad2a136e8f81d05e4fa2498db1e06e4e50a1c",
+      "unchangedFrom": "3c3fc7d8751da18beb401c59e1cf89a40ff86aa3"
+    }
+  ],
+  "checks": [
+    {
+      "name": "tests",
+      "log": "✔ title permits one constructor-only recovery with the same revalidated identity (6.507916ms)\n✔ title never repeats an action that throws the same native error after dispatch (1.574083ms)\n✔ evaluate permits one constructor-only recovery with the same revalidated identity (1.034666ms)\n✔ evaluate never repeats an action that throws the same native error after dispatch (0.944542ms)\n✔ quit permits one constructor-only recovery with the same revalidated identity (0.995709ms)\n✔ quit never repeats an action that throws the same native error after dispatch (0.860666ms)\n✔ baseline permits one constructor-only recovery with the same revalidated identity (1.102125ms)\n✔ baseline never repeats an action that throws the same native error after dispatch (0.871666ms)\n✔ unclassified constructor failure is fatal: Error: Application can't be found. (1.803ms)\n✔ unclassified constructor failure is fatal: Error: Not authorized (0.881667ms)\n✔ unclassified constructor failure is fatal: Error: Unknown failure (0.725ms)\n✔ a repeated constructor failure retains both attempts and throws the original cause (0.957292ms)\n✔ changed identity prevents constructor recovery: {\"terminated\":true} (1.040042ms)\n✔ changed identity prevents constructor recovery: {\"bundleIdentifier\":\"other.app\"} (1.626333ms)\n✔ changed identity prevents constructor recovery: {\"launchDate\":{\"timeIntervalSince1970\":5678}} (0.800291ms)\n✔ changed identity prevents constructor recovery: {\"executableURL\":{\"path\":\"/other/Safari\"}} (0.681959ms)\n✔ identity replacement during a successful constructor is rejected before dispatch (0.788291ms)\n✔ the host-observed executable is checked before resolving an application (0.703375ms)\n✔ value polling propagates identity changed without a second native request (5.705792ms)\n✔ value polling propagates denied without a second native request (0.0985ms)\n✔ value polling propagates Application can't be found. without a second native request (0.069708ms)\n✔ value polling propagates host timeout without a second native request (0.067917ms)\n✔ readiness still polls successful values until the requested state arrives (252.381042ms)\n✔ normal consent can inspect one pending request and observe its eventual success (0.899542ms)\n✔ the consent-loop observation throws the original failed request before it can be renewed (0.654792ms)\n✔ a valid required baseline is retained before optional capture diagnostics (1.723041ms)\n✔ invalid baseline cannot become passed evidence: not json (1.098625ms)\n✔ invalid baseline cannot become passed evidence: {} (1.208792ms)\n✔ invalid baseline cannot become passed evidence: {\"title\":\"wrong\",\"bounds\":{\"x\":0,\"y\":0,\"width\":1,\"height\":1}} (0.25375ms)\n✔ invalid baseline cannot become passed evidence: {\"title\":\"Spinel desktop profile probe\",\"bounds\":{\"x\":0,\"y\":0,\"width\":0,\"height\":1}} (7.319042ms)\n✔ a post-dispatch baseline failure is fatal and preserves its cause without another request (1.215416ms)\n✔ successful host request retains constructor trace and exact original timeout/target (0.176333ms)\n✔ host timeout is never retried and preserves the first failure plus constructor trace (0.148834ms)\n✔ the checked system executable and class establish identity without any Apple Event (0.813208ms)\n✔ nil bundle preserves the first loading failure before lookup or teardown authority (0.741459ms)\n✔ bundle lookup throws preserves the first loading failure before lookup or teardown authority (0.7105ms)\n✔ failed load preserves the first loading failure before lookup or teardown authority (0.629584ms)\n✔ load throws preserves the first loading failure before lookup or teardown authority (0.654708ms)\n✔ nil class preserves the first loading failure before lookup or teardown authority (0.692333ms)\n✔ class lookup throws preserves the first loading failure before lookup or teardown authority (0.679667ms)\n✔ wrong PID refuses teardown before sending a quit event (0.718625ms)\n✔ wrong bundle refuses teardown before sending a quit event (0.619584ms)\n✔ missing process refuses teardown before sending a quit event (0.603292ms)\n✔ exited refuses teardown before sending a quit event (0.555042ms)\n✔ missing launch date refuses teardown before sending a quit event (1.019375ms)\n✔ PID reuse refuses teardown before sending a quit event (0.598459ms)\n✔ positively matched identity permits teardown (0.550208ms)\n✔ title preserves the PID and supplied Apple Event timeout after checked loading (0.520125ms)\n✔ evaluate preserves the source, document and supplied timeout after checked loading (0.505625ms)\n✔ baseline preserves native window, tab and page state after checked loading (0.605833ms)\n✔ withheld launch identity records the exact unfinished phase (0.577083ms)\n✔ eight-second process timeout preserves its first cause and last phase (0.359958ms)\n✔ no script output is explicitly an osascript startup failure, never an owned identity (0.102041ms)\n✔ malformed diagnostic output cannot replace the original process failure (0.104833ms)\n✔ invalid JSON retains the command's output and trace at host-identity-parse (0.08975ms)\n✔ wrong bundle retains the command's output and trace at host-identity-validation (0.140125ms)\n✔ relative executable retains the command's output and trace at host-identity-validation (0.32475ms)\nℹ tests 57\nℹ suites 0\nℹ pass 57\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 447.720458\nWATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":632,\"peakKiB\":258800}\n",
+      "watchdog": {
+        "root": 81081,
+        "started": 1793824351056,
+        "elapsedMs": 632,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 91040,
+        "peakKiB": 258800,
+        "live": [
+          {
+            "pid": 81081,
+            "parent": 81030,
+            "group": 81081,
+            "rssKiB": 89472,
+            "started": "Wed Nov  4 12:32:30 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn140-checkpoint-tests-watchdog.json node --test scripts/ci/desktop-safari-identity.test.ts"
+          },
+          {
+            "pid": 81171,
+            "parent": 81081,
+            "group": 81081,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 81081,
+            "parent": 81030,
+            "group": 81081,
+            "rssKiB": 89472,
+            "started": "Wed Nov  4 12:32:30 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn140-checkpoint-tests-watchdog.json node --test scripts/ci/desktop-safari-identity.test.ts"
+          },
+          {
+            "pid": 81100,
+            "parent": 81081,
+            "group": 81081,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81126,
+            "parent": 81081,
+            "group": 81081,
+            "rssKiB": 60672,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "(node)"
+          },
+          {
+            "pid": 81127,
+            "parent": 81126,
+            "group": 81081,
+            "rssKiB": 109152,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/desktop-safari-identity.test.ts"
+          },
+          {
+            "pid": 81145,
+            "parent": 81081,
+            "group": 81081,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81158,
+            "parent": 81081,
+            "group": 81081,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81171,
+            "parent": 81081,
+            "group": 81081,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    {
+      "name": "types",
+      "log": "WATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":295,\"peakKiB\":90832}\n",
+      "watchdog": {
+        "root": 81217,
+        "started": 1793824361075,
+        "elapsedMs": 295,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 90832,
+        "peakKiB": 90832,
+        "live": [
+          {
+            "pid": 81217,
+            "parent": 81181,
+            "group": 81217,
+            "rssKiB": 89264,
+            "started": "Wed Nov  4 12:32:40 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn140-checkpoint-types-watchdog.json node_modules/.bin/tsc -p /tmp/spn140-typecheck.json"
+          },
+          {
+            "pid": 81250,
+            "parent": 81217,
+            "group": 81217,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 81217,
+            "parent": 81181,
+            "group": 81217,
+            "rssKiB": 89264,
+            "started": "Wed Nov  4 12:32:40 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn140-checkpoint-types-watchdog.json node_modules/.bin/tsc -p /tmp/spn140-typecheck.json"
+          },
+          {
+            "pid": 81236,
+            "parent": 81217,
+            "group": 81217,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81250,
+            "parent": 81217,
+            "group": 81217,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:32:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    {
+      "name": "lint",
+      "log": "\n> lint\n> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check\n\n\n> dependencies:check\n> node scripts/dependencies/no-univer-pro.ts\n\nNo Univer Pro dependencies in 8 manifests or the resolved lockfile.\n\n> format:check\n> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts\n\nChecking formatting...\nAll matched files use Prettier code style!\nWATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":18484,\"peakKiB\":723968}\n",
+      "watchdog": {
+        "root": 81306,
+        "started": 1793824380831,
+        "elapsedMs": 18484,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 81456,
+        "peakKiB": 723968,
+        "live": [
+          {
+            "pid": 81306,
+            "parent": 81271,
+            "group": 81306,
+            "rssKiB": 79888,
+            "started": "Wed Nov  4 12:33:00 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn140-checkpoint-lint-watchdog.json npm run lint"
+          },
+          {
+            "pid": 82614,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:19 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 81306,
+            "parent": 81271,
+            "group": 81306,
+            "rssKiB": 79888,
+            "started": "Wed Nov  4 12:33:00 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn140-checkpoint-lint-watchdog.json npm run lint"
+          },
+          {
+            "pid": 81325,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:00 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81351,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 61296,
+            "started": "Wed Nov  4 12:33:00 2026",
+            "command": "npm run lint   "
+          },
+          {
+            "pid": 81363,
+            "parent": 81351,
+            "group": 81306,
+            "rssKiB": 1088,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "sh -c npm run dependencies:check && oxlint --deny-warnings . && npm run format:check"
+          },
+          {
+            "pid": 81364,
+            "parent": 81363,
+            "group": 81306,
+            "rssKiB": 62624,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "npm   "
+          },
+          {
+            "pid": 81370,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81396,
+            "parent": 81363,
+            "group": 81306,
+            "rssKiB": 66640,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "node /Users/mxbaylee/projects/spinel-spn-140/node_modules/.bin/oxlint --deny-warnings ."
+          },
+          {
+            "pid": 81402,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81410,
+            "parent": 81363,
+            "group": 81306,
+            "rssKiB": 55040,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "npm run format:check   "
+          },
+          {
+            "pid": 81428,
+            "parent": 81410,
+            "group": 81306,
+            "rssKiB": 450976,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "node /Users/mxbaylee/projects/spinel-spn-140/node_modules/.bin/prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts playwright.config.ts prettier.config.ts vite.config.ts vitest.config.ts"
+          },
+          {
+            "pid": 81434,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81458,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:01 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81487,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:02 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81501,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 12:33:02 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81526,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:02 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81609,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:02 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81720,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1600,
+            "started": "Wed Nov  4 12:33:03 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81775,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:03 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81788,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:03 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81801,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1616,
+            "started": "Wed Nov  4 12:33:03 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81814,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81827,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81840,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81853,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81866,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81879,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81892,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81905,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81918,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81931,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81944,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81957,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81970,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:07 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81983,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:07 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 81996,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:07 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82009,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:07 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82022,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:08 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82035,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:08 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82048,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:08 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82061,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:08 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82074,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:09 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82087,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:09 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82100,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:09 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82113,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:09 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82126,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82139,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82152,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82165,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82178,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82191,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82204,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82217,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82230,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:12 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82243,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:12 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82256,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:12 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82269,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:12 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82282,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:13 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82295,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:13 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82308,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:13 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82321,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:13 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82334,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:14 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82347,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:14 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82360,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:14 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82374,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:14 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82387,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:15 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82400,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:15 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82413,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:15 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82426,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:15 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82439,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:16 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82452,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:16 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82465,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:16 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82478,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:16 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82491,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:17 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82504,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:17 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82517,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:17 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82530,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:17 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82543,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:18 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82557,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:18 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82570,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:18 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82588,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:18 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82601,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:19 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 82614,
+            "parent": 81306,
+            "group": 81306,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 12:33:19 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    }
+  ],
+  "compilerConfiguration": {
+    "extends": "/Users/mxbaylee/projects/spinel-spn-140/tsconfig.json",
+    "include": [
+      "/Users/mxbaylee/projects/spinel-spn-140/scripts/ci/desktop-safari-identity.ts",
+      "/Users/mxbaylee/projects/spinel-spn-140/scripts/ci/desktop-safari-identity.test.ts",
+      "/Users/mxbaylee/projects/spinel-spn-140/scripts/ci/desktop-profile-probe.ts"
+    ],
+    "compilerOptions": {
+      "typeRoots": [
+        "/Users/mxbaylee/projects/spinel-spn-140/node_modules/@types"
+      ]
+    }
+  },
+  "limits": "Types cover three changed roots and imports, not full project. Native compiler peak is not established by a 295ms run with 250ms sampling. No native browser experiment ran locally. Earlier 98/98 reviews apply only to previous source."
+}
