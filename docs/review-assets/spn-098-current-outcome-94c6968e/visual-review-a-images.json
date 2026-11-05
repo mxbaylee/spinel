@@ -1,0 +1,127 @@
+{
+  "source": "94c6968e29b57351c548dd5065cb0a61adfad896",
+  "run": 42023278102,
+  "attempt": 1,
+  "imagesActuallyOpened": [
+    {
+      "path": "visual/desktop-light/current-production-account-feedback--draft-light.png",
+      "sha256": "518bcd8a989a7dbc26c1b28bc0d72d4cec1aca96cec241f354b5b5f434282c7d",
+      "bytes": 48063
+    },
+    {
+      "path": "visual/desktop-light/current-production-admin-feedback--paired-downloads-light.png",
+      "sha256": "0ced427dd7be336f6b1ef796b8e281f5662477a84c28d5233857dde42b57f918",
+      "bytes": 99843
+    },
+    {
+      "path": "visual/desktop-light/current-production-admin-feedback--flag-light.png",
+      "sha256": "ecce3da59b0b92c4bf2ea3a220b1a01f9ae268a1eecb498528ac72256341201b",
+      "bytes": 33400
+    },
+    {
+      "path": "visual/desktop-light/shell-rail--feedback-light.png",
+      "sha256": "857f0610aeecaaff235061b46d74a254b0ecb1ff8f3711b5903f2f101689ab4a",
+      "bytes": 26742
+    },
+    {
+      "path": "visual/desktop-light/editor-frame--feedback-light.png",
+      "sha256": "647bafcf46a459a7e68df15b4835fdf178ab207ee41b9bead684986f62d28aca",
+      "bytes": 55781
+    },
+    {
+      "path": "visual/desktop-dark/current-production-account-feedback--draft-dark.png",
+      "sha256": "2e03dd4a3b499647e028a83844537e170e97abcb880243066044eb458e19d3d2",
+      "bytes": 53174
+    },
+    {
+      "path": "visual/desktop-dark/current-production-admin-feedback--paired-downloads-dark.png",
+      "sha256": "f1885b099dd4d70af14ee258b96570b23aac20b2ed0c88ab8bcd9c9ace368d43",
+      "bytes": 105389
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--draft-phone.png",
+      "sha256": "3abc3a59142cac551ec4e438c6068204cbaedbf2d8136eb465b62f041d901332",
+      "bytes": 39034
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--paired-downloads-phone.png",
+      "sha256": "b66bb61292259163c9e5223d0d752538361ddf2df5289b0f608368327872d04c",
+      "bytes": 61156
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--long-message-phone.png",
+      "sha256": "8f55660ff8d8edad2b977dc9d69c1ce6c87bd7924eb715c3c40c0ebb1e9bada8",
+      "bytes": 46894
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--failed-draft-phone.png",
+      "sha256": "9dc9e8f9f1b857c33486f438a83b5c6943d9c8b93165fab7366ad47dd5af4f8f",
+      "bytes": 54172
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--access-changed-phone.png",
+      "sha256": "9d048725de3fe1d65f01d60b556a8ddfa68ce39e6d7a672418a598a7b6e63d1a",
+      "bytes": 53707
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--download-failed-phone.png",
+      "sha256": "4b2a1ff283f93826768d7e1b2106f449f2c379f3e4e7e4b3bd6fd3a4448ad44a",
+      "bytes": 56158
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--access-changed-phone.png",
+      "sha256": "5ac60d16f58a15db1f48619387a761378b14d4599adfceff388e386c444a2b91",
+      "bytes": 49540
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--expanded-limits-phone.png",
+      "sha256": "1388ccd712ef1c3de8b8846deb4bec358e956434f74ca618c1638c6a5a062531",
+      "bytes": 76323
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--old-feedback-only-phone.png",
+      "sha256": "b02812d08bea257540852ec677f29e3591a9aef228ff0166b537b61bfcb4f5ba",
+      "bytes": 70660
+    },
+    {
+      "path": "visual/mobile-light/shell-rail--feedback-phone.png",
+      "sha256": "114060a0bc7b3e0d7a214170f98f185dc016d02a7a984c386c13fcd68c2bbd8f",
+      "bytes": 11506
+    },
+    {
+      "path": "visual/mobile-light/editor-frame--feedback-phone.png",
+      "sha256": "00b77a005e55226d9d583a93cc0d9b122be8cfd62d13d15c301d9e57697e30e0",
+      "bytes": 46105
+    },
+    {
+      "path": "visual/mobile-light/editor-frame--feedback-focus-return-phone.png",
+      "sha256": "b4d615ad846057c5212dc76886ae4095e0ca09c954f805256305623e1fa0e73e",
+      "bytes": 19572
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--cancelled-send-phone.png",
+      "sha256": "5c72420731577eeae20563b5b688cf2be1c436b041c25ca9fdecac831785a8ab",
+      "bytes": 53603
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--stale-report-phone.png",
+      "sha256": "b058ffd8ce999db99831bba70904e8f0164527fc4959d399bb3ee67704a55863",
+      "bytes": 47583
+    },
+    {
+      "path": "visual/mobile-light/current-production-account-feedback--saved-phone.png",
+      "sha256": "c08bfb079bfa0295ec48a6e6786a87de1e6f3a6b8e04659d77dbeffd21bd2711",
+      "bytes": 34401
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--expired-phone.png",
+      "sha256": "46d0e184be7782b0dc26a1287578518e2e8649a0ece035b7091fba8909416fac",
+      "bytes": 58391
+    },
+    {
+      "path": "visual/mobile-light/current-production-admin-feedback--flags-unavailable-phone.png",
+      "sha256": "ab8a07eea83320c8b83e6f9412fa44238d22105bf6ac24eebd10c5e602c772f3",
+      "bytes": 33254
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "root": 78256,
+  "started": 1793881359747,
+  "elapsedMs": 282,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 71968,
+  "peakKiB": 92352,
+  "live": [
+    {
+      "pid": 78256,
+      "parent": 78230,
+      "group": 78256,
+      "rssKiB": 70432,
+      "started": "Thu Nov  5 04:22:39 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn098-current-hosted/inspect-browser-watchdog.json node /tmp/spn098-current-hosted/inspect-browser.ts"
+    },
+    {
+      "pid": 78357,
+      "parent": 78256,
+      "group": 78256,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:22:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 78256,
+      "parent": 78230,
+      "group": 78256,
+      "rssKiB": 70432,
+      "started": "Thu Nov  5 04:22:39 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn098-current-hosted/inspect-browser-watchdog.json node /tmp/spn098-current-hosted/inspect-browser.ts"
+    },
+    {
+      "pid": 78275,
+      "parent": 78256,
+      "group": 78256,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:22:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 78357,
+      "parent": 78256,
+      "group": 78256,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:22:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
