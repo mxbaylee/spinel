@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T02:29:17.785Z",
+  "unpublishedCheckpoint": {
+    "source": "ec68084ef1f8eb2fa0231b188fbbf48b9ec8c118",
+    "tree": "23f0a6eb8fc3568c5733e92b1228898eaa00875f",
+    "ciRun": false
+  },
+  "currentBase": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "substantivePendingRepair": "Cookie-authoritative identity assertion in e2e/history.spec.ts, blobfe2341b67254a73ba8f4c48c23dd06efa509dc0d; no repaired-head hosted acceptance has yet executed.",
+  "lateEvidence": {
+    "terminalB": {
+      "path": "integrated-95d52be-terminal.json",
+      "bytes": 67692,
+      "sha256": "e67bdf3cc1dfbfa30d0e64d8cdbd4b7adcc87a939e1b876e44426b456ac422f3",
+      "run": 41948253612,
+      "attempt": 1,
+      "conclusion": "failure",
+      "jobs": 33,
+      "successful": 29,
+      "failed": 4,
+      "terminalAt": "2026-11-05T02:23:16Z"
+    },
+    "frozenCheckpoint": {
+      "path": "integrated-95d52be-ci.json",
+      "bytes": 47231,
+      "sha256": "c20f307fefa0fd95b44ff848ff0dde350e7ab6603a792f31c823768edb35394f",
+      "unchanged": true
+    }
+  },
+  "mobileFailure": {
+    "source": "95d52be36061315bff866dec615544104ca4767c",
+    "tested": "679ad75636799820e47bf0214ade771c3fe859e2",
+    "job": 126985936494,
+    "attempt": 0,
+    "maximumMs": 129.10000000009313,
+    "limitMs": 100,
+    "completedState": 672,
+    "cause": "unknown",
+    "causalRepairClaimed": false,
+    "retainedBundle": "../../../review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure",
+    "rawMetricsSha256": "6f2c334d0183717f7f03c9eac185ab1fe59a5a035471ee7c2958c68a8c69b9cd",
+    "rootVerifiedManifestAndExactDecompression": true,
+    "rootInspectedSyntheticSenderAndPeerImages": true
+  },
+  "followup": {
+    "id": "SPN-146",
+    "effort": "L",
+    "allocation": "existing CLI, not an ID rename or reuse",
+    "contract": "complete bounded native/runtime diagnosis and causal repair or supported measurement disposition; unchanged acceptance budgets"
+  },
+  "nextValidation": "One necessary full validation of the genuine previously unvalidated history repair after both exact-head grades. Every selected unprofiled first-attempt performance gate remains mandatory. A repeated failure stops for diagnosis or justified repair; no bookkeeping-only push, unchanged rerun or follow-up waiver.",
+  "backlog": {
+    "open": 23,
+    "completed": 20,
+    "nextId": 147,
+    "groomingLast": "2026-10-29",
+    "groomingEvery": 7,
+    "settingsUnchanged": true
+  },
+  "checks": [
+    {
+      "name": "mobile-followup-new",
+      "log": {
+        "bytes": 649,
+        "sha256": "8cb9a05424b3f105b914413445b3b3fe99ffece5d8a0a2e8f948e4f7890c48d8",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:new\n> node scripts/backlog/cli.ts new ⚡ Keep mobile native flushes within their budget\n\ncreated docs/todo/SPN-146.md; next_id is now 147\n{\"startedAt\":\"2026-11-05T02:23:57.374Z\",\"finishedAt\":\"2026-11-05T02:23:58.298Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"npm\",\"run\",\"backlog:new\",\"--\",\"⚡\",\"Keep mobile native flushes within their budget\"],\"elapsedMs\":923,\"peakKiB\":322776,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-05T02:23:57.374Z",
+        "finishedAt": "2026-11-05T02:23:58.298Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:new",
+          "--",
+          "⚡",
+          "Keep mobile native flushes within their budget"
+        ],
+        "elapsedMs": 923,
+        "peakKiB": 322776,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "name": "final-index",
+      "log": {
+        "bytes": 2038,
+        "sha256": "876694c05832d557bfaef4d6e128cbe5d2b49032887d5a62bb7a21de7c683818",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:index\n> node scripts/backlog/cli.ts index\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 20 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nSPN-146: score 21 → 22\nwrote docs/todo/readme.md\n{\"startedAt\":\"2026-11-05T02:25:44.080Z\",\"finishedAt\":\"2026-11-05T02:25:45.178Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"npm\",\"run\",\"backlog:index\"],\"elapsedMs\":1094,\"peakKiB\":331436,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-05T02:25:44.080Z",
+        "finishedAt": "2026-11-05T02:25:45.178Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:index"
+        ],
+        "elapsedMs": 1094,
+        "peakKiB": 331436,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "name": "final-backlog",
+      "log": {
+        "bytes": 2014,
+        "sha256": "bc5be69e5cd955cfc939fdd73093cdf30d207b0ca53f50d3a45e5813d22437b8",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:check\n> node scripts/backlog/cli.ts check\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 20 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nbacklog ok: 23 open tickets\n{\"startedAt\":\"2026-11-05T02:29:16.610Z\",\"finishedAt\":\"2026-11-05T02:29:17.423Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"npm\",\"run\",\"backlog:check\"],\"elapsedMs\":813,\"peakKiB\":326180,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-05T02:29:16.610Z",
+        "finishedAt": "2026-11-05T02:29:17.423Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:check"
+        ],
+        "elapsedMs": 813,
+        "peakKiB": 326180,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    }
+  ],
+  "unchangedExecutable": [
+    {
+      "path": "src",
+      "object": "d5bec485bdfbdedfa079dab310f276515dd2efb0"
+    },
+    {
+      "path": "server",
+      "object": "e8a59b3a704361c57612bf275cd98fc7596b6ea1"
+    },
+    {
+      "path": "web",
+      "object": "23c7a7440142128cec78e9d47ec59765afbf3bb6"
+    },
+    {
+      "path": "lib",
+      "object": "8ae87a1e7e322f9820914b9b1614f831d66c48ab"
+    },
+    {
+      "path": "e2e",
+      "object": "f5a789a91ad352c485414f93cd31022466d79415"
+    },
+    {
+      "path": "scripts",
+      "object": "1afefc44eaf17ab0107ae013df93e54ff149f61a"
+    },
+    {
+      "path": ".storybook",
+      "object": "ad8d6c1336a81e149a0eeb53977f94daa0abd188"
+    },
+    {
+      "path": ".github",
+      "object": "31a493ecbc294d11ade598757cc49f408d95bda5"
+    },
+    {
+      "path": "package.json",
+      "object": "f5772edccf157465975964205d30d37af2633288"
+    },
+    {
+      "path": "package-lock.json",
+      "object": "4e7c117548fd1caed8048588b42dfb122c67bb62"
+    }
+  ],
+  "canonicalMainFiles": [
+    {
+      "path": "docs/implementation/SPN-141.md",
+      "blob": "e1fddd8964f9d868fc3ba82343c34bfd3e749041"
+    },
+    {
+      "path": "docs/implementation/SPN-143.md",
+      "blob": "af3a5a416607e72169ace390b75975cbfc59d84d"
+    },
+    {
+      "path": "docs/implementation/SPN-144.md",
+      "blob": "be2f5b36f7d1c581213639093dd1aa10c3e74366"
+    },
+    {
+      "path": "docs/todo/SPN-141.md",
+      "blob": "2587a917821269f75d6d4a15c94f03cb35f2417d"
+    },
+    {
+      "path": "docs/todo/SPN-144.md",
+      "blob": "770fe266a6fc033ceda970d3988ee3d9635f72ba"
+    }
+  ],
+  "localCheckAttribution": "Corrected executable source is identical to the pre-integration70b154f checkpoint and the unpublishedec68084 checkpoint. Previous full typecheck,20auth/profile/HTTP cases and focused lint/format retain their recorded scope; no blocked full-app attempt was repeated.",
+  "pending": [
+    "exact committed-head PR check",
+    "two independent exact-head grades above95",
+    "fresh full selected CI/native/Storybook acceptance",
+    "independent visual approval",
+    "guarded merge and branch cleanup"
+  ],
+  "preparationFinding": {
+    "command": "git diff --cached --check",
+    "initialExitCode": 2,
+    "reason": "failure-log.txt:34: new blank line at EOF",
+    "disposition": {
+      "reason": "git diff --cached --check rejected one newly added blank line at EOF in the readable failure log; all test data and words remain unchanged.",
+      "original": {
+        "file": "failure-log.txt",
+        "bytes": 3606,
+        "sha256": "1779ab2ad57f44dd75c45eab041965bb5392d59ea2b1a5d9810f8d440280af29",
+        "preservedAs": "failure-log.txt.raw.gz",
+        "gzipBytes": 909,
+        "gzipSha256": "c1ddce072dab93929e1d9ec117df3bad6eb51ef50df78c307d15bc3936f5d801"
+      },
+      "readable": {
+        "file": "failure-log.txt",
+        "bytes": 3605,
+        "sha256": "c4de544de1b2e72aa0fd58d8aa13f4f6931d9877de842f4833db327e5a4477bc",
+        "change": "Only two final newline characters become one."
+      },
+      "originalManifest": {
+        "file": "original-safe-evidence-manifest.json",
+        "bytes": 1421,
+        "sha256": "a0bcb619805ec2019cfc3ed351105e1f5d44df697c16f20d9bf5f8cd68f9840a"
+      },
+      "receiptBoundary": "receipt.json and its entryDerivations remain verbatim source-extraction evidence; their original failure-log identity is exactly recoverable from the raw gzip. This manifest records the later readable representation."
+    }
+  }
+}

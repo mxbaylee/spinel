@@ -1,4 +1,4 @@
-# 🪪 SPN-089 history identity assertion failure
+# 🧾 SPN-089 rejected B acceptance failures
 
 ## 🔎 Source and first observed development failure
 
@@ -20,7 +20,9 @@ cases with no executed result, including Doc history. Those unexecuted cases
 are not acceptance. The production worker also reports both Sheet and Doc
 failing this same assertion; its exact attempts and other worker outcomes are
 retained in the [CI disposition](../../implementation/evidence/SPN-089/integrated-95d52be-ci.json).
-Pending or superseded work remains explicit there and in the PR's final record.
+That checkpoint remains frozen with its then-pending work. The additional
+[terminal record](../../implementation/evidence/SPN-089/integrated-95d52be-terminal.json)
+retains the later mobile failure and final aggregate result.
 
 The production failures occurred earlier but became observable after that shard
 completed: Sheet retry 0 began at **01:40:02.414 UTC** and Doc retry 0 at
@@ -84,3 +86,31 @@ The screenshot and other files retain their original bytes.
 B's independently successful native, Storybook and visual results remain in the
 [source-bound validation record](../../implementation/evidence/SPN-089/integrated-95d52be-validation.json).
 They do not waive B's failed ordinary CI or validate the repaired source.
+
+## ⚡ Later mobile capacity-flush failure
+
+The same run's [mobile responsiveness worker](https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936494)
+later finished failed on `mobile sustained native typing plain-1`, retry 0.
+It measured a genuine **129.1 ms** capacity pair against the **100 ms** maximum:
+history 59.8 ms and collaboration 69.2 ms at completed state 672. Both returned,
+clearing queues 32/32 to 0/0. The exact saved/live/peer content, selections and
+66-group undo/redo assertions had passed; those passes do not waive the timing
+failure. The worker had six passing cases and one failure, with no skipped or
+flaky cases. There is no trace or CPU profile of the failed sample.
+
+The [safe mobile receipt](mobile-responsiveness-first-failure/receipt.json)
+retains source/runtime identity, all baseline/candidate outcomes, numerical
+observations, archive/member hashes and privacy inspection. The original failed
+sample's complete metrics remain in an exact compressed object; its synthetic
+sender/peer screenshots and useful error context retain the failure surface.
+No page snapshot was included in the original error context, and none is inferred.
+The readable mobile log removes only one extra blank line at EOF for source
+whitespace checks. Its exact original remains in `failure-log.txt.raw.gz`;
+`original-safe-evidence-manifest.json` and the current `manifest.json` distinguish
+original extraction identities from that readable representation.
+
+[SPN-146](../../implementation/SPN-146.md#registration-and-scope) owns the separate
+unknown-cause native/runtime investigation. The history-session correction does
+not repair this measured path. The next substantively repaired source still
+requires one complete fresh acceptance run with all original budgets and first
+attempts; another failure requires diagnosis, not an unchanged rerun or waiver.

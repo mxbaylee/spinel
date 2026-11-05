@@ -47,8 +47,11 @@ Both independent nonimplementing reviewers checked the collision disposition
 against the no-reuse/no-renumber rule and the [SPN-136 retirement precedent](../../SPN-136.md).
 An already-open canonical ID cannot be reserved for this proposal. The CLI's
 fresh ID avoids introducing a reservation exception or lowering the counter.
-The combined backlog has 22 open tickets, 20 recorded completions and next ID
-146; grooming date 2026-10-29, reminder interval and all settings remain intact.
+At this collision checkpoint, the combined backlog had 22 open tickets, 20
+recorded completions and next ID 146; grooming date 2026-10-29, reminder interval
+and all settings remained intact. The later independent mobile-performance
+follow-up is recorded separately in [final candidate preparation](final-candidate-preparation.json);
+it does not change either SPN-144 allocation's historical identity.
 Owner and Collaborator retain the pending-work reliability obligation, Operator
 gets attributable registration and failure history, and Link guest retains the
 same access boundaries. No runtime behavior changes in this collision repair.
