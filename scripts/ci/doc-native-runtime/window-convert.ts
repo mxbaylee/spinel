@@ -41,7 +41,7 @@ try {
     execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim(),
   );
   assert.equal(preparation.nativeReference, '2f442317dd2e1c188ae4a810ac094fd1162a4a2a');
-  assert.equal(preparation.eventBefore, '02ef01a40fe8369b79477909673c76de6d2a4edf');
+  assert.equal(preparation.eventBefore, 'ab8966044fdc9c7645d5768956d84852ff308df3');
   assert.deepEqual(metrics.nativeDiagnosticBuild, preparation);
   for (const [path, expected] of Object.entries(preparation.sources))
     assert.equal(hash(await readFile(path)), expected, `Prepared source changed: ${path}`);
