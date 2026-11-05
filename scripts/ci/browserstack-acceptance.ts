@@ -23,6 +23,13 @@ import {
 } from './browserstack-scope.ts';
 import { prepareSpacePageOffline } from './browserstack-offline-preparation.ts';
 import { webdriverErrorCode } from './browserstack.ts';
+import {
+  inputCounterInstallScript,
+  inputCounterFocusScript,
+  inputCounterReadScript,
+  inputCounterDiagnostic,
+} from './browserstack-input-observation.ts';
+export { inputCounterInstallScript, inputCounterReadScript, inputCounterDiagnostic };
 
 type Row = Record<string, unknown>;
 type Kind = 'sheet' | 'doc';
@@ -680,43 +687,6 @@ async function docTextPoint(driver: PhoneAcceptanceDriver) {
   throw new Error('capability-acceptance-native-text-pixels-unavailable');
 }
 
-/**
- * Counts the page's text insertions (`input` events whose `inputType` starts
- * with `insert`) and reads the focused element's `data-u-comp` name. No text,
- * value or content is read. A later install replaces it.
- */
-export const inputCounterInstallScript = `
-  const key='__spinelInputCount';window[key]?.stop();const state={count:0};
-  const keep=(event)=>{if(typeof event.inputType==='string'&&event.inputType.startsWith('insert'))state.count++;};
-  document.addEventListener('input',keep,{capture:true,passive:true});
-  window[key]={state,stop:()=>{document.removeEventListener('input',keep,{capture:true});delete window[key];}};
-  return true;
-`;
-/** Returns the insertion count and the focused editor's name; `true` stops counting. */
-export const inputCounterReadScript = `
-  const counter=window.__spinelInputCount;const node=document.activeElement;
-  const comp=node?.closest?.('[data-u-comp]')?.getAttribute('data-u-comp');
-  const answer={installed:Boolean(counter),count:counter?counter.state.count:null,
-    focus:typeof comp==='string'?comp.slice(0,40):null,
-    editor:Boolean(node?.matches?.('[contenteditable="true"][data-u-comp="editor"]'))};
-  if(arguments[0]===true)counter?.stop();return answer;
-`;
-/** Keeps the bounded fields the counter returns. */
-export function inputCounterDiagnostic(value: unknown) {
-  const observed = value !== null && typeof value === 'object' ? (value as Row) : {};
-  return {
-    installed: observed.installed === true,
-    count:
-      typeof observed.count === 'number' && Number.isSafeInteger(observed.count)
-        ? observed.count
-        : null,
-    focus:
-      typeof observed.focus === 'string' && /^[\w-]{1,40}$/.test(observed.focus)
-        ? observed.focus
-        : null,
-    editor: observed.editor === true,
-  };
-}
 /** How long one key may take to reach the editor as an insertion. */
 export const keyInsertionMilliseconds = 2_000;
 
@@ -726,46 +696,89 @@ export const keyInsertionMilliseconds = 2_000;
 // counted this one's insertion. Every step is recorded; a dropped key fails
 // with its index recorded.
 async function nativeType(driver: PhoneAcceptanceDriver, text: string) {
-  await driver.execute(inputCounterInstallScript);
   const steps: (ReturnType<typeof inputCounterDiagnostic> & { index: number })[] = [];
   const keys = Array.from(text);
-  for (const [index, value] of keys.entries()) {
-    const focused = await until(
-      driver,
-      () =>
-        driver.execute(
-          `const node=document.activeElement;return node?.matches('[contenteditable="true"][data-u-comp="editor"]') ? node : null;`,
-        ),
-      (value) => value !== null,
-      'native-input-not-focused',
-    );
-    elementId(focused);
-    // Real key ticks only. No textContent assignment, synthetic InputEvent,
-    // command service or SDK edit is used.
-    await actions(driver, {
-      type: 'key',
-      id: 'phone-acceptance-keys',
-      actions: [
-        { type: 'keyDown', value },
-        { type: 'keyUp', value },
-      ],
-    });
-    let last = inputCounterDiagnostic(null);
+  let failure: unknown;
+  let failed = false;
+  let installed = false;
+  let cleanupObservation = inputCounterDiagnostic(null);
+  let cleanup: 'not-installed' | 'stopped' | 'failed' = 'not-installed';
+  try {
+    installed = true; // An uncertain install is still owned and needs removal.
+    await driver.execute(inputCounterInstallScript);
+    for (const [index, value] of keys.entries()) {
+      let last = inputCounterDiagnostic(null);
+      try {
+        const focused = await until(
+          driver,
+          () => driver.execute(inputCounterFocusScript, [index]),
+          (value) => value !== null,
+          'native-input-not-focused',
+        );
+        elementId(focused);
+        // Native actions remain unchanged. Observation never resends a key.
+        await actions(driver, {
+          type: 'key',
+          id: 'phone-acceptance-keys',
+          actions: [
+            { type: 'keyDown', value },
+            { type: 'keyUp', value },
+          ],
+        });
+        await until(
+          driver,
+          async () => (last = inputCounterDiagnostic(await driver.execute(inputCounterReadScript))),
+          (state) => state.count !== null && state.count >= index + 1,
+          'native-input-character-dropped',
+          keyInsertionMilliseconds,
+        );
+        requireCondition(
+          last.trace?.current &&
+            last.trace.index === index &&
+            last.trace.pending === 0 &&
+            last.trace.dropped === 0,
+          'native-input-observation-unavailable',
+        );
+      } finally {
+        steps.push({ index, ...last });
+      }
+    }
+  } catch (error) {
+    failed = true;
+    failure = error;
+  }
+  if (installed) {
     try {
-      await until(
-        driver,
-        async () => (last = inputCounterDiagnostic(await driver.execute(inputCounterReadScript))),
-        (state) => state.count !== null && state.count >= index + 1,
-        'native-input-character-dropped',
-        keyInsertionMilliseconds,
-      );
-    } finally {
-      steps.push({ index, ...last });
-      if (steps.length === keys.length || (last.count ?? 0) < index + 1)
-        await driver.record('native-input-keys', { keys: keys.length, steps });
+      // One removal read, using the existing failure-evidence budget when needed.
+      // No action, navigation or new polling loop follows a failed insertion.
+      const stop = () => driver.execute(inputCounterReadScript, [true]);
+      const value = failed && driver.diagnose ? await driver.diagnose(stop) : await stop();
+      const final = inputCounterDiagnostic(value);
+      cleanupObservation = final; // Never replace the deadline's first-failure snapshot.
+      requireCondition(final.installed && final.trace?.current, 'native-input-removal-unavailable');
+      cleanup = 'stopped';
+    } catch (error) {
+      cleanup = 'failed';
+      if (!failed) {
+        failed = true;
+        failure = error;
+      }
     }
   }
-  await driver.execute(inputCounterReadScript, [true]);
+  try {
+    await driver.record('native-input-keys', {
+      keys: keys.length,
+      steps,
+      cleanup,
+      cleanupObservation,
+    });
+  } catch (error) {
+    if (!failed) {
+      failed = true;
+      failure = error;
+    }
+  }
+  if (failed) throw failure;
 }
 
 async function author(

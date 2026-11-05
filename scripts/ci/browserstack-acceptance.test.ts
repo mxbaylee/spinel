@@ -37,7 +37,6 @@ import {
   tapTraceInstallScript,
   inputCounterInstallScript,
   inputCounterReadScript,
-  inputCounterDiagnostic,
   phoneNativeType,
   tapTraceReadScript,
   withTapTrace,
@@ -1221,24 +1220,60 @@ test('an editor that never opens records the tap trace and keeps its own failure
   ]);
 });
 
-test('native typing sends one key per action and waits for each insertion; a dropped key fails with its index recorded', async () => {
-  const typed = async (dropAfter: number) => {
+test('native typing preserves each observation boundary and never resends a dropped key', async () => {
+  const trace = (index: number) => ({
+    current: true,
+    index,
+    start: 0,
+    end: 0,
+    dropped: 0,
+    pending: 0,
+    events: [],
+  });
+  const observed = (index: number, count: number) => ({
+    installed: true,
+    count,
+    focus: 'editor',
+    editor: true,
+    trace: trace(index),
+  });
+  const typed = async (
+    dropAfter: number,
+    options: {
+      removalFailure?: boolean;
+      recordFailure?: boolean;
+      lateInsertion?: boolean;
+      actionFailure?: boolean;
+      staleTrace?: boolean;
+    } = {},
+  ) => {
     const calls: string[] = [];
-    const records: [string, unknown][] = [];
-    let inserted = 0;
+    const records: [string, any][] = [];
+    let inserted = 0,
+      index = -1;
     const driver = {
-      execute: async (script: string) => {
+      execute: async (script: string, args: unknown[] = []) => {
         if (script === inputCounterInstallScript) return (calls.push('install'), true);
-        if (script === inputCounterReadScript)
-          return { installed: true, count: inserted, focus: 'editor', editor: true };
+        if (script === inputCounterReadScript) {
+          if (args[0] === true) {
+            calls.push('stop');
+            if (options.removalFailure) throw new Error('removal-failed');
+            if (options.lateInsertion) inserted++;
+          }
+          const snapshot = observed(index, inserted);
+          if (options.staleTrace) snapshot.trace.current = false;
+          return snapshot;
+        }
+        index = Number(args[0]);
         calls.push('focus');
         return { 'element-6066-11e4-a52e-4f735466cecf': 'editor-1' };
       },
-      command: async (suffix: string, method = 'GET', body?: unknown) => {
+      command: async (_suffix: string, method = 'GET', body?: any) => {
         if (method === 'POST') {
-          const keys = (body as { actions: { actions: { type: string; value: string }[] }[] })
-            .actions[0]!.actions;
-          calls.push(keys.map((key) => `${key.type}:${key.value}`).join(' '));
+          calls.push(
+            body.actions[0].actions.map((key: any) => `${key.type}:${key.value}`).join(' '),
+          );
+          if (options.actionFailure) throw new Error('action-failed');
           if (inserted < dropAfter) inserted++;
         }
         return null;
@@ -1246,19 +1281,13 @@ test('native typing sends one key per action and waits for each insertion; a dro
       remaining: (maximum = 1) => maximum,
       record: async (stage: string, value: unknown) => {
         records.push([stage, value]);
+        if (options.recordFailure) throw new Error('recording-failed');
       },
     } as unknown as PhoneAcceptanceDriver;
     let error: unknown;
     await phoneNativeType(driver, '731').catch((caught: unknown) => (error = caught));
     return { calls, records, error };
   };
-  const step = (index: number, count: number) => ({
-    index,
-    installed: true,
-    count,
-    focus: 'editor',
-    editor: true,
-  });
   const whole = await typed(3);
   assert.equal(whole.error, undefined);
   assert.deepEqual(whole.calls, [
@@ -1269,52 +1298,50 @@ test('native typing sends one key per action and waits for each insertion; a dro
     'keyDown:3 keyUp:3',
     'focus',
     'keyDown:1 keyUp:1',
+    'stop',
   ]);
   assert.deepEqual(whole.records, [
-    ['native-input-keys', { keys: 3, steps: [step(0, 1), step(1, 2), step(2, 3)] }],
+    [
+      'native-input-keys',
+      {
+        keys: 3,
+        steps: [0, 1, 2].map((index) => ({ index, ...observed(index, index + 1) })),
+        cleanup: 'stopped',
+        cleanupObservation: observed(2, 3),
+      },
+    ],
   ]);
-  // Run 41938061698 kept only the first key: the second now fails, recorded.
-  const dropped = await typed(1);
-  assert.match(String(dropped.error), /native-input-character-dropped/);
-  assert.deepEqual(dropped.calls.slice(-1), ['keyDown:3 keyUp:3']);
-  assert.deepEqual(dropped.records, [
-    ['native-input-keys', { keys: 3, steps: [step(0, 1), step(1, 1)] }],
-  ]);
-  assert.deepEqual(inputCounterDiagnostic({ count: 1.5, focus: 'a b', editor: 'yes' }), {
-    installed: false,
-    count: null,
-    focus: null,
-    editor: false,
-  });
-});
-
-test('the input counter counts insertions only and reads the focused editor name, never text', () => {
-  const listeners = new Map<string, (event: unknown) => void>();
-  const editor = {
-    matches: () => true,
-    closest: () => ({ getAttribute: () => 'editor' }),
-    textContent: 'secret',
-  };
-  const document = {
-    activeElement: editor,
-    addEventListener: (type: string, listener: (event: unknown) => void) =>
-      listeners.set(type, listener),
-    removeEventListener: (type: string) => listeners.delete(type),
-  };
-  const window: Record<string, unknown> = {};
-  const context = createContext({ window, document });
-  const run = (script: string, args: unknown[] = []) =>
-    JSON.parse(
-      JSON.stringify(
-        runInContext(`(function(){${script}}).apply(null, args)`, Object.assign(context, { args })),
-      ),
+  // Physical run42080221117 lost the third character: keep that first cause.
+  for (const secondaryFailure of [false, true]) {
+    const dropped = await typed(2, {
+      removalFailure: secondaryFailure,
+      recordFailure: secondaryFailure,
+      lateInsertion: !secondaryFailure,
+    });
+    assert.match(String(dropped.error), /native-input-character-dropped/);
+    assert.equal(dropped.calls.filter((call) => call === 'keyDown:1 keyUp:1').length, 1);
+    assert.deepEqual(dropped.calls.slice(-2), ['keyDown:1 keyUp:1', 'stop']);
+    assert.deepEqual(
+      dropped.records[0][1].steps.map((step: any) => step.count),
+      [1, 2, 2],
     );
-  assert.equal(run(inputCounterInstallScript), true);
-  for (const inputType of ['insertText', 'deleteContentBackward', 'insertText', undefined])
-    listeners.get('input')!({ inputType, data: 'secret' });
-  const read = run(inputCounterReadScript, [true]);
-  assert.deepEqual(read, { installed: true, count: 2, focus: 'editor', editor: true });
-  assert.equal(JSON.stringify(read).includes('secret'), false);
-  assert.equal(listeners.size, 0, 'a final read stops counting');
-  assert.equal('__spinelInputCount' in window, false);
+    assert.equal(dropped.records[0][1].cleanup, secondaryFailure ? 'failed' : 'stopped');
+    if (!secondaryFailure)
+      assert.equal(
+        dropped.records[0][1].cleanupObservation.count,
+        3,
+        'a late insertion during cleanup cannot replace the failed deadline snapshot',
+      );
+  }
+  for (const [options, expected] of [
+    [{ actionFailure: true, removalFailure: true, recordFailure: true }, /action-failed/],
+    [{ staleTrace: true }, /native-input-observation-unavailable/],
+    [{ removalFailure: true }, /removal-failed/],
+    [{ recordFailure: true }, /recording-failed/],
+  ] as const) {
+    const failed = await typed(3, options);
+    assert.match(String(failed.error), expected);
+    assert.equal(failed.calls.filter((call) => call === 'stop').length, 1);
+    assert.equal(failed.records.length, 1);
+  }
 });
