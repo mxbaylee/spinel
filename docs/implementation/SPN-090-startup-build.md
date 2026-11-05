@@ -43,3 +43,18 @@ plan, without application or provider changes. It remains part of SPN-090's
 unresolved startup/device acceptance; it is not a new product or acceptance
 gate. Before final landing, reconcile diagnostic machinery and the complete
 PR scope rather than closing the ticket on this observation alone.
+
+## 🔧 First source review finding and repair
+
+Both independent reviews of `aaee734b` found that the inspector incorrectly
+required every HTML href to be an emitted file. Actual production HTML includes
+server-owned favicon routes with queries and public installation aliases.
+That candidate was not published. The repair validates emitted script,
+module-preload and stylesheet references separately, binds installation aliases
+to the descriptor's exact hashed assets, and labels the three fixed favicon
+routes as server-owned. Arbitrary missing JavaScript/CSS still fails.
+The fixture now reads the actual `web/index.html`, preserves query-bearing
+favicon URLs, and rejects missing runtime assets or tampered installation bytes.
+All four behavioral controls pass. An initial nullable flatMap return-type
+inference error was repaired with an explicit result type; scoped types and
+lint pass afterward. No hosted attempt was consumed by the rejected source.

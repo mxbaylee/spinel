@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { inspectBuildGraph, inspectFinalBuild, sha256 } from './browserstack-build-graph.ts';
+import { installationAssetName, installationPaths } from '../../src/shared/pwa.ts';
 
 const chunk = (fileName: string, imports: string[] = [], dynamicImports: string[] = []) => ({
   type: 'chunk' as const,
@@ -57,21 +58,35 @@ test('final settled files bind descriptor CSS, copied assets, and unchanged decl
   const directory = await mkdtemp(join(tmpdir(), 'spn090-final-build-'));
   try {
     await mkdir(join(directory, 'assets'));
+    const installation = Object.fromEntries(
+      installationPaths.map((path) => [path, installationAssetName(path, sha256(path))]),
+    );
     const descriptor = {
       protocol: 1,
       version: 'a'.repeat(16),
       compatibility: { format: 1, sdkVersion: '1.1.0' },
       entry: '/assets/application.js',
       css: ['/assets/editor.css'],
-      files: ['/assets/application.js', '/assets/editor.css'],
+      files: [
+        '/assets/application.js',
+        '/assets/editor.css',
+        ...Object.values(installation),
+      ].sort(),
+      installation,
     };
-    const html = `<script type="module" src="/assets/application.js"></script><script id="spinel-runtime" type="application/json">${JSON.stringify(descriptor)}</script>`;
+    const html = (await readFile('web/index.html', 'utf8'))
+      .replace('/main.tsx', '/assets/application.js')
+      .replace(
+        '</head>',
+        `<script id="spinel-runtime" type="application/json">${JSON.stringify(descriptor)}</script></head>`,
+      );
     const values = {
       'index.html': html,
       'service-worker.js': 'worker',
       'assets/application.js': 'app',
       'assets/editor.css': 'editor CSS',
       'copied.txt': 'public copy',
+      ...Object.fromEntries(installationPaths.map((path) => [installation[path].slice(1), path])),
     };
     for (const [file, value] of Object.entries(values))
       await writeFile(join(directory, file), value);
@@ -93,6 +108,19 @@ test('final settled files bind descriptor CSS, copied assets, and unchanged decl
     assert.equal(result.complete, true);
     assert.deepEqual(result.staticJavaScriptClosure, ['assets/application.js']);
     assert.deepEqual(result.preRenderStylesheets, ['/assets/editor.css']);
+    assert.deepEqual(
+      result.htmlEntrypoints.find((row) => row.href === '/favicon.ico?v=2'),
+      {
+        href: '/favicon.ico?v=2',
+        pathname: '/favicon.ico',
+        owner: 'server-pwa-route',
+        emitted: null,
+      },
+    );
+    assert.equal(
+      result.htmlEntrypoints.find((row) => row.href === '/manifest.webmanifest')?.emitted,
+      installation['/manifest.webmanifest'],
+    );
     assert.equal(
       result.finalFiles.find((row) => row.file === 'copied.txt')?.copiedOutsideBundle,
       true,
@@ -106,6 +134,21 @@ test('final settled files bind descriptor CSS, copied assets, and unchanged decl
     await assert.rejects(inspect(), /descriptor entry mismatch/);
     await writeFile(join(directory, 'index.html'), html);
     hashes['index.html'] = sha256(html);
+    const missingScript = html.replace(
+      'src="/assets/application.js"',
+      'src="/assets/missing.js?v=2"',
+    );
+    await writeFile(join(directory, 'index.html'), missingScript);
+    hashes['index.html'] = sha256(missingScript);
+    await assert.rejects(inspect(), /Missing HTML entry asset/);
+    await writeFile(join(directory, 'index.html'), html);
+    hashes['index.html'] = sha256(html);
+    await writeFile(join(directory, installation['/manifest.webmanifest'].slice(1)), 'tampered');
+    await assert.rejects(inspect(), /installation alias target/);
+    await writeFile(
+      join(directory, installation['/manifest.webmanifest'].slice(1)),
+      '/manifest.webmanifest',
+    );
     await symlink('/etc/hosts', join(directory, 'escaped'));
     await assert.rejects(inspect(), /Symlink/);
     await rm(join(directory, 'escaped'));

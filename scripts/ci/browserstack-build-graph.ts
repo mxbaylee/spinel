@@ -3,6 +3,7 @@ import { gzipSync } from 'node:zlib';
 import { lstat, readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { runtimeDescriptor, shellFiles } from '../../src/shared/offlineShell.ts';
+import { installationAssetDigest, isInstallationPath } from '../../src/shared/pwa.ts';
 
 export type BuildMember = {
   type: 'asset' | 'chunk';
@@ -143,12 +144,49 @@ export async function inspectFinalBuild(
     JSON.stringify(descriptor.files.filter((file) => file.endsWith('.css')))
   )
     throw new Error('Final descriptor CSS inventory mismatch');
-  const htmlEntrypoints = [
-    ...html.matchAll(/<(?:script|link)\b[^>]*(?:src|href)="([^"]+)"[^>]*>/g),
-  ].map((match) => match[1]);
-  for (const path of htmlEntrypoints)
-    if (!path.startsWith('/') || !bytes.has(path.slice(1)))
-      throw new Error('Missing HTML entry asset');
+  const htmlEntrypoints = [...html.matchAll(/<(script|link)\b([^>]*)>/g)].flatMap<{
+    href: string;
+    pathname: string;
+    owner: string;
+    emitted: string | null;
+  }>((match) => {
+    const attributes = Object.fromEntries(
+      [...match[2].matchAll(/([\w-]+)="([^"]*)"/g)].map((attribute) => [
+        attribute[1],
+        attribute[2],
+      ]),
+    );
+    const href = attributes.src ?? attributes.href;
+    if (!href) return [];
+    const url = new URL(href, 'https://inspection.invalid');
+    if (
+      !href.startsWith('/') ||
+      href.startsWith('//') ||
+      url.origin !== 'https://inspection.invalid' ||
+      /[\\\0]/.test(href)
+    )
+      throw new Error('Unsupported HTML asset URL');
+    const pathname = decodeURIComponent(url.pathname);
+    const runtime =
+      match[1] === 'script' || ['modulepreload', 'stylesheet'].includes(attributes.rel);
+    if (runtime) {
+      if (!bytes.has(pathname.slice(1))) throw new Error('Missing HTML entry asset');
+      return [{ href, pathname, owner: 'emitted-runtime', emitted: pathname }];
+    }
+    if (isInstallationPath(pathname)) {
+      const emitted = descriptor.installation?.[pathname];
+      const value = emitted && bytes.get(emitted.slice(1));
+      if (!emitted || !value || sha256(value) !== installationAssetDigest(pathname, emitted))
+        throw new Error('Missing or changed installation alias target');
+      return [{ href, pathname, owner: 'server-route-and-retained-installation-alias', emitted }];
+    }
+    if (
+      attributes.rel === 'icon' &&
+      ['/favicon.ico', '/favicon-32.png', '/favicon.svg'].includes(pathname)
+    )
+      return [{ href, pathname, owner: 'server-pwa-route', emitted: null }];
+    throw new Error('Unclassified HTML asset reference');
+  });
   return {
     ...graph,
     complete: true,
