@@ -47,6 +47,7 @@ const harnessPaths = [
   'web/docResponsivenessEvidence.ts',
   'src/ui/docIdleEpisode.ts',
   'src/ui/nativeDocFlush.ts',
+  'src/ui/nativeDocFlushDiagnostic.ts',
   'playwright.config.ts',
   'package-lock.json',
 ];

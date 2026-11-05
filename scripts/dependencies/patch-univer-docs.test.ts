@@ -36,6 +36,8 @@ import type {
 } from '@univerjs/docs';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { patchInstalledDocs, prepareDocsPatch } from './patch-univer-docs.ts';
+import { observeNativeDocComposition } from '../../src/ui/nativeDocFlushDiagnostic.ts';
+import type { DiagnosticManager } from '../../src/ui/nativeDocFlushDiagnostic.ts';
 import type {
   NativeDocFlushManager,
   NativeDocFlushObservation,
@@ -1888,6 +1890,145 @@ for (const format of ['es', 'cjs'] as const) {
           `${cover}/${name}: admitted join reduces work`,
         );
       }
+  });
+
+  test(`${format}: following-retain and old-body variants preserve exact paragraph joins`, async () => {
+    const { original, patched, constantGuardPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const variants: [string, (body: any) => void][] = [
+      [
+        'style absent',
+        (body) => {
+          delete body.textRuns[0].ts;
+        },
+      ],
+      [
+        'style undefined',
+        (body) => {
+          body.textRuns[0].ts = undefined;
+        },
+      ],
+      [
+        'style empty',
+        (body) => {
+          body.textRuns[0].ts = {};
+        },
+      ],
+      [
+        'run identity undefined',
+        (body) => {
+          body.textRuns[0].sId = undefined;
+        },
+      ],
+      [
+        'marker present',
+        (body) => {
+          body.__textXPreserveParagraphIds = true;
+        },
+      ],
+      ...[
+        'paragraphs',
+        'customRanges',
+        'customDecorations',
+        'customBlocks',
+        'sectionBreaks',
+      ].flatMap((field) =>
+        (['absent', 'undefined', 'empty'] as const).map((mode): [string, (body: any) => void] => [
+          `${field} ${mode}`,
+          (body) => {
+            if (mode === 'absent') delete body[field];
+            else body[field] = mode === 'undefined' ? undefined : [];
+          },
+        ]),
+      ),
+    ];
+    for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
+      for (const target of ['body', 'oldBody'])
+        for (const [name, mutate] of [
+          ...variants,
+          ...(target === 'oldBody'
+            ? [
+                [
+                  'old runs empty',
+                  (body: any) => {
+                    body.textRuns = [];
+                  },
+                ] as [string, (body: any) => void],
+              ]
+            : []),
+        ]) {
+          const scenario = paragraphSequence(3, 16, cover, 5);
+          mutate((scenario.states[3].redoState.actions as any)[1].e[2][target]);
+          const native = measuredFlush(original, scenario.states, scenario.states, true);
+          const before = measuredFlush(
+            constantGuardPatched,
+            scenario.states,
+            scenario.states,
+            true,
+          );
+          const after = measuredFlush(patched, scenario.states, scenario.states, true);
+          const context = `${cover}/${target}/${name}`;
+          assert.deepEqual(
+            after.output,
+            native.output,
+            `${context}: upstream raw bridge semantics`,
+          );
+          assert.deepEqual(after.output, before.output, `${context}: current raw bridge semantics`);
+          // These artificial old-body representations use native composition as
+          // the oracle; do not claim they came from an independently authored edit.
+          assert.deepEqual(
+            appliedSnapshots(after.output, scenario),
+            appliedSnapshots(before.output, scenario),
+            `${context}: complete applied snapshots`,
+          );
+          assert.ok(
+            after.counts.allocations < before.counts.allocations,
+            `${context}: admitted join`,
+          );
+        }
+  });
+
+  test(`${format}: diagnostic wrappers preserve actual manager output and native phase ownership`, async () => {
+    const { constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
+    const scenario = paragraphSequence(3);
+    const control = flush(constantGuardPatched, scenario.states);
+    const fixture = managerFixture(constantGuardPatched);
+    const compose = core.JSONX.compose;
+    const diagnostic = observeNativeDocComposition(
+      fixture.manager as unknown as DiagnosticManager,
+      core.JSONX,
+      unitId,
+    );
+    try {
+      fixture.manager.setStateCache(unitId, {
+        history: [...scenario.states],
+        collaboration: [...scenario.states],
+      });
+      fixture.manager.flushPendingChanges(unitId);
+      const report = diagnostic.finish();
+      assert.equal(report.restored, true);
+      assert.equal(report.dropped, 0);
+      assert.equal(report.states, 64);
+      assert.deepEqual(
+        report.captures.map((value) => value.phase),
+        ['history', 'collaboration'],
+      );
+      assert.deepEqual(
+        report.captures.map((value) => decodeCapture(value.cache)),
+        [scenario.states, scenario.states],
+      );
+      assert.ok(report.calls.length > 0);
+      assert.deepEqual(
+        { history: fixture.history, changes: fixture.changes, publication: fixture.publication },
+        control,
+      );
+      assert.equal(core.JSONX.compose, compose);
+    } finally {
+      diagnostic.finish();
+      fixture.close();
+    }
   });
 
   test(`${format}: unsupported markers after odd and even prefixes retain raw native publication`, async () => {
