@@ -1,0 +1,120 @@
+{
+  "source": "97d0b3203fbddc673d5a9bc729410949eb875523",
+  "run": 42110760785,
+  "artifact": 13455300311,
+  "disposition": "Complete32 observations;13/16 criterion passes and3misses at1440.Qualification failed/inconclusive, allowanceclosed. OrdinaryCI/native/Story snapshots are pending, not final acceptance.",
+  "payloads": [
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/analysis.json.gz",
+      "rawBytes": 2598372,
+      "storedBytes": 170049,
+      "rawSha256": "d6a7045fca3ff1a0037eee5716de03df41680a8e80e7367a532077fa40098d76",
+      "storedSha256": "8932cf24573b03adf520f87e5c1985270e518d9fc6da46bbee037cc5723a7d11"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/audit-a.log.gz",
+      "rawBytes": 1576,
+      "storedBytes": 709,
+      "rawSha256": "4e7cfb1c3ab4390016240ed7c259ee2efad402d2e14b27cad4714d3669a4abca",
+      "storedSha256": "5491fb46aad7acaddc7fc8939d25e7c269b68c48750622b71b4257c6ad79b0f4"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/audit-a.ts.gz",
+      "rawBytes": 3684,
+      "storedBytes": 1484,
+      "rawSha256": "e683d737facb0133a5d2efd283d4769b4e797634b639ab65f79d94375010d5c4",
+      "storedSha256": "e6b51506bdad9b2fac5136a3f375926f3c3c8b53e36b636b75e7308b416348d4"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/ci-current.json.gz",
+      "rawBytes": 68241,
+      "storedBytes": 4291,
+      "rawSha256": "77093caf9ba390fc712d722dedf163ec727ff7512e3be648c5a41f0baaa0faf3",
+      "storedSha256": "f93a501bb032ca8d4b9a3555b19b112480e4b1321da0773ea45f30aae59dc10c"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/compact-proof-a.json.gz",
+      "rawBytes": 12617,
+      "storedBytes": 2357,
+      "rawSha256": "7c9582fffe89a4c4d7418d90e69693b7028033fc91b3a1923fc16e45329e5b08",
+      "storedSha256": "ea49fd4b6f8f3e2ab6e67afc0f55cdddf66d104a4db83d7a1057855f8725018b"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/crosscheck-a.log.gz",
+      "rawBytes": 3378,
+      "storedBytes": 1159,
+      "rawSha256": "5395b11bad441d250ec40007734d1f598aed169df60c5f803f1be3303b534252",
+      "storedSha256": "c0410201cfc35720330ec3cdc2f6b86db5107a179212e4811e58bee4a7f872b2"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/crosscheck-a.ts.gz",
+      "rawBytes": 5071,
+      "storedBytes": 1937,
+      "rawSha256": "f5a8ef0d69d152d2dca6d2d40a542e185a604dd138d0648b8318e2e0951b754d",
+      "storedSha256": "c33f640b051223451aea07a2305a5ed4c9be035cb513be743827c172e8bd05af"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/crosscheck-watchdog-a.json.gz",
+      "rawBytes": 1547,
+      "storedBytes": 426,
+      "rawSha256": "98f951443e2b03485624f2c548cdbb69d70208820a77fc30e6f1d151d6e64953",
+      "storedSha256": "5515ce4b74838bd30d35509de91f2967358759b252446401003ce6ffaf920ad3"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/jobs-a.json.gz",
+      "rawBytes": 3163,
+      "storedBytes": 884,
+      "rawSha256": "815aa67ef1899f70fc7a3782f04673a93b0c5edf375215620ff9e59888afaaa3",
+      "storedSha256": "a17ae7c983d3a30d613fd158a263c4c46b93d499d08d23827d7b78866860d6a0"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/native-current.json.gz",
+      "rawBytes": 7911,
+      "storedBytes": 1003,
+      "rawSha256": "73f702945316f16fcae0e4afd8413770e00184ae6437885b4bf5b5301d439f14",
+      "storedSha256": "d966e256d886b878d240f4a4b32ce31e90494c29d3d97d2f55d147925be4ca06"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/original.zip",
+      "rawBytes": 2486861,
+      "storedBytes": 2486861,
+      "rawSha256": "e105d8e249b9acf0a3e60aa06e52a1fda8262715070cd70e4edc4a4a2a988508",
+      "storedSha256": "e105d8e249b9acf0a3e60aa06e52a1fda8262715070cd70e4edc4a4a2a988508"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/outcome-review-a.md.gz",
+      "rawBytes": 7326,
+      "storedBytes": 3475,
+      "rawSha256": "c98fb2ef2aa21fbe5e19341f7a31e3260788d3f766845e779ab4848a6a642db8",
+      "storedSha256": "cb69109636d0ab257a4cec30c8684221ec838be864e19ec6561c312a56ef8c8b"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/proof-a.json.gz",
+      "rawBytes": 501620,
+      "storedBytes": 69505,
+      "rawSha256": "af23cb508419e8c46ad53d500ca61089ba581da184c49fe7a5cd3b2031a695e3",
+      "storedSha256": "da94c1acb8f6bcb9ab59fff80e7bb9f14b697fec18767cd4b9e88ebd439e8652"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/run-a.json.gz",
+      "rawBytes": 12218,
+      "storedBytes": 1688,
+      "rawSha256": "b714b09969133b655768960c2124907b76c8bc8bc14e17ce572f4e339f8e697e",
+      "storedSha256": "2e73798a97595d0b64300ec30dd2f6587125230f93a62b9c26be5454da97e86f"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/story-current.json.gz",
+      "rawBytes": 11314,
+      "storedBytes": 1297,
+      "rawSha256": "dc9417f7e1fd55c29ab1e3dba93327992a45a3054686cb70ef353d47d0638a17",
+      "storedSha256": "c5e0d3a5bb5df1bd72dcf006819a6f8aadaca21a86469441ab0644e148d0e657"
+    },
+    {
+      "path": "docs/review-assets/spn-146-linear-outcome-97d0b320/watchdog-a.json.gz",
+      "rawBytes": 3395,
+      "storedBytes": 565,
+      "rawSha256": "882dc8d17a5997544307a11a78f53a3ab232aa78d4fec3aade242c45f445e042",
+      "storedSha256": "d8e3f59d2a88b4dd95a84ba2e036987cf03236a2779bf6619fc8b5bef01545c1"
+    }
+  ]
+}
