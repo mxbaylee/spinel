@@ -88,67 +88,15 @@ export function analyzeRuntime(observation: any, events: Event[]) {
   marks.push(observation.gcControl.gcStart, observation.gcControl.gcEnd);
   assert.equal(marks.length, 194);
   assert.equal(new Set(marks.map((m) => m.name)).size, 194);
-  const offsets: number[] = [];
-  let renderer: { pid: number; tid: number } | undefined;
-  for (const mark of marks) {
-    const matches = events.filter((e) => e.name === mark.name);
-    assert.equal(matches.length, 1, mark.name);
-    const event = matches[0]!;
-    assert.ok(
-      finite(event.ts) && Number.isSafeInteger(event.pid) && Number.isSafeInteger(event.tid),
+  const { low, high, renderer, thread, spans, gc, gcDurationUnknown, control } =
+    alignNativeRuntimeTrace(
+      events,
+      marks,
+      observation.gcControl.gcStart,
+      observation.gcControl.gcEnd,
     );
-    assert.ok(event.cat?.split(',').includes('blink.user_timing'));
-    renderer ??= { pid: event.pid!, tid: event.tid! };
-    assert.deepEqual({ pid: event.pid, tid: event.tid }, renderer);
-    offsets.push(event.ts / 1000 - mark.time);
-  }
-  const low = Math.min(...offsets),
-    high = Math.max(...offsets);
-  assert.ok(high - low <= 0.25, 'Marker clock offset exceeds0.25ms quantization bound');
-  const thread = events
-    .map((event, index) => ({ ...event, index }))
-    .filter((e) => e.pid === renderer!.pid && e.tid === renderer!.tid);
-  const gcName = (e: Event) =>
-    e.cat?.split(',').includes('disabled-by-default-v8.gc') ||
-    /(?:^|[._])GC(?:[._]|$)|(?:Major|Minor)GC|GarbageCollection/i.test(e.name ?? '');
-  // Chromium's instant, flow and nestable-async records are context, not measured
-  // pause intervals. Keep every record; never infer duration from link distances.
-  // Phase authority and the original rejection are recorded in SPN-146.md.
-  const gc = thread.filter(gcName);
-  assert.ok(
-    gc.every((e) => ['X', 'B', 'E', 'I', 's', 't', 'f', 'b', 'e', 'n'].includes(e.ph ?? '')),
-    'Unsupported GC representation',
-  );
-  const gcDurationUnknown = gc.filter((e) => !['X', 'B', 'E'].includes(e.ph!));
-  for (const e of gcDurationUnknown) {
-    assert.ok(finite(e.ts) && e.dur === undefined, 'Malformed GC context record');
-  }
-  const spans: any[] = [],
-    stack: any[] = [];
-  for (const e of thread) {
-    if (e.ph === 'B') stack.push(e);
-    if (e.ph === 'E') {
-      const first = stack.pop();
-      assert.ok(first && finite(first.ts) && finite(e.ts));
-      assert.ok(e.ts >= first.ts);
-      if (e.name) assert.equal(e.name, first.name, 'Mismatched synchronous interval end');
-      if (gcName(first)) spans.push({ ...first, dur: e.ts - first.ts, endIndex: e.index });
-    }
-    if (e.ph === 'X' && gcName(e)) {
-      assert.ok(finite(e.ts) && finite(e.dur) && e.dur >= 0);
-      spans.push(e);
-    }
-  }
-  assert.equal(stack.length, 0, 'Unclosed synchronous trace interval');
   const overlaps = (event: any, began: number, ended: number) =>
     event.ts / 1000 <= ended && (event.ts + event.dur) / 1000 >= began;
-  const control = spans.filter(
-    (e) =>
-      e.dur > 0 &&
-      e.ts / 1000 >= observation.gcControl.gcStart.time + high &&
-      (e.ts + e.dur) / 1000 <= observation.gcControl.gcEnd.time + low,
-  );
-  assert.ok(control.length > 0, 'No visible post-observation GC interval control');
   const rows = intervals.map((range) => {
     const began = range.began + low,
       ended = range.ended + high;
@@ -232,4 +180,73 @@ export function validateRuntimeJournal(observation: any, journal: any) {
     { resource: 'context', status: 'fulfilled' },
     { resource: 'browser', status: 'fulfilled' },
   ]);
+}
+
+/** Shared strict clock/GC interpretation; callers own workload semantics. */
+export function alignNativeRuntimeTrace(
+  events: Event[],
+  marks: Array<{ name: string; time: number }>,
+  gcStart: { time: number },
+  gcEnd: { time: number },
+) {
+  assert.ok(marks.length >= 4 && new Set(marks.map((m) => m.name)).size === marks.length);
+  assert.ok(marks.every((m) => finite(m.time)));
+  const offsets: number[] = [];
+  let renderer: { pid: number; tid: number } | undefined;
+  for (const mark of marks) {
+    const matches = events.filter((e) => e.name === mark.name);
+    assert.equal(matches.length, 1, mark.name);
+    const event = matches[0]!;
+    assert.ok(
+      finite(event.ts) && Number.isSafeInteger(event.pid) && Number.isSafeInteger(event.tid),
+    );
+    assert.ok(event.cat?.split(',').includes('blink.user_timing'));
+    renderer ??= { pid: event.pid!, tid: event.tid! };
+    assert.deepEqual({ pid: event.pid, tid: event.tid }, renderer);
+    offsets.push(event.ts / 1000 - mark.time);
+  }
+  const low = Math.min(...offsets),
+    high = Math.max(...offsets);
+  assert.ok(high - low <= 0.25, 'Marker clock offset exceeds0.25ms quantization bound');
+  const thread = events
+    .map((event, index) => ({ ...event, index }))
+    .filter((e) => e.pid === renderer!.pid && e.tid === renderer!.tid);
+  const gcName = (e: Event) =>
+    e.cat?.split(',').includes('disabled-by-default-v8.gc') ||
+    /(?:^|[._])GC(?:[._]|$)|(?:Major|Minor)GC|GarbageCollection/i.test(e.name ?? '');
+  // Chromium's instant, flow and nestable-async records are context, not measured
+  // pause intervals. Keep every record; never infer duration from link distances.
+  // Phase authority and the original rejection are recorded in SPN-146.md.
+  const gc = thread.filter(gcName);
+  assert.ok(
+    gc.every((e) => ['X', 'B', 'E', 'I', 's', 't', 'f', 'b', 'e', 'n'].includes(e.ph ?? '')),
+    'Unsupported GC representation',
+  );
+  const gcDurationUnknown = gc.filter((e) => !['X', 'B', 'E'].includes(e.ph!));
+  for (const e of gcDurationUnknown) {
+    assert.ok(finite(e.ts) && e.dur === undefined, 'Malformed GC context record');
+  }
+  const spans: any[] = [],
+    stack: any[] = [];
+  for (const e of thread) {
+    if (e.ph === 'B') stack.push(e);
+    if (e.ph === 'E') {
+      const first = stack.pop();
+      assert.ok(first && finite(first.ts) && finite(e.ts));
+      assert.ok(e.ts >= first.ts);
+      if (e.name) assert.equal(e.name, first.name, 'Mismatched synchronous interval end');
+      if (gcName(first)) spans.push({ ...first, dur: e.ts - first.ts, endIndex: e.index });
+    }
+    if (e.ph === 'X' && gcName(e)) {
+      assert.ok(finite(e.ts) && finite(e.dur) && e.dur >= 0);
+      spans.push(e);
+    }
+  }
+  assert.equal(stack.length, 0, 'Unclosed synchronous trace interval');
+  const control = spans.filter(
+    (e) =>
+      e.dur > 0 && e.ts / 1000 >= gcStart.time + high && (e.ts + e.dur) / 1000 <= gcEnd.time + low,
+  );
+  assert.ok(control.length > 0, 'No visible post-observation GC interval control');
+  return { low, high, renderer, thread, spans, gc, gcDurationUnknown, control };
 }

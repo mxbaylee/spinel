@@ -57,6 +57,37 @@ test('native diagnostic delegates exact calls, losslessly retains preflush data 
   assert.equal(diagnostic.finish().captures.length, 2);
 });
 
+test('nonterminal scalar snapshot preserves ownership and continued native observation', () => {
+  const { manager, composer, cache } = fixture();
+  const diagnostic = observeNativeDocComposition(manager, composer, 'doc');
+  const wrapper = manager._pushHistory;
+  manager.flushPendingChanges('doc');
+  const first = diagnostic.snapshot();
+  assert.deepEqual(
+    { ...first, observedAt: 0 },
+    {
+      unitId: 'doc',
+      observedAt: 0,
+      states: 2,
+      phases: 2,
+      dropped: 0,
+      errors: [],
+      activePair: null,
+      stopped: false,
+      ownsMethods: true,
+      phasesReturned: true,
+    },
+  );
+  assert.equal(manager._pushHistory, wrapper);
+  cache.history = [{ ownUndefined: undefined }];
+  cache.collaboration = [{ actions: [] }];
+  manager.flushPendingChanges('doc');
+  assert.equal(diagnostic.snapshot().states, 4);
+  assert.equal(diagnostic.finish().captures.length, 4);
+  assert.equal(diagnostic.snapshot().stopped, true);
+  assert.equal(diagnostic.snapshot().ownsMethods, false);
+});
+
 test('capture errors do not change native behavior and remain incomplete evidence', () => {
   const { manager, composer, cache } = fixture();
   let reads = 0;

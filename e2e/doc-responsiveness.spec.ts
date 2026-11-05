@@ -35,6 +35,11 @@ import { registerDocResponsivenessBoundaries } from './doc-responsiveness-bounda
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
 import { startNativeDiagnosticTrace } from './doc-responsiveness-native-trace.ts';
 import {
+  nativeWindowInput,
+  validateNativeWindowBoundary,
+} from './doc-responsiveness-native-window.ts';
+import { observeNativeWindowSources } from './doc-responsiveness-native-sources.ts';
+import {
   callbackProgress,
   runOwnedObservation,
   persistCallbackManifest,
@@ -425,7 +430,7 @@ for (const preset of ['desktop', 'mobile'] as const)
         let diagnosticTrace: Awaited<ReturnType<typeof startNativeDiagnosticTrace>> | undefined;
         let diagnosticFinished = false;
         let diagnosticCleanupFailure: unknown;
-        const nativeCapture = (action: 'start' | 'finish') =>
+        const nativeCapture = (action: 'start' | 'snapshot' | 'finish') =>
           f.page.evaluate((action) => {
             let value: any = null;
             const listener = (event: Event) => {
@@ -442,6 +447,8 @@ for (const preset of ['desktop', 'mobile'] as const)
             return value;
           }, action);
         let reloadObservers: ReloadObservers | undefined;
+        let loadedSources: Awaited<ReturnType<typeof observeNativeWindowSources>> | undefined;
+        let compositionObserver: Awaited<ReturnType<Page['evaluateHandle']>> | undefined;
         let clockOrigins: ClockOrigins | undefined;
         const drainDiagnostics: DocDrainDiagnostics = {
           nodeTimeOrigin: performance.timeOrigin,
@@ -472,6 +479,8 @@ for (const preset of ['desktop', 'mobile'] as const)
                 'e2e/doc-responsiveness-fixture.ts',
                 'e2e/doc-responsiveness-boundaries.ts',
                 'e2e/doc-responsiveness-native-trace.ts',
+                'e2e/doc-responsiveness-native-window.ts',
+                'e2e/doc-responsiveness-native-sources.ts',
                 'e2e/doc-responsiveness-callback-trace.ts',
                 'e2e/doc-responsiveness-callback-progress.ts',
                 'web/docResponsivenessEvidence.ts',
@@ -543,6 +552,8 @@ for (const preset of ['desktop', 'mobile'] as const)
           evidence.cgroupLimit = (
             await readFile('/sys/fs/cgroup/memory.max', 'utf8').catch(() => 'unavailable')
           ).trim();
+          if (nativeDiagnostic)
+            loadedSources = await observeNativeWindowSources(cdp, new URL(baseURL!).origin);
           await Promise.all([
             f.page.goto(`/?item=${f.item.id}`),
             f.other.goto(`/?item=${f.item.id}`),
@@ -591,17 +602,47 @@ for (const preset of ['desktop', 'mobile'] as const)
             evidence.nativeDiagnosticBuild = JSON.parse(
               await readFile('spn146-diagnostic-build.json', 'utf8'),
             );
-            diagnosticTrace = await startNativeDiagnosticTrace(
-              cdp,
-              info.outputPath('spn146-runtime-trace.pftrace.gz'),
-              progress!,
-              { signal: controller.signal, interrupt: detachSession },
+            const build = evidence.nativeDiagnosticBuild as any;
+            expect(build.role).toBe('prior-native');
+            expect(build.source).toBe(evidence.source);
+            evidence.nativeLoadedSources = await loadedSources!.retain(
+              info.outputPath('spn146-loaded-sources'),
+              {
+                'node_modules/@univerjs/docs/lib/es/index.js': build.builds.find(
+                  (x: any) => x.format === 'es',
+                ).priorSha256,
+                'node_modules/@univerjs/core/lib/es/index.js':
+                  build.sources['node_modules/@univerjs/core/lib/es/index.js'],
+              },
             );
+            await loadedSources!.dispose();
+            loadedSources = undefined;
             evidence.nativeDiagnosticStart = await nativeCapture('start');
             expect((evidence.nativeDiagnosticStart as any)?.started).toBe(true);
-            await f.page.evaluate(() => performance.mark('spn146-native-diagnostic-start'));
+            compositionObserver = await f.page.evaluateHandle(() => {
+              let active = false,
+                starts = 0,
+                ends = 0;
+              const start = () => {
+                active = true;
+                starts++;
+              };
+              const end = () => {
+                active = false;
+                ends++;
+              };
+              window.addEventListener('compositionstart', start, true);
+              window.addEventListener('compositionend', end, true);
+              return {
+                read: () => ({ active, starts, ends }),
+                dispose() {
+                  window.removeEventListener('compositionstart', start, true);
+                  window.removeEventListener('compositionend', end, true);
+                },
+              };
+            });
           }
-          if (profiled) {
+          const startProfiler = async () => {
             await cdp.send('Profiler.enable');
             await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
             const beforeMs = await f.page.evaluate(() => performance.now());
@@ -610,7 +651,8 @@ for (const preset of ['desktop', 'mobile'] as const)
             const afterMs = await f.page.evaluate(() => performance.now());
             profilerClock = { beforeMs, afterMs };
             evidence.profilerStartBracket = profilerClock;
-          }
+          };
+          if (profiled && !nativeDiagnostic) await startProfiler();
           const armedNative = await readDocResponsiveness(f.page, false, {
             action: 'arm',
             epoch: randomUUID(),
@@ -630,11 +672,100 @@ for (const preset of ['desktop', 'mobile'] as const)
           finishInput = await observeInput(f.page);
           progress?.phase('typing');
           const typingStarted = performance.now();
-          for (const [index, paragraph] of paragraphs.entries()) {
-            progress?.phase('typing-paragraph', index + 1);
-            if (index > 0) await f.page.keyboard.press('Enter');
-            // This is the retained SPN-072 reproducer. Never use insertText here.
-            await f.page.keyboard.type(paragraph);
+          if (nativeDiagnostic) {
+            const window: any = {
+              complete: false,
+              start: 384,
+              end: 448,
+              boundaries: [],
+              marks: [],
+              source: evidence.source,
+              timingAcceptance: false,
+              continuationPerturbedByGC: true,
+            };
+            evidence.nativeWindow = window;
+            const persistWindow = async () => {
+              const failure = await persistCallbackManifest(
+                info.outputPath('spn146-window.json'),
+                window,
+                primaryDiagnosticFailure,
+              );
+              if (failure) throw failure;
+            };
+            const boundary = async (completed: 384 | 448, phase: string) => {
+              progress!.phase(phase);
+              const native = await readDocResponsiveness(f.page);
+              const capture = await nativeCapture('snapshot');
+              const composition = await compositionObserver!.evaluate((value: any) => value.read());
+              window.boundaries.push({ phase, completed, native, capture, composition });
+              await persistWindow();
+              expect(native).not.toBeNull();
+              validateNativeWindowBoundary(native!, capture, drainArm!, completed, composition);
+            };
+            const mark = async (name: string) => {
+              const value = await f.page.evaluate(
+                (name) => ({
+                  name,
+                  time: performance.mark(name).startTime,
+                  timeOrigin: performance.timeOrigin,
+                }),
+                name,
+              );
+              window.marks.push(value);
+              return value;
+            };
+            window.input = nativeWindowInput(paragraphs);
+            await persistWindow();
+            for (const entry of window.input) {
+              controller.signal.throwIfAborted();
+              if (entry.action === 'enter') await f.page.keyboard.press('Enter');
+              else await f.page.keyboard.type(entry.text);
+              if (entry.completed === 384) {
+                await boundary(384, 'window-before-start');
+                progress!.phase('window-trace-start');
+                diagnosticTrace = await startNativeDiagnosticTrace(
+                  cdp,
+                  info.outputPath('spn146-runtime-trace.pftrace.gz'),
+                  progress!,
+                  { signal: controller.signal, interrupt: detachSession },
+                );
+                progress!.phase('window-profile-start');
+                await startProfiler();
+                await boundary(384, 'window-after-start');
+                await mark('spn146-window-start');
+              } else if (entry.completed === 448) {
+                await boundary(448, 'window-before-stop');
+                await mark('spn146-window-end');
+                progress!.phase('window-profile-stop');
+                const beforeMs = await now(f.page);
+                const { profile } = await cdp.send('Profiler.stop');
+                profiling = false;
+                window.profilerStopBracket = { beforeMs, afterMs: await now(f.page) };
+                evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
+                window.profileSha256 = evidence.profileSha256;
+                window.profilerStartBracket = profilerClock;
+                await boundary(448, 'window-before-gc');
+                progress!.phase('window-gc-control');
+                await mark('spn146-window-gc-start');
+                await cdp.send('HeapProfiler.collectGarbage');
+                await mark('spn146-window-gc-end');
+                await boundary(448, 'window-after-gc');
+                await persistWindow();
+                progress!.phase('window-trace-finish');
+                evidence.nativeDiagnosticTrace = await diagnosticTrace!.finish();
+                window.traceComplete = true;
+                await persistWindow();
+                progress!.phase('window-continuation');
+              }
+            }
+            window.complete = true;
+            await persistWindow();
+          } else {
+            for (const [index, paragraph] of paragraphs.entries()) {
+              if (index > 0) await f.page.keyboard.press('Enter');
+              // This is the retained SPN-072 reproducer. Never use insertText here.
+              await f.page.keyboard.type(paragraph);
+            }
           }
           progress?.phase('native-drain');
           evidence.typingWallMs = performance.now() - typingStarted;
@@ -757,7 +888,6 @@ for (const preset of ['desktop', 'mobile'] as const)
           evidence.timingCompleteAt = await now(f.page);
           evidence.timingComplete = true;
           if (nativeDiagnostic) {
-            await f.page.evaluate(() => performance.mark('spn146-native-diagnostic-end'));
             const capture = await nativeCapture('finish');
             diagnosticFinished = true;
             evidence.nativeDiagnosticObserver = {
@@ -771,7 +901,7 @@ for (const preset of ['desktop', 'mobile'] as const)
             expect(capture?.errors).toEqual([]);
             expect(capture?.states).toBe(expectedInputCount * 2);
             expect(capture?.captures.length).toBe(132);
-            evidence.nativeDiagnosticTrace = await diagnosticTrace!.finish();
+            expect((evidence.nativeWindow as any)?.traceComplete).toBe(true);
           }
           const savedStarted = performance.now();
           await saved(f.page);
@@ -907,6 +1037,15 @@ for (const preset of ['desktop', 'mobile'] as const)
           throw error;
         } finally {
           if (nativeDiagnostic) {
+            if (loadedSources)
+              await loadedSources.dispose().catch((error) => {
+                evidence.nativeSourceCleanupFailure = String(error);
+                primaryDiagnosticFailure ??= error;
+              });
+            if (compositionObserver) {
+              await compositionObserver.evaluate((value: any) => value.dispose()).catch(() => {});
+              await compositionObserver.dispose().catch(() => {});
+            }
             if (!diagnosticFinished) {
               const partial = await nativeCapture('finish').catch((error) => ({
                 error: String(error),
@@ -961,7 +1100,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           else await persisted;
           if (nativeDiagnostic) {
             const cleanup: Record<string, unknown> = { startedAt: performance.now() };
-            let cleanupFailure: unknown = diagnosticPersistenceFailure;
+            let cleanupFailure: unknown = primaryDiagnosticFailure ?? diagnosticPersistenceFailure;
             try {
               await detachSession();
               cleanup.cdp = 'detached';

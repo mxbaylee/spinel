@@ -3,8 +3,7 @@ name: 🔬 Native Doc flush diagnosis
 on:
   pull_request:
     branches: [main]
-    types: [opened]
-  workflow_dispatch:
+    types: [synchronize]
 
 permissions:
   contents: read
@@ -15,8 +14,8 @@ concurrency:
 
 jobs:
   observation:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush'
-    name: One prior-native mobile observation
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '02ef01a40fe8369b79477909673c76de6d2a4edf'
+    name: One prior-native fixed-window observation
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -27,12 +26,15 @@ jobs:
       SPN146_DIAGNOSTIC: '1'
       SPN108_BASELINE: '0'
       SPINEL_E2E_PROJECT: doc-responsiveness
-      SPN146_REVIEWED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      SPN146_REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
+      SPN146_EVENT_BEFORE: ${{ github.event.before }}
     steps:
+      - name: Admit only the declared first attempt
+        run: test "$GITHUB_RUN_ATTEMPT" = 1
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
@@ -43,19 +45,27 @@ jobs:
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
+          export DOC_TRACE_PROCESSOR_PATH="$RUNNER_TEMP/spn146-window-trace-processor"
+          printf '%s\n' "DOC_TRACE_PROCESSOR_PATH=$DOC_TRACE_PROCESSOR_PATH" >> "$GITHUB_ENV"
+          node scripts/ci/doc-trace-processor.ts "$DOC_TRACE_PROCESSOR_PATH"
       - name: Bind exact prior native implementation
         run: node scripts/ci/prepare-doc-native-diagnostic.ts --prior-native
       - name: Build diagnostic application
-        run: npm run build
+        run: npm run build -- --sourcemap hidden
       - name: One diagnostic first attempt
-        run: npx playwright test --project=doc-responsiveness --grep 'mobile sustained native typing profile$' --retries=0
+        run: |
+          mkdir -p test-results
+          node scripts/ci/doc-native-runtime/watchdog.ts --application-window test-results/spn146-window-watchdog.json npx playwright test --project=doc-responsiveness --grep 'mobile sustained native typing profile$' --retries=0
+      - name: Convert and inspect the complete fixed window
+        run: node scripts/ci/doc-native-runtime/watchdog.ts test-results/spn146-window-analysis-watchdog.json node scripts/ci/doc-native-runtime/window-convert.ts
       - name: Preserve complete or partial observation
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: spn146-prior-native-diagnostic
+          name: spn146-prior-native-fixed-window
           path: |
             spn146-diagnostic-build.json
+            test-results/spn146-window*.json
             test-results/doc-responsiveness/
             playwright-report/doc-responsiveness.json
             !test-results/**/*.sqlite*
