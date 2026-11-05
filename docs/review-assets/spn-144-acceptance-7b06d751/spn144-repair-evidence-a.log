@@ -1,0 +1,64 @@
+spn144-all-callback-controls.log.gz nnot become accepted storage or delete preexisting bytes (2.959417ms)
+✔ wrong-format cannot become accepted storage or delete preexisting bytes (3.668125ms)
+✔ a rejected trace-end still owns a late stream until interruption settles (3.661875ms)
+✔ native text transport retains complete Unicode characters and exact decoded identity (6.217583ms)
+✔ destination failure releases a pending read and close without replacing the original write error (8.83275ms)
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (6.324917ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.566042ms)
+✔ sized restore participates in the immutable plan and fails closed (2.15175ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.803666ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.586792ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.630625ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.636375ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.955209ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (1.910709ms)
+ℹ tests 120
+ℹ suites 0
+ℹ pass 120
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3341.482208
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":3492,"peakKiB":789168}
+
+spn144-typecheck.log.gz WATCHDOG: {"code":0,"signal":null,"elapsedMs":543,"peakKiB":245904}
+
+spn144-lint.log.gz 
+> lint
+> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check
+
+
+> dependencies:check
+> node scripts/dependencies/no-univer-pro.ts
+
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.
+
+> format:check
+> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts
+
+Checking formatting...
+All matched files use Prettier code style!
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":17259,"peakKiB":701888}
+
+spn144-backlog-index.log.gz mming
+warning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-089.md: 63 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: Grooming reminder: 20 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.
+wrote docs/todo/readme.md
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":432,"peakKiB":246496}
+
+{"head":"7b06d7516c4c386f5a23044e74d0c09b95a5a929","manifestSha256":"b0f1254ffeb904588eed20fdf853511b82ca68c44e22916a13e48f8e5f367200","entries":124,"storedBytes":404736,"decodedBytes":2044813,"allHashesMatched":true,"receipts":[{"file":"spn144-all-callback-controls-watchdog.json.gz","outcome":"command-passed","elapsedMs":3492,"peakKiB":789168,"pressure":"1"},{"file":"spn144-typecheck-watchdog.json.gz","outcome":"command-passed","elapsedMs":543,"peakKiB":245904,"pressure":"1"},{"file":"spn144-lint-watchdog.json.gz","outcome":"command-passed","elapsedMs":17259,"peakKiB":701888,"pressure":"1"},{"file":"spn144-backlog-index-watchdog.json.gz","outcome":"command-passed","elapsedMs":432,"peakKiB":246496,"pressure":"1"}]}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":214,"peakKiB":91472}

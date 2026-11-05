@@ -1,0 +1,38 @@
+{
+  "head": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "manifestSha256": "b0f1254ffeb904588eed20fdf853511b82ca68c44e22916a13e48f8e5f367200",
+  "entries": 124,
+  "storedBytes": 404736,
+  "decodedBytes": 2044813,
+  "allHashesMatched": true,
+  "receipts": [
+    {
+      "file": "spn144-all-callback-controls-watchdog.json.gz",
+      "outcome": "command-passed",
+      "elapsedMs": 3492,
+      "peakKiB": 789168,
+      "pressure": "1"
+    },
+    {
+      "file": "spn144-typecheck-watchdog.json.gz",
+      "outcome": "command-passed",
+      "elapsedMs": 543,
+      "peakKiB": 245904,
+      "pressure": "1"
+    },
+    {
+      "file": "spn144-lint-watchdog.json.gz",
+      "outcome": "command-passed",
+      "elapsedMs": 17259,
+      "peakKiB": 701888,
+      "pressure": "1"
+    },
+    {
+      "file": "spn144-backlog-index-watchdog.json.gz",
+      "outcome": "command-passed",
+      "elapsedMs": 432,
+      "peakKiB": 246496,
+      "pressure": "1"
+    }
+  ]
+}

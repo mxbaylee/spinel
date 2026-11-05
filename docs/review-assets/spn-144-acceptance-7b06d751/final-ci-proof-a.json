@@ -1,0 +1,112 @@
+{
+  "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+  "ci": {
+    "run": 41959231289,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "allJobs": 33,
+    "allJobsSuccessful": true,
+    "gates": [
+      {
+        "name": "Pull request",
+        "id": 127021350899,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "id": 127021613409,
+        "conclusion": "success"
+      },
+      {
+        "name": "Backlog",
+        "id": 127021613502,
+        "conclusion": "success"
+      },
+      {
+        "name": "Typecheck",
+        "id": 127021613546,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lib tests",
+        "id": 127025360724,
+        "conclusion": "success"
+      },
+      {
+        "name": "Unit tests",
+        "id": 127025409106,
+        "conclusion": "success"
+      },
+      {
+        "name": "Playwright smoke",
+        "id": 127034641087,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "planDigest": "30c4359ce37331675090a92f691d6183f44352844f4e3290ac0aef698a7e1323",
+  "selectedSuites": 15,
+  "aggregates": [
+    {
+      "group": "unit",
+      "artifact": 13384757948,
+      "zipBytes": 1141,
+      "zipSha256": "176a1102cdd8ebf831a38f6fb9cc232e51fc77c09e20f37ed32fde99fe84ec0f",
+      "member": "ci-results-unit.json",
+      "memberBytes": 6192,
+      "memberSha256": "17c95a80d099d6e7870c93e8ddfc8b0fc30e7169531e7111c43c3c5de2a369c9",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "unit-tests"
+      ]
+    },
+    {
+      "group": "lib",
+      "artifact": 13384892119,
+      "zipBytes": 1158,
+      "zipSha256": "d58c5f5b1fb7234871234b18cb3a62cb94e62bdcb6903406ec23a82c901d6863",
+      "member": "ci-results-lib.json",
+      "memberBytes": 6299,
+      "memberSha256": "f162a3ebafd20e3af98a2f6c458be7d3c58505430b5b9decb79d2aa9631b6bab",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "lib-test-run"
+      ]
+    },
+    {
+      "group": "browser",
+      "artifact": 13386770969,
+      "zipBytes": 1298,
+      "zipSha256": "0d2450294a1abffaa752a9f6b53909cb530d20f12acd7094a7e5e26fa185546f",
+      "member": "ci-results-browser.json",
+      "memberBytes": 10248,
+      "memberSha256": "3b08ddeb6ab9fe61d71b97d6b2b27717fd5764e0230888709ffa296532cd28a7",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes"
+      ]
+    }
+  ],
+  "storybook": {
+    "run": 41959231266,
+    "attempt": 1,
+    "selectedSuccesses": 8,
+    "inapplicablePagesSkips": 2
+  },
+  "mobileRawAudit": "accepted: responsiveness-mobile-review-b.md/json reviewed by A",
+  "mergeReady": false
+}

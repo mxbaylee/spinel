@@ -1,0 +1,72 @@
+{
+  "authority": {
+    "release": "v59.1",
+    "source": "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
+    "manifest": "f5cb5074e59208ec89c65aeeed53cc9cf6204cd5",
+    "platform": "linux-x64",
+    "target": "linux-amd64",
+    "bytes": 15885448,
+    "sha256": "2434129a3af4dc9e2034a476f7b76447b490975213e301769310d3bd0d5d6458",
+    "url": "https://commondatastorage.googleapis.com/perfetto-luci-artifacts/v59.1/linux-amd64/trace_processor_shell"
+  },
+  "input": {
+    "bytes": 549455622,
+    "sha256": "83c08c0b4c2d34eb34bc3e8c4ce520034c8272ce53d38c46a4c150b153d46a9c"
+  },
+  "passed": true,
+  "temporaryRemoved": true,
+  "framing": {
+    "bytes": 549455622,
+    "sha256": "83c08c0b4c2d34eb34bc3e8c4ce520034c8272ce53d38c46a4c150b153d46a9c",
+    "packets": 1740716,
+    "emptyPackets": 0
+  },
+  "conversion": {
+    "args": [
+      "convert",
+      "json",
+      "/home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-xFSSzB/input.pftrace"
+    ],
+    "code": 0,
+    "signal": null,
+    "stderr": "",
+    "stdout": "",
+    "diagnosticsTruncated": false,
+    "elapsedMs": 40769.643195,
+    "childClosed": true,
+    "outputRemoved": false,
+    "outputCloseFailure": null
+  },
+  "output": {
+    "file": "spn144-derived.json.gz",
+    "bytes": 49941575,
+    "sha256": "879391b9ddeef734f3f3dda712411e29c4aa697b24ef62bff45c4d80c65cb1ee",
+    "storage": {
+      "compression": "gzip",
+      "producer": "node:zlib",
+      "level": 1
+    },
+    "decoded": {
+      "bytes": 670561307,
+      "sha256": "4c02fd69239a48d16adbe292b5f9470c92ea9bffd4adb8c655418d08a4483307"
+    }
+  },
+  "statistics": {
+    "args": [
+      "query",
+      "--format",
+      "csv",
+      "/home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-xFSSzB/input.pftrace",
+      "SELECT name, severity, value FROM stats WHERE value != 0 AND severity IN ('error', 'data_loss') ORDER BY name"
+    ],
+    "code": 0,
+    "signal": null,
+    "stderr": "\u001b[1;32mTrace loaded\u001b[0m: 549.46 MB in 7.70s (71.3 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.7s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-xFSSzB/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n",
+    "stdout": "\"name\",\"severity\",\"value\"\n",
+    "diagnosticsTruncated": false,
+    "elapsedMs": 7801.465534999996,
+    "childClosed": true,
+    "outputRemoved": false,
+    "outputCloseFailure": null
+  }
+}

@@ -1,0 +1,354 @@
+{
+  "accepted": true,
+  "owners": [
+    {
+      "sample": "plain-1",
+      "idleEpisode": {
+        "startedAt": 152577.90000000014,
+        "endedAt": 152578.5,
+        "durationMs": 0.5999999998603016,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      },
+      "native": [
+        {
+          "sequence": 197,
+          "unitId": "ed3a9197-cc13-4928-b793-ce20cd5e6a38",
+          "phase": "history",
+          "origin": "policy-idle",
+          "startedAt": 152577.90000000014,
+          "endedAt": 152578.2000000002,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "outcome": "returned",
+          "epoch": "2733e9db-a79c-4ac8-8f22-0424bfa49b7e",
+          "generation": "ed3a9197-cc13-4928-b793-ce20cd5e6a38:1793849342908.6:1266.1000000000931:1",
+          "completedStates": 2086
+        },
+        {
+          "sequence": 198,
+          "unitId": "ed3a9197-cc13-4928-b793-ce20cd5e6a38",
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "startedAt": 152578.30000000005,
+          "endedAt": 152578.5,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "2733e9db-a79c-4ac8-8f22-0424bfa49b7e",
+          "generation": "ed3a9197-cc13-4928-b793-ce20cd5e6a38:1793849342908.6:1266.1000000000931:1",
+          "completedStates": 2086
+        }
+      ]
+    },
+    {
+      "sample": "plain-2",
+      "idleEpisode": {
+        "startedAt": 152366.69999999995,
+        "endedAt": 152401.09999999986,
+        "durationMs": 34.39999999990687,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      },
+      "native": [
+        {
+          "sequence": 197,
+          "unitId": "47d3f939-ecde-42e5-a5a2-564cd32f10c5",
+          "phase": "history",
+          "origin": "policy-idle",
+          "startedAt": 152366.69999999995,
+          "endedAt": 152369.19999999995,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "outcome": "returned",
+          "epoch": "fbef4dc4-d6e9-421c-9ec0-1b58ace13014",
+          "generation": "47d3f939-ecde-42e5-a5a2-564cd32f10c5:1793849518518.8:1269.0999999998603:1",
+          "completedStates": 2086
+        },
+        {
+          "sequence": 198,
+          "unitId": "47d3f939-ecde-42e5-a5a2-564cd32f10c5",
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "startedAt": 152369.19999999995,
+          "endedAt": 152401.09999999986,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "fbef4dc4-d6e9-421c-9ec0-1b58ace13014",
+          "generation": "47d3f939-ecde-42e5-a5a2-564cd32f10c5:1793849518518.8:1269.0999999998603:1",
+          "completedStates": 2086
+        }
+      ]
+    },
+    {
+      "sample": "plain-3",
+      "idleEpisode": {
+        "startedAt": 153849,
+        "endedAt": 153853.30000000005,
+        "durationMs": 4.300000000046566,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      },
+      "native": [
+        {
+          "sequence": 197,
+          "unitId": "b0bea216-81f7-4706-aaeb-ade912abe87a",
+          "phase": "history",
+          "origin": "policy-idle",
+          "startedAt": 153849.1000000001,
+          "endedAt": 153852.2000000002,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "outcome": "returned",
+          "epoch": "3b0b7bfd-c70c-4330-9501-bf833266a2e8",
+          "generation": "b0bea216-81f7-4706-aaeb-ade912abe87a:1793849684256.5:1230.8000000000466:1",
+          "completedStates": 2086
+        },
+        {
+          "sequence": 198,
+          "unitId": "b0bea216-81f7-4706-aaeb-ade912abe87a",
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "startedAt": 153852.2000000002,
+          "endedAt": 153853.30000000005,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "3b0b7bfd-c70c-4330-9501-bf833266a2e8",
+          "generation": "b0bea216-81f7-4706-aaeb-ade912abe87a:1793849684256.5:1230.8000000000466:1",
+          "completedStates": 2086
+        }
+      ]
+    },
+    {
+      "sample": "profile",
+      "idleEpisode": {
+        "startedAt": 164384.30000000028,
+        "endedAt": 164390.30000000028,
+        "durationMs": 6,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      },
+      "native": [
+        {
+          "sequence": 197,
+          "unitId": "1cbbbaf4-db33-4e11-8969-fa016ea66bac",
+          "phase": "history",
+          "origin": "policy-idle",
+          "startedAt": 164384.30000000028,
+          "endedAt": 164389.8999999999,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "outcome": "returned",
+          "epoch": "d0edf961-e820-469b-8470-97b3248e4ac5",
+          "generation": "1cbbbaf4-db33-4e11-8969-fa016ea66bac:1793849851153.6:1254:1",
+          "completedStates": 2086
+        },
+        {
+          "sequence": 198,
+          "unitId": "1cbbbaf4-db33-4e11-8969-fa016ea66bac",
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "startedAt": 164390,
+          "endedAt": 164390.30000000028,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "d0edf961-e820-469b-8470-97b3248e4ac5",
+          "generation": "1cbbbaf4-db33-4e11-8969-fa016ea66bac:1793849851153.6:1254:1",
+          "completedStates": 2086
+        }
+      ]
+    }
+  ],
+  "post": {
+    "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+    "selection": {
+      "start": 2087,
+      "end": 2087,
+      "segmentId": ""
+    },
+    "peer": {
+      "unitId": "b455ec14-fd23-4ae7-9417-6bcbe35e9780",
+      "observedAt": 163123.7999999998,
+      "textLength": 2089,
+      "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+      "selection": {
+        "start": 0,
+        "end": 0,
+        "segmentId": ""
+      }
+    },
+    "saved": {
+      "textLength": 2089,
+      "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d"
+    }
+  },
+  "hosted": {
+    "job": 127021613605,
+    "run": 41959231289,
+    "attempt": 1,
+    "head": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "conclusion": "success",
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success"
+      },
+      {
+        "name": "Require comparison applicability",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "conclusion": "success"
+      },
+      {
+        "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install candidate",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install Chromium",
+        "conclusion": "success"
+      },
+      {
+        "name": "Immutable uncapped source with matched compatibility and native observations",
+        "conclusion": "success"
+      },
+      {
+        "name": "Use identical browser workload on both sources",
+        "conclusion": "success"
+      },
+      {
+        "name": "Install and build baseline",
+        "conclusion": "success"
+      },
+      {
+        "name": "Observe baseline first attempts",
+        "conclusion": "success"
+      },
+      {
+        "name": "Build candidate",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify candidate responsiveness and boundaries",
+        "conclusion": "success"
+      },
+      {
+        "name": "Verify candidate evidence and selected paired comparison",
+        "conclusion": "success"
+      },
+      {
+        "name": "Retain every baseline and candidate attempt",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Immutable uncapped source with matched compatibility and native observations",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "conclusion": "success"
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "conclusion": "success"
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success"
+      }
+    ],
+    "files": [
+      {
+        "file": "responsiveness-mobile-job.json",
+        "bytes": 4219,
+        "sha256": "3c416bd1bef4cd342890945939cdd1765549dfb53a3f329a4beb9432f631af7d"
+      },
+      {
+        "file": "responsiveness-mobile-job.log",
+        "bytes": 91871,
+        "sha256": "3bbbfe60538feb8dddeae15b795647c36a2da4b31704b5c8d3576ea586546768"
+      },
+      {
+        "file": "responsiveness-mobile-artifact.json",
+        "bytes": 791,
+        "sha256": "4b6892540efb04e5df9c384250b9144d82d3010c02a4c6493c30d54f61cf8847"
+      }
+    ]
+  }
+}

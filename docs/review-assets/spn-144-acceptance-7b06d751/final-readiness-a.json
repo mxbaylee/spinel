@@ -1,0 +1,97 @@
+{
+  "reviewer": "A",
+  "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+  "tree": "d451532408b37f1cb5da12511c6fca38520599e2",
+  "acceptanceComplete": true,
+  "sourceBlockers": [],
+  "acceptanceBlockers": [],
+  "readyForArchivePreparation": true,
+  "mergeReady": false,
+  "mergeCompleted": false,
+  "acceptedOwners": [
+    "desktop callback A",
+    "mobile callback B",
+    "desktop responsiveness A",
+    "mobile responsiveness B"
+  ],
+  "ci": {
+    "run": 41959231289,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "allJobs": 33,
+    "allJobsSuccessful": true,
+    "gates": [
+      {
+        "name": "Pull request",
+        "id": 127021350899,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "id": 127021613409,
+        "conclusion": "success"
+      },
+      {
+        "name": "Backlog",
+        "id": 127021613502,
+        "conclusion": "success"
+      },
+      {
+        "name": "Typecheck",
+        "id": 127021613546,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lib tests",
+        "id": 127025360724,
+        "conclusion": "success"
+      },
+      {
+        "name": "Unit tests",
+        "id": 127025409106,
+        "conclusion": "success"
+      },
+      {
+        "name": "Playwright smoke",
+        "id": 127034641087,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "aggregates": "final-ci-proof-a.json",
+  "storybook": {
+    "run": 41959231266,
+    "attempt": 1,
+    "selectedSuccesses": 8,
+    "inapplicablePagesSkips": 2
+  },
+  "finalReceipt": {
+    "path": "/tmp/spn144-final-body.md",
+    "sha256": "84a2788f9d829def81f217051f2c49f543c1636bb7f53f7738d45a9ce074024f",
+    "wordingFindingsResolved": true,
+    "pendingMarkers": [
+      "ARCHIVE_URL",
+      "PENDING_MERGE_CLEANUP"
+    ],
+    "remoteEdit": false
+  },
+  "archiveBuilder": {
+    "path": "/tmp/spn144-archive-build.ts",
+    "sha256": "6f9b298a320976b930964c939db4d0aa2488b33d6b959f9d8779f71beb916e44",
+    "findingsResolved": true,
+    "executedByReviewer": false
+  },
+  "mobileReviewSha256": "7323d3fd7f6e9d5c2bf6e5cb5d244bfbf3c0f0cc91668d89bdbf813e6d8c7058",
+  "remainingConditions": [
+    "B final reconciliation",
+    "freeze inputs and build archive",
+    "immutable publication and independent remote tag/all blob/member verification",
+    "concrete receipt URL readback",
+    "fresh exact-head/base/check/thread/review/merge guards"
+  ],
+  "runtimeReruns": false,
+  "duplicateNativeAudit": false
+}

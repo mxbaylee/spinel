@@ -1,0 +1,54 @@
+{
+  "root": 80037,
+  "started": 1793850478185,
+  "elapsedMs": 249,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93376,
+  "peakKiB": 93376,
+  "live": [
+    {
+      "pid": 80037,
+      "parent": 48367,
+      "group": 80037,
+      "rssKiB": 91808,
+      "started": "Wed Nov  4 19:47:57 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-hosted/final-ci-b-watchdog.json node /tmp/spn144-hosted/final-ci-b.ts"
+    },
+    {
+      "pid": 80168,
+      "parent": 80037,
+      "group": 80037,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:47:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 80037,
+      "parent": 48367,
+      "group": 80037,
+      "rssKiB": 91808,
+      "started": "Wed Nov  4 19:47:57 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-hosted/final-ci-b-watchdog.json node /tmp/spn144-hosted/final-ci-b.ts"
+    },
+    {
+      "pid": 80075,
+      "parent": 80037,
+      "group": 80037,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:47:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80168,
+      "parent": 80037,
+      "group": 80037,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:47:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

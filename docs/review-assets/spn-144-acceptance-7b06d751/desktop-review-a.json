@@ -1,0 +1,333 @@
+{
+  "identities": {
+    "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+    "sourceAndTestedTree": "d451532408b37f1cb5da12511c6fca38520599e2",
+    "ci": 41959231289,
+    "storybook": 41959231266,
+    "attempt": 1,
+    "planArtifact": 13384338190,
+    "planZipSha256": "6c2236ad1e6158f27463e60856a14553745e5279730648d4e26c6545d3c5294e",
+    "planDigest": "30c4359ce37331675090a92f691d6183f44352844f4e3290ac0aef698a7e1323",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "helperDisposition": "Initial node --input-type=module -e command rejected a TypeScript annotation at parse time before checks or writes; executing the same helper as a .ts file repairs the invocation. No hosted/browser/converter workload was repeated."
+  },
+  "archive": {
+    "bytes": 196654763,
+    "sha256": "2c46913b24c75fe2fb3e3ba6a81c1d2ae9d79c7422e09d0070149748b786d714"
+  },
+  "memberProof": "callback-desktop-members-a.json",
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41959231289",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042154"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 33,
+      "unmapped": 10,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 37128927,
+        "sha256": "3fe0143bca624727ce225a1f2f515e87d264f0bf382fe4e34277c020eabfa691",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 529912814,
+          "sha256": "7b4888722b6a907641bb3bdbce5642faf3543d89ce29d54866c05113fc4b5124"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 51791499,
+        "sha256": "46ab9471c9199c32f055ebf967c6be81c9161816e910a1cde9073ed00fed17f8",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 664571791,
+          "sha256": "a68811f71205b5d20d6f82f3d7ee3f507e8569d4eee68ba702b1015c251001d3"
+        }
+      },
+      "framing": {
+        "bytes": 529912814,
+        "sha256": "7b4888722b6a907641bb3bdbce5642faf3543d89ce29d54866c05113fc4b5124",
+        "packets": 1924012,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 1048270,
+        "retainedEvents": 1048270,
+        "callbackEvents": 221253,
+        "uncompressedBytes": 664571791,
+        "uncompressedSha256": "a68811f71205b5d20d6f82f3d7ee3f507e8569d4eee68ba702b1015c251001d3",
+        "maxEventBytes": 18369
+      },
+      "timing": {
+        "behaviorCompleteMs": 95068.576306,
+        "completionWaitMs": 11277.848671,
+        "endResponseMs": 6.338627999997698,
+        "readStoreMs": 7812.788757999995,
+        "framingMaterializeMs": 3178.567387999996,
+        "conversionMs": 41002.784063,
+        "statisticsMs": 7703.021468999999,
+        "parseMs": 10232.553428000014,
+        "attributionMs": 789.2982900000061,
+        "analysisMs": 535.8869290000002,
+        "cleanupCompleteMs": 177746.8242,
+        "cleanupHeadroomMs": 242253.1758
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": false,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 7841,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 9,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1881,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 529.91 MB in 7.62s (69.6 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.6s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-RYh6pw/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    },
+    {
+      "role": "candidate",
+      "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41959231289",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042154"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 35,
+      "unmapped": 10,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 37370123,
+        "sha256": "7151e66e7f354e8b816778d9340077fb4371832084a3832f47257dba453dc705",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 549455622,
+          "sha256": "83c08c0b4c2d34eb34bc3e8c4ce520034c8272ce53d38c46a4c150b153d46a9c"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 49941575,
+        "sha256": "879391b9ddeef734f3f3dda712411e29c4aa697b24ef62bff45c4d80c65cb1ee",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 670561307,
+          "sha256": "4c02fd69239a48d16adbe292b5f9470c92ea9bffd4adb8c655418d08a4483307"
+        }
+      },
+      "framing": {
+        "bytes": 549455622,
+        "sha256": "83c08c0b4c2d34eb34bc3e8c4ce520034c8272ce53d38c46a4c150b153d46a9c",
+        "packets": 1740716,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 951785,
+        "retainedEvents": 951785,
+        "callbackEvents": 197653,
+        "uncompressedBytes": 670561307,
+        "uncompressedSha256": "4c02fd69239a48d16adbe292b5f9470c92ea9bffd4adb8c655418d08a4483307",
+        "maxEventBytes": 18371
+      },
+      "timing": {
+        "behaviorCompleteMs": 74083.633196,
+        "completionWaitMs": 12639.692211000001,
+        "endResponseMs": 12.60037500000908,
+        "readStoreMs": 8136.162136999992,
+        "framingMaterializeMs": 3183.9744840000058,
+        "conversionMs": 40769.643195,
+        "statisticsMs": 7801.465534999996,
+        "parseMs": 10179.77107800002,
+        "attributionMs": 759.7166579999903,
+        "analysisMs": 487.8752080000122,
+        "cleanupCompleteMs": 158200.158655,
+        "cleanupHeadroomMs": 261799.841345
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": true,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 4,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 549.46 MB in 7.70s (71.3 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.7s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-xFSSzB/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 178002,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 241998
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 158410,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 261590
+    }
+  ],
+  "comparisonAccepted": true,
+  "comparisonExactlyReproducedFromRetainedAnalysis": true,
+  "rawEventAnalysisReparsed": false,
+  "innerProtoDecoded": false,
+  "scope": "complete streamed framing/raw hashes plus retained hosted analysis and actual source assertions; no browser/converter rerun",
+  "desktopCallbackOwnerAccepted": true,
+  "finalJobTerminalReconciliation": {
+    "status": "completed",
+    "conclusion": "success",
+    "job": 127021613522,
+    "run": 41959231289,
+    "attempt": 1,
+    "head": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "started": "2026-11-05T03:04:59Z",
+    "completed": "2026-11-05T03:12:45Z",
+    "allStepsSuccessful": 19,
+    "jobJsonSha256": "2764fcf8da1fd386558b3ccbdf4aeb60207564b0e46c6e2b805de8df84b75864",
+    "jobLogSha256": "96d789ec841b81782e50d0611c2a21666770cc8d6d273d1e0ba0028ab5fdeab5"
+  },
+  "mergeApproval": false,
+  "exclusions": {
+    "sqliteMembers": 12,
+    "nonSqliteRetained": 81,
+    "originalZipPreserved": true
+  }
+}

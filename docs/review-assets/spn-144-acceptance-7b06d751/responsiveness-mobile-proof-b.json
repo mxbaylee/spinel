@@ -1,0 +1,4864 @@
+{
+  "ids": {
+    "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+    "sourceAndTestedTree": "d451532408b37f1cb5da12511c6fca38520599e2",
+    "ci": 41959231289,
+    "storybook": 41959231266,
+    "attempt": 1,
+    "planArtifact": 13384338190,
+    "planZipSha256": "6c2236ad1e6158f27463e60856a14553745e5279730648d4e26c6545d3c5294e",
+    "planDigest": "30c4359ce37331675090a92f691d6183f44352844f4e3290ac0aef698a7e1323",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "helperDisposition": "Initial node --input-type=module -e command rejected a TypeScript annotation at parse time before checks or writes; executing the same helper as a .ts file repairs the invocation. No hosted/browser/converter workload was repeated."
+  },
+  "proof": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 254542,
+      "sha256": "c7cc8199b235fd0254532c14ff6df93f6e5d8430ada3fdbdf9c9202d7025eb4d"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 255137,
+      "sha256": "16606e66839f76933295bf82bfb3858a695aa101bb65bbf8f3ee5eeb87003594"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 255152,
+      "sha256": "d669ec3e3e0da24b478ebf5cb010502677a234418651a9ec8780e1a033597b4e"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 265090,
+      "sha256": "715d475779ea574bcd8f30f75928d9ba08d562e26b75d358b8de8fd59d418c66"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 241,
+      "sha256": "8ab85d75e636e7784b9f0fa6e29acfc32ff42a12306984101f52645a381341a0"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 6097457,
+      "sha256": "c3bada236b2427d20d695d5b7c9eb0dc04be059a88df501957b2aa4c51da112f"
+    },
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1381360,
+      "sha256": "6eeace865c4cb3244b526eec3dbbe956b58039188f2dd3007c369e10812b9838"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "bytes": 224675,
+      "sha256": "06c23cefdf644111ab70fef7b292f356b804220831c21afebe685eeea4b51f61"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 628880,
+      "sha256": "56dbfc83056c295ae94cbc872d6fc2ce59ea7d265c9f526d987a217b89cb2179"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 629548,
+      "sha256": "9b8d000a43084745acd9e8ddb13a38de27c27dc13b7e19d55c42003dc4e0fb22"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 631586,
+      "sha256": "9a319aef28540f82121dbbb7aeb9eee4d148506241086c44e98d389c0f5372c2"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 633186,
+      "sha256": "02329a955a5df7f1182a37c2e40c933deed6f5889c6fc093249b13a64e30aec3"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 227,
+      "sha256": "3141005b943212a57584dfaa5d0e7baced1ab97be0a3997a4e982bfd451ad5bb"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 4340500,
+      "sha256": "bdc56c24f5e4927897c32917803f978653b292715da1caa3a0bd2c53f34a1e12"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 2334,
+      "sha256": "350c01c71060a03563c5b679081530fbb155020c98bbce986883bbade9fcec5c"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 67582,
+      "sha256": "e43cdf51509f9732772969e3bfb58d1277a6bfb6692be8fd19e09bc63987a5a2"
+    },
+    {
+      "file": "test-results/spn108-comparison-mobile.json",
+      "bytes": 12744,
+      "sha256": "fb5daeec00286a90fe394655a23854fe67ccf0c52d45b3e706e3658733aaa35d"
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "bytes": 1382515,
+      "sha256": "01a8e2dd2ba95b1222739d2a9df927239695c02e5808acca1cc5c3368887d086"
+    }
+  ],
+  "metrics": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-1",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 103.5,
+        "p95": 178.80000000001746,
+        "max": 292.8999999999651,
+        "sum": 218914.20000000176
+      },
+      "tasks": {
+        "count": 1711,
+        "p50": 106,
+        "p95": 175,
+        "max": 38735,
+        "sum": 264626
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 103.5,
+          "p95": 178.80000000001746,
+          "max": 292.8999999999651,
+          "sum": 218914.20000000176
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 112.10000000000582,
+          "p95": 188.29999999998836,
+          "max": 411.29999999998836,
+          "sum": 238360.2
+        },
+        "debounceBreakingGaps": 4,
+        "longTaskMs": {
+          "count": 1711,
+          "p50": 106,
+          "p95": 175,
+          "max": 38735,
+          "sum": 264626
+        },
+        "totalBlockingMs": 179076,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 79780.40000000002,
+        "firstVerifiedBrowserLocalDrainMs": 79367.40000000002,
+        "lateReadMinusLocalWitnessMs": 413,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-2",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 102.90000000002328,
+        "p95": 175.09999999997672,
+        "max": 279.5,
+        "sum": 212843.09999999992
+      },
+      "tasks": {
+        "count": 1621,
+        "p50": 110,
+        "p95": 172,
+        "max": 38665,
+        "sum": 257707
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 102.90000000002328,
+          "p95": 175.09999999997672,
+          "max": 279.5,
+          "sum": 212843.09999999992
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 111.90000000002328,
+          "p95": 184.69999999995343,
+          "max": 395.79999999993015,
+          "sum": 230936.59999999998
+        },
+        "debounceBreakingGaps": 3,
+        "longTaskMs": {
+          "count": 1621,
+          "p50": 110,
+          "p95": 172,
+          "max": 38665,
+          "sum": 257707
+        },
+        "totalBlockingMs": 176657,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 80429.6000000001,
+        "firstVerifiedBrowserLocalDrainMs": 79785.20000000007,
+        "lateReadMinusLocalWitnessMs": 644.4000000000233,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-3",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 104,
+        "p95": 177.79999999993015,
+        "max": 299.89999999990687,
+        "sum": 217423.49999999872
+      },
+      "tasks": {
+        "count": 1621,
+        "p50": 112,
+        "p95": 180,
+        "max": 40210,
+        "sum": 263188
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 104,
+          "p95": 177.79999999993015,
+          "max": 299.89999999990687,
+          "sum": 217423.49999999872
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 112.69999999995343,
+          "p95": 188.39999999990687,
+          "max": 348.4000000000233,
+          "sum": 236104.6000000001
+        },
+        "debounceBreakingGaps": 7,
+        "longTaskMs": {
+          "count": 1621,
+          "p50": 112,
+          "p95": 180,
+          "max": 40210,
+          "sum": 263188
+        },
+        "totalBlockingMs": 182138,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 82290,
+        "firstVerifiedBrowserLocalDrainMs": 81667.09999999986,
+        "lateReadMinusLocalWitnessMs": 622.9000000001397,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "profile",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 113.30000000004657,
+        "p95": 190.79999999981374,
+        "max": 307.89999999990687,
+        "sum": 236688.9000000006
+      },
+      "tasks": {
+        "count": 1722,
+        "p50": 116,
+        "p95": 191,
+        "max": 42091,
+        "sum": 288692
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 113.30000000004657,
+          "p95": 190.79999999981374,
+          "max": 307.89999999990687,
+          "sum": 236688.9000000006
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 123.19999999995343,
+          "p95": 201.80000000004657,
+          "max": 363.5,
+          "sum": 257914.80000000005
+        },
+        "debounceBreakingGaps": 10,
+        "longTaskMs": {
+          "count": 1722,
+          "p50": 116,
+          "p95": 191,
+          "max": 42091,
+          "sum": 288692
+        },
+        "totalBlockingMs": 202592,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 88098.1000000001,
+        "firstVerifiedBrowserLocalDrainMs": 87403,
+        "lateReadMinusLocalWitnessMs": 695.1000000000931,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "compositionCpu": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 2,
+        "reorderedSampleCount": 4,
+        "clock": {
+          "beforeMs": 2399.6999999999534,
+          "afterMs": 4297.299999999814,
+          "uncertaintyMs": 1897.5999999998603,
+          "profileStartTimeUs": 1091351369,
+          "profileEndTimeUs": 1439480213
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 36402,
+          "sampledCpuMs": 39170.761999999646,
+          "certainContainingTasks": [
+            {
+              "index": 1719,
+              "startedAt": 266782.09999999986,
+              "durationMs": 40764,
+              "sampleCount": 34733
+            }
+          ],
+          "maxContainingTaskMs": 40764,
+          "taskAttribution": "certain-whole-containing-task"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 37591,
+          "sampledCpuMs": 40469.41800000011,
+          "certainContainingTasks": [
+            {
+              "index": 1720,
+              "startedAt": 307548.09999999986,
+              "durationMs": 42091,
+              "sampleCount": 35899
+            }
+          ],
+          "maxContainingTaskMs": 42091,
+          "taskAttribution": "certain-whole-containing-task"
+        }
+      },
+      "profileSha256": "c3bada236b2427d20d695d5b7c9eb0dc04be059a88df501957b2aa4c51da112f",
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+      "capacity": {
+        "count": 65,
+        "p50": 11.600000000093132,
+        "p95": 32.60000000009313,
+        "max": 45.60000000009313,
+        "sum": 991.3999999985099
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.5999999998603016,
+        "p95": 0.5999999998603016,
+        "max": 0.5999999998603016,
+        "sum": 0.5999999998603016
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 64.5999999998603,
+        "p95": 99.19999999995343,
+        "max": 207,
+        "sum": 132168.19999999437
+      },
+      "tasks": {
+        "count": 1154,
+        "p50": 71,
+        "p95": 104,
+        "max": 188,
+        "sum": 85554
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 64.5999999998603,
+          "p95": 99.19999999995343,
+          "max": 207,
+          "sum": 132168.19999999437
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 72.5999999998603,
+          "p95": 108.60000000009313,
+          "max": 213.80000000004657,
+          "sum": 149707.69999999995
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1154,
+          "p50": 71,
+          "p95": 104,
+          "max": 188,
+          "sum": 85554
+        },
+        "totalBlockingMs": 27854,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 11.600000000093132,
+          "p95": 32.60000000009313,
+          "max": 45.60000000009313,
+          "sum": 991.3999999985099
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 0.5999999998603016,
+          "p95": 0.5999999998603016,
+          "max": 0.5999999998603016,
+          "sum": 0.5999999998603016
+        },
+        "pairedFlushMaximumMs": 45.60000000009313,
+        "postFinalKeyDrainUpperBoundMs": 810.1999999999534,
+        "firstVerifiedBrowserLocalDrainMs": 462.80000000004657,
+        "lateReadMinusLocalWitnessMs": 347.39999999990687,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 66,
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": true,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 152577.90000000014,
+        "endedAt": 152578.5,
+        "durationMs": 0.5999999998603016,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+      "capacity": {
+        "count": 65,
+        "p50": 12.5,
+        "p95": 29,
+        "max": 44.10000000009313,
+        "sum": 1017.1000000005588
+      },
+      "idle": {
+        "count": 1,
+        "p50": 34.39999999990687,
+        "p95": 34.39999999990687,
+        "max": 34.39999999990687,
+        "sum": 34.39999999990687
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 62.89999999990687,
+        "p95": 101.5999999998603,
+        "max": 198.9000000001397,
+        "sum": 131977.0000000007
+      },
+      "tasks": {
+        "count": 1152,
+        "p50": 70,
+        "p95": 106,
+        "max": 176,
+        "sum": 85120
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 62.89999999990687,
+          "p95": 101.5999999998603,
+          "max": 198.9000000001397,
+          "sum": 131977.0000000007
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 71.29999999981374,
+          "p95": 110.69999999995343,
+          "max": 207.80000000004657,
+          "sum": 149698.2000000002
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1152,
+          "p50": 70,
+          "p95": 106,
+          "max": 176,
+          "sum": 85120
+        },
+        "totalBlockingMs": 27520,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.5,
+          "p95": 29,
+          "max": 44.10000000009313,
+          "sum": 1017.1000000005588
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 34.39999999990687,
+          "p95": 34.39999999990687,
+          "max": 34.39999999990687,
+          "sum": 34.39999999990687
+        },
+        "pairedFlushMaximumMs": 44.10000000009313,
+        "postFinalKeyDrainUpperBoundMs": 744.3999999999069,
+        "firstVerifiedBrowserLocalDrainMs": 352.69999999995343,
+        "lateReadMinusLocalWitnessMs": 391.69999999995343,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": true,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 152366.69999999995,
+        "endedAt": 152401.09999999986,
+        "durationMs": 34.39999999990687,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+      "capacity": {
+        "count": 65,
+        "p50": 12.299999999813735,
+        "p95": 32.0999999998603,
+        "max": 41.89999999990687,
+        "sum": 988.9999999993015
+      },
+      "idle": {
+        "count": 1,
+        "p50": 4.300000000046566,
+        "p95": 4.300000000046566,
+        "max": 4.300000000046566,
+        "sum": 4.300000000046566
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 64.70000000018626,
+        "p95": 102,
+        "max": 192.30000000004657,
+        "sum": 133488.09999999497
+      },
+      "tasks": {
+        "count": 1197,
+        "p50": 71,
+        "p95": 106,
+        "max": 187,
+        "sum": 88954
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 64.70000000018626,
+          "p95": 102,
+          "max": 192.30000000004657,
+          "sum": 133488.09999999497
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 72.69999999995343,
+          "p95": 110.70000000018626,
+          "max": 273,
+          "sum": 151168
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1197,
+          "p50": 71,
+          "p95": 106,
+          "max": 187,
+          "sum": 88954
+        },
+        "totalBlockingMs": 29104,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.299999999813735,
+          "p95": 32.0999999998603,
+          "max": 41.89999999990687,
+          "sum": 988.9999999993015
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 4.300000000046566,
+          "p95": 4.300000000046566,
+          "max": 4.300000000046566,
+          "sum": 4.300000000046566
+        },
+        "pairedFlushMaximumMs": 41.89999999990687,
+        "postFinalKeyDrainUpperBoundMs": 1211.6000000000931,
+        "firstVerifiedBrowserLocalDrainMs": 343.30000000004657,
+        "lateReadMinusLocalWitnessMs": 868.3000000000466,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": true,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 153849,
+        "endedAt": 153853.30000000005,
+        "durationMs": 4.300000000046566,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "profile",
+      "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+      "capacity": {
+        "count": 65,
+        "p50": 14.5,
+        "p95": 36.300000000046566,
+        "max": 49.299999999813735,
+        "sum": 1146.0999999993946
+      },
+      "idle": {
+        "count": 1,
+        "p50": 6,
+        "p95": 6,
+        "max": 6,
+        "sum": 6
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 68.9000000001397,
+        "p95": 107,
+        "max": 195.80000000004657,
+        "sum": 141493.69999999297
+      },
+      "tasks": {
+        "count": 1302,
+        "p50": 75,
+        "p95": 111,
+        "max": 180,
+        "sum": 100350
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 68.9000000001397,
+          "p95": 107,
+          "max": 195.80000000004657,
+          "sum": 141493.69999999297
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 77.19999999995343,
+          "p95": 116.20000000018626,
+          "max": 210.80000000004657,
+          "sum": 159666.50000000023
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1302,
+          "p50": 75,
+          "p95": 111,
+          "max": 180,
+          "sum": 100350
+        },
+        "totalBlockingMs": 35250,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 14.5,
+          "p95": 36.300000000046566,
+          "max": 49.299999999813735,
+          "sum": 1146.0999999993946
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 6,
+          "p95": 6,
+          "max": 6,
+          "sum": 6
+        },
+        "pairedFlushMaximumMs": 49.299999999813735,
+        "postFinalKeyDrainUpperBoundMs": 1091,
+        "firstVerifiedBrowserLocalDrainMs": 514.6999999997206,
+        "lateReadMinusLocalWitnessMs": 576.3000000002794,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "compositionCpu": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 1,
+        "reorderedSampleCount": 2,
+        "clock": {
+          "beforeMs": 2364,
+          "afterMs": 4185.200000000186,
+          "uncertaintyMs": 1821.2000000001863,
+          "profileStartTimeUs": 1971791381,
+          "profileEndTimeUs": 2134586206
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 600,
+          "sampledCpuMs": 639.5129999999998,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 2,
+          "sampleCount": 444,
+          "sampledCpuMs": 479.6430000000001,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        }
+      },
+      "profileSha256": "bdc56c24f5e4927897c32917803f978653b292715da1caa3a0bd2c53f34a1e12",
+      "runner": {
+        "name": "GitHub Actions 1000042152",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41959231289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 164384.30000000028,
+        "endedAt": 164390.30000000028,
+        "durationMs": 6,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T03:06:09.363Z",
+        "duration": 1365607.79,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile sustained native typing plain-1",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 333709,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-2",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 326554,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-3",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 333891,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing profile",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 364310,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T03:28:58.347Z",
+        "duration": 864708.803,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile sustained native typing plain-1",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 176045,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-2",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 165724,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-3",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 166867,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing profile",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 177831,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile resumes native typing after a quiet pause",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 164166,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile pending composition crosses the group limit without partial history",
+          "timeout": 120000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 5359,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile revocation refuses pending guest input and a late composition event",
+          "timeout": 120000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 4521,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "mobile",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "pendingBeforeRevocation": {
+          "unitId": "a3dfeb77-968a-4042-a854-8c9e1b3d824f",
+          "mobile": true,
+          "observedAt": 2604.7000000001863,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2232.600000000093,
+              "durationMs": 7.399999999906868,
+              "history": 32,
+              "collaboration": 32
+            }
+          ],
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 65,
+            "end": 65,
+            "segmentId": ""
+          }
+        },
+        "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+        "heldWrites": 1,
+        "forwardedAfterRevocation": [
+          false
+        ],
+        "compositionEvents": {
+          "events": [
+            {
+              "order": 0,
+              "phase": "guest-provisional",
+              "type": "compositionstart",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2544.5
+            },
+            {
+              "order": 1,
+              "phase": "guest-provisional",
+              "type": "compositionupdate",
+              "data": "保留",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2545.4000000003725
+            },
+            {
+              "order": 2,
+              "phase": "guest-provisional",
+              "type": "beforeinput",
+              "data": "保留",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2554.5
+            },
+            {
+              "order": 3,
+              "phase": "guest-provisional",
+              "type": "input",
+              "data": "保留",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2555.4000000003725
+            }
+          ],
+          "dropped": 0
+        },
+        "errors": []
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "mobile",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "beforeCancellation": {
+          "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+          "mobile": true,
+          "observedAt": 3240.600000000093,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 3001.2000000001863,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            }
+          ],
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 63,
+            "end": 63,
+            "segmentId": ""
+          }
+        },
+        "intermediate": {
+          "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+          "mobile": true,
+          "observedAt": 4166.899999999907,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 3001.2000000001863,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3548,
+              "durationMs": 6.2000000001862645,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 316.70000000018626
+            }
+          ],
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 66,
+            "end": 66,
+            "segmentId": ""
+          }
+        },
+        "composingEnter": {
+          "before": {
+            "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+            "mobile": true,
+            "observedAt": 4196.200000000186,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": [
+              {
+                "reason": "capacity",
+                "startedAt": 3001.2000000001863,
+                "durationMs": 7.7999999998137355,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 3548,
+                "durationMs": 6.2000000001862645,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 316.70000000018626
+              }
+            ],
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+          },
+          "after": {
+            "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+            "mobile": true,
+            "observedAt": 4237.299999999814,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": [
+              {
+                "reason": "capacity",
+                "startedAt": 3001.2000000001863,
+                "durationMs": 7.7999999998137355,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 3548,
+                "durationMs": 6.2000000001862645,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 316.70000000018626
+              }
+            ],
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+          }
+        },
+        "beforeFinalComposition": {
+          "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+          "mobile": true,
+          "observedAt": 4591.700000000186,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 3001.2000000001863,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3548,
+              "durationMs": 6.2000000001862645,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 316.70000000018626
+            }
+          ],
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 94,
+            "end": 94,
+            "segmentId": ""
+          }
+        },
+        "afterFinalComposition": {
+          "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+          "mobile": true,
+          "observedAt": 4849.5,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 3001.2000000001863,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3548,
+              "durationMs": 6.2000000001862645,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 316.70000000018626
+            }
+          ],
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "final": {
+          "unitId": "b44dc2f9-b946-4407-b3ff-355737c1f15f",
+          "mobile": true,
+          "observedAt": 5130,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 3001.2000000001863,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3548,
+              "durationMs": 6.2000000001862645,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 316.70000000018626
+            }
+          ],
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+        "compositionEvents": {
+          "events": [
+            {
+              "order": 0,
+              "phase": "cancellation-updates",
+              "type": "compositionstart",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3273.2999999998137
+            },
+            {
+              "order": 1,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮0",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3274.7000000001863
+            },
+            {
+              "order": 2,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮0",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3289.7999999998137
+            },
+            {
+              "order": 3,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮0",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3291.100000000093
+            },
+            {
+              "order": 4,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮1",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3299.2999999998137
+            },
+            {
+              "order": 5,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮1",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3306.2999999998137
+            },
+            {
+              "order": 6,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮1",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3306.7000000001863
+            },
+            {
+              "order": 7,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮2",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3309.7000000001863
+            },
+            {
+              "order": 8,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮2",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3315.100000000093
+            },
+            {
+              "order": 9,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮2",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3315.5
+            },
+            {
+              "order": 10,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮3",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3320.899999999907
+            },
+            {
+              "order": 11,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮3",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3326.100000000093
+            },
+            {
+              "order": 12,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮3",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3326.5
+            },
+            {
+              "order": 13,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮4",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3339.2000000001863
+            },
+            {
+              "order": 14,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮4",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3345.100000000093
+            },
+            {
+              "order": 15,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮4",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3345.399999999907
+            },
+            {
+              "order": 16,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮5",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3353.7000000001863
+            },
+            {
+              "order": 17,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮5",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3359.7000000001863
+            },
+            {
+              "order": 18,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮5",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3360.2000000001863
+            },
+            {
+              "order": 19,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮6",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3362.899999999907
+            },
+            {
+              "order": 20,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮6",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3368.399999999907
+            },
+            {
+              "order": 21,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮6",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3368.899999999907
+            },
+            {
+              "order": 22,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮7",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3374.399999999907
+            },
+            {
+              "order": 23,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮7",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3378.2999999998137
+            },
+            {
+              "order": 24,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮7",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3378.600000000093
+            },
+            {
+              "order": 25,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮8",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3391
+            },
+            {
+              "order": 26,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮8",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3400
+            },
+            {
+              "order": 27,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮8",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3400.399999999907
+            },
+            {
+              "order": 28,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮9",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3402.899999999907
+            },
+            {
+              "order": 29,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮9",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3407.899999999907
+            },
+            {
+              "order": 30,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮9",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3408.2000000001863
+            },
+            {
+              "order": 31,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮10",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3411.2999999998137
+            },
+            {
+              "order": 32,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮10",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3416.7000000001863
+            },
+            {
+              "order": 33,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮10",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3417
+            },
+            {
+              "order": 34,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮11",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3422.899999999907
+            },
+            {
+              "order": 35,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮11",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3428.2000000001863
+            },
+            {
+              "order": 36,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮11",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3428.600000000093
+            },
+            {
+              "order": 37,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮12",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3434.5
+            },
+            {
+              "order": 38,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮12",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3440.2999999998137
+            },
+            {
+              "order": 39,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮12",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3440.7000000001863
+            },
+            {
+              "order": 40,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮13",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3450.7000000001863
+            },
+            {
+              "order": 41,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮13",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3457.2000000001863
+            },
+            {
+              "order": 42,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮13",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3457.5
+            },
+            {
+              "order": 43,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮14",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3465.399999999907
+            },
+            {
+              "order": 44,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮14",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3471.2000000001863
+            },
+            {
+              "order": 45,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮14",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3471.600000000093
+            },
+            {
+              "order": 46,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮15",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3478.899999999907
+            },
+            {
+              "order": 47,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮15",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3484.7000000001863
+            },
+            {
+              "order": 48,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮15",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3485
+            },
+            {
+              "order": 49,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮16",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3498
+            },
+            {
+              "order": 50,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮16",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3503.2999999998137
+            },
+            {
+              "order": 51,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮16",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3503.7000000001863
+            },
+            {
+              "order": 52,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮17",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3508.2000000001863
+            },
+            {
+              "order": 53,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮17",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3512.5
+            },
+            {
+              "order": 54,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮17",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3512.7999999998137
+            },
+            {
+              "order": 55,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮18",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3519.399999999907
+            },
+            {
+              "order": 56,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮18",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3525.2999999998137
+            },
+            {
+              "order": 57,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮18",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3525.7000000001863
+            },
+            {
+              "order": 58,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮19",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3530.399999999907
+            },
+            {
+              "order": 59,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮19",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3537.100000000093
+            },
+            {
+              "order": 60,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮19",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3537.399999999907
+            },
+            {
+              "order": 61,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮20",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3540.2999999998137
+            },
+            {
+              "order": 62,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮20",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3545.7000000001863
+            },
+            {
+              "order": 63,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮20",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3546
+            },
+            {
+              "order": 64,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮21",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3557.5
+            },
+            {
+              "order": 65,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮21",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3562.7999999998137
+            },
+            {
+              "order": 66,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮21",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3563.2000000001863
+            },
+            {
+              "order": 67,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮22",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3568.399999999907
+            },
+            {
+              "order": 68,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮22",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3573.399999999907
+            },
+            {
+              "order": 69,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮22",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3574.2999999998137
+            },
+            {
+              "order": 70,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮23",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3578.7999999998137
+            },
+            {
+              "order": 71,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮23",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3583.600000000093
+            },
+            {
+              "order": 72,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮23",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3584
+            },
+            {
+              "order": 73,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮24",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3589.2000000001863
+            },
+            {
+              "order": 74,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮24",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3593.399999999907
+            },
+            {
+              "order": 75,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮24",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3593.7000000001863
+            },
+            {
+              "order": 76,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮25",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3599.100000000093
+            },
+            {
+              "order": 77,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮25",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3604
+            },
+            {
+              "order": 78,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮25",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3604.2999999998137
+            },
+            {
+              "order": 79,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮26",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3610.100000000093
+            },
+            {
+              "order": 80,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮26",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3614.899999999907
+            },
+            {
+              "order": 81,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮26",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3615.2000000001863
+            },
+            {
+              "order": 82,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮27",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3624.2000000001863
+            },
+            {
+              "order": 83,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮27",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3631.7999999998137
+            },
+            {
+              "order": 84,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮27",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3632.2000000001863
+            },
+            {
+              "order": 85,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮28",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3641.5
+            },
+            {
+              "order": 86,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮28",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3646.399999999907
+            },
+            {
+              "order": 87,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮28",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3646.7000000001863
+            },
+            {
+              "order": 88,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮29",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3652.100000000093
+            },
+            {
+              "order": 89,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮29",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3656.7999999998137
+            },
+            {
+              "order": 90,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮29",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3657.2000000001863
+            },
+            {
+              "order": 91,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮30",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3664.399999999907
+            },
+            {
+              "order": 92,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮30",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3669.399999999907
+            },
+            {
+              "order": 93,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮30",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3669.899999999907
+            },
+            {
+              "order": 94,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮31",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3673.899999999907
+            },
+            {
+              "order": 95,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮31",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3679.2999999998137
+            },
+            {
+              "order": 96,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮31",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3679.7000000001863
+            },
+            {
+              "order": 97,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮32",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3689.7999999998137
+            },
+            {
+              "order": 98,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮32",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3697.7999999998137
+            },
+            {
+              "order": 99,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮32",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3698
+            },
+            {
+              "order": 100,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮33",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3702.7999999998137
+            },
+            {
+              "order": 101,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮33",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3709.7000000001863
+            },
+            {
+              "order": 102,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮33",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3710.100000000093
+            },
+            {
+              "order": 103,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮34",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3716.600000000093
+            },
+            {
+              "order": 104,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮34",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3722
+            },
+            {
+              "order": 105,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮34",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3722.2999999998137
+            },
+            {
+              "order": 106,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮35",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3726.399999999907
+            },
+            {
+              "order": 107,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮35",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3736.2999999998137
+            },
+            {
+              "order": 108,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮35",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3739.2999999998137
+            },
+            {
+              "order": 109,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮36",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3745.2000000001863
+            },
+            {
+              "order": 110,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮36",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3751
+            },
+            {
+              "order": 111,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮36",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3751.399999999907
+            },
+            {
+              "order": 112,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮37",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3757.2000000001863
+            },
+            {
+              "order": 113,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮37",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3763.2999999998137
+            },
+            {
+              "order": 114,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮37",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3763.7000000001863
+            },
+            {
+              "order": 115,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮38",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3769.2999999998137
+            },
+            {
+              "order": 116,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮38",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3774.100000000093
+            },
+            {
+              "order": 117,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮38",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3774.2999999998137
+            },
+            {
+              "order": 118,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮39",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3778.2000000001863
+            },
+            {
+              "order": 119,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮39",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3784.100000000093
+            },
+            {
+              "order": 120,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮39",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3784.5
+            },
+            {
+              "order": 121,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮40",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3788.399999999907
+            },
+            {
+              "order": 122,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮40",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3794.100000000093
+            },
+            {
+              "order": 123,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮40",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3794.2999999998137
+            },
+            {
+              "order": 124,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮41",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3803.7000000001863
+            },
+            {
+              "order": 125,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮41",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3808.7000000001863
+            },
+            {
+              "order": 126,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮41",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3809.100000000093
+            },
+            {
+              "order": 127,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮42",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3813.2999999998137
+            },
+            {
+              "order": 128,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮42",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3818.100000000093
+            },
+            {
+              "order": 129,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮42",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3818.399999999907
+            },
+            {
+              "order": 130,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮43",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3821.899999999907
+            },
+            {
+              "order": 131,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮43",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3825.2999999998137
+            },
+            {
+              "order": 132,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮43",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3825.600000000093
+            },
+            {
+              "order": 133,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮44",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3828.899999999907
+            },
+            {
+              "order": 134,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮44",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3834
+            },
+            {
+              "order": 135,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮44",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3834.399999999907
+            },
+            {
+              "order": 136,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮45",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3838.2000000001863
+            },
+            {
+              "order": 137,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮45",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3843
+            },
+            {
+              "order": 138,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮45",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3843.2999999998137
+            },
+            {
+              "order": 139,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮46",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3850
+            },
+            {
+              "order": 140,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮46",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3855.5
+            },
+            {
+              "order": 141,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮46",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3855.899999999907
+            },
+            {
+              "order": 142,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮47",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3859.2000000001863
+            },
+            {
+              "order": 143,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮47",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3867.899999999907
+            },
+            {
+              "order": 144,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮47",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3868.399999999907
+            },
+            {
+              "order": 145,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮48",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3873.399999999907
+            },
+            {
+              "order": 146,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮48",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3878.7000000001863
+            },
+            {
+              "order": 147,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮48",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3879.100000000093
+            },
+            {
+              "order": 148,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮49",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3886.5
+            },
+            {
+              "order": 149,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮49",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3891.899999999907
+            },
+            {
+              "order": 150,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮49",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3892.399999999907
+            },
+            {
+              "order": 151,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮50",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3897.2000000001863
+            },
+            {
+              "order": 152,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮50",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3902.2999999998137
+            },
+            {
+              "order": 153,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮50",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3902.600000000093
+            },
+            {
+              "order": 154,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮51",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3907.2000000001863
+            },
+            {
+              "order": 155,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮51",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3911.399999999907
+            },
+            {
+              "order": 156,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮51",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3911.7000000001863
+            },
+            {
+              "order": 157,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮52",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3914.7000000001863
+            },
+            {
+              "order": 158,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮52",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3918.2999999998137
+            },
+            {
+              "order": 159,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮52",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3918.7000000001863
+            },
+            {
+              "order": 160,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮53",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3921.2000000001863
+            },
+            {
+              "order": 161,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮53",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3926.899999999907
+            },
+            {
+              "order": 162,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮53",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3927.2000000001863
+            },
+            {
+              "order": 163,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮54",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3931.2999999998137
+            },
+            {
+              "order": 164,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮54",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3936.7999999998137
+            },
+            {
+              "order": 165,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮54",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3937.100000000093
+            },
+            {
+              "order": 166,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮55",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3941.100000000093
+            },
+            {
+              "order": 167,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮55",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3946.2000000001863
+            },
+            {
+              "order": 168,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮55",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3946.7000000001863
+            },
+            {
+              "order": 169,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮56",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3952.7999999998137
+            },
+            {
+              "order": 170,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮56",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3958.899999999907
+            },
+            {
+              "order": 171,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮56",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3959.2999999998137
+            },
+            {
+              "order": 172,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮57",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3969.600000000093
+            },
+            {
+              "order": 173,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮57",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3974.7000000001863
+            },
+            {
+              "order": 174,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮57",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3975
+            },
+            {
+              "order": 175,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮58",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3979.2999999998137
+            },
+            {
+              "order": 176,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮58",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3984.5
+            },
+            {
+              "order": 177,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮58",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3985
+            },
+            {
+              "order": 178,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮59",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3993
+            },
+            {
+              "order": 179,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮59",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4000.100000000093
+            },
+            {
+              "order": 180,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮59",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4000.5
+            },
+            {
+              "order": 181,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮60",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4006.899999999907
+            },
+            {
+              "order": 182,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮60",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4013.7000000001863
+            },
+            {
+              "order": 183,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮60",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4014
+            },
+            {
+              "order": 184,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮61",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4022.2999999998137
+            },
+            {
+              "order": 185,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮61",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4029
+            },
+            {
+              "order": 186,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮61",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4029.5
+            },
+            {
+              "order": 187,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮62",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4038.600000000093
+            },
+            {
+              "order": 188,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮62",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4044.899999999907
+            },
+            {
+              "order": 189,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮62",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4045.2000000001863
+            },
+            {
+              "order": 190,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮63",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4055.7999999998137
+            },
+            {
+              "order": 191,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮63",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4083.100000000093
+            },
+            {
+              "order": 192,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮63",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4083.600000000093
+            },
+            {
+              "order": 193,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮64",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4086.2000000001863
+            },
+            {
+              "order": 194,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮64",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4090.7999999998137
+            },
+            {
+              "order": 195,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮64",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4091.100000000093
+            },
+            {
+              "order": 196,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮65",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4094.600000000093
+            },
+            {
+              "order": 197,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮65",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4098.299999999814
+            },
+            {
+              "order": 198,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮65",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4098.5
+            },
+            {
+              "order": 199,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮66",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4102
+            },
+            {
+              "order": 200,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮66",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4107.100000000093
+            },
+            {
+              "order": 201,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮66",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4107.399999999907
+            },
+            {
+              "order": 202,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮67",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4110.899999999907
+            },
+            {
+              "order": 203,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮67",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4114.899999999907
+            },
+            {
+              "order": 204,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮67",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4115.100000000093
+            },
+            {
+              "order": 205,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮68",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4117.799999999814
+            },
+            {
+              "order": 206,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮68",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4122.100000000093
+            },
+            {
+              "order": 207,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮68",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4122.399999999907
+            },
+            {
+              "order": 208,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "仮69",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4125.299999999814
+            },
+            {
+              "order": 209,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "仮69",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4130.299999999814
+            },
+            {
+              "order": 210,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "仮69",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4130.399999999907
+            },
+            {
+              "order": 211,
+              "phase": "cancellation-end",
+              "type": "compositionupdate",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4243.700000000186
+            },
+            {
+              "order": 212,
+              "phase": "cancellation-end",
+              "type": "beforeinput",
+              "data": "",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4243.700000000186
+            },
+            {
+              "order": 213,
+              "phase": "cancellation-end",
+              "type": "input",
+              "data": "仮69",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4244.200000000186
+            },
+            {
+              "order": 214,
+              "phase": "cancellation-end",
+              "type": "compositionend",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": false,
+              "observedAt": 4244.299999999814
+            },
+            {
+              "order": 215,
+              "phase": "converted-updates",
+              "type": "compositionstart",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4636.700000000186
+            },
+            {
+              "order": 216,
+              "phase": "converted-updates",
+              "type": "compositionupdate",
+              "data": "か",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4637.399999999907
+            },
+            {
+              "order": 217,
+              "phase": "converted-updates",
+              "type": "beforeinput",
+              "data": "か",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4652
+            },
+            {
+              "order": 218,
+              "phase": "converted-updates",
+              "type": "input",
+              "data": "か",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4652.399999999907
+            },
+            {
+              "order": 219,
+              "phase": "converted-updates",
+              "type": "compositionupdate",
+              "data": "かん",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4670.100000000093
+            },
+            {
+              "order": 220,
+              "phase": "converted-updates",
+              "type": "beforeinput",
+              "data": "かん",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4678.799999999814
+            },
+            {
+              "order": 221,
+              "phase": "converted-updates",
+              "type": "input",
+              "data": "かん",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4679.100000000093
+            },
+            {
+              "order": 222,
+              "phase": "converted-commit",
+              "type": "compositionupdate",
+              "data": "漢字",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4707.700000000186
+            },
+            {
+              "order": 223,
+              "phase": "converted-commit",
+              "type": "beforeinput",
+              "data": "漢字",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4725.100000000093
+            },
+            {
+              "order": 224,
+              "phase": "converted-commit",
+              "type": "input",
+              "data": "漢字",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4725.399999999907
+            },
+            {
+              "order": 225,
+              "phase": "converted-commit",
+              "type": "compositionend",
+              "data": "漢字",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": false,
+              "observedAt": 4725.399999999907
+            }
+          ],
+          "dropped": 0
+        },
+        "errors": []
+      }
+    }
+  ],
+  "post": {
+    "file": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "summary": {
+      "finalOriginalKeyAt": 151479.3999999999,
+      "continuationKeyAt": 151906.5,
+      "continuationFrameAt": 152013.1000000001,
+      "browserQuietGapMs": 427.10000000009313,
+      "continuationKeyToFrameMs": 106.60000000009313,
+      "continuationKeyToNativeReadMs": 107.5,
+      "continuationRequestReturnMs": 89.2385779999895,
+      "finalOriginalKeyToContinuationFrameMs": 533.7000000001863,
+      "finalOriginalKeyToContinuationNativeReadMs": 534.6000000000931
+    },
+    "budgets": {
+      "requestedQuietPauseMs": 350,
+      "continuationRequestReturnMs": 1000,
+      "continuationKeyToFrameMs": 500,
+      "continuationKeyToNativeReadMs": 500,
+      "finalOriginalKeyToContinuationFrameMs": 1850,
+      "finalOriginalKeyToContinuationNativeReadMs": 1850
+    },
+    "fixture": {
+      "originalInputCount": 2086,
+      "continuation": "x",
+      "totalInputCount": 2087,
+      "originalTextSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+    },
+    "native": {
+      "unitId": "b455ec14-fd23-4ae7-9417-6bcbe35e9780",
+      "mobile": true,
+      "observedAt": 163111.1000000001,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "flushes": [
+        {
+          "reason": "capacity",
+          "startedAt": 3568.600000000093,
+          "durationMs": 31,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 4676.199999999721,
+          "durationMs": 16.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 5729.600000000093,
+          "durationMs": 11.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 6841.199999999721,
+          "durationMs": 9.900000000372529,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 7929.399999999907,
+          "durationMs": 41.39999999990687,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 9099,
+          "durationMs": 20.199999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 10306.5,
+          "durationMs": 13.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 11576.799999999814,
+          "durationMs": 9.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 12776.19999999972,
+          "durationMs": 33.60000000009313,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 14061.799999999814,
+          "durationMs": 11.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 15331.299999999814,
+          "durationMs": 12.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 16676.299999999814,
+          "durationMs": 11.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 18164.299999999814,
+          "durationMs": 24.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 19572.899999999907,
+          "durationMs": 8.700000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 21030.100000000093,
+          "durationMs": 9.099999999627471,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 22549.69999999972,
+          "durationMs": 9.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 24067.19999999972,
+          "durationMs": 24.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 25750.5,
+          "durationMs": 10.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 27346.799999999814,
+          "durationMs": 9.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 28960.600000000093,
+          "durationMs": 8.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 30567.799999999814,
+          "durationMs": 24.700000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 32453.399999999907,
+          "durationMs": 11.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 34317.60000000009,
+          "durationMs": 9,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 36218.39999999991,
+          "durationMs": 9.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 38244.799999999814,
+          "durationMs": 27.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 40206,
+          "durationMs": 10.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 42306.799999999814,
+          "durationMs": 10.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 44441,
+          "durationMs": 8.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 46552.299999999814,
+          "durationMs": 26.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 48815.10000000009,
+          "durationMs": 21.199999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 51046.89999999991,
+          "durationMs": 9.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 53294.69999999972,
+          "durationMs": 8.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 55613.799999999814,
+          "durationMs": 21.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 58111.10000000009,
+          "durationMs": 10.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 60539.19999999972,
+          "durationMs": 8.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 63090.799999999814,
+          "durationMs": 15.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 65627.29999999981,
+          "durationMs": 24.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 68222.5,
+          "durationMs": 11.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 70799.29999999981,
+          "durationMs": 9.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 73505.5,
+          "durationMs": 11.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 76138.8999999999,
+          "durationMs": 18.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 78888.29999999981,
+          "durationMs": 12.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 81589.6000000001,
+          "durationMs": 9.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 84503,
+          "durationMs": 14.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 87623.29999999981,
+          "durationMs": 24,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 90298.1000000001,
+          "durationMs": 10,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 93170,
+          "durationMs": 12.699999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 96093.3999999999,
+          "durationMs": 12.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 98966.8999999999,
+          "durationMs": 16,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 101979.29999999981,
+          "durationMs": 12.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 104921.69999999972,
+          "durationMs": 8.300000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 107960.8999999999,
+          "durationMs": 16.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 111062.8999999999,
+          "durationMs": 20.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 114099.3999999999,
+          "durationMs": 9.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 117338.19999999972,
+          "durationMs": 11.300000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 120526,
+          "durationMs": 60.60000000009313,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 123746,
+          "durationMs": 9.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 126942.3999999999,
+          "durationMs": 25.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 130315.19999999972,
+          "durationMs": 11.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 133624.1000000001,
+          "durationMs": 7.7999999998137355,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 137085.3999999999,
+          "durationMs": 10.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 140430.6000000001,
+          "durationMs": 31.59999999962747,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 143901.8999999999,
+          "durationMs": 11.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 147288.8999999999,
+          "durationMs": 13.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 150806.2999999998,
+          "durationMs": 11.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "idle",
+          "startedAt": 151842.6000000001,
+          "durationMs": 3.3999999999068677,
+          "history": 6,
+          "collaboration": 6,
+          "quietForMs": 360.60000000009313
+        },
+        {
+          "reason": "idle",
+          "startedAt": 152213.8999999999,
+          "durationMs": 0.10000000009313226,
+          "history": 1,
+          "collaboration": 1,
+          "quietForMs": 304.5
+        }
+      ],
+      "history": {
+        "undos": 67,
+        "redos": 0
+      },
+      "drainWitness": null,
+      "selection": {
+        "start": 2087,
+        "end": 2087,
+        "segmentId": ""
+      },
+      "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.x\r\n"
+    },
+    "peer": {
+      "unitId": "b455ec14-fd23-4ae7-9417-6bcbe35e9780",
+      "observedAt": 163123.7999999998,
+      "textLength": 2089,
+      "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+      "selection": {
+        "start": 0,
+        "end": 0,
+        "segmentId": ""
+      }
+    },
+    "saved": {
+      "textLength": 2089,
+      "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d"
+    }
+  },
+  "clocks": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bracket": {
+        "beforeMs": 2399.6999999999534,
+        "afterMs": 4297.299999999814
+      },
+      "profileStartTimeUs": 1091351369,
+      "profileEndTimeUs": 1439480213,
+      "sha256": "c3bada236b2427d20d695d5b7c9eb0dc04be059a88df501957b2aa4c51da112f",
+      "uncertaintyMs": 1897.5999999998603
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bracket": {
+        "beforeMs": 2364,
+        "afterMs": 4185.200000000186
+      },
+      "profileStartTimeUs": 1971791381,
+      "profileEndTimeUs": 2134586206,
+      "sha256": "bdc56c24f5e4927897c32917803f978653b292715da1caa3a0bd2c53f34a1e12",
+      "uncertaintyMs": 1821.2000000001863
+    }
+  ],
+  "comparison": {
+    "schema": 2,
+    "mode": "paired",
+    "candidateGroupLimit": 32,
+    "candidateHistoryLimit": 100,
+    "baselineHistoryLimit": 50,
+    "protocolRevision": 5,
+    "drainAcceptance": {
+      "metric": "first-verified-browser-local-empty",
+      "maximumMs": 1000,
+      "lateReadUpperBound": "descriptive-only"
+    },
+    "preset": "mobile",
+    "physicalDevice": false,
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "baselineRedoOutcome": [
+      {
+        "sample": "profile",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-3",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-2",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-1",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      }
+    ],
+    "candidateIntegrity": true,
+    "failures": [],
+    "unavailable": [],
+    "summaries": [
+      {
+        "role": "baseline-observation",
+        "sample": "profile",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 190.79999999981374,
+        "longestTaskMs": 42091,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 88098.1000000001,
+        "firstVerifiedBrowserLocalDrainMs": 87403,
+        "lateReadMinusLocalWitnessMs": 695.1000000000931,
+        "drainPollCount": 8,
+        "firstEmptyAfterFinalKeyMs": 87406.6000000001,
+        "typingWallMs": 258129.80497099995,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-3",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 177.79999999993015,
+        "longestTaskMs": 40210,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 82290,
+        "firstVerifiedBrowserLocalDrainMs": 81667.09999999986,
+        "lateReadMinusLocalWitnessMs": 622.9000000001397,
+        "drainPollCount": 9,
+        "firstEmptyAfterFinalKeyMs": 81672,
+        "typingWallMs": 236267.04572199995,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-2",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 175.09999999997672,
+        "longestTaskMs": 38665,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 80429.6000000001,
+        "firstVerifiedBrowserLocalDrainMs": 79785.20000000007,
+        "lateReadMinusLocalWitnessMs": 644.4000000000233,
+        "drainPollCount": 8,
+        "firstEmptyAfterFinalKeyMs": 79789.40000000002,
+        "typingWallMs": 231097.162356,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-1",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 178.80000000001746,
+        "longestTaskMs": 38735,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 79780.40000000002,
+        "firstVerifiedBrowserLocalDrainMs": 79367.40000000002,
+        "lateReadMinusLocalWitnessMs": 413,
+        "drainPollCount": 9,
+        "firstEmptyAfterFinalKeyMs": 79371.40000000002,
+        "typingWallMs": 238554.380183,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "profile",
+        "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+        "inputP95Ms": 107,
+        "longestTaskMs": 180,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 14.5,
+          "p95": 36.300000000046566,
+          "max": 49.299999999813735,
+          "sum": 1146.0999999993946
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 6,
+          "p95": 6,
+          "max": 6,
+          "sum": 6
+        },
+        "pairedFlushMaximumMs": 49.299999999813735,
+        "nativeDrainUpperBoundMs": 1091,
+        "firstVerifiedBrowserLocalDrainMs": 514.6999999997206,
+        "lateReadMinusLocalWitnessMs": 576.3000000002794,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 606.8999999999069,
+        "typingWallMs": 159791.80926999997,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-3",
+        "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+        "inputP95Ms": 102,
+        "longestTaskMs": 187,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 12.299999999813735,
+          "p95": 32.0999999998603,
+          "max": 41.89999999990687,
+          "sum": 988.9999999993015
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 4.300000000046566,
+          "p95": 4.300000000046566,
+          "max": 4.300000000046566,
+          "sum": 4.300000000046566
+        },
+        "pairedFlushMaximumMs": 41.89999999990687,
+        "nativeDrainUpperBoundMs": 1211.6000000000931,
+        "firstVerifiedBrowserLocalDrainMs": 343.30000000004657,
+        "lateReadMinusLocalWitnessMs": 868.3000000000466,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 519.5,
+        "typingWallMs": 151280.26189800003,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-2",
+        "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+        "inputP95Ms": 101.5999999998603,
+        "longestTaskMs": 176,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 12.5,
+          "p95": 29,
+          "max": 44.10000000009313,
+          "sum": 1017.1000000005588
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 34.39999999990687,
+          "p95": 34.39999999990687,
+          "max": 34.39999999990687,
+          "sum": 34.39999999990687
+        },
+        "pairedFlushMaximumMs": 44.10000000009313,
+        "nativeDrainUpperBoundMs": 744.3999999999069,
+        "firstVerifiedBrowserLocalDrainMs": 352.69999999995343,
+        "lateReadMinusLocalWitnessMs": 391.69999999995343,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 398.89999999990687,
+        "typingWallMs": 149806.112997,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-1",
+        "source": "eb91917064bd9d7665683fade860cd82457fbca4",
+        "inputP95Ms": 99.19999999995343,
+        "longestTaskMs": 188,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 11.600000000093132,
+          "p95": 32.60000000009313,
+          "max": 45.60000000009313,
+          "sum": 991.3999999985099
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.5999999998603016,
+          "p95": 0.5999999998603016,
+          "max": 0.5999999998603016,
+          "sum": 0.5999999998603016
+        },
+        "pairedFlushMaximumMs": 45.60000000009313,
+        "nativeDrainUpperBoundMs": 810.1999999999534,
+        "firstVerifiedBrowserLocalDrainMs": 462.80000000004657,
+        "lateReadMinusLocalWitnessMs": 347.39999999990687,
+        "drainPollCount": 2,
+        "firstEmptyAfterFinalKeyMs": 539.4000000001397,
+        "typingWallMs": 149826.053359,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 66
+      }
+    ],
+    "improvement": {
+      "history": {
+        "baselineContainingTaskMs": 40764,
+        "candidateEntireTaskUpperBoundMs": 188,
+        "reductionPercent": 99.53880875282111,
+        "status": "registered-relative-gate-applied",
+        "candidateAttribution": "sampled-native-reducer",
+        "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+      },
+      "collaboration": {
+        "baselineContainingTaskMs": 42091,
+        "candidateEntireTaskUpperBoundMs": 188,
+        "reductionPercent": 99.55334869687107,
+        "status": "registered-relative-gate-applied",
+        "candidateAttribution": "sampled-native-reducer",
+        "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+      }
+    },
+    "unprofiledImprovement": {
+      "metric": "whole-browser-longest-task-reduction",
+      "samples": [
+        {
+          "sample": "plain-3",
+          "baselineLongestTaskMs": 40210,
+          "candidateEntireTaskUpperBoundMs": 188,
+          "reductionPercent": 99.53245461328028
+        },
+        {
+          "sample": "plain-2",
+          "baselineLongestTaskMs": 38665,
+          "candidateEntireTaskUpperBoundMs": 188,
+          "reductionPercent": 99.5137721453511
+        },
+        {
+          "sample": "plain-1",
+          "baselineLongestTaskMs": 38735,
+          "candidateEntireTaskUpperBoundMs": 188,
+          "reductionPercent": 99.51465083258036
+        }
+      ],
+      "conservativeAggregateReductionPercent": 99.5137721453511,
+      "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+    },
+    "profilingVariation": [
+      {
+        "role": "baseline-observation",
+        "plainTypingMs": {
+          "count": 3,
+          "p50": 236267.04572199995,
+          "p95": 238554.380183,
+          "max": 238554.380183,
+          "sum": 705918.5882609999
+        },
+        "profileTypingMs": 258129.80497099995,
+        "profileMinusPlainMedianMs": 21862.759248999995,
+        "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+      },
+      {
+        "role": "candidate",
+        "plainTypingMs": {
+          "count": 3,
+          "p50": 149826.053359,
+          "p95": 151280.26189800003,
+          "max": 151280.26189800003,
+          "sum": 450912.428254
+        },
+        "profileTypingMs": 159791.80926999997,
+        "profileMinusPlainMedianMs": 9965.755910999957,
+        "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+      }
+    ],
+    "composition": {
+      "baseline": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 2,
+        "reorderedSampleCount": 4,
+        "clock": {
+          "beforeMs": 2399.6999999999534,
+          "afterMs": 4297.299999999814,
+          "uncertaintyMs": 1897.5999999998603,
+          "profileStartTimeUs": 1091351369,
+          "profileEndTimeUs": 1439480213
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 36402,
+          "sampledCpuMs": 39170.761999999646,
+          "certainContainingTasks": [
+            {
+              "index": 1719,
+              "startedAt": 266782.09999999986,
+              "durationMs": 40764,
+              "sampleCount": 34733
+            }
+          ],
+          "maxContainingTaskMs": 40764,
+          "taskAttribution": "certain-whole-containing-task"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 37591,
+          "sampledCpuMs": 40469.41800000011,
+          "certainContainingTasks": [
+            {
+              "index": 1720,
+              "startedAt": 307548.09999999986,
+              "durationMs": 42091,
+              "sampleCount": 35899
+            }
+          ],
+          "maxContainingTaskMs": 42091,
+          "taskAttribution": "certain-whole-containing-task"
+        }
+      },
+      "candidate": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 1,
+        "reorderedSampleCount": 2,
+        "clock": {
+          "beforeMs": 2364,
+          "afterMs": 4185.200000000186,
+          "uncertaintyMs": 1821.2000000001863,
+          "profileStartTimeUs": 1971791381,
+          "profileEndTimeUs": 2134586206
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 600,
+          "sampledCpuMs": 639.5129999999998,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 2,
+          "sampleCount": 444,
+          "sampledCpuMs": 479.6430000000001,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        }
+      }
+    }
+  }
+}

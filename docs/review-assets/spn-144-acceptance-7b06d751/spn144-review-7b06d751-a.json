@@ -1,0 +1,20 @@
+{
+  "reviewer": "A",
+  "head": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "score": 100,
+  "rubric": {"scope":35,"correctnessIntegrityAccess":25,"verification":20,"ciOperations":10,"maintainabilityComplexity":10},
+  "readyForDeclaredValidationPushFromThisReview": true,
+  "requiresOtherQualifyingExactHeadReview": true,
+  "mergeApproval": false,
+  "unresolvedBlockers": [],
+  "dispositions": [
+    {"id":"A1","status":"resolved","evidence":"materialization preserves primary and secondary close failure; malformed+close, write+close and close-only controls"},
+    {"id":"A2","status":"resolved","evidence":"verified receipt authority bound to pair-compared instrumentation; valid cross-platform mismatch negative"},
+    {"id":"related-output-close-precedence","status":"resolved","evidence":"nonzero child result remembered at close before file settlement; real failed child plus late-close control"}
+  ],
+  "evidence": {"payloads":124,"storedBytes":404736,"decodedBytes":2044813,"manifestSha256":"b0f1254ffeb904588eed20fdf853511b82ca68c44e22916a13e48f8e5f367200","allHashesMatched":true,"independentWatchdogMs":214,"independentPeakKiB":91472,"pressure":"1","proof":"/tmp/spn144-repair-evidence-a.json"},
+  "retainedLocalChecks":{"controls":125,"controlsMs":3149,"controlsPeakKiB":740400,"lintMs":17061,"lintPeakKiB":722880,"focusedTypecheckRoots":12,"focusedTypecheckMs":476,"focusedTypecheckPeakKiB":290384},
+  "hostedAcceptance":"pending: all seven gates, Linux converter, full desktop/mobile first pairs under420s and all other selected owners",
+  "browserConverterOrTestRerunsByReviewer": 0
+}

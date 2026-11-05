@@ -1,0 +1,50 @@
+{
+  "reviewer": "B",
+  "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "score": 100,
+  "rubric": {
+    "scope": 35,
+    "correctness_integrity_access": 25,
+    "verification": 20,
+    "ci_operations": 10,
+    "maintainability_complexity": 10
+  },
+  "findings": [],
+  "priorFindings": [
+    {
+      "id": "B1",
+      "status": "resolved",
+      "proof": "Receipt-bound verified authority in exactly paired instrumentation; individually-valid different-platform negative."
+    },
+    {
+      "id": "B2",
+      "status": "resolved",
+      "proof": "Primary validation/write failure and separate close error retained; close-only failure rejects."
+    }
+  ],
+  "relatedRepair": "Child exit recorded before secondary output close failure, both retained and rejected.",
+  "validation_push_ready": true,
+  "validation_push_condition": "Both independent reviews must qualify on this exact commit.",
+  "merge_ready": false,
+  "new_browser_converter_workloads": 0,
+  "evidence": {
+    "payloads": 124,
+    "storedBytes": 404736,
+    "controls": 125,
+    "controlElapsedMs": 3149,
+    "controlPeakKiB": 740400,
+    "lintElapsedMs": 17061,
+    "lintPeakKiB": 722880,
+    "focusedTypesElapsedMs": 476,
+    "focusedTypesPeakKiB": 290384
+  },
+  "pending": [
+    "all seven hosted gates",
+    "actual Linux converter",
+    "full first-attempt420s desktop/mobile baseline-candidate pairs",
+    "all selected unprofiled content/history/access owners",
+    "final integrity/publication/fresh merge guards"
+  ],
+  "report": "/tmp/spn144-review-7b06d751-b.md"
+}

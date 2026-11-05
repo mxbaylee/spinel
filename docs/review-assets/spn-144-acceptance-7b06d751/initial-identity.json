@@ -1,0 +1,33 @@
+{
+  "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+  "sourceAndTestedTree": "d451532408b37f1cb5da12511c6fca38520599e2",
+  "ci": 41959231289,
+  "storybook": 41959231266,
+  "attempt": 1,
+  "planArtifact": 13384338190,
+  "planZipSha256": "6c2236ad1e6158f27463e60856a14553745e5279730648d4e26c6545d3c5294e",
+  "planDigest": "30c4359ce37331675090a92f691d6183f44352844f4e3290ac0aef698a7e1323",
+  "selectedSuites": [
+    "backlog",
+    "pull-request",
+    "lint",
+    "typecheck",
+    "unit-tests",
+    "lib-test-run",
+    "playwright-run",
+    "container-smoke",
+    "restore-timing",
+    "sync-transition",
+    "doc-responsiveness",
+    "doc-callback-lifetimes",
+    "responsiveness-baseline",
+    "callback-baseline",
+    "phone-compatibility"
+  ],
+  "mode": "full",
+  "paths": null,
+  "reason": "Immutable range or event labels unavailable; full coverage.",
+  "helperDisposition": "Initial node --input-type=module -e command rejected a TypeScript annotation at parse time before checks or writes; executing the same helper as a .ts file repairs the invocation. No hosted/browser/converter workload was repeated."
+}

@@ -1,0 +1,156 @@
+{
+  "archive": {
+    "bytes": 1686582,
+    "sha256": "d2b65e6e6c5968a6f4bcf45558fc69067154dc926c9700c499e228875943217a"
+  },
+  "count": 18,
+  "retained": 18,
+  "omitted": 0,
+  "method": "all original ZIP members streamed and CRC32/SHA256 verified; non-SQLite extracted exclusively and re-read; original ZIP unchanged",
+  "members": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 123307,
+      "sha256": "64573d0aebb57f6de4ced8636a775a7c47684cf5b2025acaa83d01078eabf48d",
+      "crc32": 1743708380,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 126272,
+      "sha256": "5f0ca7ec5a54b7f9895deeb53d6cbfa110c56edb2dcb7e18b43c97d5e3d98b57",
+      "crc32": 1379678818,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 124504,
+      "sha256": "50392783999f93b7c16d4a8db3b13060d65fcc9d01cd1ab44712ec1b6f567524",
+      "crc32": 3706254417,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 129654,
+      "sha256": "7a89a04997f41cea90942d52e2d2e2f170342dff0b11ed4ba2eb0078b6030c0c",
+      "crc32": 2353715056,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 239,
+      "sha256": "2c8adaa5c59736a98ae1cdf97dd5eed1f2db67e29fda1e216474ec3fe2075b79",
+      "crc32": 4284678142,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 3770653,
+      "sha256": "08ec6fc3ae245fb6cd3d01d49dabfea865a60a55b04a484476af3acf76486d17",
+      "crc32": 1857235270,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1381364,
+      "sha256": "751880d218cfbb428cae9f62397e733c2fbad74ad6ff7f37aab6b89361ae9045",
+      "crc32": 398160495,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "bytes": 129852,
+      "sha256": "4fd725606136276ff62f2aaa0d855b214eae5bf1390d9294e67bf839047ec007",
+      "crc32": 2369691168,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 530137,
+      "sha256": "e2971a2225ade4679c5abc3e490addd9c8973d664c1d374bc87b4810cc400139",
+      "crc32": 2167186343,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 536432,
+      "sha256": "635cd3fe2ce7b3cad0ac0163e1b64e41eb7a34a5b0fe33f535772ad032f8738f",
+      "crc32": 768199510,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 538978,
+      "sha256": "4a73f4dd668e7496dde65950f298ac90d07f8698f39b70512b51b268bd7cd814",
+      "crc32": 1726634975,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 539329,
+      "sha256": "8703dbb32e5724626963b3bba91426f81d35d4a8c633bcf9fde1c46fa0b9ed69",
+      "crc32": 2330735406,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 238,
+      "sha256": "4f0ae813fdf62abec0e828f4af0d6a18cf5f14b097aff41b595dd209c92d065a",
+      "crc32": 3037891725,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 3368147,
+      "sha256": "d177cae178fbbf1274fe878d72257e25ae4c5b7b174715e2d7c0cb94f837b640",
+      "crc32": 3388244113,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 2356,
+      "sha256": "eb9a6cbb11c3e820fee71ce1c74b11e76011fca3f8a84de8af49d90502fe8cb7",
+      "crc32": 1562735170,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 67537,
+      "sha256": "92d12ae5997a3579b49079c9f5200e76741e36718634022460e6388e2485800f",
+      "crc32": 3329451331,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "test-results/spn108-comparison-desktop.json",
+      "bytes": 12816,
+      "sha256": "9e7fb336aca6ac4baaba183726611148b6ede0fc17265ffdc00c4b91b7300098",
+      "crc32": 2729823983,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "bytes": 1382517,
+      "sha256": "29d80d7fdf7c02017578f2f686befd8722ecefa3803bf9deaae25b71500e816b",
+      "crc32": 835120431,
+      "omitted": false,
+      "reason": null
+    }
+  ]
+}

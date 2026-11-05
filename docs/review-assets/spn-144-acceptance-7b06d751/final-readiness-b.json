@@ -1,0 +1,201 @@
+{
+  "reviewer": "B",
+  "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+  "sourceAndTestedTree": "d451532408b37f1cb5da12511c6fca38520599e2",
+  "status": "acceptance-complete-publication-and-fresh-guards-pending",
+  "unresolvedAcceptanceBlockers": [],
+  "sourceGrades": {
+    "A": 100,
+    "B": 100
+  },
+  "ci": {
+    "run": 41959231289,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "allJobs": 33,
+    "allJobsSuccessful": true,
+    "gates": [
+      {
+        "name": "Pull request",
+        "id": 127021350899,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "id": 127021613409,
+        "conclusion": "success"
+      },
+      {
+        "name": "Backlog",
+        "id": 127021613502,
+        "conclusion": "success"
+      },
+      {
+        "name": "Typecheck",
+        "id": 127021613546,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lib tests",
+        "id": 127025360724,
+        "conclusion": "success"
+      },
+      {
+        "name": "Unit tests",
+        "id": 127025409106,
+        "conclusion": "success"
+      },
+      {
+        "name": "Playwright smoke",
+        "id": 127034641087,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "storybook": {
+    "run": 41959231266,
+    "attempt": 1,
+    "selectedSuccesses": 8,
+    "inapplicablePagesSkips": 2
+  },
+  "planDigest": "30c4359ce37331675090a92f691d6183f44352844f4e3290ac0aef698a7e1323",
+  "aggregates": [
+    {
+      "group": "unit",
+      "artifact": 13384757948,
+      "zipBytes": 1141,
+      "zipSha256": "176a1102cdd8ebf831a38f6fb9cc232e51fc77c09e20f37ed32fde99fe84ec0f",
+      "member": "ci-results-unit.json",
+      "memberBytes": 6192,
+      "memberSha256": "17c95a80d099d6e7870c93e8ddfc8b0fc30e7169531e7111c43c3c5de2a369c9",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "unit-tests"
+      ]
+    },
+    {
+      "group": "lib",
+      "artifact": 13384892119,
+      "zipBytes": 1158,
+      "zipSha256": "d58c5f5b1fb7234871234b18cb3a62cb94e62bdcb6903406ec23a82c901d6863",
+      "member": "ci-results-lib.json",
+      "memberBytes": 6299,
+      "memberSha256": "f162a3ebafd20e3af98a2f6c458be7d3c58505430b5b9decb79d2aa9631b6bab",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "lib-test-run"
+      ]
+    },
+    {
+      "group": "browser",
+      "artifact": 13386770969,
+      "zipBytes": 1298,
+      "zipSha256": "0d2450294a1abffaa752a9f6b53909cb530d20f12acd7094a7e5e26fa185546f",
+      "member": "ci-results-browser.json",
+      "memberBytes": 10248,
+      "memberSha256": "3b08ddeb6ab9fe61d71b97d6b2b27717fd5764e0230888709ffa296532cd28a7",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes"
+      ]
+    }
+  ],
+  "owners": {
+    "desktopCallback": "accepted-A",
+    "mobileCallback": "accepted-B",
+    "desktopResponsiveness": "accepted-A",
+    "mobileResponsiveness": "accepted-B"
+  },
+  "publicationVerified": false,
+  "merged": false,
+  "cleanupComplete": false,
+  "pending": [
+    "immutable remote archive ref/manifest verification",
+    "bind actual archive URL in canonical receipt",
+    "fresh exact source/base/checks/threads/mergeability guards",
+    "reconcile any metadata-triggered workflows",
+    "guarded squash and actual merge readback",
+    "canonical receipt readback and scoped obsolete branch cleanup"
+  ],
+  "inspected": [
+    {
+      "path": "/tmp/spn144-hosted/README.md",
+      "bytes": 6464,
+      "sha256": "f1510d2dd2216427342c69cdc44e9a6ba309f49ea53c0cb2c03430a26614ae95"
+    },
+    {
+      "path": "/tmp/spn144-final-body.md",
+      "bytes": 7752,
+      "sha256": "84a2788f9d829def81f217051f2c49f543c1636bb7f53f7738d45a9ce074024f"
+    },
+    {
+      "path": "/tmp/spn144-hosted/desktop-review-a.md",
+      "bytes": 9260,
+      "sha256": "ef30026f9fbe736aaf12516c1a8d79dc621bedc74334ba8c0ba7682e6e9f8567"
+    },
+    {
+      "path": "/tmp/spn144-hosted/mobile-review-b.md",
+      "bytes": 9780,
+      "sha256": "e9f39f7d53972d19837db3d9545cbd0df33e5645213810716c604c632fcebeac"
+    },
+    {
+      "path": "/tmp/spn144-hosted/responsiveness-desktop-review-a.md",
+      "bytes": 7948,
+      "sha256": "a3adc507a851c48f9b7c2b3ae0ebf33a56c847915114bc2a551a02c1ca532b18"
+    },
+    {
+      "path": "/tmp/spn144-hosted/responsiveness-mobile-review-b.md",
+      "bytes": 7477,
+      "sha256": "7323d3fd7f6e9d5c2bf6e5cb5d244bfbf3c0f0cc91668d89bdbf813e6d8c7058"
+    },
+    {
+      "path": "/tmp/spn144-hosted/spn144-review-7b06d751-a.json",
+      "bytes": 1654,
+      "sha256": "5b5169cdf97c4d9184c89060c15ebd61692b4d8d15b8f3d4d91fa7d9850c472c"
+    },
+    {
+      "path": "/tmp/spn144-hosted/spn144-review-7b06d751-b.json",
+      "bytes": 1602,
+      "sha256": "37f37aff134195da5af230eb63c36b9a6f45ea534498d535436328924f5c866e"
+    },
+    {
+      "path": "/tmp/spn144-hosted/premerge-pr.json",
+      "bytes": 4304,
+      "sha256": "0b6fcca55ae6342823beff33f6577e0d12f49fa90dcebbea99e9044de0bf9dd4"
+    },
+    {
+      "path": "/tmp/spn144-hosted/premerge-threads.json",
+      "bytes": 27,
+      "sha256": "3e8a08aebce453c022e75a478b159f99c0a339d175c62baff78fe85551e8213d"
+    },
+    {
+      "path": "/tmp/spn144-hosted/premerge-reviews.json",
+      "bytes": 20,
+      "sha256": "8c1f6e8a8f0cc2d4e4a74c436878676c6ce7be8fdccfd2b5e060ebaac22e6901"
+    },
+    {
+      "path": "/tmp/spn144-hosted/premerge-comments.json",
+      "bytes": 243,
+      "sha256": "78472c1ef9fab47c9821a70edd1e97f3344b0c9dd8ad21e8ac69d472477d5413"
+    }
+  ],
+  "limitations": [
+    "No full trace or profile-event reanalysis by reviewer.",
+    "Historical timeout cause remains unknown; passes do not retroactively waive it.",
+    "Downstream SPN141/140/120 integrated acceptance remains separate."
+  ]
+}

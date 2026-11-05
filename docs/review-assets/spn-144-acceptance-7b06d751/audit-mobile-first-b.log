@@ -1,0 +1,20 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(m.zoom.changed.scale.x>m.zoom.before.scale.x)
+
+    at file:///private/tmp/spn144-hosted/audit-mobile-b.ts:33:50
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":2576,"peakKiB":336864}
