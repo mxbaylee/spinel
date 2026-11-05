@@ -1,0 +1,124 @@
+{
+  "source": "8b6828196266f1fac6c46e2cc16b16321db72cf7",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "purpose": "failed full observation; retained fast window is not causal or timing acceptance",
+  "run": 42076760192,
+  "artifact": 13439850683,
+  "payloads": [
+    {
+      "path": "artifacts.json",
+      "bytes": 746,
+      "sha256": "614254d53b50f80a08ccda9af12afad9b8649e454d42ed727eea751c951f63f1"
+    },
+    {
+      "path": "inspect.ts",
+      "bytes": 2693,
+      "sha256": "2b1f50e053e80fe20c6d2971c5ee657d127dcbb9c95c0aa162e6a55190cffd16"
+    },
+    {
+      "path": "inspection-watchdog.json",
+      "bytes": 3118,
+      "sha256": "f3bc86539c8bf69769f20281265ac0293acfd366b4e69ffa635420aba7f55ec2"
+    },
+    {
+      "path": "inspection.log",
+      "bytes": 132,
+      "sha256": "40885f23811eed3863cc7b6a80c686ed427224192038b29ab1945101280ecd34"
+    },
+    {
+      "path": "integrity.json",
+      "bytes": 20901,
+      "sha256": "061236d80af418f49148c2b1e678d5561aa01c050339f370ef41ee1acf7ccc3c"
+    },
+    {
+      "path": "job.log",
+      "bytes": 62172,
+      "sha256": "566de7b82c9b10c839cddc51b11d837af6b9962de494be749ca03155934159e8"
+    },
+    {
+      "path": "jobs-42072224806.json",
+      "bytes": 79969,
+      "sha256": "add6726f63ac5788e0cb0df12309bf0d6d3a4f076fb3f0ebbb5dcda0bca61ab8"
+    },
+    {
+      "path": "jobs-42076752584.json",
+      "bytes": 66349,
+      "sha256": "0623b56546153d9709ce17ce36f47abdd4596fb3e358e924123705f7d62834ba"
+    },
+    {
+      "path": "jobs-42076760163.json",
+      "bytes": 33268,
+      "sha256": "5cd12349cfca917aaa862843680a0515ad15d77a57c4274cb1a2b72cb5aeea39"
+    },
+    {
+      "path": "jobs-42076760177.json",
+      "bytes": 906,
+      "sha256": "bb5bea995649c241a76196524ebee45b114f98ae6194867f46aa7265e6cd5e33"
+    },
+    {
+      "path": "jobs-42076760203.json",
+      "bytes": 10086,
+      "sha256": "f1e96ebfbd7306659c4aeb1600d1922457d7de95e7202b3da81c4c36f632f578"
+    },
+    {
+      "path": "jobs-42076760307.json",
+      "bytes": 11886,
+      "sha256": "b7fc853a51c9b2c8f9be3d16968cf201072ee978ebd703f9539913c548b10c1e"
+    },
+    {
+      "path": "jobs.json",
+      "bytes": 3685,
+      "sha256": "679b3714bccb639bb145de69647f718ed05acbee63104c79652c98867a760c42"
+    },
+    {
+      "path": "next-evidence-review-a.md",
+      "bytes": 9841,
+      "sha256": "fc2c53a9cf8201a80aab9290e8ee4ee427fb1e1a91be1c86019ba316e02d82ae"
+    },
+    {
+      "path": "observation.zip",
+      "bytes": 11376066,
+      "sha256": "f0f4987040a6825f2dde6e1cb31e12ec3b8b15c66db0979b5baeb9dc83537edc"
+    },
+    {
+      "path": "outcome-review-b.md",
+      "bytes": 6603,
+      "sha256": "b2fbf3a8062a181ba53c5835ff0b83aed5d6f0cbc1720d3d611ce7a9a56f7767"
+    },
+    {
+      "path": "run-42072224806.json",
+      "bytes": 12195,
+      "sha256": "8eec980eca408334084ca64cfb4113d383700b279ea0861493a4f366f7c49cd2"
+    },
+    {
+      "path": "run-42076752584.json",
+      "bytes": 12195,
+      "sha256": "25658d62b13d4b50d64e97231a9376ca90037173cf85ae7a0765bfcff325ba33"
+    },
+    {
+      "path": "run-42076760163.json",
+      "bytes": 12184,
+      "sha256": "6bbe64ea12e99d0baceb32ffbdaaca3107cc4dfd3fe22bfcddb755f419fa369f"
+    },
+    {
+      "path": "run-42076760177.json",
+      "bytes": 12224,
+      "sha256": "19df39233da9764b91509f79bd6f85554851d33d372b9fcc0cbbe17d86884ec6"
+    },
+    {
+      "path": "run-42076760203.json",
+      "bytes": 12209,
+      "sha256": "2761c4893557c1cf3929efaf55ddc3871d756672392e35220ef18865f14cd1bc"
+    },
+    {
+      "path": "run-42076760307.json",
+      "bytes": 12198,
+      "sha256": "0f5abc39e4b7e1ae1a5c469cb27d6fe57788093296c2f0c53583f9bf4c51ddad"
+    },
+    {
+      "path": "run.json",
+      "bytes": 12222,
+      "sha256": "68d6feda276575c9f1201cae5d83a6c96894c8427d0fedb7cc0ca77a629233f7"
+    }
+  ]
+}

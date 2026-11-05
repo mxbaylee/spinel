@@ -1,0 +1,5 @@
+# 🛑 SPN-146 changed-launcher outcome
+
+Exact source 8b6828196266f1fac6c46e2cc16b16321db72cf7, run42076760192/job127418913183 attempt1 failed the unchanged 2GiB owned-resource ceiling. Complete original70-member artifact and integrity/source audit retained. Window384–448 transport completed, but pairs41632.6ms and44811.1ms both below80ms comparison threshold. No accepted trace conversion/clock/source attribution, GC inference or historical-cause claim. First violation2105812KiB at146005.338637ms; laterpeak2106380KiB. Progress native-drain, terminalnull: full2086 semantic/drain/history/normalcleanup outcome unproven. Known child reaping is narrower than ordinary fixture cleanup.
+
+Independent B outcome review and A static next-evidence review agree no supported production repair and no automatic same-window repetition. The allowance is closed. Preserve prior component criterion misses. Ordinary triggered CI/Story/native and listed metadata runs deliberately canceled, all jobs terminal; component skipped. No current product acceptance or merge approval.
