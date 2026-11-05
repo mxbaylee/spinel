@@ -1,5 +1,20 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+
+test('hosted ordinary and opt-in startup owners receive the exact build evidence flag', () => {
+  const workflow = readFileSync('.github/workflows/ci.yml', 'utf8');
+  const flag = "VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}";
+  for (const step of ['Build', 'Playwright smoke']) {
+    const block = workflow.match(
+      new RegExp(`      - name: ${step}\\n([\\s\\S]*?)(?=      - name:)`),
+    )?.[1];
+    assert.ok(
+      block?.includes(flag),
+      `${step} must bind ordinary mobile absence and sync presence to the same build flag`,
+    );
+  }
+});
 import {
   createBootstrapJournal,
   sanitizeBootstrapSnapshot,

@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdir, mkdtemp, open, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -3034,7 +3035,13 @@ export async function runCapability(
 }
 
 /** The workflow run this journal belongs to; a journal never moves between runs. */
-export type RunIdentity = { runId: string; attempt: string; sourceSha: string; testedSha: string };
+export type RunIdentity = {
+  runId: string;
+  attempt: string;
+  sourceSha: string;
+  testedSha: string;
+  eventSha?: string;
+};
 /** Account sessions observed in BrowserStack's plan.json just before any device allocation. */
 export type AccountSessions = { runningSessions: number; queuedSessions: number };
 type Journal = RunIdentity & {
@@ -3102,7 +3109,7 @@ export function readPreparedCapabilityJournal(
       Date.parse(journal.preparedAt) <= now,
     'journal-invalid',
   );
-  for (const key of ['runId', 'attempt', 'sourceSha', 'testedSha'] as const)
+  for (const key of ['runId', 'attempt', 'sourceSha', 'testedSha', 'eventSha'] as const)
     requireCondition(journal[key] === identity[key], 'journal-identity-mismatch');
   return journal as Journal;
 }
@@ -3126,19 +3133,31 @@ export async function checkIdleAccount(
   requireCondition(runningSessions === 0 && queuedSessions === 0, 'account-busy');
   return sessions;
 }
-function identityFromEnvironment(): RunIdentity {
+export function identityFromEnvironment(
+  environment: NodeJS.ProcessEnv,
+  checkedOut: string,
+): RunIdentity {
+  requireCondition(
+    /^[a-f0-9]{40}$/.test(checkedOut) && checkedOut === environment.SOURCE_SHA,
+    'checkout-source-mismatch',
+  );
+  requireCondition(/^[a-f0-9]{40}$/.test(environment.GITHUB_SHA ?? ''), 'event-source-invalid');
   return {
-    runId: process.env.GITHUB_RUN_ID ?? '',
-    attempt: process.env.GITHUB_RUN_ATTEMPT ?? '',
-    sourceSha: process.env.SOURCE_SHA ?? '',
-    testedSha: process.env.GITHUB_SHA ?? '',
+    runId: environment.GITHUB_RUN_ID ?? '',
+    attempt: environment.GITHUB_RUN_ATTEMPT ?? '',
+    sourceSha: checkedOut,
+    testedSha: checkedOut,
+    eventSha: environment.GITHUB_SHA,
   };
 }
 async function main() {
   const mode = process.argv[2];
   requireCondition(mode === 'prepare' || mode === 'run', 'invalid-mode');
   const scope = readCapabilityScope(process.env.BS_CAPABILITY_SCOPE);
-  const identity = identityFromEnvironment();
+  const identity = identityFromEnvironment(
+    process.env,
+    execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+  );
   await mkdir('artifacts', { recursive: true });
   if (mode === 'prepare') {
     const journal = preparedCapabilityJournal(identity, Date.now(), scope);

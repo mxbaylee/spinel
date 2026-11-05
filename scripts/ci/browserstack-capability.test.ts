@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import { createContext, runInContext } from 'node:vm';
 import {
   capabilityOutcome,
+  identityFromEnvironment,
   capabilityRunOutcome,
   captureRequiredPngScreenshot,
   blankPageDiagnostic,
@@ -73,6 +74,36 @@ import {
   type CapabilityResult,
   type RunIdentity,
 } from './browserstack-capability.ts';
+
+test('phone identity binds actual head checkout separately from the PR merge event', () => {
+  const head = 'a'.repeat(40),
+    event = 'b'.repeat(40);
+  const environment = {
+    SOURCE_SHA: head,
+    GITHUB_SHA: event,
+    GITHUB_RUN_ID: '123',
+    GITHUB_RUN_ATTEMPT: '1',
+  };
+  const identity = identityFromEnvironment(environment, head);
+  assert.deepEqual(identity, {
+    sourceSha: head,
+    testedSha: head,
+    eventSha: event,
+    runId: '123',
+    attempt: '1',
+  });
+  assert.throws(() => identityFromEnvironment(environment, event), /checkout-source-mismatch/);
+  assert.throws(
+    () => identityFromEnvironment({ ...environment, GITHUB_SHA: '' }, head),
+    /event-source-invalid/,
+  );
+  const journal = preparedCapabilityJournal(identity, 100);
+  assert.equal(readPreparedCapabilityJournal(journal, identity, 101).eventSha, event);
+  assert.throws(
+    () => readPreparedCapabilityJournal(journal, { ...identity, eventSha: head }, 101),
+    /journal-identity-mismatch/,
+  );
+});
 import { clientFor } from './browserstack.ts';
 import { createNativeTap, installConfirmationLabels } from './browserstack-native-controls.ts';
 import { chromeReadinessFailureScript } from './browserstack-chrome-readiness.ts';
