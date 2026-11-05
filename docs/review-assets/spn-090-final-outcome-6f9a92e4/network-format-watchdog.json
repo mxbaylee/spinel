@@ -1,0 +1,70 @@
+{
+  "root": 75680,
+  "started": 1793880283072,
+  "elapsedMs": 339,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90160,
+  "peakKiB": 257568,
+  "live": [
+    {
+      "pid": 75680,
+      "parent": 75644,
+      "group": 75680,
+      "rssKiB": 88624,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-format-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-network-log.ts scripts/ci/browserstack-session-diagnostics.ts scripts/ci/browserstack-session-diagnostics.test.ts scripts/ci/browserstack.test.ts .github/workflows/browserstack.yml"
+    },
+    {
+      "pid": 75744,
+      "parent": 75680,
+      "group": 75680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 75680,
+      "parent": 75644,
+      "group": 75680,
+      "rssKiB": 88624,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-format-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-network-log.ts scripts/ci/browserstack-session-diagnostics.ts scripts/ci/browserstack-session-diagnostics.test.ts scripts/ci/browserstack.test.ts .github/workflows/browserstack.yml"
+    },
+    {
+      "pid": 75699,
+      "parent": 75680,
+      "group": 75680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 75725,
+      "parent": 75680,
+      "group": 75680,
+      "rssKiB": 167584,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 75731,
+      "parent": 75680,
+      "group": 75680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 75744,
+      "parent": 75680,
+      "group": 75680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:04:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,150 @@
+{
+  "root": 77427,
+  "started": 1793880835325,
+  "elapsedMs": 2520,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92928,
+  "peakKiB": 118448,
+  "live": [
+    {
+      "pid": 77427,
+      "parent": 77382,
+      "group": 77427,
+      "rssKiB": 91392,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-branch-push-watchdog.json git push -u origin codex/spn-090-production-integration"
+    },
+    {
+      "pid": 77585,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 77427,
+      "parent": 77382,
+      "group": 77427,
+      "rssKiB": 91392,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-branch-push-watchdog.json git push -u origin codex/spn-090-production-integration"
+    },
+    {
+      "pid": 77446,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77454,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 8992,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "git push -u origin codex/spn-090-production-integration"
+    },
+    {
+      "pid": 77455,
+      "parent": 77454,
+      "group": 77427,
+      "rssKiB": 6944,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "/usr/bin/ssh git@github.com git-receive-pack 'mxbaylee/spinel.git'"
+    },
+    {
+      "pid": 77463,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77476,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77490,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77504,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77514,
+      "parent": 77454,
+      "group": 77427,
+      "rssKiB": 11568,
+      "started": "Thu Nov  5 04:13:56 2026",
+      "command": "/opt/homebrew/Cellar/git/2.39.0/libexec/git-core/git pack-objects --all-progress-implied --revs --stdout --thin --delta-base-offset -q"
+    },
+    {
+      "pid": 77520,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77533,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77546,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77559,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77572,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 77585,
+      "parent": 77427,
+      "group": 77427,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:13:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

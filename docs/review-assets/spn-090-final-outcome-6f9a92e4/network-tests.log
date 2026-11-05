@@ -1,0 +1,46 @@
+✔ network diagnostics retain resource status and timing without URLs, headers, cookies or content (1.1905ms)
+✔ network diagnostics distinguish unsupported metadata, truncation and a valid empty HAR (1.250875ms)
+✔ network timing unknowns and status zero do not become a measured download or identified failure cause (0.136625ms)
+✔ selected network diagnostics make exactly one bounded completed-session GET and never fall back to driver or allocation routes (3.39625ms)
+✔ invalid network selection, missing HAR, provider refusal and oversized HAR cannot pass or allocate a fallback session (1.67275ms)
+✔ diagnostics require exact session and execution identities and credentials before any provider request (1.447791ms)
+✔ only a matching Appium failed response supplies a cause; request echoes and successful return values cannot (1.450708ms)
+✔ cause classification uses allowlisted protocol codes and anchored driver messages, never arbitrary echoed text (0.702917ms)
+✔ Chromium function and result failures are classified only from correlated source-anchored errors (0.854916ms)
+✔ one session-bound terminal error can classify execute HTTP500 while retaining malformed proxy evidence (0.244084ms)
+✔ terminal evidence rejects echoes, foreign or unassociated loggers, duplicates, stale records and incompatible completions (0.386458ms)
+✔ terminal classification preserves unknown405 and malformed evidence and still retrieves the fallback (0.617958ms)
+✔ response structure retains only MIME and shape enums, counts and BOM without private headers, keys or values (2.112583ms)
+✔ stale, overlapping or differently logged proxy responses cannot supply the final failed command cause (0.150375ms)
+✔ text logs require an explicit failed response state and all overlapping or malformed records remain unclassified (0.211208ms)
+✔ completed-session collection journals before the fixed GET, keeps only digests and skips fallback when the cause is classified (0.326084ms)
+✔ unclassified complete text permits exactly one documented fallback and does not fabricate a capability pass (0.429292ms)
+✔ a malformed or unfinished later record requires fallback and prevents fully classified status even after a classified failure (0.400416ms)
+✔ orphan and mismatched framed responses retain uncertainty and require fallback after an earlier classified failure (0.5365ms)
+✔ denied, redirect, missing, empty, invalid UTF8 and oversized responses fail visibly without retries or fallback (0.934791ms)
+✔ the response byte limit is inclusive and retained failure records are bounded (2.153542ms)
+✔ request deadlines cover stalled headers and bodies, abort the read and never retry (1.270083ms)
+✔ empty-chunk streams cannot starve the monotonic deadline and failed initial persistence prevents fetching (1.157583ms)
+✔ a fulfilled final journal cannot report available diagnostics after the overall deadline (0.274875ms)
+✔ the overall deadline includes a stalled initial journal and makes no provider request (0.139167ms)
+✔ selects physical phones, excludes beta/tablet/emulator entries, and supports unlisted Firefox (17.479959ms)
+✔ credentials stay in the HTTPS authorization header and remote error text is discarded (1.36275ms)
+✔ WebDriver failures preserve HTTP class and only allowlisted protocol codes without replay or remote details (1.494959ms)
+✔ WebDriver error diagnostics bound body bytes and discard malformed or oversized payloads (0.679875ms)
+✔ a stalled error body is cancelled without replacing the original HTTP failure (249.905542ms)
+✔ diagnostic stream acquisition, failures and empty chunks cannot replace or indefinitely postpone the HTTP failure (255.37475ms)
+✔ a wrong runner challenge fails and still deletes the allocated session (0.760416ms)
+✔ real-browser evidence is required and a teardown failure cannot produce a pass (0.673875ms)
+✔ session creation failures never echo the remote exception or claim cleanup (0.172625ms)
+✔ malformed success responses and a different Android browser do not pass (0.319709ms)
+✔ monthly Safari, Chrome and Firefox acceptance, every phone scope, and read-only diagnostics preserve their boundaries (30.927375ms)
+✔ direct legacy smoke CLI stays closed before any provider call (144.764917ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 801.439375
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":1026,"peakKiB":363808}

@@ -1,0 +1,54 @@
+{
+  "root": 75814,
+  "started": 1793880323934,
+  "elapsedMs": 252,
+  "outcome": "command-failed",
+  "pressure": "1",
+  "rssKiB": 92096,
+  "peakKiB": 92096,
+  "live": [
+    {
+      "pid": 75814,
+      "parent": 75779,
+      "group": 75814,
+      "rssKiB": 90560,
+      "started": "Thu Nov  5 04:05:23 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-typecheck-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node node_modules/typescript/bin/tsc --noEmit --target esnext --module nodenext --allowImportingTsExtensions --skipLibCheck --types node scripts/ci/browserstack-network-log.ts scripts/ci/browserstack-session-diagnostics.ts scripts/ci/browserstack-session-diagnostics.test.ts"
+    },
+    {
+      "pid": 75851,
+      "parent": 75814,
+      "group": 75814,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:05:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 75814,
+      "parent": 75779,
+      "group": 75814,
+      "rssKiB": 90560,
+      "started": "Thu Nov  5 04:05:23 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-typecheck-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node node_modules/typescript/bin/tsc --noEmit --target esnext --module nodenext --allowImportingTsExtensions --skipLibCheck --types node scripts/ci/browserstack-network-log.ts scripts/ci/browserstack-session-diagnostics.ts scripts/ci/browserstack-session-diagnostics.test.ts"
+    },
+    {
+      "pid": 75833,
+      "parent": 75814,
+      "group": 75814,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:05:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 75851,
+      "parent": 75814,
+      "group": 75814,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:05:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

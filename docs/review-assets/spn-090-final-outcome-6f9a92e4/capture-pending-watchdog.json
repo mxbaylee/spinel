@@ -1,0 +1,198 @@
+{
+  "root": 74324,
+  "started": 1793879695155,
+  "elapsedMs": 2725,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 74304,
+  "peakKiB": 674704,
+  "live": [
+    {
+      "pid": 74324,
+      "parent": 74289,
+      "group": 74324,
+      "rssKiB": 72768,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/capture-pending-watchdog.json node /tmp/spn090-current-hosted/capture-pending.ts"
+    },
+    {
+      "pid": 74522,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 74324,
+      "parent": 74289,
+      "group": 74324,
+      "rssKiB": 72768,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/capture-pending-watchdog.json node /tmp/spn090-current-hosted/capture-pending.ts"
+    },
+    {
+      "pid": 74343,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74369,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 215856,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 74379,
+      "parent": 74369,
+      "group": 74324,
+      "rssKiB": 2752,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 74385,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74398,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74406,
+      "parent": 74369,
+      "group": 74406,
+      "rssKiB": 93616,
+      "started": "Thu Nov  5 03:54:55 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/playwright_chromiumdev_profile-U7GpPG --remote-debugging-pipe --no-startup-window"
+    },
+    {
+      "pid": 74412,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74420,
+      "parent": 74406,
+      "group": 74406,
+      "rssKiB": 61712,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=gpu-process --gpu-recent-crash-count=0 --no-sandbox --disable-breakpad --headless --use-angle=swiftshader-webgl --enable-unsafe-swiftshader --gpu-preferences=WAAAAAAAAAAgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,5610136720312792429,1079273517526612410,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,15961905990088800849,17081796346318381917,4 --trace-process-track-uuid=3190708988185955192"
+    },
+    {
+      "pid": 74421,
+      "parent": 74406,
+      "group": 74406,
+      "rssKiB": 48832,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --use-angle=swiftshader-webgl --use-gl=angle --mute-audio --headless=old --shared-files --field-trial-handle=1718379636,r,5610136720312792429,1079273517526612410,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,15961905990088800849,17081796346318381917,4 --trace-process-track-uuid=3190708989122997041"
+    },
+    {
+      "pid": 74422,
+      "parent": 74406,
+      "group": 74406,
+      "rssKiB": 173600,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --disable-gpu-compositing --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=4 --launch-time-ticks=363217567771 --shared-files --field-trial-handle=1718379636,r,5610136720312792429,1079273517526612410,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,15961905990088800849,17081796346318381917,4 --trace-process-track-uuid=3190708990060038890"
+    },
+    {
+      "pid": 74428,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74441,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74455,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74463,
+      "parent": 74406,
+      "group": 74406,
+      "rssKiB": 175872,
+      "started": "Thu Nov  5 03:54:56 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --disable-gpu-compositing --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=363218272269 --shared-files --field-trial-handle=1718379636,r,5610136720312792429,1079273517526612410,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,15961905990088800849,17081796346318381917,4 --trace-process-track-uuid=3190708990997080739"
+    },
+    {
+      "pid": 74469,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74482,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74490,
+      "parent": 74406,
+      "group": 74406,
+      "rssKiB": 134880,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --disable-gpu-compositing --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=6 --launch-time-ticks=363218718316 --shared-files --field-trial-handle=1718379636,r,5610136720312792429,1079273517526612410,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,15961905990088800849,17081796346318381917,4 --trace-process-track-uuid=3190708991934122588"
+    },
+    {
+      "pid": 74496,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74509,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 74522,
+      "parent": 74324,
+      "group": 74324,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

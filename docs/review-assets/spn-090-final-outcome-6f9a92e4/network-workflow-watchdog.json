@@ -1,0 +1,54 @@
+{
+  "root": 76122,
+  "started": 1793880401717,
+  "elapsedMs": 81,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90192,
+  "peakKiB": 90192,
+  "live": [
+    {
+      "pid": 76122,
+      "parent": 76086,
+      "group": 76122,
+      "rssKiB": 88656,
+      "started": "Thu Nov  5 04:06:41 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-workflow-watchdog.json /tmp/spn146-actionlint/actionlint -shellcheck= -pyflakes= .github/workflows/browserstack.yml"
+    },
+    {
+      "pid": 76155,
+      "parent": 76122,
+      "group": 76122,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 76122,
+      "parent": 76086,
+      "group": 76122,
+      "rssKiB": 88656,
+      "started": "Thu Nov  5 04:06:41 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-workflow-watchdog.json /tmp/spn146-actionlint/actionlint -shellcheck= -pyflakes= .github/workflows/browserstack.yml"
+    },
+    {
+      "pid": 76141,
+      "parent": 76122,
+      "group": 76122,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 76155,
+      "parent": 76122,
+      "group": 76122,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,70 @@
+{
+  "root": 75909,
+  "started": 1793880361430,
+  "elapsedMs": 334,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 89904,
+  "peakKiB": 89904,
+  "live": [
+    {
+      "pid": 75909,
+      "parent": 75874,
+      "group": 75909,
+      "rssKiB": 88368,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-typecheck-corrected-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --target esnext --module nodenext --allowImportingTsExtensions --skipLibCheck --types node scripts/ci/browserstack-network-log.ts scripts/ci/browserstack-session-diagnostics.ts scripts/ci/browserstack-session-diagnostics.test.ts"
+    },
+    {
+      "pid": 75959,
+      "parent": 75909,
+      "group": 75909,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 75909,
+      "parent": 75874,
+      "group": 75909,
+      "rssKiB": 88368,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/network-typecheck-corrected-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --target esnext --module nodenext --allowImportingTsExtensions --skipLibCheck --types node scripts/ci/browserstack-network-log.ts scripts/ci/browserstack-session-diagnostics.ts scripts/ci/browserstack-session-diagnostics.test.ts"
+    },
+    {
+      "pid": 75928,
+      "parent": 75909,
+      "group": 75909,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 75940,
+      "parent": 75909,
+      "group": 75909,
+      "rssKiB": 0,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "<defunct>"
+    },
+    {
+      "pid": 75946,
+      "parent": 75909,
+      "group": 75909,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 75959,
+      "parent": 75909,
+      "group": 75909,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:06:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,427 @@
+﻿2026-11-05T11:34:23.0082492Z Current runner version: '2.338.2'
+2026-11-05T11:34:23.0119183Z ##[group]Runner Image Provisioner
+2026-11-05T11:34:23.0120657Z Hosted Compute Agent
+2026-11-05T11:34:23.0121614Z Version: 20261021.618
+2026-11-05T11:34:23.0123367Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-05T11:34:23.0124792Z Build Date: 2026-10-21T00:45:21Z
+2026-11-05T11:34:23.0126472Z Worker ID: {504f8245-9429-49b4-a3bb-7d167d1b6d99}
+2026-11-05T11:34:23.0127868Z Region: northcentralus
+2026-11-05T11:34:23.0128882Z Cloud: Azure
+2026-11-05T11:34:23.0129966Z ##[endgroup]
+2026-11-05T11:34:23.0132674Z ##[group]Operating System
+2026-11-05T11:34:23.0134044Z Ubuntu
+2026-11-05T11:34:23.0135037Z 24.04.5
+2026-11-05T11:34:23.0135938Z LTS
+2026-11-05T11:34:23.0137314Z ##[endgroup]
+2026-11-05T11:34:23.0138441Z ##[group]Runner Image
+2026-11-05T11:34:23.0139771Z Image: ubuntu-24.04
+2026-11-05T11:34:23.0140795Z Version: 20261025.353.1
+2026-11-05T11:34:23.0143160Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-05T11:34:23.0146466Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-05T11:34:23.0148495Z ##[endgroup]
+2026-11-05T11:34:23.0150432Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T11:34:23.0153338Z Contents: read
+2026-11-05T11:34:23.0154380Z Metadata: read
+2026-11-05T11:34:23.0155518Z ##[endgroup]
+2026-11-05T11:34:23.0159061Z Secret source: Actions
+2026-11-05T11:34:23.0160787Z Cache mode: write
+2026-11-05T11:34:23.0162272Z Prepare workflow directory
+2026-11-05T11:34:23.0737824Z Prepare all required actions
+2026-11-05T11:34:23.0788258Z Getting action download info
+2026-11-05T11:34:23.3401285Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T11:34:23.4715903Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T11:34:23.6197086Z Download action repository 'browserstack/github-actions@1fad39ae4755588f7fc6854da6c3efba2bf5d08f' (SHA:1fad39ae4755588f7fc6854da6c3efba2bf5d08f)
+2026-11-05T11:34:24.2366811Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T11:34:24.5117221Z Complete job name: Selected phone capability or acceptance with disposable CI HTTPS
+2026-11-05T11:34:24.6124115Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T11:34:24.6125843Z with:
+2026-11-05T11:34:24.6127000Z   persist-credentials: false
+2026-11-05T11:34:24.6127960Z   repository: mxbaylee/spinel
+2026-11-05T11:34:24.6137642Z   token: ***
+2026-11-05T11:34:24.6138408Z   ssh-strict: true
+2026-11-05T11:34:24.6139178Z   ssh-user: git
+2026-11-05T11:34:24.6139925Z   clean: true
+2026-11-05T11:34:24.6140726Z   sparse-checkout-cone-mode: true
+2026-11-05T11:34:24.6141679Z   fetch-depth: 1
+2026-11-05T11:34:24.6142458Z   fetch-tags: false
+2026-11-05T11:34:24.6143279Z   show-progress: true
+2026-11-05T11:34:24.6144080Z   lfs: false
+2026-11-05T11:34:24.6144805Z   submodules: false
+2026-11-05T11:34:24.6145604Z   set-safe-directory: true
+2026-11-05T11:34:24.6146680Z   allow-unsafe-pr-checkout: false
+2026-11-05T11:34:24.6147922Z env:
+2026-11-05T11:34:24.6149863Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:24.6152210Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:24.6153412Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:24.6154387Z ##[endgroup]
+2026-11-05T11:34:24.9541391Z Syncing repository: mxbaylee/spinel
+2026-11-05T11:34:24.9543365Z ##[group]Getting Git version info
+2026-11-05T11:34:24.9544167Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-05T11:34:24.9545214Z [command]/usr/bin/git version
+2026-11-05T11:34:24.9710139Z git version 2.56.0
+2026-11-05T11:34:24.9722130Z ##[endgroup]
+2026-11-05T11:34:24.9743825Z Temporarily overriding HOME='/home/runner/work/_temp/0abd660f-2740-44c5-832b-8fa61decbc58' before making global git config changes
+2026-11-05T11:34:24.9746963Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T11:34:24.9751834Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-05T11:34:24.9812790Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-05T11:34:24.9910177Z ##[group]Determining repository object format
+2026-11-05T11:34:24.9913610Z ##[endgroup]
+2026-11-05T11:34:24.9915584Z ##[group]Initializing the repository
+2026-11-05T11:34:24.9917288Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-05T11:34:25.0010792Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T11:34:25.0012678Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T11:34:25.0013911Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T11:34:25.0015052Z hint: call:
+2026-11-05T11:34:25.0015735Z hint:
+2026-11-05T11:34:25.0016910Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T11:34:25.0017811Z hint:
+2026-11-05T11:34:25.0018658Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T11:34:25.0019904Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T11:34:25.0020894Z hint:
+2026-11-05T11:34:25.0021592Z hint: 	git branch -m <name>
+2026-11-05T11:34:25.0022285Z hint:
+2026-11-05T11:34:25.0023127Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T11:34:25.0045677Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-05T11:34:25.0060129Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T11:34:25.0154099Z ##[endgroup]
+2026-11-05T11:34:25.0156488Z ##[group]Disabling automatic garbage collection
+2026-11-05T11:34:25.0158525Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-05T11:34:25.0208813Z ##[endgroup]
+2026-11-05T11:34:25.0211170Z ##[group]Setting up auth
+2026-11-05T11:34:25.0212814Z Removing SSH command configuration
+2026-11-05T11:34:25.0215436Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T11:34:25.0274901Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T11:34:25.0807770Z Removing HTTP extra header
+2026-11-05T11:34:25.0814034Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T11:34:25.0863469Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T11:34:25.1103346Z Removing includeIf entries pointing to credentials config files
+2026-11-05T11:34:25.1115869Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T11:34:25.1161423Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T11:34:25.1411217Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T11:34:25.1465421Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:25.1511970Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:25.1557999Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:25.1603591Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:25.1653661Z ##[endgroup]
+2026-11-05T11:34:25.1655860Z ##[group]Fetching the repository
+2026-11-05T11:34:25.1662333Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b:refs/remotes/origin/codex/spn-090-real-devices
+2026-11-05T11:34:27.5690152Z From https://github.com/mxbaylee/spinel
+2026-11-05T11:34:27.5692310Z  * [new ref]         6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b -> origin/codex/spn-090-real-devices
+2026-11-05T11:34:27.5700707Z [command]/usr/bin/git branch --list --remote origin/codex/spn-090-real-devices
+2026-11-05T11:34:27.5740740Z   origin/codex/spn-090-real-devices
+2026-11-05T11:34:27.5750353Z [command]/usr/bin/git rev-parse refs/remotes/origin/codex/spn-090-real-devices
+2026-11-05T11:34:27.5788109Z 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:27.5793648Z ##[endgroup]
+2026-11-05T11:34:27.5794611Z ##[group]Determining the checkout info
+2026-11-05T11:34:27.5795697Z ##[endgroup]
+2026-11-05T11:34:27.5800933Z [command]/usr/bin/git sparse-checkout disable
+2026-11-05T11:34:27.5871793Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T11:34:27.5915543Z ##[group]Checking out the ref
+2026-11-05T11:34:27.5920454Z [command]/usr/bin/git checkout --progress --force -B codex/spn-090-real-devices refs/remotes/origin/codex/spn-090-real-devices
+2026-11-05T11:34:28.1541166Z Switched to a new branch 'codex/spn-090-real-devices'
+2026-11-05T11:34:28.1547877Z branch 'codex/spn-090-real-devices' set up to track 'origin/codex/spn-090-real-devices'.
+2026-11-05T11:34:28.1576479Z ##[endgroup]
+2026-11-05T11:34:28.1643987Z [command]/usr/bin/git log -1 --format=%H
+2026-11-05T11:34:28.1690580Z 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:28.1700033Z ##[group]Removing auth
+2026-11-05T11:34:28.1700759Z Removing SSH command configuration
+2026-11-05T11:34:28.1704996Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T11:34:28.1758936Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T11:34:28.2088169Z Removing HTTP extra header
+2026-11-05T11:34:28.2098428Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T11:34:28.2151693Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T11:34:28.2433796Z Removing includeIf entries pointing to credentials config files
+2026-11-05T11:34:28.2457260Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T11:34:28.2507196Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-05T11:34:28.2508002Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T11:34:28.2508523Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T11:34:28.2508983Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T11:34:28.2509995Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-05T11:34:28.2552061Z /home/runner/work/_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:28.2567349Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-4a98d8ca\-a05d\-42f4\-b0ae\-11fe5e0e0194\.config
+2026-11-05T11:34:28.2964812Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T11:34:28.2987523Z /home/runner/work/_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:28.2992904Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-4a98d8ca\-a05d\-42f4\-b0ae\-11fe5e0e0194\.config
+2026-11-05T11:34:28.3047337Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T11:34:28.3087751Z /github/runner_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:28.3097084Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-4a98d8ca\-a05d\-42f4\-b0ae\-11fe5e0e0194\.config
+2026-11-05T11:34:28.3143099Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T11:34:28.3179204Z /github/runner_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config
+2026-11-05T11:34:28.3187602Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-4a98d8ca\-a05d\-42f4\-b0ae\-11fe5e0e0194\.config
+2026-11-05T11:34:28.3234660Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T11:34:28.3484387Z Removing credentials config '/home/runner/work/_temp/git-credentials-4a98d8ca-a05d-42f4-b0ae-11fe5e0e0194.config'
+2026-11-05T11:34:28.3494369Z ##[endgroup]
+2026-11-05T11:34:28.3736791Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T11:34:28.3737207Z with:
+2026-11-05T11:34:28.3737422Z   node-version-file: .nvmrc
+2026-11-05T11:34:28.3737683Z   package-manager-cache: false
+2026-11-05T11:34:28.3737937Z   check-latest: false
+2026-11-05T11:34:28.3740779Z   token: ***
+2026-11-05T11:34:28.3740998Z env:
+2026-11-05T11:34:28.3741537Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:28.3742190Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:28.3742522Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:28.3742792Z ##[endgroup]
+2026-11-05T11:34:28.5009072Z Node version file is not JSON file
+2026-11-05T11:34:28.5014241Z Node version file is not TOML file
+2026-11-05T11:34:28.5014850Z Resolved .nvmrc as 26.12.1
+2026-11-05T11:34:28.5035399Z Attempting to download 26.12.1...
+2026-11-05T11:34:29.1987271Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-05T11:34:29.6857202Z Extracting ...
+2026-11-05T11:34:29.7010813Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/f7bcece5-a0bc-4dac-add7-c143548ca7f1 -f /home/runner/work/_temp/c17b3c04-5712-4a91-8efa-a7ee2cc5b72e
+2026-11-05T11:34:31.0490030Z Adding to the cache ...
+2026-11-05T11:34:32.8274531Z ##[group]Environment details
+2026-11-05T11:34:33.0627769Z node: v26.12.1
+2026-11-05T11:34:33.0637208Z npm: 11.20.0
+2026-11-05T11:34:33.0646990Z yarn: 1.22.22
+2026-11-05T11:34:33.0647797Z ##[endgroup]
+2026-11-05T11:34:33.0804009Z ##[group]Run node scripts/ci/browserstack-capability.ts prepare
+2026-11-05T11:34:33.0804575Z [36;1mnode scripts/ci/browserstack-capability.ts prepare[0m
+2026-11-05T11:34:33.0831899Z shell: /usr/bin/bash -e {0}
+2026-11-05T11:34:33.0832178Z env:
+2026-11-05T11:34:33.0832752Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:33.0833436Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:33.0833778Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:33.0834056Z ##[endgroup]
+2026-11-05T11:34:33.2595050Z ##[group]Run npm ci
+2026-11-05T11:34:33.2595491Z [36;1mnpm ci[0m
+2026-11-05T11:34:33.2617358Z shell: /usr/bin/bash -e {0}
+2026-11-05T11:34:33.2617618Z env:
+2026-11-05T11:34:33.2618174Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:33.2618835Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:33.2619175Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:33.2619444Z ##[endgroup]
+2026-11-05T11:34:47.3461424Z 
+2026-11-05T11:34:47.3470408Z > postinstall
+2026-11-05T11:34:47.3472802Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-05T11:34:47.3474399Z 
+2026-11-05T11:34:47.9210104Z 
+2026-11-05T11:34:47.9211288Z added 501 packages, and audited 509 packages in 15s
+2026-11-05T11:34:47.9211738Z 
+2026-11-05T11:34:47.9214941Z 136 packages are looking for funding
+2026-11-05T11:34:47.9215609Z   run `npm fund` for details
+2026-11-05T11:34:47.9436677Z 
+2026-11-05T11:34:47.9437917Z 4 moderate severity vulnerabilities
+2026-11-05T11:34:47.9438324Z 
+2026-11-05T11:34:47.9438795Z To address all issues (including breaking changes), run:
+2026-11-05T11:34:47.9439407Z   npm audit fix --force
+2026-11-05T11:34:47.9439704Z 
+2026-11-05T11:34:47.9439941Z Run `npm audit` for details.
+2026-11-05T11:34:47.9450637Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-05T11:34:47.9451929Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-05T11:34:47.9452754Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-05T11:34:47.9453464Z npm warn install-scripts
+2026-11-05T11:34:47.9454599Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-05T11:34:48.0285024Z ##[group]Run npm run typecheck
+2026-11-05T11:34:48.0285354Z [36;1mnpm run typecheck[0m
+2026-11-05T11:34:48.0305210Z shell: /usr/bin/bash -e {0}
+2026-11-05T11:34:48.0305463Z env:
+2026-11-05T11:34:48.0306020Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:48.0306972Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:48.0307311Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:48.0307587Z ##[endgroup]
+2026-11-05T11:34:48.1310548Z 
+2026-11-05T11:34:48.1311066Z > typecheck
+2026-11-05T11:34:48.1311352Z > tsc -p .
+2026-11-05T11:34:48.1311484Z 
+2026-11-05T11:34:55.2160756Z ##[group]Run npm run build
+2026-11-05T11:34:55.2161064Z [36;1mnpm run build[0m
+2026-11-05T11:34:55.2181413Z shell: /usr/bin/bash -e {0}
+2026-11-05T11:34:55.2181691Z env:
+2026-11-05T11:34:55.2182253Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:55.2182949Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:55.2183296Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:55.2183593Z   VITE_SYNC_EVIDENCE: 1
+2026-11-05T11:34:55.2183818Z ##[endgroup]
+2026-11-05T11:34:55.3195414Z 
+2026-11-05T11:34:55.3195726Z > build
+2026-11-05T11:34:55.3196294Z > vite build
+2026-11-05T11:34:55.3196529Z 
+2026-11-05T11:34:55.6086968Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-05T11:34:55.6196608Z transforming...
+2026-11-05T11:34:56.4719233Z ✓ 4370 modules transformed.
+2026-11-05T11:34:56.8221733Z rendering chunks...
+2026-11-05T11:34:57.5442658Z computing gzip size...
+2026-11-05T11:34:57.7140305Z dist/assets/install-manifest-35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34.webmanifest      0.41 kB
+2026-11-05T11:34:57.7141885Z dist/index.html                                                                                                4.41 kB │ gzip:     1.57 kB
+2026-11-05T11:34:57.7143551Z dist/assets/install-app-icon-180-892edc23116874ce9a77dff7c705ae8963d5cea9152948101bb23ee4208106c1.png          6.92 kB
+2026-11-05T11:34:57.7144911Z dist/assets/install-app-icon-192-844c7988559fb9ac8e667b9a554ee810bdd1890d9ab8ed168db5c6c5bd9969a0.png          7.53 kB
+2026-11-05T11:34:57.7145951Z dist/assets/install-app-icon-512-ff4fcd00a0d9d9fb9f673859c1a4f88fc8a123080d480e94ab23468080605e84.png         23.16 kB
+2026-11-05T11:34:57.7147395Z dist/assets/nativeCopy-mVcC3r32.css                                                                            2.53 kB │ gzip:     0.88 kB
+2026-11-05T11:34:57.7148400Z dist/assets/HistoryBrowser-D9Z9OhM7.css                                                                        3.36 kB │ gzip:     0.96 kB
+2026-11-05T11:34:57.7149325Z dist/assets/theme-6GPmlRwP.css                                                                                 5.63 kB │ gzip:     1.61 kB
+2026-11-05T11:34:57.7150283Z dist/assets/CopyFile-Bp41xbsr.css                                                                             16.91 kB │ gzip:     3.69 kB
+2026-11-05T11:34:57.7151201Z dist/assets/application-B9PzMhak.css                                                                          58.90 kB │ gzip:    10.58 kB
+2026-11-05T11:34:57.7152135Z dist/assets/documentReady-CZMWh3-A.css                                                                       114.43 kB │ gzip:    17.18 kB
+2026-11-05T11:34:57.7153025Z dist/assets/lib-DGHf0mi1.css                                                                                 124.16 kB │ gzip:    18.08 kB
+2026-11-05T11:34:57.7153929Z dist/assets/rolldown-runtime-XKyaHtl9.js                                                                       0.72 kB │ gzip:     0.42 kB
+2026-11-05T11:34:57.7154898Z dist/assets/existingDatabase-CDJOByQx.js                                                                       1.20 kB │ gzip:     0.74 kB
+2026-11-05T11:34:57.7155817Z dist/assets/module-preload-BLdHbfdN.js                                                                         1.51 kB │ gzip:     0.79 kB
+2026-11-05T11:34:57.7156891Z dist/assets/snapshotIdentity-DuVE7NNT.js                                                                       1.70 kB │ gzip:     0.75 kB
+2026-11-05T11:34:57.7157804Z dist/assets/OfflineViewer-CnAqT_nW.js                                                                          1.96 kB │ gzip:     1.00 kB
+2026-11-05T11:34:57.7158681Z dist/assets/rendering-BS7ANbIK.js                                                                              2.48 kB │ gzip:     1.14 kB
+2026-11-05T11:34:57.7159874Z dist/assets/runtime-CtNWayoN.js                                                                                2.63 kB │ gzip:     1.07 kB
+2026-11-05T11:34:57.7160773Z dist/assets/OfflineAccess-CbiGXkd5.js                                                                          2.98 kB │ gzip:     1.45 kB
+2026-11-05T11:34:57.7161642Z dist/assets/download-BN1tfXY-.js                                                                               3.48 kB │ gzip:     1.69 kB
+2026-11-05T11:34:57.7162514Z dist/assets/documentAccess-BpTD8alm.js                                                                         3.54 kB │ gzip:     1.62 kB
+2026-11-05T11:34:57.7163375Z dist/assets/main-C8IwslP4.js                                                                                   3.75 kB │ gzip:     1.84 kB
+2026-11-05T11:34:57.7164241Z dist/assets/spaceNavigation-BsLiTX-r.js                                                                        3.95 kB │ gzip:     1.64 kB
+2026-11-05T11:34:57.7165136Z dist/assets/checkpoint-CNBwfwki.js                                                                             5.36 kB │ gzip:     1.94 kB
+2026-11-05T11:34:57.7166005Z dist/assets/SheetEditor-DE0kGSyV.js                                                                            6.16 kB │ gzip:     2.86 kB
+2026-11-05T11:34:57.7167031Z dist/assets/PreparedImages-DxTqDsTH.js                                                                         6.59 kB │ gzip:     2.59 kB
+2026-11-05T11:34:57.7168051Z dist/assets/native-SDg643Gn.js                                                                                 7.10 kB │ gzip:     3.11 kB
+2026-11-05T11:34:57.7168890Z dist/assets/react-DlmbjZJV.js                                                                                  7.87 kB │ gzip:     3.00 kB
+2026-11-05T11:34:57.7169752Z dist/assets/offlineError-BYtDddN3.js                                                                          10.51 kB │ gzip:     3.89 kB
+2026-11-05T11:34:57.7170646Z dist/assets/useDiagnostics-CYddNRk_.js                                                                        13.20 kB │ gzip:     4.32 kB
+2026-11-05T11:34:57.7171521Z dist/assets/DocEditor-BqBuz7OD.js                                                                             16.73 kB │ gzip:     6.97 kB
+2026-11-05T11:34:57.7172351Z dist/service-worker.js                                                                                        18.21 kB │ gzip:     6.86 kB
+2026-11-05T11:34:57.7173211Z dist/assets/HistoryBrowser-B4Uhrazr.js                                                                        20.97 kB │ gzip:     7.45 kB
+2026-11-05T11:34:57.7174094Z dist/assets/offlineStore-nw4zmlFM.js                                                                          31.15 kB │ gzip:     9.16 kB
+2026-11-05T11:34:57.7174962Z dist/assets/model-eQ0Z7CfK.js                                                                                119.36 kB │ gzip:    34.15 kB
+2026-11-05T11:34:57.7175812Z dist/assets/nativeCopy-BXgmWl_d.js                                                                           125.33 kB │ gzip:    40.31 kB
+2026-11-05T11:34:57.7176885Z dist/assets/documentReady-Sg7XsImQ.js                                                                        178.33 kB │ gzip:    48.47 kB
+2026-11-05T11:34:57.7177822Z dist/assets/floating-ui.react-dom-C7Svilm4.js                                                                214.31 kB │ gzip:    67.17 kB
+2026-11-05T11:34:57.7178719Z dist/assets/profile-BzxfUm23.js                                                                              282.02 kB │ gzip:    57.72 kB
+2026-11-05T11:34:57.7179579Z dist/assets/application-8TWMM7LW.js                                                                          341.97 kB │ gzip:    97.02 kB
+2026-11-05T11:34:57.7180427Z dist/assets/lib-CXaYNDXC.js                                                                                  378.80 kB │ gzip:   104.51 kB
+2026-11-05T11:34:57.7181399Z dist/assets/theme-BUKfwjsk.js                                                                                590.27 kB │ gzip:   151.11 kB
+2026-11-05T11:34:57.7182258Z dist/assets/CopyFile-C6i42XXv.js                                                                             637.55 kB │ gzip:   110.32 kB
+2026-11-05T11:34:57.7183097Z dist/assets/es-BRjhezBD.js                                                                                 1,166.09 kB │ gzip:   203.42 kB
+2026-11-05T11:34:57.7183983Z dist/assets/nativeSyncPermissions-1ztolsBe.js                                                              3,806.10 kB │ gzip: 1,017.77 kB
+2026-11-05T11:34:57.7184910Z dist/assets/univer-renderer-DCzWCcTA.js                                                                    5,916.01 kB │ gzip: 1,466.43 kB
+2026-11-05T11:34:57.7185296Z 
+2026-11-05T11:34:57.7194526Z [33m[plugin builtin:vite-reporter] 
+2026-11-05T11:34:57.7195344Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-05T11:34:57.7196385Z - Using dynamic import() to code-split the application
+2026-11-05T11:34:57.7197832Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-05T11:34:57.7199006Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-05T11:34:57.7315669Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-05T11:34:57.7317442Z [39m
+2026-11-05T11:34:57.7323855Z [32m✓ built in 2.12s[39m
+2026-11-05T11:34:57.7844570Z ##[group]Run browserstack/github-actions/setup-env@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
+2026-11-05T11:34:57.7845065Z with:
+2026-11-05T11:34:57.7845792Z   username: ***
+2026-11-05T11:34:57.7846066Z   access-key: ***
+2026-11-05T11:34:57.7846597Z   github-token: none
+2026-11-05T11:34:57.7846864Z   github-app: browserstack-integrations[bot]
+2026-11-05T11:34:57.7847190Z env:
+2026-11-05T11:34:57.7847721Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:57.7848375Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:57.7848705Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:57.7849035Z ##[endgroup]
+2026-11-05T11:34:57.8911069Z ##[group]Setting Environment Variables
+2026-11-05T11:34:57.8917828Z Use BROWSERSTACK_USERNAME environment variable for your username in your tests
+2026-11-05T11:34:57.8918491Z 
+2026-11-05T11:34:57.8918989Z Use BROWSERSTACK_ACCESS_KEY environment variable for your access key in your tests
+2026-11-05T11:34:57.8919337Z 
+2026-11-05T11:34:57.8920070Z No project-name input given, so BROWSERSTACK_PROJECT_NAME was left unset and your own configuration will be used. Pass project-name (or the REPO_NAME token) to set it here.
+2026-11-05T11:34:57.8920686Z 
+2026-11-05T11:34:57.8921340Z No build-name input given, so BROWSERSTACK_BUILD_NAME was left unset and your own configuration will be used. Pass build-name (or the BUILD_INFO token) to set it here.
+2026-11-05T11:34:57.8921927Z 
+2026-11-05T11:34:57.8923848Z ##[endgroup]
+2026-11-05T11:34:57.9079870Z ##[group]Run browserstack/github-actions/setup-local@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
+2026-11-05T11:34:57.9080642Z with:
+2026-11-05T11:34:57.9080973Z   local-testing: start
+2026-11-05T11:34:57.9081356Z   local-identifier: random
+2026-11-05T11:34:57.9081746Z   local-logging-level: false
+2026-11-05T11:34:57.9082161Z   local-args: --force-local --timeout 5
+2026-11-05T11:34:57.9082589Z env:
+2026-11-05T11:34:57.9083465Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:34:57.9084706Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:34:57.9085245Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:34:57.9085867Z   BROWSERSTACK_USERNAME: ***-GitHubAction
+2026-11-05T11:34:57.9086605Z   BROWSERSTACK_ACCESS_KEY: ***
+2026-11-05T11:34:57.9087055Z ##[endgroup]
+2026-11-05T11:34:58.0717285Z ##[group]Setting Environment Variables
+2026-11-05T11:34:58.0723183Z BROWSERSTACK_LOCAL_IDENTIFIER environment variable set as: GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad
+2026-11-05T11:34:58.0724061Z Use BROWSERSTACK_LOCAL_IDENTIFIER env variable in your test script as the local identifier
+2026-11-05T11:34:58.0724465Z 
+2026-11-05T11:34:58.0724746Z ##[endgroup]
+2026-11-05T11:34:58.0757034Z Downloading BrowserStackLocal binary...
+2026-11-05T11:34:58.4534649Z [command]/usr/bin/unzip -o -q /home/runner/_work/binary/LocalBinaryFolder/linux/binaryZip
+2026-11-05T11:34:58.7211776Z BrowserStackLocal binary downloaded & extracted successfuly at: /home/runner/_work/binary/LocalBinaryFolder/linux
+2026-11-05T11:34:58.7492847Z Starting local tunnel with local-identifier=GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad in daemon mode...
+2026-11-05T11:34:58.7509039Z [command]/opt/hostedtoolcache/BrowserStackLocal/1.0.0/x64/BrowserStackLocal --key *** --only-automate --ci-plugin GitHubAction --force-local --timeout 5 --local-identifier GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad --daemon start
+2026-11-05T11:35:01.0041033Z {"state":"connected","pid":2672,"message":{"message":"Connected"}}
+2026-11-05T11:35:01.0275230Z Local tunnel status: {"message":"Connected"}
+2026-11-05T11:35:01.0445707Z ##[group]Run node scripts/ci/browserstack-capability.ts run
+2026-11-05T11:35:01.0446504Z [36;1mnode scripts/ci/browserstack-capability.ts run[0m
+2026-11-05T11:35:01.0467616Z shell: /usr/bin/bash -e {0}
+2026-11-05T11:35:01.0467875Z env:
+2026-11-05T11:35:01.0468427Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:35:01.0469104Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:35:01.0469451Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:35:01.0469910Z   BROWSERSTACK_USERNAME: ***-GitHubAction
+2026-11-05T11:35:01.0470243Z   BROWSERSTACK_ACCESS_KEY: ***
+2026-11-05T11:35:01.0470639Z   BROWSERSTACK_LOCAL_IDENTIFIER: GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad
+2026-11-05T11:35:01.0471080Z   BS_USERNAME: ***
+2026-11-05T11:35:01.0471321Z   BS_ACCESS_KEY: ***
+2026-11-05T11:35:01.0471566Z ##[endgroup]
+2026-11-05T11:35:58.7811193Z ##[error]Process completed with exit code 1.
+2026-11-05T11:35:58.7876753Z ##[group]Run browserstack/github-actions/setup-local@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
+2026-11-05T11:35:58.7877261Z with:
+2026-11-05T11:35:58.7877472Z   local-testing: stop
+2026-11-05T11:35:58.7877723Z   local-logging-level: false
+2026-11-05T11:35:58.7877955Z env:
+2026-11-05T11:35:58.7878619Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:35:58.7879273Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:35:58.7879614Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:35:58.7880050Z   BROWSERSTACK_USERNAME: ***-GitHubAction
+2026-11-05T11:35:58.7880376Z   BROWSERSTACK_ACCESS_KEY: ***
+2026-11-05T11:35:58.7880782Z   BROWSERSTACK_LOCAL_IDENTIFIER: GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad
+2026-11-05T11:35:58.7881195Z ##[endgroup]
+2026-11-05T11:35:58.9461889Z Stopping local tunnel with local-identifier=GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad in daemon mode...
+2026-11-05T11:35:58.9528814Z [command]/opt/hostedtoolcache/BrowserStackLocal/1.0.0/x64/BrowserStackLocal --key *** --only-automate --ci-plugin GitHubAction --local-identifier GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad --daemon stop
+2026-11-05T11:36:00.6222836Z {"status":"success","message":"BrowserStackLocal stopped successfully"}
+2026-11-05T11:36:01.1467630Z Local tunnel stopping status: BrowserStackLocal stopped successfully
+2026-11-05T11:36:01.1671475Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T11:36:01.1671917Z with:
+2026-11-05T11:36:01.1672168Z   name: browserstack-capability-42020011460-1
+2026-11-05T11:36:01.1672695Z   path: artifacts/browserstack-capability.json
+artifacts/browserstack-capability/
+
+2026-11-05T11:36:01.1673149Z   if-no-files-found: error
+2026-11-05T11:36:01.1673388Z   retention-days: 14
+2026-11-05T11:36:01.1673614Z   compression-level: 6
+2026-11-05T11:36:01.1673847Z   overwrite: false
+2026-11-05T11:36:01.1674071Z   include-hidden-files: false
+2026-11-05T11:36:01.1674319Z   archive: true
+2026-11-05T11:36:01.1674511Z env:
+2026-11-05T11:36:01.1675046Z   BS_AUTHORED_SCOPES: ["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]
+2026-11-05T11:36:01.1675704Z   SOURCE_SHA: 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b
+2026-11-05T11:36:01.1676040Z   BS_CAPABILITY_SCOPE: safari-acceptance
+2026-11-05T11:36:01.1676713Z   BROWSERSTACK_USERNAME: ***-GitHubAction
+2026-11-05T11:36:01.1677053Z   BROWSERSTACK_ACCESS_KEY: ***
+2026-11-05T11:36:01.1677454Z   BROWSERSTACK_LOCAL_IDENTIFIER: GitHubAction-2481581c-0b2c-4ceb-8a37-4d2d5db7e4ad
+2026-11-05T11:36:01.1677891Z   BROWSERSTACK_LOCAL_LOGS_FILE: 
+2026-11-05T11:36:01.1678139Z ##[endgroup]
+2026-11-05T11:36:01.3214220Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-05T11:36:01.3217000Z The least common ancestor is /home/runner/work/spinel/spinel/artifacts. This will be the root directory of the artifact
+2026-11-05T11:36:01.3218801Z With the provided path, there will be 2 files uploaded
+2026-11-05T11:36:01.3223625Z Artifact name is valid!
+2026-11-05T11:36:01.3224286Z Root directory input is valid!
+2026-11-05T11:36:01.5965195Z Uploading artifact: browserstack-capability-42020011460-1.zip
+2026-11-05T11:36:01.6005691Z Beginning upload of artifact content to blob storage
+2026-11-05T11:36:01.8319003Z Uploaded bytes 101210
+2026-11-05T11:36:01.8662510Z Finished uploading artifact content to blob storage!
+2026-11-05T11:36:01.8663452Z SHA256 digest of uploaded artifact is 63c2115ab05c0c4012511ae23f019347c674edefb09e7d3062d28be355c4609e
+2026-11-05T11:36:01.8664450Z Finalizing artifact upload
+2026-11-05T11:36:02.3565199Z Artifact browserstack-capability-42020011460-1 successfully finalized. Artifact ID 13410608977
+2026-11-05T11:36:02.3566939Z Artifact browserstack-capability-42020011460-1 has been successfully uploaded! Final size is 101210 bytes. Artifact ID is 13410608977
+2026-11-05T11:36:02.3569418Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/42020011460/artifacts/13410608977
+2026-11-05T11:36:02.3788466Z Post job cleanup.
+2026-11-05T11:36:02.4697721Z [command]/usr/bin/git version
+2026-11-05T11:36:02.4749912Z git version 2.56.0
+2026-11-05T11:36:02.4825266Z Temporarily overriding HOME='/home/runner/work/_temp/e9df99a9-6dc2-409d-90e0-4f475254db2a' before making global git config changes
+2026-11-05T11:36:02.4827078Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T11:36:02.4831299Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-05T11:36:02.4872016Z Removing SSH command configuration
+2026-11-05T11:36:02.4880031Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T11:36:02.4923973Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T11:36:02.5212235Z Removing HTTP extra header
+2026-11-05T11:36:02.5227634Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T11:36:02.5265968Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T11:36:02.5538105Z Removing includeIf entries pointing to credentials config files
+2026-11-05T11:36:02.5544882Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T11:36:02.5599305Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T11:36:02.6062328Z Cleaning up orphan processes

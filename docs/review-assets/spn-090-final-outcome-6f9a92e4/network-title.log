@@ -1,0 +1,7 @@
+
+> backlog:pr
+> node scripts/backlog/cli.ts pr --base main --title 🧪 SPN-090 Verify offline launches on real phones
+
+warning: 27673 changed lines is past the 10000 soft limit; consider splitting
+pull request ok
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":495,"peakKiB":266208}

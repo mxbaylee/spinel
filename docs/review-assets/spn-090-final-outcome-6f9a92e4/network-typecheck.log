@@ -1,0 +1,2 @@
+error TS5112: tsconfig.json is present but will not be loaded if files are specified on commandline. Use '--ignoreConfig' to skip this error.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":252,"peakKiB":92096}
