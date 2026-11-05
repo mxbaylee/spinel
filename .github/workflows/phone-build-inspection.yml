@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   inspection:
-    if: github.repository == 'mxbaylee/spinel' && github.event.before == '5bb97d17484ca7df151114ad2f6e28a03b4630c2'
+    if: github.repository == 'mxbaylee/spinel' && github.event.before == '3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:

@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { build, version } from 'vite';
-import { inspectFinalBuild, sha256 } from './browserstack-build-graph.ts';
+import { inspectFinalBuild, sha256, validateRendererBoundary } from './browserstack-build-graph.ts';
 import type { BuildMember } from './browserstack-build-graph.ts';
 
 const root = process.cwd();
@@ -34,6 +34,8 @@ const identity = {
         'web/application.tsx',
         'scripts/ci/browserstack-build-inspection.ts',
         'scripts/ci/browserstack-build-graph.ts',
+        'src/build/rendererChunks.ts',
+        'docs/implementation/evidence/SPN-090/renderer-baseline.json',
       ].map(async (file) => [file, sha256(await readFile(file))]),
     ),
   ),
@@ -74,9 +76,30 @@ try {
   });
   if (!emitted) throw new Error('Build inspection hook never ran');
   const graph = await inspectFinalBuild(emitted.directory, emitted.bundle, root, emitted.hashes);
+  const baseline = JSON.parse(
+    await readFile('docs/implementation/evidence/SPN-090/renderer-baseline.json', 'utf8'),
+  );
   await writeFile(
     'artifacts/browserstack-build-graph.json',
-    JSON.stringify({ ...identity, ...graph }, null, 2),
+    JSON.stringify(
+      {
+        ...identity,
+        ...graph,
+        rendererBaseline: baseline,
+        rendererBoundary: { passed: false, status: 'pending' },
+      },
+      null,
+      2,
+    ),
+  );
+  const rendererBoundary = validateRendererBoundary(graph, baseline.modules);
+  await writeFile(
+    'artifacts/browserstack-build-graph.json',
+    JSON.stringify(
+      { ...identity, ...graph, rendererBoundary, rendererBaseline: baseline },
+      null,
+      2,
+    ),
   );
   await writeFile(
     'artifacts/browserstack-build-result.json',

@@ -8,17 +8,7 @@ import { shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
 import { installationAssetName, installationPaths, pwaManifest } from './src/shared/pwa.ts';
 import { iconSvg } from './src/ui/appIcon.ts';
-
-// Language layout data must arrive with the renderer, before offline editing.
-// Group the open-source renderer's dynamic dictionaries in both build modes.
-const rendererChunks = {
-  groups: [
-    // Vite may otherwise coalesce this shared helper into the large renderer,
-    // making the tiny bootstrap import native code before runtime selection.
-    { name: 'module-preload', test: /vite\/preload-helper\.js/ },
-    { name: 'univer-renderer', test: /node_modules[\\/]@univerjs[\\/]engine-render[\\/]/ },
-  ],
-};
+import { rendererOutput } from './src/build/rendererChunks.ts';
 
 // Write the offline app shell (docs/offline.md) into the built service worker.
 // Its contents change with every build, so browsers install the new worker.
@@ -113,7 +103,7 @@ export default defineConfig(({ mode }) => {
       offlineShell(compatibility, mode === 'offline-upgrade' ? format : undefined),
     ],
     define: { __SPINEL_RUNTIME_COMPATIBILITY__: JSON.stringify(compatibility) },
-    optimizeDeps: { rolldownOptions: { output: { codeSplitting: rendererChunks } } },
+    optimizeDeps: { rolldownOptions: { output: rendererOutput } },
     build: {
       outDir: '../dist',
       emptyOutDir: true,
@@ -124,7 +114,7 @@ export default defineConfig(({ mode }) => {
           'service-worker': fileURLToPath(new URL('./web/service-worker.ts', import.meta.url)),
         },
         output: {
-          codeSplitting: rendererChunks,
+          ...rendererOutput,
           entryFileNames: (chunk) =>
             chunk.name === 'service-worker'
               ? 'service-worker.js'

@@ -4,6 +4,7 @@ import { lstat, readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { runtimeDescriptor, shellFiles } from '../../src/shared/offlineShell.ts';
 import { installationAssetDigest, isInstallationPath } from '../../src/shared/pwa.ts';
+import assert from 'node:assert/strict';
 
 export type BuildMember = {
   type: 'asset' | 'chunk';
@@ -88,6 +89,59 @@ export async function inspectBuildGraph(
     staticGzipBytes: initial.reduce((sum, row) => sum + row.gzipBytes, 0),
     totalBytes,
     files: rows,
+  };
+}
+
+export function validateRendererBoundary(
+  graph: Awaited<ReturnType<typeof inspectFinalBuild>>,
+  expectedModules: string[],
+) {
+  const chunks = graph.files.filter((row) => row.type === 'chunk');
+  const renderer = chunks.filter((row) =>
+    row.modules?.some((module) => module.id.includes('node_modules/@univerjs/engine-render/')),
+  );
+  assert.ok(renderer.length > 0, 'Renderer output missing');
+  const modules = [
+    ...new Set(
+      renderer
+        .flatMap((row) => row.modules ?? [])
+        .map((module) => module.id)
+        .filter((id) => id.includes('node_modules/@univerjs/engine-render/')),
+    ),
+  ].sort();
+  assert.deepEqual(modules, expectedModules, 'Renderer or dictionary module inventory changed');
+  assert.ok(
+    renderer.every((row) => !row.initialApplicationDependency),
+    'Anonymous startup still imports renderer',
+  );
+  assert.ok(
+    renderer.every((row) => graph.descriptor.files.includes('/' + row.file)),
+    'Renderer missing from offline shell',
+  );
+  const editors: Record<string, string[]> = {};
+  for (const id of ['web/DocEditor.tsx', 'web/SheetEditor.tsx']) {
+    const roots = chunks.filter((row) => row.modules?.some((module) => module.id === id));
+    assert.ok(roots.length > 0, `Missing editor entry ${id}`);
+    const closure = new Set<string>();
+    const visit = (file: string) => {
+      if (closure.has(file)) return;
+      closure.add(file);
+      const row = chunks.find((row) => row.file === file);
+      assert.ok(row, 'Missing editor dependency');
+      [...(row.imports ?? []), ...(row.dynamicImports ?? [])].forEach(visit);
+    };
+    roots.forEach((row) => visit(row.file));
+    assert.ok(
+      renderer.every((row) => closure.has(row.file)),
+      `Editor lost renderer/dictionaries ${id}`,
+    );
+    editors[id] = [...closure].sort();
+  }
+  return {
+    passed: true,
+    modules: modules.length,
+    chunks: renderer.map((row) => row.file),
+    editors,
   };
 }
 

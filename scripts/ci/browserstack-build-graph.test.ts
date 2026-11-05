@@ -4,7 +4,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { inspectBuildGraph, inspectFinalBuild, sha256 } from './browserstack-build-graph.ts';
+import {
+  inspectBuildGraph,
+  inspectFinalBuild,
+  sha256,
+  validateRendererBoundary,
+} from './browserstack-build-graph.ts';
 import { installationAssetName, installationPaths } from '../../src/shared/pwa.ts';
 
 const chunk = (fileName: string, imports: string[] = [], dynamicImports: string[] = []) => ({
@@ -204,12 +209,54 @@ test('one build-only branch transition cannot route provider or browser work', a
   const expression = workflow.match(/^    if: (.+)$/m)?.[1];
   assert.ok(expression);
   for (const [repository, before, expected] of [
-    ['mxbaylee/spinel', '5bb97d17484ca7df151114ad2f6e28a03b4630c2', true],
-    ['fork/spinel', '5bb97d17484ca7df151114ad2f6e28a03b4630c2', false],
+    ['mxbaylee/spinel', '3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b', true],
+    ['fork/spinel', '3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b', false],
+    ['mxbaylee/spinel', '5bb97d17484ca7df151114ad2f6e28a03b4630c2', false],
     ['mxbaylee/spinel', 'later-head', false],
   ])
     assert.equal(
       runInNewContext(expression, { github: { repository, event: { before } } }),
       expected,
     );
+});
+
+test('renderer boundary rejects eager imports and missing dictionary, shell or editor reachability', () => {
+  const modules = [
+    'node_modules/@univerjs/engine-render/dictionary.js',
+    'node_modules/@univerjs/engine-render/index.js',
+  ];
+  const fixture = () => ({
+    files: [
+      {
+        file: 'renderer.js',
+        type: 'chunk',
+        initialApplicationDependency: false,
+        modules: modules.map((id) => ({ id })),
+        imports: [],
+        dynamicImports: [],
+      },
+      ...['DocEditor', 'SheetEditor'].map((name) => ({
+        file: name + '.js',
+        type: 'chunk',
+        initialApplicationDependency: false,
+        modules: [{ id: 'web/' + name + '.tsx' }],
+        imports: ['renderer.js'],
+        dynamicImports: [],
+      })),
+    ],
+    descriptor: { files: ['/renderer.js'] },
+  });
+  assert.equal(validateRendererBoundary(fixture() as any, modules).passed, true);
+  const eager = fixture();
+  eager.files[0].initialApplicationDependency = true;
+  assert.throws(() => validateRendererBoundary(eager as any, modules), /still imports renderer/);
+  const missing = fixture();
+  missing.files[0].modules.pop();
+  assert.throws(() => validateRendererBoundary(missing as any, modules), /inventory changed/);
+  const offline = fixture();
+  offline.descriptor.files = [];
+  assert.throws(() => validateRendererBoundary(offline as any, modules), /offline shell/);
+  const editor = fixture();
+  editor.files[1].imports = [];
+  assert.throws(() => validateRendererBoundary(editor as any, modules), /lost renderer/);
 });
