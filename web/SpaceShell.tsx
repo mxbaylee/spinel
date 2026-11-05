@@ -4,7 +4,7 @@ import { Dialog } from '@base-ui/react/dialog';
 import { GemLogo, replayGemWiggle } from '../src/ui/GemLogo.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
-import { Button } from '../src/ui/redesign/Controls.tsx';
+import { Button, ModalTitleContent } from '../src/ui/redesign/Controls.tsx';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import './space.css';
@@ -154,11 +154,8 @@ export function SpaceShell({
           <Dialog.Backdrop className="sp-backdrop" />
           <Dialog.Popup className="sp-ui space-pages-dialog" finalFocus={pages}>
             <div className="space-pages-heading">
-              <Dialog.Title className="space-pages-title">
-                <span aria-hidden="true">
-                  <ProfileIcon icon="lucide:panel-left" size={20} />
-                </span>
-                Space contents
+              <Dialog.Title className="sp-modal-title">
+                <ModalTitleContent title="Space contents" icon="pages" />
               </Dialog.Title>
               <Dialog.Close className="sp-control sp-quiet" aria-label="Close Space contents">
                 <ProfileIcon icon="lucide:x" />

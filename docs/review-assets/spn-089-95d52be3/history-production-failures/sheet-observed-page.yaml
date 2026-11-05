@@ -1,0 +1,104 @@
+- main:
+  - region "Your files":
+    - region "Document workspace":
+      - button "Back to files"
+      - heading "Version test" [level=1]
+      - 'button "Save details: View only"': View only
+      - status "Connection status": Online
+      - button "Online — connected to Spinel"
+      - button "People in this document"
+      - button "Document actions": ···
+      - text: View only
+      - button "Enter theatre mode"
+      - region "Sheet document":
+        - status "Save status": View only.
+        - tablist:
+          - tab "Start" [selected]
+          - tab "Formulas"
+          - tab "View"
+        - toolbar "Start":
+          - button "Undo" [disabled]:
+            - img
+          - button "Redo" [disabled]:
+            - img
+          - button "Format Painter" [disabled]:
+            - img
+          - button "Clear formatting" [disabled]:
+            - img
+          - button "Paste":
+            - img
+            - text: Paste
+            - img
+          - textbox [disabled]: Arial
+          - img
+          - textbox [disabled]: "11"
+          - img
+          - button "Increase font size" [disabled]:
+            - img
+          - button "Decrease font size" [disabled]:
+            - img
+          - button "Bold" [disabled]:
+            - img
+          - button "Italic" [disabled]:
+            - img
+          - button "Underline" [disabled]:
+            - img
+          - button "Strikethrough" [disabled]:
+            - img
+          - img
+          - img
+          - img
+          - img
+          - img
+          - img
+          - button "Horizontal align" [disabled]:
+            - img
+            - img
+          - button "Vertical align" [disabled]:
+            - img
+            - img
+          - button "Text wrap" [disabled]:
+            - img
+            - img
+          - button "Shrink to fit" [disabled]:
+            - img
+          - button "Text rotate" [disabled]:
+            - img
+            - img
+          - button "Merge cells" [disabled]:
+            - img
+            - img
+          - button:
+            - img
+        - complementary
+        - textbox: A1
+        - img
+        - img
+        - img
+        - img
+        - img
+        - complementary
+        - button [disabled]:
+          - img
+        - button:
+          - img
+        - tablist "Sheet tabs":
+          - tab "Sheet1" [selected]
+        - button "Toggle Gridlines" [disabled] [pressed]:
+          - img
+        - button "Zoom out":
+          - img
+        - button "Reset zoom"
+        - slider "Zoom"
+        - button "Zoom in":
+          - img
+        - textbox "Zoom": 100%
+        - button "Menu":
+          - img
+        - region "Notifications alt+T"
+        - region "Notifications alt+T"
+- button "Delete" [disabled]
+- button "Copy" [disabled]
+- button "Rename" [disabled]
+- button "Hide" [disabled]
+- button "Unhide" [disabled]

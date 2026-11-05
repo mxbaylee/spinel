@@ -1,5 +1,6 @@
 import { gunzipSync } from 'node:zlib';
 import { expect, test } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
@@ -8,6 +9,7 @@ for (const kind of ['sheet', 'doc'] as const) {
   test(`${kind} versions can be named, renamed, unnamed and read by a viewer`, async ({
     page,
     context,
+    browser,
     baseURL,
   }, info) => {
     test.setTimeout(90_000);
@@ -26,10 +28,14 @@ for (const kind of ['sheet', 'doc'] as const) {
       httpOnly: true,
       sameSite: 'Strict' as const,
     });
-    await context.addCookies([cookie(owner.id)]);
+    let viewerContext: BrowserContext | undefined;
+    const cleanupFailures: unknown[] = [];
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     try {
+      await context.addCookies([cookie(owner.id)]);
+      viewerContext = await browser.newContext({ baseURL });
+      await viewerContext.addCookies([cookie(viewer.id)]);
       await page.goto(`/?item=${item.id}`);
       const editor = page.getByRole('region', {
         name: kind === 'sheet' ? 'Sheet document' : 'Doc document',
@@ -87,21 +93,58 @@ for (const kind of ['sheet', 'doc'] as const) {
       expect(
         db.prepare('SELECT name FROM history_checkpoints WHERE id=?').get(String(stored.id))?.name,
       ).toBeNull();
-      await context.clearCookies();
-      await context.addCookies([cookie(viewer.id)]);
-      await page.reload();
-      await expect(saved).toContainText('View only', { timeout: 30_000 });
-      await page.getByRole('button', { name: 'Document actions', exact: true }).click();
-      await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
-      await expect(panel.getByText('Before editing', { exact: true })).toBeVisible();
+      // History visibility belongs to a second account, not a cookie replacement
+      // in the live owner's tab. Retire that editor before opening the viewer so
+      // an owner request or authentication redirect cannot choose the viewer's URL.
+      await page.close();
+      const viewerPage = await viewerContext.newPage();
+      viewerPage.on('pageerror', (error) => errors.push(error.message));
+      await viewerPage.goto(`/?item=${item.id}`);
+      const viewerEditor = viewerPage.getByRole('region', {
+        name: kind === 'sheet' ? 'Sheet document' : 'Doc document',
+        exact: true,
+      });
+      await expect(viewerEditor.getByRole('status', { name: 'Save status' })).toContainText(
+        'View only',
+        { timeout: 30_000 },
+      );
+      await expect(viewerPage).toHaveURL(new URL(`/?item=${item.id}`, baseURL!).href);
+      // Editors hide the global profile navigation. Verify the active account
+      // through this viewer context's cookie-authoritative session instead.
+      const viewerSession = await viewerContext.request.get('/api/auth/session', {
+        timeout: 5_000,
+      });
+      expect(viewerSession.status()).toBe(200);
+      expect((await viewerSession.json()).user).toMatchObject({
+        id: viewer.id,
+        name: viewer.name,
+        isAdmin: false,
+      });
+      await viewerPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+      await viewerPage.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+      const viewerPanel = viewerPage.getByRole('region', { name: 'Version names' });
+      await expect(viewerPanel.getByText('Before editing', { exact: true })).toBeVisible();
       await expect(
-        panel.getByRole('button', {
+        viewerPanel.getByRole('button', {
           name: /Name this version|Rename version|Remove name|^Name version$/,
         }),
       ).toHaveCount(0);
       expect(errors).toEqual([]);
     } finally {
-      db.close();
+      try {
+        await viewerContext?.close();
+      } catch (cause) {
+        cleanupFailures.push(cause);
+      } finally {
+        try {
+          db.close();
+        } catch (cause) {
+          cleanupFailures.push(cause);
+        }
+      }
+      for (const failure of cleanupFailures)
+        console.error('History fixture cleanup failed:', failure);
     }
+    if (cleanupFailures.length) throw cleanupFailures[0];
   });
 }

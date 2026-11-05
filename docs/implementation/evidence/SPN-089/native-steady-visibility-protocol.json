@@ -1,0 +1,20 @@
+{
+  "purpose": "One finite followup after observed desktop opacity-readiness failures; diagnostic derived bundle, not current-head acceptance.",
+  "priorExperiment": "native-steady-probe.json",
+  "change": "Wait for the actual dialog to be visible before unchanged strict heading/title/cue/form assertions.",
+  "sourceFileSha256": "a0a958f75d7ffb049ed282a83e028ad1c359f065b3bfe9255495765edafd92b8",
+  "storyDiagnosticSha256": "1b61d41c348aab7bc531cd07fbd3d42cee8681720059aa7687e53ecf951adee5",
+  "candidatePatch": {
+    "old": ".findByRole(`dialog`,{name:`Make a copy`},{timeout:3e4});if(n){",
+    "new": ".findByRole(`dialog`,{name:`Make a copy`},{timeout:3e4});await K(()=>W(r).toBeVisible());if(n){"
+  },
+  "cases": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "stop": "Exactly one fresh initialization per variant; no retries. Close all pages, browser and owned server.",
+  "fixtureClock": "2026-10-20T16:00:00Z with progressing Date.now, matching existing capture runner."
+}

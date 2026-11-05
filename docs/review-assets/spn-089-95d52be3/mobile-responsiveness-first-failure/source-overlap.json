@@ -1,0 +1,147 @@
+{
+  "sources": {
+    "previousMain": "5c565b61e11ce29780581f33410749436ecef42f",
+    "currentMain": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "failedB": "95d52be36061315bff866dec615544104ca4767c",
+    "testedB": "679ad75636799820e47bf0214ade771c3fe859e2",
+    "unpublishedIdentityRepair": "ec68084ef1f8eb2fa0231b188fbbf48b9ec8c118"
+  },
+  "files": [
+    {
+      "path": "e2e/doc-responsiveness.ts",
+      "bytes": 16800,
+      "sha256": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+      "gitBlob": "f53279146fb8b988e890d5541a72bd603fed0d9b",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "e2e/doc-responsiveness.spec.ts",
+      "bytes": 47357,
+      "sha256": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+      "gitBlob": "38b4704bb2815d170814575d3855d873fd26669c",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-fixture.ts",
+      "bytes": 7066,
+      "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+      "gitBlob": "573a0ed60e4aace758e7a20c65af8015c254c773",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-boundaries.ts",
+      "bytes": 17682,
+      "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+      "gitBlob": "97bd2d6de242997fe48f60e43e941d21fabcb4eb",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "web/docResponsivenessEvidence.ts",
+      "bytes": 14293,
+      "sha256": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+      "gitBlob": "4ff943c5e07b32a972b23c004256fcbf1a37b1e0",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "src/ui/docIdleEpisode.ts",
+      "bytes": 7164,
+      "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+      "gitBlob": "e90f280c0167c286ab0780a8a62def53a3944106",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "src/ui/nativeDocFlush.ts",
+      "bytes": 968,
+      "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+      "gitBlob": "c466701cf94600a31da475e07aca9100ac471534",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "bytes": 10662,
+      "sha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+      "gitBlob": "c60295a8a9edb72c278cf046e007bb3470d68055",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 361925,
+      "sha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+      "gitBlob": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+      "recordedHarnessHashMatches": true
+    },
+    {
+      "path": "src/ui/boundedDocHistory.ts",
+      "bytes": 4647,
+      "sha256": "f2553445649d14c3bbcd62f0f6e3f0e0622e4db85c94f3f4700788e2591f9cfd",
+      "gitBlob": "cc82ad9da174e9b3084c1d4989388e4a153cd9ba",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": null,
+      "recordedHarnessHashMatches": null
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs.ts",
+      "bytes": 16889,
+      "sha256": "41e7204223f5d9df1c9e1785d27d6d061f354f6e8022c55411244abeee6419a1",
+      "gitBlob": "d0aeae203b93965634508bc8e7b567012f7cff0a",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": null,
+      "recordedHarnessHashMatches": null
+    },
+    {
+      "path": "scripts/dependencies/doc-flush-observation.ts",
+      "bytes": 4549,
+      "sha256": "44a089f08216f0988c78a05990a727afd27313bdc4fc9ba9bf466d0b9119eb51",
+      "gitBlob": "e2e6fa16fa2243c2d9b85c64d13fb19d622e6a7c",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": null,
+      "recordedHarnessHashMatches": null
+    },
+    {
+      "path": "web/DocEditor.tsx",
+      "bytes": 46563,
+      "sha256": "05b75fce66cdb1346aedfa7414f6db7099e5e508b79b30ff3d057977c4cdb21c",
+      "gitBlob": "3e84285cff521fee82239ee9f33f6201839e2b2b",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": null,
+      "recordedHarnessHashMatches": null
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 34677,
+      "sha256": "6f69599eaa79beb913b37a5259c9bd0a9b276a797b8d553d60d69b67a1604be9",
+      "gitBlob": "27564b8de06d145684c09b2da041a7f8b38f5cde",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": null,
+      "recordedHarnessHashMatches": null
+    },
+    {
+      "path": "package.json",
+      "bytes": 4349,
+      "sha256": "a817f6510747557eeaaab490fb70d209bedb0a646ade837f87018a244ffcbe53",
+      "gitBlob": "f5772edccf157465975964205d30d37af2633288",
+      "allFiveSourcesByteIdentical": true,
+      "recordedHarnessHash": null,
+      "recordedHarnessHashMatches": null
+    }
+  ],
+  "boundary": "Direct production/observation/harness object equality establishes unchanged scope, not harmlessness, an internal cause or a performance repair."
+}

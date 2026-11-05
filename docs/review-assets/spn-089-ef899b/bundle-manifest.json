@@ -1,0 +1,69 @@
+{
+  "scope": "Immutable ancillary evidence payload for SPN-089 at ef899b; application branch unchanged.",
+  "applicationHead": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+  "testedMerge": "b928c3848847eca3433171524a3ed8d331e295e4",
+  "tree": "19d726f7eeb41c581a7bd96ee221e49215a02f13",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5415,
+      "sha256": "c011000cae1321232884c6b1b58afe8a4ff5ed243dd2f83bfb1cd95691fa62c8"
+    },
+    {
+      "path": "final/manifest.json",
+      "bytes": 2054,
+      "sha256": "53cdb9edead0f33b5fc26c54c05d919566eb25299e4066033e1ebc3a9603eb2d"
+    },
+    {
+      "path": "final/redesign-native-editors--make-copy-dialog-dark.png",
+      "bytes": 75082,
+      "sha256": "328484878ff3f2f8927831dcf19a0b0c9892ea6c6282c8c237d8fbca3c36f2e4"
+    },
+    {
+      "path": "final/redesign-native-editors--make-copy-dialog-light.png",
+      "bytes": 75355,
+      "sha256": "b47be47afdf7754101fcffcb8d4f4b01da3040dc4245265f3f36f6f03a5f0d38"
+    },
+    {
+      "path": "final/redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "bytes": 22726,
+      "sha256": "cab2325280f021bca646f25a946443ced3b91f32088417653b5790cf857b74e5"
+    },
+    {
+      "path": "final/redesign-native-editors--make-copy-dialog-phone.png",
+      "bytes": 22708,
+      "sha256": "3d6b0c83bf068564e0b2f6bf95a74ee74de5061a2874c8ce896ed178334a8968"
+    },
+    {
+      "path": "final/redesign-native-editors--make-copy-dialog-tablet.png",
+      "bytes": 26065,
+      "sha256": "0eb6b8583814e184a618a802548ce5cc27407a0d215b053ccb1e507109fc4522"
+    },
+    {
+      "path": "final-build-provenance.json",
+      "bytes": 763,
+      "sha256": "97091400bb06949e6ebc7ffd3ec93bead2bc6e92526bcd217889779d8f63b26b"
+    },
+    {
+      "path": "final-captures.json",
+      "bytes": 487,
+      "sha256": "004d3633a7b8ab65417a181a5d9dce95d9e1b1fe95331da992a41fcec1223cca"
+    },
+    {
+      "path": "firefox-first-attempt/failure-record.json",
+      "bytes": 9315,
+      "sha256": "27b4dbf463cc09db5a9577f846cfed89aac2b64e0cdee53c2970cfb799998afe"
+    },
+    {
+      "path": "firefox-first-attempt/failure.png",
+      "bytes": 100409,
+      "sha256": "a5f10b6d88fbd1cd1768a456bf84daf4aa3ced06e9f9eed3a4b7821a2c0d2a7a"
+    },
+    {
+      "path": "inventory-receipt.json",
+      "bytes": 17286,
+      "sha256": "7d90fb1d3133fe63378ef665de29cf35fe6a27e9843f84f05361721faffe52b4"
+    }
+  ],
+  "manifestIncludesOwnDigest": false
+}

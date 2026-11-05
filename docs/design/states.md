@@ -152,12 +152,16 @@ states, including a connected device whose changes are not yet durably saved.
 ### Modal title icons
 
 Owner follow-up, 2026-10-21, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits): every product modal gets an appropriate
-icon beside its textual title through the shared proposal Modal heading. Screen
-migrations SPN-045/048/049/081–085 apply the pattern to their own dialogs;
-SPN-089 audits the remaining production dialogs after those migrations. Use
+icon beside its textual title through the shared Modal heading. Screen
+migrations SPN-045/048/049/081–085 applied the pattern to their own dialogs;
+[SPN-089](../implementation/SPN-089.md) audits the remaining production dialogs and
+requires an explicit semantic icon or emoji for every shared modal. 💬 Use
 consistent size/alignment, hide decorative icons from assistive technology, and
 preserve the title as the accessible name. Tooltips are not modals. Do not patch
-SDK-owned dialogs through unsupported hooks. The proposal uses a 20 px decorative semantic icon, a wrapping title and a separate close target; accessible text and dismissal behavior are unchanged.
+SDK-owned dialogs through unsupported hooks. The pattern uses a 20 px decorative cue,
+a wrapping title and a separate close target; accessible text and dismissal
+behavior are unchanged. The app-owned native Make a copy addon uses its supported
+public title API. Formula and picker dialogs retain their native focus lifecycle.
 
 The reused profile icon picker also has a decorative title icon; its native dialog
 keeps the existing accessible title and keyboard behavior.

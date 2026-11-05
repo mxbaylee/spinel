@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 260,
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "baseSha": "5c565b61e11ce29780581f33410749436ecef42f",
+  "testedSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+  "sourceTree": "43bac9fbd53c842b8d5796560f19076edacd38b7",
+  "testedTree": "43bac9fbd53c842b8d5796560f19076edacd38b7",
+  "runId": 41948253612,
+  "attempt": 1,
+  "job": {
+    "id": 126985936508,
+    "name": "Playwright smoke (development 2/2)",
+    "status": "completed",
+    "conclusion": "failure",
+    "startedAt": "2026-11-05T01:37:38Z",
+    "completedAt": "2026-11-05T01:43:05Z",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936508"
+  },
+  "artifact": {
+    "id": 13379978325,
+    "name": "theme-screenshots-development-2",
+    "bytes": 5933894,
+    "sha256": "d572e3e5d0a9d04334bfbc7e2efd8d3d30e33ab9cdb5e4e95b6881e16b79b0e6",
+    "createdAt": "2026-11-05T01:43:02Z",
+    "expiresAt": "2026-11-12T01:43:01Z",
+    "expired": false,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379978325"
+  },
+  "observedAt": "2026-11-05T01:47:16.250055+00:00",
+  "stats": {
+    "startTime": "2026-11-05T01:38:33.850Z",
+    "duration": 267223.201,
+    "expected": 11,
+    "skipped": 64,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "historyCases": [
+    {
+      "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "line": 9,
+      "project": "development",
+      "expectedStatus": "passed",
+      "status": "unexpected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "duration": 17418,
+          "startTime": "2026-11-05T01:41:59.557Z"
+        },
+        {
+          "retry": 1,
+          "status": "failed",
+          "duration": 25106,
+          "startTime": "2026-11-05T01:42:17.565Z"
+        },
+        {
+          "retry": 2,
+          "status": "failed",
+          "duration": 17233,
+          "startTime": "2026-11-05T01:42:43.568Z"
+        }
+      ]
+    },
+    {
+      "title": "doc versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "line": 9,
+      "project": "development",
+      "expectedStatus": "passed",
+      "status": "skipped",
+      "results": []
+    }
+  ],
+  "assertion": {
+    "path": "e2e/history.spec.ts",
+    "line": 112,
+    "locator": "getByRole('link', { name: 'Your profile' })",
+    "expected": "Version viewer",
+    "timeoutMs": 5000,
+    "actual": "element(s) not found",
+    "allThreeSheetAttempts": "failed at this same assertion"
+  },
+  "observedPage": "Online read-only Sheet document in Document workspace, heading Version test, Save status View only, disabled edit controls and Document actions. No Your profile link.",
+  "precedingAssertions": "The View only and exact item URL assertions completed before the failing identity assertion in each reported attempt.",
+  "classification": "Current candidate fixture locator defect, distinct from the retained A dashboard/route-loss surface. The required identity assertion targets navigation chrome absent from this standalone editor.",
+  "skippedOwnership": "64 cases, including Doc history, have empty results and no explicit skip annotations because development maxFailures=1 stopped the shard. They did not run and provide no acceptance.",
+  "retryDisposition": "Built-in retry0/1/2 all failed. No workflow or job rerun. Current source remains failed; later heads/passes cannot replace this record.",
+  "firstAttemptTrace": false,
+  "retry1Trace": true,
+  "rawDataBoundary": "Raw report, original whole ZIP and session-bearing trace stay scratch-only. Sanitized snapshot, useful first PNG, selected log excerpt and immutable hashes form the publishable subset.",
+  "retry1TraceIdentity": {
+    "path": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/trace.zip",
+    "bytes": 2198011,
+    "sha256": "ba866d28b63ecffa01c3c451efbf5d36025ee25ec025d58423e8fc5c27638fc6",
+    "crc32": "2d3aa1ff"
+  },
+  "originalReport": {
+    "path": "playwright-report/development-2-of-2.json",
+    "bytes": 1470188,
+    "sha256": "c87d1cc6a25460ce690ea3a49565f0b6f5c8f91c4016ea19ca8fe5152d5ce3af"
+  },
+  "extractionManifest": "extraction-manifest.json",
+  "files": [
+    {
+      "path": "failure-log.txt",
+      "bytes": 9931,
+      "sha256": "3683aa74d1fb5a391f36092d10029e37d69024b9bc7a6edfb15b2cf7bec84d9a"
+    },
+    {
+      "path": "observed-page.yaml",
+      "bytes": 2863,
+      "sha256": "347b11035008deda91b18edb7306f808bbf48ede550b9ca6e862b7565d0ed234"
+    },
+    {
+      "path": "failure.png",
+      "bytes": 42815,
+      "sha256": "9c788740dfe8ffa39b4336eb433e336d375215b22f87be100d905995488d7ea7"
+    },
+    {
+      "path": "error-context.md",
+      "bytes": 11313,
+      "sha256": "0cffddbcfad4a57f8fa4a9e189462074428512e7d6f3dfeecf696f9c36faa137"
+    }
+  ]
+}

@@ -82,7 +82,7 @@ function Fixture({
       <div className="univer-container" style={{ background: 'var(--sp-panel)', padding: 24 }}>
         Geometry fixture. Native selection and rendering are checked in Playwright.
         {dialog && (
-          <Modal title="Editor dialog fixture" trigger="Open editor dialog">
+          <Modal title="Editor dialog fixture" icon="info" trigger="Open editor dialog">
             Document dialog content.
           </Modal>
         )}

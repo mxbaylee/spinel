@@ -1,0 +1,374 @@
+{
+  "schema": 1,
+  "ticket": "SPN-089",
+  "pullRequest": 260,
+  "observedAt": "2026-11-04T22:03:57Z",
+  "observer": "/root/verification_plan; final Storybook status independently verified by /root",
+  "checkpoint": "Incomplete overall acceptance; polling stopped. External Actions runs continue. No background monitoring promised.",
+  "application": {
+    "head": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "tree": "19d726f7eeb41c581a7bd96ee221e49215a02f13",
+    "base": "7679351822caaa9535d73d656191f2a6597a3380",
+    "testedMerge": "b928c3848847eca3433171524a3ed8d331e295e4",
+    "mergeTreeMatchesHead": true,
+    "draft": true,
+    "merged": false
+  },
+  "sourceCi": {
+    "run": 41918564598,
+    "attempt": 1,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41918564598",
+    "terminal": false,
+    "failureObserved": false,
+    "counts": {
+      "jobsSeen": 30,
+      "successful": 9,
+      "running": 8,
+      "queued": 13
+    },
+    "jobs": [
+      {
+        "id": 126887093935,
+        "name": "Pull request",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887094212,
+        "name": "Classify changes (41918564598)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650158,
+        "name": "Unit tests (supervisor)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650168,
+        "name": "Unit tests (recovery)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650170,
+        "name": "Container smoke",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650200,
+        "name": "Lint",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650201,
+        "name": "Unit tests (remaining)",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650247,
+        "name": "Typecheck",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650257,
+        "name": "Sized restore acceptance",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650272,
+        "name": "Backlog",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 126887650391,
+        "name": "Doc callback lifetimes (mobile)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650431,
+        "name": "Retained sync transition",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650444,
+        "name": "Doc responsiveness (desktop)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650464,
+        "name": "Doc responsiveness (mobile)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650476,
+        "name": "Lib tests (dense-cells)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650528,
+        "name": "Lib tests (cells)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650538,
+        "name": "Playwright smoke (development 1/2)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650556,
+        "name": "Lib tests (mixed-fuzz)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650599,
+        "name": "Doc callback lifetimes (desktop)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650627,
+        "name": "Playwright smoke (sync-production)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650633,
+        "name": "Playwright smoke (sync-soak-sheet)",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 126887650661,
+        "name": "Playwright smoke (mobile-https)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650667,
+        "name": "Lib tests (remaining)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650741,
+        "name": "Playwright smoke (production 2/2)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650766,
+        "name": "Playwright smoke (development 2/2)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650806,
+        "name": "Playwright smoke (sync-development)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650836,
+        "name": "Playwright smoke (sync-soak-doc)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650844,
+        "name": "Playwright smoke (supervised-restore)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650850,
+        "name": "Playwright smoke (production 1/2)",
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "id": 126887650903,
+        "name": "Playwright smoke (offline-upgrade)",
+        "status": "queued",
+        "conclusion": null
+      }
+    ],
+    "plan": {
+      "mode": "full",
+      "reason": "Immutable range or event labels unavailable; full coverage.",
+      "artifact": 13366865855,
+      "artifactBytes": 943,
+      "providerArchiveSha256": "31137ad69d268dc14fa32c4741e4fa7db08d77e63987df4fe93b89a192044ab4",
+      "classificationJob": 126887094212,
+      "sourceAndMergeCheckedInClassificationLog": true,
+      "selectedScopeDropped": false
+    },
+    "requiredGates": {
+      "passed": [
+        "Backlog",
+        "Pull request",
+        "Lint",
+        "Typecheck"
+      ],
+      "aggregatesNotYetCreated": [
+        "Unit tests",
+        "Lib tests",
+        "Playwright smoke"
+      ],
+      "allPassed": false
+    },
+    "priorityCoverage": {
+      "nativeCopyDevelopment": "Owning job 126887650538 running; named current-head results not yet verified.",
+      "nativeCopyProduction": "Owning job 126887650850 queued; named current-head results not yet verified.",
+      "syncDevelopment": "Job 126887650806 queued; no fresh disposition for historical ECONNRESET.",
+      "mobileResponsiveness": "Job 126887650464 observing baseline; no completed candidate outcome."
+    }
+  },
+  "descriptionEditCi": {
+    "run": 41921571089,
+    "attempt": 1,
+    "head": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41921571089",
+    "claim": "Run identity and head only. No acceptance or independently verified tested-merge claim."
+  },
+  "storybook": {
+    "run": 41918564629,
+    "attempt": 1,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41918564629",
+    "status": "completed",
+    "conclusion": "success",
+    "updatedAt": "2026-11-04T22:02:31Z",
+    "aggregateJob": 126893492583,
+    "aggregateConclusion": "success",
+    "storiesPerVariant": 1056,
+    "variants": 5,
+    "totalStates": 5280,
+    "additionalInteractions": 49,
+    "interactionBreakdown": {
+      "desktopLight": 13,
+      "desktopDark": 9,
+      "mobileLight": 9,
+      "mobileDark": 9,
+      "tablet": 9
+    },
+    "nativeFocusedSourceCapture": {
+      "passed": 5,
+      "total": 5,
+      "failures": 0,
+      "elapsedMs": 29736,
+      "peakKiB": 1080508
+    },
+    "independentVisualApproval": {
+      "reviewer": "dialog_audit",
+      "scope": "SPN-089 title implementation and layouts; agent review only",
+      "approved": true,
+      "limitation": "P3: existing compact native fixture renders default square input borders; actual production screenshots retain rounded styling."
+    }
+  },
+  "desktopOffline": {
+    "run": 41918564509,
+    "attempt": 1,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41918564509",
+    "status": "completed",
+    "conclusion": "failure",
+    "completedAt": "2026-11-04T21:52:42Z",
+    "jobs": [
+      {
+        "id": 126884671951,
+        "browser": "Firefox",
+        "conclusion": "failure"
+      },
+      {
+        "id": 126884672301,
+        "browser": "Chrome",
+        "conclusion": "success"
+      },
+      {
+        "id": 126884672353,
+        "browser": "Safari",
+        "conclusion": "success"
+      }
+    ],
+    "failure": {
+      "stage": "storage-deletion",
+      "operation": "verify-storage-empty",
+      "localStorageClearResult": 0,
+      "localStorageAtVerification": 1,
+      "workers": [],
+      "caches": [],
+      "targetDatabaseRemoved": true,
+      "otherDatabasesNotFailedCriteria": true,
+      "postLossAssertionsExecuted": false,
+      "keyOrWriterKnown": false,
+      "outcomeOwner": "SPN-141",
+      "ownerPr": 258,
+      "prerequisite": "SPN-142",
+      "prerequisitePr": 262,
+      "unintegratedCandidateFixForExactFailureProven": false,
+      "sourceScope": "Relevant storage/fixture/harness/workflow paths unchanged by SPN-089.",
+      "receipt": "firefox-first-attempt/failure-record.json",
+      "originalArtifact": 13365513716,
+      "archiveSha256": "3fbdf7a964ead83bdb9e547f0582608aa93bbe04ec9ef5ebb432f225b2eaeee4",
+      "unchangedRerun": false
+    }
+  },
+  "evidence": {
+    "initialCommit": "0355dba47304a59bb40899d95d5de886775229b4",
+    "initialTree": "ff9f0acd0d9658b125cb438c690d7cc941225417",
+    "branch": "codex/spn-089-review-evidence-ef899b",
+    "folder": "docs/review-assets/spn-089-ef899b",
+    "originalBundleFiles": 13,
+    "applicationChangedByEvidencePublication": false
+  },
+  "review": {
+    "head": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "kind": "independent agent pre-push reviews",
+    "scores": [
+      {
+        "reviewer": "dialog_audit",
+        "score": 97,
+        "rubric": [
+          35,
+          25,
+          17,
+          10,
+          10
+        ]
+      },
+      {
+        "reviewer": "verification_plan",
+        "score": 97,
+        "rubric": [
+          35,
+          25,
+          17,
+          10,
+          10
+        ]
+      }
+    ]
+  },
+  "disposition": {
+    "modalTitleUi": "Implemented and visually accepted.",
+    "fullStorybookCatalogue": "Passed.",
+    "fullCiAcceptance": false,
+    "desktopOfflineAcceptance": false,
+    "ready": false,
+    "reason": "Preserved SPN-141-owned Firefox prerequisite failure and unfinished source/description-edit CI."
+  }
+}

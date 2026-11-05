@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import { assertDialogTitle } from '../.storybook/dialogBounds.ts';
 import type {
   SpaceDeletePreview,
   SpaceNode,
@@ -751,6 +752,25 @@ export const Offline: Story = {
   },
 };
 
+/** The active page opens the real Space offline controls in its own modal. */
+export const OfflineCopies: Story = {
+  parameters: { api: treeApi() },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await page.findByRole('button', { name: 'Document actions' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Offline copies' }));
+    const dialog = await page.findByRole('dialog', { name: 'Offline copies' });
+    await assertDialogTitle(dialog, 'Offline copies');
+    await expect(
+      within(dialog).getByRole('button', {
+        name: 'Make Welcome available offline on this device',
+      }),
+    ).toBeEnabled();
+    await waitFor(() => expect(page.queryByRole('menu')).not.toBeInTheDocument());
+  },
+};
+
 const deepItems = Array.from({ length: 14 }, (_, index) =>
   item(
     100 + index,
@@ -822,14 +842,20 @@ export const PagesDrawer: Story = {
     if (window.matchMedia('(max-width: 900px)').matches) {
       const trigger = canvas.getByRole('button', { name: 'Open Space contents' });
       await userEvent.click(trigger);
-      await expect(await page.findByRole('dialog', { name: 'Space contents' })).toBeVisible();
+      await assertDialogTitle(
+        await page.findByRole('dialog', { name: 'Space contents' }),
+        'Space contents',
+      );
       await userEvent.keyboard('{Escape}');
       await waitFor(() =>
         expect(page.queryByRole('dialog', { name: 'Space contents' })).not.toBeInTheDocument(),
       );
       await expect(trigger).toHaveFocus();
       await userEvent.click(trigger);
-      await page.findByRole('dialog', { name: 'Space contents' });
+      await assertDialogTitle(
+        await page.findByRole('dialog', { name: 'Space contents' }),
+        'Space contents',
+      );
     } else {
       await userEvent.click(canvas.getByRole('button', { name: 'Collapse navigation' }));
       const trigger = canvas.getByRole('button', { name: 'Open Space contents' });

@@ -1,0 +1,48 @@
+{
+  "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+  "baseSha": "eb32117f5d09c28cd411063256db6d645335ae8a",
+  "sources": [
+    {
+      "path": "e2e/history.spec.ts",
+      "gitBlob": "8a46f34e53d02b6d91790f1e53f4bdca864373a4",
+      "sha256": "ab179eaaf8c00342f94bc66159dd740951726cd791a8b0385539786e51bef7b1",
+      "bytes": 5441,
+      "unchangedFromBase": true
+    },
+    {
+      "path": "web/api.ts",
+      "gitBlob": "74d82175725a5cfef5346df08610672bb09fa031",
+      "sha256": "45121a0724c70091d5f0d4e6e71fb80aa8bf282b63ddc1c99d7aa958171138cf",
+      "bytes": 2955,
+      "unchangedFromBase": true
+    },
+    {
+      "path": "web/itemsApi.ts",
+      "gitBlob": "9000440c278e414a70a02d50c2961cd09be2c0c3",
+      "sha256": "89b4c36f454ebcd5c652911c7d037acceda427aa0e63dd4010e954f614d3f449",
+      "bytes": 787,
+      "unchangedFromBase": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "gitBlob": "c60295a8a9edb72c278cf046e007bb3470d68055",
+      "sha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+      "bytes": 10662,
+      "unchangedFromBase": true
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "gitBlob": "27564b8de06d145684c09b2da041a7f8b38f5cde",
+      "sha256": "6f69599eaa79beb913b37a5259c9bd0a9b276a797b8d553d60d69b67a1604be9",
+      "bytes": 34677,
+      "unchangedFromBase": true
+    },
+    {
+      "path": "web/spinelSync.ts",
+      "gitBlob": "7d8fbce65194c45071060cf1e8979d2d673f6222",
+      "sha256": "f311fae970039a4e1bca97f5d84da6e8da21720e10aa6703149bbec0a1fa1310",
+      "bytes": 44945,
+      "unchangedFromBase": true
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "diagnosticOnly": true,
+  "priorMissedEmissionRecord": "native-steady-probe.json",
+  "proposedStatesPassed": true,
+  "results": [
+    {
+      "mode": "steady-visibility",
+      "variant": "light",
+      "status": "passed",
+      "events": [
+        {
+          "event": "GET_DIALOGS",
+          "time": 2070,
+          "observers": 0
+        },
+        {
+          "event": "READY",
+          "time": 2166,
+          "stage": 2
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 2297,
+          "observers": 1
+        },
+        {
+          "event": "STEADY",
+          "time": 4834,
+          "stage": 3
+        },
+        {
+          "event": "OPEN",
+          "time": 4834,
+          "observers": 1,
+          "id": "spinel.make-copy"
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 4844,
+          "observers": 1
+        }
+      ],
+      "dialogCount": 1
+    },
+    {
+      "mode": "steady-visibility",
+      "variant": "dark",
+      "status": "passed",
+      "events": [
+        {
+          "event": "GET_DIALOGS",
+          "time": 1788,
+          "observers": 0
+        },
+        {
+          "event": "READY",
+          "time": 1869,
+          "stage": 2
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 2002,
+          "observers": 1
+        },
+        {
+          "event": "STEADY",
+          "time": 4558,
+          "stage": 3
+        },
+        {
+          "event": "OPEN",
+          "time": 4558,
+          "observers": 1,
+          "id": "spinel.make-copy"
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 4570,
+          "observers": 1
+        }
+      ],
+      "dialogCount": 1
+    },
+    {
+      "mode": "steady-visibility",
+      "variant": "phone",
+      "status": "passed",
+      "events": [
+        {
+          "event": "READY",
+          "time": 1527,
+          "stage": 2
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 1836,
+          "observers": 0
+        },
+        {
+          "event": "STEADY",
+          "time": 4524,
+          "stage": 3
+        },
+        {
+          "event": "OPEN",
+          "time": 4525,
+          "observers": 1,
+          "id": "spinel.make-copy"
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 4528,
+          "observers": 1
+        }
+      ],
+      "dialogCount": 1
+    },
+    {
+      "mode": "steady-visibility",
+      "variant": "phone-dark",
+      "status": "passed",
+      "events": [
+        {
+          "event": "READY",
+          "time": 1598,
+          "stage": 2
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 1896,
+          "observers": 0
+        },
+        {
+          "event": "STEADY",
+          "time": 4597,
+          "stage": 3
+        },
+        {
+          "event": "OPEN",
+          "time": 4598,
+          "observers": 1,
+          "id": "spinel.make-copy"
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 4603,
+          "observers": 1
+        }
+      ],
+      "dialogCount": 1
+    },
+    {
+      "mode": "steady-visibility",
+      "variant": "tablet",
+      "status": "passed",
+      "events": [
+        {
+          "event": "READY",
+          "time": 1598,
+          "stage": 2
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 1907,
+          "observers": 0
+        },
+        {
+          "event": "STEADY",
+          "time": 4597,
+          "stage": 3
+        },
+        {
+          "event": "OPEN",
+          "time": 4598,
+          "observers": 1,
+          "id": "spinel.make-copy"
+        },
+        {
+          "event": "GET_DIALOGS",
+          "time": 4601,
+          "observers": 1
+        }
+      ],
+      "dialogCount": 1
+    }
+  ]
+}

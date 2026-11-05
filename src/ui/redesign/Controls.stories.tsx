@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
 import './mockups.css';
 import { AppearanceChoice } from './ThemeMenu.tsx';
+import { assertDialogControls, assertDialogTitle } from '../../../.storybook/dialogBounds.ts';
 function Controls({ disabled = false, error = false }: { disabled?: boolean; error?: boolean }) {
   const [value, setValue] = useState('system');
   const [kind, setKind] = useState('doc');
@@ -123,10 +124,95 @@ export const LongModalTitle: Story = {
     await userEvent.click(trigger);
     const title = 'Delete the household planning folder and all its contents permanently?';
     const dialog = await page.findByRole('dialog', { name: title });
-    await expect(within(dialog).getByRole('heading', { name: title })).toBeVisible();
+    await assertDialogTitle(dialog, title);
+    const titleText = dialog.querySelector('.sp-modal-title-icon')!.nextElementSibling!;
+    const lines = titleText.ownerDocument.createRange();
+    lines.selectNodeContents(titleText);
+    await expect(
+      lines.getClientRects().length,
+      'This fixture exercises a wrapped title',
+    ).toBeGreaterThan(1);
+    await assertDialogControls(dialog);
     await userEvent.keyboard('{Escape}');
     // Base UI returns focus after its closing transition has completed.
     await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.click(trigger);
+    await assertDialogTitle(await page.findByRole('dialog', { name: title }), title);
+  },
+};
+
+export const EmojiModalTitle: Story = {
+  render: () => (
+    <div className="sp-ui rd-dialog-stage">
+      <Modal emoji="🌿" title="Keep this workspace on your device?" trigger="Open emoji dialog">
+        <p>The emoji is decorative. The question remains the accessible dialog name.</p>
+      </Modal>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = page.getByRole('button', { name: 'Open emoji dialog' });
+    await userEvent.click(trigger);
+    const title = 'Keep this workspace on your device?';
+    const dialog = await page.findByRole('dialog', { name: title });
+    await assertDialogTitle(dialog, title);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.click(trigger);
+    await assertDialogTitle(await page.findByRole('dialog', { name: title }), title);
+  },
+};
+
+function PendingDialog() {
+  const [busy, setBusy] = useState(true);
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="sp-ui rd-dialog-stage">
+      <Modal
+        icon="upload"
+        title="Import files"
+        trigger="Open pending dialog"
+        open={open}
+        onOpenChange={setOpen}
+        dismissDisabled={busy}
+      >
+        <p role="status">
+          {busy ? 'Importing files…' : 'Could not import these files. Try again.'}
+        </p>
+        <Button onClick={() => setBusy(false)}>Finish example request</Button>
+      </Modal>
+    </div>
+  );
+}
+
+export const PendingModal: Story = {
+  render: () => <PendingDialog />,
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement.ownerDocument.body);
+    const trigger = page.getByRole('button', { name: 'Open pending dialog' });
+    await userEvent.click(trigger);
+    const dialog = await page.findByRole('dialog', { name: 'Import files' });
+    await assertDialogTitle(dialog, 'Import files');
+    await expect(within(dialog).getByRole('button', { name: 'Close dialog' })).toBeDisabled();
+    await userEvent.keyboard('{Escape}');
+    await expect(dialog).toBeVisible();
+  },
+};
+
+export const ErrorModal: Story = {
+  render: () => <PendingDialog />,
+  play: async (context) => {
+    await PendingModal.play!(context);
+    const page = within(context.canvasElement.ownerDocument.body);
+    let dialog = page.getByRole('dialog', { name: 'Import files' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Finish example request' }));
+    await assertDialogTitle(dialog, 'Import files');
+    await expect(within(dialog).getByRole('status')).toHaveTextContent('Could not import');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Close dialog' }));
+    const trigger = page.getByRole('button', { name: 'Open pending dialog' });
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.click(trigger);
+    dialog = await page.findByRole('dialog', { name: 'Import files' });
+    await assertDialogTitle(dialog, 'Import files');
   },
 };

@@ -1,0 +1,235 @@
+{
+  "scope": "Minimal sanitized retention of the native Firefox storage-loss preparation failure from the current source's first Desktop offline attempt. The original failed outcome is preserved.",
+  "source": {
+    "head": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "testedMerge": "b928c3848847eca3433171524a3ed8d331e295e4",
+    "headTree": "19d726f7eeb41c581a7bd96ee221e49215a02f13",
+    "testedMergeTree": "19d726f7eeb41c581a7bd96ee221e49215a02f13",
+    "base": "7679351822caaa9535d73d656191f2a6597a3380",
+    "pullRequest": 260
+  },
+  "workflow": {
+    "name": "Desktop offline",
+    "runId": 41918564509,
+    "attempt": 1,
+    "jobId": 126884671951,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41918564509/job/126884671951",
+    "runConclusion": "failure",
+    "runCompletedAt": "2026-11-04T21:52:42Z",
+    "jobConclusion": "failure",
+    "kind": "Native Firefox/macOS acceptance; not a Playwright project",
+    "browser": {
+      "name": "Firefox",
+      "version": "159.0.1"
+    },
+    "runner": {
+      "label": "macos-26",
+      "arch": "arm64",
+      "imageOS": "macos26",
+      "imageVersion": "20261026.0455.2"
+    },
+    "otherBrowserJobs": [
+      {
+        "browser": "Chrome",
+        "jobId": 126884672301,
+        "conclusion": "success"
+      },
+      {
+        "browser": "Safari",
+        "jobId": 126884672353,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "originalArtifact": {
+    "id": 13365513716,
+    "name": "desktop-offline-firefox-macos-26-41918564509-1",
+    "bytes": 716721,
+    "archiveSha256": "3fbdf7a964ead83bdb9e547f0582608aa93bbe04ec9ef5ebb432f225b2eaeee4",
+    "archiveMembers": 17,
+    "archiveDigestVerified": true,
+    "acceptanceMember": "firefox/acceptance.json",
+    "acceptanceBytes": 54478,
+    "acceptanceSha256": "86d92bfb03d76c6de4a1a89dbedbc521b99405007bf8c96464b059e960a4c1fd",
+    "versionsMember": "firefox/versions.json",
+    "versionsSha256": "ed05e2d46f15c101c337ab2b72987e0961b71f4037a02f35fcce34607fc92359"
+  },
+  "failure": {
+    "stage": "storage-deletion",
+    "recordedAt": "2026-11-04T21:46:37.531Z",
+    "assertionClass": "AssertionError [ERR_ASSERTION]",
+    "callerExpectation": "storage-deletion.status === 'passed'",
+    "actualStatus": "failed",
+    "deletion": {
+      "database": "spinel-offline-e1e20c4f-5e77-41de-a05f-c74add9d70fd",
+      "error": "Error: verify-storage-empty: Error: Storage remains after deletion: {\"workers\":[],\"cacheNames\":[],\"databases\":[\"UniverLocalStorage\",\"spinel-offline-runtime\"],\"localStorageEntries\":1}",
+      "operations": [
+        {
+          "elapsedMs": 1,
+          "name": "serviceWorker.getRegistrations",
+          "startedAt": "2026-11-04T21:46:37.474Z",
+          "status": "passed",
+          "value": [
+            "https://localhost:8176/"
+          ]
+        },
+        {
+          "elapsedMs": 16,
+          "name": "serviceWorker.unregister:https://localhost:8176/",
+          "startedAt": "2026-11-04T21:46:37.476Z",
+          "status": "passed",
+          "value": true
+        },
+        {
+          "elapsedMs": 6,
+          "name": "caches.keys",
+          "startedAt": "2026-11-04T21:46:37.492Z",
+          "status": "passed",
+          "value": [
+            "spinel-shell-4e96a0b6ac90280e"
+          ]
+        },
+        {
+          "elapsedMs": 2,
+          "name": "caches.delete:spinel-shell-4e96a0b6ac90280e",
+          "startedAt": "2026-11-04T21:46:37.497Z",
+          "status": "passed",
+          "value": true
+        },
+        {
+          "elapsedMs": 1,
+          "name": "localStorage.clear",
+          "startedAt": "2026-11-04T21:46:37.499Z",
+          "status": "passed",
+          "value": 0
+        },
+        {
+          "elapsedMs": 9,
+          "name": "indexedDB.deleteDatabase:spinel-offline-e1e20c4f-5e77-41de-a05f-c74add9d70fd",
+          "startedAt": "2026-11-04T21:46:37.500Z",
+          "status": "passed",
+          "value": null
+        },
+        {
+          "elapsedMs": 3,
+          "name": "verify-service-workers",
+          "startedAt": "2026-11-04T21:46:37.510Z",
+          "status": "passed",
+          "value": []
+        },
+        {
+          "elapsedMs": 3,
+          "name": "verify-cache-names",
+          "startedAt": "2026-11-04T21:46:37.513Z",
+          "status": "passed",
+          "value": []
+        },
+        {
+          "elapsedMs": 2,
+          "name": "verify-database-names",
+          "startedAt": "2026-11-04T21:46:37.516Z",
+          "status": "passed",
+          "value": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ]
+        },
+        {
+          "elapsedMs": 0,
+          "error": "Error: Storage remains after deletion: {\"workers\":[],\"cacheNames\":[],\"databases\":[\"UniverLocalStorage\",\"spinel-offline-runtime\"],\"localStorageEntries\":1}",
+          "name": "verify-storage-empty",
+          "startedAt": "2026-11-04T21:46:37.518Z",
+          "status": "failed"
+        }
+      ],
+      "status": "failed",
+      "timeoutMs": 28000
+    },
+    "predicate": {
+      "source": "scripts/ci/desktop-storage.ts",
+      "expression": "workers.length || cacheNames.length || databases.includes(database) || localStorage.length",
+      "failedOperand": "localStorage.length",
+      "observations": {
+        "localStorageClearReturned": 0,
+        "localStorageEntriesAtVerification": 1,
+        "serviceWorkersAtVerification": [],
+        "cacheNamesAtVerification": [],
+        "targetPrivateDatabaseDeletion": "passed",
+        "targetPrivateDatabasePresentAtVerification": false,
+        "otherDatabasesAtVerification": [
+          "UniverLocalStorage",
+          "spinel-offline-runtime"
+        ]
+      },
+      "interpretation": "The other two database names did not fail this predicate. Only the observed localStorage.length of 1 made verify-storage-empty fail after localStorage.clear had returned 0."
+    },
+    "pageUrlAfterFailure": "https://localhost:8176/?shared=1",
+    "subsequentStagesNotRun": [
+      "cleared-storage-is-not-advertised",
+      "post-deletion-outage",
+      "missing-data-cannot-open-offline"
+    ]
+  },
+  "screenshot": {
+    "file": "failure.png",
+    "originalMember": "firefox/failure.png",
+    "bytes": 100409,
+    "sha256": "a5f10b6d88fbd1cd1768a456bf84daf4aa3ced06e9f9eed3a4b7821a2c0d2a7a",
+    "matchesOriginalArchiveMember": true,
+    "caption": "Native Firefox still displays the live Shared with me application after storage preparation failed. Storage counts and the failed predicate are established by the receipt, not the pixels."
+  },
+  "relevantCommittedSourceHashes": [
+    {
+      "path": ".github/workflows/desktop-offline.yml",
+      "sha256": "626af9b4114ecd6b24ef0273bf5a50017c17acab44c35a29294c85d725ef5bfc",
+      "identicalToBase": true
+    },
+    {
+      "path": "scripts/ci/desktop-offline.ts",
+      "sha256": "5ec17bc147d76fd7185f34e266def50360229a49a53386addf77b006a1fea459",
+      "identicalToBase": true
+    },
+    {
+      "path": "scripts/ci/desktop-storage.ts",
+      "sha256": "a1c71df18edbfd6a7fab858dbbffb2786b8491b18c917c80a17e7357ea9da5ce",
+      "identicalToBase": true
+    },
+    {
+      "path": "scripts/ci/desktop-browser.ts",
+      "sha256": "25b31d60ee13ce2692cab505304d25b5f77a55ba6007f5938b060a4301ef3847",
+      "identicalToBase": true
+    },
+    {
+      "path": "scripts/ci/desktop-offline-fixture.ts",
+      "sha256": "139aa86b6fead19fa69d0ebdaec3ba2b74f149c8f9476eeff3a71f6bf25306eb",
+      "identicalToBase": true
+    }
+  ],
+  "ownership": {
+    "outcomeTicket": "SPN-141",
+    "outcome": "Quiescent storage-loss preparation outcome before the offline-loss acceptance checks.",
+    "relationship": "This is an additional failing predicate within the already-open outcome. The original SPN-141 evidence concerned shell-cache residue; this attempt observes local storage repopulation after a zero result.",
+    "producer": "unproven",
+    "unprovenClaims": [
+      "Exact local-storage key and writer",
+      "Same low-level producer as the original SPN-141 failure",
+      "User data loss",
+      "Browser defect"
+    ],
+    "candidate": {
+      "commit": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+      "integration": "unintegrated",
+      "integrationBlocker": "SPN-142",
+      "fixesThisExactPredicate": "unproven",
+      "requiredEvidence": "Accepted integration and fresh native acceptance of this same strict predicate."
+    },
+    "reviewSource": "verification_plan inspected the original archive, receipt, relevant committed source and the unintegrated candidate comparison."
+  },
+  "sanitization": {
+    "retained": "Source/run identities, public software metadata, the complete ten-operation deletion record, its synthetic fixture database/cache identifiers, source hashes and one relevant failure PNG.",
+    "omitted": "Actor/account records, authentication and session material, local-storage key/value content, full browser-driver logs, stack/page dumps, unrelated screenshots and embedded image bytes from the raw acceptance record.",
+    "rawAcceptanceCopied": false,
+    "browserDriverLogsCopied": false
+  },
+  "disposition": "The current source's first Desktop offline attempt remains failed. This bundle neither repairs it nor substitutes older/later passes for the original failure. Full-suite and current readiness belong to PR #260."
+}

@@ -1,23 +1,37 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
-import { AppearanceDialog, CoverArt, ItemIcon } from '../../../web/Appearance.tsx';
-import { emptyAppearance, gemNames } from '../../shared/appearance.ts';
+import { failure, pending } from '../../../.storybook/api.ts';
+import { assertDialogTitle } from '../../../.storybook/dialogBounds.ts';
+import {
+  AppearanceDialog,
+  ConnectedAppearanceDialog,
+  CoverArt,
+  ItemIcon,
+} from '../../../web/Appearance.tsx';
+import { appearancePath, emptyAppearance, gemNames } from '../../shared/appearance.ts';
 import type { GemName, ItemAppearance } from '../../shared/appearance.ts';
 import { GemPairs } from './AppearanceReview.tsx';
 import { Button } from './Controls.tsx';
 import { spaceAccentPalettes } from '../palette.ts';
+
+const fixtureId = 'storybook-fixture';
+const endpoint = appearancePath(fixtureId);
 
 function Playground({
   kind,
   gem,
   open,
   failSave,
+  connected = false,
+  disabled = false,
 }: {
   kind: 'doc' | 'sheet' | 'folder' | 'space';
   gem: GemName;
   open: boolean;
   failSave: boolean;
+  connected?: boolean;
+  disabled?: boolean;
 }) {
   const [value, setValue] = useState<ItemAppearance>({
     ...emptyAppearance(),
@@ -25,7 +39,7 @@ function Playground({
   });
   const [dialog, setDialog] = useState(open);
   const [assets, setAssets] = useState<Record<string, string>>({});
-  const target = { id: 'storybook-fixture', name: 'Field notes', kind };
+  const target = { id: fixtureId, name: 'Field notes', kind };
   return (
     <div
       className="sp-ui"
@@ -51,7 +65,14 @@ function Playground({
           modes.
         </p>
       </div>
-      {dialog && (
+      {dialog && connected && (
+        <ConnectedAppearanceDialog
+          target={target}
+          disabled={disabled}
+          close={() => setDialog(false)}
+        />
+      )}
+      {dialog && !connected && (
         <AppearanceDialog
           assets={assets}
           target={target}
@@ -154,3 +175,87 @@ export const PlaygroundStory: Story = {
   },
 };
 export const GemsLightAndDark: Story = { render: () => <GemPairs /> };
+
+export const AppearanceOpen: Story = {
+  args: { open: true },
+  play: async ({ canvasElement }) => {
+    const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Appearance · Field notes',
+    });
+    await assertDialogTitle(dialog, 'Appearance · Field notes');
+    await expect(within(dialog).getByRole('button', { name: 'Save appearance' })).toBeEnabled();
+  },
+};
+
+export const PageCoverOpen: Story = {
+  args: { open: true },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const appearance = await body.findByRole('dialog', { name: 'Appearance · Field notes' });
+    await userEvent.click(within(appearance).getByRole('button', { name: 'Change cover' }));
+    const dialog = await body.findByRole('dialog', { name: 'Page cover' });
+    await assertDialogTitle(dialog, 'Page cover');
+    await expect(within(dialog).getByRole('button', { name: 'Save cover' })).toBeEnabled();
+  },
+};
+
+export const IconOrEmojiPickerOpen: Story = {
+  args: { open: true },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const appearance = await body.findByRole('dialog', { name: 'Appearance · Field notes' });
+    await userEvent.click(within(appearance).getByRole('button', { name: 'Choose icon or emoji' }));
+    const dialog = await body.findByRole('dialog', { name: 'Choose an icon or emoji' });
+    await assertDialogTitle(dialog, 'Choose an icon or emoji');
+    await userEvent.type(
+      within(dialog).getByRole('textbox', { name: 'Search icons and emojis' }),
+      'flower',
+    );
+    await expect(within(dialog).getByRole('button', { name: 'Flower' })).toBeVisible();
+    await expect(within(dialog).getByRole('button', { name: 'Sunflower emoji' })).toBeVisible();
+  },
+};
+
+async function connectedStatus(canvasElement: HTMLElement, message: string) {
+  const dialog = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+    name: 'Appearance',
+  });
+  await expect(await within(dialog).findByText(message)).toHaveAttribute('role', 'status');
+  await assertDialogTitle(dialog, 'Appearance');
+}
+
+export const ConnectedLoading: Story = {
+  args: { open: true, connected: true },
+  parameters: { api: { [`GET ${endpoint}`]: pending() } },
+  play: async ({ canvasElement }) => {
+    await connectedStatus(canvasElement, 'Checking appearance access…');
+  },
+};
+
+export const ConnectedError: Story = {
+  args: { open: true, connected: true },
+  parameters: {
+    api: { [`GET ${endpoint}`]: failure('Appearance could not be loaded. Try again.', 503) },
+  },
+  play: async ({ canvasElement }) => {
+    await connectedStatus(canvasElement, 'Appearance could not be loaded. Try again.');
+  },
+};
+
+export const ConnectedOffline: Story = {
+  args: { open: true, connected: true, disabled: true },
+  play: async ({ canvasElement }) => {
+    await connectedStatus(canvasElement, 'Connect to change appearance.');
+  },
+};
+
+export const ConnectedReadOnly: Story = {
+  args: { open: true, connected: true },
+  parameters: { api: { [`GET ${endpoint}`]: { appearance: emptyAppearance(), canEdit: false } } },
+  play: async ({ canvasElement }) => {
+    await connectedStatus(
+      canvasElement,
+      'You can view this item, but cannot change its appearance.',
+    );
+  },
+};

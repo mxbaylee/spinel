@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-05T00:52:57.438Z",
+  "repository": "mxbaylee/spinel",
+  "pr": 260,
+  "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+  "baseSha": "eb32117f5d09c28cd411063256db6d645335ae8a",
+  "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+  "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+  "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+  "workflow": {
+    "runId": 41938091631,
+    "attempt": 1,
+    "eventAction": "synchronize",
+    "status": "completed",
+    "conclusion": "failure"
+  },
+  "job": {
+    "id": 126952141414,
+    "name": "Playwright smoke (development 2/2)",
+    "conclusion": "failure",
+    "step": {
+      "number": 10,
+      "name": "Playwright smoke",
+      "startedAt": "2026-11-05T00:28:28Z",
+      "completedAt": "2026-11-05T00:43:55Z"
+    }
+  },
+  "requiredGate": {
+    "id": 126970449691,
+    "name": "Playwright smoke",
+    "conclusion": "failure",
+    "error": "Incomplete coverage playwright-run: selected=true, result=failure"
+  },
+  "artifact": {
+    "id": 13377247190,
+    "name": "theme-screenshots-development-2",
+    "bytes": 19390863,
+    "sha256": "eed5bf59612ca5185474c4898252f0e8254ac75dd084cda10ee40bbae0274d6f",
+    "expiresAt": "2026-11-12T00:43:55Z",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377247190",
+    "archiveSizeAndDigestIndependentlyVerified": true,
+    "selectedEntriesCrcAndSizeVerified": true,
+    "manifest": "extraction-manifest.json"
+  },
+  "test": {
+    "file": "e2e/history.spec.ts",
+    "declarationLine": 8,
+    "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+    "project": "development",
+    "assertionLine": 93,
+    "observed": "Save status inside Sheet document did not exist within30000ms; expected View only after viewer cookie replacement and page.reload.",
+    "retry0": {
+      "status": "failed",
+      "startTime": "2026-11-05T00:31:17.989Z",
+      "durationMs": 37358
+    },
+    "retry1": {
+      "status": "passed",
+      "startTime": "2026-11-05T00:31:55.802Z",
+      "durationMs": 14676
+    },
+    "finalStatus": "flaky",
+    "suite": {
+      "passed": 74,
+      "flaky": 1,
+      "skipped": 1,
+      "exitCode": 1,
+      "skip": "Existing production-only supervised-maintenance case does not run in development."
+    },
+    "policy": "playwright.config.ts keeps CI retries2 and failOnFlakyTests=true. The successful retry does not repair or pass this workflow."
+  },
+  "observedPage": {
+    "actor": "Version viewer",
+    "connection": "Online",
+    "surface": "My files dashboard",
+    "content": "Empty folder with Trash entry; no Sheet document region.",
+    "actualUrl": "Not recorded in first-attempt screenshot/context.",
+    "context": "observed-page.yaml",
+    "screenshot": "failure.png"
+  },
+  "diagnosis": {
+    "classification": "Observable assertion failure after completed editor/history work and an account switch; not a proven browser/server startup failure.",
+    "codeSupportedMechanism": "A live owner page remains during clearCookies/addCookies/reload. Existing periodic native access probes can observe a credential-less interval, end authentication and navigate to sign-in without the ordinary item query; an authenticated viewer can subsequently render the dashboard. Root and an independent read-only agent are reviewing that fixture boundary.",
+    "notEstablished": "No first-attempt trace exists. The exact request, response status, navigation sequence and writer responsible for the observed route loss are not proven.",
+    "repairBoundary": "Use an isolated viewer browser context and explicit item URL after owner-page closure, retaining actor, saved history, permission and page-error assertions. Actual candidate review and changed-source verification are separate.",
+    "disposition": "This source run remains failed and blocks merge. No unchanged workflow retry or later metadata pass may replace it."
+  },
+  "trace": {
+    "firstAttempt": false,
+    "retry1Only": {
+      "file": "retry1-trace.zip",
+      "sha256": "1ed6c18b70066dc9c3e70a1d6301adadb4671f7ceea90c267cd235a139c4f2e2",
+      "bytes": 2301781,
+      "status": "passed"
+    }
+  },
+  "safeEvidence": [
+    "sanitized-test-result.json",
+    "failure-log.txt",
+    "observed-page.yaml",
+    "failure.png",
+    "source-hashes.json",
+    "extraction-manifest.json"
+  ],
+  "scratchOnlyInputs": [
+    "original-artifact.zip",
+    "raw-report.json",
+    "retry1-trace.zip"
+  ],
+  "limitations": "Sanitized summaries preserve the failed contract and immutable evidence identities. They are not a first-attempt network trace. Raw reports/traces can contain transient authentication or fixture data and are retained only for local diagnosis."
+}

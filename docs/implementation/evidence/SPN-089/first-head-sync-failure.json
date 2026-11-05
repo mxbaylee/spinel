@@ -1,0 +1,52 @@
+{
+  "status": "unresolved",
+  "sourceHead": "8e5c48f52098dd381bd71bc1499a2f626f3497fb",
+  "testedMerge": "5e6585d7e2a4be9f87e42b7f8071c2e396fe263b",
+  "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+  "runId": 41912204272,
+  "jobId": 126862674357,
+  "runAttempt": 1,
+  "url": "https://github.com/mxbaylee/spinel/actions/runs/41912204272/job/126862674357",
+  "project": "sync-development",
+  "retainedHeader": [
+    "SPN-089 hosted failure evidence",
+    "Run: https://github.com/mxbaylee/spinel/actions/runs/41912204272/job/126862674357",
+    "Run attempt: 1",
+    "Head: 8e5c48f52098dd381bd71bc1499a2f626f3497fb",
+    "Tested PR merge: 5e6585d7e2a4be9f87e42b7f8071c2e396fe263b",
+    "Base: 13b74ecea5f2552627ff638be9413ad4754ef581",
+    "Sanitization: cookie/authorization header values and token-like query values removed."
+  ],
+  "sanitization": "Source log already removed cookie/authorization values and token-like query values. This record retains only source metadata, the socket failure and the test summary; no request headers or bodies.",
+  "failureExcerpt": [
+    "2026-11-04T21:09:38.1654203Z [WebServer] node:events:505",
+    "2026-11-04T21:09:38.1664364Z ",
+    "2026-11-04T21:09:38.1664971Z [WebServer]     throw er; // Unhandled 'error' event",
+    "2026-11-04T21:09:38.1665448Z ",
+    "2026-11-04T21:09:38.1671539Z [WebServer]     ^",
+    "2026-11-04T21:09:38.1672280Z [WebServer] ",
+    "2026-11-04T21:09:38.1673856Z [WebServer] Error: read ECONNRESET",
+    "2026-11-04T21:09:38.1674987Z [WebServer]     at TCP.onStreamRead (node:internal/stream_base_commons:221:20)",
+    "2026-11-04T21:09:38.1676259Z [WebServer] Emitted 'error' event on Socket instance at:",
+    "2026-11-04T21:09:38.1677396Z [WebServer]     at emitErrorNT (node:internal/streams/destroy:170:8)",
+    "2026-11-04T21:09:38.1678853Z [WebServer]     at emitErrorCloseNT (node:internal/streams/destroy:129:3)",
+    "2026-11-04T21:09:38.1684419Z [WebServer]     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {",
+    "2026-11-04T21:09:38.1686078Z [WebServer]   errno: -104,",
+    "2026-11-04T21:09:38.1687044Z [WebServer]   code: 'ECONNRESET',",
+    "2026-11-04T21:09:38.1688005Z [WebServer]   syscall: 'read'",
+    "2026-11-04T21:09:38.1688940Z [WebServer] }",
+    "2026-11-04T21:09:38.1690125Z [WebServer] ",
+    "2026-11-04T21:09:38.1691397Z [WebServer] Node.js v26.12.1"
+  ],
+  "subsequentFailure": "2026-11-04T21:09:41.8336509Z     AggregateError: apiRequestContext.post: connect ECONNREFUSED ::1:3104",
+  "summaryExcerpt": [
+    "2026-11-04T21:09:56.6539905Z   4 failed",
+    "2026-11-04T21:09:56.6541228Z     [sync-development] › e2e/sync-client.spec.ts:552:3 › native sheet viewers cannot enqueue edits during startup or after readiness ",
+    "2026-11-04T21:09:56.6543018Z     [sync-development] › e2e/sync-client.spec.ts:552:3 › native doc viewers cannot enqueue edits during startup or after readiness ",
+    "2026-11-04T21:09:56.6544539Z     [sync-development] › e2e/sync-client.spec.ts:593:3 › native sync sheet menus preserve supported commands on desktop ",
+    "2026-11-04T21:09:56.6545931Z     [sync-development] › e2e/sync-client.spec.ts:593:3 › native sync sheet menus preserve supported commands on phone ",
+    "2026-11-04T21:09:56.6546718Z   17 passed (3.4m)",
+    "2026-11-04T21:09:56.7016578Z ##[error]Process completed with exit code 1."
+  ],
+  "interpretation": "An unhandled raw Socket ECONNRESET terminated the web server; subsequent API calls were refused. The originating socket path is unknown. That path is unchanged by this dialog-title repair, and this evidence does not establish its cause or resolution."
+}

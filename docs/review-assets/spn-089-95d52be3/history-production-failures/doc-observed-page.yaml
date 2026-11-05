@@ -1,0 +1,84 @@
+- main:
+  - region "Your files":
+    - region "Document workspace":
+      - button "Back to files"
+      - heading "Version test" [level=1]
+      - 'button "Save details: View only"': View only
+      - status "Connection status": Online
+      - button "Online — connected to Spinel"
+      - button "People in this document"
+      - button "Document actions": ···
+      - text: View only
+      - button "Enter theatre mode"
+      - region "Doc document":
+        - status "Save status": View only.
+        - paragraph
+        - tablist:
+          - tab "Start" [selected]
+          - tab "Insert"
+          - tab "View"
+        - toolbar "Start":
+          - button "Undo" [disabled]:
+            - img
+          - button "Redo" [disabled]:
+            - img
+          - button "Format Painter" [disabled]:
+            - img
+          - button "Clear formatting" [disabled]:
+            - img
+          - button "Paste special" [disabled]:
+            - img
+            - text: Paste
+            - img
+          - button "Bold" [disabled]:
+            - img
+          - button "Italic" [disabled]:
+            - img
+          - button "Underline" [disabled]:
+            - img
+          - button "Strikethrough" [disabled]:
+            - img
+          - button "Subscript" [disabled]:
+            - img
+          - button "Superscript" [disabled]:
+            - img
+          - text: Normal
+          - img
+          - textbox: "11"
+          - img
+          - textbox: Arial
+          - img
+          - img
+          - img
+          - img
+          - img
+          - button "Align Left" [disabled]:
+            - img
+            - img
+          - img
+          - img
+          - img
+          - img
+          - button "Task list" [disabled]:
+            - img
+          - button "Toggle Shortcut Panel":
+            - img
+          - button "Search features":
+            - img
+          - button "Make a copy"
+        - complementary
+        - complementary
+        - button "View document statistics":
+          - img
+          - text: 3 words
+        - button "Zoom out":
+          - img
+        - button "Reset zoom"
+        - slider "Zoom"
+        - button "Zoom in":
+          - img
+        - textbox "Zoom": 100%
+        - button "Menu":
+          - img
+        - region "Notifications alt+T"
+        - region "Notifications alt+T"

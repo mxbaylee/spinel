@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import { assertDialogTitle } from '../.storybook/dialogBounds.ts';
 import { AdminUsers } from './AdminUsers.tsx';
 
 const day = 86_400_000;
@@ -83,6 +84,22 @@ export const Loading: Story = {
 };
 export const Empty: Story = {
   parameters: { api: { ...loaded, 'GET /api/auth/admin/users': { users: [] } } },
+};
+export const Passkeys: Story = {
+  parameters: { api: loaded },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Actions for Sam Rivera' }),
+    );
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Manage passkeys' }));
+    const dialog = await body.findByRole('dialog', { name: 'Passkeys for Sam Rivera' });
+    await assertDialogTitle(dialog, 'Passkeys for Sam Rivera');
+    await expect(
+      within(dialog).getByRole('list', { name: 'Sam Rivera passkeys' }).children,
+    ).toHaveLength(2);
+    await waitFor(() => expect(body.queryByRole('menu')).not.toBeInTheDocument());
+  },
 };
 /** A lone admin with a single passkey cannot remove it. */
 export const LastAdminPasskey: Story = {

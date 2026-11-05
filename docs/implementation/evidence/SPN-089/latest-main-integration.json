@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T02:16:21.082Z",
+  "checkpoint": {
+    "source": "70b154f2bfb2cc5fc7b90e02cc0f74107ec2ddf1",
+    "tree": "c47a60cb8e778da63c6a0643a8845799d0254b47",
+    "notBranchPublished": true
+  },
+  "incomingMain": {
+    "source": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "parent": "5c565b61e11ce29780581f33410749436ecef42f",
+    "tree": "712c0286808dd1b388c9a1faa067e8cc3bf54817",
+    "changedFiles": [
+      "docs/implementation/SPN-141.md",
+      "docs/implementation/SPN-143.md",
+      "docs/implementation/SPN-144.md",
+      "docs/todo/SPN-141.md",
+      "docs/todo/SPN-144.md",
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md"
+    ],
+    "executableChanges": []
+  },
+  "resolution": {
+    "canonicalMainFiles": [
+      {
+        "path": "docs/implementation/SPN-141.md",
+        "blob": "e1fddd8964f9d868fc3ba82343c34bfd3e749041",
+        "bytes": 4851,
+        "sha256": "18cb39e4511b4e456568ea6240c6ee0925e0f77aa06a54337dd12313f21a5fc0"
+      },
+      {
+        "path": "docs/implementation/SPN-143.md",
+        "blob": "af3a5a416607e72169ace390b75975cbfc59d84d",
+        "bytes": 19960,
+        "sha256": "5e0da52d62b7225db92cf289e91c95a7a13f76493fbc7be81de9296f2090a760"
+      },
+      {
+        "path": "docs/implementation/SPN-144.md",
+        "blob": "be2f5b36f7d1c581213639093dd1aa10c3e74366",
+        "bytes": 7822,
+        "sha256": "18c21e9610291e04849c1edc0c2e3af34a490bc865343dc732555019dbd749e4"
+      },
+      {
+        "path": "docs/todo/SPN-141.md",
+        "blob": "2587a917821269f75d6d4a15c94f03cb35f2417d",
+        "bytes": 3099,
+        "sha256": "6f9684a43fa31ecb4b319cd4c088d10e73393af99e9896621c24f7965b695ff4"
+      },
+      {
+        "path": "docs/todo/SPN-144.md",
+        "blob": "770fe266a6fc033ceda970d3988ee3d9635f72ba",
+        "bytes": 3544,
+        "sha256": "842fb7756839aafd102e61c3c8a1bfdbc728dc694e157d8751f80ca465dbc43a"
+      }
+    ],
+    "originalOfflineAllocation": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "originalParentsWithoutTicket": [
+      "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+      "eb32117f5d09c28cd411063256db6d645335ae8a"
+    ],
+    "retiredProposal": "branch-only offline SPN-144; preserved verbatim, no completion claimed",
+    "freshTicket": "SPN-145",
+    "allocationMethod": "existing backlog:new CLI",
+    "originalAndCurrentIdentityMap": "offline-activation-registration.md"
+  },
+  "backlog": {
+    "open": 22,
+    "completed": 20,
+    "nextId": 146,
+    "groomingLast": "2026-10-29",
+    "groomingEvery": 7,
+    "originalSettingsPreserved": true,
+    "everyMainOpenTicketUnchangedExceptLandingSPN089": true,
+    "duplicateCompletions": []
+  },
+  "checks": [
+    {
+      "name": "originalAllocation",
+      "log": {
+        "bytes": 667,
+        "sha256": "84e79f32279d3073bc9482131dcfddb4a184c7f2a9ac963ba0f0628b7297f63a",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:new\n> node scripts/backlog/cli.ts new 🔄 Resolve intermittent offline-upgrade worker activation\n\ncreated docs/todo/SPN-144.md; next_id is now 145\n{\"startedAt\":\"2026-11-04T23:51:05.805Z\",\"finishedAt\":\"2026-11-04T23:51:06.724Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"npm\",\"run\",\"backlog:new\",\"--\",\"🔄\",\"Resolve intermittent offline-upgrade worker activation\"],\"elapsedMs\":919,\"peakKiB\":313228,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-04T23:51:05.805Z",
+        "finishedAt": "2026-11-04T23:51:06.724Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:new",
+          "--",
+          "🔄",
+          "Resolve intermittent offline-upgrade worker activation"
+        ],
+        "elapsedMs": 919,
+        "peakKiB": 313228,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "name": "freshAllocation",
+      "log": {
+        "bytes": 707,
+        "sha256": "e061f3bb2bc085d8798aa29e07eb23c8eefec91d58ac5f103a2057c84d7e6473",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:new\n> node scripts/backlog/cli.ts new 🔄 Resolve intermittent offline-upgrade worker activation\n\ncreated docs/todo/SPN-145.md; next_id is now 146\n{\"startedAt\":\"2026-11-05T02:08:57.290Z\",\"finishedAt\":\"2026-11-05T02:08:59.955Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts\",\"npm\",\"run\",\"backlog:new\",\"--\",\"🔄\",\"Resolve intermittent offline-upgrade worker activation\"],\"elapsedMs\":2664,\"peakKiB\":329044,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-05T02:08:57.290Z",
+        "finishedAt": "2026-11-05T02:08:59.955Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:new",
+          "--",
+          "🔄",
+          "Resolve intermittent offline-upgrade worker activation"
+        ],
+        "elapsedMs": 2664,
+        "peakKiB": 329044,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "name": "generatedIndex",
+      "log": {
+        "bytes": 2012,
+        "sha256": "cf76f24a9ed3d3b37101a7630af6b039e5769ae70816ea9b7f2b187f1f5a8753",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:index\n> node scripts/backlog/cli.ts index\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 20 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nwrote docs/todo/readme.md\n{\"startedAt\":\"2026-11-05T02:15:13.315Z\",\"finishedAt\":\"2026-11-05T02:15:14.209Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"npm\",\"run\",\"backlog:index\"],\"elapsedMs\":893,\"peakKiB\":327504,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-05T02:15:13.315Z",
+        "finishedAt": "2026-11-05T02:15:14.209Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:index"
+        ],
+        "elapsedMs": 893,
+        "peakKiB": 327504,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "name": "backlogCheck",
+      "log": {
+        "bytes": 2014,
+        "sha256": "e2abd6931ec7143fcf2a699161cce112f8c7ea84743e3cbd43f3c9418b8d29f1",
+        "text": "npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.\n\n> backlog:check\n> node scripts/backlog/cli.ts check\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 20 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nbacklog ok: 22 open tickets\n{\"startedAt\":\"2026-11-05T02:15:18.232Z\",\"finishedAt\":\"2026-11-05T02:15:18.923Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"npm\",\"run\",\"backlog:check\"],\"elapsedMs\":691,\"peakKiB\":329352,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "measurement": {
+        "startedAt": "2026-11-05T02:15:18.232Z",
+        "finishedAt": "2026-11-05T02:15:18.923Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:check"
+        ],
+        "elapsedMs": 691,
+        "peakKiB": 329352,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    }
+  ],
+  "equivalentSources": [
+    {
+      "path": "src",
+      "checkpointObject": "d5bec485bdfbdedfa079dab310f276515dd2efb0",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "server",
+      "checkpointObject": "e8a59b3a704361c57612bf275cd98fc7596b6ea1",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "web",
+      "checkpointObject": "23c7a7440142128cec78e9d47ec59765afbf3bb6",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "lib",
+      "checkpointObject": "8ae87a1e7e322f9820914b9b1614f831d66c48ab",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "e2e",
+      "checkpointObject": "f5a789a91ad352c485414f93cd31022466d79415",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "scripts",
+      "checkpointObject": "1afefc44eaf17ab0107ae013df93e54ff149f61a",
+      "workingTreeEqual": true
+    },
+    {
+      "path": ".storybook",
+      "checkpointObject": "ad8d6c1336a81e149a0eeb53977f94daa0abd188",
+      "workingTreeEqual": true
+    },
+    {
+      "path": ".github",
+      "checkpointObject": "31a493ecbc294d11ade598757cc49f408d95bda5",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "package.json",
+      "checkpointObject": "f5772edccf157465975964205d30d37af2633288",
+      "workingTreeEqual": true
+    },
+    {
+      "path": "package-lock.json",
+      "checkpointObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "workingTreeEqual": true
+    }
+  ],
+  "localCheckBoundary": "All executable sources remain identical to checkpoint70b154f; the prior history-session-identity-local.json records exact original check scope. Typecheck,20auth/profile/HTTP tests and focused lint/format are attributable to identical source, not claimed as rerun after docs-only integration. Full-app startup remains blocked by recorded EPERM; hosted C acceptance is pending.",
+  "helperPreservation": [
+    {
+      "path": "docs/review-assets/spn-089-ef899b",
+      "tree": "ebf2ced0be2167932ac0fc28439f629c0605d779",
+      "unchanged": true
+    },
+    {
+      "path": "docs/review-assets/spn-089-ee996e95",
+      "tree": "1d780f87a467c5f3f5a40eb196baf4cd1e3c14d3",
+      "unchanged": true
+    }
+  ],
+  "pending": [
+    "exact-committed-C PR check",
+    "both independent exact-C grades above95",
+    "fresh current-head selected CI/native/Storybook",
+    "independent current-C visual review",
+    "guarded merge and cleanup"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-11-04T21:34:36.243Z",
+  "finishedAt": "2026-11-04T21:35:01.610Z",
+  "node": "v26.12.1",
+  "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "/workspace/scratch/ce40e94380e1/validation/native-steady-visibility-probe.ts"
+  ],
+  "elapsedMs": 25366,
+  "peakKiB": 1051332,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}
