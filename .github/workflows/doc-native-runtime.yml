@@ -1,4 +1,4 @@
-name: 🔬 Native Doc component counterfactual
+name: 🔬 Native Doc qualification repair
 on:
   pull_request:
     branches: [main]
@@ -10,9 +10,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   component:
-    # One reachable pre-merge update only. Edits and later repair pushes cannot
-    # renew the registered allowance; GitHub reruns fail before installation.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '7e041c0c7c84bc28c56aeff1bda35b2a93654114'
+    # Explicit changed-candidate experiment after the original inconclusive run.
+    # One reviewed transition; edits/later pushes/reruns cannot renew it.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '483bf8ae4609fa8027485293e6050fe8dca88e1c'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -49,7 +49,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: spn146-linux-native-component
+          name: spn146-linux-qualification-repair
           path: test-results/spn146-native-runtime/
           if-no-files-found: error
           retention-days: 30
