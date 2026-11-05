@@ -1,0 +1,47 @@
+{
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "files": [
+    {
+      "path": "sheet-failure.png",
+      "bytes": 42798,
+      "sha256": "17b75cc461ba53feffb4b751d70c77d78f071959bf08dfd85813047fdfd63fda",
+      "provenance": "Exact first-attempt archive bytes: test-results/production/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-production/test-failed-1.png"
+    },
+    {
+      "path": "sheet-observed-page.yaml",
+      "bytes": 2863,
+      "sha256": "347b11035008deda91b18edb7306f808bbf48ede550b9ca6e862b7565d0ed234",
+      "provenance": "Exact YAML page-snapshot block plus final newline from test-results/production/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-production/error-context.md, SHA256 0cffddbcfad4a57f8fa4a9e189462074428512e7d6f3dfeecf696f9c36faa137"
+    },
+    {
+      "path": "doc-failure.png",
+      "bytes": 29917,
+      "sha256": "eaf022c3fccac6fcfcd93afd3e59df5c25f8b18c36a3309c97f3495c56d831c6",
+      "provenance": "Exact first-attempt archive bytes: test-results/production/history-doc-versions-can-b-ed300-nnamed-and-read-by-a-viewer-production/test-failed-1.png"
+    },
+    {
+      "path": "doc-observed-page.yaml",
+      "bytes": 2344,
+      "sha256": "0823e31eb09da8eaf33784c2405774a9525c1e0b56c548820ef854da33dd1cf2",
+      "provenance": "Exact YAML page-snapshot block plus final newline from test-results/production/history-doc-versions-can-b-ed300-nnamed-and-read-by-a-viewer-production/error-context.md, SHA256 07e945a7223ce18dadf72119005a1284159cabce9ccdf3185ac2fbb7da3d58ef"
+    },
+    {
+      "path": "receipt.json",
+      "bytes": 5488,
+      "sha256": "faccbf3b5f82f13a86db0d233ff1b588d794a2e74af097624012b063e09df8f1",
+      "provenance": "Sanitized production report receipt with all six failed attempts and original artifact/report identities."
+    },
+    {
+      "path": "extraction-manifest.json",
+      "bytes": 2344,
+      "sha256": "5293d2675ea2cbd4698349d61bc15c229a558c6e0eae2e0be4c08f67710844b6",
+      "provenance": "Original artifact entry identities; raw contexts/traces are not included in this subset."
+    }
+  ],
+  "excluded": [
+    "raw report",
+    "original ZIP",
+    "raw error contexts",
+    "retry traces"
+  ]
+}

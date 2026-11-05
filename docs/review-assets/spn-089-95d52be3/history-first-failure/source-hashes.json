@@ -1,0 +1,35 @@
+{
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "sources": [
+    {
+      "path": "e2e/history.spec.ts",
+      "blob": "8f36da93be833f57443dc3ffed0105f0c8c90290",
+      "bytes": 7021,
+      "sha256": "dc6426c1a38b99e5e7e1f8773d657e0159ee7b9e1d5925600ca9627bb24a39e1"
+    },
+    {
+      "path": "web/Rail.tsx",
+      "blob": "5acdc04a98e759aeea3f8523fd20ea2cdfff4e4c",
+      "bytes": 5729,
+      "sha256": "d6649cf9f5176f50102a76e4421c13c419468e2df41759b2f2dcbc5ca61814a5"
+    },
+    {
+      "path": "web/EditorFrame.tsx",
+      "blob": "d6755789e27e916611e310a5d6601ed1a3607b1d",
+      "bytes": 11495,
+      "sha256": "200428f7030758caab45525a6b4f0ea8aed7d5f79a4b38a9f34ffa404644561b"
+    },
+    {
+      "path": "playwright.config.ts",
+      "blob": "c60295a8a9edb72c278cf046e007bb3470d68055",
+      "bytes": 10662,
+      "sha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "blob": "27564b8de06d145684c09b2da041a7f8b38f5cde",
+      "bytes": 34677,
+      "sha256": "6f69599eaa79beb913b37a5259c9bd0a9b276a797b8d553d60d69b67a1604be9"
+    }
+  ]
+}

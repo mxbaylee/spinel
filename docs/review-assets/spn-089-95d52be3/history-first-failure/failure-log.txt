@@ -1,0 +1,104 @@
+2026-11-05T01:43:01.0073829Z   1) [development] › e2e/history.spec.ts:9:3 › sheet versions can be named, renamed, unnamed and read by a viewer
+2026-11-05T01:43:01.0075015Z
+2026-11-05T01:43:01.0075374Z     Error: expect(locator).toContainText(expected) failed
+2026-11-05T01:43:01.0075831Z
+2026-11-05T01:43:01.0076330Z     Locator: getByRole('link', { name: 'Your profile' })
+2026-11-05T01:43:01.0077164Z     Expected substring: "Version viewer"
+2026-11-05T01:43:01.0077757Z     Timeout: 5000ms
+2026-11-05T01:43:01.0078118Z     Error: element(s) not found
+2026-11-05T01:43:01.0078364Z
+2026-11-05T01:43:01.0078565Z     Call log:
+2026-11-05T01:43:01.0079601Z       - Expect "toContainText" getByRole('link', { name: 'Your profile' }) with timeout 5000ms
+2026-11-05T01:43:01.0082810Z       - waiting for getByRole('link', { name: 'Your profile' })
+2026-11-05T01:43:01.0083494Z
+2026-11-05T01:43:01.0083504Z
+2026-11-05T01:43:01.0083792Z       110 |       );
+2026-11-05T01:43:01.0084663Z       111 |       await expect(viewerPage).toHaveURL(new URL(`/?item=${item.id}`, baseURL!).href);
+2026-11-05T01:43:01.0086485Z     > 112 |       await expect(viewerPage.getByRole('link', { name: 'Your profile' })).toContainText(
+2026-11-05T01:43:01.0109527Z           |                                                                            ^
+2026-11-05T01:43:01.0110222Z       113 |         'Version viewer',
+2026-11-05T01:43:01.0110688Z       114 |       );
+2026-11-05T01:43:01.0111405Z       115 |       await viewerPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+2026-11-05T01:43:01.0112409Z         at /home/runner/work/spinel/spinel/e2e/history.spec.ts:112:76
+2026-11-05T01:43:01.0112883Z
+2026-11-05T01:43:01.0113630Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0115307Z     test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/test-failed-1.png
+2026-11-05T01:43:01.0116919Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0117442Z
+2026-11-05T01:43:01.0118403Z     Error Context: test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/error-context.md
+2026-11-05T01:43:01.0119352Z
+2026-11-05T01:43:01.0119973Z     Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0120427Z
+2026-11-05T01:43:01.0120714Z     Error: expect(locator).toContainText(expected) failed
+2026-11-05T01:43:01.0121091Z
+2026-11-05T01:43:01.0121354Z     Locator: getByRole('link', { name: 'Your profile' })
+2026-11-05T01:43:01.0121938Z     Expected substring: "Version viewer"
+2026-11-05T01:43:01.0122369Z     Timeout: 5000ms
+2026-11-05T01:43:01.0122762Z     Error: element(s) not found
+2026-11-05T01:43:01.0123016Z
+2026-11-05T01:43:01.0123140Z     Call log:
+2026-11-05T01:43:01.0123816Z       - Expect "toContainText" getByRole('link', { name: 'Your profile' }) with timeout 5000ms
+2026-11-05T01:43:01.0125413Z       - waiting for getByRole('link', { name: 'Your profile' })
+2026-11-05T01:43:01.0125825Z
+2026-11-05T01:43:01.0125834Z
+2026-11-05T01:43:01.0125967Z       110 |       );
+2026-11-05T01:43:01.0126680Z       111 |       await expect(viewerPage).toHaveURL(new URL(`/?item=${item.id}`, baseURL!).href);
+2026-11-05T01:43:01.0127771Z     > 112 |       await expect(viewerPage.getByRole('link', { name: 'Your profile' })).toContainText(
+2026-11-05T01:43:01.0128651Z           |                                                                            ^
+2026-11-05T01:43:01.0129232Z       113 |         'Version viewer',
+2026-11-05T01:43:01.0129660Z       114 |       );
+2026-11-05T01:43:01.0130428Z       115 |       await viewerPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+2026-11-05T01:43:01.0131392Z         at /home/runner/work/spinel/spinel/e2e/history.spec.ts:112:76
+2026-11-05T01:43:01.0131842Z
+2026-11-05T01:43:01.0132545Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0134082Z     test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/test-failed-1.png
+2026-11-05T01:43:01.0135883Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0136363Z
+2026-11-05T01:43:01.0137368Z     Error Context: test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/error-context.md
+2026-11-05T01:43:01.0138387Z
+2026-11-05T01:43:01.0139084Z     attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0140772Z     test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/trace.zip
+2026-11-05T01:43:01.0141896Z     Usage:
+2026-11-05T01:43:01.0142078Z
+2026-11-05T01:43:01.0143136Z         npx playwright show-trace test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/trace.zip
+2026-11-05T01:43:01.0144235Z
+2026-11-05T01:43:01.0145060Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0145539Z
+2026-11-05T01:43:01.0146185Z     Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0146679Z
+2026-11-05T01:43:01.0146997Z     Error: expect(locator).toContainText(expected) failed
+2026-11-05T01:43:01.0147392Z
+2026-11-05T01:43:01.0147684Z     Locator: getByRole('link', { name: 'Your profile' })
+2026-11-05T01:43:01.0148269Z     Expected substring: "Version viewer"
+2026-11-05T01:43:01.0148706Z     Timeout: 5000ms
+2026-11-05T01:43:01.0149075Z     Error: element(s) not found
+2026-11-05T01:43:01.0149329Z
+2026-11-05T01:43:01.0149455Z     Call log:
+2026-11-05T01:43:01.0150084Z       - Expect "toContainText" getByRole('link', { name: 'Your profile' }) with timeout 5000ms
+2026-11-05T01:43:01.0186167Z       - waiting for getByRole('link', { name: 'Your profile' })
+2026-11-05T01:43:01.0186601Z
+2026-11-05T01:43:01.0186611Z
+2026-11-05T01:43:01.0186756Z       110 |       );
+2026-11-05T01:43:01.0187490Z       111 |       await expect(viewerPage).toHaveURL(new URL(`/?item=${item.id}`, baseURL!).href);
+2026-11-05T01:43:01.0188638Z     > 112 |       await expect(viewerPage.getByRole('link', { name: 'Your profile' })).toContainText(
+2026-11-05T01:43:01.0189482Z           |                                                                            ^
+2026-11-05T01:43:01.0190018Z       113 |         'Version viewer',
+2026-11-05T01:43:01.0190415Z       114 |       );
+2026-11-05T01:43:01.0191130Z       115 |       await viewerPage.getByRole('button', { name: 'Document actions', exact: true }).click();
+2026-11-05T01:43:01.0192076Z         at /home/runner/work/spinel/spinel/e2e/history.spec.ts:112:76
+2026-11-05T01:43:01.0192524Z
+2026-11-05T01:43:01.0193299Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0195161Z     test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry2/test-failed-1.png
+2026-11-05T01:43:01.0196803Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T01:43:01.0197275Z
+2026-11-05T01:43:01.0198264Z     Error Context: test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry2/error-context.md
+2026-11-05T01:43:01.0199310Z
+2026-11-05T01:43:01.0199318Z
+2026-11-05T01:43:01.0199678Z Testing stopped early after 1 maximum allowed failures.
+2026-11-05T01:43:01.0200064Z
+2026-11-05T01:43:01.0754389Z   1 failed
+2026-11-05T01:43:01.0756266Z     [development] › e2e/history.spec.ts:9:3 › sheet versions can be named, renamed, unnamed and read by a viewer
+2026-11-05T01:43:01.0757205Z   64 did not run
+2026-11-05T01:43:01.0757449Z   11 passed (4.5m)
+2026-11-05T01:43:01.0757790Z   1 error was not a part of any test, see above for details
+2026-11-05T01:43:01.1317529Z ##[error]Process completed with exit code 1.

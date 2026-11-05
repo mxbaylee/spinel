@@ -1,0 +1,1366 @@
+{
+  "schemaVersion": 2,
+  "status": "REJECTED SOURCE B: ordinary CI workers failed the new inaccessible profile-link identity assertion. Successful visual, native and Storybook evidence is retained as historical evidence, not merge acceptance or validation of the repaired source. The separate CI checkpoint explicitly records remaining work at its observation time.",
+  "source": {
+    "sha": "95d52be36061315bff866dec615544104ca4767c",
+    "baseSha": "5c565b61e11ce29780581f33410749436ecef42f",
+    "testedMergeSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+    "sourceTree": "43bac9fbd53c842b8d5796560f19076edacd38b7",
+    "testedTree": "43bac9fbd53c842b8d5796560f19076edacd38b7"
+  },
+  "sourceReviews": [
+    {
+      "reviewer": "/root/verification_plan",
+      "agentReviewOnly": true,
+      "phase": "pre-push",
+      "score": 97,
+      "rubric": {
+        "scope": 35,
+        "correctnessDataAccess": 25,
+        "regressionEvidence": 17,
+        "ciOperations": 10,
+        "maintainabilityComplexity": 10
+      },
+      "blockingFindings": [],
+      "deductions": [
+        {
+          "points": 2,
+          "reason": "Repaired Sheet/Doc runtime pair has not successfully executed on B."
+        },
+        {
+          "points": 1,
+          "reason": "Combined B hosted CI/native/Storybook and exact-current visual disposition pending."
+        }
+      ],
+      "eligibility": "No implementation edits anywhere in the SPN-089 thread; read-only findings/inspection and audit receipts only."
+    },
+    {
+      "reviewer": "/root/repair_independent_review",
+      "agentReviewOnly": true,
+      "phase": "pre-push",
+      "score": 98,
+      "rubric": {
+        "scope": 35,
+        "correctnessDataAccess": 25,
+        "regressionEvidence": 18,
+        "ciOperations": 10,
+        "maintainabilityComplexity": 10
+      },
+      "blockingFindings": [],
+      "deductions": [
+        {
+          "points": 2,
+          "reason": "B viewer path has executed zero local browser tests; fresh B hosted/runtime and visual acceptance outstanding."
+        }
+      ],
+      "eligibility": "Fresh read-only reviewer; made no implementation or repository edits and ran no local heavy workload."
+    }
+  ],
+  "localEvidence": {
+    "maintainedPath": "docs/implementation/evidence/SPN-089/history-viewer-repair-local.json",
+    "allAttemptsRetained": 12,
+    "typecheck": {
+      "result": "pass",
+      "elapsedMs": 38473,
+      "peakKiB": 1838744
+    },
+    "lint": "Full combined check passed before final cleanup-only edit; final focused Oxlint/Prettier passed.",
+    "callbackControls": {
+      "passed": 72,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "backlog": {
+      "open": 21,
+      "completed": 20,
+      "nextId": 145
+    },
+    "prCheck": {
+      "result": "pass",
+      "countedChangedLines": 14086,
+      "elapsedMs": 1078,
+      "peakKiB": 338028
+    },
+    "localHistory": {
+      "result": "environment-blocked",
+      "executedTests": 0,
+      "reason": "EPERM on required Linux abstract Unix workspace-lease socket before webServer startup",
+      "elapsedMs": 9811,
+      "peakKiB": 569972,
+      "retried": false,
+      "leaseBypassed": false
+    }
+  },
+  "hostedBuild": {
+    "artifactId": 13378779596,
+    "runId": 41948253822,
+    "attempt": 1,
+    "bytes": 6192897,
+    "sha256": "5e6edfe1a2a4c2bb5b7d5768fefa29fe302de011da23372545d06fec1b367a1f",
+    "expiresAt": "2026-11-12T01:25:13Z",
+    "identity": {
+      "sha": "95d52be36061315bff866dec615544104ca4767c",
+      "checkedOutSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41948253822",
+      "builtAt": "2026-11-05T01:25:13.676Z"
+    },
+    "archiveFiles": 363,
+    "byteVerifiedFiles": 363,
+    "extractedBytes": 22829437,
+    "byteVerification": "Every ZIP file passed its size/CRC-32 checks; decoded byte length and SHA-256 matched an independent disk read.",
+    "indexSha256": "0b3279bc24df52ae9557f9053058b93827f00211a1fa33c97cfcbce4dc208be1",
+    "catalogueStories": 1056,
+    "inventoryOwners": 45,
+    "inventoryStoryCount": 114,
+    "inventorySource": {
+      "commit": "95d52be36061315bff866dec615544104ca4767c",
+      "path": "docs/implementation/SPN-089.md",
+      "blobSha": "b67646cb68a0e0131b49032bbdf5a0515dc7db01",
+      "sha256": "258a32bec649aa94591ebe88811c01598823ab5c9b8fe1c2ef76700146c38fb3"
+    },
+    "missing": [],
+    "nonStories": [],
+    "mismatchedIds": []
+  },
+  "currentCapture": {
+    "protocol": {
+      "runner": "Unchanged committed scripts/screenshots.ts",
+      "stories": [
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "variants": [
+        "light",
+        "dark",
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "expectedStates": 15,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "runtime": {
+        "node": "26.12.1",
+        "playwright": "1.64.1",
+        "chromiumHeadlessShell": "156.0.8078.4",
+        "playwrightChromiumRevision": "1248"
+      },
+      "resourcePolicy": {
+        "serialized": true,
+        "maximumCombinedRSSKiB": 2097152,
+        "maximumRuntimeMs": 480000
+      },
+      "environmentOnlyAdaptation": "Existing network-interfaces.ts fallback only returns an empty interface inventory for this container's ERR_SYSTEM_ERROR. It modifies no application, fixture, CSS, timeout or assertion.",
+      "stopCondition": "Preserve any first failure and diagnose before further execution. No unchanged reruns or weakened assertions/budgets."
+    },
+    "runnerSha256": "826076ecf86911398978c8d802e03f3fdc0f6053078843029b93e0b48870da54",
+    "manifestSha256": "acc21e70309f888d0c6d91164aea896a056fb8b8fee01de98b466e7c5cedbde2",
+    "manifest": {
+      "reviewedAt": "2026-11-05T01:28:16.791Z",
+      "durationMs": 32768,
+      "captureScreenshots": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "viewport": "all",
+      "theme": "all",
+      "variants": [
+        "light",
+        "dark",
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "requested": [
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "checked": [
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "tablet"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "tablet"
+        }
+      ],
+      "captures": [
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "light",
+          "filename": "redesign-native-editors--make-copy-dialog-light.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light",
+          "filename": "redesign-controls--long-modal-title-light.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "light",
+          "filename": "redesign-controls--emoji-modal-title-light.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "dark",
+          "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark",
+          "filename": "redesign-controls--long-modal-title-dark.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "dark",
+          "filename": "redesign-controls--emoji-modal-title-dark.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone",
+          "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone",
+          "filename": "redesign-controls--long-modal-title-phone.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone",
+          "filename": "redesign-controls--emoji-modal-title-phone.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone-dark",
+          "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark",
+          "filename": "redesign-controls--long-modal-title-phone-dark.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone-dark",
+          "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "tablet",
+          "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet",
+          "filename": "redesign-controls--long-modal-title-tablet.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "tablet",
+          "filename": "redesign-controls--emoji-modal-title-tablet.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        }
+      ],
+      "verifications": [],
+      "failures": []
+    },
+    "watchdog": {
+      "startedAt": "2026-11-05T01:27:42.748Z",
+      "finishedAt": "2026-11-05T01:28:16.856Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/validation/spn089-merge/b/hosted",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "node",
+        "--import",
+        "/workspace/scratch/ce40e94380e1/validation/network-interfaces.ts",
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/screenshots.ts",
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "elapsedMs": 34107,
+      "peakKiB": 1065488,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "images": [
+      {
+        "filename": "redesign-controls--emoji-modal-title-dark.png",
+        "bytes": 39272,
+        "sha256": "4eb725adc03f9e63f526de28e5e004918b83d6d3ac8f5f61fc9a3eb001d3b41a",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-light.png",
+        "bytes": 34402,
+        "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-light.png"
+        ]
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+        "bytes": 31424,
+        "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-phone-dark.png"
+        ]
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-phone.png",
+        "bytes": 28196,
+        "sha256": "80d900797eff7fa09202bbe9e3af6c3f7d04ff9352ed76d685775270ae5cbc95",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-tablet.png",
+        "bytes": 32389,
+        "sha256": "306dc2e6890b207295dbb4338be31b3c585a05286496ea4dc899f6c90e59dc9a",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-dark.png",
+        "bytes": 45900,
+        "sha256": "426bec22e1fa538438a47b3bc7e6f017e9670fbe508ab6636b03f66989927403",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-light.png",
+        "bytes": 40989,
+        "sha256": "65241e8a2dcd6e57819ba38e77ac8930c67b96afe06aaf9c01d3ba0700956cac",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-phone-dark.png",
+        "bytes": 37809,
+        "sha256": "13d8857e56b991de7cac0af525fe5d4bb259199d89fdfbead39ef0b4172b804c",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-phone.png",
+        "bytes": 34570,
+        "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-controls--long-modal-title-phone.png"
+        ]
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-tablet.png",
+        "bytes": 39083,
+        "sha256": "ed084770ae1a29f2bcf32524c351a16a0f3691d85850b76b587c47419cec8a1a",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+        "bytes": 75094,
+        "sha256": "37454fe6931f2e05e158d6d968f0957d659c5d5e2bdc7c0d4113fb4a7bad259c",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-light.png",
+        "bytes": 75360,
+        "sha256": "7cd955f8a65c4be85de1cec68ff75f6b2ccf4a3aca96099cee951f65096fbf17",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-light.png"
+        ]
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+        "bytes": 22705,
+        "sha256": "1613e4847da98f3a9d43fec17b2f33d7952207983892bc545d18a2b696c6ecef",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+        "bytes": 22688,
+        "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-phone.png"
+        ]
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+        "bytes": 26043,
+        "sha256": "6ec639ee8602d36f246200d0a9f26f3087c63e0b07ec6ddc799d7525625228db",
+        "retainedPaths": []
+      }
+    ]
+  },
+  "independentVisualReview": {
+    "reviewedAt": "2026-11-05T01:33:17.529443+00:00",
+    "reviewer": "/root/dialog_audit",
+    "reviewMode": "Independent agent visual review only; no product/story/test/runner authorship and no local workload executed by reviewer.",
+    "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+    "disposition": "APPROVED for the SPN-089 visual gate at exact B source; current full CI/native/catalogue gates remain separate requirements.",
+    "scope": "Personally inspected all 15 actual uninstrumented hosted-B captures of long SVG title, emoji title and native Make a copy across desktop light/dark, phone light/dark and tablet. Prior unchanged owner visuals retain source-specific carry-forward approval.",
+    "inspectedFilenames": "All 15 filenames listed in currentCapture.manifest.captures were personally inspected.",
+    "findings": [
+      {
+        "id": "SPN089-title-first-line-alignment",
+        "severity": "P2 historical",
+        "status": "closed at exact B",
+        "disposition": "All fresh B SVG and emoji views remain aligned with their first line, including five-line phone wrapping; both native title owners show no renewed offset. Current unchanged story plays passed their geometry and bounds assertions."
+      },
+      {
+        "id": "SPN089-compact-native-name-field-fixture-fidelity",
+        "severity": "P3",
+        "status": "known nonblocking caveat retained",
+        "affectedVariants": [
+          "phone",
+          "phone-dark",
+          "tablet"
+        ],
+        "disposition": "The native preview Name input remains square/default-styled, including its dark gray compact background. This predates the title correction and is outside this change. These fixture forms must not be described as pixel-identical production forms or as a repaired styling issue."
+      }
+    ],
+    "newBlockingFindings": [],
+    "personas": {
+      "owner": "Long destructive-action titles and native copy title remain legible, with available close/cancel controls and complete form bounds.",
+      "collaborator": "Shared heading layout and clear textual naming carry through light/dark and compact sizes; no new permission or collaboration-behavior claim is inferred from screenshots.",
+      "operator": "Shared owner code and previously inspected operator/loading/error previews are unchanged; explicit cues remain supplementary to title text.",
+      "linkGuest": "Native copy compact title and controls are visible; unchanged Space drawer and other guest title-owner previews keep their prior source-specific approval. Access correctness remains owned by current CI/native tests."
+    },
+    "sourceEquivalence": {
+      "priorVisualSource": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+      "currentSource": "95d52be36061315bff866dec615544104ca4767c",
+      "identicalObjects": [
+        {
+          "path": "src",
+          "object": "d5bec485bdfbdedfa079dab310f276515dd2efb0"
+        },
+        {
+          "path": "web",
+          "object": "23c7a7440142128cec78e9d47ec59765afbf3bb6"
+        },
+        {
+          "path": ".storybook",
+          "object": "ad8d6c1336a81e149a0eeb53977f94daa0abd188"
+        },
+        {
+          "path": "scripts/screenshots.ts",
+          "object": "2ef0a367c87da9ece0153fceea98ea0863aaf22e"
+        },
+        {
+          "path": "scripts/ci/icon-screenshots.ts",
+          "object": "382ae2b9d0353fab61ec43eac94f8b7d7c278981"
+        },
+        {
+          "path": "scripts/ci/storybook-review-gate.ts",
+          "object": "b4b94e63a18f9184f35305077dadf1beb39653de"
+        },
+        {
+          "path": "scripts/dependencies/patch-univer-docs.ts",
+          "object": "d0aeae203b93965634508bc8e7b567012f7cff0a"
+        },
+        {
+          "path": "package.json",
+          "object": "f5772edccf157465975964205d30d37af2633288"
+        },
+        {
+          "path": "package-lock.json",
+          "object": "4e7c117548fd1caed8048588b42dfb122c67bb62"
+        },
+        {
+          "path": ".github/workflows/storybook.yml",
+          "object": "54758abff8770ba497402841c400a3f9ee3eb370"
+        }
+      ],
+      "boundary": "Fresh B screenshots and hosted catalogue remain required; unchanged title-owner source permits clearly labeled carry-forward of previously inspected owners, not reuse of old CI as B acceptance."
+    },
+    "priorVisualReviewSha256": "83aacff1ded96587a3402c77695004d2d0917b96e6b9e80889aa68e27b1f737c",
+    "previousOwnerSource": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+    "carryForwardBoundary": "B changes history/callback test code. Do not claim all E2E code is unchanged, reuse old CI as B acceptance, or relabel older production-native screenshots as fresh B production screenshots.",
+    "retentionPlan": {
+      "adequateWithoutEvidenceOnlyCommit": true,
+      "indispensableUnretainedCapture": null,
+      "currentMatches": "The five entries with nonempty retainedPaths in currentCapture.images are byte-identical to actual B captures.",
+      "captionBoundary": "Native desktop LIGHT is B's retained match, not dark. Other owner images keep original ee996e95 source/theme/viewport captions with verified equivalence.",
+      "durability": "Full 15-state manifest, all15 image hashes, exact source/tested/build identities and current independent visual disposition are retained here. Raw hosted archives remain supplementary and expire."
+    },
+    "fullSafeReceipt": {
+      "bytes": 35562,
+      "sha256": "c1b37e2fbb163aea98f03dea5d62c6d3782c93048006a851b474e56ef84a5880"
+    }
+  },
+  "nativeDesktop": {
+    "workflow": {
+      "id": 41948253550,
+      "name": "💻 Desktop offline",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "createdAt": "2026-11-05T01:23:59Z",
+      "completedBy": "2026-11-05T01:35:46Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550"
+    },
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+    "stageNames": [
+      "browser-start",
+      "all-four-downloads-complete",
+      "transport-disabled-before-quit",
+      "exact-records-captured-before-quit",
+      "browser-stop",
+      "transport-disabled-before-relaunch",
+      "offline-catalog-and-original-records-retained",
+      "native-doc-input-caret",
+      "native-offline-edits-committed",
+      "transport-still-disabled-before-pending-relaunch",
+      "native-clipboard-content",
+      "pending-restart-retained",
+      "transport-restored",
+      "normal-reconnect-exact-content-once",
+      "recovered-original-reconnect-outage",
+      "conflict-copy-preserves-original",
+      "storage-deletion",
+      "cleared-storage-is-not-advertised",
+      "post-deletion-outage",
+      "missing-data-cannot-open-offline",
+      "complete",
+      "safari-online-rendering-baseline"
+    ],
+    "operationNames": [
+      "serviceWorker.getRegistrations",
+      "serviceWorker.unregister",
+      "caches.keys",
+      "caches.delete",
+      "localStorage.clear",
+      "indexedDB.deleteDatabase",
+      "verify-service-workers",
+      "verify-cache-names",
+      "verify-database-names",
+      "verify-storage-empty"
+    ],
+    "browsers": [
+      {
+        "browser": "chrome",
+        "job": {
+          "id": 126985717545,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550/job/126985717545",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-05T01:24:03Z",
+          "completedAt": "2026-11-05T01:26:58Z"
+        },
+        "reportStatus": "passed",
+        "runner": {
+          "label": "macos-26",
+          "arch": "arm64",
+          "imageOS": "macos26",
+          "imageVersion": "20261026.0455.2"
+        },
+        "version": "157.0.8103.39",
+        "stageCount": 37,
+        "stageNameIndexes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          6,
+          7,
+          7,
+          8,
+          4,
+          9,
+          0,
+          10,
+          11,
+          10,
+          11,
+          10,
+          11,
+          10,
+          11,
+          12,
+          13,
+          14,
+          10,
+          15,
+          13,
+          14,
+          10,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          4
+        ],
+        "storageDeletion": {
+          "status": "passed",
+          "timeoutMs": 28000,
+          "operationResultFields": [
+            "status",
+            "elapsedMs"
+          ],
+          "operationResults": [
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1704
+            ],
+            [
+              "passed",
+              2
+            ],
+            [
+              "passed",
+              137
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              4
+            ],
+            [
+              "passed",
+              2
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              0
+            ]
+          ],
+          "verification": {
+            "cacheNames": [],
+            "databases": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "localStorageEntries": 0,
+            "workers": []
+          },
+          "targetDatabaseRemoved": true
+        },
+        "finalCleanup": true,
+        "artifact": {
+          "id": 13380066437,
+          "name": "desktop-offline-chrome-macos-26-41948253550-1",
+          "bytes": 228224,
+          "sha256": "8874b9594ad475d70dce30b20b95be4f21cf042a3249df055df840d7eb150178",
+          "createdAt": "2026-11-05T01:26:51Z",
+          "expiresAt": "2026-11-19T01:26:50Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550/artifacts/13380066437"
+        },
+        "reportEntry": {
+          "path": "chrome/acceptance.json",
+          "bytes": 48950,
+          "sha256": "ae905a72f0f3f661681616771a7e2186b0e3dcce2db6208fbd412f9a7d3c1117",
+          "crc32": "37fda9bb"
+        }
+      },
+      {
+        "browser": "firefox",
+        "job": {
+          "id": 126985717242,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550/job/126985717242",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-05T01:24:04Z",
+          "completedAt": "2026-11-05T01:27:56Z"
+        },
+        "reportStatus": "passed",
+        "runner": {
+          "label": "macos-26",
+          "arch": "arm64",
+          "imageOS": "macos26",
+          "imageVersion": "20261026.0455.2"
+        },
+        "version": "159.0.1",
+        "stageCount": 37,
+        "stageNameIndexes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          6,
+          7,
+          7,
+          8,
+          4,
+          9,
+          0,
+          10,
+          11,
+          10,
+          11,
+          10,
+          11,
+          10,
+          11,
+          12,
+          13,
+          14,
+          10,
+          15,
+          13,
+          14,
+          10,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          4
+        ],
+        "storageDeletion": {
+          "status": "passed",
+          "timeoutMs": 28000,
+          "operationResultFields": [
+            "status",
+            "elapsedMs"
+          ],
+          "operationResults": [
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              29
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              2
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              4
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              0
+            ]
+          ],
+          "verification": {
+            "cacheNames": [],
+            "databases": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "localStorageEntries": 0,
+            "workers": []
+          },
+          "targetDatabaseRemoved": true
+        },
+        "finalCleanup": true,
+        "artifact": {
+          "id": 13379332727,
+          "name": "desktop-offline-firefox-macos-26-41948253550-1",
+          "bytes": 451037,
+          "sha256": "84c91c7257b09b5df3084f2a348aa4c88d84bea5087c210e9a98404c8ee247f8",
+          "createdAt": "2026-11-05T01:27:47Z",
+          "expiresAt": "2026-11-19T01:27:46Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550/artifacts/13379332727"
+        },
+        "reportEntry": {
+          "path": "firefox/acceptance.json",
+          "bytes": 49866,
+          "sha256": "930847f541564318cc61dc4167c74d93f6d25ce3ab744a02b4a9172bf5b70ad4",
+          "crc32": "fdef483a"
+        }
+      },
+      {
+        "browser": "safari",
+        "job": {
+          "id": 126985717405,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550/job/126985717405",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-05T01:24:07Z",
+          "completedAt": "2026-11-05T01:35:45Z"
+        },
+        "reportStatus": "passed",
+        "runner": {
+          "label": "macos-15-intel",
+          "arch": "x64",
+          "imageOS": "macos15",
+          "imageVersion": "20260824.0482.1"
+        },
+        "version": "27.2",
+        "stageCount": 39,
+        "stageNameIndexes": [
+          0,
+          21,
+          21,
+          1,
+          2,
+          3,
+          4,
+          5,
+          0,
+          6,
+          7,
+          7,
+          8,
+          4,
+          9,
+          0,
+          10,
+          11,
+          10,
+          11,
+          10,
+          11,
+          10,
+          11,
+          12,
+          13,
+          14,
+          10,
+          15,
+          13,
+          14,
+          10,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          4
+        ],
+        "storageDeletion": {
+          "status": "passed",
+          "timeoutMs": 28000,
+          "operationResultFields": [
+            "status",
+            "elapsedMs"
+          ],
+          "operationResults": [
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              3
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              9
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              6
+            ],
+            [
+              "passed",
+              1
+            ]
+          ],
+          "verification": {
+            "workers": [],
+            "cacheNames": [],
+            "databases": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "localStorageEntries": 0
+          },
+          "targetDatabaseRemoved": true
+        },
+        "finalCleanup": true,
+        "artifact": {
+          "id": 13379858414,
+          "name": "desktop-offline-safari-macos-15-intel-41948253550-1",
+          "bytes": 1012252,
+          "sha256": "730be514465d5c4c4595f29930917783a405b4dcacd72c7555ef8e29fc28a419",
+          "createdAt": "2026-11-05T01:35:34Z",
+          "expiresAt": "2026-11-19T01:35:33Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253550/artifacts/13379858414"
+        },
+        "reportEntry": {
+          "path": "safari/acceptance.json",
+          "bytes": 47132,
+          "sha256": "24b5f9690763e1dc91cc5990e670866d91eaed1a86d4bb35ede48fcb1b17cba1",
+          "crc32": "f2d88aa4"
+        }
+      }
+    ],
+    "verification": "All three archive sizes/SHA-256 values and every ZIP-entry CRC verified. Reports match current source, tested merge, workflow URL and attempt 1; GitHub API verifies tested/source tree equality. Stage indexes refer to stageNames; each storage operation row follows operationNames. All strict storage predicates and final driver/browser cleanup passed.",
+    "failureDisposition": "No first-attempt failure or workflow rerun in this native run. Fresh current-source success does not establish the cause or repair of the retained ef899b localStorage preparation anomaly owned by SPN-141.",
+    "limitations": "No raw driver logs, session-bearing browser data or image bodies are included; the raw artifact ZIPs remain scratch-only diagnostic inputs.",
+    "safeReceipt": {
+      "bytes": 15676,
+      "sha256": "3e45924e57f6b7ceec4f55553698925c5efdae6de8cacde73474abe35d08baea"
+    }
+  },
+  "livePreview": {
+    "url": "https://mxbaylee.github.io/spinel/sha.json",
+    "observedAt": "2026-11-05 01:34:24 UTC",
+    "identity": {
+      "sha": "95d52be36061315bff866dec615544104ca4767c",
+      "checkedOutSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41948253822",
+      "builtAt": "2026-11-05T01:25:13.676Z"
+    }
+  },
+  "historicalEvidence": {
+    "rejectedA": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "failedSourceRun": 41938091631,
+    "contrastingEditedRun": 41941715656,
+    "editedRunIsRepair": false,
+    "historyFailureBundle": "docs/review-assets/spn-089-866df9f/history-first-failure",
+    "sourceACiReceipt": "docs/implementation/evidence/SPN-089/integrated-866df9f-ci.json",
+    "sourceAVisualNativeReceipt": "docs/implementation/evidence/SPN-089/integrated-866df9f-validation.json",
+    "olderNativeBundle": "docs/review-assets/spn-089-ef899b",
+    "olderAlignmentBundle": "docs/review-assets/spn-089-ee996e95",
+    "offlineAnomalyFollowup": "SPN-144",
+    "boundary": "Original first failures, retries and causal uncertainty remain; none is waived by later passes."
+  },
+  "storybook": {
+    "source": "95d52be36061315bff866dec615544104ca4767c",
+    "base": "5c565b61e11ce29780581f33410749436ecef42f",
+    "tested": "679ad75636799820e47bf0214ade771c3fe859e2",
+    "tree": "43bac9fbd53c842b8d5796560f19076edacd38b7",
+    "run": {
+      "id": 41948253822,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253822",
+      "attempt": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "conclusion": "success",
+      "updatedAt": "2026-11-05T01:42:16Z"
+    },
+    "classification": {
+      "mode": "full",
+      "docsOnly": false,
+      "captureScreenshots": true,
+      "planSha256": "9ec0952cc4585b7eca3f4afe9ca56628c775fb401968aa07876a6c90e9efc8ef",
+      "logSha256": "84a420244430208201e383a562a99571c5948ab824ed3efa5db346681cdb0ee7"
+    },
+    "jobs": [
+      {
+        "id": 126985718178,
+        "name": "Classify changes",
+        "conclusion": "success"
+      },
+      {
+        "id": 126985927234,
+        "name": "Build Storybook",
+        "conclusion": "success"
+      },
+      {
+        "id": 126986227749,
+        "name": "Review Storybook desktop (dark)",
+        "conclusion": "success"
+      },
+      {
+        "id": 126986227816,
+        "name": "Review Storybook mobile (light)",
+        "conclusion": "success"
+      },
+      {
+        "id": 126986227820,
+        "name": "Review Storybook tablet",
+        "conclusion": "success"
+      },
+      {
+        "id": 126986227859,
+        "name": "Review Storybook desktop (light)",
+        "conclusion": "success"
+      },
+      {
+        "id": 126986227897,
+        "name": "Review Storybook mobile (dark)",
+        "conclusion": "success"
+      },
+      {
+        "id": 126986228887,
+        "name": "Publish PR preview to GitHub Pages",
+        "conclusion": "success"
+      },
+      {
+        "id": 126991705574,
+        "name": "Review Storybook states and interactions",
+        "conclusion": "success"
+      },
+      {
+        "id": 126992404481,
+        "name": "Deploy to GitHub Pages",
+        "conclusion": "skipped"
+      }
+    ],
+    "catalogue": {
+      "indexStories": 1056,
+      "indexSha256": "0b3279bc24df52ae9557f9053058b93827f00211a1fa33c97cfcbce4dc208be1",
+      "storyIdsSha256": "1a0b189097f45c53ab6b216eb2882b4d9ee70adf05cdde56512c5bedd293141e",
+      "inventory": "45 owners / 114 IDs present",
+      "checked": 5280,
+      "captured": 5280,
+      "extra": 49,
+      "failures": 0,
+      "variants": [
+        {
+          "variant": "light",
+          "jobId": 126986227859,
+          "artifactId": 13380551637,
+          "checked": 1056,
+          "captured": 1056,
+          "additionalInteractionPasses": 13,
+          "durationMs": 523020,
+          "manifestSha256": "6b8f16d43f40584ff21452dda0220af53c9d37d51c65fdfd78379766b2f93ddc",
+          "jobLogSha256": "6b4108b61358e14fd0bd712b0bb287f7f858544e4c21e2ebd0bd0c565df30290"
+        },
+        {
+          "variant": "dark",
+          "jobId": 126986227749,
+          "artifactId": 13380920101,
+          "checked": 1056,
+          "captured": 1056,
+          "additionalInteractionPasses": 9,
+          "durationMs": 517453,
+          "manifestSha256": "81d3df654587c2cee94d13692fd326212f578138b0fdd92518d37eedea64bdf3",
+          "jobLogSha256": "788b31e3fc0d0304c9c532f0083ef09f2115aed2023905e08c9e9042c5aa16c1"
+        },
+        {
+          "variant": "phone",
+          "jobId": 126986227816,
+          "artifactId": 13379648221,
+          "checked": 1056,
+          "captured": 1056,
+          "additionalInteractionPasses": 9,
+          "durationMs": 482696,
+          "manifestSha256": "1f84dabd03eb6ed68c4f7958a8d0b43a3a06ce3db9ed0614067dd2aabf0528ec",
+          "jobLogSha256": "eb2a04aa05e9d2e286ddb47fa1615daa64d3ff225b4b3165bf6080cc2bd3f9bb"
+        },
+        {
+          "variant": "phone-dark",
+          "jobId": 126986227897,
+          "artifactId": 13380217017,
+          "checked": 1056,
+          "captured": 1056,
+          "additionalInteractionPasses": 9,
+          "durationMs": 485948,
+          "manifestSha256": "54ff976d30657ae1857af3082f1bea805876e33886caa2711cc246e9489a03e2",
+          "jobLogSha256": "8d4e59ddad68b4464b4f9b6f94c89e7c4c7c3c738d4d2bccd11f75afa3e9e789"
+        },
+        {
+          "variant": "tablet",
+          "jobId": 126986227820,
+          "artifactId": 13379274008,
+          "checked": 1056,
+          "captured": 1056,
+          "additionalInteractionPasses": 9,
+          "durationMs": 494916,
+          "manifestSha256": "0fb30a1a90e4c157d45a6df2a44d57bc764103742d4185dc0161bf05469a30b6",
+          "jobLogSha256": "1b20fdafce2707696a76f8fd84c261b2173030f01df21bfe63b75c0de19d8c67"
+        }
+      ],
+      "verification": "All five log/checked/captured sets exactly match the1056-story index; no duplicates/missing IDs; every capture filename exists in its verified archive; zero manifest failures."
+    },
+    "extraAssertions": {
+      "everyVariant": "6 settled native-formula viewers + 2 Doc/Sheet toolbar-scroll checks + 1 controls keyboard/Escape/focus/dialog/nested-theme check",
+      "desktopLightOnce": "4 native Doc/Sheet edit/viewer keyboard assertions",
+      "iconIntegration": {
+        "ownerJob": 126986227859,
+        "artifact": 13379713759,
+        "states": 42,
+        "stories": 14,
+        "variants": [
+          "light",
+          "dark",
+          "phone"
+        ],
+        "manifestSha256": "5791384e145434e14cc4ad0425e95aa0f8eb922054db17e95f1935a2ce7e8af5"
+      }
+    },
+    "aggregate": {
+      "jobId": 126991705574,
+      "conclusion": "success",
+      "inputs": {
+        "CLASSIFICATION_RESULT": "success",
+        "BUILD_RESULT": "success",
+        "DOCS_ONLY": "false",
+        "CAPTURE_SCREENSHOTS": "true",
+        "DESKTOP_RESULT": "success",
+        "TABLET_RESULT": "success",
+        "MOBILE_RESULT": "success"
+      },
+      "logFile": "storybook-aggregate.log",
+      "logSha256": "737d655b5de28c97802290248f6152f66aee8f6cbe2a2fe3c4bc19bb28e6a7a9"
+    },
+    "artifacts": [
+      {
+        "id": 13380920101,
+        "name": "design-review-desktop-dark",
+        "size_in_bytes": 50060889,
+        "digest": "sha256:b3865fe60452c7b9b423a555a32e980f04b648059104e623e610042dccb92761",
+        "expires_at": "2026-11-19T01:34:55Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      },
+      {
+        "id": 13380551637,
+        "name": "design-review-desktop-light",
+        "size_in_bytes": 49426893,
+        "digest": "sha256:42564a613773cbccb8c0aa91eededb25210294c166b0f5cc6aaa051b5a58e9f3",
+        "expires_at": "2026-11-19T01:40:15Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      },
+      {
+        "id": 13380217017,
+        "name": "design-review-mobile-dark",
+        "size_in_bytes": 41837447,
+        "digest": "sha256:3254cd3029092b3b1ce3e62a6432bae849ae2e110525c8f44583190489120071",
+        "expires_at": "2026-11-19T01:35:20Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      },
+      {
+        "id": 13379996377,
+        "name": "github-pages",
+        "size_in_bytes": 6126473,
+        "digest": "sha256:6880e1113529e59d605d722ec3f5afb56b4723bd924c9252ba1bec6d3240dc44",
+        "expires_at": "2026-11-06T01:25:16Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": false,
+        "verification": "API metadata, successful deployment payload and live sha.json identity; this Pages archive itself was not independently downloaded."
+      },
+      {
+        "id": 13379713759,
+        "name": "entity-icon-screenshots",
+        "size_in_bytes": 2438212,
+        "digest": "sha256:8b0df6327f644c0fae5b5ad457aa8f665f36148c6566903fe42243019f0af47d",
+        "expires_at": "2027-02-03T01:24:00Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      },
+      {
+        "id": 13379648221,
+        "name": "design-review-mobile-light",
+        "size_in_bytes": 41402163,
+        "digest": "sha256:449384817327e16fa8c0f72528387263f8cfd4f429028f0c19fae059902af8b2",
+        "expires_at": "2026-11-19T01:34:39Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      },
+      {
+        "id": 13379274008,
+        "name": "design-review-tablet",
+        "size_in_bytes": 45679437,
+        "digest": "sha256:d4899e86226eb9873dd9b047a8f9c14aa9eacba5e5e9eb5150bdf891de594207",
+        "expires_at": "2026-11-19T01:37:39Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      },
+      {
+        "id": 13378779596,
+        "name": "storybook-review",
+        "size_in_bytes": 6192897,
+        "digest": "sha256:5e6edfe1a2a4c2bb5b7d5768fefa29fe302de011da23372545d06fec1b367a1f",
+        "expires_at": "2026-11-12T01:25:13Z",
+        "expired": false,
+        "archiveHashAndSizeIndependentlyVerified": true
+      }
+    ],
+    "skips": {
+      "job": {
+        "id": 126992404481,
+        "reason": "Main-only deploy intentionally skipped on pull_request; PR preview succeeded separately."
+      },
+      "steps": [
+        {
+          "jobId": 126985927234,
+          "step": "Documentation-only change"
+        },
+        {
+          "jobId": 126986227749,
+          "step": "Check icon and integration stories"
+        },
+        {
+          "jobId": 126986227749,
+          "step": "Upload icon evidence"
+        }
+      ],
+      "reasons": [
+        "Build Documentation-only change is skipped because this is a full review.",
+        "Desktop-dark Check icon and integration stories and Upload icon evidence are skipped because desktop light owns that suite once."
+      ],
+      "unexpectedRequiredSkips": 0,
+      "failedSteps": 0,
+      "cancelledJobs": 0,
+      "runAttempts": [
+        1
+      ]
+    },
+    "preview": {
+      "jobId": 126986228887,
+      "conclusion": "success",
+      "url": "https://mxbaylee.github.io/spinel/",
+      "observedAt": "2026-11-05T01:33:57.544084+00:00",
+      "status": 200,
+      "identity": {
+        "sha": "95d52be36061315bff866dec615544104ca4767c",
+        "checkedOutSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+        "branch": "codex/spn-089-dialog-title-icons",
+        "pullRequest": 260,
+        "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41948253822",
+        "builtAt": "2026-11-05T01:25:13.676Z"
+      },
+      "matchesVerifiedBuildIdentity": true,
+      "logSha256": "f13fd7434d5eec02eaa40102438f7cc018a70e2a890aa340d3461a00b59a4f38",
+      "shaJsonSha256": "f91130484db1bde7d67187093b836d0587a791c0791eec41d3bcc87d00e74960",
+      "boundary": "Shared Pages is mutable; identity is verified at the recorded observation time.",
+      "shaUrl": "https://mxbaylee.github.io/spinel/sha.json"
+    },
+    "visual": {
+      "receiptSha256": "c1b37e2fbb163aea98f03dea5d62c6d3782c93048006a851b474e56ef84a5880",
+      "freshImagesInspected": 15,
+      "disposition": "Independent agent approval",
+      "P2": "closed",
+      "P3": "Compact native-preview Name field retains square/default styling; not a production-form repair claim.",
+      "retention": "Five exact fresh-B byte matches are adequate with full15-state receipt and source-specific historical captions. Native desktop LIGHT matches B; do not relabel the retained historical dark image as fresh B."
+    },
+    "fullReceiptSha256": "d6efe9f83e2dd55948d2b282d696c55558e3edb81df6dd8166f6a54848d99b1b",
+    "boundary": "Exact B Storybook and visual gates passed; separately owned current ordinary/native CI and final PR/base checks remain required. Historical A failures are preserved, not replaced by this result."
+  },
+  "ordinaryCiDispositionPath": "integrated-95d52be-ci.json",
+  "failureEvidencePath": "../../review-assets/spn-089-95d52be3/README.md",
+  "reviewMiss": "Both pre-push reviews failed to notice that the global profile Rail is deliberately hidden in the native editor. The new identity assertion is invalid; all original source grades are historical pre-push assessments, not current merge approval."
+}

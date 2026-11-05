@@ -1,0 +1,178 @@
+{
+  "recordedAt": "2026-11-05T01:53:32.413Z",
+  "parentSource": "95d52be36061315bff866dec615544104ca4767c",
+  "fixture": {
+    "path": "e2e/history.spec.ts",
+    "bytes": 7365,
+    "sha256": "ad5ef5354d136fc64e7874bef315d219d1402116b6370cf0d8a13fdf179a050a",
+    "blob": "fe2341b67254a73ba8f4c48c23dd06efa509dc0d"
+  },
+  "protocol": {
+    "purpose": "Repair the B history actor assertion against the actual editor/session contract.",
+    "parentSource": "95d52be36061315bff866dec615544104ca4767c",
+    "base": "5c565b61e11ce29780581f33410749436ecef42f",
+    "change": "Replace the inaccessible hidden global-Rail profile locator with one cookie-authoritative GET through the existing viewerContext. Require HTTP200 and exact viewer id/name/non-admin status after existing read-only editor and exact item URL assertions.",
+    "requestTimeoutMs": 5000,
+    "preserve": [
+      "separate viewer context",
+      "session before navigation",
+      "owner closes before viewer opens",
+      "all original saved-content and history assertions",
+      "read-only and absent naming controls",
+      "page errors from both actors",
+      "independent cleanup owners",
+      "90000ms test timeout",
+      "30000ms editor readiness",
+      "built-in retry and fail-fast policy"
+    ],
+    "localPlan": [
+      "full typecheck",
+      "focused lint and formatting",
+      "existing feasible session HTTP/store contract tests at their owning layer",
+      "exact-title PR check on committed candidate"
+    ],
+    "browserBoundary": "Do not repeat the unchanged environment-blocked application startup. B's local attempt already proves the required Linux abstract Unix workspace-lease EPERM before zero tests. No lease bypass or resource escalation.",
+    "hostedPending": "New source requires two independent current-commit reviews before publication, then fresh selected CI, actual dev/prod Sheet+Doc history, native and Storybook gates, and a renewed exact-source visual disposition.",
+    "resourcePolicy": {
+      "serialized": true,
+      "maximumCombinedRSSKiB": 2097152,
+      "maximumRuntimeMs": 480000
+    },
+    "firstFailurePolicy": "Preserve B's first failure and built-in retries, missing Doc/unexecuted cases and all partial workflow results. Do not rerun B to seek a different outcome."
+  },
+  "checks": [
+    {
+      "name": "typecheck",
+      "startedAt": "2026-11-05T01:48:39.380Z",
+      "finishedAt": "2026-11-05T01:49:30.604Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 51224,
+      "peakKiB": 1855068,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "log": {
+        "bytes": 504,
+        "sha256": "dfccdf85ca60addba7972676c38062e4ecbee24f50ffd23f555276a946e2d8c7"
+      }
+    },
+    {
+      "name": "session-contract-tests",
+      "startedAt": "2026-11-05T01:49:44.344Z",
+      "finishedAt": "2026-11-05T01:49:50.775Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "npm",
+        "exec",
+        "--",
+        "vitest",
+        "run",
+        "src/server/auth/auth.test.ts",
+        "src/server/auth/profile.test.ts",
+        "src/server/auth/self-access-http.test.ts"
+      ],
+      "elapsedMs": 6431,
+      "peakKiB": 632348,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "log": {
+        "bytes": 994,
+        "sha256": "a95df048f26d14f5a22cd9a033213b8826a34c366ee06c99bbe3f5f710a8bb26"
+      }
+    },
+    {
+      "name": "lint",
+      "startedAt": "2026-11-05T01:50:41.510Z",
+      "finishedAt": "2026-11-05T01:50:42.643Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "npm",
+        "exec",
+        "--",
+        "oxlint",
+        "--deny-warnings",
+        "e2e/history.spec.ts"
+      ],
+      "elapsedMs": 1133,
+      "peakKiB": 354232,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "log": {
+        "bytes": 520,
+        "sha256": "55a038926d2c30c8347f9115bee38f58fa30d1cec6497353efe6b6051e2c6af8"
+      }
+    },
+    {
+      "name": "format",
+      "startedAt": "2026-11-05T01:50:43.048Z",
+      "finishedAt": "2026-11-05T01:50:45.387Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "npm",
+        "exec",
+        "--",
+        "prettier",
+        "--check",
+        "e2e/history.spec.ts"
+      ],
+      "elapsedMs": 2338,
+      "peakKiB": 349256,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "log": {
+        "bytes": 580,
+        "sha256": "89cc73045b5ccac61f3264e864e262c1abc92ec3a3b51837a239cffe8799ff32"
+      }
+    }
+  ],
+  "contractTests": {
+    "files": [
+      "src/server/auth/auth.test.ts",
+      "src/server/auth/profile.test.ts",
+      "src/server/auth/self-access-http.test.ts"
+    ],
+    "passed": 20,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "Existing session authority, profile shape and HTTP account-boundary coverage. This is not full application/browser acceptance."
+  },
+  "actualBrowserExecution": {
+    "executedOnThisRepair": 0,
+    "priorBlockedAttempt": "history-viewer-repair-local.json",
+    "reason": "Unchanged required application abstract Unix workspace-lease EPERM. No repeated startup, lease bypass or assertion weakening."
+  },
+  "inheritedChecks": {
+    "source": "95d52be36061315bff866dec615544104ca4767c",
+    "scope": "Unchanged application, story, runtime, dependency and imported callback sources retain their original local-check attribution. Hosted acceptance must rerun on the new reviewed commit."
+  },
+  "prePushRemaining": [
+    "Commit complete candidate and exact-title PR check",
+    "Two independent exact-commit reviews"
+  ],
+  "preMergeRemaining": [
+    "Fresh selected CI and all actual history/copy outcomes",
+    "Native and Storybook gates",
+    "Renewed exact-source visual disposition",
+    "Current base and review-thread checks"
+  ]
+}

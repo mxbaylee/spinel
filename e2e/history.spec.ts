@@ -109,9 +109,17 @@ for (const kind of ['sheet', 'doc'] as const) {
         { timeout: 30_000 },
       );
       await expect(viewerPage).toHaveURL(new URL(`/?item=${item.id}`, baseURL!).href);
-      await expect(viewerPage.getByRole('link', { name: 'Your profile' })).toContainText(
-        'Version viewer',
-      );
+      // Editors hide the global profile navigation. Verify the active account
+      // through this viewer context's cookie-authoritative session instead.
+      const viewerSession = await viewerContext.request.get('/api/auth/session', {
+        timeout: 5_000,
+      });
+      expect(viewerSession.status()).toBe(200);
+      expect((await viewerSession.json()).user).toMatchObject({
+        id: viewer.id,
+        name: viewer.name,
+        isAdmin: false,
+      });
       await viewerPage.getByRole('button', { name: 'Document actions', exact: true }).click();
       await viewerPage.getByRole('menuitem', { name: 'Versions', exact: true }).click();
       const viewerPanel = viewerPage.getByRole('region', { name: 'Version names' });
