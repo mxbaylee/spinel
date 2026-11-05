@@ -265,8 +265,8 @@ disposed, including the failing missing-import control.
 
 The repaired candidate's full TypeScript check passed in3,248ms, peak1,728,080KiB,
 normal pressure. This supersedes the earlier resource-blocked local check while
-preserving its receipt. New exact-head reviews are required; the single hosted
-transition remains unconsumed and all application/component acceptance pending.
+preserving its receipt. New exact-head reviews are required. (Superseded: the single
+hosted transition was consumed on this head; see the next result section.)
 
 The [binding-repair manifest](evidence/SPN-146/linear-binding-repair/manifest.json)
 preserves both rejected-source reviews, the original test setup and registry
@@ -274,3 +274,63 @@ failures, successful module/regression/typecheck/lint/build checks and exact
 repaired source bindings. The earlier manifest remains the original record of
 the rejected candidate; its passing region tests are not retroactive production
 module validation. Fresh complete-build checks passed after the import repair.
+
+## ❌ Linux component qualification result on `97d0b32` — criterion not met
+
+**2026-11-05.** The single admitted transition (`8b68281…` → `97d0b32`, run
+[42110760785](https://github.com/mxbaylee/spinel/actions/runs/42110760785), attempt 1, artifact
+`spn146-linux-linear-copy-qualification` 13455300311, 2,486,861 bytes, SHA256
+`e105d8e249b9acf0a3e60aa06e52a1fda8262715070cd70e4edc4a4a2a988508`) ran and is now
+**consumed**; the earlier "remains unconsumed" wording is superseded. Preparation, build,
+observation and conversion completed with valid, complete clock and trace evidence. The
+conversion step then failed with "Component result does not satisfy preregistered positive
+criterion". Analysis disposition: **inconclusive**. No retry, reinterpretation or threshold
+change is authorized, and this does not establish or refute the production latency outcome.
+
+The criterion (unchanged) requires every one of 16 matched whole-flush comparisons to fall by
+at least 20% and 1 ms. **13 of 16 met it**, with reductions of 28–66% in ES and CJS at 544,
+672 and 1,984 completed states. The three misses are all at completed state **1,440**:
+
+| Format | Order | Prior ms | Candidate ms | Change |
+| --- | --- | --- | --- | --- |
+| ES | candidate-prior | 11.0 | 13.7 | −25% (slower) |
+| CJS | prior-candidate | 8.9 | 7.5 | 16% |
+| CJS | candidate-prior | 12.7 | 12.4 | 2% |
+
+State 1,440 is also where the recorded `plain-3` failure (114.4 ms) occurred, so the repair is
+not shown to help at the state that failed in CI. The ES 1,440 prior-candidate pair did meet
+the criterion (65%), which keeps order and measurement noise as open possibilities; nothing here
+identifies a cause. Limits are those of the analysis itself: Linux component only, GC spans may
+nest, no pause subtraction, no cross-environment pooling and no historical-maximum explanation.
+The artifact is retained on GitHub only until its retention expires; this section is the durable
+summary.
+
+**Reading the three misses against absolute cost.** The run applied the 4× CPU throttle
+(acknowledged in `observation.json`). Across all 32 measured intervals the unrepaired build's whole
+flush ranged 8.9–44.5 ms and the candidate's 4.8–15.7 ms; at state 1,440 the unrepaired build cost
+only 8.9–16.5 ms, leaving little for a 20% reduction to separate from measurement noise (history
+6.1 ms in both ES intervals; the collaboration phase differed 7.2 vs 4.9 ms). So the three misses
+are consistent with a relative threshold applied to already-small costs; this is a reading, not a
+diagnosed cause. It also shows the component's flush costs are about 7–10× below the production
+failures they target (129.1 ms at state 672, 114.4 ms at state 1,440): even the unrepaired build
+stayed under the 100 ms budget here. This component therefore cannot validate or refute the repair
+against those production maxima; only the unchanged native acceptance gate can, or a new
+preregistered question that explains the gap (document size, memory/GC state or runtime pauses in
+the real 2,086-key workload).
+
+**Redo-only scope.** The linear path is intentionally gated to `redoState` with more than four
+qualified tail states. `undoState` keeps the unchanged native fold by design, not oversight;
+the raw-equality tests in `patch-univer-docs.test.ts` cover both states and show undo unchanged.
+
+**One-shot workflows removed.** `doc-native-runtime.yml` (consumed above) and
+`doc-native-diagnostic.yml` (pinned to a long-superseded base commit) can no longer fire, so
+both and their file-reading assertions are deleted. Their results remain recorded here and in
+the earlier sections. The runner, converter and watchdog sources are kept for now because the
+next question may reuse them; move or remove them once the ticket's verdict is in.
+
+**Landing bookkeeping is not acceptance.** Deleting the ticket file and dropping the SPN-089
+dependency are prepared in this PR as the process requires before grading
+([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). They take effect only on
+merge, which still requires a causal repair or evidence-supported disposition and a green
+current-head native acceptance.
+
