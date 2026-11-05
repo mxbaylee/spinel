@@ -39,6 +39,8 @@ const formats = {
 } as const;
 
 export function prepareDocsPatch(source: string, format: keyof typeof formats) {
+  const originalImport = 'import { AlignTypeH, BooleanNumber,';
+  const iteratorImport = 'import { ActionIterator, AlignTypeH, BooleanNumber,';
   const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
   const anchor = 'const DEBOUNCE_DELAY = 300;';
   const markerField = ', "__textXPreserveParagraphIds"';
@@ -369,7 +371,10 @@ function canComposeDocParagraphTail(states, key, prefix) {
   const original = replacements.reduce(
     (text, { before, after }) => text.replaceAll(after, before),
     docFlushObservationReplacements
-      .reduce((text, { before, after }) => text.replaceAll(after, before), source)
+      .reduce(
+        (text, { before, after }) => text.replaceAll(after, before),
+        format === 'es' ? source.replaceAll(iteratorImport, originalImport) : source,
+      )
       .replaceAll(qualifiedRangesHelper, anchor)
       .replaceAll(paragraphTailHelper, anchor)
       .replaceAll(constantGuardHelper, anchor)
@@ -389,18 +394,22 @@ function canComposeDocParagraphTail(states, key, prefix) {
   const previousPatched = composed.replace(helper, previousHelper);
   const markerPatched = composed.replace(helper, markerHelper);
   const prefixPatched = composed.replace(helper, prefixHelper);
-  const patched = docFlushObservationReplacements.reduce((text, { before, after, count }) => {
+  const observed = docFlushObservationReplacements.reduce((text, { before, after, count }) => {
     if (text.split(before).length !== count + 1)
       throw new Error('Docs observation patch target count changed.');
     return text.replaceAll(before, after);
   }, composed);
-  const completeDeletePatched = patched.replace(helper, completeDeleteHelper);
-  const deletePrefixPatched = patched.replace(helper, deletePrefixHelper);
-  const constantGuardPatched = patched.replace(helper, constantGuardHelper);
-  const paragraphTailPatched = patched.replace(helper, paragraphTailHelper);
-  const qualifiedRangesPatched = patched.replace(helper, qualifiedRangesHelper);
+  if (format === 'es' && observed.split(originalImport).length !== 2)
+    throw new Error('Docs native iterator import target count changed.');
+  const patched = format === 'es' ? observed.replace(originalImport, iteratorImport) : observed;
+  // Historical controls retain their exact complete-module imports and hashes.
+  const completeDeletePatched = observed.replace(helper, completeDeleteHelper);
+  const deletePrefixPatched = observed.replace(helper, deletePrefixHelper);
+  const constantGuardPatched = observed.replace(helper, constantGuardHelper);
+  const paragraphTailPatched = observed.replace(helper, paragraphTailHelper);
+  const qualifiedRangesPatched = observed.replace(helper, qualifiedRangesHelper);
   // Isolated semantic/work control only: this intermediate was never installed.
-  const linearTailPatched = patched.replace(helper, linearTailHelper);
+  const linearTailPatched = observed.replace(helper, linearTailHelper);
   if (
     source !== original &&
     source !== patched &&
