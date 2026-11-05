@@ -1,0 +1,19 @@
+{
+  "id": 13389183629,
+  "name": "desktop-offline-firefox-macos-26-41970163073-1",
+  "size_in_bytes": 453796,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13389183629",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13389183629/zip",
+  "expired": false,
+  "created_at": "2026-11-05T04:52:53Z",
+  "expires_at": "2026-11-19T04:52:51Z",
+  "updated_at": "2026-11-05T04:52:53Z",
+  "digest": "sha256:6c7798700d51177bf574849b8725ba0776d5b51532a9ac350d66697f536ed5ed",
+  "workflow_run": {
+    "id": 41970163073,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-141-storage-quiescence",
+    "head_sha": "4e593fbaf9ea89585920053b9415f9a8eac0944f"
+  }
+}

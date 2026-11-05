@@ -1,0 +1,5099 @@
+{
+  "ids": {
+    "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+    "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+    "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+    "sourceAndTestedTree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+    "ci": 41970163093,
+    "storybook": 41970163084,
+    "native": 41970163073,
+    "attempt": 1,
+    "planArtifact": 13388658785,
+    "planZipSha256": "31795d1ddb7035f4193b62c590c21c154eab5d392a1d028f467367d55577b713",
+    "planDigest": "a10853aa57c4e7a4373988a69faf3582ada07da1597e3787610dcc386d775a79",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "previousFailedSource": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+    "previousFailedArchive": "eb51a5554244520593c66b7638f9eeff1d32fbb5",
+    "prerequisiteAcceptedSource": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "prerequisiteAcceptedArchive": "ec71f258d270d0b46c23f35b6e5d1fbda6675414",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "proofs": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 123949,
+      "sha256": "1352a5c3d2738ae4c1f8ffb9aa4d820651f8f1419315f8c6a5fe98c6c0ea86ee"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 124277,
+      "sha256": "4e79632811ce6f6169275b7ad37c136ba1fa70aecfb5b120f0a6527ee5518d64"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 124023,
+      "sha256": "c6166c0cae469c0aa4fbe4b4fe90f6f277c847adbe2933628097bee127278a29"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 126933,
+      "sha256": "4989b4fd442af89e0133c0a615e20bcc974804baa062d11a52abddcf889c6657"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 226,
+      "sha256": "499083e9261eab441625364d7c5fbbb231319e5a221d7cbed46057e9983a0cc4"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 3530463,
+      "sha256": "432f6ddab7c7dcac130671a7910026c1d5782471e43e93e98edb830d72ae09f6"
+    },
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1380910,
+      "sha256": "8be62b8c721201dc9388b06feeccf08ac75fa4fa512edf0a7ce8e18dea17d0ee"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "bytes": 130661,
+      "sha256": "94706b20b588931d2f96e72527afa3940faad78cb78bdacb96a26e39e3403dd7"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 537463,
+      "sha256": "1cf8fc538b3727c54c04a36a03d118dc223674d2dc21c6fc1871a17dada8294a"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 537189,
+      "sha256": "1f158ffcbd7d9da36889d59fd6aef668270c79f7c33b25de18ffbebf568f10f3"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 538203,
+      "sha256": "68cfa3565ae8ae4bbc632da931250de2a10ad96af49c5677ca8e9628f87abcbf"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 538141,
+      "sha256": "1bdc80809aceb13381637b9929ef94e9bfee0ee5b1bbf5a32c5c2515517a78bd"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 228,
+      "sha256": "1b8ce5f25b41effa60c3f1e9700985dbf8f07355293ba5eb7626bc6944480fcb"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 3195704,
+      "sha256": "f1c30910f17dae3eb4e592ef0f2f08f8fe2e6764fd874f5604066c8a5d733460"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 2334,
+      "sha256": "fd7973181308857a934422895bbb2c9442a9f58734c769292f86e6d559b2adda"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 67331,
+      "sha256": "7ffb745dee91002b1f40e5d499f3188452bfc271730d2e13732fc0264254f552"
+    },
+    {
+      "file": "test-results/spn108-comparison-desktop.json",
+      "bytes": 12706,
+      "sha256": "6f25836db27428f1bb89953b373f281161315f559bda36927798c9d647f55fe0"
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "bytes": 1394868,
+      "sha256": "f3321b3c23d1d995461992550d3b351a560ad453cbb6c6a79e3a652e663dc351"
+    }
+  ],
+  "metrics": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-2",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 33.20000000001164,
+          "p95": 53.90000000002328,
+          "max": 117.5,
+          "sum": 70579.80000000092
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 38.09999999997672,
+          "p95": 59,
+          "max": 124.59999999997672,
+          "sum": 80331.20000000001
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 38,
+          "p50": 69,
+          "p95": 8914,
+          "max": 9264,
+          "sum": 20678
+        },
+        "totalBlockingMs": 18778,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 18891.400000000023,
+        "firstVerifiedBrowserLocalDrainMs": 18806.800000000047,
+        "lateReadMinusLocalWitnessMs": 84.59999999997672,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 33.20000000001164,
+        "p95": 53.90000000002328,
+        "max": 117.5,
+        "sum": 70579.80000000092
+      },
+      "tasks": {
+        "count": 38,
+        "p50": 69,
+        "p95": 8914,
+        "max": 9264,
+        "sum": 20678
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "preUndoIntegrity": {
+        "observedAt": 114728.59999999998,
+        "sender": {
+          "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+          "observedAt": 114717.59999999998,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "peer": {
+          "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+          "observedAt": 114726.59999999998,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "baseline-capacity-refusal",
+        "requestedGroups": 1,
+        "beforeUndoAt": 114783.09999999998,
+        "afterUndoAt": 114957.80000000005,
+        "beforeRedoAt": 114965.20000000007,
+        "afterRedoAt": 115118.20000000007,
+        "finalObservedAt": 115999.5,
+        "recoveredAt": 115999.5,
+        "firstUndo": {
+          "observedAt": 114946,
+          "sender": {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "observedAt": 114938.30000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "observedAt": 114938.59999999998,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "undo": {
+          "observedAt": 114946,
+          "sender": {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "observedAt": 114938.30000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "observedAt": 114938.59999999998,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "final": {
+          "observedAt": 115999.5,
+          "sender": {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "observedAt": 115990.80000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "peer": {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "observedAt": 115990.80000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "reloads": [
+          {
+            "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+            "reason": "capacity",
+            "clean": false,
+            "observedAt": 115065.09999999998,
+            "surface": "sender",
+            "sourceObservedAt": 115065.09999999998,
+            "sourceTimeOrigin": 1793854835860.2
+          }
+        ]
+      },
+      "finalReloads": [
+        {
+          "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+          "reason": "capacity",
+          "clean": false,
+          "observedAt": 115065.09999999998,
+          "surface": "sender",
+          "sourceObservedAt": 115065.09999999998,
+          "sourceTimeOrigin": 1793854835860.2
+        }
+      ],
+      "nativeWitness": {
+        "epoch": "95d7cf45-28b7-408f-873b-b1ae7dd78543",
+        "generation": "73210510-dec6-4010-9c55-3f663d13005c:1793854835860.2:1843.9000000000233:1",
+        "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+        "timeOrigin": 1793854835860.2,
+        "installedAt": 1843.9000000000233,
+        "armedAt": 2424.8000000000466,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 82761.59999999998,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2424.8000000000466
+        },
+        "terminal": {
+          "epoch": "95d7cf45-28b7-408f-873b-b1ae7dd78543",
+          "generation": "73210510-dec6-4010-9c55-3f663d13005c:1793854835860.2:1843.9000000000233:1",
+          "unitId": "73210510-dec6-4010-9c55-3f663d13005c",
+          "timeOrigin": 1793854835860.2,
+          "completedStates": 2086,
+          "observedAt": 82761.59999999998,
+          "pending": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "nativeFlushes": {
+          "length": 0,
+          "first": []
+        },
+        "nativeObservationAvailable": false,
+        "idleEpisode": null,
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "observedAt": 101567.70000000007,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 1,
+            "first": [
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-3",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 33.39999999990687,
+          "p95": 53.800000000046566,
+          "max": 106.19999999995343,
+          "sum": 70605.59999999998
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 38.09999999997672,
+          "p95": 59,
+          "max": 113.09999999997672,
+          "sum": 80557.69999999995
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 37,
+          "p50": 68,
+          "p95": 8880,
+          "max": 9321,
+          "sum": 20515
+        },
+        "totalBlockingMs": 18665,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 18879.5,
+        "firstVerifiedBrowserLocalDrainMs": 18793.199999999953,
+        "lateReadMinusLocalWitnessMs": 86.30000000004657,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 33.39999999990687,
+        "p95": 53.800000000046566,
+        "max": 106.19999999995343,
+        "sum": 70605.59999999998
+      },
+      "tasks": {
+        "count": 37,
+        "p50": 68,
+        "p95": 8880,
+        "max": 9321,
+        "sum": 20515
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "preUndoIntegrity": {
+        "observedAt": 114998.20000000007,
+        "sender": {
+          "unitId": "334d97f3-0371-4429-878d-153212c90870",
+          "observedAt": 114984.20000000007,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "peer": {
+          "unitId": "334d97f3-0371-4429-878d-153212c90870",
+          "observedAt": 114995.30009765632,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "baseline-capacity-refusal",
+        "requestedGroups": 1,
+        "beforeUndoAt": 115025.5,
+        "afterUndoAt": 115147.09999999998,
+        "beforeRedoAt": 115151.5,
+        "afterRedoAt": 115323.59999999998,
+        "finalObservedAt": 116188.70000000007,
+        "recoveredAt": 116188.70000000007,
+        "firstUndo": {
+          "observedAt": 115136.80000000005,
+          "sender": {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "observedAt": 115127.30000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "observedAt": 115128.80009765632,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "undo": {
+          "observedAt": 115136.80000000005,
+          "sender": {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "observedAt": 115127.30000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "observedAt": 115128.80009765632,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "final": {
+          "observedAt": 116188.70000000007,
+          "sender": {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "observedAt": 116181.30000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "peer": {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "observedAt": 116181.50009765627,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "reloads": [
+          {
+            "unitId": "334d97f3-0371-4429-878d-153212c90870",
+            "reason": "capacity",
+            "clean": false,
+            "observedAt": 115244.59999999998,
+            "surface": "sender",
+            "sourceObservedAt": 115244.59999999998,
+            "sourceTimeOrigin": 1793854952124.7
+          }
+        ]
+      },
+      "finalReloads": [
+        {
+          "unitId": "334d97f3-0371-4429-878d-153212c90870",
+          "reason": "capacity",
+          "clean": false,
+          "observedAt": 115244.59999999998,
+          "surface": "sender",
+          "sourceObservedAt": 115244.59999999998,
+          "sourceTimeOrigin": 1793854952124.7
+        }
+      ],
+      "nativeWitness": {
+        "epoch": "eba1a1b8-4dc6-45cb-a4bc-4e91af84a0e1",
+        "generation": "334d97f3-0371-4429-878d-153212c90870:1793854952124.7:1812.4000000000233:1",
+        "unitId": "334d97f3-0371-4429-878d-153212c90870",
+        "timeOrigin": 1793854952124.7,
+        "installedAt": 1812.4000000000233,
+        "armedAt": 2336.4000000000233,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 82899.70000000007,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2336.4000000000233
+        },
+        "terminal": {
+          "epoch": "eba1a1b8-4dc6-45cb-a4bc-4e91af84a0e1",
+          "generation": "334d97f3-0371-4429-878d-153212c90870:1793854952124.7:1812.4000000000233:1",
+          "unitId": "334d97f3-0371-4429-878d-153212c90870",
+          "timeOrigin": 1793854952124.7,
+          "completedStates": 2086,
+          "observedAt": 82899.70000000007,
+          "pending": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "nativeFlushes": {
+          "length": 0,
+          "first": []
+        },
+        "nativeObservationAvailable": false,
+        "idleEpisode": null,
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "observedAt": 101691.59999999998,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 1,
+            "first": [
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-1",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 33.399999999965075,
+          "p95": 54.59999999997672,
+          "max": 120.40000000002328,
+          "sum": 71509.09999999887
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 38.09999999997672,
+          "p95": 59.70000000001164,
+          "max": 126.60000000003492,
+          "sum": 81312.29999999999
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 41,
+          "p50": 65,
+          "p95": 109,
+          "max": 9220,
+          "sum": 20739
+        },
+        "totalBlockingMs": 18690,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 18808.79999999999,
+        "firstVerifiedBrowserLocalDrainMs": 18731.29999999999,
+        "lateReadMinusLocalWitnessMs": 77.5,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 33.399999999965075,
+        "p95": 54.59999999997672,
+        "max": 120.40000000002328,
+        "sum": 71509.09999999887
+      },
+      "tasks": {
+        "count": 41,
+        "p50": 65,
+        "p95": 109,
+        "max": 9220,
+        "sum": 20739
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "preUndoIntegrity": {
+        "observedAt": 115744.90000000002,
+        "sender": {
+          "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+          "observedAt": 115732.40000000002,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "peer": {
+          "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+          "observedAt": 115740.99995117186,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "baseline-capacity-refusal",
+        "requestedGroups": 1,
+        "beforeUndoAt": 115810.20000000001,
+        "afterUndoAt": 116001.60000000003,
+        "beforeRedoAt": 116005.90000000002,
+        "afterRedoAt": 116186.80000000005,
+        "finalObservedAt": 117059.20000000001,
+        "recoveredAt": 117059.20000000001,
+        "firstUndo": {
+          "observedAt": 115945.60000000003,
+          "sender": {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "observedAt": 115934.20000000001,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "observedAt": 115934.59995117184,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "undo": {
+          "observedAt": 115987.70000000001,
+          "sender": {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "observedAt": 115978,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "observedAt": 115978.49995117186,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "final": {
+          "observedAt": 117059.20000000001,
+          "sender": {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "observedAt": 117050,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "peer": {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "observedAt": 117050.49995117186,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "reloads": [
+          {
+            "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+            "reason": "capacity",
+            "clean": false,
+            "observedAt": 116110.20000000001,
+            "surface": "sender",
+            "sourceObservedAt": 116110.20000000001,
+            "sourceTimeOrigin": 1793854718524.6
+          }
+        ]
+      },
+      "finalReloads": [
+        {
+          "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+          "reason": "capacity",
+          "clean": false,
+          "observedAt": 116110.20000000001,
+          "surface": "sender",
+          "sourceObservedAt": 116110.20000000001,
+          "sourceTimeOrigin": 1793854718524.6
+        }
+      ],
+      "nativeWitness": {
+        "epoch": "b3856b6b-83dc-454a-9632-c65012f5670c",
+        "generation": "2099ae2d-0882-4c37-a869-67a4bfa069f1:1793854718524.6:1852:1",
+        "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+        "timeOrigin": 1793854718524.6,
+        "installedAt": 1852,
+        "armedAt": 2327.8000000000466,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 83646.20000000001,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2327.8000000000466
+        },
+        "terminal": {
+          "epoch": "b3856b6b-83dc-454a-9632-c65012f5670c",
+          "generation": "2099ae2d-0882-4c37-a869-67a4bfa069f1:1793854718524.6:1852:1",
+          "unitId": "2099ae2d-0882-4c37-a869-67a4bfa069f1",
+          "timeOrigin": 1793854718524.6,
+          "completedStates": 2086,
+          "observedAt": 83646.20000000001,
+          "pending": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "nativeFlushes": {
+          "length": 0,
+          "first": []
+        },
+        "nativeObservationAvailable": false,
+        "idleEpisode": null,
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "observedAt": 102376.90000000002,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 1,
+            "first": [
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "profile",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 34.10000000009313,
+          "p95": 55.800000000046566,
+          "max": 119.59999999997672,
+          "sum": 72577.99999999965
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 39,
+          "p95": 61,
+          "max": 126.5,
+          "sum": 82649.20000000007
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 46,
+          "p50": 61,
+          "p95": 104,
+          "max": 9467,
+          "sum": 21362
+        },
+        "totalBlockingMs": 19062,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 19224.899999999907,
+        "firstVerifiedBrowserLocalDrainMs": 19148.099999999977,
+        "lateReadMinusLocalWitnessMs": 76.79999999993015,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 34.10000000009313,
+        "p95": 55.800000000046566,
+        "max": 119.59999999997672,
+        "sum": 72577.99999999965
+      },
+      "tasks": {
+        "count": 46,
+        "p50": 61,
+        "p95": 104,
+        "max": 9467,
+        "sum": 21362
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "preUndoIntegrity": {
+        "observedAt": 117980.40000000002,
+        "sender": {
+          "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+          "observedAt": 117959.40000000002,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "peer": {
+          "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+          "observedAt": 117969.40000000002,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "baseline-capacity-refusal",
+        "requestedGroups": 1,
+        "beforeUndoAt": 118002.30000000005,
+        "afterUndoAt": 118126.40000000002,
+        "beforeRedoAt": 118130.69999999995,
+        "afterRedoAt": 118316.80000000005,
+        "finalObservedAt": 119160.80000000005,
+        "recoveredAt": 119160.80000000005,
+        "firstUndo": {
+          "observedAt": 118118.40000000002,
+          "sender": {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "observedAt": 118112.19999999995,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "observedAt": 118112.40000000002,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "undo": {
+          "observedAt": 118118.40000000002,
+          "sender": {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "observedAt": 118112.19999999995,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 2086,
+              "collaboration": 2086
+            }
+          },
+          "peer": {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "observedAt": 118112.40000000002,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "final": {
+          "observedAt": 119160.80000000005,
+          "sender": {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "observedAt": 119154.09999999998,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "peer": {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "observedAt": 119154.30000000005,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "reloads": [
+          {
+            "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+            "reason": "capacity",
+            "clean": false,
+            "observedAt": 118225.59999999998,
+            "surface": "sender",
+            "sourceObservedAt": 118225.59999999998,
+            "sourceTimeOrigin": 1793855068574.2
+          }
+        ]
+      },
+      "finalReloads": [
+        {
+          "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+          "reason": "capacity",
+          "clean": false,
+          "observedAt": 118225.59999999998,
+          "surface": "sender",
+          "sourceObservedAt": 118225.59999999998,
+          "sourceTimeOrigin": 1793855068574.2
+        }
+      ],
+      "profileSha256": "432f6ddab7c7dcac130671a7910026c1d5782471e43e93e98edb830d72ae09f6",
+      "compositionCpu": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 0,
+        "reorderedSampleCount": 0,
+        "clock": {
+          "beforeMs": 2314,
+          "afterMs": 2737.1999999999534,
+          "uncertaintyMs": 423.19999999995343,
+          "profileStartTimeUs": 682459821,
+          "profileEndTimeUs": 784788168
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 7647,
+          "sampledCpuMs": 8155.4119999997465,
+          "certainContainingTasks": [
+            {
+              "index": 44,
+              "startedAt": 86018.80000000005,
+              "durationMs": 9061,
+              "sampleCount": 7268
+            }
+          ],
+          "maxContainingTaskMs": 9061,
+          "taskAttribution": "certain-whole-containing-task"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 8062,
+          "sampledCpuMs": 8637.356999999844,
+          "certainContainingTasks": [
+            {
+              "index": 45,
+              "startedAt": 95080.59999999998,
+              "durationMs": 9467,
+              "sampleCount": 7704
+            }
+          ],
+          "maxContainingTaskMs": 9467,
+          "taskAttribution": "certain-whole-containing-task"
+        }
+      },
+      "nativeWitness": {
+        "epoch": "77c13f4d-4e1e-46a1-a3e6-ebb8d84fef28",
+        "generation": "4c254b00-868a-499d-888f-555487f32b3f:1793855068574.2:1906.8000000000466:1",
+        "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+        "timeOrigin": 1793855068574.2,
+        "installedAt": 1906.8000000000466,
+        "armedAt": 2742,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 85400,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2742
+        },
+        "terminal": {
+          "epoch": "77c13f4d-4e1e-46a1-a3e6-ebb8d84fef28",
+          "generation": "4c254b00-868a-499d-888f-555487f32b3f:1793855068574.2:1906.8000000000466:1",
+          "unitId": "4c254b00-868a-499d-888f-555487f32b3f",
+          "timeOrigin": 1793855068574.2,
+          "completedStates": 2086,
+          "observedAt": 85400,
+          "pending": {
+            "history": 2086,
+            "collaboration": 2086
+          }
+        },
+        "nativeFlushes": {
+          "length": 0,
+          "first": []
+        },
+        "nativeObservationAvailable": false,
+        "idleEpisode": null,
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 2086,
+            "collaboration": 2086
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "observedAt": 104547.40000000002,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 1,
+            "first": [
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 23.599999999976717,
+          "p95": 35.40000000002328,
+          "max": 75.70000000006985,
+          "sum": 50022.900000002584
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 27.5,
+          "p95": 40.70000000006985,
+          "max": 81.90000000002328,
+          "sum": 58625
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 7,
+          "p50": 52,
+          "p95": 65,
+          "max": 65,
+          "sum": 379
+        },
+        "totalBlockingMs": 29,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.900000000023283,
+          "p95": 9,
+          "max": 9.70000000006985,
+          "sum": 237.2000000004191
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 0.5,
+          "p95": 0.5,
+          "max": 0.5,
+          "sum": 0.5
+        },
+        "pairedFlushMaximumMs": 9.70000000006985,
+        "postFinalKeyDrainUpperBoundMs": 538.5999999999767,
+        "firstVerifiedBrowserLocalDrainMs": 304.69999999995343,
+        "lateReadMinusLocalWitnessMs": 233.90000000002328,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 65,
+        "p50": 2.900000000023283,
+        "p95": 9,
+        "max": 9.70000000006985,
+        "sum": 237.2000000004191
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.5,
+        "p95": 0.5,
+        "max": 0.5,
+        "sum": 0.5
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 23.599999999976717,
+        "p95": 35.40000000002328,
+        "max": 75.70000000006985,
+        "sum": 50022.900000002584
+      },
+      "tasks": {
+        "count": 7,
+        "p50": 52,
+        "p95": 65,
+        "max": 65,
+        "sum": 379
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "preUndoIntegrity": {
+        "observedAt": 73762,
+        "sender": {
+          "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+          "observedAt": 73723.30000000005,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          }
+        },
+        "peer": {
+          "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+          "observedAt": 73723.39990234375,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "passed",
+        "requestedGroups": 66,
+        "beforeUndoAt": 73819.40000000002,
+        "afterUndoAt": 76294.20000000007,
+        "beforeRedoAt": 76298.40000000002,
+        "afterRedoAt": 78787.6000000001,
+        "finalObservedAt": 78890.40000000002,
+        "firstUndo": {
+          "observedAt": 74158.5,
+          "sender": {
+            "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+            "observedAt": 74110.20000000007,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+            "observedAt": 74107.89990234375,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "undo": {
+          "observedAt": 76255.6000000001,
+          "sender": {
+            "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+            "observedAt": 76212.1000000001,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 66
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+            "observedAt": 76212.6999023438,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 22,
+            "textLength": 2,
+            "textSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6"
+          }
+        },
+        "final": {
+          "observedAt": 78890.40000000002,
+          "sender": {
+            "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+            "observedAt": 78857.5,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+            "observedAt": 78857.59990234382,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 29,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          }
+        },
+        "reloads": []
+      },
+      "finalReloads": [],
+      "nativeWitness": {
+        "epoch": "f33097da-df93-4ca7-bcae-112244c0f193",
+        "generation": "186ccc42-e162-4aac-91d8-e41247cb02b2:1793855195661.8:1337.3000000000466:1",
+        "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+        "timeOrigin": 1793855195661.8,
+        "installedAt": 1337.3000000000466,
+        "armedAt": 2487.600000000093,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 61119.10000000009,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2487.600000000093
+        },
+        "terminal": {
+          "epoch": "f33097da-df93-4ca7-bcae-112244c0f193",
+          "generation": "186ccc42-e162-4aac-91d8-e41247cb02b2:1793855195661.8:1337.3000000000466:1",
+          "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+          "timeOrigin": 1793855195661.8,
+          "completedStates": 2086,
+          "observedAt": 61119.10000000009,
+          "pending": {
+            "history": 6,
+            "collaboration": 6
+          }
+        },
+        "nativeFlushes": {
+          "length": 200,
+          "first": [
+            {
+              "sequence": 2,
+              "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+              "phase": "history",
+              "origin": "policy-capacity",
+              "startedAt": 3118.100000000093,
+              "endedAt": 3122.70000000007,
+              "before": {
+                "history": 32,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "outcome": "returned",
+              "epoch": "f33097da-df93-4ca7-bcae-112244c0f193",
+              "generation": "186ccc42-e162-4aac-91d8-e41247cb02b2:1793855195661.8:1337.3000000000466:1",
+              "completedStates": 32
+            },
+            {
+              "sequence": 3,
+              "unitId": "186ccc42-e162-4aac-91d8-e41247cb02b2",
+              "phase": "collaboration",
+              "origin": "policy-capacity",
+              "startedAt": 3122.70000000007,
+              "endedAt": 3125.100000000093,
+              "before": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 0
+              },
+              "outcome": "returned",
+              "epoch": "f33097da-df93-4ca7-bcae-112244c0f193",
+              "generation": "186ccc42-e162-4aac-91d8-e41247cb02b2:1793855195661.8:1337.3000000000466:1",
+              "completedStates": 32
+            }
+          ]
+        },
+        "nativeObservationAvailable": true,
+        "idleEpisode": {
+          "startedAt": 61422.5,
+          "endedAt": 61423,
+          "durationMs": 0.5,
+          "history": 6,
+          "collaboration": 6,
+          "origin": "policy-idle",
+          "nativeSequences": {
+            "length": 2,
+            "first": [
+              197,
+              198
+            ]
+          }
+        },
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "observedAt": 61423,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 2,
+            "first": [
+              "history-status",
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [
+        "capacity",
+        "idle"
+      ],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 23.800000000046566,
+          "p95": 35.79999999993015,
+          "max": 74.79999999993015,
+          "sum": 50456.40000000014
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 28.099999999976717,
+          "p95": 41.09999999997672,
+          "max": 80.19999999995343,
+          "sum": 59418
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 7,
+          "p50": 54,
+          "p95": 67,
+          "max": 67,
+          "sum": 394
+        },
+        "totalBlockingMs": 44,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.900000000023283,
+          "p95": 5.700000000069849,
+          "max": 10.199999999953434,
+          "sum": 214.79999999981374
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.5,
+          "p95": 1.5,
+          "max": 1.5,
+          "sum": 1.5
+        },
+        "pairedFlushMaximumMs": 10.199999999953434,
+        "postFinalKeyDrainUpperBoundMs": 579,
+        "firstVerifiedBrowserLocalDrainMs": 318,
+        "lateReadMinusLocalWitnessMs": 261,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 65,
+        "p50": 2.900000000023283,
+        "p95": 5.700000000069849,
+        "max": 10.199999999953434,
+        "sum": 214.79999999981374
+      },
+      "idle": {
+        "count": 1,
+        "p50": 1.5,
+        "p95": 1.5,
+        "max": 1.5,
+        "sum": 1.5
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 23.800000000046566,
+        "p95": 35.79999999993015,
+        "max": 74.79999999993015,
+        "sum": 50456.40000000014
+      },
+      "tasks": {
+        "count": 7,
+        "p50": 54,
+        "p95": 67,
+        "max": 67,
+        "sum": 394
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "preUndoIntegrity": {
+        "observedAt": 75164.30000000005,
+        "sender": {
+          "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+          "observedAt": 75056,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          }
+        },
+        "peer": {
+          "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+          "observedAt": 75070.40000000002,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "passed",
+        "requestedGroups": 1,
+        "beforeUndoAt": 75226.80000000005,
+        "afterUndoAt": 75482.20000000007,
+        "beforeRedoAt": 75486.09999999998,
+        "afterRedoAt": 75758.09999999998,
+        "finalObservedAt": 75852.90000000002,
+        "firstUndo": {
+          "observedAt": 75474.30000000005,
+          "sender": {
+            "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+            "observedAt": 75441.20000000007,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+            "observedAt": 75441.6000000001,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "undo": {
+          "observedAt": 75474.30000000005,
+          "sender": {
+            "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+            "observedAt": 75441.20000000007,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+            "observedAt": 75441.6000000001,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "final": {
+          "observedAt": 75852.90000000002,
+          "sender": {
+            "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+            "observedAt": 75816.90000000002,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+            "observedAt": 75816.90000000002,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 19,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          }
+        },
+        "reloads": []
+      },
+      "finalReloads": [],
+      "nativeWitness": {
+        "epoch": "98f434fd-11ff-4009-9b10-4fbd0af22a28",
+        "generation": "340499e8-5277-4457-8c59-c51aab5211c3:1793855275021.8:1289.0999999999767:1",
+        "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+        "timeOrigin": 1793855275021.8,
+        "installedAt": 1289.0999999999767,
+        "armedAt": 2638.20000000007,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 62061.30000000005,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2638.20000000007
+        },
+        "terminal": {
+          "epoch": "98f434fd-11ff-4009-9b10-4fbd0af22a28",
+          "generation": "340499e8-5277-4457-8c59-c51aab5211c3:1793855275021.8:1289.0999999999767:1",
+          "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+          "timeOrigin": 1793855275021.8,
+          "completedStates": 2086,
+          "observedAt": 62061.30000000005,
+          "pending": {
+            "history": 6,
+            "collaboration": 6
+          }
+        },
+        "nativeFlushes": {
+          "length": 200,
+          "first": [
+            {
+              "sequence": 2,
+              "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+              "phase": "history",
+              "origin": "policy-capacity",
+              "startedAt": 3255.3000000000466,
+              "endedAt": 3259.8000000000466,
+              "before": {
+                "history": 32,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "outcome": "returned",
+              "epoch": "98f434fd-11ff-4009-9b10-4fbd0af22a28",
+              "generation": "340499e8-5277-4457-8c59-c51aab5211c3:1793855275021.8:1289.0999999999767:1",
+              "completedStates": 32
+            },
+            {
+              "sequence": 3,
+              "unitId": "340499e8-5277-4457-8c59-c51aab5211c3",
+              "phase": "collaboration",
+              "origin": "policy-capacity",
+              "startedAt": 3259.8000000000466,
+              "endedAt": 3261.4000000000233,
+              "before": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 0
+              },
+              "outcome": "returned",
+              "epoch": "98f434fd-11ff-4009-9b10-4fbd0af22a28",
+              "generation": "340499e8-5277-4457-8c59-c51aab5211c3:1793855275021.8:1289.0999999999767:1",
+              "completedStates": 32
+            }
+          ]
+        },
+        "nativeObservationAvailable": true,
+        "idleEpisode": {
+          "startedAt": 62376,
+          "endedAt": 62377.5,
+          "durationMs": 1.5,
+          "history": 6,
+          "collaboration": 6,
+          "origin": "policy-idle",
+          "nativeSequences": {
+            "length": 2,
+            "first": [
+              197,
+              198
+            ]
+          }
+        },
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "observedAt": 62378.70000000007,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 2,
+            "first": [
+              "history-status",
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [
+        "capacity",
+        "idle"
+      ],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 23.699999999953434,
+          "p95": 35.09999999997672,
+          "max": 84.79999999993015,
+          "sum": 49756.099999998696
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 28.099999999976717,
+          "p95": 40.29999999993015,
+          "max": 95.89999999990687,
+          "sum": 58619.19999999995
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 8,
+          "p50": 53,
+          "p95": 58,
+          "max": 58,
+          "sum": 432
+        },
+        "totalBlockingMs": 32,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.900000000023283,
+          "p95": 8.70000000006985,
+          "max": 19.899999999906868,
+          "sum": 265.29999999981374
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 0.8000000000465661,
+          "p95": 0.8000000000465661,
+          "max": 0.8000000000465661,
+          "sum": 0.8000000000465661
+        },
+        "pairedFlushMaximumMs": 19.899999999906868,
+        "postFinalKeyDrainUpperBoundMs": 443.80000000004657,
+        "firstVerifiedBrowserLocalDrainMs": 302.80000000004657,
+        "lateReadMinusLocalWitnessMs": 141,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 65,
+        "p50": 2.900000000023283,
+        "p95": 8.70000000006985,
+        "max": 19.899999999906868,
+        "sum": 265.29999999981374
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.8000000000465661,
+        "p95": 0.8000000000465661,
+        "max": 0.8000000000465661,
+        "sum": 0.8000000000465661
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 23.699999999953434,
+        "p95": 35.09999999997672,
+        "max": 84.79999999993015,
+        "sum": 49756.099999998696
+      },
+      "tasks": {
+        "count": 8,
+        "p50": 53,
+        "p95": 58,
+        "max": 58,
+        "sum": 432
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "preUndoIntegrity": {
+        "observedAt": 73739.69999999995,
+        "sender": {
+          "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+          "observedAt": 73664.69999999995,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          }
+        },
+        "peer": {
+          "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+          "observedAt": 73676.59999999998,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "passed",
+        "requestedGroups": 1,
+        "beforeUndoAt": 73791.90000000002,
+        "afterUndoAt": 74063.80000000005,
+        "beforeRedoAt": 74068.09999999998,
+        "afterRedoAt": 74354,
+        "finalObservedAt": 74484.5,
+        "firstUndo": {
+          "observedAt": 74056.30000000005,
+          "sender": {
+            "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+            "observedAt": 74023.40000000002,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+            "observedAt": 74023.59999999998,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "undo": {
+          "observedAt": 74056.30000000005,
+          "sender": {
+            "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+            "observedAt": 74023.40000000002,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+            "observedAt": 74023.59999999998,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "final": {
+          "observedAt": 74484.5,
+          "sender": {
+            "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+            "observedAt": 74435.5,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+            "observedAt": 74436.19999999995,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 19,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          }
+        },
+        "reloads": []
+      },
+      "finalReloads": [],
+      "nativeWitness": {
+        "epoch": "1812559e-d98b-4d29-aa45-37831d6caeb7",
+        "generation": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1:1793855351279.6:1202.4000000000233:1",
+        "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+        "timeOrigin": 1793855351279.6,
+        "installedAt": 1202.4000000000233,
+        "armedAt": 2293.0999999999767,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 60917.69999999995,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2293.0999999999767
+        },
+        "terminal": {
+          "epoch": "1812559e-d98b-4d29-aa45-37831d6caeb7",
+          "generation": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1:1793855351279.6:1202.4000000000233:1",
+          "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+          "timeOrigin": 1793855351279.6,
+          "completedStates": 2086,
+          "observedAt": 60917.69999999995,
+          "pending": {
+            "history": 6,
+            "collaboration": 6
+          }
+        },
+        "nativeFlushes": {
+          "length": 200,
+          "first": [
+            {
+              "sequence": 2,
+              "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+              "phase": "history",
+              "origin": "policy-capacity",
+              "startedAt": 2916.1999999999534,
+              "endedAt": 2920,
+              "before": {
+                "history": 32,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "outcome": "returned",
+              "epoch": "1812559e-d98b-4d29-aa45-37831d6caeb7",
+              "generation": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1:1793855351279.6:1202.4000000000233:1",
+              "completedStates": 32
+            },
+            {
+              "sequence": 3,
+              "unitId": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1",
+              "phase": "collaboration",
+              "origin": "policy-capacity",
+              "startedAt": 2920.0999999999767,
+              "endedAt": 2921.6999999999534,
+              "before": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 0
+              },
+              "outcome": "returned",
+              "epoch": "1812559e-d98b-4d29-aa45-37831d6caeb7",
+              "generation": "2cfe800f-e07b-4de3-95cf-a00fc7002cb1:1793855351279.6:1202.4000000000233:1",
+              "completedStates": 32
+            }
+          ]
+        },
+        "nativeObservationAvailable": true,
+        "idleEpisode": {
+          "startedAt": 61219,
+          "endedAt": 61219.80000000005,
+          "durationMs": 0.8000000000465661,
+          "history": 6,
+          "collaboration": 6,
+          "origin": "policy-idle",
+          "nativeSequences": {
+            "length": 2,
+            "first": [
+              197,
+              198
+            ]
+          }
+        },
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "observedAt": 61219.80000000005,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 2,
+            "first": [
+              "history-status",
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [
+        "capacity",
+        "idle"
+      ],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "profile",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 24.300000000046566,
+          "p95": 36.699999999953434,
+          "max": 91.80000000004657,
+          "sum": 51523.999999993364
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 28.699999999953434,
+          "p95": 41.800000000046566,
+          "max": 97.80000000004657,
+          "sum": 60700.40000000002
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 9,
+          "p50": 58,
+          "p95": 70,
+          "max": 70,
+          "sum": 530
+        },
+        "totalBlockingMs": 80,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.800000000046566,
+          "p95": 8.600000000093132,
+          "max": 15.400000000023283,
+          "sum": 263.10000000090804
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 1.1999999999534339,
+          "p95": 1.1999999999534339,
+          "max": 1.1999999999534339,
+          "sum": 1.1999999999534339
+        },
+        "pairedFlushMaximumMs": 15.400000000023283,
+        "postFinalKeyDrainUpperBoundMs": 580.8999999999069,
+        "firstVerifiedBrowserLocalDrainMs": 334.19999999995343,
+        "lateReadMinusLocalWitnessMs": 246.69999999995343,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "capacity": {
+        "count": 65,
+        "p50": 2.800000000046566,
+        "p95": 8.600000000093132,
+        "max": 15.400000000023283,
+        "sum": 263.10000000090804
+      },
+      "idle": {
+        "count": 1,
+        "p50": 1.1999999999534339,
+        "p95": 1.1999999999534339,
+        "max": 1.1999999999534339,
+        "sum": 1.1999999999534339
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 24.300000000046566,
+        "p95": 36.699999999953434,
+        "max": 91.80000000004657,
+        "sum": 51523.999999993364
+      },
+      "tasks": {
+        "count": 9,
+        "p50": 58,
+        "p95": 70,
+        "max": 70,
+        "sum": 530
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "preUndoIntegrity": {
+        "observedAt": 76560.09999999986,
+        "sender": {
+          "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+          "observedAt": 76514.30000000005,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 2086,
+            "end": 2086,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          }
+        },
+        "peer": {
+          "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+          "observedAt": 76526.10019531252,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        "saved": {
+          "revision": 17,
+          "textLength": 2088,
+          "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "passed": true,
+        "reloads": []
+      },
+      "undoRedo": {
+        "outcome": "passed",
+        "requestedGroups": 1,
+        "beforeUndoAt": 76610.5,
+        "afterUndoAt": 76940.3999999999,
+        "beforeRedoAt": 76944.30000000005,
+        "afterRedoAt": 77258,
+        "finalObservedAt": 77339.59999999986,
+        "firstUndo": {
+          "observedAt": 76933.09999999986,
+          "sender": {
+            "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+            "observedAt": 76897.5,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+            "observedAt": 76897.80019531248,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "undo": {
+          "observedAt": 76933.09999999986,
+          "sender": {
+            "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+            "observedAt": 76897.5,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 2080,
+              "end": 2080,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 65,
+              "redos": 1
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+            "observedAt": 76897.80019531248,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 18,
+            "textLength": 2082,
+            "textSha256": "b0b9f4db4b68490bff1fb4c71a7c853501d3fc7bf9635dc754e789860d1ca522"
+          }
+        },
+        "final": {
+          "observedAt": 77339.59999999986,
+          "sender": {
+            "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+            "observedAt": 77305.3999999999,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 2086,
+              "end": 2086,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 66,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            }
+          },
+          "peer": {
+            "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+            "observedAt": 77305.70019531238,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+            "selection": {
+              "start": 0,
+              "end": 0,
+              "segmentId": ""
+            },
+            "history": {
+              "undos": 0,
+              "redos": 0
+            },
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 0,
+              "collaboration": 0
+            }
+          },
+          "saved": {
+            "revision": 19,
+            "textLength": 2088,
+            "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+          }
+        },
+        "reloads": []
+      },
+      "finalReloads": [],
+      "profileSha256": "f1c30910f17dae3eb4e592ef0f2f08f8fe2e6764fd874f5604066c8a5d733460",
+      "compositionCpu": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 0,
+        "reorderedSampleCount": 0,
+        "clock": {
+          "beforeMs": 2382.5999999999767,
+          "afterMs": 2813,
+          "uncertaintyMs": 430.4000000000233,
+          "profileStartTimeUs": 1040165078,
+          "profileEndTimeUs": 1101977326
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 137,
+          "sampledCpuMs": 127.18799999999997,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 104,
+          "sampledCpuMs": 113.01699999999994,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        }
+      },
+      "nativeWitness": {
+        "epoch": "8cfa2555-c196-4c75-aa93-6223d806394d",
+        "generation": "92a90adb-9d76-405e-826b-f94fc96cca75:1793855426210.9:1292.7999999999302:1",
+        "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+        "timeOrigin": 1793855426210.9,
+        "installedAt": 1292.7999999999302,
+        "armedAt": 2817.0999999999767,
+        "expectedCompletedStates": 2086,
+        "completedStates": 2086,
+        "lastCompletedStateAt": 63523.39999999991,
+        "initial": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "history": {
+            "undos": 0,
+            "redos": 0
+          },
+          "observedAt": 2817.0999999999767
+        },
+        "terminal": {
+          "epoch": "8cfa2555-c196-4c75-aa93-6223d806394d",
+          "generation": "92a90adb-9d76-405e-826b-f94fc96cca75:1793855426210.9:1292.7999999999302:1",
+          "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+          "timeOrigin": 1793855426210.9,
+          "completedStates": 2086,
+          "observedAt": 63523.39999999991,
+          "pending": {
+            "history": 6,
+            "collaboration": 6
+          }
+        },
+        "nativeFlushes": {
+          "length": 200,
+          "first": [
+            {
+              "sequence": 2,
+              "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+              "phase": "history",
+              "origin": "policy-capacity",
+              "startedAt": 3504,
+              "endedAt": 3512.6999999999534,
+              "before": {
+                "history": 32,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "outcome": "returned",
+              "epoch": "8cfa2555-c196-4c75-aa93-6223d806394d",
+              "generation": "92a90adb-9d76-405e-826b-f94fc96cca75:1793855426210.9:1292.7999999999302:1",
+              "completedStates": 32
+            },
+            {
+              "sequence": 3,
+              "unitId": "92a90adb-9d76-405e-826b-f94fc96cca75",
+              "phase": "collaboration",
+              "origin": "policy-capacity",
+              "startedAt": 3512.6999999999534,
+              "endedAt": 3515.5999999999767,
+              "before": {
+                "history": 0,
+                "collaboration": 32
+              },
+              "after": {
+                "history": 0,
+                "collaboration": 0
+              },
+              "outcome": "returned",
+              "epoch": "8cfa2555-c196-4c75-aa93-6223d806394d",
+              "generation": "92a90adb-9d76-405e-826b-f94fc96cca75:1793855426210.9:1292.7999999999302:1",
+              "completedStates": 32
+            }
+          ]
+        },
+        "nativeObservationAvailable": true,
+        "idleEpisode": {
+          "startedAt": 63855.39999999991,
+          "endedAt": 63856.59999999986,
+          "durationMs": 1.1999999999534339,
+          "history": 6,
+          "collaboration": 6,
+          "origin": "policy-idle",
+          "nativeSequences": {
+            "length": 2,
+            "first": [
+              197,
+              198
+            ]
+          }
+        },
+        "firstEmpty": {
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "history": {
+            "undos": 66,
+            "redos": 0
+          },
+          "observedAt": 63856.89999999991,
+          "completedStates": 2086,
+          "wakeups": {
+            "length": 2,
+            "first": [
+              "history-status",
+              "collaboration-emission"
+            ]
+          }
+        },
+        "sealedAt": null,
+        "invalidated": false,
+        "invalidations": {
+          "length": 0,
+          "first": []
+        }
+      },
+      "nativeFlushReasons": [
+        "capacity",
+        "idle"
+      ],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 1,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runner": {
+        "name": "GitHub Actions 1000042385",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41970163093",
+        "attempt": "1"
+      },
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1"
+    }
+  ],
+  "boundaries": [
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "data": {
+        "schema": 5,
+        "scenario": "resume-native-typing-after-quiet-pause",
+        "preset": "desktop",
+        "attempt": 0,
+        "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+        "browser": "156.0.8078.4",
+        "playwright": "1.64.1",
+        "runtime": "v26.12.1",
+        "nodeTimeOrigin": 1793855194321.235,
+        "system": {
+          "platform": "linux",
+          "architecture": "x64",
+          "release": "7.0.0-1017-azure",
+          "cpu": "AMD EPYC 9V74 80-Core Processor",
+          "cpus": 4,
+          "totalmem": 16760344576
+        },
+        "runner": {
+          "name": "GitHub Actions 1000042385",
+          "run": "41970163093",
+          "attempt": "1"
+        },
+        "instrumentation": {
+          "cpuThrottle": 1,
+          "profiler": false,
+          "playwrightTrace": false,
+          "physicalDevice": false
+        },
+        "fixture": {
+          "originalInputCount": 2086,
+          "continuation": "x",
+          "totalInputCount": 2087,
+          "originalTextSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "budgets": {
+          "requestedQuietPauseMs": 350,
+          "continuationRequestReturnMs": 1000,
+          "continuationKeyToFrameMs": 200,
+          "continuationKeyToNativeReadMs": 200,
+          "finalOriginalKeyToContinuationFrameMs": 1550,
+          "finalOriginalKeyToContinuationNativeReadMs": 1550
+        },
+        "harnessSha256": {
+          "e2e/doc-responsiveness.ts": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+          "e2e/doc-responsiveness.spec.ts": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+          "e2e/doc-responsiveness-fixture.ts": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+          "e2e/doc-responsiveness-boundaries.ts": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+          "web/docResponsivenessEvidence.ts": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+          "src/ui/docIdleEpisode.ts": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+          "src/ui/nativeDocFlush.ts": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+          "playwright.config.ts": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+          "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+        },
+        "browserEnvironment": {
+          "configured": {
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "isMobile": false,
+            "hasTouch": false,
+            "deviceScaleFactor": 1
+          },
+          "observed": {
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "screen": {
+              "width": 1920,
+              "height": 1080
+            },
+            "devicePixelRatio": 1,
+            "coarsePointer": false,
+            "touchEvent": false,
+            "maxTouchPoints": 0,
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+            "visibility": "visible",
+            "hasFocus": true
+          }
+        },
+        "originalTypingNodeBracket": {
+          "requestAt": 312000.215728,
+          "returnedAt": 370708.994322
+        },
+        "quietPauseNodeBracket": {
+          "startedAt": 370709.015704,
+          "returnedAt": 371059.25731,
+          "requestedMs": 350
+        },
+        "continuationNodeBracket": {
+          "requestAt": 371059.25731,
+          "returnedAt": 371098.779273
+        },
+        "input": {
+          "timeOrigin": 1793855503933.4,
+          "startedAt": 2386.100000000093,
+          "endedAt": 61526.700000000186,
+          "keydownAt": {
+            "length": 2087,
+            "first": [
+              2388.5,
+              2423
+            ]
+          },
+          "keyToFrameMs": {
+            "length": 2087,
+            "first": [
+              27.800000000046566,
+              18.700000000186265
+            ]
+          },
+          "longTasks": {
+            "length": 6,
+            "first": [
+              {
+                "startedAt": 20569,
+                "durationMs": 52
+              },
+              {
+                "startedAt": 27613.800000000047,
+                "durationMs": 56
+              }
+            ]
+          }
+        },
+        "continuationFrame": {
+          "installedAt": 2387.600000000093,
+          "unitId": "d4b28873-6a05-4a75-8d91-c8eb00c0dd01",
+          "expectedKeys": 2087,
+          "keyCount": 2087,
+          "result": {
+            "keyAt": 61448.10000000009,
+            "frameAt": 61481.700000000186,
+            "readStartedAt": 61481.700000000186,
+            "readReturnedAt": 61481.80000000005,
+            "responses": 1,
+            "snapshot": {
+              "unitId": "d4b28873-6a05-4a75-8d91-c8eb00c0dd01",
+              "mobile": false,
+              "observedAt": 61481.80000000005,
+              "pending": [
+                "history",
+                "collaboration"
+              ],
+              "highWater": [
+                "history",
+                "collaboration"
+              ],
+              "flushes": {
+                "length": 65
+              },
+              "history": [
+                "undos",
+                "redos"
+              ],
+              "drainWitness": [],
+              "selection": [
+                "start",
+                "end",
+                "segmentId"
+              ],
+              "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.x\r\n"
+            }
+          }
+        },
+        "summary": {
+          "finalOriginalKeyAt": 61057.40000000014,
+          "continuationKeyAt": 61448,
+          "continuationFrameAt": 61481.700000000186,
+          "browserQuietGapMs": 390.5999999998603,
+          "continuationKeyToFrameMs": 33.700000000186265,
+          "continuationKeyToNativeReadMs": 33.800000000046566,
+          "continuationRequestReturnMs": 39.52196300000651,
+          "finalOriginalKeyToContinuationFrameMs": 424.30000000004657,
+          "finalOriginalKeyToContinuationNativeReadMs": 424.39999999990687
+        },
+        "native": {
+          "unitId": "d4b28873-6a05-4a75-8d91-c8eb00c0dd01",
+          "mobile": false,
+          "observedAt": 73778.6000000001,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 66,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3034.2000000001863,
+                "durationMs": 7.099999999860302,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "capacity",
+                "startedAt": 3617.100000000093,
+                "durationMs": 4.100000000093132,
+                "history": 32,
+                "collaboration": 32
+              }
+            ]
+          },
+          "history": {
+            "undos": 67,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 2087,
+            "end": 2087,
+            "segmentId": ""
+          },
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the origina…(2089)"
+        },
+        "peer": {
+          "unitId": "d4b28873-6a05-4a75-8d91-c8eb00c0dd01",
+          "observedAt": 73801.80000000005,
+          "textLength": 2089,
+          "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          }
+        },
+        "saved": {
+          "textLength": 2089,
+          "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d"
+        },
+        "reloadObservers": {
+          "length": 2,
+          "first": [
+            {
+              "surface": "sender",
+              "installedAt": 52.60000000009313,
+              "sourceInstalledAt": 52.60000000009313,
+              "sourceTimeOrigin": 1793855503933.4,
+              "dropped": 0,
+              "malformed": 0
+            },
+            {
+              "surface": "peer",
+              "installedAt": 53.500048828078434,
+              "sourceInstalledAt": 51.699999999953434,
+              "sourceTimeOrigin": 1793855503935.2,
+              "dropped": 0,
+              "malformed": 0
+            }
+          ]
+        },
+        "reloads": {
+          "length": 0,
+          "first": []
+        },
+        "completed": true,
+        "errors": {
+          "length": 0,
+          "first": []
+        }
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "desktop",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "pendingBeforeRevocation": {
+          "unitId": "3d5637fc-23e8-4a04-98d6-2b1daf2a38e2",
+          "mobile": false,
+          "observedAt": 4040.899999999907,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 1,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3242.6999999999534,
+                "durationMs": 9.899999999906868,
+                "history": 32,
+                "collaboration": 32
+              }
+            ]
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 65,
+            "end": 65,
+            "segmentId": ""
+          }
+        },
+        "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+        "heldWrites": 1,
+        "forwardedAfterRevocation": {
+          "length": 1,
+          "first": [
+            false
+          ]
+        },
+        "compositionEvents": {
+          "events": {
+            "length": 4,
+            "first": [
+              {
+                "order": 0,
+                "phase": "guest-provisional",
+                "type": "compositionstart",
+                "data": "",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 3963.399999999907
+              },
+              {
+                "order": 1,
+                "phase": "guest-provisional",
+                "type": "compositionupdate",
+                "data": "保留",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 3964.5
+              }
+            ]
+          },
+          "dropped": 0
+        },
+        "errors": {
+          "length": 0,
+          "first": []
+        }
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "desktop",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "beforeCancellation": {
+          "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+          "mobile": false,
+          "observedAt": 4378.699999999953,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 1,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3645.600000000093,
+                "durationMs": 8.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              }
+            ]
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 63,
+            "end": 63,
+            "segmentId": ""
+          }
+        },
+        "intermediate": {
+          "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+          "mobile": false,
+          "observedAt": 6057.600000000093,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3645.600000000093,
+                "durationMs": 8.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4673,
+                "durationMs": 10.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 340.89999999990687
+              }
+            ]
+          },
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 66,
+            "end": 66,
+            "segmentId": ""
+          }
+        },
+        "composingEnter": {
+          "before": {
+            "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+            "mobile": false,
+            "observedAt": 6093.100000000093,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": {
+              "length": 2
+            },
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+          },
+          "after": {
+            "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+            "mobile": false,
+            "observedAt": 6141.90000000014,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": {
+              "length": 2
+            },
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+          }
+        },
+        "beforeFinalComposition": {
+          "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+          "mobile": false,
+          "observedAt": 6875.300000000047,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3645.600000000093,
+                "durationMs": 8.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4673,
+                "durationMs": 10.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 340.89999999990687
+              }
+            ]
+          },
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 94,
+            "end": 94,
+            "segmentId": ""
+          }
+        },
+        "afterFinalComposition": {
+          "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+          "mobile": false,
+          "observedAt": 7147.40000000014,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3645.600000000093,
+                "durationMs": 8.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4673,
+                "durationMs": 10.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 340.89999999990687
+              }
+            ]
+          },
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "final": {
+          "unitId": "8fabfb34-4cd6-4f36-bcd6-898b9d62c19a",
+          "mobile": false,
+          "observedAt": 7470.300000000047,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3645.600000000093,
+                "durationMs": 8.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4673,
+                "durationMs": 10.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 340.89999999990687
+              }
+            ]
+          },
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "correctness": "composing Enter preserves provisional text and history; cancelled provisional te…(168)",
+        "compositionEvents": {
+          "events": {
+            "length": 226,
+            "first": [
+              {
+                "order": 0,
+                "phase": "cancellation-updates",
+                "type": "compositionstart",
+                "data": "",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 4460.199999999953
+              },
+              {
+                "order": 1,
+                "phase": "cancellation-updates",
+                "type": "compositionupdate",
+                "data": "仮0",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 4462.90000000014
+              }
+            ]
+          },
+          "dropped": 0
+        },
+        "errors": {
+          "length": 0,
+          "first": []
+        }
+      }
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T04:58:31.525Z",
+        "duration": 476425.555,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop sustained native typing plain-1",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 117501,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-2",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 116254,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-3",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 116431,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing profile",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 119392,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T05:06:31.304Z",
+        "duration": 400907.965,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop sustained native typing plain-1",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 79729,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-2",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 76241,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-3",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 74911,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing profile",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 77734,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop resumes native typing after a quiet pause",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 74071,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop pending composition crosses the group limit without partial history",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 7696,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop revocation refuses pending guest input and a late composition event",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 6503,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "schema": 2,
+    "mode": "paired",
+    "candidateGroupLimit": 32,
+    "candidateHistoryLimit": 100,
+    "baselineHistoryLimit": 50,
+    "protocolRevision": 5,
+    "drainAcceptance": {
+      "metric": "first-verified-browser-local-empty",
+      "maximumMs": 1000,
+      "lateReadUpperBound": "descriptive-only"
+    },
+    "preset": "desktop",
+    "physicalDevice": false,
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "baselineRedoOutcome": [
+      {
+        "sample": "profile",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-3",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-2",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-1",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      }
+    ],
+    "candidateIntegrity": true,
+    "failures": [],
+    "unavailable": [],
+    "summaries": [
+      {
+        "role": "baseline-observation",
+        "sample": "profile",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 55.800000000046566,
+        "longestTaskMs": 9467,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 19224.899999999907,
+        "firstVerifiedBrowserLocalDrainMs": 19148.099999999977,
+        "lateReadMinusLocalWitnessMs": 76.79999999993015,
+        "drainPollCount": 5,
+        "firstEmptyAfterFinalKeyMs": 19149.599999999977,
+        "typingWallMs": 82712.20110200002,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-3",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 53.800000000046566,
+        "longestTaskMs": 9321,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 18879.5,
+        "firstVerifiedBrowserLocalDrainMs": 18793.199999999953,
+        "lateReadMinusLocalWitnessMs": 86.30000000004657,
+        "drainPollCount": 4,
+        "firstEmptyAfterFinalKeyMs": 18794.099999999977,
+        "typingWallMs": 80646.67362399999,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-2",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 53.90000000002328,
+        "longestTaskMs": 9264,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 18891.400000000023,
+        "firstVerifiedBrowserLocalDrainMs": 18806.800000000047,
+        "lateReadMinusLocalWitnessMs": 84.59999999997672,
+        "drainPollCount": 4,
+        "firstEmptyAfterFinalKeyMs": 18807.900000000023,
+        "typingWallMs": 80391.223732,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-1",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 54.59999999997672,
+        "longestTaskMs": 9220,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 18808.79999999999,
+        "firstVerifiedBrowserLocalDrainMs": 18731.29999999999,
+        "lateReadMinusLocalWitnessMs": 77.5,
+        "drainPollCount": 4,
+        "firstEmptyAfterFinalKeyMs": 18732.70000000001,
+        "typingWallMs": 81373.157788,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "profile",
+        "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+        "inputP95Ms": 36.699999999953434,
+        "longestTaskMs": 70,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 2.800000000046566,
+          "p95": 8.600000000093132,
+          "max": 15.400000000023283,
+          "sum": 263.10000000090804
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 1.1999999999534339,
+          "p95": 1.1999999999534339,
+          "max": 1.1999999999534339,
+          "sum": 1.1999999999534339
+        },
+        "pairedFlushMaximumMs": 15.400000000023283,
+        "nativeDrainUpperBoundMs": 580.8999999999069,
+        "firstVerifiedBrowserLocalDrainMs": 334.19999999995343,
+        "lateReadMinusLocalWitnessMs": 246.69999999995343,
+        "drainPollCount": 3,
+        "firstEmptyAfterFinalKeyMs": 416.19999999995343,
+        "typingWallMs": 60741.51489399999,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-3",
+        "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+        "inputP95Ms": 35.09999999997672,
+        "longestTaskMs": 58,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 2.900000000023283,
+          "p95": 8.70000000006985,
+          "max": 19.899999999906868,
+          "sum": 265.29999999981374
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.8000000000465661,
+          "p95": 0.8000000000465661,
+          "max": 0.8000000000465661,
+          "sum": 0.8000000000465661
+        },
+        "pairedFlushMaximumMs": 19.899999999906868,
+        "nativeDrainUpperBoundMs": 443.80000000004657,
+        "firstVerifiedBrowserLocalDrainMs": 302.80000000004657,
+        "lateReadMinusLocalWitnessMs": 141,
+        "drainPollCount": 3,
+        "firstEmptyAfterFinalKeyMs": 306.5,
+        "typingWallMs": 58658.476131,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-2",
+        "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+        "inputP95Ms": 35.79999999993015,
+        "longestTaskMs": 67,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 2.900000000023283,
+          "p95": 5.700000000069849,
+          "max": 10.199999999953434,
+          "sum": 214.79999999981374
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 1.5,
+          "p95": 1.5,
+          "max": 1.5,
+          "sum": 1.5
+        },
+        "pairedFlushMaximumMs": 10.199999999953434,
+        "nativeDrainUpperBoundMs": 579,
+        "firstVerifiedBrowserLocalDrainMs": 318,
+        "lateReadMinusLocalWitnessMs": 261,
+        "drainPollCount": 3,
+        "firstEmptyAfterFinalKeyMs": 414.89999999990687,
+        "typingWallMs": 59458.718810000006,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-1",
+        "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+        "inputP95Ms": 35.40000000002328,
+        "longestTaskMs": 65,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 2.900000000023283,
+          "p95": 9,
+          "max": 9.70000000006985,
+          "sum": 237.2000000004191
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.5,
+          "p95": 0.5,
+          "max": 0.5,
+          "sum": 0.5
+        },
+        "pairedFlushMaximumMs": 9.70000000006985,
+        "nativeDrainUpperBoundMs": 538.5999999999767,
+        "firstVerifiedBrowserLocalDrainMs": 304.69999999995343,
+        "lateReadMinusLocalWitnessMs": 233.90000000002328,
+        "drainPollCount": 4,
+        "firstEmptyAfterFinalKeyMs": 372.30000000004657,
+        "typingWallMs": 58663.461017999995,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 66
+      }
+    ],
+    "improvement": {
+      "history": {
+        "baselineContainingTaskMs": 9061,
+        "candidateEntireTaskUpperBoundMs": 70,
+        "reductionPercent": 99.2274583379318,
+        "status": "registered-relative-gate-applied",
+        "candidateAttribution": "sampled-native-reducer",
+        "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+      },
+      "collaboration": {
+        "baselineContainingTaskMs": 9467,
+        "candidateEntireTaskUpperBoundMs": 70,
+        "reductionPercent": 99.26058941586564,
+        "status": "registered-relative-gate-applied",
+        "candidateAttribution": "sampled-native-reducer",
+        "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+      }
+    },
+    "unprofiledImprovement": {
+      "metric": "whole-browser-longest-task-reduction",
+      "samples": [
+        {
+          "sample": "plain-3",
+          "baselineLongestTaskMs": 9321,
+          "candidateEntireTaskUpperBoundMs": 70,
+          "reductionPercent": 99.24900761720845
+        },
+        {
+          "sample": "plain-2",
+          "baselineLongestTaskMs": 9264,
+          "candidateEntireTaskUpperBoundMs": 70,
+          "reductionPercent": 99.24438687392055
+        },
+        {
+          "sample": "plain-1",
+          "baselineLongestTaskMs": 9220,
+          "candidateEntireTaskUpperBoundMs": 70,
+          "reductionPercent": 99.24078091106291
+        }
+      ],
+      "conservativeAggregateReductionPercent": 99.24078091106291,
+      "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+    },
+    "profilingVariation": [
+      {
+        "role": "baseline-observation",
+        "plainTypingMs": {
+          "count": 3,
+          "p50": 80646.67362399999,
+          "p95": 81373.157788,
+          "max": 81373.157788,
+          "sum": 242411.05514399998
+        },
+        "profileTypingMs": 82712.20110200002,
+        "profileMinusPlainMedianMs": 2065.5274780000327,
+        "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+      },
+      {
+        "role": "candidate",
+        "plainTypingMs": {
+          "count": 3,
+          "p50": 58663.461017999995,
+          "p95": 59458.718810000006,
+          "max": 59458.718810000006,
+          "sum": 176780.655959
+        },
+        "profileTypingMs": 60741.51489399999,
+        "profileMinusPlainMedianMs": 2078.053875999998,
+        "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+      }
+    ],
+    "composition": {
+      "baseline": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 0,
+        "reorderedSampleCount": 0,
+        "clock": {
+          "beforeMs": 2314,
+          "afterMs": 2737.1999999999534,
+          "uncertaintyMs": 423.19999999995343,
+          "profileStartTimeUs": 682459821,
+          "profileEndTimeUs": 784788168
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 7647,
+          "sampledCpuMs": 8155.4119999997465,
+          "certainContainingTasks": [
+            {
+              "index": 44,
+              "startedAt": 86018.80000000005,
+              "durationMs": 9061,
+              "sampleCount": 7268
+            }
+          ],
+          "maxContainingTaskMs": 9061,
+          "taskAttribution": "certain-whole-containing-task"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 8062,
+          "sampledCpuMs": 8637.356999999844,
+          "certainContainingTasks": [
+            {
+              "index": 45,
+              "startedAt": 95080.59999999998,
+              "durationMs": 9467,
+              "sampleCount": 7704
+            }
+          ],
+          "maxContainingTaskMs": 9467,
+          "taskAttribution": "certain-whole-containing-task"
+        }
+      },
+      "candidate": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 0,
+        "reorderedSampleCount": 0,
+        "clock": {
+          "beforeMs": 2382.5999999999767,
+          "afterMs": 2813,
+          "uncertaintyMs": 430.4000000000233,
+          "profileStartTimeUs": 1040165078,
+          "profileEndTimeUs": 1101977326
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 137,
+          "sampledCpuMs": 127.18799999999997,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 104,
+          "sampledCpuMs": 113.01699999999994,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        }
+      }
+    }
+  },
+  "clocks": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "data": {
+        "bracket": {
+          "beforeMs": 2314,
+          "afterMs": 2737.1999999999534
+        },
+        "profileStartTimeUs": 682459821,
+        "profileEndTimeUs": 784788168,
+        "sha256": "432f6ddab7c7dcac130671a7910026c1d5782471e43e93e98edb830d72ae09f6"
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "data": {
+        "bracket": {
+          "beforeMs": 2382.5999999999767,
+          "afterMs": 2813
+        },
+        "profileStartTimeUs": 1040165078,
+        "profileEndTimeUs": 1101977326,
+        "sha256": "f1c30910f17dae3eb4e592ef0f2f08f8fe2e6764fd874f5604066c8a5d733460"
+      }
+    }
+  ]
+}

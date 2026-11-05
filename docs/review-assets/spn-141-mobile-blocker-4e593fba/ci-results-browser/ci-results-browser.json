@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "a10853aa57c4e7a4373988a69faf3582ada07da1597e3787610dcc386d775a79",
+    "error": "Error: Incomplete coverage doc-responsiveness: selected=true, result=failure",
+    "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"success\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"failure\",\"doc-callback-lifetimes\":\"success\"}"
+  }
+}

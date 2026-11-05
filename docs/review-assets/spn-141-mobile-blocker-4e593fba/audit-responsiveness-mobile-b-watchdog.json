@@ -1,0 +1,94 @@
+{
+  "root": 11908,
+  "started": 1793856673706,
+  "elapsedMs": 805,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91072,
+  "peakKiB": 230160,
+  "live": [
+    {
+      "pid": 11908,
+      "parent": 11872,
+      "group": 11908,
+      "rssKiB": 89472,
+      "started": "Wed Nov  4 21:31:13 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-mobile-b-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-mobile-b.ts"
+    },
+    {
+      "pid": 12188,
+      "parent": 11908,
+      "group": 11908,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:31:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 11908,
+      "parent": 11872,
+      "group": 11908,
+      "rssKiB": 89472,
+      "started": "Wed Nov  4 21:31:13 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-mobile-b-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-mobile-b.ts"
+    },
+    {
+      "pid": 11927,
+      "parent": 11908,
+      "group": 11908,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:31:13 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 11953,
+      "parent": 11908,
+      "group": 11908,
+      "rssKiB": 132256,
+      "started": "Wed Nov  4 21:31:13 2026",
+      "command": "node /tmp/spn141-after144-hosted/audit-responsiveness-mobile-b.ts"
+    },
+    {
+      "pid": 12082,
+      "parent": 11953,
+      "group": 11908,
+      "rssKiB": 320,
+      "started": "Wed Nov  4 21:31:14 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 12088,
+      "parent": 11908,
+      "group": 11908,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:31:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 12134,
+      "parent": 11953,
+      "group": 11908,
+      "rssKiB": 7392,
+      "started": "Wed Nov  4 21:31:14 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 12140,
+      "parent": 11908,
+      "group": 11908,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:31:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 12188,
+      "parent": 11908,
+      "group": 11908,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:31:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

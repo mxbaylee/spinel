@@ -1,0 +1,20 @@
+{
+  "id": 13391186267,
+  "node_id": "MDg6QXJ0aWZhY3QxMzM5MTE4NjI2Nw==",
+  "name": "ci-results-browser",
+  "size_in_bytes": 465,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13391186267",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13391186267/zip",
+  "expired": false,
+  "digest": "sha256:39ce66918523e0f55477da8f76486c857468690fb8635dd19109212c2c5924f9",
+  "created_at": "2026-11-05T05:30:00Z",
+  "updated_at": "2026-11-05T05:30:00Z",
+  "expires_at": "2026-12-05T05:29:59Z",
+  "workflow_run": {
+    "id": 41970163093,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-141-storage-quiescence",
+    "head_sha": "4e593fbaf9ea89585920053b9415f9a8eac0944f"
+  }
+}

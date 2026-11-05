@@ -1,0 +1,54 @@
+{
+  "root": 7553,
+  "started": 1793854491220,
+  "elapsedMs": 198,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93024,
+  "peakKiB": 93024,
+  "live": [
+    {
+      "pid": 7553,
+      "parent": 7517,
+      "group": 7553,
+      "rssKiB": 91440,
+      "started": "Wed Nov  4 20:54:51 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/chrome-audit-a-watchdog.json node /tmp/spn141-after144-hosted/audit-chrome-a.ts"
+    },
+    {
+      "pid": 7694,
+      "parent": 7553,
+      "group": 7553,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 20:54:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 7553,
+      "parent": 7517,
+      "group": 7553,
+      "rssKiB": 91440,
+      "started": "Wed Nov  4 20:54:51 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/chrome-audit-a-watchdog.json node /tmp/spn141-after144-hosted/audit-chrome-a.ts"
+    },
+    {
+      "pid": 7572,
+      "parent": 7553,
+      "group": 7553,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 20:54:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 7694,
+      "parent": 7553,
+      "group": 7553,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 20:54:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

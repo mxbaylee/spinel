@@ -1,0 +1,231 @@
+{
+  "status": "passed",
+  "summaries": [
+    {
+      "sample": "plain-1",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.39999999990686774,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 304.69999999995343,
+      "groups": 66
+    },
+    {
+      "sample": "plain-2",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 1.2000000000698492,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.2999999999301508,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 1.5,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 318,
+      "groups": 1
+    },
+    {
+      "sample": "plain-3",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.40000000002328306,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.40000000002328306,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.8000000000465661,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 302.80000000004657,
+      "groups": 1
+    },
+    {
+      "sample": "profile",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.6999999999534339,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.4000000001396984,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 1.1999999999534339,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 334.19999999995343,
+      "groups": 1
+    },
+    {
+      "scenario": "resume-native-typing-after-quiet-pause",
+      "summary": {
+        "finalOriginalKeyAt": 61057.40000000014,
+        "continuationKeyAt": 61448,
+        "continuationFrameAt": 61481.700000000186,
+        "browserQuietGapMs": 390.5999999998603,
+        "continuationKeyToFrameMs": 33.700000000186265,
+        "continuationKeyToNativeReadMs": 33.800000000046566,
+        "continuationRequestReturnMs": 39.52196300000651,
+        "finalOriginalKeyToContinuationFrameMs": 424.30000000004657,
+        "finalOriginalKeyToContinuationNativeReadMs": 424.39999999990687
+      }
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+      "eventCount": 4,
+      "physicalIme": false
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+      "eventCount": 226,
+      "physicalIme": false
+    }
+  ]
+}

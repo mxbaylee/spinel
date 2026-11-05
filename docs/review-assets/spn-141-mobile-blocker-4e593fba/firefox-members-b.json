@@ -1,0 +1,140 @@
+{
+  "archive": {
+    "bytes": 453796,
+    "sha256": "6c7798700d51177bf574849b8725ba0776d5b51532a9ac350d66697f536ed5ed"
+  },
+  "count": 16,
+  "retained": 16,
+  "omitted": 0,
+  "method": "all original ZIP members streamed and CRC32/SHA256 verified; non-SQLite extracted exclusively and re-read; original ZIP unchanged",
+  "members": [
+    {
+      "file": "firefox/3479a293-556b-4fad-b3ee-0a81c6993c11-before-doc-input.png",
+      "bytes": 38952,
+      "sha256": "e94c22e2be36b24c0580134c7ff52ca3dfaaa5a51e1f4ec28163c7d01c1bd78a",
+      "crc32": 3405454498,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/doc-conflict-offline.png",
+      "bytes": 39845,
+      "sha256": "727cd20678a2d678b3ce81c639c6591d9e441d9a5d482408f5ee6906fa5ed27a",
+      "crc32": 2841527624,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/acceptance.json",
+      "bytes": 56443,
+      "sha256": "de932b152996872c5be8ed10808734dfcb7c18787035ad73234055d0068c66f9",
+      "crc32": 1031196004,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/84faf3c7-6fcf-4436-82b9-f36d043175ee-before-doc-input.png",
+      "bytes": 38624,
+      "sha256": "396acfee0701d88a3f5875b32abf4716055493d0edc729a54e741d79594f6c0c",
+      "crc32": 2681085077,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/doc-recovered-copy.png",
+      "bytes": 44143,
+      "sha256": "7882df88885f43702e7b0723e02b60e9fb8a9494e9059ffc372a75dbe59c10a6",
+      "crc32": 4109668126,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/firefox-driver-1.log",
+      "bytes": 1760,
+      "sha256": "ac0cf118194f5aa9dee01f9ef3ccd3fda4b2e40937c7b337763abcbf1811562d",
+      "crc32": 250266419,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/doc-normal-offline.png",
+      "bytes": 39491,
+      "sha256": "434fc3bf423017f6a1eabcbdd85c367ead127d0eaea727ca148393a6b8881796",
+      "crc32": 2169886241,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/firefox-driver-2.log",
+      "bytes": 2143,
+      "sha256": "349b67472ded99fc97403101d3cb4f4afc7f00b61614d1cd44cd2c7254e47c2d",
+      "crc32": 3143171196,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/firefox-driver-3.log",
+      "bytes": 2269,
+      "sha256": "25bf7c21d92226c7961449bab89ad5f3caa8d208ce481e3d370d3dea2f958c34",
+      "crc32": 861783356,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/firefox-driver-4.log",
+      "bytes": 2034,
+      "sha256": "3eb557d29a035004b87e9ce92794d90cdcf7a21aab5f6a2e4d68f8536c789ca4",
+      "crc32": 2556730296,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/firefox-storage-prompt-1.json",
+      "bytes": 21974,
+      "sha256": "4b9e6f7fe2ea35c373450ef21ac68a42c8f61daabbbafaa885465908fe03f3e3",
+      "crc32": 4279574503,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/firefox-storage-prompt-1.png",
+      "bytes": 145735,
+      "sha256": "858ca04198dced60ffa97d8cc0cac6eb2cb60ee79366bda3276fe3aef74cfe89",
+      "crc32": 854559482,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/sheet-conflict-offline.png",
+      "bytes": 51811,
+      "sha256": "dcc7a1757ada5cd71c5a55d4fe56d6ce435ea8326f7581b1520476fe6017cba7",
+      "crc32": 2812656980,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/sheet-normal-offline.png",
+      "bytes": 51421,
+      "sha256": "7893929a1fc2d07cc6b6e0cf8d66443489985705fb3dddad51688cb995a351dd",
+      "crc32": 1563979689,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/sheet-recovered-copy.png",
+      "bytes": 55186,
+      "sha256": "8ec05d2f478796a31609cb40b65587a074aa8e92252928709533de956e663f08",
+      "crc32": 601688374,
+      "omitted": false,
+      "reason": null
+    },
+    {
+      "file": "firefox/versions.json",
+      "bytes": 648,
+      "sha256": "b4cb91c8e5ef69b24d4a6d7e4faf36c9f0b3b644e61816f667f75585d517e504",
+      "crc32": 2254935062,
+      "omitted": false,
+      "reason": null
+    }
+  ]
+}

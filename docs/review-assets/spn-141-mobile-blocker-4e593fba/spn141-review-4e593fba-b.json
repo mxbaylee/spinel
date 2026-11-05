@@ -1,0 +1,60 @@
+{
+  "reviewer": "B",
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "score": 97,
+  "rubric": {
+    "scope": 35,
+    "correctnessIntegrityAccess": 25,
+    "meaningfulVerification": 17,
+    "ciOperations": 10,
+    "maintainabilityOverComplexity": 10
+  },
+  "sourceFindings": [],
+  "unresolvedSourceBlockers": [],
+  "deductions": [
+    {
+      "points": 3,
+      "category": "meaningfulVerification",
+      "condition": "current-head actual Chrome/Firefox/Safari lifecycle/storage and full hosted acceptance pending",
+      "nextEvidence": "one declared first-attempt native workflow and selected ordinary gates",
+      "sourceFixRequired": false
+    }
+  ],
+  "validationPushReady": true,
+  "condition": "both independent exact-head scores above95",
+  "mergeApproval": false,
+  "independentChecks": {
+    "cleanHeadTreeBase": true,
+    "fiveCompleteSourceBytesMatch403AndC4": true,
+    "fiveSourceSha256Match": true,
+    "receiptRun41969003306All15TerminalCancelled": true,
+    "bookkeepingNextId": 147,
+    "proposedCompletions": 21,
+    "openTickets": 22,
+    "sourceWhitespace": true
+  },
+  "localEvidence": {
+    "controls": 46,
+    "controlsMs": 347,
+    "controlsPeakKiB": 91104,
+    "focusedTypeRoots": 5,
+    "typesMs": 1447,
+    "typesPeakKiB": 619968,
+    "lintMs": 16879,
+    "lintPeakKiB": 740112,
+    "pressure": "1",
+    "titleFirstFailurePreserved": true
+  },
+  "newRuntimeExecutionsByReviewer": 0,
+  "oldPassesCurrentHeadCredit": false,
+  "pending": [
+    "all seven current-head hosted gates",
+    "all three first-attempt native desktop owners",
+    "all other selected ordinary/browser owners and applicable Storybook",
+    "final exact-source immutable acceptance evidence",
+    "fresh merge guards, actual squash, receipt and obsolete-ref cleanup"
+  ],
+  "report": "/tmp/spn141-review-4e593fba-b.md"
+}

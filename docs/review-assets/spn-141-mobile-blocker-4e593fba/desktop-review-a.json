@@ -1,0 +1,677 @@
+{
+  "identities": {
+    "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+    "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+    "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+    "sourceAndTestedTree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+    "ci": 41970163093,
+    "storybook": 41970163084,
+    "native": 41970163073,
+    "attempt": 1,
+    "planArtifact": 13388658785,
+    "planZipSha256": "31795d1ddb7035f4193b62c590c21c154eab5d392a1d028f467367d55577b713",
+    "planDigest": "a10853aa57c4e7a4373988a69faf3582ada07da1597e3787610dcc386d775a79",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "previousFailedSource": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+    "previousFailedArchive": "eb51a5554244520593c66b7638f9eeff1d32fbb5",
+    "prerequisiteAcceptedSource": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "prerequisiteAcceptedArchive": "ec71f258d270d0b46c23f35b6e5d1fbda6675414",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "archive": {
+    "bytes": 196894731,
+    "sha256": "e8558dceee084a117eec1a35d54912b4b228610c2cf8b46f1b7be6d8e040cc7c"
+  },
+  "memberProof": "callback-desktop-members-a.json",
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41970163093",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042374"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 33,
+      "unmapped": 10,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 37207738,
+        "sha256": "66a7ac7a4f7a52f1915a142db7514251d0cb8f7a0d7c1a7710f7e5fdd44886c9",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 530133051,
+          "sha256": "56b454a8647775122237fa6ab4733f8243ef99c45d8dee6f9585fd8bdb8cf964"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 51775798,
+        "sha256": "216f1f8f6acd7c0c498e20526d0d9f084df2e9111c4007c351c54394b9010d9c",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 665146115,
+          "sha256": "e08692cd89f49a742932c05f3f4a5ea624d051c3309d8cc72eb712ce0a96f66e"
+        }
+      },
+      "framing": {
+        "bytes": 530133051,
+        "sha256": "56b454a8647775122237fa6ab4733f8243ef99c45d8dee6f9585fd8bdb8cf964",
+        "packets": 1923412,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 1048630,
+        "retainedEvents": 1048630,
+        "callbackEvents": 221340,
+        "uncompressedBytes": 665146115,
+        "uncompressedSha256": "e08692cd89f49a742932c05f3f4a5ea624d051c3309d8cc72eb712ce0a96f66e",
+        "maxEventBytes": 18371
+      },
+      "timing": {
+        "behaviorCompleteMs": 94531.108035,
+        "completionWaitMs": 11550.625759000002,
+        "endResponseMs": 4.874309999999241,
+        "readStoreMs": 7736.264492000002,
+        "framingMaterializeMs": 3179.0753340000083,
+        "conversionMs": 40881.934328,
+        "statisticsMs": 7665.739899000007,
+        "parseMs": 10117.770265,
+        "attributionMs": 734.2963809999637,
+        "analysisMs": 537.6034010000294,
+        "cleanupCompleteMs": 177133.050705,
+        "cleanupHeadroomMs": 242866.949295
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": false,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 7687,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 9,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1878,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 530.13 MB in 7.58s (70.0 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.6s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-mZ3CCl/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    },
+    {
+      "role": "candidate",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41970163093",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042374"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 35,
+      "unmapped": 9,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 37337906,
+        "sha256": "07f272147f3af098cf947a6c2a756a62978094cb709ce0359867df0459d401f4",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 549737160,
+          "sha256": "c5569fb60b8f3e40fe5882b20a5cc1842dde36ccaf9ee161d762038ebb875ec7"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 50190478,
+        "sha256": "83b53a4b28cbcac78a202934d9df4e5137c8d1627ed135645d36b6abf9720a83",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 671984459,
+          "sha256": "6fed5c8f3bbafcbbd07bb8806bcaa1085207f5cfc9bc21c84009de2d0c1a4479"
+        }
+      },
+      "framing": {
+        "bytes": 549737160,
+        "sha256": "c5569fb60b8f3e40fe5882b20a5cc1842dde36ccaf9ee161d762038ebb875ec7",
+        "packets": 1749081,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 958712,
+        "retainedEvents": 958712,
+        "callbackEvents": 197508,
+        "uncompressedBytes": 671984459,
+        "uncompressedSha256": "6fed5c8f3bbafcbbd07bb8806bcaa1085207f5cfc9bc21c84009de2d0c1a4479",
+        "maxEventBytes": 18371
+      },
+      "timing": {
+        "behaviorCompleteMs": 73359.36698,
+        "completionWaitMs": 12220.59294100001,
+        "endResponseMs": 4.184294999999111,
+        "readStoreMs": 7912.201509999999,
+        "framingMaterializeMs": 3081.238977000001,
+        "conversionMs": 40411.93501100001,
+        "statisticsMs": 7795.378213000018,
+        "parseMs": 10024.515186999983,
+        "attributionMs": 745.8307110000169,
+        "analysisMs": 489.41749699998763,
+        "cleanupCompleteMs": 156204.509882,
+        "cleanupHeadroomMs": 263795.49011799996
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": true,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 4,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 549.74 MB in 7.70s (71.4 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.7s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-aOgEaf/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 177405,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 242595
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 156412,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 263588
+    }
+  ],
+  "comparisonAccepted": true,
+  "comparisonExactlyReproducedFromRetainedAnalysis": true,
+  "rawEventAnalysisReparsed": false,
+  "innerProtoDecoded": false,
+  "scope": "complete streamed framing/raw hashes plus retained hosted analysis and actual source assertions; no browser/converter rerun",
+  "nativeAssertions": [
+    {
+      "role": "baselineObservation",
+      "textBytes": 2088,
+      "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+      "keyCount": 2086,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "selection": {
+        "start": 2086,
+        "end": 2086,
+        "segmentId": ""
+      },
+      "unmappedFunctionCallPositions": 10,
+      "maxObservedBufferFill": 0.4876624643802643,
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership."
+    },
+    {
+      "role": "candidate",
+      "textBytes": 2088,
+      "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+      "keyCount": 2086,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "selection": {
+        "start": 2086,
+        "end": 2086,
+        "segmentId": ""
+      },
+      "unmappedFunctionCallPositions": 9,
+      "maxObservedBufferFill": 0.5067846775054932,
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership."
+    }
+  ],
+  "terminalJob": {
+    "id": 127056548236,
+    "run": 41970163093,
+    "attempt": 1,
+    "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+    "status": "completed",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T04:52:53Z",
+    "completedAt": "2026-11-05T05:00:28Z",
+    "successfulSteps": 19,
+    "jobSha256": "426b998cf71eb09d8c21ba7b3b0812b587f6085e2c44f0b7b04e0f2dcf64c401",
+    "logSha256": "11010174355a8000171a62abedad7c5edc3dedbef31dca1bc25ac61aa95f01ca",
+    "artifact": 13390015877,
+    "artifactMetadataSha256": "8845cb92955d941985793cfd7feb67fbdb0e99108899180828ada93ff2560f98"
+  },
+  "accepted": true,
+  "acceptanceScope": "current-source desktop callback first pair only",
+  "oldPassCredit": false,
+  "overallMergeApproval": false,
+  "validation": {
+    "extract": {
+      "root": 8673,
+      "started": 1793855089881,
+      "elapsedMs": 1916,
+      "outcome": "command-passed",
+      "pressure": "1",
+      "rssKiB": 74608,
+      "peakKiB": 234464,
+      "live": [
+        {
+          "pid": 8673,
+          "parent": 8637,
+          "group": 8673,
+          "rssKiB": 73008,
+          "started": "Wed Nov  4 21:04:49 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/retain-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/retain-desktop-a.ts"
+        },
+        {
+          "pid": 8815,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:51 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "known": [
+        {
+          "pid": 8673,
+          "parent": 8637,
+          "group": 8673,
+          "rssKiB": 73008,
+          "started": "Wed Nov  4 21:04:49 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/retain-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/retain-desktop-a.ts"
+        },
+        {
+          "pid": 8692,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:49 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8718,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 160752,
+          "started": "Wed Nov  4 21:04:49 2026",
+          "command": "node /tmp/spn141-after144-hosted/retain-desktop-a.ts"
+        },
+        {
+          "pid": 8724,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:50 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8737,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:50 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8750,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:50 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8763,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:50 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8776,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:51 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8789,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:51 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8802,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:51 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8815,
+          "parent": 8673,
+          "group": 8673,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:51 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+    },
+    "streamAudit": {
+      "root": 8858,
+      "started": 1793855098294,
+      "elapsedMs": 3824,
+      "outcome": "command-passed",
+      "pressure": "1",
+      "rssKiB": 95536,
+      "peakKiB": 355008,
+      "live": [
+        {
+          "pid": 8858,
+          "parent": 8823,
+          "group": 8858,
+          "rssKiB": 93936,
+          "started": "Wed Nov  4 21:04:58 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/audit-desktop-a.ts"
+        },
+        {
+          "pid": 9123,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:02 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "known": [
+        {
+          "pid": 8858,
+          "parent": 8823,
+          "group": 8858,
+          "rssKiB": 93936,
+          "started": "Wed Nov  4 21:04:58 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/audit-desktop-a.ts"
+        },
+        {
+          "pid": 8877,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:58 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8903,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 260896,
+          "started": "Wed Nov  4 21:04:58 2026",
+          "command": "node /tmp/spn141-after144-hosted/audit-desktop-a.ts"
+        },
+        {
+          "pid": 8926,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:58 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8939,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:58 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8952,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8965,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8978,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 8991,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:04:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9004,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:00 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9016,
+          "parent": 8903,
+          "group": 8858,
+          "rssKiB": 7344,
+          "started": "Wed Nov  4 21:05:00 2026",
+          "command": "(git)"
+        },
+        {
+          "pid": 9022,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:00 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9045,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:00 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9058,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:00 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9071,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:01 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9084,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:01 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9097,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:01 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9110,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:01 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 9123,
+          "parent": 8858,
+          "group": 8858,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:05:02 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+    }
+  }
+}

@@ -1,0 +1,335 @@
+{
+  "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+  "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "testedSha": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "runner": {
+    "label": "macos-15-intel",
+    "arch": "x64",
+    "imageOS": "macos15",
+    "imageVersion": "20260824.0482.1"
+  },
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41970163073",
+  "status": "passed",
+  "safariTargets": [
+    {
+      "stage": "online",
+      "pid": 3953,
+      "time": "2026-11-05T04:50:53.906Z",
+      "phase": "identity-established",
+      "timeoutMs": 8000,
+      "trace": "Safari request phase: {\"at\":\"2026-11-05T04:50:54.061Z\",\"phase\":\"appkit-bundle-create-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.085Z\",\"phase\":\"appkit-bundle-create-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.088Z\",\"phase\":\"appkit-executable-load-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.369Z\",\"phase\":\"appkit-executable-load-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.370Z\",\"phase\":\"running-application-class-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.372Z\",\"phase\":\"running-application-class-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.373Z\",\"phase\":\"process-lookup-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.374Z\",\"phase\":\"process-lookup-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.374Z\",\"phase\":\"process-liveness-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.377Z\",\"phase\":\"process-liveness-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.377Z\",\"phase\":\"pid-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.378Z\",\"phase\":\"pid-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.379Z\",\"phase\":\"bundle-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.379Z\",\"phase\":\"bundle-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.380Z\",\"phase\":\"executable-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.386Z\",\"phase\":\"executable-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.386Z\",\"phase\":\"launch-date-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.390Z\",\"phase\":\"launch-date-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.391Z\",\"phase\":\"identity-validation-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.391Z\",\"phase\":\"identity-validation-end\"}\n",
+      "stdout": "{\"pid\":3953,\"bundleIdentifier\":\"com.apple.Safari\",\"executablePath\":\"/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari\",\"launchedAt\":1793854252.5392997}\n",
+      "identity": {
+        "pid": 3953,
+        "bundleIdentifier": "com.apple.Safari",
+        "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+        "launchedAt": 1793854252.5392997
+      },
+      "elapsedMs": 1493
+    },
+    {
+      "stage": "offline-restart",
+      "pid": 4273,
+      "time": "2026-11-05T04:51:20.156Z",
+      "phase": "identity-established",
+      "timeoutMs": 8000,
+      "trace": "Safari request phase: {\"at\":\"2026-11-05T04:51:20.206Z\",\"phase\":\"appkit-bundle-create-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.311Z\",\"phase\":\"appkit-bundle-create-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.311Z\",\"phase\":\"appkit-executable-load-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.314Z\",\"phase\":\"appkit-executable-load-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.314Z\",\"phase\":\"running-application-class-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.315Z\",\"phase\":\"running-application-class-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.317Z\",\"phase\":\"process-lookup-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.318Z\",\"phase\":\"process-lookup-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.318Z\",\"phase\":\"process-liveness-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.320Z\",\"phase\":\"process-liveness-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.320Z\",\"phase\":\"pid-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.321Z\",\"phase\":\"pid-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.321Z\",\"phase\":\"bundle-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.321Z\",\"phase\":\"bundle-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.322Z\",\"phase\":\"executable-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.323Z\",\"phase\":\"executable-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.324Z\",\"phase\":\"launch-date-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.325Z\",\"phase\":\"launch-date-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.326Z\",\"phase\":\"identity-validation-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.326Z\",\"phase\":\"identity-validation-end\"}\n",
+      "stdout": "{\"pid\":4273,\"bundleIdentifier\":\"com.apple.Safari\",\"executablePath\":\"/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari\",\"launchedAt\":1793854280.02688}\n",
+      "identity": {
+        "pid": 4273,
+        "bundleIdentifier": "com.apple.Safari",
+        "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+        "launchedAt": 1793854280.02688
+      },
+      "elapsedMs": 177
+    }
+  ],
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+  "machine": "x86_64",
+  "version": "27.2",
+  "beforePid": "3953",
+  "automationTitleRequests": [
+    {
+      "attempt": 1,
+      "targetPid": 3953,
+      "timeoutMs": 60000,
+      "startedAt": "2026-11-05T04:50:55.402Z",
+      "phases": [
+        "{\"at\":\"2026-11-05T04:50:55.504Z\",\"phase\":\"appkit-bundle-create-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-bundle-create-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-executable-load-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.857Z\",\"phase\":\"appkit-executable-load-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.858Z\",\"phase\":\"running-application-class-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.859Z\",\"phase\":\"running-application-class-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.860Z\",\"phase\":\"process-lookup-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-lookup-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-liveness-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.863Z\",\"phase\":\"process-liveness-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.865Z\",\"phase\":\"bundle-read-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"bundle-read-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"executable-read-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.912Z\",\"phase\":\"executable-read-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.913Z\",\"phase\":\"launch-date-read-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"launch-date-read-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-end\"}",
+        "{\"at\":\"2026-11-05T04:50:55.916Z\",\"phase\":\"application-constructor-begin\"}",
+        "{\"at\":\"2026-11-05T04:50:55.975Z\",\"phase\":\"application-constructor-end\"}",
+        "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-specifier-ready\"}",
+        "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-get-begin\"}",
+        "{\"at\":\"2026-11-05T04:51:14.772Z\",\"phase\":\"title-get-end\"}"
+      ],
+      "value": "Spinel desktop profile probe",
+      "finishedAt": "2026-11-05T04:51:14.820Z"
+    }
+  ],
+  "automationPromptChecks": [
+    {
+      "mode": "inspect",
+      "startedAt": "2026-11-05T04:50:55.406Z",
+      "value": "Recognized hosted-compute-agent control of Safari:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+      "finishedAt": "2026-11-05T04:51:03.967Z"
+    },
+    {
+      "mode": "capture",
+      "path": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+      "startedAt": "2026-11-05T04:51:03.967Z",
+      "error": {
+        "message": "Command failed: /usr/sbin/screencapture -x /Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+        "code": null,
+        "signal": "SIGTERM",
+        "killed": true,
+        "stdout": "",
+        "stderr": ""
+      },
+      "finishedAt": "2026-11-05T04:51:09.253Z"
+    },
+    {
+      "mode": "approve",
+      "startedAt": "2026-11-05T04:51:09.253Z",
+      "value": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+      "finishedAt": "2026-11-05T04:51:14.759Z"
+    }
+  ],
+  "automationStartedAt": "2026-11-05T04:50:55.402Z",
+  "automationPrompt": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+  "automationReadyTitleRequest": 1,
+  "automationFinishedAt": "2026-11-05T04:51:15.011Z",
+  "firstTitleRequest": {
+    "attempt": 1,
+    "targetPid": 3953,
+    "timeoutMs": 60000,
+    "startedAt": "2026-11-05T04:50:55.402Z",
+    "phases": [
+      "{\"at\":\"2026-11-05T04:50:55.504Z\",\"phase\":\"appkit-bundle-create-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-bundle-create-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-executable-load-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.857Z\",\"phase\":\"appkit-executable-load-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.858Z\",\"phase\":\"running-application-class-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.859Z\",\"phase\":\"running-application-class-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.860Z\",\"phase\":\"process-lookup-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-lookup-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-liveness-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.863Z\",\"phase\":\"process-liveness-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.865Z\",\"phase\":\"bundle-read-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"bundle-read-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"executable-read-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.912Z\",\"phase\":\"executable-read-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.913Z\",\"phase\":\"launch-date-read-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"launch-date-read-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-end\"}",
+      "{\"at\":\"2026-11-05T04:50:55.916Z\",\"phase\":\"application-constructor-begin\"}",
+      "{\"at\":\"2026-11-05T04:50:55.975Z\",\"phase\":\"application-constructor-end\"}",
+      "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-specifier-ready\"}",
+      "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-get-begin\"}",
+      "{\"at\":\"2026-11-05T04:51:14.772Z\",\"phase\":\"title-get-end\"}"
+    ],
+    "value": "Spinel desktop profile probe",
+    "finishedAt": "2026-11-05T04:51:14.820Z"
+  },
+  "appleEvents": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+  "prepared": {
+    "prepared": true,
+    "persisted": false,
+    "persistenceRequested": false
+  },
+  "paintBaselines": {
+    "online": {
+      "time": "2026-11-05T04:51:17.424Z",
+      "pid": "3953",
+      "state": {
+        "windowId": 34,
+        "bounds": {
+          "x": 298,
+          "y": 40,
+          "width": 1324,
+          "height": 940
+        },
+        "tabIndex": 1,
+        "title": "Spinel desktop profile probe",
+        "url": "http://localhost:8175/",
+        "page": {
+          "url": "http://localhost:8175/",
+          "title": "Spinel desktop profile probe",
+          "readyState": "complete",
+          "visibility": "visible",
+          "hasFocus": true,
+          "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+        }
+      },
+      "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-online.png",
+      "canvas2d": {
+        "context": "2d",
+        "options": "default",
+        "width": 320,
+        "height": 120,
+        "contextAvailable": true,
+        "drawCompleted": true,
+        "readbackAfterPhysicalCapture": true,
+        "pixels": [
+          {
+            "x": 80,
+            "y": 80,
+            "rgba": [
+              118,
+              51,
+              213,
+              255
+            ]
+          },
+          {
+            "x": 240,
+            "y": 80,
+            "rgba": [
+              37,
+              99,
+              235,
+              255
+            ]
+          }
+        ]
+      }
+    },
+    "offline": {
+      "time": "2026-11-05T04:51:24.501Z",
+      "pid": "4273",
+      "state": {
+        "windowId": 45,
+        "bounds": {
+          "x": 298,
+          "y": 40,
+          "width": 1324,
+          "height": 940
+        },
+        "tabIndex": 1,
+        "title": "Spinel desktop profile probe",
+        "url": "http://localhost:8175/?offline-restart",
+        "page": {
+          "url": "http://localhost:8175/?offline-restart",
+          "title": "Spinel desktop profile probe",
+          "readyState": "complete",
+          "visibility": "visible",
+          "hasFocus": true,
+          "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+        }
+      },
+      "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-offline.png",
+      "canvas2d": {
+        "context": "2d",
+        "options": "default",
+        "width": 320,
+        "height": 120,
+        "contextAvailable": true,
+        "drawCompleted": true,
+        "readbackAfterPhysicalCapture": true,
+        "pixels": [
+          {
+            "x": 80,
+            "y": 80,
+            "rgba": [
+              118,
+              51,
+              213,
+              255
+            ]
+          },
+          {
+            "x": 240,
+            "y": 80,
+            "rgba": [
+              37,
+              99,
+              235,
+              255
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requestsBeforeOffline": 4,
+  "afterPid": "4273",
+  "retained": {
+    "localStorage": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+    "indexedDB": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+    "cache": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+    "worker": true
+  },
+  "automationLog": {
+    "startedAt": "2026-11-05T04:50:55.402Z",
+    "finishedAt": "2026-11-05T04:51:15.011Z",
+    "queryEnd": "2026-11-05T04:51:16.000Z",
+    "requestIds": [
+      "308.29"
+    ],
+    "error": {
+      "message": "Error: Command failed: /usr/bin/log show --start 2026-11-05 04:50:55+0000 --end 2026-11-05 04:51:16+0000 --style compact --info --debug --predicate subsystem == \"com.apple.TCC\" OR process == \"appleeventsd\"",
+      "code": null,
+      "signal": "SIGTERM",
+      "killed": true,
+      "stderr": ""
+    },
+    "sourceComplete": false,
+    "matchedLineCount": 28,
+    "retainedLineCount": 28,
+    "retainedBytes": 5323,
+    "headLineCount": 28,
+    "omittedLineCount": 0,
+    "truncated": true,
+    "lines": [
+      "2026-11-05 04:50:55.250 Df appleeventsd[308:3c15] [com.apple.xpc:connection] [0x7fe2a6b09df0] invalidated because the client process (pid 3979) either cancelled the connection or exited",
+      "2026-11-05 04:50:55.250 A  appleeventsd[308:3c15] Handle XPC Event",
+      "2026-11-05 04:50:55.250 I  appleeventsd[308:3c15] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=3979, so unregistering any application with that pid.",
+      "2026-11-05 04:50:55.250 I  appleeventsd[308:3c15] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 3979/0x0:0x0 0x00000000still-hintable  sess=100002 because we received error on its connection.",
+      "2026-11-05 04:50:55.250 I  appleeventsd[308:3c15] [com.apple.appleevents:connection] REMOVING: conn:0x0x7fe2a6b09df0 - 3979 from sAllConnectionSetP",
+      "2026-11-05 04:50:55.250 Db appleeventsd[308:3c15] [com.apple.appleevents:connection] Connection count: 23",
+      "2026-11-05 04:50:55.594 A  appleeventsd[308:86c] New XPC Connection",
+      "2026-11-05 04:50:55.594 I  appleeventsd[308:86c] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=3999 peer-session=186a2",
+      "2026-11-05 04:50:55.594 I  appleeventsd[308:86c] [com.apple.appleevents:connection] ADDING: conn:0x0x7fe2a68125a0 - 3999 to sAllConnectionSetP",
+      "2026-11-05 04:50:55.594 Df appleeventsd[308:86c] [com.apple.xpc:connection] [0x7fe2a68125a0] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[3999].0x7fe2a68125a0",
+      "2026-11-05 04:50:55.594 A  appleeventsd[308:86c] Handle XPC Event",
+      "2026-11-05 04:50:55.594 I  appleeventsd[308:86c] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=3999 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7fe2a6806180> { name = 8999, right = send, urefs = 1 } , }",
+      "2026-11-05 04:50:55.595 I  appleeventsd[308:86c] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=3999 token=[sess=100002 pid=3999 uid:501,501,501 g:20,20 pV:8547] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:8999/0x2327 send:2 limit:0)",
+      "2026-11-05 04:50:55.595 I  appleeventsd[308:3c15] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100002 pid=3999 uid:501,501,501 g:20,20 pV:8547]",
+      "2026-11-05 04:50:55.595 Df appleeventsd[308:3c15] [com.apple.xpc:connection] [0x7fe2a68123f0] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+      "2026-11-05 04:50:55.595 A  appleeventsd[308:3c15] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+      "2026-11-05 04:50:55.595 I  appleeventsd[308:3c15] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=308.29, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:3999, auid:501, euid:501},",
+      "2026-11-05 04:50:55.595 Df tccd[150:390b] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=308, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=308.29",
+      "2026-11-05 04:50:55.596 I  tccd[150:390b] [com.apple.TCC:access] REQUEST_MSG: msgID=308.29, msg={",
+      "\tservice=\"kTCCServiceAppleEvents\"",
+      "2026-11-05 04:50:55.596 I  tccd[150:390b] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=967, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=3999, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=308, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+      "2026-11-05 04:50:55.596 I  tccd[150:390b] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=967, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=3999, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=308, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+      "2026-11-05 04:50:55.602 Df tccd[150:390b] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=308.29",
+      "2026-11-05 04:50:55.602 I  appleeventsd[308:3c15] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7fe2a5f14940> { count = 2, transaction: 0, voucher = 0x0, contents =",
+      "2026-11-05 04:50:55.602 Df appleeventsd[308:3c15] [com.apple.xpc:connection] [0x7fe2a68123f0] invalidated after the last release of the connection object",
+      "2026-11-05 04:50:56.712 A  appleeventsd[308:3c14] Handle XPC Event",
+      "2026-11-05 04:50:56.712 I  appleeventsd[308:3c14] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=3999 got event {command=kAELookupClientPort, asn=0x0-0x3d03d, }",
+      "2026-11-05 04:50:56.712 I  appleeventsd[308:3c14] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x3d03d name=(null) bundleID=(null) signature=0x00000000 session=186a2"
+    ]
+  }
+}

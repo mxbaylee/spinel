@@ -1,0 +1,250 @@
+[
+  {
+    "sample": "plain-1",
+    "capacityIndex": 61,
+    "ordinal": 62,
+    "reason": "capacity",
+    "startedAt": 143736.09999999986,
+    "durationMs": 116.5,
+    "history": 32,
+    "collaboration": 32,
+    "endedAt": 143852.59999999986,
+    "native": [
+      {
+        "sequence": 185,
+        "unitId": "448d2011-9226-480d-b2b6-39cb71926ba9",
+        "phase": "history",
+        "origin": "policy-capacity",
+        "startedAt": 143736.09999999986,
+        "endedAt": 143793,
+        "before": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 32
+        },
+        "outcome": "returned",
+        "epoch": "7e026139-98e0-43bf-80a7-ed8151d189c5",
+        "generation": "448d2011-9226-480d-b2b6-39cb71926ba9:1793855718049.8:1267.8000000000466:1",
+        "completedStates": 1984
+      },
+      {
+        "sequence": 186,
+        "unitId": "448d2011-9226-480d-b2b6-39cb71926ba9",
+        "phase": "collaboration",
+        "origin": "policy-capacity",
+        "startedAt": 143793,
+        "endedAt": 143852.59999999986,
+        "before": {
+          "history": 0,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "epoch": "7e026139-98e0-43bf-80a7-ed8151d189c5",
+        "generation": "448d2011-9226-480d-b2b6-39cb71926ba9:1793855718049.8:1267.8000000000466:1",
+        "completedStates": 1984
+      },
+      {
+        "sequence": 184,
+        "unitId": "448d2011-9226-480d-b2b6-39cb71926ba9",
+        "phase": "pair",
+        "origin": "policy-capacity",
+        "startedAt": 143736.09999999986,
+        "endedAt": 143852.59999999986,
+        "before": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "epoch": "7e026139-98e0-43bf-80a7-ed8151d189c5",
+        "generation": "448d2011-9226-480d-b2b6-39cb71926ba9:1793855718049.8:1267.8000000000466:1",
+        "completedStates": 1984
+      }
+    ],
+    "neighbors": [
+      {
+        "reason": "capacity",
+        "startedAt": 137156.30000000005,
+        "durationMs": 8,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 140532.19999999995,
+        "durationMs": 10.100000000093132,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 143736.09999999986,
+        "durationMs": 116.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 147126.5,
+        "durationMs": 9.099999999860302,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 150512.19999999995,
+        "durationMs": 10.600000000093132,
+        "history": 32,
+        "collaboration": 32
+      }
+    ],
+    "longTasks": [
+      {
+        "startedAt": 143732.09999999986,
+        "durationMs": 197
+      }
+    ],
+    "longTaskShape": {
+      "startedAt": 2378.899999999907,
+      "durationMs": 80
+    },
+    "timingComplete": true,
+    "completed": null,
+    "finalReloads": [],
+    "profilePresent": false
+  },
+  {
+    "sample": "plain-3",
+    "capacityIndex": 16,
+    "ordinal": 17,
+    "reason": "capacity",
+    "startedAt": 25117.899999999907,
+    "durationMs": 122.30000000004657,
+    "history": 32,
+    "collaboration": 32,
+    "endedAt": 25240.199999999953,
+    "native": [
+      {
+        "sequence": 50,
+        "unitId": "56d18669-0183-4830-9256-3ed2697e0d8a",
+        "phase": "history",
+        "origin": "policy-capacity",
+        "startedAt": 25117.899999999907,
+        "endedAt": 25185.199999999953,
+        "before": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 32
+        },
+        "outcome": "returned",
+        "epoch": "0258a422-02ee-48a2-a4ae-72a3f2e85b4f",
+        "generation": "56d18669-0183-4830-9256-3ed2697e0d8a:1793856065790.1:1194.3999999999069:1",
+        "completedStates": 544
+      },
+      {
+        "sequence": 51,
+        "unitId": "56d18669-0183-4830-9256-3ed2697e0d8a",
+        "phase": "collaboration",
+        "origin": "policy-capacity",
+        "startedAt": 25185.199999999953,
+        "endedAt": 25239.399999999907,
+        "before": {
+          "history": 0,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "epoch": "0258a422-02ee-48a2-a4ae-72a3f2e85b4f",
+        "generation": "56d18669-0183-4830-9256-3ed2697e0d8a:1793856065790.1:1194.3999999999069:1",
+        "completedStates": 544
+      },
+      {
+        "sequence": 49,
+        "unitId": "56d18669-0183-4830-9256-3ed2697e0d8a",
+        "phase": "pair",
+        "origin": "policy-capacity",
+        "startedAt": 25117.899999999907,
+        "endedAt": 25239.399999999907,
+        "before": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "epoch": "0258a422-02ee-48a2-a4ae-72a3f2e85b4f",
+        "generation": "56d18669-0183-4830-9256-3ed2697e0d8a:1793856065790.1:1194.3999999999069:1",
+        "completedStates": 544
+      }
+    ],
+    "neighbors": [
+      {
+        "reason": "capacity",
+        "startedAt": 21842.09999999986,
+        "durationMs": 7.199999999953434,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 23528.299999999814,
+        "durationMs": 8,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 25117.899999999907,
+        "durationMs": 122.30000000004657,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 26941.5,
+        "durationMs": 8.799999999813735,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "capacity",
+        "startedAt": 28498.799999999814,
+        "durationMs": 8.100000000093132,
+        "history": 32,
+        "collaboration": 32
+      }
+    ],
+    "longTasks": [
+      {
+        "startedAt": 25114.5,
+        "durationMs": 177
+      }
+    ],
+    "longTaskShape": {
+      "startedAt": 2333.6999999999534,
+      "durationMs": 76
+    },
+    "timingComplete": true,
+    "completed": null,
+    "finalReloads": [],
+    "profilePresent": false
+  }
+]

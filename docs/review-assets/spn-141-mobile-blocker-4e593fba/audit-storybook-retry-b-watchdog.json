@@ -1,0 +1,54 @@
+{
+  "root": 11401,
+  "started": 1793856394234,
+  "elapsedMs": 147,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90448,
+  "peakKiB": 90448,
+  "live": [
+    {
+      "pid": 11401,
+      "parent": 11364,
+      "group": 11401,
+      "rssKiB": 88848,
+      "started": "Wed Nov  4 21:26:34 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn141-after144-hosted/audit-storybook-retry-b-watchdog.json node /tmp/spn141-after144-hosted/audit-storybook-retry-b.ts"
+    },
+    {
+      "pid": 11492,
+      "parent": 11401,
+      "group": 11401,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:26:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 11401,
+      "parent": 11364,
+      "group": 11401,
+      "rssKiB": 88848,
+      "started": "Wed Nov  4 21:26:34 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn141-after144-hosted/audit-storybook-retry-b-watchdog.json node /tmp/spn141-after144-hosted/audit-storybook-retry-b.ts"
+    },
+    {
+      "pid": 11420,
+      "parent": 11401,
+      "group": 11401,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:26:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 11492,
+      "parent": 11401,
+      "group": 11401,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:26:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

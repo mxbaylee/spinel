@@ -1,0 +1,2 @@
+PASS terminal identity, paired instrumentation, reload observers and profile clock bindings.
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":125,"peakKiB":91008}

@@ -1,0 +1,54 @@
+{
+  "root": 11781,
+  "started": 1793856640311,
+  "elapsedMs": 229,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92688,
+  "peakKiB": 92688,
+  "live": [
+    {
+      "pid": 11781,
+      "parent": 11745,
+      "group": 11781,
+      "rssKiB": 91088,
+      "started": "Wed Nov  4 21:30:40 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn141-after144-hosted/retain-responsiveness-mobile-b-watchdog.json node /tmp/spn141-after144-hosted/retain-responsiveness-mobile-b.ts"
+    },
+    {
+      "pid": 11832,
+      "parent": 11781,
+      "group": 11781,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:30:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 11781,
+      "parent": 11745,
+      "group": 11781,
+      "rssKiB": 91088,
+      "started": "Wed Nov  4 21:30:40 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn141-after144-hosted/retain-responsiveness-mobile-b-watchdog.json node /tmp/spn141-after144-hosted/retain-responsiveness-mobile-b.ts"
+    },
+    {
+      "pid": 11800,
+      "parent": 11781,
+      "group": 11781,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:30:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 11832,
+      "parent": 11781,
+      "group": 11781,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:30:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

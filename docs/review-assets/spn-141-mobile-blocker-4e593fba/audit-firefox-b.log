@@ -1,0 +1,2 @@
+PASS: exact Firefox first-attempt source, 16 ZIP/member hashes, 44 stages, four same-profile launches/exits, complete content/image receipts and strict storage handoff/deletion.
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":171,"peakKiB":90864}

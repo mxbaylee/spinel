@@ -1,0 +1,54 @@
+{
+  "root": 10625,
+  "started": 1793855699218,
+  "elapsedMs": 188,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90640,
+  "peakKiB": 90640,
+  "live": [
+    {
+      "pid": 10625,
+      "parent": 10584,
+      "group": 10625,
+      "rssKiB": 89040,
+      "started": "Wed Nov  4 21:14:59 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a.ts"
+    },
+    {
+      "pid": 10685,
+      "parent": 10625,
+      "group": 10625,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 10625,
+      "parent": 10584,
+      "group": 10625,
+      "rssKiB": 89040,
+      "started": "Wed Nov  4 21:14:59 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a.ts"
+    },
+    {
+      "pid": 10644,
+      "parent": 10625,
+      "group": 10625,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10685,
+      "parent": 10625,
+      "group": 10625,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

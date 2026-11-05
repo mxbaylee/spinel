@@ -1,0 +1,173 @@
+{
+  "captureScreenshots": false,
+  "checked": [
+    {
+      "id": "identity-entity-icons--lineup",
+      "variant": "light"
+    },
+    {
+      "id": "identity-entity-icons--in-context",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--populated",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--shared-drawer",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--new-doc",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--new-sheet",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-searchpanel--results",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-trash--with-items",
+      "variant": "light"
+    },
+    {
+      "id": "identity-social-cards--document",
+      "variant": "light"
+    },
+    {
+      "id": "identity-social-cards--spreadsheet",
+      "variant": "light"
+    },
+    {
+      "id": "identity-social-cards--space-preview",
+      "variant": "light"
+    },
+    {
+      "id": "identity-social-cards--emoji",
+      "variant": "light"
+    },
+    {
+      "id": "identity-social-cards--long-title",
+      "variant": "light"
+    },
+    {
+      "id": "identity-social-cards--long-word",
+      "variant": "light"
+    },
+    {
+      "id": "identity-entity-icons--lineup",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-entity-icons--in-context",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--populated",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-drawer",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-doc",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-sheet",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-searchpanel--results",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-trash--with-items",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-social-cards--document",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-social-cards--spreadsheet",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-social-cards--space-preview",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-social-cards--emoji",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-social-cards--long-title",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-social-cards--long-word",
+      "variant": "dark"
+    },
+    {
+      "id": "identity-entity-icons--lineup",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-entity-icons--in-context",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--populated",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--shared-drawer",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--new-doc",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--new-sheet",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-searchpanel--results",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-trash--with-items",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-social-cards--document",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-social-cards--spreadsheet",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-social-cards--space-preview",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-social-cards--emoji",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-social-cards--long-title",
+      "variant": "phone"
+    },
+    {
+      "id": "identity-social-cards--long-word",
+      "variant": "phone"
+    }
+  ]
+}

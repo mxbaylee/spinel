@@ -1,0 +1,20 @@
+{
+  "reviewer": "/root/spn120_review_a",
+  "independentNonimplementing": true,
+  "head": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "rubric": {"scope":35,"correctnessIntegrityAccess":25,"meaningfulVerification":20,"ciOperations":10,"maintainabilityComplexity":10},
+  "score":100,
+  "findings":[],
+  "validationPushReady":true,
+  "validationPushCondition":"Other independent qualifying review must cover the same exact head.",
+  "mergeApproved":false,
+  "pending":["All seven current-head CI gates and all selected ordinary owners","First-attempt native Chrome, Firefox and Safari acceptance on this integrated source","Final evidence publication and exact source/base/check/review guards","Guarded squash and obsolete branch cleanup"],
+  "evidenceProof":"/tmp/spn141-review-4e593fba-proof-a.json",
+  "evidenceWatchdog":{"elapsedMs":361,"peakKiB":193072,"pressure":"1","outcome":"command-passed","firstExecution":true},
+  "payloadCount":29,
+  "sourceFileCount":5,
+  "priorSourceAcceptanceCreditedToCurrentHead":false,
+  "report":"/tmp/spn141-review-4e593fba-a.md"
+}

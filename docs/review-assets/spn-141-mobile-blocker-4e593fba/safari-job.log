@@ -1,0 +1,2353 @@
+﻿2026-11-05T04:49:31.5813220Z Current runner version: '2.338.2'
+2026-11-05T04:49:31.5889970Z ##[group]Runner Image Provisioner
+2026-11-05T04:49:31.5892580Z Hosted Compute Agent
+2026-11-05T04:49:31.5894270Z Version: 20260819.586
+2026-11-05T04:49:31.5896210Z Commit: 3cc4a88dfa507ef76119ad1bb3eccc6378bb2b76
+2026-11-05T04:49:31.5897960Z Build Date: 2026-08-18T23:20:18Z
+2026-11-05T04:49:31.5899730Z Worker ID: {23c3061b-97ca-4663-bfd6-2e52c7893840}
+2026-11-05T04:49:31.5901430Z Azure Region: westus
+2026-11-05T04:49:31.5902850Z ##[endgroup]
+2026-11-05T04:49:31.5910890Z ##[group]Operating System
+2026-11-05T04:49:31.5917330Z macOS
+2026-11-05T04:49:31.5920590Z 15.7.9
+2026-11-05T04:49:31.5921880Z 24G830
+2026-11-05T04:49:31.5923070Z ##[endgroup]
+2026-11-05T04:49:31.5924440Z ##[group]Runner Image
+2026-11-05T04:49:31.5925830Z Image: macos-15
+2026-11-05T04:49:31.5927130Z Version: 20260824.0482.1
+2026-11-05T04:49:31.5930230Z Included Software: https://github.com/actions/runner-images/blob/macos-15/20260824.0482/images/macos/macos-15-Readme.md
+2026-11-05T04:49:31.5934180Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15%2F20260824.0482
+2026-11-05T04:49:31.5936650Z ##[endgroup]
+2026-11-05T04:49:31.5940900Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T04:49:31.5945620Z Contents: read
+2026-11-05T04:49:31.5947400Z Metadata: read
+2026-11-05T04:49:31.5948670Z ##[endgroup]
+2026-11-05T04:49:31.5953710Z Secret source: Actions
+2026-11-05T04:49:31.5955910Z Cache mode: write
+2026-11-05T04:49:31.5960530Z Prepare workflow directory
+2026-11-05T04:49:31.7454530Z Prepare all required actions
+2026-11-05T04:49:31.7566900Z Getting action download info
+2026-11-05T04:49:32.3516080Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T04:49:32.6435390Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T04:49:33.3933550Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T04:49:34.2910160Z Complete job name: Native desktop offline (safari, macos-15-intel)
+2026-11-05T04:49:34.5160320Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T04:49:34.5166230Z with:
+2026-11-05T04:49:34.5168680Z   persist-credentials: false
+2026-11-05T04:49:34.5171620Z   repository: mxbaylee/spinel
+2026-11-05T04:49:34.5197990Z   token: ***
+2026-11-05T04:49:34.5199840Z   ssh-strict: true
+2026-11-05T04:49:34.5201630Z   ssh-user: git
+2026-11-05T04:49:34.5203550Z   clean: true
+2026-11-05T04:49:34.5205410Z   sparse-checkout-cone-mode: true
+2026-11-05T04:49:34.5207720Z   fetch-depth: 1
+2026-11-05T04:49:34.5209580Z   fetch-tags: false
+2026-11-05T04:49:34.5211860Z   show-progress: true
+2026-11-05T04:49:34.5213730Z   lfs: false
+2026-11-05T04:49:34.5215440Z   submodules: false
+2026-11-05T04:49:34.5217420Z   set-safe-directory: true
+2026-11-05T04:49:34.5219580Z   allow-unsafe-pr-checkout: false
+2026-11-05T04:49:34.5223300Z env:
+2026-11-05T04:49:34.5225510Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:49:34.5229090Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:49:34.5232070Z ##[endgroup]
+2026-11-05T04:49:35.0773430Z Syncing repository: mxbaylee/spinel
+2026-11-05T04:49:35.0781320Z ##[group]Getting Git version info
+2026-11-05T04:49:35.0785310Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-05T04:49:35.0792250Z [command]/usr/local/bin/git version
+2026-11-05T04:49:35.0795890Z git version 2.55.0
+2026-11-05T04:49:35.0806240Z ##[endgroup]
+2026-11-05T04:49:35.0824800Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/8c84bb6f-afc0-4eee-b352-9691ba3c7f5b/.gitconfig'
+2026-11-05T04:49:35.0868500Z Temporarily overriding HOME='/Users/runner/work/_temp/8c84bb6f-afc0-4eee-b352-9691ba3c7f5b' before making global git config changes
+2026-11-05T04:49:35.0879030Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T04:49:35.0944970Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T04:49:35.1085510Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-05T04:49:35.1120430Z ##[group]Determining repository object format
+2026-11-05T04:49:35.1154790Z ##[endgroup]
+2026-11-05T04:49:35.1192600Z ##[group]Initializing the repository
+2026-11-05T04:49:35.1197440Z [command]/usr/local/bin/git init /Users/runner/work/spinel/spinel
+2026-11-05T04:49:35.1601230Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T04:49:35.1633470Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T04:49:35.1666170Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T04:49:35.1684830Z hint: call:
+2026-11-05T04:49:35.1707920Z hint:
+2026-11-05T04:49:35.1739200Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T04:49:35.1780630Z hint:
+2026-11-05T04:49:35.1818440Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T04:49:35.1857680Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T04:49:35.1878340Z hint:
+2026-11-05T04:49:35.1911550Z hint: 	git branch -m <name>
+2026-11-05T04:49:35.1989250Z hint:
+2026-11-05T04:49:35.2025400Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T04:49:35.2059960Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-05T04:49:35.2157530Z [command]/usr/local/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T04:49:35.2286630Z ##[endgroup]
+2026-11-05T04:49:35.2361400Z ##[group]Disabling automatic garbage collection
+2026-11-05T04:49:35.2366020Z [command]/usr/local/bin/git config --local gc.auto 0
+2026-11-05T04:49:35.2524680Z ##[endgroup]
+2026-11-05T04:49:35.2543210Z ##[group]Setting up auth
+2026-11-05T04:49:35.2570980Z Removing SSH command configuration
+2026-11-05T04:49:35.2627550Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:49:35.2736680Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:49:35.5050460Z Removing HTTP extra header
+2026-11-05T04:49:35.5115210Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:49:35.5276950Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:49:35.8596970Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:49:35.8662510Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:49:35.9263150Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:49:36.0831850Z [command]/usr/local/bin/git config --file /Users/runner/work/_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T04:49:36.1043440Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:36.1373750Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:36.1864440Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:36.1995340Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:36.2239630Z ##[endgroup]
+2026-11-05T04:49:36.2244220Z ##[group]Fetching the repository
+2026-11-05T04:49:36.2253390Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f0e74d52629923737985ce03e4f32ff218dcf76d:refs/remotes/pull/258/merge
+2026-11-05T04:49:40.2225250Z From https://github.com/mxbaylee/spinel
+2026-11-05T04:49:40.2363470Z  * [new ref]         f0e74d52629923737985ce03e4f32ff218dcf76d -> pull/258/merge
+2026-11-05T04:49:40.2695730Z ##[endgroup]
+2026-11-05T04:49:40.2794950Z ##[group]Determining the checkout info
+2026-11-05T04:49:40.2952270Z ##[endgroup]
+2026-11-05T04:49:40.3081640Z [command]/usr/local/bin/git sparse-checkout disable
+2026-11-05T04:49:40.3369110Z [command]/usr/local/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T04:49:40.3599300Z ##[group]Checking out the ref
+2026-11-05T04:49:40.3756040Z [command]/usr/local/bin/git checkout --progress --force refs/remotes/pull/258/merge
+2026-11-05T04:49:41.5808900Z Updating files:  25% (694/2701)
+2026-11-05T04:49:41.6703320Z Updating files:  26% (703/2701)
+2026-11-05T04:49:41.7286650Z Updating files:  27% (730/2701)
+2026-11-05T04:49:41.9998790Z Updating files:  28% (757/2701)
+2026-11-05T04:49:42.0432590Z Updating files:  29% (784/2701)
+2026-11-05T04:49:42.0607480Z Updating files:  30% (811/2701)
+2026-11-05T04:49:42.0861160Z Updating files:  31% (838/2701)
+2026-11-05T04:49:42.0919860Z Updating files:  32% (865/2701)
+2026-11-05T04:49:42.0999670Z Updating files:  33% (892/2701)
+2026-11-05T04:49:42.2591270Z Updating files:  34% (919/2701)
+2026-11-05T04:49:42.3592170Z Updating files:  35% (946/2701)
+2026-11-05T04:49:42.3808010Z Updating files:  36% (973/2701)
+2026-11-05T04:49:42.4129460Z Updating files:  37% (1000/2701)
+2026-11-05T04:49:42.4334160Z Updating files:  37% (1005/2701)
+2026-11-05T04:49:42.5078700Z Updating files:  38% (1027/2701)
+2026-11-05T04:49:42.5641720Z Updating files:  39% (1054/2701)
+2026-11-05T04:49:42.5769740Z Updating files:  40% (1081/2701)
+2026-11-05T04:49:42.6053680Z Updating files:  41% (1108/2701)
+2026-11-05T04:49:42.6169250Z Updating files:  42% (1135/2701)
+2026-11-05T04:49:42.6188930Z Updating files:  43% (1162/2701)
+2026-11-05T04:49:42.6361140Z Updating files:  44% (1189/2701)
+2026-11-05T04:49:42.6486850Z Updating files:  45% (1216/2701)
+2026-11-05T04:49:42.6914040Z Updating files:  46% (1243/2701)
+2026-11-05T04:49:42.7665590Z Updating files:  47% (1270/2701)
+2026-11-05T04:49:42.9068120Z Updating files:  48% (1297/2701)
+2026-11-05T04:49:42.9547300Z Updating files:  49% (1324/2701)
+2026-11-05T04:49:42.9945280Z Updating files:  50% (1351/2701)
+2026-11-05T04:49:43.0213390Z Updating files:  51% (1378/2701)
+2026-11-05T04:49:43.0324260Z Updating files:  52% (1405/2701)
+2026-11-05T04:49:43.1433190Z Updating files:  53% (1432/2701)
+2026-11-05T04:49:43.1781070Z Updating files:  54% (1459/2701)
+2026-11-05T04:49:43.1869840Z Updating files:  55% (1486/2701)
+2026-11-05T04:49:43.2140550Z Updating files:  56% (1513/2701)
+2026-11-05T04:49:43.2258260Z Updating files:  57% (1540/2701)
+2026-11-05T04:49:43.2347090Z Updating files:  58% (1567/2701)
+2026-11-05T04:49:43.2509010Z Updating files:  59% (1594/2701)
+2026-11-05T04:49:43.2636680Z Updating files:  60% (1621/2701)
+2026-11-05T04:49:43.3260130Z Updating files:  61% (1648/2701)
+2026-11-05T04:49:43.3456600Z Updating files:  62% (1675/2701)
+2026-11-05T04:49:43.3742310Z Updating files:  62% (1681/2701)
+2026-11-05T04:49:43.4045720Z Updating files:  63% (1702/2701)
+2026-11-05T04:49:43.4715870Z Updating files:  64% (1729/2701)
+2026-11-05T04:49:43.5034410Z Updating files:  65% (1756/2701)
+2026-11-05T04:49:43.5370430Z Updating files:  66% (1783/2701)
+2026-11-05T04:49:43.5778460Z Updating files:  67% (1810/2701)
+2026-11-05T04:49:43.5836070Z Updating files:  68% (1837/2701)
+2026-11-05T04:49:43.5869170Z Updating files:  69% (1864/2701)
+2026-11-05T04:49:43.5953420Z Updating files:  70% (1891/2701)
+2026-11-05T04:49:43.6000670Z Updating files:  71% (1918/2701)
+2026-11-05T04:49:43.6099720Z Updating files:  72% (1945/2701)
+2026-11-05T04:49:43.6157100Z Updating files:  73% (1972/2701)
+2026-11-05T04:49:43.6234540Z Updating files:  74% (1999/2701)
+2026-11-05T04:49:43.6356530Z Updating files:  75% (2026/2701)
+2026-11-05T04:49:43.6482340Z Updating files:  76% (2053/2701)
+2026-11-05T04:49:43.6581630Z Updating files:  77% (2080/2701)
+2026-11-05T04:49:43.6888600Z Updating files:  78% (2107/2701)
+2026-11-05T04:49:43.7403210Z Updating files:  79% (2134/2701)
+2026-11-05T04:49:43.7814670Z Updating files:  80% (2161/2701)
+2026-11-05T04:49:43.9360690Z Updating files:  81% (2188/2701)
+2026-11-05T04:49:43.9475980Z Updating files:  82% (2215/2701)
+2026-11-05T04:49:43.9563490Z Updating files:  83% (2242/2701)
+2026-11-05T04:49:43.9635980Z Updating files:  84% (2269/2701)
+2026-11-05T04:49:43.9714900Z Updating files:  85% (2296/2701)
+2026-11-05T04:49:44.0379320Z Updating files:  86% (2323/2701)
+2026-11-05T04:49:44.0494460Z Updating files:  87% (2350/2701)
+2026-11-05T04:49:44.0586910Z Updating files:  88% (2377/2701)
+2026-11-05T04:49:44.0710040Z Updating files:  89% (2404/2701)
+2026-11-05T04:49:44.0795570Z Updating files:  90% (2431/2701)
+2026-11-05T04:49:44.0856780Z Updating files:  91% (2458/2701)
+2026-11-05T04:49:44.0951430Z Updating files:  92% (2485/2701)
+2026-11-05T04:49:44.1083310Z Updating files:  93% (2512/2701)
+2026-11-05T04:49:44.1153350Z Updating files:  94% (2539/2701)
+2026-11-05T04:49:44.1275640Z Updating files:  95% (2566/2701)
+2026-11-05T04:49:44.1386460Z Updating files:  96% (2593/2701)
+2026-11-05T04:49:44.1461270Z Updating files:  97% (2620/2701)
+2026-11-05T04:49:44.1578730Z Updating files:  98% (2647/2701)
+2026-11-05T04:49:44.2628570Z Updating files:  99% (2674/2701)
+2026-11-05T04:49:44.2914630Z Updating files: 100% (2701/2701)
+2026-11-05T04:49:44.3734180Z Updating files: 100% (2701/2701), done.
+2026-11-05T04:49:44.4040290Z HEAD is now at f0e74d5 Merge 4e593fbaf9ea89585920053b9415f9a8eac0944f into 2f442317dd2e1c188ae4a810ac094fd1162a4a2a
+2026-11-05T04:49:44.4237240Z ##[endgroup]
+2026-11-05T04:49:44.4325550Z [command]/usr/local/bin/git log -1 --format=%H
+2026-11-05T04:49:44.4377440Z f0e74d52629923737985ce03e4f32ff218dcf76d
+2026-11-05T04:49:44.4486890Z ##[group]Removing auth
+2026-11-05T04:49:44.4532340Z Removing SSH command configuration
+2026-11-05T04:49:44.4571760Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:49:44.4646270Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:49:44.4981520Z Removing HTTP extra header
+2026-11-05T04:49:44.5008820Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:49:44.5159740Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:49:44.7384490Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:49:44.7389190Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:49:44.7433070Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T04:49:44.7436310Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T04:49:44.7439230Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T04:49:44.7440810Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T04:49:44.7446290Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T04:49:44.7550800Z /Users/runner/work/_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:44.7564870Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-c87bc0ec\-c65f\-42a8\-b7fd\-20266d5b005d\.config
+2026-11-05T04:49:44.7676150Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T04:49:44.7771640Z /Users/runner/work/_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:44.7782830Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-c87bc0ec\-c65f\-42a8\-b7fd\-20266d5b005d\.config
+2026-11-05T04:49:44.7892010Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T04:49:44.7988770Z /github/runner_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:44.8006640Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-c87bc0ec\-c65f\-42a8\-b7fd\-20266d5b005d\.config
+2026-11-05T04:49:44.8114560Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T04:49:44.8208580Z /github/runner_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config
+2026-11-05T04:49:44.8219450Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-c87bc0ec\-c65f\-42a8\-b7fd\-20266d5b005d\.config
+2026-11-05T04:49:44.8351070Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:49:44.9702390Z Removing credentials config '/Users/runner/work/_temp/git-credentials-c87bc0ec-c65f-42a8-b7fd-20266d5b005d.config'
+2026-11-05T04:49:44.9715110Z ##[endgroup]
+2026-11-05T04:49:45.0075680Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T04:49:45.0076490Z with:
+2026-11-05T04:49:45.0076860Z   node-version-file: .nvmrc
+2026-11-05T04:49:45.0077340Z   package-manager-cache: false
+2026-11-05T04:49:45.0077810Z   check-latest: false
+2026-11-05T04:49:45.0082690Z   token: ***
+2026-11-05T04:49:45.0083040Z env:
+2026-11-05T04:49:45.0083460Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:49:45.0084080Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:49:45.0084540Z ##[endgroup]
+2026-11-05T04:49:45.2446850Z Node version file is not JSON file
+2026-11-05T04:49:45.2457520Z Node version file is not TOML file
+2026-11-05T04:49:45.2458410Z Resolved .nvmrc as 26.12.1
+2026-11-05T04:49:45.2473410Z Attempting to download 26.12.1...
+2026-11-05T04:49:46.0127550Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-darwin-x64.tar.gz
+2026-11-05T04:49:47.0289280Z Extracting ...
+2026-11-05T04:49:47.0529140Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/ec4bfb42-804b-4a19-876a-541c6f5a5bcb -f /Users/runner/work/_temp/b12ad70d-9c27-42f3-814f-3a7a16bbabac
+2026-11-05T04:49:53.3339420Z Adding to the cache ...
+2026-11-05T04:50:03.3263360Z ##[group]Environment details
+2026-11-05T04:50:04.9389600Z node: v26.12.1
+2026-11-05T04:50:04.9415300Z npm: 11.20.0
+2026-11-05T04:50:04.9460630Z yarn: 1.22.22
+2026-11-05T04:50:04.9499390Z ##[endgroup]
+2026-11-05T04:50:04.9867970Z ##[group]Run node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+2026-11-05T04:50:04.9870140Z [36;1mnode scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T04:50:05.0023340Z shell: /bin/bash -e {0}
+2026-11-05T04:50:05.0024070Z env:
+2026-11-05T04:50:05.0024850Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:50:05.0025830Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:50:05.0026630Z   DESKTOP_BROWSER: safari
+2026-11-05T04:50:05.0027290Z ##[endgroup]
+2026-11-05T04:50:49.4782800Z {
+2026-11-05T04:50:49.5789300Z   "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:50:49.6981370Z   "checkedAt": "2026-11-05T04:50:05.395Z",
+2026-11-05T04:50:49.7986030Z   "kind": "safari",
+2026-11-05T04:50:49.8999700Z   "status": "passed",
+2026-11-05T04:50:50.0003780Z   "before": "26.6",
+2026-11-05T04:50:50.1011430Z   "releaseSource": "https://support.apple.com/en-us/149527",
+2026-11-05T04:50:50.2035980Z   "requiredStable": "27.2",
+2026-11-05T04:50:50.3045650Z   "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+2026-11-05T04:50:50.3256150Z   "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+2026-11-05T04:50:50.4350740Z   "installed": "27.2"
+2026-11-05T04:50:50.5421940Z }
+2026-11-05T04:50:50.8955690Z ##[group]Run node scripts/ci/desktop-profile-probe.ts
+2026-11-05T04:50:50.8957660Z [36;1mnode scripts/ci/desktop-profile-probe.ts[0m
+2026-11-05T04:50:50.9149680Z shell: /bin/bash -e {0}
+2026-11-05T04:50:50.9150530Z env:
+2026-11-05T04:50:50.9152160Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:50:50.9153300Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:50:50.9154540Z ##[endgroup]
+2026-11-05T04:51:34.6757430Z {
+2026-11-05T04:51:34.7489780Z   "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+2026-11-05T04:51:34.8500300Z   "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:51:34.8949200Z   "testedSha": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+2026-11-05T04:51:34.9643550Z   "runner": {
+2026-11-05T04:51:34.9923870Z     "label": "macos-15-intel",
+2026-11-05T04:51:35.0315520Z     "arch": "x64",
+2026-11-05T04:51:35.0550510Z     "imageOS": "macos15",
+2026-11-05T04:51:35.1519120Z     "imageVersion": "20260824.0482.1"
+2026-11-05T04:51:35.1791080Z   },
+2026-11-05T04:51:35.1932990Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/41970163073",
+2026-11-05T04:51:35.2013840Z   "status": "passed",
+2026-11-05T04:51:35.2158150Z   "safariTargets": [
+2026-11-05T04:51:35.2159190Z     {
+2026-11-05T04:51:35.2207620Z       "stage": "online",
+2026-11-05T04:51:35.2246760Z       "pid": 3953,
+2026-11-05T04:51:35.2357480Z       "time": "2026-11-05T04:50:53.906Z",
+2026-11-05T04:51:35.2553680Z       "phase": "identity-established",
+2026-11-05T04:51:35.2756300Z       "timeoutMs": 8000,
+2026-11-05T04:51:35.2884760Z       "trace": "Safari request phase: {\"at\":\"2026-11-05T04:50:54.061Z\",\"phase\":\"appkit-bundle-create-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.085Z\",\"phase\":\"appkit-bundle-create-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.088Z\",\"phase\":\"appkit-executable-load-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.369Z\",\"phase\":\"appkit-executable-load-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.370Z\",\"phase\":\"running-application-class-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.372Z\",\"phase\":\"running-application-class-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.373Z\",\"phase\":\"process-lookup-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.374Z\",\"phase\":\"process-lookup-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.374Z\",\"phase\":\"process-liveness-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.377Z\",\"phase\":\"process-liveness-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.377Z\",\"phase\":\"pid-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.378Z\",\"phase\":\"pid-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.379Z\",\"phase\":\"bundle-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.379Z\",\"phase\":\"bundle-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.380Z\",\"phase\":\"executable-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.386Z\",\"phase\":\"executable-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.386Z\",\"phase\":\"launch-date-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.390Z\",\"phase\":\"launch-date-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.391Z\",\"phase\":\"identity-validation-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:50:55.391Z\",\"phase\":\"identity-validation-end\"}\n",
+2026-11-05T04:51:35.3022510Z       "stdout": "{\"pid\":3953,\"bundleIdentifier\":\"com.apple.Safari\",\"executablePath\":\"/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari\",\"launchedAt\":1793854252.5392997}\n",
+2026-11-05T04:51:35.3140990Z       "identity": {
+2026-11-05T04:51:35.3221950Z         "pid": 3953,
+2026-11-05T04:51:35.3298490Z         "bundleIdentifier": "com.apple.Safari",
+2026-11-05T04:51:35.3332060Z         "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+2026-11-05T04:51:35.3418920Z         "launchedAt": 1793854252.5392997
+2026-11-05T04:51:35.3485260Z       },
+2026-11-05T04:51:35.3529650Z       "elapsedMs": 1493
+2026-11-05T04:51:35.3567650Z     },
+2026-11-05T04:51:35.3584070Z     {
+2026-11-05T04:51:35.3605160Z       "stage": "offline-restart",
+2026-11-05T04:51:35.3622460Z       "pid": 4273,
+2026-11-05T04:51:35.3639050Z       "time": "2026-11-05T04:51:20.156Z",
+2026-11-05T04:51:35.3651580Z       "phase": "identity-established",
+2026-11-05T04:51:35.3662460Z       "timeoutMs": 8000,
+2026-11-05T04:51:35.3706990Z       "trace": "Safari request phase: {\"at\":\"2026-11-05T04:51:20.206Z\",\"phase\":\"appkit-bundle-create-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.311Z\",\"phase\":\"appkit-bundle-create-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.311Z\",\"phase\":\"appkit-executable-load-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.314Z\",\"phase\":\"appkit-executable-load-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.314Z\",\"phase\":\"running-application-class-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.315Z\",\"phase\":\"running-application-class-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.317Z\",\"phase\":\"process-lookup-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.318Z\",\"phase\":\"process-lookup-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.318Z\",\"phase\":\"process-liveness-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.320Z\",\"phase\":\"process-liveness-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.320Z\",\"phase\":\"pid-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.321Z\",\"phase\":\"pid-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.321Z\",\"phase\":\"bundle-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.321Z\",\"phase\":\"bundle-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.322Z\",\"phase\":\"executable-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.323Z\",\"phase\":\"executable-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.324Z\",\"phase\":\"launch-date-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.325Z\",\"phase\":\"launch-date-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.326Z\",\"phase\":\"identity-validation-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T04:51:20.326Z\",\"phase\":\"identity-validation-end\"}\n",
+2026-11-05T04:51:35.3730680Z       "stdout": "{\"pid\":4273,\"bundleIdentifier\":\"com.apple.Safari\",\"executablePath\":\"/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari\",\"launchedAt\":1793854280.02688}\n",
+2026-11-05T04:51:35.3734810Z       "identity": {
+2026-11-05T04:51:35.3735530Z         "pid": 4273,
+2026-11-05T04:51:35.3737060Z         "bundleIdentifier": "com.apple.Safari",
+2026-11-05T04:51:35.3739280Z         "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+2026-11-05T04:51:35.3741420Z         "launchedAt": 1793854280.02688
+2026-11-05T04:51:35.3742520Z       },
+2026-11-05T04:51:35.3743560Z       "elapsedMs": 177
+2026-11-05T04:51:35.3744820Z     }
+2026-11-05T04:51:35.3745650Z   ],
+2026-11-05T04:51:35.3746990Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+2026-11-05T04:51:35.3749390Z   "machine": "x86_64",
+2026-11-05T04:51:35.3750500Z   "version": "27.2",
+2026-11-05T04:51:35.3751330Z   "beforePid": "3953",
+2026-11-05T04:51:35.3752660Z   "automationTitleRequests": [
+2026-11-05T04:51:35.3753740Z     {
+2026-11-05T04:51:35.3754570Z       "attempt": 1,
+2026-11-05T04:51:35.3755340Z       "targetPid": 3953,
+2026-11-05T04:51:35.3756220Z       "timeoutMs": 60000,
+2026-11-05T04:51:35.3757520Z       "startedAt": "2026-11-05T04:50:55.402Z",
+2026-11-05T04:51:35.3758920Z       "phases": [
+2026-11-05T04:51:35.3761560Z         "{\"at\":\"2026-11-05T04:50:55.504Z\",\"phase\":\"appkit-bundle-create-begin\"}",
+2026-11-05T04:51:35.3763620Z         "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-bundle-create-end\"}",
+2026-11-05T04:51:35.3766520Z         "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-executable-load-begin\"}",
+2026-11-05T04:51:35.3768590Z         "{\"at\":\"2026-11-05T04:50:55.857Z\",\"phase\":\"appkit-executable-load-end\"}",
+2026-11-05T04:51:35.3771200Z         "{\"at\":\"2026-11-05T04:50:55.858Z\",\"phase\":\"running-application-class-begin\"}",
+2026-11-05T04:51:35.3773410Z         "{\"at\":\"2026-11-05T04:50:55.859Z\",\"phase\":\"running-application-class-end\"}",
+2026-11-05T04:51:35.3776380Z         "{\"at\":\"2026-11-05T04:50:55.860Z\",\"phase\":\"process-lookup-begin\"}",
+2026-11-05T04:51:35.3778440Z         "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-lookup-end\"}",
+2026-11-05T04:51:35.3780620Z         "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-liveness-begin\"}",
+2026-11-05T04:51:35.3782400Z         "{\"at\":\"2026-11-05T04:50:55.863Z\",\"phase\":\"process-liveness-end\"}",
+2026-11-05T04:51:35.3784070Z         "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-begin\"}",
+2026-11-05T04:51:35.3786180Z         "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-end\"}",
+2026-11-05T04:51:35.3787960Z         "{\"at\":\"2026-11-05T04:50:55.865Z\",\"phase\":\"bundle-read-begin\"}",
+2026-11-05T04:51:35.3789680Z         "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"bundle-read-end\"}",
+2026-11-05T04:51:35.3791760Z         "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"executable-read-begin\"}",
+2026-11-05T04:51:35.3793980Z         "{\"at\":\"2026-11-05T04:50:55.912Z\",\"phase\":\"executable-read-end\"}",
+2026-11-05T04:51:35.3795730Z         "{\"at\":\"2026-11-05T04:50:55.913Z\",\"phase\":\"launch-date-read-begin\"}",
+2026-11-05T04:51:35.3797680Z         "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"launch-date-read-end\"}",
+2026-11-05T04:51:35.3799490Z         "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-begin\"}",
+2026-11-05T04:51:35.3801820Z         "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-end\"}",
+2026-11-05T04:51:35.3803690Z         "{\"at\":\"2026-11-05T04:50:55.916Z\",\"phase\":\"application-constructor-begin\"}",
+2026-11-05T04:51:35.3805850Z         "{\"at\":\"2026-11-05T04:50:55.975Z\",\"phase\":\"application-constructor-end\"}",
+2026-11-05T04:51:35.3807820Z         "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-specifier-ready\"}",
+2026-11-05T04:51:35.3816060Z         "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-get-begin\"}",
+2026-11-05T04:51:35.3819300Z         "{\"at\":\"2026-11-05T04:51:14.772Z\",\"phase\":\"title-get-end\"}"
+2026-11-05T04:51:35.3820810Z       ],
+2026-11-05T04:51:35.3821650Z       "value": "Spinel desktop profile probe",
+2026-11-05T04:51:35.3822870Z       "finishedAt": "2026-11-05T04:51:14.820Z"
+2026-11-05T04:51:35.3823710Z     }
+2026-11-05T04:51:35.3824200Z   ],
+2026-11-05T04:51:35.3824960Z   "automationPromptChecks": [
+2026-11-05T04:51:35.3826180Z     {
+2026-11-05T04:51:35.3826760Z       "mode": "inspect",
+2026-11-05T04:51:35.3827540Z       "startedAt": "2026-11-05T04:50:55.406Z",
+2026-11-05T04:51:35.3840010Z       "value": "Recognized hosted-compute-agent control of Safari:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+2026-11-05T04:51:35.3844360Z       "finishedAt": "2026-11-05T04:51:03.967Z"
+2026-11-05T04:51:35.3845530Z     },
+2026-11-05T04:51:35.3846150Z     {
+2026-11-05T04:51:35.3846740Z       "mode": "capture",
+2026-11-05T04:51:35.3848740Z       "path": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+2026-11-05T04:51:35.3850700Z       "startedAt": "2026-11-05T04:51:03.967Z",
+2026-11-05T04:51:35.3851740Z       "error": {
+2026-11-05T04:51:35.3855950Z         "message": "Command failed: /usr/sbin/screencapture -x /Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+2026-11-05T04:51:35.3858540Z         "code": null,
+2026-11-05T04:51:35.3859310Z         "signal": "SIGTERM",
+2026-11-05T04:51:35.3860110Z         "killed": true,
+2026-11-05T04:51:35.3861000Z         "stdout": "",
+2026-11-05T04:51:35.3861800Z         "stderr": ""
+2026-11-05T04:51:35.3862500Z       },
+2026-11-05T04:51:35.3863320Z       "finishedAt": "2026-11-05T04:51:09.253Z"
+2026-11-05T04:51:35.3864240Z     },
+2026-11-05T04:51:35.3865010Z     {
+2026-11-05T04:51:35.3865980Z       "mode": "approve",
+2026-11-05T04:51:35.3867550Z       "startedAt": "2026-11-05T04:51:09.253Z",
+2026-11-05T04:51:35.3874040Z       "value": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+2026-11-05T04:51:35.3878280Z       "finishedAt": "2026-11-05T04:51:14.759Z"
+2026-11-05T04:51:35.3879530Z     }
+2026-11-05T04:51:35.3880690Z   ],
+2026-11-05T04:51:35.3881720Z   "automationStartedAt": "2026-11-05T04:50:55.402Z",
+2026-11-05T04:51:35.3886800Z   "automationPrompt": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+2026-11-05T04:51:35.3890920Z   "automationReadyTitleRequest": 1,
+2026-11-05T04:51:35.3892040Z   "automationFinishedAt": "2026-11-05T04:51:15.011Z",
+2026-11-05T04:51:35.3893230Z   "firstTitleRequest": {
+2026-11-05T04:51:35.3893920Z     "attempt": 1,
+2026-11-05T04:51:35.3894400Z     "targetPid": 3953,
+2026-11-05T04:51:35.3895200Z     "timeoutMs": 60000,
+2026-11-05T04:51:35.3895900Z     "startedAt": "2026-11-05T04:50:55.402Z",
+2026-11-05T04:51:35.3896820Z     "phases": [
+2026-11-05T04:51:35.3897980Z       "{\"at\":\"2026-11-05T04:50:55.504Z\",\"phase\":\"appkit-bundle-create-begin\"}",
+2026-11-05T04:51:35.3899710Z       "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-bundle-create-end\"}",
+2026-11-05T04:51:35.3901130Z       "{\"at\":\"2026-11-05T04:50:55.854Z\",\"phase\":\"appkit-executable-load-begin\"}",
+2026-11-05T04:51:35.3902580Z       "{\"at\":\"2026-11-05T04:50:55.857Z\",\"phase\":\"appkit-executable-load-end\"}",
+2026-11-05T04:51:35.3904170Z       "{\"at\":\"2026-11-05T04:50:55.858Z\",\"phase\":\"running-application-class-begin\"}",
+2026-11-05T04:51:35.3905780Z       "{\"at\":\"2026-11-05T04:50:55.859Z\",\"phase\":\"running-application-class-end\"}",
+2026-11-05T04:51:35.3908490Z       "{\"at\":\"2026-11-05T04:50:55.860Z\",\"phase\":\"process-lookup-begin\"}",
+2026-11-05T04:51:35.3910460Z       "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-lookup-end\"}",
+2026-11-05T04:51:35.3912400Z       "{\"at\":\"2026-11-05T04:50:55.862Z\",\"phase\":\"process-liveness-begin\"}",
+2026-11-05T04:51:35.3913920Z       "{\"at\":\"2026-11-05T04:50:55.863Z\",\"phase\":\"process-liveness-end\"}",
+2026-11-05T04:51:35.3915520Z       "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-begin\"}",
+2026-11-05T04:51:35.3916880Z       "{\"at\":\"2026-11-05T04:50:55.864Z\",\"phase\":\"pid-read-end\"}",
+2026-11-05T04:51:35.3918210Z       "{\"at\":\"2026-11-05T04:50:55.865Z\",\"phase\":\"bundle-read-begin\"}",
+2026-11-05T04:51:35.3919850Z       "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"bundle-read-end\"}",
+2026-11-05T04:51:35.3921770Z       "{\"at\":\"2026-11-05T04:50:55.866Z\",\"phase\":\"executable-read-begin\"}",
+2026-11-05T04:51:35.3923480Z       "{\"at\":\"2026-11-05T04:50:55.912Z\",\"phase\":\"executable-read-end\"}",
+2026-11-05T04:51:35.3924800Z       "{\"at\":\"2026-11-05T04:50:55.913Z\",\"phase\":\"launch-date-read-begin\"}",
+2026-11-05T04:51:35.3926130Z       "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"launch-date-read-end\"}",
+2026-11-05T04:51:35.3929110Z       "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-begin\"}",
+2026-11-05T04:51:35.3931020Z       "{\"at\":\"2026-11-05T04:50:55.915Z\",\"phase\":\"identity-validation-end\"}",
+2026-11-05T04:51:35.3932850Z       "{\"at\":\"2026-11-05T04:50:55.916Z\",\"phase\":\"application-constructor-begin\"}",
+2026-11-05T04:51:35.3935960Z       "{\"at\":\"2026-11-05T04:50:55.975Z\",\"phase\":\"application-constructor-end\"}",
+2026-11-05T04:51:35.3937990Z       "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-specifier-ready\"}",
+2026-11-05T04:51:35.3940040Z       "{\"at\":\"2026-11-05T04:50:56.837Z\",\"phase\":\"title-get-begin\"}",
+2026-11-05T04:51:35.3942310Z       "{\"at\":\"2026-11-05T04:51:14.772Z\",\"phase\":\"title-get-end\"}"
+2026-11-05T04:51:35.3944800Z     ],
+2026-11-05T04:51:35.3946110Z     "value": "Spinel desktop profile probe",
+2026-11-05T04:51:35.3947380Z     "finishedAt": "2026-11-05T04:51:14.820Z"
+2026-11-05T04:51:35.3948340Z   },
+2026-11-05T04:51:35.3950810Z   "appleEvents": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:51:35.3952940Z   "prepared": {
+2026-11-05T04:51:35.3953680Z     "prepared": true,
+2026-11-05T04:51:35.3954680Z     "persisted": false,
+2026-11-05T04:51:35.3955660Z     "persistenceRequested": false
+2026-11-05T04:51:35.3956520Z   },
+2026-11-05T04:51:35.3957170Z   "paintBaselines": {
+2026-11-05T04:51:35.3957900Z     "online": {
+2026-11-05T04:51:35.3958740Z       "time": "2026-11-05T04:51:17.424Z",
+2026-11-05T04:51:35.3959880Z       "pid": "3953",
+2026-11-05T04:51:35.3961130Z       "state": {
+2026-11-05T04:51:35.3961960Z         "windowId": 34,
+2026-11-05T04:51:35.3963030Z         "bounds": {
+2026-11-05T04:51:35.3964280Z           "x": 298,
+2026-11-05T04:51:35.3965290Z           "y": 40,
+2026-11-05T04:51:35.3966190Z           "width": 1324,
+2026-11-05T04:51:35.3968020Z           "height": 940
+2026-11-05T04:51:35.3969240Z         },
+2026-11-05T04:51:35.3970520Z         "tabIndex": 1,
+2026-11-05T04:51:35.3971830Z         "title": "Spinel desktop profile probe",
+2026-11-05T04:51:35.3973150Z         "url": "http://localhost:8175/",
+2026-11-05T04:51:35.3974120Z         "page": {
+2026-11-05T04:51:35.3975150Z           "url": "http://localhost:8175/",
+2026-11-05T04:51:35.3976390Z           "title": "Spinel desktop profile probe",
+2026-11-05T04:51:35.3978280Z           "readyState": "complete",
+2026-11-05T04:51:35.3980900Z           "visibility": "visible",
+2026-11-05T04:51:35.3981770Z           "hasFocus": true,
+2026-11-05T04:51:35.3983180Z           "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+2026-11-05T04:51:35.3985710Z         }
+2026-11-05T04:51:35.3986140Z       },
+2026-11-05T04:51:35.3987360Z       "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-online.png",
+2026-11-05T04:51:35.3988870Z       "canvas2d": {
+2026-11-05T04:51:35.3989470Z         "context": "2d",
+2026-11-05T04:51:35.3990330Z         "options": "default",
+2026-11-05T04:51:35.3990940Z         "width": 320,
+2026-11-05T04:51:35.3991670Z         "height": 120,
+2026-11-05T04:51:35.3992420Z         "contextAvailable": true,
+2026-11-05T04:51:35.3993220Z         "drawCompleted": true,
+2026-11-05T04:51:35.3994400Z         "readbackAfterPhysicalCapture": true,
+2026-11-05T04:51:35.3995130Z         "pixels": [
+2026-11-05T04:51:35.3995560Z           {
+2026-11-05T04:51:35.3996210Z             "x": 80,
+2026-11-05T04:51:35.3996790Z             "y": 80,
+2026-11-05T04:51:35.3997230Z             "rgba": [
+2026-11-05T04:51:35.3997670Z               118,
+2026-11-05T04:51:35.3998380Z               51,
+2026-11-05T04:51:35.3999210Z               213,
+2026-11-05T04:51:35.3999660Z               255
+2026-11-05T04:51:35.4000060Z             ]
+2026-11-05T04:51:35.4000470Z           },
+2026-11-05T04:51:35.4000840Z           {
+2026-11-05T04:51:35.4001240Z             "x": 240,
+2026-11-05T04:51:35.4001670Z             "y": 80,
+2026-11-05T04:51:35.4003170Z             "rgba": [
+2026-11-05T04:51:35.4003820Z               37,
+2026-11-05T04:51:35.4004240Z               99,
+2026-11-05T04:51:35.4004640Z               235,
+2026-11-05T04:51:35.4005040Z               255
+2026-11-05T04:51:35.4005550Z             ]
+2026-11-05T04:51:35.4006120Z           }
+2026-11-05T04:51:35.4006530Z         ]
+2026-11-05T04:51:35.4006900Z       }
+2026-11-05T04:51:35.4007260Z     },
+2026-11-05T04:51:35.4007750Z     "offline": {
+2026-11-05T04:51:35.4008330Z       "time": "2026-11-05T04:51:24.501Z",
+2026-11-05T04:51:35.4008910Z       "pid": "4273",
+2026-11-05T04:51:35.4009330Z       "state": {
+2026-11-05T04:51:35.4009780Z         "windowId": 45,
+2026-11-05T04:51:35.4010230Z         "bounds": {
+2026-11-05T04:51:35.4010650Z           "x": 298,
+2026-11-05T04:51:35.4011070Z           "y": 40,
+2026-11-05T04:51:35.4011490Z           "width": 1324,
+2026-11-05T04:51:35.4011960Z           "height": 940
+2026-11-05T04:51:35.4012390Z         },
+2026-11-05T04:51:35.4012790Z         "tabIndex": 1,
+2026-11-05T04:51:35.4013490Z         "title": "Spinel desktop profile probe",
+2026-11-05T04:51:35.4014430Z         "url": "http://localhost:8175/?offline-restart",
+2026-11-05T04:51:35.4015220Z         "page": {
+2026-11-05T04:51:35.4015860Z           "url": "http://localhost:8175/?offline-restart",
+2026-11-05T04:51:35.4017020Z           "title": "Spinel desktop profile probe",
+2026-11-05T04:51:35.4017890Z           "readyState": "complete",
+2026-11-05T04:51:35.4018600Z           "visibility": "visible",
+2026-11-05T04:51:35.4019360Z           "hasFocus": true,
+2026-11-05T04:51:35.4020840Z           "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+2026-11-05T04:51:35.4022130Z         }
+2026-11-05T04:51:35.4022980Z       },
+2026-11-05T04:51:35.4024830Z       "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-offline.png",
+2026-11-05T04:51:35.4037510Z       "canvas2d": {
+2026-11-05T04:51:35.4038060Z         "context": "2d",
+2026-11-05T04:51:35.4038680Z         "options": "default",
+2026-11-05T04:51:35.4039250Z         "width": 320,
+2026-11-05T04:51:35.4039690Z         "height": 120,
+2026-11-05T04:51:35.4040420Z         "contextAvailable": true,
+2026-11-05T04:51:35.4041050Z         "drawCompleted": true,
+2026-11-05T04:51:35.4041740Z         "readbackAfterPhysicalCapture": true,
+2026-11-05T04:51:35.4042390Z         "pixels": [
+2026-11-05T04:51:35.4042820Z           {
+2026-11-05T04:51:35.4043440Z             "x": 80,
+2026-11-05T04:51:35.4043900Z             "y": 80,
+2026-11-05T04:51:35.4044440Z             "rgba": [
+2026-11-05T04:51:35.4045120Z               118,
+2026-11-05T04:51:35.4046610Z               51,
+2026-11-05T04:51:35.4047180Z               213,
+2026-11-05T04:51:35.4047610Z               255
+2026-11-05T04:51:35.4048020Z             ]
+2026-11-05T04:51:35.4048490Z           },
+2026-11-05T04:51:35.4048890Z           {
+2026-11-05T04:51:35.4049350Z             "x": 240,
+2026-11-05T04:51:35.4050160Z             "y": 80,
+2026-11-05T04:51:35.4051230Z             "rgba": [
+2026-11-05T04:51:35.4051860Z               37,
+2026-11-05T04:51:35.4052280Z               99,
+2026-11-05T04:51:35.4052700Z               235,
+2026-11-05T04:51:35.4053170Z               255
+2026-11-05T04:51:35.4053600Z             ]
+2026-11-05T04:51:35.4054160Z           }
+2026-11-05T04:51:35.4054700Z         ]
+2026-11-05T04:51:35.4055180Z       }
+2026-11-05T04:51:35.4055540Z     }
+2026-11-05T04:51:35.4055920Z   },
+2026-11-05T04:51:35.4056390Z   "requestsBeforeOffline": 4,
+2026-11-05T04:51:35.4057080Z   "afterPid": "4273",
+2026-11-05T04:51:35.4057580Z   "retained": {
+2026-11-05T04:51:35.4058320Z     "localStorage": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+2026-11-05T04:51:35.4059290Z     "indexedDB": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+2026-11-05T04:51:35.4060370Z     "cache": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+2026-11-05T04:51:35.4060990Z     "worker": true
+2026-11-05T04:51:35.4061420Z   },
+2026-11-05T04:51:35.4062520Z   "automationLog": {
+2026-11-05T04:51:35.4063100Z     "startedAt": "2026-11-05T04:50:55.402Z",
+2026-11-05T04:51:35.4063850Z     "finishedAt": "2026-11-05T04:51:15.011Z",
+2026-11-05T04:51:35.4064550Z     "queryEnd": "2026-11-05T04:51:16.000Z",
+2026-11-05T04:51:35.4065370Z     "requestIds": [
+2026-11-05T04:51:35.4065970Z       "308.29"
+2026-11-05T04:51:35.4066360Z     ],
+2026-11-05T04:51:35.4066880Z     "error": {
+2026-11-05T04:51:35.4070280Z       "message": "Error: Command failed: /usr/bin/log show --start 2026-11-05 04:50:55+0000 --end 2026-11-05 04:51:16+0000 --style compact --info --debug --predicate subsystem == \"com.apple.TCC\" OR process == \"appleeventsd\"",
+2026-11-05T04:51:35.4072830Z       "code": null,
+2026-11-05T04:51:35.4073410Z       "signal": "SIGTERM",
+2026-11-05T04:51:35.4074050Z       "killed": true,
+2026-11-05T04:51:35.4074630Z       "stderr": ""
+2026-11-05T04:51:35.4075220Z     },
+2026-11-05T04:51:35.4075790Z     "sourceComplete": false,
+2026-11-05T04:51:35.4076610Z     "matchedLineCount": 28,
+2026-11-05T04:51:35.4077440Z     "retainedLineCount": 28,
+2026-11-05T04:51:35.4078130Z     "retainedBytes": 5323,
+2026-11-05T04:51:35.4078770Z     "headLineCount": 28,
+2026-11-05T04:51:35.4079440Z     "omittedLineCount": 0,
+2026-11-05T04:51:35.4080280Z     "truncated": true,
+2026-11-05T04:51:35.4080890Z     "lines": [
+2026-11-05T04:51:35.4083680Z       "2026-11-05 04:50:55.250 Df appleeventsd[308:3c15] [com.apple.xpc:connection] [0x7fe2a6b09df0] invalidated because the client process (pid 3979) either cancelled the connection or exited",
+2026-11-05T04:51:35.4086450Z       "2026-11-05 04:50:55.250 A  appleeventsd[308:3c15] Handle XPC Event",
+2026-11-05T04:51:35.4089890Z       "2026-11-05 04:50:55.250 I  appleeventsd[308:3c15] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=3979, so unregistering any application with that pid.",
+2026-11-05T04:51:35.4095990Z       "2026-11-05 04:50:55.250 I  appleeventsd[308:3c15] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 3979/0x0:0x0 0x00000000still-hintable  sess=100002 because we received error on its connection.",
+2026-11-05T04:51:35.4101640Z       "2026-11-05 04:50:55.250 I  appleeventsd[308:3c15] [com.apple.appleevents:connection] REMOVING: conn:0x0x7fe2a6b09df0 - 3979 from sAllConnectionSetP",
+2026-11-05T04:51:35.4104500Z       "2026-11-05 04:50:55.250 Db appleeventsd[308:3c15] [com.apple.appleevents:connection] Connection count: 23",
+2026-11-05T04:51:35.4106380Z       "2026-11-05 04:50:55.594 A  appleeventsd[308:86c] New XPC Connection",
+2026-11-05T04:51:35.4108650Z       "2026-11-05 04:50:55.594 I  appleeventsd[308:86c] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=3999 peer-session=186a2",
+2026-11-05T04:51:35.4112780Z       "2026-11-05 04:50:55.594 I  appleeventsd[308:86c] [com.apple.appleevents:connection] ADDING: conn:0x0x7fe2a68125a0 - 3999 to sAllConnectionSetP",
+2026-11-05T04:51:35.4116910Z       "2026-11-05 04:50:55.594 Df appleeventsd[308:86c] [com.apple.xpc:connection] [0x7fe2a68125a0] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[3999].0x7fe2a68125a0",
+2026-11-05T04:51:35.4120080Z       "2026-11-05 04:50:55.594 A  appleeventsd[308:86c] Handle XPC Event",
+2026-11-05T04:51:35.4125370Z       "2026-11-05 04:50:55.594 I  appleeventsd[308:86c] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=3999 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7fe2a6806180> { name = 8999, right = send, urefs = 1 } , }",
+2026-11-05T04:51:35.4132460Z       "2026-11-05 04:50:55.595 I  appleeventsd[308:86c] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=3999 token=[sess=100002 pid=3999 uid:501,501,501 g:20,20 pV:8547] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:8999/0x2327 send:2 limit:0)",
+2026-11-05T04:51:35.4139880Z       "2026-11-05 04:50:55.595 I  appleeventsd[308:3c15] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100002 pid=3999 uid:501,501,501 g:20,20 pV:8547]",
+2026-11-05T04:51:35.4143320Z       "2026-11-05 04:50:55.595 Df appleeventsd[308:3c15] [com.apple.xpc:connection] [0x7fe2a68123f0] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T04:51:35.4146010Z       "2026-11-05 04:50:55.595 A  appleeventsd[308:3c15] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T04:51:35.4150430Z       "2026-11-05 04:50:55.595 I  appleeventsd[308:3c15] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=308.29, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:3999, auid:501, euid:501},",
+2026-11-05T04:51:35.4154890Z       "2026-11-05 04:50:55.595 Df tccd[150:390b] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=308, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=308.29",
+2026-11-05T04:51:35.4157380Z       "2026-11-05 04:50:55.596 I  tccd[150:390b] [com.apple.TCC:access] REQUEST_MSG: msgID=308.29, msg={",
+2026-11-05T04:51:35.4158440Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T04:51:35.4163720Z       "2026-11-05 04:50:55.596 I  tccd[150:390b] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=967, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=3999, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=308, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T04:51:35.4175180Z       "2026-11-05 04:50:55.596 I  tccd[150:390b] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=967, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=3999, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=308, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T04:51:35.4183730Z       "2026-11-05 04:50:55.602 Df tccd[150:390b] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=308.29",
+2026-11-05T04:51:35.4187940Z       "2026-11-05 04:50:55.602 I  appleeventsd[308:3c15] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7fe2a5f14940> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T04:51:35.4192680Z       "2026-11-05 04:50:55.602 Df appleeventsd[308:3c15] [com.apple.xpc:connection] [0x7fe2a68123f0] invalidated after the last release of the connection object",
+2026-11-05T04:51:35.4196890Z       "2026-11-05 04:50:56.712 A  appleeventsd[308:3c14] Handle XPC Event",
+2026-11-05T04:51:35.4199890Z       "2026-11-05 04:50:56.712 I  appleeventsd[308:3c14] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=3999 got event {command=kAELookupClientPort, asn=0x0-0x3d03d, }",
+2026-11-05T04:51:35.4206960Z       "2026-11-05 04:50:56.712 I  appleeventsd[308:3c14] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x3d03d name=(null) bundleID=(null) signature=0x00000000 session=186a2"
+2026-11-05T04:51:35.4209480Z     ]
+2026-11-05T04:51:35.4210020Z   }
+2026-11-05T04:51:35.4210520Z }
+2026-11-05T04:51:35.4349940Z ##[group]Run npm ci
+2026-11-05T04:51:35.4350890Z [36;1mnpm ci[0m
+2026-11-05T04:51:35.4465360Z shell: /bin/bash -e {0}
+2026-11-05T04:51:35.4465930Z env:
+2026-11-05T04:51:35.4466430Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:51:35.4467100Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:51:35.4467650Z ##[endgroup]
+2026-11-05T04:52:42.7858980Z 
+2026-11-05T04:52:42.7860370Z > postinstall
+2026-11-05T04:52:42.7864450Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-05T04:52:42.7867380Z 
+2026-11-05T04:52:45.2012170Z 
+2026-11-05T04:52:45.2015690Z added 493 packages, and audited 501 packages in 1m
+2026-11-05T04:52:45.2016740Z 
+2026-11-05T04:52:45.2042000Z 132 packages are looking for funding
+2026-11-05T04:52:45.2049110Z   run `npm fund` for details
+2026-11-05T04:52:45.2696790Z npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-11-05T04:52:45.2700250Z 
+2026-11-05T04:52:45.2702040Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-05T04:52:45.2703250Z 4 moderate severity vulnerabilities
+2026-11-05T04:52:45.2749650Z npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+2026-11-05T04:52:45.2751660Z 
+2026-11-05T04:52:45.2861190Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-05T04:52:45.2886690Z To address all issues (including breaking changes), run:
+2026-11-05T04:52:45.2937600Z npm warn install-scripts
+2026-11-05T04:52:45.2945980Z   npm audit fix --force
+2026-11-05T04:52:45.2980910Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-05T04:52:45.2983280Z 
+2026-11-05T04:52:45.3014400Z Run `npm audit` for details.
+2026-11-05T04:52:45.7860190Z ##[group]Run npm run build
+2026-11-05T04:52:45.7864480Z [36;1mnpm run build[0m
+2026-11-05T04:52:45.8071070Z shell: /bin/bash -e {0}
+2026-11-05T04:52:45.8071970Z env:
+2026-11-05T04:52:45.8072640Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:52:45.8074110Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:52:45.8074750Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-05T04:52:45.8075580Z ##[endgroup]
+2026-11-05T04:52:46.7281660Z 
+2026-11-05T04:52:46.7316990Z > build
+2026-11-05T04:52:46.7366440Z > vite build
+2026-11-05T04:52:46.7400660Z 
+2026-11-05T04:52:47.5462370Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-05T04:52:47.6712640Z transforming...
+2026-11-05T04:52:49.6954720Z ✓ 4368 modules transformed.
+2026-11-05T04:52:50.5415570Z rendering chunks...
+2026-11-05T04:52:51.8229650Z computing gzip size...
+2026-11-05T04:52:52.0898330Z dist/index.html                                    3.50 kB │ gzip:     1.29 kB
+2026-11-05T04:52:52.1132860Z dist/assets/nativeCopy-mVcC3r32.css                2.53 kB │ gzip:     0.88 kB
+2026-11-05T04:52:52.1363070Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-05T04:52:52.1402490Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-05T04:52:52.1424120Z dist/assets/CopyFile-Bp41xbsr.css                 16.91 kB │ gzip:     3.69 kB
+2026-11-05T04:52:52.1507030Z [33m[plugin builtin:vite-reporter] 
+2026-11-05T04:52:52.1509850Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-05T04:52:52.1613190Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-05T04:52:52.1616380Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-05T04:52:52.1682960Z - Using dynamic import() to code-split the application
+2026-11-05T04:52:52.1686250Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-05T04:52:52.1691230Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-05T04:52:52.1695030Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-05T04:52:52.1698350Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB
+2026-11-05T04:52:52.1701640Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-05T04:52:52.1704280Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB
+2026-11-05T04:52:52.1706260Z dist/assets/OfflineViewer-DxPRhgPs.js              1.96 kB │ gzip:     1.00 kB
+2026-11-05T04:52:52.1708200Z dist/assets/rendering-Y2ZaHuhz.js                  2.48 kB │ gzip:     1.14 kB
+2026-11-05T04:52:52.1710340Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB
+2026-11-05T04:52:52.1713970Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB
+2026-11-05T04:52:52.1718090Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB
+2026-11-05T04:52:52.1721110Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB
+2026-11-05T04:52:52.1723830Z dist/assets/main-B45aDqO7.js                       3.75 kB │ gzip:     1.84 kB
+2026-11-05T04:52:52.1725990Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB
+2026-11-05T04:52:52.1728090Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB
+2026-11-05T04:52:52.1730570Z dist/assets/SheetEditor-FiU1acjF.js                6.14 kB │ gzip:     2.85 kB
+2026-11-05T04:52:52.1734100Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB
+2026-11-05T04:52:52.1736980Z dist/assets/native-DuYzNdfP.js                     7.10 kB │ gzip:     3.11 kB
+2026-11-05T04:52:52.1739610Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB
+2026-11-05T04:52:52.1744640Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB
+2026-11-05T04:52:52.1747670Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-05T04:52:52.1750950Z dist/assets/useDiagnostics-DuPOOcXt.js            13.20 kB │ gzip:     4.32 kB
+2026-11-05T04:52:52.1753700Z dist/service-worker.js                            15.37 kB │ gzip:     5.88 kB
+2026-11-05T04:52:52.2227650Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-05T04:52:52.2231290Z dist/assets/DocEditor-B2R16Ts9.js                 16.71 kB │ gzip:     6.95 kB
+2026-11-05T04:52:52.2232590Z [39m
+2026-11-05T04:52:52.2234180Z dist/assets/HistoryBrowser-N_mUDGVn.js            20.97 kB │ gzip:     7.45 kB
+2026-11-05T04:52:52.2354520Z dist/assets/offlineStore-CNblyHxf.js              31.15 kB │ gzip:     9.16 kB
+2026-11-05T04:52:52.2453340Z dist/assets/model-C-KJgbHu.js                    119.35 kB │ gzip:    34.23 kB
+2026-11-05T04:52:52.2509160Z dist/assets/nativeCopy-DPYNV4NP.js               124.52 kB │ gzip:    40.05 kB
+2026-11-05T04:52:52.2555870Z dist/assets/documentReady-BTwXpX3d.js            178.33 kB │ gzip:    48.46 kB
+2026-11-05T04:52:52.2595570Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB
+2026-11-05T04:52:52.2617230Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB
+2026-11-05T04:52:52.2633960Z dist/assets/application-Bmpgmib6.js              341.50 kB │ gzip:    96.86 kB
+2026-11-05T04:52:52.2672930Z dist/assets/lib-BHp9PmuQ.js                      378.77 kB │ gzip:   104.54 kB
+2026-11-05T04:52:52.2732430Z dist/assets/theme-CqYTemgo.js                    590.29 kB │ gzip:   151.12 kB
+2026-11-05T04:52:52.2758050Z dist/assets/CopyFile-qR382OFY.js                 637.50 kB │ gzip:   110.32 kB
+2026-11-05T04:52:52.2799270Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB
+2026-11-05T04:52:52.2834850Z dist/assets/nativeSyncPermissions-SuF-rts9.js  3,806.09 kB │ gzip: 1,017.74 kB
+2026-11-05T04:52:52.2863280Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB
+2026-11-05T04:52:52.2920760Z 
+2026-11-05T04:52:52.2995820Z [32m✓ built in 4.64s[39m
+2026-11-05T04:52:52.3666950Z ##[group]Run test "$RUNNER_ENVIRONMENT" = github-hosted
+2026-11-05T04:52:52.3669130Z [36;1mtest "$RUNNER_ENVIRONMENT" = github-hosted[0m
+2026-11-05T04:52:52.3670020Z [36;1mmkdir -p test-results/desktop-tls[0m
+2026-11-05T04:52:52.3671030Z [36;1mopenssl req -x509 -newkey rsa:2048 -nodes \[0m
+2026-11-05T04:52:52.3671980Z [36;1m  -keyout test-results/desktop-tls/key.pem \[0m
+2026-11-05T04:52:52.3672940Z [36;1m  -out test-results/desktop-tls/cert.pem -days 1 \[0m
+2026-11-05T04:52:52.3674690Z [36;1m  -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'[0m
+2026-11-05T04:52:52.3676170Z [36;1msudo security add-trusted-cert -d -r trustRoot \[0m
+2026-11-05T04:52:52.3677390Z [36;1m  -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem[0m
+2026-11-05T04:52:52.3758180Z shell: /bin/bash -e {0}
+2026-11-05T04:52:52.3758770Z env:
+2026-11-05T04:52:52.3759490Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:52:52.3760420Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:52:52.3761070Z ##[endgroup]
+2026-11-05T04:52:52.4597250Z Generating a RSA private key
+2026-11-05T04:52:52.4804110Z ..................+++++
+2026-11-05T04:52:52.5039610Z ....................+++++
+2026-11-05T04:52:52.5049320Z writing new private key to 'test-results/desktop-tls/key.pem'
+2026-11-05T04:52:52.5076700Z -----
+2026-11-05T04:52:53.0245080Z ##[group]Run node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+2026-11-05T04:52:53.0248630Z [36;1mnode --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T04:52:53.0603040Z shell: /bin/bash -e {0}
+2026-11-05T04:52:53.0606670Z env:
+2026-11-05T04:52:53.0607620Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:52:53.0608600Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:52:53.0610180Z   DESKTOP_BROWSER: safari
+2026-11-05T04:52:53.0611110Z ##[endgroup]
+2026-11-05T04:53:07.5139430Z Desktop safari: browser-start
+2026-11-05T04:53:20.2049900Z Desktop safari: safari-online-rendering-baseline
+2026-11-05T04:54:08.4325210Z Desktop safari: safari-online-rendering-baseline
+2026-11-05T04:54:44.3786360Z Desktop safari: all-four-downloads-complete
+2026-11-05T04:54:44.4289600Z Desktop safari: transport-disabled-before-quit
+2026-11-05T04:54:50.1441370Z Desktop safari: exact-records-captured-before-quit
+2026-11-05T04:54:51.3327360Z Desktop safari: browser-stop
+2026-11-05T04:54:51.4334070Z Desktop safari: transport-disabled-before-relaunch
+2026-11-05T04:54:58.4788240Z Desktop safari: browser-start
+2026-11-05T04:55:05.4603520Z Desktop safari: offline-catalog-and-original-records-retained
+2026-11-05T04:55:37.1898160Z Desktop safari: native-doc-input-caret
+2026-11-05T04:55:51.1985140Z Desktop safari: native-doc-input-caret
+2026-11-05T04:55:53.6902370Z Desktop safari: native-offline-edits-committed
+2026-11-05T04:55:54.1003060Z Desktop safari: browser-stop
+2026-11-05T04:55:54.1326070Z Desktop safari: transport-still-disabled-before-pending-relaunch
+2026-11-05T04:55:59.1494910Z Desktop safari: browser-start
+2026-11-05T04:56:07.4690350Z Desktop safari: native-clipboard-content
+2026-11-05T04:56:07.4691870Z Desktop safari: pending-restart-retained
+2026-11-05T04:56:16.0243970Z Desktop safari: native-clipboard-content
+2026-11-05T04:56:16.0250140Z Desktop safari: pending-restart-retained
+2026-11-05T04:56:29.4371130Z Desktop safari: native-clipboard-content
+2026-11-05T04:56:29.4407880Z Desktop safari: pending-restart-retained
+2026-11-05T04:56:44.1835970Z Desktop safari: native-clipboard-content
+2026-11-05T04:56:44.1840270Z Desktop safari: pending-restart-retained
+2026-11-05T04:56:46.3504850Z Desktop safari: transport-restored
+2026-11-05T04:56:57.2806490Z Desktop safari: normal-reconnect-exact-content-once
+2026-11-05T04:57:10.4750240Z Desktop safari: recovered-original-reconnect-outage
+2026-11-05T04:57:23.1372230Z Desktop safari: native-clipboard-content
+2026-11-05T04:57:23.1379340Z Desktop safari: conflict-copy-preserves-original
+2026-11-05T04:57:33.4352180Z Desktop safari: normal-reconnect-exact-content-once
+2026-11-05T04:57:46.6758960Z Desktop safari: recovered-original-reconnect-outage
+2026-11-05T04:58:02.0137830Z Desktop safari: native-clipboard-content
+2026-11-05T04:58:02.0147690Z Desktop safari: conflict-copy-preserves-original
+2026-11-05T04:58:06.7510750Z Desktop safari: storage-loss-tabs-prepared
+2026-11-05T04:58:07.1281260Z Desktop safari: storage-loss-unregistration
+2026-11-05T04:58:07.3343040Z Desktop safari: storage-loss-tabs-handed-off
+2026-11-05T04:58:07.7224210Z Desktop safari: storage-loss-quiescence-before-stop
+2026-11-05T04:58:08.1871270Z Desktop safari: browser-stop-before-storage-loss
+2026-11-05T04:58:11.8088750Z Desktop safari: browser-start
+2026-11-05T04:58:12.1343940Z Desktop safari: storage-loss-tabs-restarted
+2026-11-05T04:58:12.6280280Z Desktop safari: storage-deletion
+2026-11-05T04:58:17.4442760Z Desktop safari: cleared-storage-is-not-advertised
+2026-11-05T04:58:17.8292540Z Desktop safari: post-deletion-outage
+2026-11-05T04:58:19.1898390Z Desktop safari: missing-data-cannot-open-offline
+2026-11-05T04:58:19.1905920Z Desktop safari: complete
+2026-11-05T04:58:19.5419340Z Desktop safari: browser-stop
+2026-11-05T04:58:19.5510190Z {
+2026-11-05T04:58:19.5516790Z   "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+2026-11-05T04:58:19.5540410Z   "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:58:19.5548950Z   "testedSha": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+2026-11-05T04:58:19.5550250Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/41970163073",
+2026-11-05T04:58:19.5551510Z   "attempt": "1",
+2026-11-05T04:58:19.5552000Z   "runner": {
+2026-11-05T04:58:19.5552560Z     "label": "macos-15-intel",
+2026-11-05T04:58:19.5553110Z     "arch": "x64",
+2026-11-05T04:58:19.5554960Z     "imageOS": "macos15",
+2026-11-05T04:58:19.5555610Z     "imageVersion": "20260824.0482.1"
+2026-11-05T04:58:19.5556580Z   },
+2026-11-05T04:58:19.5557030Z   "browser": "safari",
+2026-11-05T04:58:19.5563750Z   "status": "passed",
+2026-11-05T04:58:19.5564720Z   "stages": [
+2026-11-05T04:58:19.5565980Z     {
+2026-11-05T04:58:19.5567240Z       "name": "browser-start",
+2026-11-05T04:58:19.5568150Z       "time": "2026-11-05T04:53:07.464Z",
+2026-11-05T04:58:19.5568840Z       "kind": "safari",
+2026-11-05T04:58:19.5569920Z       "version": "27.2",
+2026-11-05T04:58:19.5571970Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.5574120Z       "profile": {
+2026-11-05T04:58:19.5574950Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.5576400Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.5580480Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.5581160Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.5582050Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.5582910Z       },
+2026-11-05T04:58:19.5584270Z       "browserPid": 5829,
+2026-11-05T04:58:19.5586500Z       "previousBrowserPid": null,
+2026-11-05T04:58:19.5587330Z       "driverPid": null,
+2026-11-05T04:58:19.5588160Z       "driverVersion": null,
+2026-11-05T04:58:19.5589260Z       "startedAt": "2026-11-05T04:53:06.137Z",
+2026-11-05T04:58:19.5591430Z       "browserTab": true,
+2026-11-05T04:58:19.5592820Z       "secureContext": true,
+2026-11-05T04:58:19.5594490Z       "storagePersisted": false
+2026-11-05T04:58:19.5596300Z     },
+2026-11-05T04:58:19.5597170Z     {
+2026-11-05T04:58:19.5597760Z       "name": "safari-online-rendering-baseline",
+2026-11-05T04:58:19.5598570Z       "time": "2026-11-05T04:53:20.106Z",
+2026-11-05T04:58:19.5599570Z       "diagnosticOnly": true,
+2026-11-05T04:58:19.5601990Z       "itemId": "6c29f526-70da-4ab7-80f8-2b875be3ff88",
+2026-11-05T04:58:19.5602690Z       "kind": "sheet",
+2026-11-05T04:58:19.5603260Z       "file": "sheet-online-before-download.png"
+2026-11-05T04:58:19.5603910Z     },
+2026-11-05T04:58:19.5604600Z     {
+2026-11-05T04:58:19.5605410Z       "name": "safari-online-rendering-baseline",
+2026-11-05T04:58:19.5606920Z       "time": "2026-11-05T04:54:08.431Z",
+2026-11-05T04:58:19.5609230Z       "diagnosticOnly": true,
+2026-11-05T04:58:19.5612420Z       "itemId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.5618620Z       "kind": "doc",
+2026-11-05T04:58:19.5619200Z       "file": "doc-online-before-download.png"
+2026-11-05T04:58:19.5621030Z     },
+2026-11-05T04:58:19.5621410Z     {
+2026-11-05T04:58:19.5623200Z       "name": "all-four-downloads-complete",
+2026-11-05T04:58:19.5624400Z       "time": "2026-11-05T04:54:44.377Z"
+2026-11-05T04:58:19.5625520Z     },
+2026-11-05T04:58:19.5626020Z     {
+2026-11-05T04:58:19.5627020Z       "name": "transport-disabled-before-quit",
+2026-11-05T04:58:19.5628180Z       "time": "2026-11-05T04:54:44.428Z",
+2026-11-05T04:58:19.5628850Z       "forwardedRequests": 386,
+2026-11-05T04:58:19.5629340Z       "blockedRequests": 2,
+2026-11-05T04:58:19.5630600Z       "forwardedUpgrades": 4,
+2026-11-05T04:58:19.5631110Z       "blockedUpgrades": 1,
+2026-11-05T04:58:19.5631680Z       "logins": 1,
+2026-11-05T04:58:19.5632680Z       "offline": true,
+2026-11-05T04:58:19.5633820Z       "activeBrowserSockets": 0
+2026-11-05T04:58:19.5634460Z     },
+2026-11-05T04:58:19.5634790Z     {
+2026-11-05T04:58:19.5635960Z       "name": "exact-records-captured-before-quit",
+2026-11-05T04:58:19.5637030Z       "time": "2026-11-05T04:54:50.143Z"
+2026-11-05T04:58:19.5637870Z     },
+2026-11-05T04:58:19.5638460Z     {
+2026-11-05T04:58:19.5643440Z       "name": "browser-stop",
+2026-11-05T04:58:19.5649150Z       "time": "2026-11-05T04:54:51.269Z",
+2026-11-05T04:58:19.5664890Z       "kind": "safari",
+2026-11-05T04:58:19.5666980Z       "browserPid": 5829,
+2026-11-05T04:58:19.5676180Z       "driverPid": null,
+2026-11-05T04:58:19.5676840Z       "browserExited": true,
+2026-11-05T04:58:19.5678220Z       "driverExited": true,
+2026-11-05T04:58:19.5679000Z       "stoppedAt": "2026-11-05T04:54:51.269Z"
+2026-11-05T04:58:19.5679880Z     },
+2026-11-05T04:58:19.5680380Z     {
+2026-11-05T04:58:19.5681520Z       "name": "transport-disabled-before-relaunch",
+2026-11-05T04:58:19.5682320Z       "time": "2026-11-05T04:54:51.315Z",
+2026-11-05T04:58:19.5683000Z       "forwardedRequests": 386,
+2026-11-05T04:58:19.5683990Z       "blockedRequests": 36,
+2026-11-05T04:58:19.5684820Z       "forwardedUpgrades": 4,
+2026-11-05T04:58:19.5685560Z       "blockedUpgrades": 2,
+2026-11-05T04:58:19.5686660Z       "logins": 1,
+2026-11-05T04:58:19.5687240Z       "offline": true,
+2026-11-05T04:58:19.5687760Z       "activeBrowserSockets": 0
+2026-11-05T04:58:19.5689130Z     },
+2026-11-05T04:58:19.5689610Z     {
+2026-11-05T04:58:19.5690220Z       "name": "browser-start",
+2026-11-05T04:58:19.5691970Z       "time": "2026-11-05T04:54:58.478Z",
+2026-11-05T04:58:19.5692810Z       "kind": "safari",
+2026-11-05T04:58:19.5694160Z       "version": "27.2",
+2026-11-05T04:58:19.5701860Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.5704770Z       "profile": {
+2026-11-05T04:58:19.5706230Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.5709110Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.5711570Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.5713320Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.5714550Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.5715050Z       },
+2026-11-05T04:58:19.5715820Z       "browserPid": 8399,
+2026-11-05T04:58:19.5716790Z       "previousBrowserPid": 5829,
+2026-11-05T04:58:19.5717370Z       "driverPid": null,
+2026-11-05T04:58:19.5718160Z       "driverVersion": null,
+2026-11-05T04:58:19.5718790Z       "startedAt": "2026-11-05T04:54:57.924Z",
+2026-11-05T04:58:19.5719330Z       "browserTab": true,
+2026-11-05T04:58:19.5719880Z       "secureContext": true,
+2026-11-05T04:58:19.5720640Z       "storagePersisted": false
+2026-11-05T04:58:19.5721510Z     },
+2026-11-05T04:58:19.5722010Z     {
+2026-11-05T04:58:19.5723150Z       "name": "offline-catalog-and-original-records-retained",
+2026-11-05T04:58:19.5724500Z       "time": "2026-11-05T04:55:05.459Z"
+2026-11-05T04:58:19.5725180Z     },
+2026-11-05T04:58:19.5726170Z     {
+2026-11-05T04:58:19.5726840Z       "name": "native-doc-input-caret",
+2026-11-05T04:58:19.5728210Z       "time": "2026-11-05T04:55:37.151Z",
+2026-11-05T04:58:19.5729430Z       "itemId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.5730620Z       "before": {
+2026-11-05T04:58:19.5732040Z         "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.5733230Z         "mobile": false,
+2026-11-05T04:58:19.5734050Z         "observedAt": 9256,
+2026-11-05T04:58:19.5734970Z         "currentUnitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.5736630Z         "currentLogicalRange": {
+2026-11-05T04:58:19.5737850Z           "start": 20,
+2026-11-05T04:58:19.5738760Z           "end": 20,
+2026-11-05T04:58:19.5739400Z           "collapsed": true,
+2026-11-05T04:58:19.5740490Z           "segmentId": "",
+2026-11-05T04:58:19.5741440Z           "segmentPage": -1
+2026-11-05T04:58:19.5742190Z         },
+2026-11-05T04:58:19.5743700Z         "unitLogicalRanges": [
+2026-11-05T04:58:19.5744270Z           {
+2026-11-05T04:58:19.5746710Z             "start": 20,
+2026-11-05T04:58:19.5747790Z             "end": 20,
+2026-11-05T04:58:19.5748450Z             "collapsed": true,
+2026-11-05T04:58:19.5749110Z             "segmentId": "",
+2026-11-05T04:58:19.5749770Z             "segmentPage": -1
+2026-11-05T04:58:19.5750220Z           }
+2026-11-05T04:58:19.5750550Z         ],
+2026-11-05T04:58:19.5750980Z         "unitSelectionOptions": {
+2026-11-05T04:58:19.5751950Z           "preserveInputStyle": true
+2026-11-05T04:58:19.5752440Z         },
+2026-11-05T04:58:19.5752870Z         "unitSelectionStyles": [
+2026-11-05T04:58:19.5753510Z           {
+2026-11-05T04:58:19.5754280Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T04:58:19.5754910Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T04:58:19.5755710Z           }
+2026-11-05T04:58:19.5756040Z         ],
+2026-11-05T04:58:19.5756390Z         "nativeRange": {
+2026-11-05T04:58:19.5756830Z           "start": 20,
+2026-11-05T04:58:19.5757220Z           "end": 20,
+2026-11-05T04:58:19.5757630Z           "collapsed": true,
+2026-11-05T04:58:19.5758290Z           "segmentId": "",
+2026-11-05T04:58:19.5758920Z           "segmentPage": -1
+2026-11-05T04:58:19.5759530Z         },
+2026-11-05T04:58:19.5759880Z         "start": 20,
+2026-11-05T04:58:19.5760460Z         "end": 20,
+2026-11-05T04:58:19.5760850Z         "hasAnchor": true,
+2026-11-05T04:58:19.5762670Z         "anchor": {
+2026-11-05T04:58:19.5764770Z           "visible": true,
+2026-11-05T04:58:19.5766090Z           "left": 466.44596831003827,
+2026-11-05T04:58:19.5766670Z           "top": 133.66666666666669,
+2026-11-05T04:58:19.5768130Z           "width": 0,
+2026-11-05T04:58:19.5769040Z           "height": 16.000000000000014
+2026-11-05T04:58:19.5769790Z         },
+2026-11-05T04:58:19.5770610Z         "inputConnected": true,
+2026-11-05T04:58:19.5771380Z         "inputFocused": true,
+2026-11-05T04:58:19.5772720Z         "pointerSelection": false,
+2026-11-05T04:58:19.5773630Z         "pendingSelection": false,
+2026-11-05T04:58:19.5774160Z         "shortcutContext": {
+2026-11-05T04:58:19.5774800Z           "doc": true,
+2026-11-05T04:58:19.5775270Z           "editor": true,
+2026-11-05T04:58:19.5776070Z           "drawing": false,
+2026-11-05T04:58:19.5776630Z           "activated": false,
+2026-11-05T04:58:19.5778780Z           "formulaBar": false
+2026-11-05T04:58:19.5780070Z         },
+2026-11-05T04:58:19.5780470Z         "viewport": {
+2026-11-05T04:58:19.5780890Z           "key": "viewMain",
+2026-11-05T04:58:19.5781530Z           "active": true,
+2026-11-05T04:58:19.5782210Z           "width": 1324,
+2026-11-05T04:58:19.5782810Z           "height": 686,
+2026-11-05T04:58:19.5783410Z           "scrollX": 0,
+2026-11-05T04:58:19.5784420Z           "scrollY": 0,
+2026-11-05T04:58:19.5785070Z           "bounds": {
+2026-11-05T04:58:19.5788460Z             "left": 0,
+2026-11-05T04:58:19.5789050Z             "right": 1324,
+2026-11-05T04:58:19.5792090Z             "top": 0,
+2026-11-05T04:58:19.5806430Z             "bottom": 686
+2026-11-05T04:58:19.5808290Z           }
+2026-11-05T04:58:19.5815040Z         },
+2026-11-05T04:58:19.5817230Z         "scale": {
+2026-11-05T04:58:19.5818480Z           "x": 1,
+2026-11-05T04:58:19.5840910Z           "y": 1
+2026-11-05T04:58:19.5841330Z         },
+2026-11-05T04:58:19.5841690Z         "layout": {
+2026-11-05T04:58:19.5842320Z           "viewportReady": true,
+2026-11-05T04:58:19.5842840Z           "firstNode": {
+2026-11-05T04:58:19.5843640Z             "glyph": 0,
+2026-11-05T04:58:19.5845070Z             "divide": 0,
+2026-11-05T04:58:19.5845720Z             "line": 0,
+2026-11-05T04:58:19.5846580Z             "column": 0,
+2026-11-05T04:58:19.5847510Z             "section": 0,
+2026-11-05T04:58:19.5848400Z             "page": 0,
+2026-11-05T04:58:19.5849490Z             "pageType": 0,
+2026-11-05T04:58:19.5850220Z             "segmentPage": -1,
+2026-11-05T04:58:19.5850690Z             "isBack": true,
+2026-11-05T04:58:19.5851120Z             "path": [
+2026-11-05T04:58:19.5851700Z               "pages",
+2026-11-05T04:58:19.5853310Z               0
+2026-11-05T04:58:19.5853870Z             ]
+2026-11-05T04:58:19.5854260Z           },
+2026-11-05T04:58:19.5854780Z           "progress": null
+2026-11-05T04:58:19.5855220Z         },
+2026-11-05T04:58:19.5855570Z         "commands": [
+2026-11-05T04:58:19.5855950Z           {
+2026-11-05T04:58:19.5856470Z             "at": 2362,
+2026-11-05T04:58:19.5857030Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5857790Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5863630Z           },
+2026-11-05T04:58:19.5867010Z           {
+2026-11-05T04:58:19.5873710Z             "at": 6877,
+2026-11-05T04:58:19.5877650Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5882500Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5883420Z           },
+2026-11-05T04:58:19.5883770Z           {
+2026-11-05T04:58:19.5884110Z             "at": 6901,
+2026-11-05T04:58:19.5884820Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5885610Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5886370Z           }
+2026-11-05T04:58:19.5886710Z         ],
+2026-11-05T04:58:19.5887540Z         "editing": false,
+2026-11-05T04:58:19.5888510Z         "bounds": {
+2026-11-05T04:58:19.5891040Z           "left": 466.44596831003827,
+2026-11-05T04:58:19.5891930Z           "right": 466.44596831003827,
+2026-11-05T04:58:19.5894680Z           "top": 247.66666666666669,
+2026-11-05T04:58:19.5895430Z           "bottom": 310.6666666666667
+2026-11-05T04:58:19.5896150Z         },
+2026-11-05T04:58:19.5898200Z         "scroll": 0,
+2026-11-05T04:58:19.5898990Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T04:58:19.5904750Z       },
+2026-11-05T04:58:19.5905300Z       "caret": {
+2026-11-05T04:58:19.5906200Z         "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.5906840Z         "mobile": false,
+2026-11-05T04:58:19.5907330Z         "observedAt": 13003,
+2026-11-05T04:58:19.5908350Z         "currentUnitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.5909400Z         "currentLogicalRange": {
+2026-11-05T04:58:19.5910100Z           "start": 0,
+2026-11-05T04:58:19.5910680Z           "end": 0,
+2026-11-05T04:58:19.5911250Z           "collapsed": true,
+2026-11-05T04:58:19.5912140Z           "segmentId": "",
+2026-11-05T04:58:19.5913040Z           "segmentPage": -1
+2026-11-05T04:58:19.5913710Z         },
+2026-11-05T04:58:19.5914310Z         "unitLogicalRanges": [
+2026-11-05T04:58:19.5914850Z           {
+2026-11-05T04:58:19.5915190Z             "start": 0,
+2026-11-05T04:58:19.5915590Z             "end": 0,
+2026-11-05T04:58:19.5916050Z             "collapsed": true,
+2026-11-05T04:58:19.5916500Z             "segmentId": "",
+2026-11-05T04:58:19.5916960Z             "segmentPage": -1
+2026-11-05T04:58:19.5917390Z           }
+2026-11-05T04:58:19.5917720Z         ],
+2026-11-05T04:58:19.5918150Z         "unitSelectionOptions": {
+2026-11-05T04:58:19.5918830Z           "preserveInputStyle": true
+2026-11-05T04:58:19.5919330Z         },
+2026-11-05T04:58:19.5919750Z         "unitSelectionStyles": [
+2026-11-05T04:58:19.5920210Z           {
+2026-11-05T04:58:19.5920630Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T04:58:19.5921250Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T04:58:19.5921750Z           }
+2026-11-05T04:58:19.5922080Z         ],
+2026-11-05T04:58:19.5922420Z         "nativeRange": {
+2026-11-05T04:58:19.5922850Z           "start": 0,
+2026-11-05T04:58:19.5923440Z           "end": 0,
+2026-11-05T04:58:19.5923840Z           "collapsed": true,
+2026-11-05T04:58:19.5924290Z           "segmentId": "",
+2026-11-05T04:58:19.5924730Z           "segmentPage": -1
+2026-11-05T04:58:19.5925150Z         },
+2026-11-05T04:58:19.5925480Z         "start": 0,
+2026-11-05T04:58:19.5925850Z         "end": 0,
+2026-11-05T04:58:19.5926230Z         "hasAnchor": true,
+2026-11-05T04:58:19.5926660Z         "anchor": {
+2026-11-05T04:58:19.5927040Z           "visible": true,
+2026-11-05T04:58:19.5928290Z           "left": 248.66666666666669,
+2026-11-05T04:58:19.5928880Z           "top": 86.66666666666667,
+2026-11-05T04:58:19.5929540Z           "width": 0,
+2026-11-05T04:58:19.5929970Z           "height": 60
+2026-11-05T04:58:19.5930360Z         },
+2026-11-05T04:58:19.5930770Z         "inputConnected": true,
+2026-11-05T04:58:19.5932350Z         "inputFocused": true,
+2026-11-05T04:58:19.5932910Z         "pointerSelection": false,
+2026-11-05T04:58:19.5933500Z         "pendingSelection": false,
+2026-11-05T04:58:19.5934190Z         "shortcutContext": {
+2026-11-05T04:58:19.5934830Z           "doc": true,
+2026-11-05T04:58:19.5935250Z           "editor": true,
+2026-11-05T04:58:19.5935670Z           "drawing": false,
+2026-11-05T04:58:19.5936110Z           "activated": false,
+2026-11-05T04:58:19.5937570Z           "formulaBar": false
+2026-11-05T04:58:19.5938680Z         },
+2026-11-05T04:58:19.5939050Z         "viewport": {
+2026-11-05T04:58:19.5940880Z           "key": "viewMain",
+2026-11-05T04:58:19.5941390Z           "active": true,
+2026-11-05T04:58:19.5942150Z           "width": 1324,
+2026-11-05T04:58:19.5942570Z           "height": 686,
+2026-11-05T04:58:19.5942990Z           "scrollX": 0,
+2026-11-05T04:58:19.5943400Z           "scrollY": 0,
+2026-11-05T04:58:19.5943810Z           "bounds": {
+2026-11-05T04:58:19.5944360Z             "left": 0,
+2026-11-05T04:58:19.5944780Z             "right": 1324,
+2026-11-05T04:58:19.5945660Z             "top": 0,
+2026-11-05T04:58:19.5946060Z             "bottom": 686
+2026-11-05T04:58:19.5946470Z           }
+2026-11-05T04:58:19.5946970Z         },
+2026-11-05T04:58:19.5947480Z         "scale": {
+2026-11-05T04:58:19.5948030Z           "x": 1,
+2026-11-05T04:58:19.5948430Z           "y": 1
+2026-11-05T04:58:19.5948780Z         },
+2026-11-05T04:58:19.5949140Z         "layout": {
+2026-11-05T04:58:19.5949800Z           "viewportReady": true,
+2026-11-05T04:58:19.5950340Z           "firstNode": {
+2026-11-05T04:58:19.5950750Z             "glyph": 0,
+2026-11-05T04:58:19.5951150Z             "divide": 0,
+2026-11-05T04:58:19.5951570Z             "line": 0,
+2026-11-05T04:58:19.5951970Z             "column": 0,
+2026-11-05T04:58:19.5952380Z             "section": 0,
+2026-11-05T04:58:19.5952910Z             "page": 0,
+2026-11-05T04:58:19.5953320Z             "pageType": 0,
+2026-11-05T04:58:19.5953820Z             "segmentPage": -1,
+2026-11-05T04:58:19.5957710Z             "isBack": true,
+2026-11-05T04:58:19.5958220Z             "path": [
+2026-11-05T04:58:19.5958610Z               "pages",
+2026-11-05T04:58:19.5959010Z               0
+2026-11-05T04:58:19.5959360Z             ]
+2026-11-05T04:58:19.5959700Z           },
+2026-11-05T04:58:19.5960070Z           "progress": null
+2026-11-05T04:58:19.5960690Z         },
+2026-11-05T04:58:19.5961050Z         "commands": [
+2026-11-05T04:58:19.5961430Z           {
+2026-11-05T04:58:19.5961770Z             "at": 2362,
+2026-11-05T04:58:19.5962310Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5963060Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5963840Z           },
+2026-11-05T04:58:19.5964350Z           {
+2026-11-05T04:58:19.5964720Z             "at": 6877,
+2026-11-05T04:58:19.5966010Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5967000Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5967590Z           },
+2026-11-05T04:58:19.5967940Z           {
+2026-11-05T04:58:19.5968300Z             "at": 6901,
+2026-11-05T04:58:19.5969040Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5970740Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5971360Z           },
+2026-11-05T04:58:19.5971870Z           {
+2026-11-05T04:58:19.5972220Z             "at": 12984,
+2026-11-05T04:58:19.5972770Z             "id": "doc.operation.move-cursor",
+2026-11-05T04:58:19.5974270Z             "direction": 0,
+2026-11-05T04:58:19.5975650Z             "granularity": "document"
+2026-11-05T04:58:19.5976140Z           },
+2026-11-05T04:58:19.5978000Z           {
+2026-11-05T04:58:19.5980950Z             "at": 12995,
+2026-11-05T04:58:19.5982720Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.5983700Z             "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf"
+2026-11-05T04:58:19.5984280Z           }
+2026-11-05T04:58:19.5984620Z         ],
+2026-11-05T04:58:19.5984960Z         "editing": false,
+2026-11-05T04:58:19.5985380Z         "bounds": {
+2026-11-05T04:58:19.5985840Z           "left": 248.66666666666669,
+2026-11-05T04:58:19.5986390Z           "right": 248.66666666666669,
+2026-11-05T04:58:19.5986950Z           "top": 247.66666666666669,
+2026-11-05T04:58:19.5987490Z           "bottom": 310.6666666666667
+2026-11-05T04:58:19.5988290Z         },
+2026-11-05T04:58:19.5988670Z         "scroll": 0,
+2026-11-05T04:58:19.5989170Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T04:58:19.5989670Z       },
+2026-11-05T04:58:19.5990010Z       "visual": {
+2026-11-05T04:58:19.5991750Z         "file": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf-before-doc-input.png",
+2026-11-05T04:58:19.5993710Z         "colorPixelCounts": [
+2026-11-05T04:58:19.5994850Z           4661
+2026-11-05T04:58:19.5996440Z         ],
+2026-11-05T04:58:19.5997000Z         "captures": 1
+2026-11-05T04:58:19.5997610Z       }
+2026-11-05T04:58:19.5998100Z     },
+2026-11-05T04:58:19.5998760Z     {
+2026-11-05T04:58:19.5999780Z       "name": "native-doc-input-caret",
+2026-11-05T04:58:19.6001170Z       "time": "2026-11-05T04:55:51.182Z",
+2026-11-05T04:58:19.6002040Z       "itemId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6002780Z       "before": {
+2026-11-05T04:58:19.6003530Z         "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6004290Z         "mobile": false,
+2026-11-05T04:58:19.6005130Z         "observedAt": 9212,
+2026-11-05T04:58:19.6006150Z         "currentUnitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6007000Z         "currentLogicalRange": {
+2026-11-05T04:58:19.6007510Z           "start": 20,
+2026-11-05T04:58:19.6008210Z           "end": 20,
+2026-11-05T04:58:19.6009210Z           "collapsed": true,
+2026-11-05T04:58:19.6009980Z           "segmentId": "",
+2026-11-05T04:58:19.6010710Z           "segmentPage": -1
+2026-11-05T04:58:19.6012160Z         },
+2026-11-05T04:58:19.6012670Z         "unitLogicalRanges": [
+2026-11-05T04:58:19.6014630Z           {
+2026-11-05T04:58:19.6015700Z             "start": 20,
+2026-11-05T04:58:19.6016350Z             "end": 20,
+2026-11-05T04:58:19.6016840Z             "collapsed": true,
+2026-11-05T04:58:19.6017300Z             "segmentId": "",
+2026-11-05T04:58:19.6017760Z             "segmentPage": -1
+2026-11-05T04:58:19.6018370Z           }
+2026-11-05T04:58:19.6018730Z         ],
+2026-11-05T04:58:19.6019160Z         "unitSelectionOptions": {
+2026-11-05T04:58:19.6019730Z           "preserveInputStyle": true
+2026-11-05T04:58:19.6020400Z         },
+2026-11-05T04:58:19.6020820Z         "unitSelectionStyles": [
+2026-11-05T04:58:19.6021480Z           {
+2026-11-05T04:58:19.6021920Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T04:58:19.6022730Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T04:58:19.6023260Z           }
+2026-11-05T04:58:19.6023580Z         ],
+2026-11-05T04:58:19.6024120Z         "nativeRange": {
+2026-11-05T04:58:19.6024730Z           "start": 20,
+2026-11-05T04:58:19.6025310Z           "end": 20,
+2026-11-05T04:58:19.6025900Z           "collapsed": true,
+2026-11-05T04:58:19.6026900Z           "segmentId": "",
+2026-11-05T04:58:19.6027370Z           "segmentPage": -1
+2026-11-05T04:58:19.6028070Z         },
+2026-11-05T04:58:19.6028820Z         "start": 20,
+2026-11-05T04:58:19.6029690Z         "end": 20,
+2026-11-05T04:58:19.6030180Z         "hasAnchor": true,
+2026-11-05T04:58:19.6030980Z         "anchor": {
+2026-11-05T04:58:19.6032010Z           "visible": true,
+2026-11-05T04:58:19.6032760Z           "left": 466.44596831003827,
+2026-11-05T04:58:19.6033920Z           "top": 133.66666666666669,
+2026-11-05T04:58:19.6056760Z           "width": 0,
+2026-11-05T04:58:19.6060700Z           "height": 16.000000000000014
+2026-11-05T04:58:19.6061240Z         },
+2026-11-05T04:58:19.6061670Z         "inputConnected": true,
+2026-11-05T04:58:19.6064680Z         "inputFocused": true,
+2026-11-05T04:58:19.6066740Z         "pointerSelection": false,
+2026-11-05T04:58:19.6067380Z         "pendingSelection": false,
+2026-11-05T04:58:19.6068120Z         "shortcutContext": {
+2026-11-05T04:58:19.6068570Z           "doc": true,
+2026-11-05T04:58:19.6069170Z           "editor": true,
+2026-11-05T04:58:19.6069620Z           "drawing": false,
+2026-11-05T04:58:19.6070550Z           "activated": false,
+2026-11-05T04:58:19.6071510Z           "formulaBar": false
+2026-11-05T04:58:19.6072140Z         },
+2026-11-05T04:58:19.6072710Z         "viewport": {
+2026-11-05T04:58:19.6073450Z           "key": "viewMain",
+2026-11-05T04:58:19.6073900Z           "active": true,
+2026-11-05T04:58:19.6074470Z           "width": 1324,
+2026-11-05T04:58:19.6075090Z           "height": 686,
+2026-11-05T04:58:19.6075690Z           "scrollX": 0,
+2026-11-05T04:58:19.6076300Z           "scrollY": 0,
+2026-11-05T04:58:19.6077120Z           "bounds": {
+2026-11-05T04:58:19.6077620Z             "left": 0,
+2026-11-05T04:58:19.6078200Z             "right": 1324,
+2026-11-05T04:58:19.6078640Z             "top": 0,
+2026-11-05T04:58:19.6079530Z             "bottom": 686
+2026-11-05T04:58:19.6080110Z           }
+2026-11-05T04:58:19.6080620Z         },
+2026-11-05T04:58:19.6081290Z         "scale": {
+2026-11-05T04:58:19.6081840Z           "x": 1,
+2026-11-05T04:58:19.6082220Z           "y": 1
+2026-11-05T04:58:19.6082570Z         },
+2026-11-05T04:58:19.6083210Z         "layout": {
+2026-11-05T04:58:19.6083670Z           "viewportReady": true,
+2026-11-05T04:58:19.6084320Z           "firstNode": {
+2026-11-05T04:58:19.6084760Z             "glyph": 0,
+2026-11-05T04:58:19.6085400Z             "divide": 0,
+2026-11-05T04:58:19.6085860Z             "line": 0,
+2026-11-05T04:58:19.6086260Z             "column": 0,
+2026-11-05T04:58:19.6086670Z             "section": 0,
+2026-11-05T04:58:19.6087090Z             "page": 0,
+2026-11-05T04:58:19.6087500Z             "pageType": 0,
+2026-11-05T04:58:19.6088380Z             "segmentPage": -1,
+2026-11-05T04:58:19.6088880Z             "isBack": true,
+2026-11-05T04:58:19.6089320Z             "path": [
+2026-11-05T04:58:19.6090260Z               "pages",
+2026-11-05T04:58:19.6090840Z               0
+2026-11-05T04:58:19.6091530Z             ]
+2026-11-05T04:58:19.6091940Z           },
+2026-11-05T04:58:19.6092350Z           "progress": null
+2026-11-05T04:58:19.6092960Z         },
+2026-11-05T04:58:19.6093650Z         "commands": [
+2026-11-05T04:58:19.6094030Z           {
+2026-11-05T04:58:19.6094380Z             "at": 2675,
+2026-11-05T04:58:19.6095110Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6096180Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6096760Z           },
+2026-11-05T04:58:19.6097340Z           {
+2026-11-05T04:58:19.6098020Z             "at": 6864,
+2026-11-05T04:58:19.6098580Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6099690Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6100500Z           },
+2026-11-05T04:58:19.6100850Z           {
+2026-11-05T04:58:19.6101380Z             "at": 6880,
+2026-11-05T04:58:19.6101920Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6102840Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6103800Z           }
+2026-11-05T04:58:19.6104150Z         ],
+2026-11-05T04:58:19.6104690Z         "editing": false,
+2026-11-05T04:58:19.6105110Z         "bounds": {
+2026-11-05T04:58:19.6105720Z           "left": 466.44596831003827,
+2026-11-05T04:58:19.6106520Z           "right": 466.44596831003827,
+2026-11-05T04:58:19.6108150Z           "top": 247.66666666666669,
+2026-11-05T04:58:19.6112510Z           "bottom": 310.6666666666667
+2026-11-05T04:58:19.6114780Z         },
+2026-11-05T04:58:19.6116960Z         "scroll": 0,
+2026-11-05T04:58:19.6118970Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T04:58:19.6119530Z       },
+2026-11-05T04:58:19.6120050Z       "caret": {
+2026-11-05T04:58:19.6120600Z         "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6121390Z         "mobile": false,
+2026-11-05T04:58:19.6121930Z         "observedAt": 10017,
+2026-11-05T04:58:19.6123130Z         "currentUnitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6124610Z         "currentLogicalRange": {
+2026-11-05T04:58:19.6125180Z           "start": 0,
+2026-11-05T04:58:19.6125590Z           "end": 0,
+2026-11-05T04:58:19.6149780Z           "collapsed": true,
+2026-11-05T04:58:19.6150670Z           "segmentId": "",
+2026-11-05T04:58:19.6151180Z           "segmentPage": -1
+2026-11-05T04:58:19.6151630Z         },
+2026-11-05T04:58:19.6152080Z         "unitLogicalRanges": [
+2026-11-05T04:58:19.6152550Z           {
+2026-11-05T04:58:19.6153050Z             "start": 0,
+2026-11-05T04:58:19.6153490Z             "end": 0,
+2026-11-05T04:58:19.6154060Z             "collapsed": true,
+2026-11-05T04:58:19.6154670Z             "segmentId": "",
+2026-11-05T04:58:19.6155160Z             "segmentPage": -1
+2026-11-05T04:58:19.6155620Z           }
+2026-11-05T04:58:19.6155980Z         ],
+2026-11-05T04:58:19.6156450Z         "unitSelectionOptions": {
+2026-11-05T04:58:19.6157050Z           "preserveInputStyle": true
+2026-11-05T04:58:19.6157570Z         },
+2026-11-05T04:58:19.6158600Z         "unitSelectionStyles": [
+2026-11-05T04:58:19.6159060Z           {
+2026-11-05T04:58:19.6159510Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T04:58:19.6160140Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T04:58:19.6160660Z           }
+2026-11-05T04:58:19.6161000Z         ],
+2026-11-05T04:58:19.6161370Z         "nativeRange": {
+2026-11-05T04:58:19.6161800Z           "start": 0,
+2026-11-05T04:58:19.6162190Z           "end": 0,
+2026-11-05T04:58:19.6162640Z           "collapsed": true,
+2026-11-05T04:58:19.6163110Z           "segmentId": "",
+2026-11-05T04:58:19.6163580Z           "segmentPage": -1
+2026-11-05T04:58:19.6164030Z         },
+2026-11-05T04:58:19.6164390Z         "start": 0,
+2026-11-05T04:58:19.6164780Z         "end": 0,
+2026-11-05T04:58:19.6165190Z         "hasAnchor": true,
+2026-11-05T04:58:19.6165650Z         "anchor": {
+2026-11-05T04:58:19.6166060Z           "visible": true,
+2026-11-05T04:58:19.6166610Z           "left": 248.66666666666669,
+2026-11-05T04:58:19.6167190Z           "top": 86.66666666666667,
+2026-11-05T04:58:19.6167690Z           "width": 0,
+2026-11-05T04:58:19.6168120Z           "height": 60
+2026-11-05T04:58:19.6168630Z         },
+2026-11-05T04:58:19.6169060Z         "inputConnected": true,
+2026-11-05T04:58:19.6169550Z         "inputFocused": true,
+2026-11-05T04:58:19.6170200Z         "pointerSelection": false,
+2026-11-05T04:58:19.6171040Z         "pendingSelection": false,
+2026-11-05T04:58:19.6171650Z         "shortcutContext": {
+2026-11-05T04:58:19.6172120Z           "doc": true,
+2026-11-05T04:58:19.6172520Z           "editor": true,
+2026-11-05T04:58:19.6173050Z           "drawing": false,
+2026-11-05T04:58:19.6173500Z           "activated": false,
+2026-11-05T04:58:19.6173960Z           "formulaBar": false
+2026-11-05T04:58:19.6174390Z         },
+2026-11-05T04:58:19.6174750Z         "viewport": {
+2026-11-05T04:58:19.6175150Z           "key": "viewMain",
+2026-11-05T04:58:19.6175600Z           "active": true,
+2026-11-05T04:58:19.6176020Z           "width": 1324,
+2026-11-05T04:58:19.6176450Z           "height": 686,
+2026-11-05T04:58:19.6176860Z           "scrollX": 0,
+2026-11-05T04:58:19.6177320Z           "scrollY": 0,
+2026-11-05T04:58:19.6177770Z           "bounds": {
+2026-11-05T04:58:19.6178190Z             "left": 0,
+2026-11-05T04:58:19.6178580Z             "right": 1324,
+2026-11-05T04:58:19.6179000Z             "top": 0,
+2026-11-05T04:58:19.6179390Z             "bottom": 686
+2026-11-05T04:58:19.6179790Z           }
+2026-11-05T04:58:19.6180120Z         },
+2026-11-05T04:58:19.6180460Z         "scale": {
+2026-11-05T04:58:19.6180820Z           "x": 1,
+2026-11-05T04:58:19.6181730Z           "y": 1
+2026-11-05T04:58:19.6182120Z         },
+2026-11-05T04:58:19.6182460Z         "layout": {
+2026-11-05T04:58:19.6182920Z           "viewportReady": true,
+2026-11-05T04:58:19.6183400Z           "firstNode": {
+2026-11-05T04:58:19.6183810Z             "glyph": 0,
+2026-11-05T04:58:19.6184220Z             "divide": 0,
+2026-11-05T04:58:19.6184630Z             "line": 0,
+2026-11-05T04:58:19.6185040Z             "column": 0,
+2026-11-05T04:58:19.6185460Z             "section": 0,
+2026-11-05T04:58:19.6185880Z             "page": 0,
+2026-11-05T04:58:19.6186280Z             "pageType": 0,
+2026-11-05T04:58:19.6186780Z             "segmentPage": -1,
+2026-11-05T04:58:19.6187240Z             "isBack": true,
+2026-11-05T04:58:19.6187670Z             "path": [
+2026-11-05T04:58:19.6188080Z               "pages",
+2026-11-05T04:58:19.6188510Z               0
+2026-11-05T04:58:19.6188860Z             ]
+2026-11-05T04:58:19.6189200Z           },
+2026-11-05T04:58:19.6189560Z           "progress": null
+2026-11-05T04:58:19.6189980Z         },
+2026-11-05T04:58:19.6190330Z         "commands": [
+2026-11-05T04:58:19.6190710Z           {
+2026-11-05T04:58:19.6191050Z             "at": 2675,
+2026-11-05T04:58:19.6191600Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6192440Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6193020Z           },
+2026-11-05T04:58:19.6193600Z           {
+2026-11-05T04:58:19.6193950Z             "at": 6864,
+2026-11-05T04:58:19.6194490Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6195220Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6195790Z           },
+2026-11-05T04:58:19.6196130Z           {
+2026-11-05T04:58:19.6196470Z             "at": 6880,
+2026-11-05T04:58:19.6197010Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6197740Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6198310Z           },
+2026-11-05T04:58:19.6198650Z           {
+2026-11-05T04:58:19.6199000Z             "at": 9878,
+2026-11-05T04:58:19.6199700Z             "id": "doc.operation.move-cursor",
+2026-11-05T04:58:19.6200260Z             "direction": 0,
+2026-11-05T04:58:19.6200780Z             "granularity": "document"
+2026-11-05T04:58:19.6201250Z           },
+2026-11-05T04:58:19.6201590Z           {
+2026-11-05T04:58:19.6201930Z             "at": 9886,
+2026-11-05T04:58:19.6202470Z             "id": "doc.operation.set-selections",
+2026-11-05T04:58:19.6203540Z             "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6"
+2026-11-05T04:58:19.6204110Z           }
+2026-11-05T04:58:19.6204440Z         ],
+2026-11-05T04:58:19.6204800Z         "editing": false,
+2026-11-05T04:58:19.6205220Z         "bounds": {
+2026-11-05T04:58:19.6205670Z           "left": 248.66666666666669,
+2026-11-05T04:58:19.6206220Z           "right": 248.66666666666669,
+2026-11-05T04:58:19.6206770Z           "top": 247.66666666666669,
+2026-11-05T04:58:19.6207330Z           "bottom": 310.6666666666667
+2026-11-05T04:58:19.6207790Z         },
+2026-11-05T04:58:19.6208130Z         "scroll": 0,
+2026-11-05T04:58:19.6208630Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T04:58:19.6209150Z       },
+2026-11-05T04:58:19.6209500Z       "visual": {
+2026-11-05T04:58:19.6211080Z         "file": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6-before-doc-input.png",
+2026-11-05T04:58:19.6212560Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6213430Z           4661
+2026-11-05T04:58:19.6213870Z         ],
+2026-11-05T04:58:19.6214230Z         "captures": 1
+2026-11-05T04:58:19.6214610Z       }
+2026-11-05T04:58:19.6214940Z     },
+2026-11-05T04:58:19.6215250Z     {
+2026-11-05T04:58:19.6215820Z       "name": "native-offline-edits-committed",
+2026-11-05T04:58:19.6217220Z       "time": "2026-11-05T04:55:53.682Z"
+2026-11-05T04:58:19.6220400Z     },
+2026-11-05T04:58:19.6220850Z     {
+2026-11-05T04:58:19.6221260Z       "name": "browser-stop",
+2026-11-05T04:58:19.6221830Z       "time": "2026-11-05T04:55:54.048Z",
+2026-11-05T04:58:19.6223490Z       "kind": "safari",
+2026-11-05T04:58:19.6224590Z       "browserPid": 8399,
+2026-11-05T04:58:19.6225050Z       "driverPid": null,
+2026-11-05T04:58:19.6225500Z       "browserExited": true,
+2026-11-05T04:58:19.6225960Z       "driverExited": true,
+2026-11-05T04:58:19.6226510Z       "stoppedAt": "2026-11-05T04:55:54.048Z"
+2026-11-05T04:58:19.6227580Z     },
+2026-11-05T04:58:19.6227990Z     {
+2026-11-05T04:58:19.6228640Z       "name": "transport-still-disabled-before-pending-relaunch",
+2026-11-05T04:58:19.6229440Z       "time": "2026-11-05T04:55:54.068Z",
+2026-11-05T04:58:19.6230020Z       "forwardedRequests": 386,
+2026-11-05T04:58:19.6230520Z       "blockedRequests": 349,
+2026-11-05T04:58:19.6230990Z       "forwardedUpgrades": 4,
+2026-11-05T04:58:19.6231490Z       "blockedUpgrades": 3,
+2026-11-05T04:58:19.6232510Z       "logins": 1,
+2026-11-05T04:58:19.6243630Z       "offline": true,
+2026-11-05T04:58:19.6244320Z       "activeBrowserSockets": 0
+2026-11-05T04:58:19.6245000Z     },
+2026-11-05T04:58:19.6245730Z     {
+2026-11-05T04:58:19.6246360Z       "name": "browser-start",
+2026-11-05T04:58:19.6247150Z       "time": "2026-11-05T04:55:59.142Z",
+2026-11-05T04:58:19.6247690Z       "kind": "safari",
+2026-11-05T04:58:19.6248100Z       "version": "27.2",
+2026-11-05T04:58:19.6249370Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.6250840Z       "profile": {
+2026-11-05T04:58:19.6251470Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.6252740Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.6253870Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.6254460Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.6255050Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.6255680Z       },
+2026-11-05T04:58:19.6256040Z       "browserPid": 9917,
+2026-11-05T04:58:19.6256570Z       "previousBrowserPid": 8399,
+2026-11-05T04:58:19.6257060Z       "driverPid": null,
+2026-11-05T04:58:19.6257490Z       "driverVersion": null,
+2026-11-05T04:58:19.6258140Z       "startedAt": "2026-11-05T04:55:58.395Z",
+2026-11-05T04:58:19.6258690Z       "browserTab": true,
+2026-11-05T04:58:19.6259130Z       "secureContext": true,
+2026-11-05T04:58:19.6259660Z       "storagePersisted": false
+2026-11-05T04:58:19.6260110Z     },
+2026-11-05T04:58:19.6260490Z     {
+2026-11-05T04:58:19.6260930Z       "name": "native-clipboard-content",
+2026-11-05T04:58:19.6261530Z       "time": "2026-11-05T04:56:07.468Z",
+2026-11-05T04:58:19.6262150Z       "kind": "sheet",
+2026-11-05T04:58:19.6262950Z       "text": "731",
+2026-11-05T04:58:19.6263350Z       "selection": null
+2026-11-05T04:58:19.6263740Z     },
+2026-11-05T04:58:19.6264580Z     {
+2026-11-05T04:58:19.6265250Z       "name": "pending-restart-retained",
+2026-11-05T04:58:19.6266170Z       "time": "2026-11-05T04:56:07.469Z",
+2026-11-05T04:58:19.6267180Z       "itemId": "6c29f526-70da-4ab7-80f8-2b875be3ff88",
+2026-11-05T04:58:19.6267770Z       "kind": "sheet",
+2026-11-05T04:58:19.6268170Z       "outcome": "normal",
+2026-11-05T04:58:19.6269140Z       "checkpointSha256": "0405e99db8f60959424d361d35bd07c0c0e9d91991dde77f9169cace4821a074",
+2026-11-05T04:58:19.6270050Z       "imageHashes": [
+2026-11-05T04:58:19.6270430Z         {
+2026-11-05T04:58:19.6271730Z           "source": "/api/items/6c29f526-70da-4ab7-80f8-2b875be3ff88/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:58:19.6275100Z           "size": 248,
+2026-11-05T04:58:19.6276090Z           "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+2026-11-05T04:58:19.6276920Z         },
+2026-11-05T04:58:19.6277240Z         {
+2026-11-05T04:58:19.6278990Z           "source": "/api/items/6c29f526-70da-4ab7-80f8-2b875be3ff88/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:58:19.6280530Z           "size": 242,
+2026-11-05T04:58:19.6282020Z           "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+2026-11-05T04:58:19.6283070Z         },
+2026-11-05T04:58:19.6283430Z         {
+2026-11-05T04:58:19.6284940Z           "source": "/api/items/6c29f526-70da-4ab7-80f8-2b875be3ff88/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:58:19.6286770Z           "size": 247,
+2026-11-05T04:58:19.6287600Z           "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+2026-11-05T04:58:19.6288480Z         }
+2026-11-05T04:58:19.6288830Z       ],
+2026-11-05T04:58:19.6289260Z       "visual": {
+2026-11-05T04:58:19.6289770Z         "file": "sheet-normal-offline.png",
+2026-11-05T04:58:19.6290320Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6290780Z           7200,
+2026-11-05T04:58:19.6291130Z           7081,
+2026-11-05T04:58:19.6291480Z           610532
+2026-11-05T04:58:19.6291910Z         ],
+2026-11-05T04:58:19.6292290Z         "captures": 1
+2026-11-05T04:58:19.6292670Z       }
+2026-11-05T04:58:19.6293100Z     },
+2026-11-05T04:58:19.6293420Z     {
+2026-11-05T04:58:19.6293870Z       "name": "native-clipboard-content",
+2026-11-05T04:58:19.6294470Z       "time": "2026-11-05T04:56:16.022Z",
+2026-11-05T04:58:19.6294960Z       "kind": "sheet",
+2026-11-05T04:58:19.6295360Z       "text": "731",
+2026-11-05T04:58:19.6295750Z       "selection": null
+2026-11-05T04:58:19.6296140Z     },
+2026-11-05T04:58:19.6296730Z     {
+2026-11-05T04:58:19.6297200Z       "name": "pending-restart-retained",
+2026-11-05T04:58:19.6297850Z       "time": "2026-11-05T04:56:16.023Z",
+2026-11-05T04:58:19.6298890Z       "itemId": "de872ce7-42ee-4202-8c87-0e08932a377d",
+2026-11-05T04:58:19.6299750Z       "kind": "sheet",
+2026-11-05T04:58:19.6300380Z       "outcome": "conflict",
+2026-11-05T04:58:19.6301520Z       "checkpointSha256": "4751f2d3911c9e85438c8e543078a7f6b0c93508f846970a0b1f692bd5714868",
+2026-11-05T04:58:19.6302510Z       "imageHashes": [
+2026-11-05T04:58:19.6303090Z         {
+2026-11-05T04:58:19.6304470Z           "source": "/api/items/de872ce7-42ee-4202-8c87-0e08932a377d/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:58:19.6305830Z           "size": 248,
+2026-11-05T04:58:19.6306730Z           "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+2026-11-05T04:58:19.6307560Z         },
+2026-11-05T04:58:19.6307890Z         {
+2026-11-05T04:58:19.6309270Z           "source": "/api/items/de872ce7-42ee-4202-8c87-0e08932a377d/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:58:19.6310520Z           "size": 242,
+2026-11-05T04:58:19.6311350Z           "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+2026-11-05T04:58:19.6312530Z         },
+2026-11-05T04:58:19.6313030Z         {
+2026-11-05T04:58:19.6315460Z           "source": "/api/items/de872ce7-42ee-4202-8c87-0e08932a377d/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:58:19.6316800Z           "size": 247,
+2026-11-05T04:58:19.6317630Z           "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+2026-11-05T04:58:19.6318430Z         }
+2026-11-05T04:58:19.6318750Z       ],
+2026-11-05T04:58:19.6319080Z       "visual": {
+2026-11-05T04:58:19.6319600Z         "file": "sheet-conflict-offline.png",
+2026-11-05T04:58:19.6320160Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6320610Z           7200,
+2026-11-05T04:58:19.6320960Z           7081,
+2026-11-05T04:58:19.6321320Z           610532
+2026-11-05T04:58:19.6321660Z         ],
+2026-11-05T04:58:19.6322010Z         "captures": 1
+2026-11-05T04:58:19.6322390Z       }
+2026-11-05T04:58:19.6322710Z     },
+2026-11-05T04:58:19.6323030Z     {
+2026-11-05T04:58:19.6323480Z       "name": "native-clipboard-content",
+2026-11-05T04:58:19.6324080Z       "time": "2026-11-05T04:56:29.428Z",
+2026-11-05T04:58:19.6324580Z       "kind": "doc",
+2026-11-05T04:58:19.6325140Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T04:58:19.6326330Z       "selection": {
+2026-11-05T04:58:19.6326970Z         "unitId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.6327550Z         "nativeRange": {
+2026-11-05T04:58:19.6328000Z           "start": 0,
+2026-11-05T04:58:19.6328400Z           "end": 40,
+2026-11-05T04:58:19.6328800Z           "collapsed": false,
+2026-11-05T04:58:19.6329280Z           "segmentId": "",
+2026-11-05T04:58:19.6330140Z           "segmentPage": -1
+2026-11-05T04:58:19.6330960Z         },
+2026-11-05T04:58:19.6332100Z         "logicalRange": {
+2026-11-05T04:58:19.6332650Z           "start": 0,
+2026-11-05T04:58:19.6333050Z           "end": 40,
+2026-11-05T04:58:19.6333440Z           "collapsed": false,
+2026-11-05T04:58:19.6333890Z           "segmentId": "",
+2026-11-05T04:58:19.6334340Z           "segmentPage": -1
+2026-11-05T04:58:19.6334760Z         },
+2026-11-05T04:58:19.6335190Z         "pendingSelection": false
+2026-11-05T04:58:19.6335660Z       }
+2026-11-05T04:58:19.6335980Z     },
+2026-11-05T04:58:19.6336300Z     {
+2026-11-05T04:58:19.6336760Z       "name": "pending-restart-retained",
+2026-11-05T04:58:19.6337380Z       "time": "2026-11-05T04:56:29.429Z",
+2026-11-05T04:58:19.6338340Z       "itemId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.6339170Z       "kind": "doc",
+2026-11-05T04:58:19.6339580Z       "outcome": "normal",
+2026-11-05T04:58:19.6340540Z       "checkpointSha256": "d09d0ffa17cffa22bdd9f465c645b3cdadfc23e582d8a26f1486aa20d408e6bd",
+2026-11-05T04:58:19.6341760Z       "imageHashes": [
+2026-11-05T04:58:19.6342150Z         {
+2026-11-05T04:58:19.6343470Z           "source": "/api/items/02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:58:19.6344730Z           "size": 243,
+2026-11-05T04:58:19.6345530Z           "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+2026-11-05T04:58:19.6346410Z         },
+2026-11-05T04:58:19.6346750Z         {
+2026-11-05T04:58:19.6348060Z           "source": "/api/items/02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:58:19.6349310Z           "size": 244,
+2026-11-05T04:58:19.6350100Z           "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+2026-11-05T04:58:19.6350870Z         },
+2026-11-05T04:58:19.6351200Z         {
+2026-11-05T04:58:19.6352500Z           "source": "/api/items/02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:58:19.6353780Z           "size": 244,
+2026-11-05T04:58:19.6354600Z           "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+2026-11-05T04:58:19.6355390Z         }
+2026-11-05T04:58:19.6355720Z       ],
+2026-11-05T04:58:19.6356050Z       "visual": {
+2026-11-05T04:58:19.6356530Z         "file": "doc-normal-offline.png",
+2026-11-05T04:58:19.6357080Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6357530Z           4661
+2026-11-05T04:58:19.6357870Z         ],
+2026-11-05T04:58:19.6358220Z         "captures": 1
+2026-11-05T04:58:19.6358600Z       }
+2026-11-05T04:58:19.6358920Z     },
+2026-11-05T04:58:19.6359250Z     {
+2026-11-05T04:58:19.6359700Z       "name": "native-clipboard-content",
+2026-11-05T04:58:19.6360300Z       "time": "2026-11-05T04:56:44.183Z",
+2026-11-05T04:58:19.6360790Z       "kind": "doc",
+2026-11-05T04:58:19.6361360Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T04:58:19.6361960Z       "selection": {
+2026-11-05T04:58:19.6362530Z         "unitId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6363140Z         "nativeRange": {
+2026-11-05T04:58:19.6363710Z           "start": 0,
+2026-11-05T04:58:19.6364260Z           "end": 40,
+2026-11-05T04:58:19.6364830Z           "collapsed": false,
+2026-11-05T04:58:19.6365570Z           "segmentId": "",
+2026-11-05T04:58:19.6366030Z           "segmentPage": -1
+2026-11-05T04:58:19.6366460Z         },
+2026-11-05T04:58:19.6366820Z         "logicalRange": {
+2026-11-05T04:58:19.6367890Z           "start": 0,
+2026-11-05T04:58:19.6368450Z           "end": 40,
+2026-11-05T04:58:19.6369080Z           "collapsed": false,
+2026-11-05T04:58:19.6369780Z           "segmentId": "",
+2026-11-05T04:58:19.6370340Z           "segmentPage": -1
+2026-11-05T04:58:19.6370760Z         },
+2026-11-05T04:58:19.6371190Z         "pendingSelection": false
+2026-11-05T04:58:19.6371650Z       }
+2026-11-05T04:58:19.6371980Z     },
+2026-11-05T04:58:19.6372290Z     {
+2026-11-05T04:58:19.6372740Z       "name": "pending-restart-retained",
+2026-11-05T04:58:19.6373520Z       "time": "2026-11-05T04:56:44.183Z",
+2026-11-05T04:58:19.6374200Z       "itemId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6374800Z       "kind": "doc",
+2026-11-05T04:58:19.6375210Z       "outcome": "conflict",
+2026-11-05T04:58:19.6376160Z       "checkpointSha256": "5757dc7261edd09f71a08de278436e953336911c777ff112e5a7b6b4ed6a3b75",
+2026-11-05T04:58:19.6377500Z       "imageHashes": [
+2026-11-05T04:58:19.6378030Z         {
+2026-11-05T04:58:19.6379340Z           "source": "/api/items/980376d4-5b58-4f31-8db5-fbc8f73a8ea6/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:58:19.6380590Z           "size": 243,
+2026-11-05T04:58:19.6381500Z           "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+2026-11-05T04:58:19.6382370Z         },
+2026-11-05T04:58:19.6382700Z         {
+2026-11-05T04:58:19.6384510Z           "source": "/api/items/980376d4-5b58-4f31-8db5-fbc8f73a8ea6/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:58:19.6385750Z           "size": 244,
+2026-11-05T04:58:19.6386670Z           "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+2026-11-05T04:58:19.6387450Z         },
+2026-11-05T04:58:19.6387770Z         {
+2026-11-05T04:58:19.6389060Z           "source": "/api/items/980376d4-5b58-4f31-8db5-fbc8f73a8ea6/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:58:19.6390530Z           "size": 244,
+2026-11-05T04:58:19.6391690Z           "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+2026-11-05T04:58:19.6392500Z         }
+2026-11-05T04:58:19.6392820Z       ],
+2026-11-05T04:58:19.6393160Z       "visual": {
+2026-11-05T04:58:19.6393650Z         "file": "doc-conflict-offline.png",
+2026-11-05T04:58:19.6394200Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6394650Z           4661
+2026-11-05T04:58:19.6395000Z         ],
+2026-11-05T04:58:19.6395340Z         "captures": 1
+2026-11-05T04:58:19.6395710Z       }
+2026-11-05T04:58:19.6396030Z     },
+2026-11-05T04:58:19.6396350Z     {
+2026-11-05T04:58:19.6396770Z       "name": "transport-restored",
+2026-11-05T04:58:19.6397430Z       "time": "2026-11-05T04:56:46.293Z"
+2026-11-05T04:58:19.6397990Z     },
+2026-11-05T04:58:19.6398310Z     {
+2026-11-05T04:58:19.6398820Z       "name": "normal-reconnect-exact-content-once",
+2026-11-05T04:58:19.6399720Z       "time": "2026-11-05T04:56:57.235Z",
+2026-11-05T04:58:19.6400660Z       "itemId": "6c29f526-70da-4ab7-80f8-2b875be3ff88",
+2026-11-05T04:58:19.6401510Z       "revision": 2,
+2026-11-05T04:58:19.6402430Z       "snapshotSha256": "a0cf530467328774c81e40577ef4a5e0dce935215d3ee832e8c913cba6f7ef5e",
+2026-11-05T04:58:19.6403290Z       "images": [
+2026-11-05T04:58:19.6403650Z         {
+2026-11-05T04:58:19.6404360Z           "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:58:19.6405200Z           "mime": "image/png",
+2026-11-05T04:58:19.6412100Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+2026-11-05T04:58:19.6417370Z         },
+2026-11-05T04:58:19.6417700Z         {
+2026-11-05T04:58:19.6418410Z           "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:58:19.6419690Z           "mime": "image/png",
+2026-11-05T04:58:19.6425530Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+2026-11-05T04:58:19.6430820Z         },
+2026-11-05T04:58:19.6444490Z         {
+2026-11-05T04:58:19.6445440Z           "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:58:19.6446860Z           "mime": "image/png",
+2026-11-05T04:58:19.6453680Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+2026-11-05T04:58:19.6459140Z         }
+2026-11-05T04:58:19.6459470Z       ]
+2026-11-05T04:58:19.6459790Z     },
+2026-11-05T04:58:19.6460100Z     {
+2026-11-05T04:58:19.6460630Z       "name": "recovered-original-reconnect-outage",
+2026-11-05T04:58:19.6461310Z       "time": "2026-11-05T04:57:10.474Z",
+2026-11-05T04:58:19.6461970Z       "itemId": "de872ce7-42ee-4202-8c87-0e08932a377d",
+2026-11-05T04:58:19.6462610Z       "forwardedRequests": 480,
+2026-11-05T04:58:19.6463100Z       "blockedRequests": 661,
+2026-11-05T04:58:19.6463580Z       "forwardedUpgrades": 8,
+2026-11-05T04:58:19.6464060Z       "blockedUpgrades": 4,
+2026-11-05T04:58:19.6464500Z       "logins": 1,
+2026-11-05T04:58:19.6464880Z       "offline": true,
+2026-11-05T04:58:19.6465360Z       "activeBrowserSockets": 0
+2026-11-05T04:58:19.6465810Z     },
+2026-11-05T04:58:19.6466130Z     {
+2026-11-05T04:58:19.6466590Z       "name": "native-clipboard-content",
+2026-11-05T04:58:19.6467200Z       "time": "2026-11-05T04:57:23.136Z",
+2026-11-05T04:58:19.6467690Z       "kind": "sheet",
+2026-11-05T04:58:19.6468090Z       "text": "731",
+2026-11-05T04:58:19.6468480Z       "selection": null
+2026-11-05T04:58:19.6468870Z     },
+2026-11-05T04:58:19.6469190Z     {
+2026-11-05T04:58:19.6469910Z       "name": "conflict-copy-preserves-original",
+2026-11-05T04:58:19.6470590Z       "time": "2026-11-05T04:57:23.137Z",
+2026-11-05T04:58:19.6471290Z       "itemId": "de872ce7-42ee-4202-8c87-0e08932a377d",
+2026-11-05T04:58:19.6472030Z       "copyId": "6caa778e-3e34-451e-ae2e-ff43146fd27a",
+2026-11-05T04:58:19.6472610Z       "receipts": [
+2026-11-05T04:58:19.6473030Z         {
+2026-11-05T04:58:19.6473560Z           "user_id": "fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6474370Z           "recovery_id": "f3817b12-1b63-4f6d-a6de-1b2ba115ad06",
+2026-11-05T04:58:19.6475580Z           "request_hash": "fba3f5fa5248767d5d9b4ccaaedc5bfe0bc9674da3a8faf1cbc13af6664dfc60",
+2026-11-05T04:58:19.6478030Z           "item_id": "6caa778e-3e34-451e-ae2e-ff43146fd27a",
+2026-11-05T04:58:19.6478850Z           "possible_replay_crash": 0
+2026-11-05T04:58:19.6479340Z         }
+2026-11-05T04:58:19.6479660Z       ],
+2026-11-05T04:58:19.6481070Z       "snapshotSha256": "9597e62c002addc46f36810c4120aba361dd078f89b7ed7fb42a1610793564eb",
+2026-11-05T04:58:19.6489510Z       "images": [
+2026-11-05T04:58:19.6489920Z         {
+2026-11-05T04:58:19.6490690Z           "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:58:19.6492340Z           "mime": "image/png",
+2026-11-05T04:58:19.6498420Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+2026-11-05T04:58:19.6503880Z         },
+2026-11-05T04:58:19.6504240Z         {
+2026-11-05T04:58:19.6505430Z           "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:58:19.6506700Z           "mime": "image/png",
+2026-11-05T04:58:19.6512760Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+2026-11-05T04:58:19.6517800Z         },
+2026-11-05T04:58:19.6518680Z         {
+2026-11-05T04:58:19.6519750Z           "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:58:19.6520850Z           "mime": "image/png",
+2026-11-05T04:58:19.6526620Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+2026-11-05T04:58:19.6531660Z         }
+2026-11-05T04:58:19.6531990Z       ],
+2026-11-05T04:58:19.6532330Z       "visual": {
+2026-11-05T04:58:19.6532830Z         "file": "sheet-recovered-copy.png",
+2026-11-05T04:58:19.6533390Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6533840Z           7200,
+2026-11-05T04:58:19.6534200Z           7081,
+2026-11-05T04:58:19.6534550Z           608551
+2026-11-05T04:58:19.6534900Z         ],
+2026-11-05T04:58:19.6535260Z         "captures": 1
+2026-11-05T04:58:19.6535630Z       }
+2026-11-05T04:58:19.6535950Z     },
+2026-11-05T04:58:19.6536270Z     {
+2026-11-05T04:58:19.6536780Z       "name": "normal-reconnect-exact-content-once",
+2026-11-05T04:58:19.6537970Z       "time": "2026-11-05T04:57:33.434Z",
+2026-11-05T04:58:19.6538820Z       "itemId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.6539480Z       "revision": 2,
+2026-11-05T04:58:19.6540730Z       "snapshotSha256": "30fcf625cccedb69077d728642d1dbba5b1e1bfe70c17e9023361d86ff73a64b",
+2026-11-05T04:58:19.6541980Z       "images": [
+2026-11-05T04:58:19.6542490Z         {
+2026-11-05T04:58:19.6543800Z           "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:58:19.6544980Z           "mime": "image/png",
+2026-11-05T04:58:19.6551200Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+2026-11-05T04:58:19.6557420Z         },
+2026-11-05T04:58:19.6558060Z         {
+2026-11-05T04:58:19.6561180Z           "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:58:19.6562560Z           "mime": "image/png",
+2026-11-05T04:58:19.6572930Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+2026-11-05T04:58:19.6578430Z         },
+2026-11-05T04:58:19.6578770Z         {
+2026-11-05T04:58:19.6579520Z           "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:58:19.6580370Z           "mime": "image/png",
+2026-11-05T04:58:19.6586200Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+2026-11-05T04:58:19.6591620Z         }
+2026-11-05T04:58:19.6591940Z       ]
+2026-11-05T04:58:19.6592260Z     },
+2026-11-05T04:58:19.6592580Z     {
+2026-11-05T04:58:19.6593100Z       "name": "recovered-original-reconnect-outage",
+2026-11-05T04:58:19.6593770Z       "time": "2026-11-05T04:57:46.674Z",
+2026-11-05T04:58:19.6594440Z       "itemId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6595090Z       "forwardedRequests": 650,
+2026-11-05T04:58:19.6595570Z       "blockedRequests": 662,
+2026-11-05T04:58:19.6596110Z       "forwardedUpgrades": 15,
+2026-11-05T04:58:19.6596600Z       "blockedUpgrades": 5,
+2026-11-05T04:58:19.6597030Z       "logins": 1,
+2026-11-05T04:58:19.6597420Z       "offline": true,
+2026-11-05T04:58:19.6597890Z       "activeBrowserSockets": 0
+2026-11-05T04:58:19.6598340Z     },
+2026-11-05T04:58:19.6598660Z     {
+2026-11-05T04:58:19.6599100Z       "name": "native-clipboard-content",
+2026-11-05T04:58:19.6599700Z       "time": "2026-11-05T04:58:02.013Z",
+2026-11-05T04:58:19.6600200Z       "kind": "doc",
+2026-11-05T04:58:19.6600770Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T04:58:19.6601350Z       "selection": {
+2026-11-05T04:58:19.6601920Z         "unitId": "e1b5c80a-4f09-4b0f-bbb9-067303ed80a6",
+2026-11-05T04:58:19.6602500Z         "nativeRange": {
+2026-11-05T04:58:19.6602920Z           "start": 0,
+2026-11-05T04:58:19.6603300Z           "end": 40,
+2026-11-05T04:58:19.6603700Z           "collapsed": false,
+2026-11-05T04:58:19.6604150Z           "segmentId": "",
+2026-11-05T04:58:19.6604590Z           "segmentPage": -1
+2026-11-05T04:58:19.6605010Z         },
+2026-11-05T04:58:19.6605370Z         "logicalRange": {
+2026-11-05T04:58:19.6605790Z           "start": 0,
+2026-11-05T04:58:19.6606170Z           "end": 40,
+2026-11-05T04:58:19.6606560Z           "collapsed": false,
+2026-11-05T04:58:19.6607020Z           "segmentId": "",
+2026-11-05T04:58:19.6607450Z           "segmentPage": -1
+2026-11-05T04:58:19.6607870Z         },
+2026-11-05T04:58:19.6608300Z         "pendingSelection": false
+2026-11-05T04:58:19.6608760Z       }
+2026-11-05T04:58:19.6609080Z     },
+2026-11-05T04:58:19.6609390Z     {
+2026-11-05T04:58:19.6609890Z       "name": "conflict-copy-preserves-original",
+2026-11-05T04:58:19.6610550Z       "time": "2026-11-05T04:58:02.014Z",
+2026-11-05T04:58:19.6611200Z       "itemId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6611930Z       "copyId": "e1b5c80a-4f09-4b0f-bbb9-067303ed80a6",
+2026-11-05T04:58:19.6612500Z       "receipts": [
+2026-11-05T04:58:19.6612860Z         {
+2026-11-05T04:58:19.6613820Z           "user_id": "fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6614650Z           "recovery_id": "10e28d19-5150-465e-8632-e6f5db0f5c4c",
+2026-11-05T04:58:19.6615730Z           "request_hash": "6c91c1604736940f4c2734dfb3de9a5c3dc33bab99463665d70aa835f2e126c6",
+2026-11-05T04:58:19.6616770Z           "item_id": "e1b5c80a-4f09-4b0f-bbb9-067303ed80a6",
+2026-11-05T04:58:19.6617440Z           "possible_replay_crash": 0
+2026-11-05T04:58:19.6617940Z         },
+2026-11-05T04:58:19.6618270Z         {
+2026-11-05T04:58:19.6618800Z           "user_id": "fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6619590Z           "recovery_id": "f3817b12-1b63-4f6d-a6de-1b2ba115ad06",
+2026-11-05T04:58:19.6620710Z           "request_hash": "fba3f5fa5248767d5d9b4ccaaedc5bfe0bc9674da3a8faf1cbc13af6664dfc60",
+2026-11-05T04:58:19.6621770Z           "item_id": "6caa778e-3e34-451e-ae2e-ff43146fd27a",
+2026-11-05T04:58:19.6622440Z           "possible_replay_crash": 0
+2026-11-05T04:58:19.6622910Z         }
+2026-11-05T04:58:19.6623240Z       ],
+2026-11-05T04:58:19.6624060Z       "snapshotSha256": "05e425e61c53d461f31c998d502a8f8e3c4716bf6f231b3c0009863f42c1e12a",
+2026-11-05T04:58:19.6624920Z       "images": [
+2026-11-05T04:58:19.6625280Z         {
+2026-11-05T04:58:19.6625990Z           "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:58:19.6626830Z           "mime": "image/png",
+2026-11-05T04:58:19.6632950Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+2026-11-05T04:58:19.6637990Z         },
+2026-11-05T04:58:19.6638320Z         {
+2026-11-05T04:58:19.6639030Z           "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:58:19.6640190Z           "mime": "image/png",
+2026-11-05T04:58:19.6645990Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+2026-11-05T04:58:19.6651040Z         },
+2026-11-05T04:58:19.6651360Z         {
+2026-11-05T04:58:19.6652100Z           "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:58:19.6652960Z           "mime": "image/png",
+2026-11-05T04:58:19.6658750Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+2026-11-05T04:58:19.6664400Z         }
+2026-11-05T04:58:19.6664740Z       ],
+2026-11-05T04:58:19.6665080Z       "visual": {
+2026-11-05T04:58:19.6665560Z         "file": "doc-recovered-copy.png",
+2026-11-05T04:58:19.6666110Z         "colorPixelCounts": [
+2026-11-05T04:58:19.6666560Z           4661
+2026-11-05T04:58:19.6666900Z         ],
+2026-11-05T04:58:19.6667240Z         "captures": 1
+2026-11-05T04:58:19.6667630Z       }
+2026-11-05T04:58:19.6667950Z     },
+2026-11-05T04:58:19.6668270Z     {
+2026-11-05T04:58:19.6668820Z       "name": "storage-loss-tabs-prepared",
+2026-11-05T04:58:19.6669640Z       "time": "2026-11-05T04:58:06.750Z",
+2026-11-05T04:58:19.6670150Z       "before": [
+2026-11-05T04:58:19.6670830Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:58:19.6671420Z       ],
+2026-11-05T04:58:19.6671750Z       "after": [
+2026-11-05T04:58:19.6672310Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:58:19.6672880Z       ]
+2026-11-05T04:58:19.6673200Z     },
+2026-11-05T04:58:19.6673520Z     {
+2026-11-05T04:58:19.6673980Z       "name": "storage-loss-unregistration",
+2026-11-05T04:58:19.6674600Z       "time": "2026-11-05T04:58:07.120Z",
+2026-11-05T04:58:19.6675100Z       "preparation": {
+2026-11-05T04:58:19.6675520Z         "status": "passed",
+2026-11-05T04:58:19.6676290Z         "database": "spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6677100Z         "phase": "unregister",
+2026-11-05T04:58:19.6677550Z         "timeoutMs": 28000,
+2026-11-05T04:58:19.6677990Z         "operations": [
+2026-11-05T04:58:19.6678390Z           {
+2026-11-05T04:58:19.6678880Z             "name": "verify-preparation-document",
+2026-11-05T04:58:19.6679570Z             "startedAt": "2026-11-05T04:58:06.873Z",
+2026-11-05T04:58:19.6680170Z             "status": "passed",
+2026-11-05T04:58:19.6680620Z             "value": {
+2026-11-05T04:58:19.6681270Z               "url": "https://localhost:8176/_desktop-storage-loss",
+2026-11-05T04:58:19.6682180Z               "marker": "inert",
+2026-11-05T04:58:19.6682640Z               "scripts": 0
+2026-11-05T04:58:19.6683040Z             },
+2026-11-05T04:58:19.6683410Z             "elapsedMs": 2
+2026-11-05T04:58:19.6683820Z           },
+2026-11-05T04:58:19.6684160Z           {
+2026-11-05T04:58:19.6684660Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T04:58:19.6685360Z             "startedAt": "2026-11-05T04:58:06.875Z",
+2026-11-05T04:58:19.6685960Z             "status": "passed",
+2026-11-05T04:58:19.6686410Z             "value": [
+2026-11-05T04:58:19.6686910Z               "https://localhost:8176/"
+2026-11-05T04:58:19.6687410Z             ],
+2026-11-05T04:58:19.6687770Z             "elapsedMs": 2
+2026-11-05T04:58:19.6688180Z           },
+2026-11-05T04:58:19.6688520Z           {
+2026-11-05T04:58:19.6689160Z             "name": "serviceWorker.unregister:https://localhost:8176/",
+2026-11-05T04:58:19.6689980Z             "startedAt": "2026-11-05T04:58:06.876Z",
+2026-11-05T04:58:19.6690580Z             "status": "passed",
+2026-11-05T04:58:19.6691030Z             "value": true,
+2026-11-05T04:58:19.6691460Z             "elapsedMs": 1
+2026-11-05T04:58:19.6691870Z           },
+2026-11-05T04:58:19.6692210Z           {
+2026-11-05T04:58:19.6692660Z             "name": "verify-unregistered",
+2026-11-05T04:58:19.6693300Z             "startedAt": "2026-11-05T04:58:06.877Z",
+2026-11-05T04:58:19.6693890Z             "status": "passed",
+2026-11-05T04:58:19.6694330Z             "value": {
+2026-11-05T04:58:19.6694740Z               "workers": [],
+2026-11-05T04:58:19.6695460Z               "controller": "https://localhost:8176/service-worker.js"
+2026-11-05T04:58:19.6696120Z             },
+2026-11-05T04:58:19.6696480Z             "elapsedMs": 1
+2026-11-05T04:58:19.6696890Z           }
+2026-11-05T04:58:19.6697220Z         ]
+2026-11-05T04:58:19.6697540Z       }
+2026-11-05T04:58:19.6697870Z     },
+2026-11-05T04:58:19.6698180Z     {
+2026-11-05T04:58:19.6698640Z       "name": "storage-loss-tabs-handed-off",
+2026-11-05T04:58:19.6699270Z       "time": "2026-11-05T04:58:07.333Z",
+2026-11-05T04:58:19.6699760Z       "before": [
+2026-11-05T04:58:19.6700320Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:58:19.6709540Z       ],
+2026-11-05T04:58:19.6709950Z       "after": [
+2026-11-05T04:58:19.6710690Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:58:19.6711420Z       ],
+2026-11-05T04:58:19.6711760Z       "documents": [
+2026-11-05T04:58:19.6712130Z         {
+2026-11-05T04:58:19.6713140Z           "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+2026-11-05T04:58:19.6713940Z           "fresh": true,
+2026-11-05T04:58:19.6714420Z           "ready": "complete",
+2026-11-05T04:58:19.6714870Z           "marker": "inert",
+2026-11-05T04:58:19.6715310Z           "scripts": 0,
+2026-11-05T04:58:19.6715720Z           "controller": null
+2026-11-05T04:58:19.6716150Z         }
+2026-11-05T04:58:19.6716470Z       ]
+2026-11-05T04:58:19.6716780Z     },
+2026-11-05T04:58:19.6717100Z     {
+2026-11-05T04:58:19.6717610Z       "name": "storage-loss-quiescence-before-stop",
+2026-11-05T04:58:19.6718280Z       "time": "2026-11-05T04:58:07.722Z",
+2026-11-05T04:58:19.6718780Z       "quiescence": {
+2026-11-05T04:58:19.6719200Z         "status": "passed",
+2026-11-05T04:58:19.6719970Z         "database": "spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6720710Z         "phase": "verify",
+2026-11-05T04:58:19.6721140Z         "timeoutMs": 28000,
+2026-11-05T04:58:19.6721580Z         "operations": [
+2026-11-05T04:58:19.6721970Z           {
+2026-11-05T04:58:19.6722470Z             "name": "verify-preparation-document",
+2026-11-05T04:58:19.6723160Z             "startedAt": "2026-11-05T04:58:07.461Z",
+2026-11-05T04:58:19.6723760Z             "status": "passed",
+2026-11-05T04:58:19.6724210Z             "value": {
+2026-11-05T04:58:19.6725000Z               "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+2026-11-05T04:58:19.6726040Z               "marker": "inert",
+2026-11-05T04:58:19.6726500Z               "scripts": 0
+2026-11-05T04:58:19.6726900Z             },
+2026-11-05T04:58:19.6727260Z             "elapsedMs": 0
+2026-11-05T04:58:19.6727670Z           },
+2026-11-05T04:58:19.6728000Z           {
+2026-11-05T04:58:19.6728520Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T04:58:19.6729210Z             "startedAt": "2026-11-05T04:58:07.461Z",
+2026-11-05T04:58:19.6729810Z             "status": "passed",
+2026-11-05T04:58:19.6730260Z             "value": [],
+2026-11-05T04:58:19.6730680Z             "elapsedMs": 1
+2026-11-05T04:58:19.6731090Z           },
+2026-11-05T04:58:19.6731420Z           {
+2026-11-05T04:58:19.6731870Z             "name": "verify-uncontrolled",
+2026-11-05T04:58:19.6732510Z             "startedAt": "2026-11-05T04:58:07.462Z",
+2026-11-05T04:58:19.6733450Z             "status": "passed",
+2026-11-05T04:58:19.6733930Z             "value": {
+2026-11-05T04:58:19.6734330Z               "workers": [],
+2026-11-05T04:58:19.6734840Z               "controller": null
+2026-11-05T04:58:19.6735290Z             },
+2026-11-05T04:58:19.6735650Z             "elapsedMs": 0
+2026-11-05T04:58:19.6736060Z           }
+2026-11-05T04:58:19.6736380Z         ]
+2026-11-05T04:58:19.6736700Z       }
+2026-11-05T04:58:19.6737010Z     },
+2026-11-05T04:58:19.6737330Z     {
+2026-11-05T04:58:19.6737820Z       "name": "browser-stop-before-storage-loss",
+2026-11-05T04:58:19.6738470Z       "time": "2026-11-05T04:58:08.143Z",
+2026-11-05T04:58:19.6738970Z       "kind": "safari",
+2026-11-05T04:58:19.6739380Z       "browserPid": 9917,
+2026-11-05T04:58:19.6739820Z       "driverPid": null,
+2026-11-05T04:58:19.6740260Z       "browserExited": true,
+2026-11-05T04:58:19.6740720Z       "driverExited": true,
+2026-11-05T04:58:19.6741250Z       "stoppedAt": "2026-11-05T04:58:08.143Z"
+2026-11-05T04:58:19.6741750Z     },
+2026-11-05T04:58:19.6742070Z     {
+2026-11-05T04:58:19.6742470Z       "name": "browser-start",
+2026-11-05T04:58:19.6743000Z       "time": "2026-11-05T04:58:11.807Z",
+2026-11-05T04:58:19.6743500Z       "kind": "safari",
+2026-11-05T04:58:19.6743910Z       "version": "27.2",
+2026-11-05T04:58:19.6745170Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.6746310Z       "profile": {
+2026-11-05T04:58:19.6746820Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.6748000Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.6749250Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.6749860Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.6750440Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.6750920Z       },
+2026-11-05T04:58:19.6751270Z       "browserPid": 12933,
+2026-11-05T04:58:19.6751790Z       "previousBrowserPid": 9917,
+2026-11-05T04:58:19.6752270Z       "driverPid": null,
+2026-11-05T04:58:19.6752710Z       "driverVersion": null,
+2026-11-05T04:58:19.6753270Z       "startedAt": "2026-11-05T04:58:11.443Z",
+2026-11-05T04:58:19.6753790Z       "browserTab": true,
+2026-11-05T04:58:19.6754240Z       "secureContext": true,
+2026-11-05T04:58:19.6755170Z       "storagePersisted": false
+2026-11-05T04:58:19.6755630Z     },
+2026-11-05T04:58:19.6755950Z     {
+2026-11-05T04:58:19.6757030Z       "name": "storage-loss-tabs-restarted",
+2026-11-05T04:58:19.6757960Z       "time": "2026-11-05T04:58:12.022Z",
+2026-11-05T04:58:19.6758620Z       "before": [
+2026-11-05T04:58:19.6759680Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:58:19.6760500Z       ],
+2026-11-05T04:58:19.6760660Z       "after": [
+2026-11-05T04:58:19.6761150Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:58:19.6761290Z       ]
+2026-11-05T04:58:19.6761430Z     },
+2026-11-05T04:58:19.6761570Z     {
+2026-11-05T04:58:19.6761820Z       "name": "storage-deletion",
+2026-11-05T04:58:19.6762060Z       "time": "2026-11-05T04:58:12.627Z",
+2026-11-05T04:58:19.6762640Z       "deletion": {
+2026-11-05T04:58:19.6762820Z         "status": "passed",
+2026-11-05T04:58:19.6763320Z         "database": "spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6763490Z         "phase": "delete",
+2026-11-05T04:58:19.6763660Z         "timeoutMs": 28000,
+2026-11-05T04:58:19.6763830Z         "operations": [
+2026-11-05T04:58:19.6763980Z           {
+2026-11-05T04:58:19.6764290Z             "name": "verify-preparation-document",
+2026-11-05T04:58:19.6764580Z             "startedAt": "2026-11-05T04:58:12.267Z",
+2026-11-05T04:58:19.6764810Z             "status": "passed",
+2026-11-05T04:58:19.6764960Z             "value": {
+2026-11-05T04:58:19.6765530Z               "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+2026-11-05T04:58:19.6765750Z               "marker": "inert",
+2026-11-05T04:58:19.6765910Z               "scripts": 0
+2026-11-05T04:58:19.6766060Z             },
+2026-11-05T04:58:19.6766240Z             "elapsedMs": 0
+2026-11-05T04:58:19.6766380Z           },
+2026-11-05T04:58:19.6766530Z           {
+2026-11-05T04:58:19.6766850Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T04:58:19.6767140Z             "startedAt": "2026-11-05T04:58:12.268Z",
+2026-11-05T04:58:19.6767370Z             "status": "passed",
+2026-11-05T04:58:19.6767520Z             "value": [],
+2026-11-05T04:58:19.6767690Z             "elapsedMs": 1
+2026-11-05T04:58:19.6767840Z           },
+2026-11-05T04:58:19.6767980Z           {
+2026-11-05T04:58:19.6768250Z             "name": "verify-uncontrolled",
+2026-11-05T04:58:19.6768540Z             "startedAt": "2026-11-05T04:58:12.268Z",
+2026-11-05T04:58:19.6768760Z             "status": "passed",
+2026-11-05T04:58:19.6768920Z             "value": {
+2026-11-05T04:58:19.6769090Z               "workers": [],
+2026-11-05T04:58:19.6769320Z               "controller": null
+2026-11-05T04:58:19.6769470Z             },
+2026-11-05T04:58:19.6769630Z             "elapsedMs": 0
+2026-11-05T04:58:19.6769780Z           },
+2026-11-05T04:58:19.6769930Z           {
+2026-11-05T04:58:19.6770160Z             "name": "caches.keys",
+2026-11-05T04:58:19.6770440Z             "startedAt": "2026-11-05T04:58:12.268Z",
+2026-11-05T04:58:19.6770670Z             "status": "passed",
+2026-11-05T04:58:19.6770830Z             "value": [
+2026-11-05T04:58:19.6771110Z               "spinel-shell-603ae4b16bb36841"
+2026-11-05T04:58:19.6771260Z             ],
+2026-11-05T04:58:19.6771420Z             "elapsedMs": 7
+2026-11-05T04:58:19.6771570Z           },
+2026-11-05T04:58:19.6771720Z           {
+2026-11-05T04:58:19.6772540Z             "name": "caches.delete:spinel-shell-603ae4b16bb36841",
+2026-11-05T04:58:19.6772870Z             "startedAt": "2026-11-05T04:58:12.276Z",
+2026-11-05T04:58:19.6773090Z             "status": "passed",
+2026-11-05T04:58:19.6773260Z             "value": true,
+2026-11-05T04:58:19.6773420Z             "elapsedMs": 4
+2026-11-05T04:58:19.6773580Z           },
+2026-11-05T04:58:19.6773720Z           {
+2026-11-05T04:58:19.6773990Z             "name": "localStorage.clear",
+2026-11-05T04:58:19.6774270Z             "startedAt": "2026-11-05T04:58:12.279Z",
+2026-11-05T04:58:19.6774500Z             "status": "passed",
+2026-11-05T04:58:19.6774660Z             "value": 0,
+2026-11-05T04:58:19.6774830Z             "elapsedMs": 0
+2026-11-05T04:58:19.6774980Z           },
+2026-11-05T04:58:19.6775120Z           {
+2026-11-05T04:58:19.6775840Z             "name": "indexedDB.deleteDatabase:spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6776120Z             "startedAt": "2026-11-05T04:58:12.280Z",
+2026-11-05T04:58:19.6776350Z             "status": "passed",
+2026-11-05T04:58:19.6776520Z             "elapsedMs": 12
+2026-11-05T04:58:19.6776670Z           },
+2026-11-05T04:58:19.6776810Z           {
+2026-11-05T04:58:19.6777090Z             "name": "verify-service-workers",
+2026-11-05T04:58:19.6777370Z             "startedAt": "2026-11-05T04:58:12.291Z",
+2026-11-05T04:58:19.6777600Z             "status": "passed",
+2026-11-05T04:58:19.6777940Z             "value": [],
+2026-11-05T04:58:19.6778100Z             "elapsedMs": 0
+2026-11-05T04:58:19.6778250Z           },
+2026-11-05T04:58:19.6778380Z           {
+2026-11-05T04:58:19.6778640Z             "name": "verify-cache-names",
+2026-11-05T04:58:19.6778930Z             "startedAt": "2026-11-05T04:58:12.292Z",
+2026-11-05T04:58:19.6779150Z             "status": "passed",
+2026-11-05T04:58:19.6779320Z             "value": [],
+2026-11-05T04:58:19.6779480Z             "elapsedMs": 3
+2026-11-05T04:58:19.6779620Z           },
+2026-11-05T04:58:19.6779770Z           {
+2026-11-05T04:58:19.6780040Z             "name": "verify-database-names",
+2026-11-05T04:58:19.6780330Z             "startedAt": "2026-11-05T04:58:12.294Z",
+2026-11-05T04:58:19.6780550Z             "status": "passed",
+2026-11-05T04:58:19.6780700Z             "value": [
+2026-11-05T04:58:19.6780950Z               "UniverLocalStorage",
+2026-11-05T04:58:19.6781210Z               "spinel-offline-runtime"
+2026-11-05T04:58:19.6781360Z             ],
+2026-11-05T04:58:19.6781530Z             "elapsedMs": 24
+2026-11-05T04:58:19.6781680Z           },
+2026-11-05T04:58:19.6781820Z           {
+2026-11-05T04:58:19.6782080Z             "name": "verify-storage-empty",
+2026-11-05T04:58:19.6782370Z             "startedAt": "2026-11-05T04:58:12.319Z",
+2026-11-05T04:58:19.6782590Z             "status": "passed",
+2026-11-05T04:58:19.6782750Z             "value": {
+2026-11-05T04:58:19.6782910Z               "workers": [],
+2026-11-05T04:58:19.6783140Z               "cacheNames": [],
+2026-11-05T04:58:19.6783310Z               "databases": [
+2026-11-05T04:58:19.6783550Z                 "UniverLocalStorage",
+2026-11-05T04:58:19.6783810Z                 "spinel-offline-runtime"
+2026-11-05T04:58:19.6783960Z               ],
+2026-11-05T04:58:19.6784210Z               "localStorageEntries": 0
+2026-11-05T04:58:19.6784360Z             },
+2026-11-05T04:58:19.6784520Z             "elapsedMs": 1
+2026-11-05T04:58:19.6784670Z           }
+2026-11-05T04:58:19.6784820Z         ]
+2026-11-05T04:58:19.6784960Z       }
+2026-11-05T04:58:19.6785100Z     },
+2026-11-05T04:58:19.6785240Z     {
+2026-11-05T04:58:19.6785560Z       "name": "cleared-storage-is-not-advertised",
+2026-11-05T04:58:19.6785800Z       "time": "2026-11-05T04:58:17.443Z",
+2026-11-05T04:58:19.6785950Z       "lost": {
+2026-11-05T04:58:19.6786120Z         "account": null,
+2026-11-05T04:58:19.6786290Z         "available": 0
+2026-11-05T04:58:19.6786430Z       }
+2026-11-05T04:58:19.6786580Z     },
+2026-11-05T04:58:19.6786720Z     {
+2026-11-05T04:58:19.6786970Z       "name": "post-deletion-outage",
+2026-11-05T04:58:19.6787330Z       "time": "2026-11-05T04:58:17.828Z",
+2026-11-05T04:58:19.6787580Z       "forwardedRequests": 790,
+2026-11-05T04:58:19.6787770Z       "blockedRequests": 663,
+2026-11-05T04:58:19.6788010Z       "forwardedUpgrades": 18,
+2026-11-05T04:58:19.6788180Z       "blockedUpgrades": 6,
+2026-11-05T04:58:19.6788340Z       "logins": 1,
+2026-11-05T04:58:19.6788510Z       "offline": true,
+2026-11-05T04:58:19.6788750Z       "activeBrowserSockets": 0
+2026-11-05T04:58:19.6788890Z     },
+2026-11-05T04:58:19.6789040Z     {
+2026-11-05T04:58:19.6789350Z       "name": "missing-data-cannot-open-offline",
+2026-11-05T04:58:19.6789590Z       "time": "2026-11-05T04:58:19.188Z",
+2026-11-05T04:58:19.6790360Z       "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+2026-11-05T04:58:19.6790510Z     },
+2026-11-05T04:58:19.6790650Z     {
+2026-11-05T04:58:19.6790820Z       "name": "complete",
+2026-11-05T04:58:19.6791060Z       "time": "2026-11-05T04:58:19.189Z"
+2026-11-05T04:58:19.6791210Z     },
+2026-11-05T04:58:19.6791340Z     {
+2026-11-05T04:58:19.6791530Z       "name": "browser-stop",
+2026-11-05T04:58:19.6791770Z       "time": "2026-11-05T04:58:19.541Z",
+2026-11-05T04:58:19.6791930Z       "kind": "safari",
+2026-11-05T04:58:19.6792120Z       "browserPid": 12933,
+2026-11-05T04:58:19.6792290Z       "driverPid": null,
+2026-11-05T04:58:19.6792470Z       "browserExited": true,
+2026-11-05T04:58:19.6793310Z       "driverExited": true,
+2026-11-05T04:58:19.6793700Z       "stoppedAt": "2026-11-05T04:58:19.541Z"
+2026-11-05T04:58:19.6793870Z     }
+2026-11-05T04:58:19.6794010Z   ],
+2026-11-05T04:58:19.6794910Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+2026-11-05T04:58:19.6795230Z   "machine": "x86_64",
+2026-11-05T04:58:19.6795460Z   "release": {
+2026-11-05T04:58:19.6796400Z     "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:58:19.6797560Z     "checkedAt": "2026-11-05T04:50:05.395Z",
+2026-11-05T04:58:19.6797790Z     "kind": "safari",
+2026-11-05T04:58:19.6797980Z     "status": "passed",
+2026-11-05T04:58:19.6798300Z     "before": "26.6",
+2026-11-05T04:58:19.6798760Z     "releaseSource": "https://support.apple.com/en-us/149527",
+2026-11-05T04:58:19.6798960Z     "requiredStable": "27.2",
+2026-11-05T04:58:19.6803480Z     "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+2026-11-05T04:58:19.6806450Z     "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+2026-11-05T04:58:19.6806640Z     "installed": "27.2"
+2026-11-05T04:58:19.6806800Z   },
+2026-11-05T04:58:19.6806950Z   "actor": {
+2026-11-05T04:58:19.6807270Z     "id": "fb37e50b-cafc-434e-a8be-c40e22b2deac",
+2026-11-05T04:58:19.6807590Z     "role": "Collaborator with editor grants",
+2026-11-05T04:58:19.6807920Z     "ownerId": "1c3afc83-4a65-4d7c-a392-cd2e2248cfd0"
+2026-11-05T04:58:19.6808070Z   },
+2026-11-05T04:58:19.6808250Z   "persistence": [
+2026-11-05T04:58:19.6808400Z     {
+2026-11-05T04:58:19.6808730Z       "itemId": "6c29f526-70da-4ab7-80f8-2b875be3ff88",
+2026-11-05T04:58:19.6808910Z       "before": false,
+2026-11-05T04:58:19.6809080Z       "after": false,
+2026-11-05T04:58:19.6809260Z       "permission": null,
+2026-11-05T04:58:19.6818300Z       "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T04:58:19.6818590Z     },
+2026-11-05T04:58:19.6818740Z     {
+2026-11-05T04:58:19.6819080Z       "itemId": "de872ce7-42ee-4202-8c87-0e08932a377d",
+2026-11-05T04:58:19.6819240Z       "before": false,
+2026-11-05T04:58:19.6819410Z       "after": false,
+2026-11-05T04:58:19.6819600Z       "permission": null,
+2026-11-05T04:58:19.6821750Z       "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T04:58:19.6821900Z     },
+2026-11-05T04:58:19.6822040Z     {
+2026-11-05T04:58:19.6822370Z       "itemId": "02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf",
+2026-11-05T04:58:19.6822530Z       "before": false,
+2026-11-05T04:58:19.6822700Z       "after": false,
+2026-11-05T04:58:19.6822860Z       "permission": null,
+2026-11-05T04:58:19.6824780Z       "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T04:58:19.6824930Z     },
+2026-11-05T04:58:19.6825070Z     {
+2026-11-05T04:58:19.6825390Z       "itemId": "980376d4-5b58-4f31-8db5-fbc8f73a8ea6",
+2026-11-05T04:58:19.6825550Z       "before": false,
+2026-11-05T04:58:19.6825950Z       "after": false,
+2026-11-05T04:58:19.6826500Z       "permission": null,
+2026-11-05T04:58:19.6828850Z       "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T04:58:19.6829020Z     }
+2026-11-05T04:58:19.6829160Z   ],
+2026-11-05T04:58:19.6829320Z   "transport": {
+2026-11-05T04:58:19.6829510Z     "forwardedRequests": 790,
+2026-11-05T04:58:19.6829690Z     "blockedRequests": 667,
+2026-11-05T04:58:19.6829890Z     "forwardedUpgrades": 18,
+2026-11-05T04:58:19.6830070Z     "blockedUpgrades": 6,
+2026-11-05T04:58:19.6830220Z     "logins": 1,
+2026-11-05T04:58:19.6830380Z     "offline": true,
+2026-11-05T04:58:19.6830570Z     "activeBrowserSockets": 0
+2026-11-05T04:58:19.6830710Z   },
+2026-11-05T04:58:19.6830870Z   "launches": [
+2026-11-05T04:58:19.6831010Z     {
+2026-11-05T04:58:19.6831170Z       "kind": "safari",
+2026-11-05T04:58:19.6831350Z       "version": "27.2",
+2026-11-05T04:58:19.6832360Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.6832520Z       "profile": {
+2026-11-05T04:58:19.6832820Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.6833610Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.6833860Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.6834110Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.6834360Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.6834510Z       },
+2026-11-05T04:58:19.6834690Z       "browserPid": 5829,
+2026-11-05T04:58:19.6834930Z       "previousBrowserPid": null,
+2026-11-05T04:58:19.6835110Z       "driverPid": null,
+2026-11-05T04:58:19.6835290Z       "driverVersion": null,
+2026-11-05T04:58:19.6835560Z       "startedAt": "2026-11-05T04:53:06.137Z"
+2026-11-05T04:58:19.6835700Z     },
+2026-11-05T04:58:19.6835850Z     {
+2026-11-05T04:58:19.6836010Z       "kind": "safari",
+2026-11-05T04:58:19.6836180Z       "version": "27.2",
+2026-11-05T04:58:19.6837180Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.6837340Z       "profile": {
+2026-11-05T04:58:19.6837630Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.6838610Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.6838880Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.6839130Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.6839380Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.6839530Z       },
+2026-11-05T04:58:19.6839700Z       "browserPid": 8399,
+2026-11-05T04:58:19.6839950Z       "previousBrowserPid": 5829,
+2026-11-05T04:58:19.6840120Z       "driverPid": null,
+2026-11-05T04:58:19.6840310Z       "driverVersion": null,
+2026-11-05T04:58:19.6840570Z       "startedAt": "2026-11-05T04:54:57.924Z"
+2026-11-05T04:58:19.6840780Z     },
+2026-11-05T04:58:19.6840940Z     {
+2026-11-05T04:58:19.6841110Z       "kind": "safari",
+2026-11-05T04:58:19.6841270Z       "version": "27.2",
+2026-11-05T04:58:19.6842270Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.6842430Z       "profile": {
+2026-11-05T04:58:19.6842730Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.6843960Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.6844240Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.6844490Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.6844730Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.6844880Z       },
+2026-11-05T04:58:19.6845260Z       "browserPid": 9917,
+2026-11-05T04:58:19.6845500Z       "previousBrowserPid": 8399,
+2026-11-05T04:58:19.6845680Z       "driverPid": null,
+2026-11-05T04:58:19.6845860Z       "driverVersion": null,
+2026-11-05T04:58:19.6846110Z       "startedAt": "2026-11-05T04:55:58.395Z"
+2026-11-05T04:58:19.6846260Z     },
+2026-11-05T04:58:19.6846400Z     {
+2026-11-05T04:58:19.6846570Z       "kind": "safari",
+2026-11-05T04:58:19.6846740Z       "version": "27.2",
+2026-11-05T04:58:19.6847730Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T04:58:19.6847900Z       "profile": {
+2026-11-05T04:58:19.6848190Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T04:58:19.6849660Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T04:58:19.6849960Z         "actualPath": "/Users/runner",
+2026-11-05T04:58:19.6850210Z         "directoryDevice": "16777220",
+2026-11-05T04:58:19.6850470Z         "directoryInode": "12884922560"
+2026-11-05T04:58:19.6850620Z       },
+2026-11-05T04:58:19.6850800Z       "browserPid": 12933,
+2026-11-05T04:58:19.6851050Z       "previousBrowserPid": 9917,
+2026-11-05T04:58:19.6851220Z       "driverPid": null,
+2026-11-05T04:58:19.6851400Z       "driverVersion": null,
+2026-11-05T04:58:19.6851670Z       "startedAt": "2026-11-05T04:58:11.443Z"
+2026-11-05T04:58:19.6851810Z     }
+2026-11-05T04:58:19.6851950Z   ]
+2026-11-05T04:58:19.6852090Z }
+2026-11-05T04:58:19.7143040Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T04:58:19.7143220Z with:
+2026-11-05T04:58:19.7144130Z   name: desktop-offline-safari-macos-15-intel-41970163073-1
+2026-11-05T04:58:19.7144340Z   path: artifacts/desktop-offline/
+2026-11-05T04:58:19.7144500Z   if-no-files-found: error
+2026-11-05T04:58:19.7145600Z   retention-days: 14
+2026-11-05T04:58:19.7145830Z   compression-level: 6
+2026-11-05T04:58:19.7146490Z   overwrite: false
+2026-11-05T04:58:19.7146690Z   include-hidden-files: false
+2026-11-05T04:58:19.7146880Z   archive: true
+2026-11-05T04:58:19.7147390Z env:
+2026-11-05T04:58:19.7147700Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:58:19.7147880Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T04:58:19.7148020Z ##[endgroup]
+2026-11-05T04:58:20.2300330Z With the provided path, there will be 17 files uploaded
+2026-11-05T04:58:20.2309580Z Artifact name is valid!
+2026-11-05T04:58:20.2311450Z Root directory input is valid!
+2026-11-05T04:58:20.6339790Z Uploading artifact: desktop-offline-safari-macos-15-intel-41970163073-1.zip
+2026-11-05T04:58:20.6976360Z Beginning upload of artifact content to blob storage
+2026-11-05T04:58:21.5642450Z Uploaded bytes 768449
+2026-11-05T04:58:21.6647740Z Finished uploading artifact content to blob storage!
+2026-11-05T04:58:21.7639790Z SHA256 digest of uploaded artifact is 327503bba223f47926ef1ff9f6f697b33f85415c1d9d1c06680ce676344bdb4b
+2026-11-05T04:58:21.8647950Z Finalizing artifact upload
+2026-11-05T04:58:22.2854360Z Artifact desktop-offline-safari-macos-15-intel-41970163073-1 successfully finalized. Artifact ID 13389144445
+2026-11-05T04:58:22.2914820Z Artifact desktop-offline-safari-macos-15-intel-41970163073-1 has been successfully uploaded! Final size is 768449 bytes. Artifact ID is 13389144445
+2026-11-05T04:58:22.3004660Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41970163073/artifacts/13389144445
+2026-11-05T04:58:22.3397480Z Post job cleanup.
+2026-11-05T04:58:22.7348080Z Post job cleanup.
+2026-11-05T04:58:23.1035560Z [command]/usr/local/bin/git version
+2026-11-05T04:58:23.1289230Z git version 2.55.0
+2026-11-05T04:58:23.1430370Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/b8a31a5c-dcfe-47e0-b107-5a2914d4c681/.gitconfig'
+2026-11-05T04:58:23.1468850Z Temporarily overriding HOME='/Users/runner/work/_temp/b8a31a5c-dcfe-47e0-b107-5a2914d4c681' before making global git config changes
+2026-11-05T04:58:23.1478490Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T04:58:23.1482280Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T04:58:23.1890040Z Removing SSH command configuration
+2026-11-05T04:58:23.1894930Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:58:23.1911310Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:58:23.4134860Z Removing HTTP extra header
+2026-11-05T04:58:23.4145020Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:58:23.4300460Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:58:23.6368900Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:58:23.6436570Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:58:23.6539100Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:58:23.9976800Z Cleaning up orphan processes
+2026-11-05T04:58:24.7174470Z Terminate orphan process: pid (10327) (System Events)

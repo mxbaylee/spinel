@@ -1,0 +1,95 @@
+{
+  "reviewer": "B, independent nonimplementing agent",
+  "result": "accepted-current-Firefox-owner",
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": 41970163073,
+  "attempt": 1,
+  "job": 127056281582,
+  "artifact": 13389183629,
+  "zip": {
+    "bytes": 453796,
+    "sha256": "6c7798700d51177bf574849b8725ba0776d5b51532a9ac350d66697f536ed5ed"
+  },
+  "members": 16,
+  "stages": 44,
+  "allNinePngsInspected": true,
+  "blockers": [],
+  "overallMergeApproval": false,
+  "limitations": [
+    "Full snapshots enforced by executed exact-source assertions; not independently replayable from retained full snapshots.",
+    "Single actual fixture tab; multi-tab negatives are deterministic controls.",
+    "Explicit storage deletion does not prove spontaneous eviction or historical Safari cause.",
+    "Software-renderer and native helper diagnostics retained; no hardware-rendering claim.",
+    "Owned cleanup only, not system-wide process absence."
+  ],
+  "evidence": [
+    {
+      "name": "initial-identity.json",
+      "bytes": 1338,
+      "sha256": "ede8f5b0d1504559c121e9a25a74799001c9ae7f0221b2a84c1b1ec48e1e57ec"
+    },
+    {
+      "name": "firefox-artifact.json",
+      "bytes": 766,
+      "sha256": "72a192458394e5fe879a187e9162048a075e3ba1ae6fe1dc7740302b8eb4f243"
+    },
+    {
+      "name": "firefox-job.json",
+      "bytes": 3351,
+      "sha256": "f3ee59c2b28596a7cc5d021cd8092a1c853a304555902da897edef6fe52e34bd"
+    },
+    {
+      "name": "firefox-job.log",
+      "bytes": 137276,
+      "sha256": "bcb6826b679480051162e4792dfa71cc626350b5578eeec7102e14a18012cc31"
+    },
+    {
+      "name": "firefox-proof-b.json",
+      "bytes": 12894,
+      "sha256": "ac8ffa370f2ced45a848f0ed3123d7ae8c2e7766da75ec7f64add68b0b0ac6b9"
+    },
+    {
+      "name": "firefox-members-b.json",
+      "bytes": 4222,
+      "sha256": "198c8be889678b1047495414ccfdb130bc5358bd3cfac3909c69a81c12cc8c8c"
+    },
+    {
+      "name": "retain-firefox-b.ts",
+      "bytes": 2824,
+      "sha256": "ec9abfd8a654d71ebf02457e968c62b992d9561d32a1bf1fa4cdf52c5153c0ec"
+    },
+    {
+      "name": "retain-firefox-b.log",
+      "bytes": 202,
+      "sha256": "29894f544c1f6ec1fe15fc195ece655a6669052278a25f2f24a16e7a6b604f38"
+    },
+    {
+      "name": "retain-firefox-b-watchdog.json",
+      "bytes": 1557,
+      "sha256": "ee515f4424879cf4e2acefa2b96bba4bf37fc106aa8aedfcd0f19d377422ea22"
+    },
+    {
+      "name": "audit-firefox-b.ts",
+      "bytes": 9535,
+      "sha256": "e8ea4c86f005fdff81c5a39db0974b409981a7418318c1b4b8fc6eec57c0875b"
+    },
+    {
+      "name": "audit-firefox-b.log",
+      "bytes": 245,
+      "sha256": "07a8aa876a7111d8763c3546b0ebc441579e365c09fa1f33e3c8275aad7a9db7"
+    },
+    {
+      "name": "audit-firefox-b-watchdog.json",
+      "bytes": 1553,
+      "sha256": "3f272f14b14c6504cad3100222b6329fbf2c96db25568b1191f8b152e9f673a6"
+    },
+    {
+      "name": "firefox-acceptance-b.md",
+      "bytes": 6427,
+      "sha256": "80d6a599aadac4d61b86144cc3db2a04c5879ae705ea9a85ad065f9c8e26ed28"
+    }
+  ]
+}

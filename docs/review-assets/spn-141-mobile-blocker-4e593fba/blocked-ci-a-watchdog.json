@@ -1,0 +1,78 @@
+{
+  "root": 12379,
+  "started": 1793856744462,
+  "elapsedMs": 528,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90832,
+  "peakKiB": 187600,
+  "live": [
+    {
+      "pid": 12379,
+      "parent": 12343,
+      "group": 12379,
+      "rssKiB": 89232,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/blocked-ci-a-watchdog.json node /tmp/spn141-after144-hosted/blocked-ci-a.ts"
+    },
+    {
+      "pid": 12545,
+      "parent": 12379,
+      "group": 12379,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 12379,
+      "parent": 12343,
+      "group": 12379,
+      "rssKiB": 89232,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/blocked-ci-a-watchdog.json node /tmp/spn141-after144-hosted/blocked-ci-a.ts"
+    },
+    {
+      "pid": 12398,
+      "parent": 12379,
+      "group": 12379,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 12424,
+      "parent": 12379,
+      "group": 12379,
+      "rssKiB": 96496,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "node /tmp/spn141-after144-hosted/blocked-ci-a.ts"
+    },
+    {
+      "pid": 12499,
+      "parent": 12379,
+      "group": 12379,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 12500,
+      "parent": 12424,
+      "group": 12379,
+      "rssKiB": 400,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 12545,
+      "parent": 12379,
+      "group": 12379,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

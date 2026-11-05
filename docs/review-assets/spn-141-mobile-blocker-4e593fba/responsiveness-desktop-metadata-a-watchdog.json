@@ -1,0 +1,54 @@
+{
+  "root": 10825,
+  "started": 1793855711792,
+  "elapsedMs": 122,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90848,
+  "peakKiB": 90848,
+  "live": [
+    {
+      "pid": 10825,
+      "parent": 10799,
+      "group": 10825,
+      "rssKiB": 89248,
+      "started": "Wed Nov  4 21:15:11 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/responsiveness-desktop-metadata-a-watchdog.json node /tmp/spn141-after144-hosted/responsiveness-desktop-metadata-a.ts"
+    },
+    {
+      "pid": 10876,
+      "parent": 10825,
+      "group": 10825,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:15:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 10825,
+      "parent": 10799,
+      "group": 10825,
+      "rssKiB": 89248,
+      "started": "Wed Nov  4 21:15:11 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/responsiveness-desktop-metadata-a-watchdog.json node /tmp/spn141-after144-hosted/responsiveness-desktop-metadata-a.ts"
+    },
+    {
+      "pid": 10844,
+      "parent": 10825,
+      "group": 10825,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:15:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10876,
+      "parent": 10825,
+      "group": 10825,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:15:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

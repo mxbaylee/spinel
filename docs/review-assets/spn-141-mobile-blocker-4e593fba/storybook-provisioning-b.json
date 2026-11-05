@@ -1,0 +1,106 @@
+{
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "run": 41970163084,
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "failure",
+  "failedWorker": 127056809749,
+  "dependentAggregate": 127060009081,
+  "siblingCorroboration": 127056809598,
+  "firstCause": "External Microsoft Ubuntu24.04 InRelease HTTP403 during apt dependency provisioning; apt100/Playwright1 before assertions.",
+  "downstream": [
+    "icon/story steps skipped",
+    "always-upload missing-files failures",
+    "aggregate correctly rejected desktop failure"
+  ],
+  "imageCaveat": {
+    "failedSetupBanner": "20261025.353.1",
+    "failedHelperEnvironment": "20261026.354.1",
+    "sibling": "20261101.360.1",
+    "inconsistencyPreserved": true
+  },
+  "assessment": "eligible for one prospective failed-jobs-only infrastructure retry",
+  "maximumAdditionalDispatches": 1,
+  "rerunExecutedByReviewer": false,
+  "sourceChange": false,
+  "overallMergeApproval": false,
+  "renewalAutomatic": false,
+  "requiredUnchanged": [
+    "source",
+    "catalog/assertions",
+    "runner labels",
+    "budgets",
+    "trust checks",
+    "dependencies"
+  ],
+  "requiredAfter": [
+    "actual job-set verification",
+    "complete application assertions/evidence",
+    "successful aggregate",
+    "both attempt histories retained"
+  ],
+  "evidence": [
+    {
+      "file": "storybook-provisioning-run.json",
+      "bytes": 12197,
+      "sha256": "6f7364b92d3bc6ce863d5ec789c2ad2f8054b40511d5b9582a53b2b36bb93eb1"
+    },
+    {
+      "file": "storybook-provisioning-jobs.json",
+      "bytes": 24545,
+      "sha256": "01f509cbe2af94658c9f8e290af17f733c57c417d5a3606bff431d8966f9214b"
+    },
+    {
+      "file": "storybook-provisioning-job.json",
+      "bytes": 3264,
+      "sha256": "082ded9f15a7eebd4525f6f11f91e3468106f27202034094f84cadc3e287b4b0"
+    },
+    {
+      "file": "storybook-provisioning-job.log",
+      "bytes": 26833,
+      "sha256": "4393e667cab4c1a9e9fc3aae1c82ac64ce5c24c75e3eff03fd09ec8d9a039aa9"
+    },
+    {
+      "file": "storybook-provisioning-aggregate-job.json",
+      "bytes": 2227,
+      "sha256": "657543336d1f7e45e49d92b91ffa5b47e4ea6dea7dc483ccff28cd7be007cfe3"
+    },
+    {
+      "file": "storybook-provisioning-aggregate.log",
+      "bytes": 18719,
+      "sha256": "f0b3226757205e52d293f4b04386e7e6ec101a36b190ddb8b078e4a1804daee9"
+    },
+    {
+      "file": "storybook-provisioning-sibling-dark-job.json",
+      "bytes": 3263,
+      "sha256": "aaa9778aa78a0392677862d34e406c6629db11027f0b8cc1ced22805d37fbae2"
+    },
+    {
+      "file": "storybook-provisioning-sibling-dark.log",
+      "bytes": 129627,
+      "sha256": "3a43acd54b9554ac5b9f56fe7ef3e7334471647bd90d14ed13e159c6dcb13632"
+    },
+    {
+      "file": "storybook-provisioning-workflow.yml.txt",
+      "bytes": 14506,
+      "sha256": "3834e10f8c68f17904af5a8c3a9864a1457f7c3290e2f8840464f0067f3f59f8"
+    },
+    {
+      "file": "storybook-provisioning-mirror-source.ts.txt",
+      "bytes": 2433,
+      "sha256": "b3c724974ba3511660f012ab510fbd791a507ac4e6dc0d9bd62a3bc31f06683d"
+    },
+    {
+      "file": "storybook-provisioning-gate-source.ts.txt",
+      "bytes": 2018,
+      "sha256": "ded4b3da22ac87b9ba8e7ac4d018f0f53e883692592ee1a0111b618ee66382c0"
+    },
+    {
+      "file": "storybook-provisioning-b.md",
+      "bytes": 5721,
+      "sha256": "39069475156814c399e00603ae336a6389fd07f15d77515f7850243ceee7cb7d"
+    }
+  ]
+}

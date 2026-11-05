@@ -1,0 +1,432 @@
+{
+  "status": "passed",
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41970163073",
+  "attempt": "1",
+  "zip": {
+    "bytes": 768449,
+    "sha256": "327503bba223f47926ef1ff9f6f697b33f85415c1d9d1c06680ce676344bdb4b"
+  },
+  "members": [
+    {
+      "name": "safari/02ae8ba5-3f77-4ff5-8e76-7f0ccc417cdf-before-doc-input.png",
+      "bytes": 81699,
+      "sha256": "8c89b02b81f2527a917553b748e337d3ccebd0601f0cd066512c3cee0c28f5af"
+    },
+    {
+      "name": "safari/acceptance.json",
+      "bytes": 53104,
+      "sha256": "9d7c058a5d35d0aa7bd8e81c923e6be96d43bb3221acae294e3f33df400bd208"
+    },
+    {
+      "name": "safari/980376d4-5b58-4f31-8db5-fbc8f73a8ea6-before-doc-input.png",
+      "bytes": 82036,
+      "sha256": "92dd418540ccdfd92c62d4c5a35f623faf658106ce26adb0290d049bce1262b8"
+    },
+    {
+      "name": "safari/doc-conflict-offline.png",
+      "bytes": 82990,
+      "sha256": "938f42ab2db98cb95c1a58c40b32eacc011f9d0a6a3d73adfa640984fbc3f9e9"
+    },
+    {
+      "name": "safari/doc-normal-offline.png",
+      "bytes": 82711,
+      "sha256": "e3c8a94bd7a606f8a28f48cedefd9b4a51e013ea0e2d9844c63469aa87257135"
+    },
+    {
+      "name": "safari/doc-online-before-download.png",
+      "bytes": 81915,
+      "sha256": "14ce1a0bd493fadb45efa3dabe59801d93a34d0164c2701e510194f75ea2f1af"
+    },
+    {
+      "name": "safari/safari-pointer.jsonl",
+      "bytes": 21407,
+      "sha256": "9c3c9775b2628e83153614186c05158c08c8a2afa3d5c60d003430bfcacebe49"
+    },
+    {
+      "name": "safari/doc-recovered-copy.png",
+      "bytes": 86438,
+      "sha256": "57197b2ecb027f9ed7701f7b29e0187903bcde4b9e75c9c46c6a7ca55e929bc2"
+    },
+    {
+      "name": "safari/safari-render-state.jsonl",
+      "bytes": 38346,
+      "sha256": "e802fbd3e711ec8b30906de74813ee619dde9546bb8c5db58543660d439db2bd"
+    },
+    {
+      "name": "safari/sheet-conflict-offline.png",
+      "bytes": 93270,
+      "sha256": "4e4677596ed68d494e90499debbc76745948361b5f4b0a2ba7bda0388fdd4e3d"
+    },
+    {
+      "name": "safari/sheet-normal-offline.png",
+      "bytes": 92413,
+      "sha256": "04a8a353e9107c462f12fa37c0d7f2374d7e2e6f3bb237708bb9e16985e546ac"
+    },
+    {
+      "name": "safari/sheet-online-before-download.png",
+      "bytes": 92222,
+      "sha256": "de70fab754f929b328416b53eb9cd57bdabb8b3c782182993296b9a6926c5f07"
+    },
+    {
+      "name": "safari/sheet-recovered-copy.png",
+      "bytes": 97649,
+      "sha256": "eba38036f62d51e68bc78eb53748660c8733a3fc0d67a25b0c5ea7ea2abd9e74"
+    },
+    {
+      "name": "safari/versions.json",
+      "bytes": 1136,
+      "sha256": "f20571af00f1d851f7e208f72f37b82cb98f3968459e3115d754e85a04da3eb0"
+    },
+    {
+      "name": "safari-profile-probe-offline.png",
+      "bytes": 66117,
+      "sha256": "7d255e93fad72fa213e48b4f2b5ea6b2055084d1541ec4034471cb2fa5487b43"
+    },
+    {
+      "name": "safari-profile-probe-online.png",
+      "bytes": 65066,
+      "sha256": "a9aaef853b55715b28a6fd70a02b149713f515ad8fed5d2291aa571111bec55a"
+    },
+    {
+      "name": "safari-profile-probe.json",
+      "bytes": 22293,
+      "sha256": "1ac931462bcb174831794d8a57e55e472c2581c1f6d15da231093476fffc27ce"
+    }
+  ],
+  "stages": 46,
+  "profile": {
+    "mode": "ordinary-hosted-safari-user",
+    "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+    "actualPath": "/Users/runner",
+    "directoryDevice": "16777220",
+    "directoryInode": "12884922560"
+  },
+  "pids": [
+    5829,
+    8399,
+    9917,
+    12933
+  ],
+  "version": "27.2",
+  "preparation": {
+    "status": "passed",
+    "database": "spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+    "phase": "unregister",
+    "timeoutMs": 28000,
+    "operations": [
+      {
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T04:58:06.873Z",
+        "status": "passed",
+        "value": {
+          "url": "https://localhost:8176/_desktop-storage-loss",
+          "marker": "inert",
+          "scripts": 0
+        },
+        "elapsedMs": 2
+      },
+      {
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T04:58:06.875Z",
+        "status": "passed",
+        "value": [
+          "https://localhost:8176/"
+        ],
+        "elapsedMs": 2
+      },
+      {
+        "name": "serviceWorker.unregister:https://localhost:8176/",
+        "startedAt": "2026-11-05T04:58:06.876Z",
+        "status": "passed",
+        "value": true,
+        "elapsedMs": 1
+      },
+      {
+        "name": "verify-unregistered",
+        "startedAt": "2026-11-05T04:58:06.877Z",
+        "status": "passed",
+        "value": {
+          "workers": [],
+          "controller": "https://localhost:8176/service-worker.js"
+        },
+        "elapsedMs": 1
+      }
+    ]
+  },
+  "quiescence": {
+    "status": "passed",
+    "database": "spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+    "phase": "verify",
+    "timeoutMs": 28000,
+    "operations": [
+      {
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T04:58:07.461Z",
+        "status": "passed",
+        "value": {
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+          "marker": "inert",
+          "scripts": 0
+        },
+        "elapsedMs": 0
+      },
+      {
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T04:58:07.461Z",
+        "status": "passed",
+        "value": [],
+        "elapsedMs": 1
+      },
+      {
+        "name": "verify-uncontrolled",
+        "startedAt": "2026-11-05T04:58:07.462Z",
+        "status": "passed",
+        "value": {
+          "workers": [],
+          "controller": null
+        },
+        "elapsedMs": 0
+      }
+    ]
+  },
+  "deletion": {
+    "status": "passed",
+    "database": "spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+    "phase": "delete",
+    "timeoutMs": 28000,
+    "operations": [
+      {
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T04:58:12.267Z",
+        "status": "passed",
+        "value": {
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled",
+          "marker": "inert",
+          "scripts": 0
+        },
+        "elapsedMs": 0
+      },
+      {
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T04:58:12.268Z",
+        "status": "passed",
+        "value": [],
+        "elapsedMs": 1
+      },
+      {
+        "name": "verify-uncontrolled",
+        "startedAt": "2026-11-05T04:58:12.268Z",
+        "status": "passed",
+        "value": {
+          "workers": [],
+          "controller": null
+        },
+        "elapsedMs": 0
+      },
+      {
+        "name": "caches.keys",
+        "startedAt": "2026-11-05T04:58:12.268Z",
+        "status": "passed",
+        "value": [
+          "spinel-shell-603ae4b16bb36841"
+        ],
+        "elapsedMs": 7
+      },
+      {
+        "name": "caches.delete:spinel-shell-603ae4b16bb36841",
+        "startedAt": "2026-11-05T04:58:12.276Z",
+        "status": "passed",
+        "value": true,
+        "elapsedMs": 4
+      },
+      {
+        "name": "localStorage.clear",
+        "startedAt": "2026-11-05T04:58:12.279Z",
+        "status": "passed",
+        "value": 0,
+        "elapsedMs": 0
+      },
+      {
+        "name": "indexedDB.deleteDatabase:spinel-offline-fb37e50b-cafc-434e-a8be-c40e22b2deac",
+        "startedAt": "2026-11-05T04:58:12.280Z",
+        "status": "passed",
+        "elapsedMs": 12
+      },
+      {
+        "name": "verify-service-workers",
+        "startedAt": "2026-11-05T04:58:12.291Z",
+        "status": "passed",
+        "value": [],
+        "elapsedMs": 0
+      },
+      {
+        "name": "verify-cache-names",
+        "startedAt": "2026-11-05T04:58:12.292Z",
+        "status": "passed",
+        "value": [],
+        "elapsedMs": 3
+      },
+      {
+        "name": "verify-database-names",
+        "startedAt": "2026-11-05T04:58:12.294Z",
+        "status": "passed",
+        "value": [
+          "UniverLocalStorage",
+          "spinel-offline-runtime"
+        ],
+        "elapsedMs": 24
+      },
+      {
+        "name": "verify-storage-empty",
+        "startedAt": "2026-11-05T04:58:12.319Z",
+        "status": "passed",
+        "value": {
+          "workers": [],
+          "cacheNames": [],
+          "databases": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ],
+          "localStorageEntries": 0
+        },
+        "elapsedMs": 1
+      }
+    ]
+  },
+  "postLoss": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again",
+  "capability": {
+    "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+    "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+    "version": "27.2",
+    "beforePid": "3953",
+    "afterPid": "4273",
+    "identityElapsedMs": [
+      1493,
+      177
+    ],
+    "retained": {
+      "localStorage": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+      "indexedDB": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+      "cache": "52fbe75d-3a18-4a38-88ea-f930f24bb835",
+      "worker": true
+    },
+    "paintBaselines": {
+      "online": {
+        "time": "2026-11-05T04:51:17.424Z",
+        "pid": "3953",
+        "state": {
+          "windowId": 34,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          },
+          "tabIndex": 1,
+          "title": "Spinel desktop profile probe",
+          "url": "http://localhost:8175/",
+          "page": {
+            "url": "http://localhost:8175/",
+            "title": "Spinel desktop profile probe",
+            "readyState": "complete",
+            "visibility": "visible",
+            "hasFocus": true,
+            "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+          }
+        },
+        "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-online.png",
+        "canvas2d": {
+          "context": "2d",
+          "options": "default",
+          "width": 320,
+          "height": 120,
+          "contextAvailable": true,
+          "drawCompleted": true,
+          "readbackAfterPhysicalCapture": true,
+          "pixels": [
+            {
+              "x": 80,
+              "y": 80,
+              "rgba": [
+                118,
+                51,
+                213,
+                255
+              ]
+            },
+            {
+              "x": 240,
+              "y": 80,
+              "rgba": [
+                37,
+                99,
+                235,
+                255
+              ]
+            }
+          ]
+        }
+      },
+      "offline": {
+        "time": "2026-11-05T04:51:24.501Z",
+        "pid": "4273",
+        "state": {
+          "windowId": 45,
+          "bounds": {
+            "x": 298,
+            "y": 40,
+            "width": 1324,
+            "height": 940
+          },
+          "tabIndex": 1,
+          "title": "Spinel desktop profile probe",
+          "url": "http://localhost:8175/?offline-restart",
+          "page": {
+            "url": "http://localhost:8175/?offline-restart",
+            "title": "Spinel desktop profile probe",
+            "readyState": "complete",
+            "visibility": "visible",
+            "hasFocus": true,
+            "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+          }
+        },
+        "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-offline.png",
+        "canvas2d": {
+          "context": "2d",
+          "options": "default",
+          "width": 320,
+          "height": 120,
+          "contextAvailable": true,
+          "drawCompleted": true,
+          "readbackAfterPhysicalCapture": true,
+          "pixels": [
+            {
+              "x": 80,
+              "y": 80,
+              "rgba": [
+                118,
+                51,
+                213,
+                255
+              ]
+            },
+            {
+              "x": 240,
+              "y": 80,
+              "rgba": [
+                37,
+                99,
+                235,
+                255
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "cleanup": "quit awaited without teardownError; server close requested before final write"
+  }
+}

@@ -1,0 +1,692 @@
+{
+  "owner": "desktop responsiveness",
+  "accepted": true,
+  "mergeApproval": false,
+  "identities": {
+    "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+    "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+    "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+    "sourceAndTestedTree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+    "ci": 41970163093,
+    "storybook": 41970163084,
+    "native": 41970163073,
+    "attempt": 1,
+    "planArtifact": 13388658785,
+    "planZipSha256": "31795d1ddb7035f4193b62c590c21c154eab5d392a1d028f467367d55577b713",
+    "planDigest": "a10853aa57c4e7a4373988a69faf3582ada07da1597e3787610dcc386d775a79",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "previousFailedSource": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+    "previousFailedArchive": "eb51a5554244520593c66b7638f9eeff1d32fbb5",
+    "prerequisiteAcceptedSource": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "prerequisiteAcceptedArchive": "ec71f258d270d0b46c23f35b6e5d1fbda6675414",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "job": {
+    "id": 127056548338,
+    "run": 41970163093,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "start": "2026-11-05T04:57:29Z",
+    "end": "2026-11-05T05:13:17Z",
+    "jsonSha256": "ceacd659aec19494d22493e24c80d6c1feef177a9399b8c6726d416e63448973",
+    "logSha256": "5f1fc1ed25302d3f0f6230b6cb4efec633e3982ac50e8c0392cb50c2800fe8cf"
+  },
+  "archive": {
+    "bytes": 1553501,
+    "sha256": "531ac034b5e8b347ca258fd9e7b10e02c8858798503a47e42de8baaa3e21a74f"
+  },
+  "members": 18,
+  "omitted": 0,
+  "memberProof": "responsiveness-desktop-members-a.json",
+  "rawMetricsProof": "responsiveness-desktop-audit-a.json",
+  "semanticProof": "responsiveness-desktop-semantics-a.json",
+  "all11CasesRetry0": true,
+  "rawUnprofiledBudgets": [
+    {
+      "sample": "plain-1",
+      "capacity": {
+        "count": 65,
+        "p50": 2.900000000023283,
+        "p95": 9,
+        "max": 9.70000000006985,
+        "sum": 237.2000000004191
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.5,
+        "p95": 0.5,
+        "max": 0.5,
+        "sum": 0.5
+      },
+      "input": {
+        "count": 2086,
+        "p50": 23.599999999976717,
+        "p95": 35.40000000002328,
+        "max": 75.70000000006985,
+        "sum": 50022.900000002584
+      },
+      "longTask": {
+        "count": 7,
+        "p50": 52,
+        "p95": 65,
+        "max": 65,
+        "sum": 379
+      },
+      "localDrainMs": 304.69999999995343
+    },
+    {
+      "sample": "plain-2",
+      "capacity": {
+        "count": 65,
+        "p50": 2.900000000023283,
+        "p95": 5.700000000069849,
+        "max": 10.199999999953434,
+        "sum": 214.79999999981374
+      },
+      "idle": {
+        "count": 1,
+        "p50": 1.5,
+        "p95": 1.5,
+        "max": 1.5,
+        "sum": 1.5
+      },
+      "input": {
+        "count": 2086,
+        "p50": 23.800000000046566,
+        "p95": 35.79999999993015,
+        "max": 74.79999999993015,
+        "sum": 50456.40000000014
+      },
+      "longTask": {
+        "count": 7,
+        "p50": 54,
+        "p95": 67,
+        "max": 67,
+        "sum": 394
+      },
+      "localDrainMs": 318
+    },
+    {
+      "sample": "plain-3",
+      "capacity": {
+        "count": 65,
+        "p50": 2.900000000023283,
+        "p95": 8.70000000006985,
+        "max": 19.899999999906868,
+        "sum": 265.29999999981374
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.8000000000465661,
+        "p95": 0.8000000000465661,
+        "max": 0.8000000000465661,
+        "sum": 0.8000000000465661
+      },
+      "input": {
+        "count": 2086,
+        "p50": 23.699999999953434,
+        "p95": 35.09999999997672,
+        "max": 84.79999999993015,
+        "sum": 49756.099999998696
+      },
+      "longTask": {
+        "count": 8,
+        "p50": 53,
+        "p95": 58,
+        "max": 58,
+        "sum": 432
+      },
+      "localDrainMs": 302.80000000004657
+    }
+  ],
+  "profileLimits": [
+    {
+      "role": "baseline-observation",
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 0,
+      "reorderedSampleCount": 0,
+      "clock": {
+        "beforeMs": 2314,
+        "afterMs": 2737.1999999999534,
+        "uncertaintyMs": 423.19999999995343,
+        "profileStartTimeUs": 682459821,
+        "profileEndTimeUs": 784788168
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 7647,
+        "sampledCpuMs": 8155.4119999997465,
+        "certainContainingTasks": [
+          {
+            "index": 44,
+            "startedAt": 86018.80000000005,
+            "durationMs": 9061,
+            "sampleCount": 7268
+          }
+        ],
+        "maxContainingTaskMs": 9061,
+        "taskAttribution": "certain-whole-containing-task"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 8062,
+        "sampledCpuMs": 8637.356999999844,
+        "certainContainingTasks": [
+          {
+            "index": 45,
+            "startedAt": 95080.59999999998,
+            "durationMs": 9467,
+            "sampleCount": 7704
+          }
+        ],
+        "maxContainingTaskMs": 9467,
+        "taskAttribution": "certain-whole-containing-task"
+      }
+    },
+    {
+      "role": "candidate",
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 0,
+      "reorderedSampleCount": 0,
+      "clock": {
+        "beforeMs": 2382.5999999999767,
+        "afterMs": 2813,
+        "uncertaintyMs": 430.4000000000233,
+        "profileStartTimeUs": 1040165078,
+        "profileEndTimeUs": 1101977326
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 137,
+        "sampledCpuMs": 127.18799999999997,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 104,
+        "sampledCpuMs": 113.01699999999994,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      }
+    }
+  ],
+  "semanticSummaries": [
+    {
+      "sample": "plain-1",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.39999999990686774,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 304.69999999995343,
+      "groups": 66
+    },
+    {
+      "sample": "plain-2",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 1.2000000000698492,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.2999999999301508,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 1.5,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 318,
+      "groups": 1
+    },
+    {
+      "sample": "plain-3",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.40000000002328306,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.40000000002328306,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.8000000000465661,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 302.80000000004657,
+      "groups": 1
+    },
+    {
+      "sample": "profile",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.6999999999534339,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.4000000001396984,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 1.1999999999534339,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 334.19999999995343,
+      "groups": 1
+    },
+    {
+      "scenario": "resume-native-typing-after-quiet-pause",
+      "summary": {
+        "finalOriginalKeyAt": 61057.40000000014,
+        "continuationKeyAt": 61448,
+        "continuationFrameAt": 61481.700000000186,
+        "browserQuietGapMs": 390.5999999998603,
+        "continuationKeyToFrameMs": 33.700000000186265,
+        "continuationKeyToNativeReadMs": 33.800000000046566,
+        "continuationRequestReturnMs": 39.52196300000651,
+        "finalOriginalKeyToContinuationFrameMs": 424.30000000004657,
+        "finalOriginalKeyToContinuationNativeReadMs": 424.39999999990687
+      }
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+      "eventCount": 4,
+      "physicalIme": false
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+      "eventCount": 226,
+      "physicalIme": false
+    }
+  ],
+  "unavailable": [],
+  "runtimeRerun": false,
+  "profileEventsReanalyzed": false,
+  "artifact": {
+    "id": 13389838658,
+    "bytes": 1553501,
+    "digest": "sha256:531ac034b5e8b347ca258fd9e7b10e02c8858798503a47e42de8baaa3e21a74f",
+    "metadataSha256": "79d671256ad019dbbfa8d941ba0662faa3bcab54cf53a73c426544245304a226",
+    "expiresAt": "2026-11-12T05:13:13Z"
+  },
+  "validation": {
+    "firstExecutionsOnly": true,
+    "extract": {
+      "root": 10229,
+      "started": 1793855689704,
+      "elapsedMs": 200,
+      "outcome": "command-passed",
+      "pressure": "1",
+      "rssKiB": 90704,
+      "peakKiB": 90704,
+      "live": [
+        {
+          "pid": 10229,
+          "parent": 10193,
+          "group": 10229,
+          "rssKiB": 89104,
+          "started": "Wed Nov  4 21:14:49 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/retain-responsiveness-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/retain-responsiveness-desktop-a.ts"
+        },
+        {
+          "pid": 10280,
+          "parent": 10229,
+          "group": 10229,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:49 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "known": [
+        {
+          "pid": 10229,
+          "parent": 10193,
+          "group": 10229,
+          "rssKiB": 89104,
+          "started": "Wed Nov  4 21:14:49 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/retain-responsiveness-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/retain-responsiveness-desktop-a.ts"
+        },
+        {
+          "pid": 10248,
+          "parent": 10229,
+          "group": 10229,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:49 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 10280,
+          "parent": 10229,
+          "group": 10229,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:49 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+    },
+    "rawAudit": {
+      "root": 10324,
+      "started": 1793855693944,
+      "elapsedMs": 703,
+      "outcome": "command-passed",
+      "pressure": "1",
+      "rssKiB": 91264,
+      "peakKiB": 220960,
+      "live": [
+        {
+          "pid": 10324,
+          "parent": 10289,
+          "group": 10324,
+          "rssKiB": 89664,
+          "started": "Wed Nov  4 21:14:53 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a.ts"
+        },
+        {
+          "pid": 10571,
+          "parent": 10324,
+          "group": 10324,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:54 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "known": [
+        {
+          "pid": 10324,
+          "parent": 10289,
+          "group": 10324,
+          "rssKiB": 89664,
+          "started": "Wed Nov  4 21:14:53 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a.ts"
+        },
+        {
+          "pid": 10343,
+          "parent": 10324,
+          "group": 10324,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:53 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 10369,
+          "parent": 10324,
+          "group": 10324,
+          "rssKiB": 123824,
+          "started": "Wed Nov  4 21:14:53 2026",
+          "command": "node /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a.ts"
+        },
+        {
+          "pid": 10481,
+          "parent": 10369,
+          "group": 10324,
+          "rssKiB": 304,
+          "started": "Wed Nov  4 21:14:54 2026",
+          "command": "(git)"
+        },
+        {
+          "pid": 10487,
+          "parent": 10324,
+          "group": 10324,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:54 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 10533,
+          "parent": 10369,
+          "group": 10324,
+          "rssKiB": 6384,
+          "started": "Wed Nov  4 21:14:54 2026",
+          "command": "(git)"
+        },
+        {
+          "pid": 10539,
+          "parent": 10324,
+          "group": 10324,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:54 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 10571,
+          "parent": 10324,
+          "group": 10324,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:54 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+    },
+    "semanticAudit": {
+      "root": 10625,
+      "started": 1793855699218,
+      "elapsedMs": 188,
+      "outcome": "command-passed",
+      "pressure": "1",
+      "rssKiB": 90640,
+      "peakKiB": 90640,
+      "live": [
+        {
+          "pid": 10625,
+          "parent": 10584,
+          "group": 10625,
+          "rssKiB": 89040,
+          "started": "Wed Nov  4 21:14:59 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a.ts"
+        },
+        {
+          "pid": 10685,
+          "parent": 10625,
+          "group": 10625,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "known": [
+        {
+          "pid": 10625,
+          "parent": 10584,
+          "group": 10625,
+          "rssKiB": 89040,
+          "started": "Wed Nov  4 21:14:59 2026",
+          "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-semantics-a.ts"
+        },
+        {
+          "pid": 10644,
+          "parent": 10625,
+          "group": 10625,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        },
+        {
+          "pid": 10685,
+          "parent": 10625,
+          "group": 10625,
+          "rssKiB": 1600,
+          "started": "Wed Nov  4 21:14:59 2026",
+          "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+        }
+      ],
+      "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+    }
+  },
+  "oldPassCredit": false,
+  "sourceAssertionLimits": "Saved/peer/history/idle records inspected directly; boundary source proves persisted equality and guest403 assertions. Fixture close is awaited in source and job/cases passed; no separate OS-wide cleanup inventory.",
+  "readinessLimit": "Current Storybook41970163084 provisioning failure remains separate/unaccepted; no overall merge approval.",
+  "acquisitionDisposition": "responsiveness-desktop-download-disposition.json",
+  "report": "responsiveness-desktop-review-a.md"
+}

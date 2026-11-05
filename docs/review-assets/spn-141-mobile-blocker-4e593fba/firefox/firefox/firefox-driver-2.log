@@ -1,0 +1,22 @@
+1793854307221	geckodriver	INFO	Listening on 127.0.0.1:49381
+1793854307416	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" "/Applications/Firefox. ... nette" "--profile" "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile" "-foreground" "-no-remote"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1793854308375	Marionette	INFO	Marionette enabled
+2026-11-05 04:51:48.572 Firefox GPU Helper[2873:13379] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-05 04:51:48.748 Firefox GPU Helper[2873:13379] Error received in message reply handler: Connection invalid
+2026-11-05 04:51:48.748 Firefox GPU Helper[2873:13390] Connection Invalid error for service com.apple.hiservices-xpcservice.
+1793854309127	Marionette	INFO	Listening on port 49382
+1793854309151	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Failed GL context creation for WebRender: 0
+[GFX1-]: Failed to connect WebRenderBridgeChild. isParent=true
+[GFX1-]: Fallback WR to SW-WR
+console.error: "Experiment desktop-release-rollout-show-relay-to-all-browsers-next-sign-up-modal-cta has unknown featureId: email-autocomplete-relay"
+console.error: "Experiment visual-card-updates has unknown featureId: newtabRefinedCardsLayout"
+console.error: "Experiment enable-nimbus-unenrollment-synchronization has unknown featureId: nimbusStore"
+console.error: "Experiment private-window-visual-refresh-design-change-only has unknown featureId: feltPrivacy"
+1793854325895	Marionette	INFO	Stopped listening on port 49382
+JavaScript warning: https://localhost:8176/assets/univer-renderer-Cqyj3Y79.js, line 32: Script terminated by timeout at:
+lW/<@https://localhost:8176/assets/univer-renderer-Cqyj3Y79.js:32:317907
+
+1793854326410	webdriver::server	INFO	Shutting down

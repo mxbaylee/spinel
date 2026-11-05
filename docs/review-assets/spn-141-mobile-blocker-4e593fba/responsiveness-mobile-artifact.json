@@ -1,0 +1,20 @@
+{
+  "id": 13391071739,
+  "node_id": "MDg6QXJ0aWZhY3QxMzM5MTA3MTczOQ==",
+  "name": "doc-responsiveness-mobile",
+  "size_in_bytes": 2580780,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13391071739",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13391071739/zip",
+  "expired": false,
+  "digest": "sha256:bac3a23814e2a1d3fb406b748bb7f85f554e0121049eed497ba0eb5ad9f3f7f7",
+  "created_at": "2026-11-05T05:29:36Z",
+  "updated_at": "2026-11-05T05:29:36Z",
+  "expires_at": "2026-11-12T05:29:34Z",
+  "workflow_run": {
+    "id": 41970163093,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-141-storage-quiescence",
+    "head_sha": "4e593fbaf9ea89585920053b9415f9a8eac0944f"
+  }
+}

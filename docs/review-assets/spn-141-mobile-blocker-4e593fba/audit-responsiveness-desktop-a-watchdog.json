@@ -1,0 +1,94 @@
+{
+  "root": 10324,
+  "started": 1793855693944,
+  "elapsedMs": 703,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91264,
+  "peakKiB": 220960,
+  "live": [
+    {
+      "pid": 10324,
+      "parent": 10289,
+      "group": 10324,
+      "rssKiB": 89664,
+      "started": "Wed Nov  4 21:14:53 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a.ts"
+    },
+    {
+      "pid": 10571,
+      "parent": 10324,
+      "group": 10324,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 10324,
+      "parent": 10289,
+      "group": 10324,
+      "rssKiB": 89664,
+      "started": "Wed Nov  4 21:14:53 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a.ts"
+    },
+    {
+      "pid": 10343,
+      "parent": 10324,
+      "group": 10324,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10369,
+      "parent": 10324,
+      "group": 10324,
+      "rssKiB": 123824,
+      "started": "Wed Nov  4 21:14:53 2026",
+      "command": "node /tmp/spn141-after144-hosted/audit-responsiveness-desktop-a.ts"
+    },
+    {
+      "pid": 10481,
+      "parent": 10369,
+      "group": 10324,
+      "rssKiB": 304,
+      "started": "Wed Nov  4 21:14:54 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 10487,
+      "parent": 10324,
+      "group": 10324,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10533,
+      "parent": 10369,
+      "group": 10324,
+      "rssKiB": 6384,
+      "started": "Wed Nov  4 21:14:54 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 10539,
+      "parent": 10324,
+      "group": 10324,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10571,
+      "parent": 10324,
+      "group": 10324,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:14:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

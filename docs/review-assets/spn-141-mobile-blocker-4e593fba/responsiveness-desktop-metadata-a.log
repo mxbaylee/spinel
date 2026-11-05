@@ -1,0 +1,2 @@
+PASS artifact/run/source identity and all raw/summary equality checks.
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":122,"peakKiB":90848}

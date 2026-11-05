@@ -1,0 +1,491 @@
+{
+  "status": "blocked",
+  "acceptanceComplete": false,
+  "mergeReady": false,
+  "identities": {
+    "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+    "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+    "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+    "sourceAndTestedTree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+    "ci": 41970163093,
+    "storybook": 41970163084,
+    "native": 41970163073,
+    "attempt": 1,
+    "planArtifact": 13388658785,
+    "planZipSha256": "31795d1ddb7035f4193b62c590c21c154eab5d392a1d028f467367d55577b713",
+    "planDigest": "a10853aa57c4e7a4373988a69faf3582ada07da1597e3787610dcc386d775a79",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "previousFailedSource": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+    "previousFailedArchive": "eb51a5554244520593c66b7638f9eeff1d32fbb5",
+    "prerequisiteAcceptedSource": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "prerequisiteAcceptedArchive": "ec71f258d270d0b46c23f35b6e5d1fbda6675414",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "ci": {
+    "run": 41970163093,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "total": 33,
+    "successful": 31,
+    "failed": [
+      {
+        "id": 127056548327,
+        "name": "Doc responsiveness (mobile)"
+      },
+      {
+        "id": 127069617826,
+        "name": "Playwright smoke"
+      }
+    ],
+    "missingCancelledSkippedPending": 0,
+    "gates": [
+      {
+        "id": 127056281448,
+        "name": "Pull request",
+        "conclusion": "success"
+      },
+      {
+        "id": 127056548071,
+        "name": "Backlog",
+        "conclusion": "success"
+      },
+      {
+        "id": 127056548079,
+        "name": "Lint",
+        "conclusion": "success"
+      },
+      {
+        "id": 127056548097,
+        "name": "Typecheck",
+        "conclusion": "success"
+      },
+      {
+        "id": 127061192624,
+        "name": "Unit tests",
+        "conclusion": "success"
+      },
+      {
+        "id": 127061916484,
+        "name": "Lib tests",
+        "conclusion": "success"
+      },
+      {
+        "id": 127069617826,
+        "name": "Playwright smoke",
+        "conclusion": "failure"
+      }
+    ]
+  },
+  "aggregates": [
+    {
+      "group": "unit",
+      "artifact": 13390555133,
+      "zipBytes": 1142,
+      "zipSha256": "8085df75e5985ec8e1b1d2b5c70de3e4d7dcdb74679255646613724913cdd2f5",
+      "memberSha256": "3d5cf24108c356ff00cbcd6bd849c89cf807879e8f621a8ed3d15fa63e1c7e26",
+      "passed": true,
+      "results": {
+        "unit-tests": "success"
+      }
+    },
+    {
+      "group": "lib",
+      "artifact": 13390660590,
+      "zipBytes": 1159,
+      "zipSha256": "13f353d622a7d5cd2e28cf49d2b908b014a5e08600a9980594b5cc0c3fa0a56e",
+      "memberSha256": "5cd1b556360a2f89b6e28b4a94942271a298fe61e68f7f0ef8ec62c5846abc4f",
+      "passed": true,
+      "results": {
+        "lib-test-run": "success"
+      }
+    },
+    {
+      "group": "browser",
+      "artifact": 13391186267,
+      "zipBytes": 465,
+      "zipSha256": "39ce66918523e0f55477da8f76486c857468690fb8635dd19109212c2c5924f9",
+      "memberSha256": "1431c7cdf3f02a17cedee0d668701688ecc886d25fdf6940225a2ac3998b6337",
+      "passed": false,
+      "results": {
+        "backlog": "success",
+        "pull-request": "success",
+        "lint": "success",
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-test-run": "success",
+        "playwright-run": "success",
+        "container-smoke": "success",
+        "restore-timing": "success",
+        "sync-transition": "success",
+        "doc-responsiveness": "failure",
+        "doc-callback-lifetimes": "success"
+      }
+    }
+  ],
+  "nonDocumentationChanges": [
+    "scripts/ci/desktop-browser.ts",
+    "scripts/ci/desktop-offline-fixture.ts",
+    "scripts/ci/desktop-offline.ts",
+    "scripts/ci/desktop-storage.test.ts",
+    "scripts/ci/desktop-storage.ts"
+  ],
+  "rawFailures": [
+    {
+      "sample": "plain-1",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "harness": [
+        {
+          "file": "e2e/doc-responsiveness.ts",
+          "sha256": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "e2e/doc-responsiveness.spec.ts",
+          "sha256": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "e2e/doc-responsiveness-fixture.ts",
+          "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "e2e/doc-responsiveness-boundaries.ts",
+          "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "web/docResponsivenessEvidence.ts",
+          "sha256": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "src/ui/docIdleEpisode.ts",
+          "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "src/ui/nativeDocFlush.ts",
+          "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "playwright.config.ts",
+          "sha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "package-lock.json",
+          "sha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+          "unchangedFromBase": true
+        }
+      ],
+      "capacityIndex": 61,
+      "completedState": 1984,
+      "peak": {
+        "reason": "capacity",
+        "startedAt": 143736.09999999986,
+        "durationMs": 116.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "neighborPairs": [
+        {
+          "reason": "capacity",
+          "startedAt": 137156.30000000005,
+          "durationMs": 8,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 140532.19999999995,
+          "durationMs": 10.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 143736.09999999986,
+          "durationMs": 116.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 147126.5,
+          "durationMs": 9.099999999860302,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 150512.19999999995,
+          "durationMs": 10.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        }
+      ],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "longTasks": [
+        {
+          "startedAt": 143732.09999999986,
+          "durationMs": 197
+        }
+      ],
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 65.19999999995343,
+          "p95": 94.5,
+          "max": 216.30000000004657,
+          "sum": 130626.99999998696
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 75.10000000009313,
+          "p95": 105.89999999990687,
+          "max": 225.5,
+          "sum": 152242.8999999999
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1137,
+          "p50": 66,
+          "p95": 100,
+          "max": 197,
+          "sum": 79708
+        },
+        "totalBlockingMs": 22858,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 11.100000000093132,
+          "p95": 28.699999999953434,
+          "max": 116.5,
+          "sum": 1005.399999999674
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2,
+          "p95": 2,
+          "max": 2,
+          "sum": 2
+        },
+        "pairedFlushMaximumMs": 116.5,
+        "postFinalKeyDrainUpperBoundMs": 707.8000000000466,
+        "firstVerifiedBrowserLocalDrainMs": 313.4000000001397,
+        "lateReadMinusLocalWitnessMs": 394.39999999990687,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "completed": null,
+      "timingComplete": true,
+      "errors": [],
+      "finalReloads": []
+    },
+    {
+      "sample": "plain-3",
+      "source": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+      "harness": [
+        {
+          "file": "e2e/doc-responsiveness.ts",
+          "sha256": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "e2e/doc-responsiveness.spec.ts",
+          "sha256": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "e2e/doc-responsiveness-fixture.ts",
+          "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "e2e/doc-responsiveness-boundaries.ts",
+          "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "web/docResponsivenessEvidence.ts",
+          "sha256": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "src/ui/docIdleEpisode.ts",
+          "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "src/ui/nativeDocFlush.ts",
+          "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "playwright.config.ts",
+          "sha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+          "unchangedFromBase": true
+        },
+        {
+          "file": "package-lock.json",
+          "sha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+          "unchangedFromBase": true
+        }
+      ],
+      "capacityIndex": 16,
+      "completedState": 544,
+      "peak": {
+        "reason": "capacity",
+        "startedAt": 25117.899999999907,
+        "durationMs": 122.30000000004657,
+        "history": 32,
+        "collaboration": 32
+      },
+      "neighborPairs": [
+        {
+          "reason": "capacity",
+          "startedAt": 21842.09999999986,
+          "durationMs": 7.199999999953434,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 23528.299999999814,
+          "durationMs": 8,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 25117.899999999907,
+          "durationMs": 122.30000000004657,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 26941.5,
+          "durationMs": 8.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 28498.799999999814,
+          "durationMs": 8.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        }
+      ],
+      "nativeKeys": [
+        "unitId",
+        "mobile",
+        "observedAt",
+        "pending",
+        "highWater",
+        "flushes",
+        "history",
+        "drainWitness",
+        "selection"
+      ],
+      "longTasks": [
+        {
+          "startedAt": 25114.5,
+          "durationMs": 177
+        }
+      ],
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 62.10000000009313,
+          "p95": 95.0999999998603,
+          "max": 189.80000000004657,
+          "sum": 128463.1999999925
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 72.39999999990687,
+          "p95": 106.69999999995343,
+          "max": 237.69999999995343,
+          "sum": 149620
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1131,
+          "p50": 68,
+          "p95": 100,
+          "max": 177,
+          "sum": 80621
+        },
+        "totalBlockingMs": 24071,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 11,
+          "p95": 34.200000000186265,
+          "max": 122.30000000004657,
+          "sum": 1025.8999999989755
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2.300000000046566,
+          "p95": 2.300000000046566,
+          "max": 2.300000000046566,
+          "sum": 2.300000000046566
+        },
+        "pairedFlushMaximumMs": 122.30000000004657,
+        "postFinalKeyDrainUpperBoundMs": 904.8000000000466,
+        "firstVerifiedBrowserLocalDrainMs": 386,
+        "lateReadMinusLocalWitnessMs": 518.8000000000466,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "completed": null,
+      "timingComplete": true,
+      "errors": [],
+      "finalReloads": []
+    }
+  ],
+  "owner": "SPN-146",
+  "currentSourceAcceptanceDoesNotTransfer": true,
+  "storybook": {
+    "run": 41970163084,
+    "attempt": 2,
+    "accepted": true
+  },
+  "native": {
+    "run": 41970163073,
+    "attempt": 1,
+    "conclusion": "success"
+  },
+  "execution": "read-only metadata/hash/current fail-closed validator; no runtime/browser/retry"
+}

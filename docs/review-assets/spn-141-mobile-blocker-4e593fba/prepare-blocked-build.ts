@@ -1,0 +1,15 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import assert from 'node:assert/strict';
+let source=readFileSync('/tmp/spn141-after144-archive-build.ts','utf8');
+const replace=(a:string,b:string)=>{assert.ok(source.includes(a),a);source=source.replace(a,b);};
+replace("prefix='docs/review-assets/spn-141-acceptance-4e593fba'","prefix='docs/review-assets/spn-141-mobile-blocker-4e593fba'");
+replace("assert.equal(run.status,'completed'); assert.equal(run.conclusion,'success');","assert.equal(run.status,'completed'); assert.equal(run.conclusion,name==='ci'?'failure':'success');");
+replace("assert.ok(jobs.every((j:any)=>j.status==='completed' && j.conclusion==='success' && j.head_sha===identity.source && j.run_id===identity.ci && j.run_attempt===1));",`assert.ok(jobs.every((j:any)=>j.status==='completed' && j.head_sha===identity.source && j.run_id===identity.ci && j.run_attempt===1));
+assert.equal(jobs.filter((j:any)=>j.conclusion==='success').length,31);
+assert.deepEqual(jobs.filter((j:any)=>j.conclusion!=='success').map((j:any)=>[j.id,j.name,j.conclusion]).sort(),[[127056548327,'Doc responsiveness (mobile)','failure'],[127069617826,'Playwright smoke','failure']].sort());`);
+replace("'final-readiness-a.md','final-readiness-b.md'","'blocked-readiness-a.md','blocked-readiness-b.md'");
+replace("assert.equal(proof.members.length,18);assert.equal(proof.omitted,0);","assert.equal(proof.members.length,proof.count);assert.equal(proof.retained,proof.count);assert.equal(proof.omitted,0);if(preset==='desktop')assert.equal(proof.count,18);else assert.ok(proof.count>=18);");
+replace("GIT_INDEX_FILE:'/tmp/spn141-after144-acceptance.index'","GIT_INDEX_FILE:'/tmp/spn141-after144-blocked.index'");
+replace("'Preserve SPN-141 acceptance and Storybook infrastructure recovery on 4e593fba'","'Preserve SPN-141 mobile capacity failures and current owner evidence on 4e593fba'");
+replace("'/tmp/spn141-after144-acceptance-archive.json'","'/tmp/spn141-after144-blocked-archive.json'");
+writeFileSync('/tmp/spn141-after144-blocked-build.ts',source);

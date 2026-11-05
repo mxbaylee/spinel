@@ -1,0 +1,2 @@
+PASS native idle ownership, full history, continuation exact text/selection, composition/revocation and hosted identities.
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":128,"peakKiB":91136}

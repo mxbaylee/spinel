@@ -1,0 +1,69 @@
+{
+  "reviewer": "/root/spn120_review_a",
+  "independentNonimplementing": true,
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "acceptanceComplete": false,
+  "mergeReady": false,
+  "status": "blocked",
+  "owner": "SPN-146",
+  "ci": {
+    "run": 41970163093,
+    "attempt": 1,
+    "totalJobs": 33,
+    "successes": 31,
+    "failures": 2,
+    "failedJobs": [
+      127056548327,
+      127069617826
+    ],
+    "requiredGatesPassed": 6,
+    "requiredGatesTotal": 7,
+    "missingCancelledSkippedPending": 0
+  },
+  "failedCapacityMaximumMs": {
+    "plain-1": 116.5,
+    "plain-3": 122.30000000004657
+  },
+  "maximumBudgetMs": 100,
+  "sourceSeparationVerified": true,
+  "causalAttributionEstablished": false,
+  "unchangedRerunAuthorized": false,
+  "nativeAccepted": true,
+  "callbacksAccepted": true,
+  "desktopResponsivenessAccepted": true,
+  "mobileResponsivenessAccepted": false,
+  "storybook": {
+    "run": 41970163084,
+    "attempt": 2,
+    "accepted": true,
+    "originalFailurePreserved": true,
+    "finiteAllowanceExhausted": true
+  },
+  "proof": "blocked-ci-proof-a.json",
+  "proofWatchdog": {
+    "firstExecution": true,
+    "elapsedMs": 528,
+    "peakKiB": 187600,
+    "pressure": 1
+  },
+  "publicationReadiness": "Prepared blocked checkpoint accepted for preservation; A receipt readback complete. Freeze after B final report, then build and independent immutable publication verification.",
+  "pendingPublication": [
+    "Reviewer B blocked-readiness report saved before freeze",
+    "Freeze/build/push/independent remote-tag and all-blob/member verification",
+    "Fill only immutable URL/count/image prefix placeholders and read back concrete receipt",
+    "Single blocked body update and terminal cancellation receipt for only its redundant metadata workflow"
+  ],
+  "branchDisposition": "Preserve active implementation/tested refs; no merge or obsolete implementation cleanup",
+  "report": "blocked-readiness-a.md",
+  "readback": {
+    "receiptSha256": "08532f9270a0e669d87b3752db5a4fa6b4aecdab5296377c02066351c993b591",
+    "readmeSha256": "e6487e6dbab7afb5478d01c5f8b9669bf48d658daa0ffdcb4e470c1b435b39bc",
+    "builderSha256": "0b310c4be91729f4ab0bed25428c9b53c5b9dfa00f83d925e01c8537cb151034",
+    "retainedBuilderByteIdentical": true
+  },
+  "aInputWritesComplete": true,
+  "publicationVerified": false
+}

@@ -1,0 +1,1975 @@
+﻿2026-11-05T04:49:30.5406940Z Current runner version: '2.338.2'
+2026-11-05T04:49:30.5456320Z ##[group]Runner Image Provisioner
+2026-11-05T04:49:30.5458280Z Hosted Compute Agent
+2026-11-05T04:49:30.5459450Z Version: 20261028.624
+2026-11-05T04:49:30.5460830Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-05T04:49:30.5462150Z Build Date: 2026-10-28T21:51:42Z
+2026-11-05T04:49:30.5463770Z Worker ID: {e0cf95f5-371c-40b2-aa19-27b077de1a35}
+2026-11-05T04:49:30.5466600Z Region: westus
+2026-11-05T04:49:30.5467820Z Cloud: MacCloud
+2026-11-05T04:49:30.5468910Z ##[endgroup]
+2026-11-05T04:49:30.5473670Z ##[group]Operating System
+2026-11-05T04:49:30.5474860Z macOS
+2026-11-05T04:49:30.5475750Z 26.7.2
+2026-11-05T04:49:30.5476630Z 25G332
+2026-11-05T04:49:30.5477780Z ##[endgroup]
+2026-11-05T04:49:30.5478900Z ##[group]Runner Image
+2026-11-05T04:49:30.5480070Z Image: macos-26-arm64
+2026-11-05T04:49:30.5481600Z Version: 20261102.0473.1
+2026-11-05T04:49:30.5484460Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261102.0473/images/macos/macos-26-arm64-Readme.md
+2026-11-05T04:49:30.5487830Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261102.0473
+2026-11-05T04:49:30.5490200Z ##[endgroup]
+2026-11-05T04:49:30.5492370Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T04:49:30.5498500Z Contents: read
+2026-11-05T04:49:30.5499690Z Metadata: read
+2026-11-05T04:49:30.5500840Z ##[endgroup]
+2026-11-05T04:49:30.5505360Z Secret source: Actions
+2026-11-05T04:49:30.5506970Z Cache mode: write
+2026-11-05T04:49:30.5508600Z Prepare workflow directory
+2026-11-05T04:49:30.6052970Z Prepare all required actions
+2026-11-05T04:49:30.6096710Z Getting action download info
+2026-11-05T04:49:31.0643380Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T04:49:32.5607970Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T04:49:32.7133710Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T04:49:32.9256280Z Complete job name: Native desktop offline (firefox, macos-26)
+2026-11-05T04:49:33.0329640Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T04:49:33.0331020Z with:
+2026-11-05T04:49:33.0331440Z   persist-credentials: false
+2026-11-05T04:49:33.0331920Z   repository: mxbaylee/spinel
+2026-11-05T04:49:33.0335810Z   token: ***
+2026-11-05T04:49:33.0336170Z   ssh-strict: true
+2026-11-05T04:49:33.0336530Z   ssh-user: git
+2026-11-05T04:49:33.0336880Z   clean: true
+2026-11-05T04:49:33.0337230Z   sparse-checkout-cone-mode: true
+2026-11-05T04:49:33.0337640Z   fetch-depth: 1
+2026-11-05T04:49:33.0338000Z   fetch-tags: false
+2026-11-05T04:49:33.0338360Z   show-progress: true
+2026-11-05T04:49:33.0338820Z   lfs: false
+2026-11-05T04:49:33.0339150Z   submodules: false
+2026-11-05T04:49:33.0339520Z   set-safe-directory: true
+2026-11-05T04:49:33.0340140Z   allow-unsafe-pr-checkout: false
+2026-11-05T04:49:33.0340950Z env:
+2026-11-05T04:49:33.0341370Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:49:33.0341940Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:49:33.0342710Z ##[endgroup]
+2026-11-05T04:49:33.6821920Z Syncing repository: mxbaylee/spinel
+2026-11-05T04:49:33.6823850Z ##[group]Getting Git version info
+2026-11-05T04:49:33.6824870Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-05T04:49:33.6836690Z [command]/opt/homebrew/bin/git version
+2026-11-05T04:49:33.7447950Z git version 2.56.0
+2026-11-05T04:49:33.7471760Z ##[endgroup]
+2026-11-05T04:49:33.7486520Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/ce04dbe4-5e4a-45dc-b792-c156a67946be/.gitconfig'
+2026-11-05T04:49:33.7493580Z Temporarily overriding HOME='/Users/runner/work/_temp/ce04dbe4-5e4a-45dc-b792-c156a67946be' before making global git config changes
+2026-11-05T04:49:33.7500390Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T04:49:33.7508390Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T04:49:33.7693810Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-05T04:49:33.7697360Z ##[group]Determining repository object format
+2026-11-05T04:49:33.7699840Z ##[endgroup]
+2026-11-05T04:49:33.7706640Z ##[group]Initializing the repository
+2026-11-05T04:49:33.7711690Z [command]/opt/homebrew/bin/git init /Users/runner/work/spinel/spinel
+2026-11-05T04:49:33.8176240Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T04:49:33.8180120Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T04:49:33.8182650Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T04:49:33.8184530Z hint: call:
+2026-11-05T04:49:33.8185550Z hint:
+2026-11-05T04:49:33.8187980Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T04:49:33.8195430Z hint:
+2026-11-05T04:49:33.8198160Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T04:49:33.8202620Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T04:49:33.8206090Z hint:
+2026-11-05T04:49:33.8208350Z hint: 	git branch -m <name>
+2026-11-05T04:49:33.8211740Z hint:
+2026-11-05T04:49:33.8215680Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T04:49:33.8220640Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-05T04:49:33.8224860Z [command]/opt/homebrew/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T04:49:33.8250480Z ##[endgroup]
+2026-11-05T04:49:33.8253110Z ##[group]Disabling automatic garbage collection
+2026-11-05T04:49:33.8254660Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-11-05T04:49:33.8340800Z ##[endgroup]
+2026-11-05T04:49:33.8342190Z ##[group]Setting up auth
+2026-11-05T04:49:33.8349310Z Removing SSH command configuration
+2026-11-05T04:49:33.8354470Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:49:33.8432040Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:49:33.9739400Z Removing HTTP extra header
+2026-11-05T04:49:33.9750140Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:49:33.9874110Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:49:34.1358440Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:49:34.1439510Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:49:34.1459630Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:49:34.2756890Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T04:49:34.2831240Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:34.2919390Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:34.3011430Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:34.3096930Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:34.3178440Z ##[endgroup]
+2026-11-05T04:49:34.3179590Z ##[group]Fetching the repository
+2026-11-05T04:49:34.3186030Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f0e74d52629923737985ce03e4f32ff218dcf76d:refs/remotes/pull/258/merge
+2026-11-05T04:49:37.2777980Z From https://github.com/mxbaylee/spinel
+2026-11-05T04:49:37.2779580Z  * [new ref]         f0e74d52629923737985ce03e4f32ff218dcf76d -> pull/258/merge
+2026-11-05T04:49:37.2784900Z ##[endgroup]
+2026-11-05T04:49:37.2785720Z ##[group]Determining the checkout info
+2026-11-05T04:49:37.2786460Z ##[endgroup]
+2026-11-05T04:49:37.2788310Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-11-05T04:49:37.2900100Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T04:49:37.3015720Z ##[group]Checking out the ref
+2026-11-05T04:49:37.3018630Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/258/merge
+2026-11-05T04:49:38.2335800Z HEAD is now at f0e74d5 Merge 4e593fbaf9ea89585920053b9415f9a8eac0944f into 2f442317dd2e1c188ae4a810ac094fd1162a4a2a
+2026-11-05T04:49:38.2382810Z ##[endgroup]
+2026-11-05T04:49:38.2523690Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-11-05T04:49:38.2649620Z f0e74d52629923737985ce03e4f32ff218dcf76d
+2026-11-05T04:49:38.2666170Z ##[group]Removing auth
+2026-11-05T04:49:38.2666770Z Removing SSH command configuration
+2026-11-05T04:49:38.2673260Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:49:38.2776480Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:49:38.4215130Z Removing HTTP extra header
+2026-11-05T04:49:38.4218190Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:49:38.4329310Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:49:38.5617710Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:49:38.5619380Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:49:38.5687330Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T04:49:38.5688070Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T04:49:38.5688950Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T04:49:38.5689380Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T04:49:38.5697930Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T04:49:38.5820200Z /Users/runner/work/_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:38.5837800Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-fa245fb3\-e108\-4212\-826f\-58b6f5794385\.config
+2026-11-05T04:49:38.5985580Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T04:49:38.6121860Z /Users/runner/work/_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:38.6136570Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-fa245fb3\-e108\-4212\-826f\-58b6f5794385\.config
+2026-11-05T04:49:38.6287100Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T04:49:38.6361790Z /github/runner_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:38.6373400Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-fa245fb3\-e108\-4212\-826f\-58b6f5794385\.config
+2026-11-05T04:49:38.6461150Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T04:49:38.6533400Z /github/runner_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config
+2026-11-05T04:49:38.6544950Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-fa245fb3\-e108\-4212\-826f\-58b6f5794385\.config
+2026-11-05T04:49:38.6676410Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:49:38.7886270Z Removing credentials config '/Users/runner/work/_temp/git-credentials-fa245fb3-e108-4212-826f-58b6f5794385.config'
+2026-11-05T04:49:38.7906790Z ##[endgroup]
+2026-11-05T04:49:38.8446650Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T04:49:38.8447110Z with:
+2026-11-05T04:49:38.8447320Z   node-version-file: .nvmrc
+2026-11-05T04:49:38.8447610Z   package-manager-cache: false
+2026-11-05T04:49:38.8447850Z   check-latest: false
+2026-11-05T04:49:38.8450160Z   token: ***
+2026-11-05T04:49:38.8450310Z env:
+2026-11-05T04:49:38.8450550Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:49:38.8450890Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:49:38.8451130Z ##[endgroup]
+2026-11-05T04:49:39.1455460Z Node version file is not JSON file
+2026-11-05T04:49:39.1475890Z Node version file is not TOML file
+2026-11-05T04:49:39.1479750Z Resolved .nvmrc as 26.12.1
+2026-11-05T04:49:39.1497360Z Attempting to download 26.12.1...
+2026-11-05T04:49:40.1808230Z Acquiring 26.12.1 - arm64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-darwin-arm64.tar.gz
+2026-11-05T04:49:40.9538260Z Extracting ...
+2026-11-05T04:49:40.9820920Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/51294579-5cfa-4bc8-898f-d7de4e05d3ea -f /Users/runner/work/_temp/730342e7-071f-456e-8dd8-ca7afce4d2a9
+2026-11-05T04:49:42.6500180Z Adding to the cache ...
+2026-11-05T04:49:47.1298510Z ##[group]Environment details
+2026-11-05T04:49:47.6797350Z node: v26.12.1
+2026-11-05T04:49:47.6797990Z npm: 11.20.0
+2026-11-05T04:49:47.6798690Z yarn: 1.22.22
+2026-11-05T04:49:47.6799330Z ##[endgroup]
+2026-11-05T04:49:47.7100020Z ##[group]Run node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+2026-11-05T04:49:47.7100580Z [36;1mnode scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T04:49:47.7170950Z shell: /bin/bash -e {0}
+2026-11-05T04:49:47.7171880Z env:
+2026-11-05T04:49:47.7172860Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:49:47.7173620Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:49:47.7174460Z   DESKTOP_BROWSER: firefox
+2026-11-05T04:49:47.7175080Z ##[endgroup]
+2026-11-05T04:50:40.0767910Z {
+2026-11-05T04:50:40.0873750Z   "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:50:40.0879970Z   "checkedAt": "2026-11-05T04:49:47.956Z",
+2026-11-05T04:50:40.0881400Z   "kind": "firefox",
+2026-11-05T04:50:40.0884220Z   "status": "passed",
+2026-11-05T04:50:40.0887180Z   "before": "159.0",
+2026-11-05T04:50:40.0887910Z   "releaseSource": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+2026-11-05T04:50:40.0891560Z   "requiredStable": "159.0.1",
+2026-11-05T04:50:40.0895610Z   "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+2026-11-05T04:50:40.0902100Z   "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-firefox/Firefox.app: accepted\nsource=Notarized Developer ID\n",
+2026-11-05T04:50:40.0911130Z   "download": "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US",
+2026-11-05T04:50:40.0912290Z   "installed": "159.0.1"
+2026-11-05T04:50:40.0913150Z }
+2026-11-05T04:50:40.1186020Z ##[group]Run npm ci
+2026-11-05T04:50:40.1186530Z [36;1mnpm ci[0m
+2026-11-05T04:50:40.1965710Z shell: /bin/bash -e {0}
+2026-11-05T04:50:40.1966240Z env:
+2026-11-05T04:50:40.1966780Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:50:40.1967470Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:50:40.2118710Z ##[endgroup]
+2026-11-05T04:51:06.2021310Z 
+2026-11-05T04:51:06.2024520Z > postinstall
+2026-11-05T04:51:06.2029840Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-05T04:51:06.2033400Z 
+2026-11-05T04:51:06.8853730Z 
+2026-11-05T04:51:06.8855910Z added 493 packages, and audited 501 packages in 26s
+2026-11-05T04:51:06.8856960Z 
+2026-11-05T04:51:06.8857440Z 132 packages are looking for funding
+2026-11-05T04:51:06.8858560Z   run `npm fund` for details
+2026-11-05T04:51:06.9095170Z 
+2026-11-05T04:51:06.9096250Z 4 moderate severity vulnerabilities
+2026-11-05T04:51:06.9096960Z 
+2026-11-05T04:51:06.9097810Z To address all issues (including breaking changes), run:
+2026-11-05T04:51:06.9099040Z   npm audit fix --force
+2026-11-05T04:51:06.9099400Z 
+2026-11-05T04:51:06.9099950Z Run `npm audit` for details.
+2026-11-05T04:51:06.9104470Z npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-11-05T04:51:06.9107340Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-05T04:51:06.9126520Z npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+2026-11-05T04:51:06.9131510Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-05T04:51:06.9134110Z npm warn install-scripts
+2026-11-05T04:51:06.9166740Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-05T04:51:07.0767700Z ##[group]Run npm run build
+2026-11-05T04:51:07.0768730Z [36;1mnpm run build[0m
+2026-11-05T04:51:07.1205250Z shell: /bin/bash -e {0}
+2026-11-05T04:51:07.1205720Z env:
+2026-11-05T04:51:07.1206080Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:51:07.1206430Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:51:07.1206780Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-05T04:51:07.1207200Z ##[endgroup]
+2026-11-05T04:51:07.5324530Z 
+2026-11-05T04:51:07.5326210Z > build
+2026-11-05T04:51:07.5328210Z > vite build
+2026-11-05T04:51:07.5329080Z 
+2026-11-05T04:51:08.0837840Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-05T04:51:08.1002760Z transforming...
+2026-11-05T04:51:09.1377650Z ✓ 4368 modules transformed.
+2026-11-05T04:51:09.6447230Z rendering chunks...
+2026-11-05T04:51:10.3664350Z computing gzip size...
+2026-11-05T04:51:10.5296880Z dist/index.html                                    3.50 kB │ gzip:     1.29 kB
+2026-11-05T04:51:10.5399140Z [33m[plugin builtin:vite-reporter] 
+2026-11-05T04:51:10.5399880Z dist/assets/nativeCopy-mVcC3r32.css                2.53 kB │ gzip:     0.88 kB
+2026-11-05T04:51:10.5515200Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-05T04:51:10.5516210Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-05T04:51:10.5578860Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-05T04:51:10.5759520Z - Using dynamic import() to code-split the application
+2026-11-05T04:51:10.5760720Z dist/assets/CopyFile-Bp41xbsr.css                 16.91 kB │ gzip:     3.69 kB
+2026-11-05T04:51:10.5780770Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-05T04:51:10.5819920Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-05T04:51:10.5828880Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-05T04:51:10.5834270Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-05T04:51:10.5835580Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-05T04:51:10.5836610Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-05T04:51:10.5838490Z [39m
+2026-11-05T04:51:10.5839230Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-05T04:51:10.5840640Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB
+2026-11-05T04:51:10.5841680Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-05T04:51:10.5844060Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB
+2026-11-05T04:51:10.5844830Z dist/assets/OfflineViewer-DxPRhgPs.js              1.96 kB │ gzip:     1.00 kB
+2026-11-05T04:51:10.5845950Z dist/assets/rendering-Y2ZaHuhz.js                  2.48 kB │ gzip:     1.14 kB
+2026-11-05T04:51:10.5846730Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB
+2026-11-05T04:51:10.5847600Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB
+2026-11-05T04:51:10.5848280Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB
+2026-11-05T04:51:10.5849010Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB
+2026-11-05T04:51:10.5851330Z dist/assets/main-B45aDqO7.js                       3.75 kB │ gzip:     1.84 kB
+2026-11-05T04:51:10.5854970Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB
+2026-11-05T04:51:10.5857060Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB
+2026-11-05T04:51:10.5859940Z dist/assets/SheetEditor-FiU1acjF.js                6.14 kB │ gzip:     2.85 kB
+2026-11-05T04:51:10.5863520Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB
+2026-11-05T04:51:10.5865770Z dist/assets/native-DuYzNdfP.js                     7.10 kB │ gzip:     3.11 kB
+2026-11-05T04:51:10.5867420Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB
+2026-11-05T04:51:10.5869200Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB
+2026-11-05T04:51:10.5870860Z dist/assets/useDiagnostics-DuPOOcXt.js            13.20 kB │ gzip:     4.32 kB
+2026-11-05T04:51:10.5872620Z dist/service-worker.js                            15.37 kB │ gzip:     5.88 kB
+2026-11-05T04:51:10.5874530Z dist/assets/DocEditor-B2R16Ts9.js                 16.71 kB │ gzip:     6.95 kB
+2026-11-05T04:51:10.5876330Z dist/assets/HistoryBrowser-N_mUDGVn.js            20.97 kB │ gzip:     7.45 kB
+2026-11-05T04:51:10.5878740Z dist/assets/offlineStore-CNblyHxf.js              31.15 kB │ gzip:     9.16 kB
+2026-11-05T04:51:10.5880640Z dist/assets/model-C-KJgbHu.js                    119.35 kB │ gzip:    34.23 kB
+2026-11-05T04:51:10.5883090Z dist/assets/nativeCopy-DPYNV4NP.js               124.52 kB │ gzip:    40.05 kB
+2026-11-05T04:51:10.5885450Z dist/assets/documentReady-BTwXpX3d.js            178.33 kB │ gzip:    48.46 kB
+2026-11-05T04:51:10.5886580Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB
+2026-11-05T04:51:10.5887590Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB
+2026-11-05T04:51:10.5888280Z dist/assets/application-Bmpgmib6.js              341.50 kB │ gzip:    96.86 kB
+2026-11-05T04:51:10.5889070Z dist/assets/lib-BHp9PmuQ.js                      378.77 kB │ gzip:   104.54 kB
+2026-11-05T04:51:10.5889950Z dist/assets/theme-CqYTemgo.js                    590.29 kB │ gzip:   151.12 kB
+2026-11-05T04:51:10.5891640Z dist/assets/CopyFile-qR382OFY.js                 637.50 kB │ gzip:   110.32 kB
+2026-11-05T04:51:10.5892510Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB
+2026-11-05T04:51:10.5896040Z dist/assets/nativeSyncPermissions-SuF-rts9.js  3,806.09 kB │ gzip: 1,017.74 kB
+2026-11-05T04:51:10.5898300Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB
+2026-11-05T04:51:10.5899820Z 
+2026-11-05T04:51:10.5900720Z [32m✓ built in 2.48s[39m
+2026-11-05T04:51:10.6639000Z ##[group]Run test "$RUNNER_ENVIRONMENT" = github-hosted
+2026-11-05T04:51:10.6640100Z [36;1mtest "$RUNNER_ENVIRONMENT" = github-hosted[0m
+2026-11-05T04:51:10.6641150Z [36;1mmkdir -p test-results/desktop-tls[0m
+2026-11-05T04:51:10.6641960Z [36;1mopenssl req -x509 -newkey rsa:2048 -nodes \[0m
+2026-11-05T04:51:10.6642850Z [36;1m  -keyout test-results/desktop-tls/key.pem \[0m
+2026-11-05T04:51:10.6643640Z [36;1m  -out test-results/desktop-tls/cert.pem -days 1 \[0m
+2026-11-05T04:51:10.6644720Z [36;1m  -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'[0m
+2026-11-05T04:51:10.6645760Z [36;1msudo security add-trusted-cert -d -r trustRoot \[0m
+2026-11-05T04:51:10.6646780Z [36;1m  -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem[0m
+2026-11-05T04:51:10.6700720Z shell: /bin/bash -e {0}
+2026-11-05T04:51:10.6701010Z env:
+2026-11-05T04:51:10.6701250Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:51:10.6701620Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:51:10.6701830Z ##[endgroup]
+2026-11-05T04:51:10.7952350Z ...+........+++++++++++++++++++++++++++++++++++++++*....+++++++++++++++++++++++++++++++++++++++*..+.+..+......+....+...+..+...+....+.....+.+...+.........+...+.....+....+...+.....+.+..+..........+...+.....++++++
+2026-11-05T04:51:10.8330100Z ..+......+......+...............+...+....+++++++++++++++++++++++++++++++++++++++*......+.........................+...+.....+....+.....+......+.+...+..+.........+......+.+++++++++++++++++++++++++++++++++++++++*....+..+......+.......+..+............+......+...+....+..+.+............+...+..............+...+...............................+.....+....+..+.........+.+.....+.+..+.+.....+......+.+..+......+....+...+...+.........+.....+.+.................+...+.......+.....+.......+......+.....+.+.....+................+.....+....+...+..+....+.....+............+.......+..+......+...+....+........+...+.+...+...+.........+.....+......+....+...+..+.........+.+......+...+..+..........+..............+..........+........+.......+......+..+.+......+....................+...+...++++++
+2026-11-05T04:51:10.8399460Z -----
+2026-11-05T04:51:11.0591180Z ##[group]Run node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+2026-11-05T04:51:11.0591770Z [36;1mnode --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T04:51:11.0662150Z shell: /bin/bash -e {0}
+2026-11-05T04:51:11.0662660Z env:
+2026-11-05T04:51:11.0662920Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:51:11.0663300Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:51:11.0663540Z   DESKTOP_BROWSER: firefox
+2026-11-05T04:51:11.0663790Z ##[endgroup]
+2026-11-05T04:51:23.0582460Z Desktop firefox: browser-start
+2026-11-05T04:51:45.3740010Z Desktop firefox: all-four-downloads-complete
+2026-11-05T04:51:45.4491450Z Desktop firefox: transport-disabled-before-quit
+2026-11-05T04:51:46.3153490Z Desktop firefox: exact-records-captured-before-quit
+2026-11-05T04:51:47.1749480Z Desktop firefox: browser-stop
+2026-11-05T04:51:47.1963060Z Desktop firefox: transport-disabled-before-relaunch
+2026-11-05T04:51:50.9813780Z Desktop firefox: browser-start
+2026-11-05T04:51:51.7191660Z Desktop firefox: offline-catalog-and-original-records-retained
+2026-11-05T04:52:00.1379780Z Desktop firefox: native-doc-input-caret
+2026-11-05T04:52:04.5016390Z Desktop firefox: native-doc-input-caret
+2026-11-05T04:52:05.8935740Z Desktop firefox: native-offline-edits-committed
+2026-11-05T04:52:06.6205920Z Desktop firefox: browser-stop
+2026-11-05T04:52:06.6419310Z Desktop firefox: transport-still-disabled-before-pending-relaunch
+2026-11-05T04:52:09.8872470Z Desktop firefox: browser-start
+2026-11-05T04:52:12.8051240Z Desktop firefox: native-clipboard-content
+2026-11-05T04:52:12.8070300Z Desktop firefox: pending-restart-retained
+2026-11-05T04:52:14.9233810Z Desktop firefox: native-clipboard-content
+2026-11-05T04:52:14.9235550Z Desktop firefox: pending-restart-retained
+2026-11-05T04:52:17.1454890Z Desktop firefox: native-clipboard-content
+2026-11-05T04:52:17.1456240Z Desktop firefox: pending-restart-retained
+2026-11-05T04:52:19.3442110Z Desktop firefox: native-clipboard-content
+2026-11-05T04:52:19.3545690Z Desktop firefox: pending-restart-retained
+2026-11-05T04:52:19.6466350Z Desktop firefox: transport-restored
+2026-11-05T04:52:24.0637860Z Desktop firefox: normal-reconnect-exact-content-once
+2026-11-05T04:52:27.9170530Z Desktop firefox: recovered-original-reconnect-outage
+2026-11-05T04:52:32.4443370Z Desktop firefox: native-clipboard-content
+2026-11-05T04:52:32.4545480Z Desktop firefox: conflict-copy-preserves-original
+2026-11-05T04:52:36.1609090Z Desktop firefox: normal-reconnect-exact-content-once
+2026-11-05T04:52:39.8365440Z Desktop firefox: recovered-original-reconnect-outage
+2026-11-05T04:52:43.6052310Z Desktop firefox: native-clipboard-content
+2026-11-05T04:52:43.6057940Z Desktop firefox: conflict-copy-preserves-original
+2026-11-05T04:52:44.3732510Z Desktop firefox: storage-loss-tabs-prepared
+2026-11-05T04:52:44.3862510Z Desktop firefox: storage-loss-unregistration
+2026-11-05T04:52:44.4752670Z Desktop firefox: storage-loss-tabs-handed-off
+2026-11-05T04:52:44.4802910Z Desktop firefox: storage-loss-quiescence-before-stop
+2026-11-05T04:52:45.3591240Z Desktop firefox: browser-stop-before-storage-loss
+2026-11-05T04:52:49.2020300Z Desktop firefox: browser-start
+2026-11-05T04:52:49.2285730Z Desktop firefox: storage-loss-tabs-restarted
+2026-11-05T04:52:49.2613090Z Desktop firefox: storage-deletion
+2026-11-05T04:52:50.1579640Z Desktop firefox: cleared-storage-is-not-advertised
+2026-11-05T04:52:50.1987230Z Desktop firefox: post-deletion-outage
+2026-11-05T04:52:50.3716370Z Desktop firefox: missing-data-cannot-open-offline
+2026-11-05T04:52:50.3823790Z Desktop firefox: complete
+2026-11-05T04:52:50.9772760Z Desktop firefox: browser-stop
+2026-11-05T04:52:50.9997950Z {
+2026-11-05T04:52:51.0000820Z   "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+2026-11-05T04:52:51.0003000Z   "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:52:51.0008340Z   "testedSha": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+2026-11-05T04:52:51.0009760Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/41970163073",
+2026-11-05T04:52:51.0010860Z   "attempt": "1",
+2026-11-05T04:52:51.0011380Z   "runner": {
+2026-11-05T04:52:51.0012660Z     "label": "macos-26",
+2026-11-05T04:52:51.0013220Z     "arch": "arm64",
+2026-11-05T04:52:51.0013830Z     "imageOS": "macos26",
+2026-11-05T04:52:51.0014350Z     "imageVersion": "20261102.0473.1"
+2026-11-05T04:52:51.0014760Z   },
+2026-11-05T04:52:51.0015240Z   "browser": "firefox",
+2026-11-05T04:52:51.0016080Z   "status": "passed",
+2026-11-05T04:52:51.0031190Z   "stages": [
+2026-11-05T04:52:51.0032320Z     {
+2026-11-05T04:52:51.0032860Z       "name": "browser-start",
+2026-11-05T04:52:51.0047330Z       "time": "2026-11-05T04:51:23.053Z",
+2026-11-05T04:52:51.0054740Z       "kind": "firefox",
+2026-11-05T04:52:51.0060030Z       "version": "159.0.1",
+2026-11-05T04:52:51.0062220Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0065150Z       "profile": {
+2026-11-05T04:52:51.0065960Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0070940Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0073370Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0112420Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0114580Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0115020Z       },
+2026-11-05T04:52:51.0115900Z       "browserPid": 2249,
+2026-11-05T04:52:51.0116440Z       "previousBrowserPid": null,
+2026-11-05T04:52:51.0116830Z       "driverPid": 2247,
+2026-11-05T04:52:51.0120070Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0121920Z       "startedAt": "2026-11-05T04:51:23.021Z",
+2026-11-05T04:52:51.0122390Z       "browserTab": true,
+2026-11-05T04:52:51.0124050Z       "secureContext": true,
+2026-11-05T04:52:51.0124540Z       "storagePersisted": false
+2026-11-05T04:52:51.0125870Z     },
+2026-11-05T04:52:51.0126250Z     {
+2026-11-05T04:52:51.0127360Z       "name": "all-four-downloads-complete",
+2026-11-05T04:52:51.0132810Z       "time": "2026-11-05T04:51:45.373Z"
+2026-11-05T04:52:51.0133730Z     },
+2026-11-05T04:52:51.0134910Z     {
+2026-11-05T04:52:51.0135500Z       "name": "transport-disabled-before-quit",
+2026-11-05T04:52:51.0167970Z       "time": "2026-11-05T04:51:45.448Z",
+2026-11-05T04:52:51.0168340Z       "forwardedRequests": 249,
+2026-11-05T04:52:51.0168800Z       "blockedRequests": 11,
+2026-11-05T04:52:51.0169240Z       "forwardedUpgrades": 4,
+2026-11-05T04:52:51.0169630Z       "blockedUpgrades": 1,
+2026-11-05T04:52:51.0170120Z       "logins": 1,
+2026-11-05T04:52:51.0170360Z       "offline": true,
+2026-11-05T04:52:51.0170800Z       "activeBrowserSockets": 0
+2026-11-05T04:52:51.0171110Z     },
+2026-11-05T04:52:51.0171400Z     {
+2026-11-05T04:52:51.0171750Z       "name": "exact-records-captured-before-quit",
+2026-11-05T04:52:51.0172100Z       "time": "2026-11-05T04:51:46.314Z"
+2026-11-05T04:52:51.0172470Z     },
+2026-11-05T04:52:51.0172680Z     {
+2026-11-05T04:52:51.0172960Z       "name": "browser-stop",
+2026-11-05T04:52:51.0173360Z       "time": "2026-11-05T04:51:47.174Z",
+2026-11-05T04:52:51.0173640Z       "kind": "firefox",
+2026-11-05T04:52:51.0173980Z       "browserPid": 2249,
+2026-11-05T04:52:51.0174210Z       "driverPid": 2247,
+2026-11-05T04:52:51.0174520Z       "browserExited": true,
+2026-11-05T04:52:51.0174840Z       "driverExited": true,
+2026-11-05T04:52:51.0175200Z       "stoppedAt": "2026-11-05T04:51:47.174Z"
+2026-11-05T04:52:51.0175520Z     },
+2026-11-05T04:52:51.0175790Z     {
+2026-11-05T04:52:51.0176520Z       "name": "transport-disabled-before-relaunch",
+2026-11-05T04:52:51.0176910Z       "time": "2026-11-05T04:51:47.187Z",
+2026-11-05T04:52:51.0177290Z       "forwardedRequests": 249,
+2026-11-05T04:52:51.0177640Z       "blockedRequests": 62,
+2026-11-05T04:52:51.0177930Z       "forwardedUpgrades": 4,
+2026-11-05T04:52:51.0178330Z       "blockedUpgrades": 2,
+2026-11-05T04:52:51.0178610Z       "logins": 1,
+2026-11-05T04:52:51.0178940Z       "offline": true,
+2026-11-05T04:52:51.0179270Z       "activeBrowserSockets": 0
+2026-11-05T04:52:51.0179570Z     },
+2026-11-05T04:52:51.0179870Z     {
+2026-11-05T04:52:51.0180080Z       "name": "browser-start",
+2026-11-05T04:52:51.0180500Z       "time": "2026-11-05T04:51:50.979Z",
+2026-11-05T04:52:51.0180770Z       "kind": "firefox",
+2026-11-05T04:52:51.0181110Z       "version": "159.0.1",
+2026-11-05T04:52:51.0181590Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0182070Z       "profile": {
+2026-11-05T04:52:51.0182380Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0182920Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0183730Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0184280Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0184760Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0186940Z       },
+2026-11-05T04:52:51.0187250Z       "browserPid": 2869,
+2026-11-05T04:52:51.0187710Z       "previousBrowserPid": 2249,
+2026-11-05T04:52:51.0188010Z       "driverPid": 2868,
+2026-11-05T04:52:51.0189410Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0190800Z       "startedAt": "2026-11-05T04:51:50.974Z",
+2026-11-05T04:52:51.0191080Z       "browserTab": true,
+2026-11-05T04:52:51.0191400Z       "secureContext": true,
+2026-11-05T04:52:51.0191680Z       "storagePersisted": true
+2026-11-05T04:52:51.0192550Z     },
+2026-11-05T04:52:51.0194060Z     {
+2026-11-05T04:52:51.0194400Z       "name": "offline-catalog-and-original-records-retained",
+2026-11-05T04:52:51.0195010Z       "time": "2026-11-05T04:51:51.718Z"
+2026-11-05T04:52:51.0195350Z     },
+2026-11-05T04:52:51.0195650Z     {
+2026-11-05T04:52:51.0196010Z       "name": "native-doc-input-caret",
+2026-11-05T04:52:51.0196410Z       "time": "2026-11-05T04:52:00.134Z",
+2026-11-05T04:52:51.0196790Z       "itemId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0197220Z       "before": {
+2026-11-05T04:52:51.0197510Z         "anchor": {
+2026-11-05T04:52:51.0197800Z           "height": 18.000000000000014,
+2026-11-05T04:52:51.0198190Z           "left": 444.08333174387616,
+2026-11-05T04:52:51.0198470Z           "top": 132.66666666666669,
+2026-11-05T04:52:51.0198790Z           "visible": true,
+2026-11-05T04:52:51.0199020Z           "width": 0
+2026-11-05T04:52:51.0199290Z         },
+2026-11-05T04:52:51.0199560Z         "bounds": {
+2026-11-05T04:52:51.0199870Z           "bottom": 311.6666666666667,
+2026-11-05T04:52:51.0200330Z           "left": 444.08333174387616,
+2026-11-05T04:52:51.0200690Z           "right": 444.08333174387616,
+2026-11-05T04:52:51.0201070Z           "top": 247.66666666666669
+2026-11-05T04:52:51.0201410Z         },
+2026-11-05T04:52:51.0201640Z         "commands": [
+2026-11-05T04:52:51.0201910Z           {
+2026-11-05T04:52:51.0202110Z             "at": 1921,
+2026-11-05T04:52:51.0202470Z             "direction": null,
+2026-11-05T04:52:51.0207760Z             "granularity": null,
+2026-11-05T04:52:51.0208140Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0208570Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0209510Z             "zoomRatio": null
+2026-11-05T04:52:51.0210130Z           },
+2026-11-05T04:52:51.0210900Z           {
+2026-11-05T04:52:51.0211090Z             "at": 2454,
+2026-11-05T04:52:51.0211370Z             "direction": null,
+2026-11-05T04:52:51.0211630Z             "granularity": null,
+2026-11-05T04:52:51.0212030Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0212470Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0212800Z             "zoomRatio": null
+2026-11-05T04:52:51.0213120Z           },
+2026-11-05T04:52:51.0213500Z           {
+2026-11-05T04:52:51.0213680Z             "at": 2532,
+2026-11-05T04:52:51.0213970Z             "direction": null,
+2026-11-05T04:52:51.0214260Z             "granularity": null,
+2026-11-05T04:52:51.0214550Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0215970Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0216260Z             "zoomRatio": null
+2026-11-05T04:52:51.0216520Z           }
+2026-11-05T04:52:51.0216760Z         ],
+2026-11-05T04:52:51.0217110Z         "currentLogicalRange": {
+2026-11-05T04:52:51.0217880Z           "collapsed": true,
+2026-11-05T04:52:51.0218170Z           "end": 20,
+2026-11-05T04:52:51.0218420Z           "segmentId": "",
+2026-11-05T04:52:51.0218660Z           "segmentPage": -1,
+2026-11-05T04:52:51.0218980Z           "start": 20
+2026-11-05T04:52:51.0219260Z         },
+2026-11-05T04:52:51.0219920Z         "currentUnitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0220360Z         "editing": false,
+2026-11-05T04:52:51.0220610Z         "end": 20,
+2026-11-05T04:52:51.0220940Z         "hasAnchor": true,
+2026-11-05T04:52:51.0221250Z         "inputConnected": true,
+2026-11-05T04:52:51.0221540Z         "inputFocused": true,
+2026-11-05T04:52:51.0221870Z         "layout": {
+2026-11-05T04:52:51.0222110Z           "firstNode": {
+2026-11-05T04:52:51.0222420Z             "column": 0,
+2026-11-05T04:52:51.0222680Z             "divide": 0,
+2026-11-05T04:52:51.0222930Z             "glyph": 0,
+2026-11-05T04:52:51.0223420Z             "isBack": true,
+2026-11-05T04:52:51.0223930Z             "line": 0,
+2026-11-05T04:52:51.0224770Z             "page": 0,
+2026-11-05T04:52:51.0230880Z             "pageType": 0,
+2026-11-05T04:52:51.0231980Z             "path": [
+2026-11-05T04:52:51.0232720Z               "pages",
+2026-11-05T04:52:51.0233160Z               0
+2026-11-05T04:52:51.0233530Z             ],
+2026-11-05T04:52:51.0236870Z             "section": 0,
+2026-11-05T04:52:51.0238250Z             "segmentPage": -1
+2026-11-05T04:52:51.0242250Z           },
+2026-11-05T04:52:51.0246220Z           "progress": null,
+2026-11-05T04:52:51.0247150Z           "viewportReady": true
+2026-11-05T04:52:51.0247750Z         },
+2026-11-05T04:52:51.0250870Z         "mobile": false,
+2026-11-05T04:52:51.0251250Z         "nativeRange": {
+2026-11-05T04:52:51.0252470Z           "collapsed": true,
+2026-11-05T04:52:51.0253120Z           "end": 20,
+2026-11-05T04:52:51.0255140Z           "segmentId": "",
+2026-11-05T04:52:51.0256380Z           "segmentPage": -1,
+2026-11-05T04:52:51.0264430Z           "start": 20
+2026-11-05T04:52:51.0265100Z         },
+2026-11-05T04:52:51.0265450Z         "observedAt": 2567,
+2026-11-05T04:52:51.0268270Z         "pendingSelection": false,
+2026-11-05T04:52:51.0269150Z         "pointerSelection": false,
+2026-11-05T04:52:51.0269610Z         "scale": {
+2026-11-05T04:52:51.0270180Z           "x": 1,
+2026-11-05T04:52:51.0270640Z           "y": 1
+2026-11-05T04:52:51.0274330Z         },
+2026-11-05T04:52:51.0274540Z         "scroll": 0,
+2026-11-05T04:52:51.0274830Z         "shortcutContext": {
+2026-11-05T04:52:51.0275200Z           "activated": false,
+2026-11-05T04:52:51.0275480Z           "doc": true,
+2026-11-05T04:52:51.0275770Z           "drawing": false,
+2026-11-05T04:52:51.0327610Z           "editor": true,
+2026-11-05T04:52:51.0327910Z           "formulaBar": false
+2026-11-05T04:52:51.0328150Z         },
+2026-11-05T04:52:51.0331060Z         "start": 20,
+2026-11-05T04:52:51.0331330Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T04:52:51.0333530Z         "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0333910Z         "unitLogicalRanges": [
+2026-11-05T04:52:51.0334110Z           {
+2026-11-05T04:52:51.0334310Z             "collapsed": true,
+2026-11-05T04:52:51.0334530Z             "end": 20,
+2026-11-05T04:52:51.0334750Z             "segmentId": "",
+2026-11-05T04:52:51.0335000Z             "segmentPage": -1,
+2026-11-05T04:52:51.0335240Z             "start": 20
+2026-11-05T04:52:51.0335400Z           }
+2026-11-05T04:52:51.0335540Z         ],
+2026-11-05T04:52:51.0335720Z         "unitSelectionOptions": {
+2026-11-05T04:52:51.0335960Z           "preserveInputStyle": true
+2026-11-05T04:52:51.0336150Z         },
+2026-11-05T04:52:51.0336330Z         "unitSelectionStyles": [
+2026-11-05T04:52:51.0336500Z           {
+2026-11-05T04:52:51.0336730Z             "fill": "rgba(103, 176, 255, 0.498)",
+2026-11-05T04:52:51.0337930Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T04:52:51.0338150Z           }
+2026-11-05T04:52:51.0338290Z         ],
+2026-11-05T04:52:51.0338430Z         "viewport": {
+2026-11-05T04:52:51.0338610Z           "active": true,
+2026-11-05T04:52:51.0338790Z           "bounds": {
+2026-11-05T04:52:51.0339930Z             "bottom": 402,
+2026-11-05T04:52:51.0340130Z             "left": 0,
+2026-11-05T04:52:51.0340340Z             "right": 1280,
+2026-11-05T04:52:51.0340540Z             "top": 0
+2026-11-05T04:52:51.0341150Z           },
+2026-11-05T04:52:51.0341290Z           "height": 402,
+2026-11-05T04:52:51.0341470Z           "key": "viewMain",
+2026-11-05T04:52:51.0341650Z           "scrollX": 0,
+2026-11-05T04:52:51.0341840Z           "scrollY": 0,
+2026-11-05T04:52:51.0342010Z           "width": 1280
+2026-11-05T04:52:51.0342170Z         }
+2026-11-05T04:52:51.0342300Z       },
+2026-11-05T04:52:51.0342450Z       "caret": {
+2026-11-05T04:52:51.0342610Z         "anchor": {
+2026-11-05T04:52:51.0342810Z           "height": 60,
+2026-11-05T04:52:51.0343010Z           "left": 226.66666666666669,
+2026-11-05T04:52:51.0343300Z           "top": 86.66666666666667,
+2026-11-05T04:52:51.0343540Z           "visible": true,
+2026-11-05T04:52:51.0343720Z           "width": 0
+2026-11-05T04:52:51.0343870Z         },
+2026-11-05T04:52:51.0344010Z         "bounds": {
+2026-11-05T04:52:51.0344240Z           "bottom": 311.6666666666667,
+2026-11-05T04:52:51.0344530Z           "left": 226.66666666666669,
+2026-11-05T04:52:51.0344810Z           "right": 226.66666666666669,
+2026-11-05T04:52:51.0345080Z           "top": 247.66666666666669
+2026-11-05T04:52:51.0345300Z         },
+2026-11-05T04:52:51.0345470Z         "commands": [
+2026-11-05T04:52:51.0345670Z           {
+2026-11-05T04:52:51.0345870Z             "at": 1921,
+2026-11-05T04:52:51.0346080Z             "direction": null,
+2026-11-05T04:52:51.0346320Z             "granularity": null,
+2026-11-05T04:52:51.0346590Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0346960Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0347300Z             "zoomRatio": null
+2026-11-05T04:52:51.0347490Z           },
+2026-11-05T04:52:51.0347630Z           {
+2026-11-05T04:52:51.0347780Z             "at": 2454,
+2026-11-05T04:52:51.0347990Z             "direction": null,
+2026-11-05T04:52:51.0348210Z             "granularity": null,
+2026-11-05T04:52:51.0348540Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0348920Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0349260Z             "zoomRatio": null
+2026-11-05T04:52:51.0349470Z           },
+2026-11-05T04:52:51.0349640Z           {
+2026-11-05T04:52:51.0349800Z             "at": 2532,
+2026-11-05T04:52:51.0350000Z             "direction": null,
+2026-11-05T04:52:51.0350220Z             "granularity": null,
+2026-11-05T04:52:51.0350490Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0350810Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0351100Z             "zoomRatio": null
+2026-11-05T04:52:51.0351740Z           },
+2026-11-05T04:52:51.0351980Z           {
+2026-11-05T04:52:51.0352160Z             "at": 2580,
+2026-11-05T04:52:51.0352380Z             "direction": 0,
+2026-11-05T04:52:51.0352600Z             "granularity": "document",
+2026-11-05T04:52:51.0352920Z             "id": "doc.operation.move-cursor",
+2026-11-05T04:52:51.0353190Z             "unitId": null,
+2026-11-05T04:52:51.0353380Z             "zoomRatio": null
+2026-11-05T04:52:51.0353560Z           },
+2026-11-05T04:52:51.0353700Z           {
+2026-11-05T04:52:51.0353840Z             "at": 2608,
+2026-11-05T04:52:51.0354030Z             "direction": null,
+2026-11-05T04:52:51.0354250Z             "granularity": null,
+2026-11-05T04:52:51.0354500Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0354820Z             "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0355070Z             "zoomRatio": null
+2026-11-05T04:52:51.0355240Z           }
+2026-11-05T04:52:51.0355370Z         ],
+2026-11-05T04:52:51.0355590Z         "currentLogicalRange": {
+2026-11-05T04:52:51.0355840Z           "collapsed": true,
+2026-11-05T04:52:51.0356030Z           "end": 0,
+2026-11-05T04:52:51.0356200Z           "segmentId": "",
+2026-11-05T04:52:51.0356400Z           "segmentPage": -1,
+2026-11-05T04:52:51.0356590Z           "start": 0
+2026-11-05T04:52:51.0356740Z         },
+2026-11-05T04:52:51.0357050Z         "currentUnitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0357650Z         "editing": false,
+2026-11-05T04:52:51.0357850Z         "end": 0,
+2026-11-05T04:52:51.0358050Z         "hasAnchor": true,
+2026-11-05T04:52:51.0358340Z         "inputConnected": true,
+2026-11-05T04:52:51.0358570Z         "inputFocused": true,
+2026-11-05T04:52:51.0358790Z         "layout": {
+2026-11-05T04:52:51.0358970Z           "firstNode": {
+2026-11-05T04:52:51.0359140Z             "column": 0,
+2026-11-05T04:52:51.0359310Z             "divide": 0,
+2026-11-05T04:52:51.0359470Z             "glyph": 0,
+2026-11-05T04:52:51.0359640Z             "isBack": true,
+2026-11-05T04:52:51.0359810Z             "line": 0,
+2026-11-05T04:52:51.0360010Z             "page": 0,
+2026-11-05T04:52:51.0360220Z             "pageType": 0,
+2026-11-05T04:52:51.0360520Z             "path": [
+2026-11-05T04:52:51.0360720Z               "pages",
+2026-11-05T04:52:51.0360890Z               0
+2026-11-05T04:52:51.0361040Z             ],
+2026-11-05T04:52:51.0361190Z             "section": 0,
+2026-11-05T04:52:51.0361370Z             "segmentPage": -1
+2026-11-05T04:52:51.0362890Z           },
+2026-11-05T04:52:51.0363090Z           "progress": null,
+2026-11-05T04:52:51.0363360Z           "viewportReady": true
+2026-11-05T04:52:51.0363580Z         },
+2026-11-05T04:52:51.0363720Z         "mobile": false,
+2026-11-05T04:52:51.0363890Z         "nativeRange": {
+2026-11-05T04:52:51.0364090Z           "collapsed": true,
+2026-11-05T04:52:51.0364310Z           "end": 0,
+2026-11-05T04:52:51.0364500Z           "segmentId": "",
+2026-11-05T04:52:51.0364900Z           "segmentPage": -1,
+2026-11-05T04:52:51.0365130Z           "start": 0
+2026-11-05T04:52:51.0365290Z         },
+2026-11-05T04:52:51.0365460Z         "observedAt": 2627,
+2026-11-05T04:52:51.0365750Z         "pendingSelection": false,
+2026-11-05T04:52:51.0366030Z         "pointerSelection": false,
+2026-11-05T04:52:51.0367620Z         "scale": {
+2026-11-05T04:52:51.0367840Z           "x": 1,
+2026-11-05T04:52:51.0368030Z           "y": 1
+2026-11-05T04:52:51.0368200Z         },
+2026-11-05T04:52:51.0368340Z         "scroll": 0,
+2026-11-05T04:52:51.0368520Z         "shortcutContext": {
+2026-11-05T04:52:51.0368730Z           "activated": false,
+2026-11-05T04:52:51.0368950Z           "doc": true,
+2026-11-05T04:52:51.0369140Z           "drawing": false,
+2026-11-05T04:52:51.0369320Z           "editor": true,
+2026-11-05T04:52:51.0369530Z           "formulaBar": false
+2026-11-05T04:52:51.0369700Z         },
+2026-11-05T04:52:51.0369870Z         "start": 0,
+2026-11-05T04:52:51.0370170Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T04:52:51.0370760Z         "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0371100Z         "unitLogicalRanges": [
+2026-11-05T04:52:51.0371360Z           {
+2026-11-05T04:52:51.0371520Z             "collapsed": true,
+2026-11-05T04:52:51.0371710Z             "end": 0,
+2026-11-05T04:52:51.0371870Z             "segmentId": "",
+2026-11-05T04:52:51.0372100Z             "segmentPage": -1,
+2026-11-05T04:52:51.0372320Z             "start": 0
+2026-11-05T04:52:51.0372500Z           }
+2026-11-05T04:52:51.0372630Z         ],
+2026-11-05T04:52:51.0372800Z         "unitSelectionOptions": {
+2026-11-05T04:52:51.0373040Z           "preserveInputStyle": true
+2026-11-05T04:52:51.0373250Z         },
+2026-11-05T04:52:51.0373500Z         "unitSelectionStyles": [
+2026-11-05T04:52:51.0373730Z           {
+2026-11-05T04:52:51.0373930Z             "fill": "rgba(103, 176, 255, 0.498)",
+2026-11-05T04:52:51.0374190Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T04:52:51.0374410Z           }
+2026-11-05T04:52:51.0374570Z         ],
+2026-11-05T04:52:51.0374740Z         "viewport": {
+2026-11-05T04:52:51.0374900Z           "active": true,
+2026-11-05T04:52:51.0375070Z           "bounds": {
+2026-11-05T04:52:51.0375250Z             "bottom": 402,
+2026-11-05T04:52:51.0375440Z             "left": 0,
+2026-11-05T04:52:51.0375670Z             "right": 1280,
+2026-11-05T04:52:51.0375880Z             "top": 0
+2026-11-05T04:52:51.0376490Z           },
+2026-11-05T04:52:51.0376670Z           "height": 402,
+2026-11-05T04:52:51.0376890Z           "key": "viewMain",
+2026-11-05T04:52:51.0377100Z           "scrollX": 0,
+2026-11-05T04:52:51.0377260Z           "scrollY": 0,
+2026-11-05T04:52:51.0377420Z           "width": 1280
+2026-11-05T04:52:51.0377600Z         }
+2026-11-05T04:52:51.0377840Z       },
+2026-11-05T04:52:51.0378060Z       "visual": {
+2026-11-05T04:52:51.0378410Z         "file": "84faf3c7-6fcf-4436-82b9-f36d043175ee-before-doc-input.png",
+2026-11-05T04:52:51.0378760Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0378950Z           4661
+2026-11-05T04:52:51.0379110Z         ],
+2026-11-05T04:52:51.0379290Z         "captures": 1
+2026-11-05T04:52:51.0379490Z       }
+2026-11-05T04:52:51.0379640Z     },
+2026-11-05T04:52:51.0379780Z     {
+2026-11-05T04:52:51.0379980Z       "name": "native-doc-input-caret",
+2026-11-05T04:52:51.0380240Z       "time": "2026-11-05T04:52:04.494Z",
+2026-11-05T04:52:51.0380590Z       "itemId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0380860Z       "before": {
+2026-11-05T04:52:51.0381040Z         "anchor": {
+2026-11-05T04:52:51.0381230Z           "height": 18.000000000000014,
+2026-11-05T04:52:51.0381480Z           "left": 444.08333174387616,
+2026-11-05T04:52:51.0381810Z           "top": 132.66666666666669,
+2026-11-05T04:52:51.0382080Z           "visible": true,
+2026-11-05T04:52:51.0382280Z           "width": 0
+2026-11-05T04:52:51.0382430Z         },
+2026-11-05T04:52:51.0382580Z         "bounds": {
+2026-11-05T04:52:51.0382810Z           "bottom": 311.6666666666667,
+2026-11-05T04:52:51.0383440Z           "left": 444.08333174387616,
+2026-11-05T04:52:51.0383820Z           "right": 444.08333174387616,
+2026-11-05T04:52:51.0384120Z           "top": 247.66666666666669
+2026-11-05T04:52:51.0386070Z         },
+2026-11-05T04:52:51.0386300Z         "commands": [
+2026-11-05T04:52:51.0386450Z           {
+2026-11-05T04:52:51.0386590Z             "at": 1944,
+2026-11-05T04:52:51.0386780Z             "direction": null,
+2026-11-05T04:52:51.0387000Z             "granularity": null,
+2026-11-05T04:52:51.0387310Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0387680Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0387970Z             "zoomRatio": null
+2026-11-05T04:52:51.0388190Z           },
+2026-11-05T04:52:51.0388350Z           {
+2026-11-05T04:52:51.0388530Z             "at": 2365,
+2026-11-05T04:52:51.0388760Z             "direction": null,
+2026-11-05T04:52:51.0389160Z             "granularity": null,
+2026-11-05T04:52:51.0389490Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0396540Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0396940Z             "zoomRatio": null
+2026-11-05T04:52:51.0397120Z           },
+2026-11-05T04:52:51.0397250Z           {
+2026-11-05T04:52:51.0397410Z             "at": 2390,
+2026-11-05T04:52:51.0397600Z             "direction": null,
+2026-11-05T04:52:51.0397930Z             "granularity": null,
+2026-11-05T04:52:51.0398320Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0398750Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0399120Z             "zoomRatio": null
+2026-11-05T04:52:51.0399450Z           }
+2026-11-05T04:52:51.0399700Z         ],
+2026-11-05T04:52:51.0399930Z         "currentLogicalRange": {
+2026-11-05T04:52:51.0400370Z           "collapsed": true,
+2026-11-05T04:52:51.0400630Z           "end": 20,
+2026-11-05T04:52:51.0408630Z           "segmentId": "",
+2026-11-05T04:52:51.0408880Z           "segmentPage": -1,
+2026-11-05T04:52:51.0409080Z           "start": 20
+2026-11-05T04:52:51.0409250Z         },
+2026-11-05T04:52:51.0409560Z         "currentUnitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0409860Z         "editing": false,
+2026-11-05T04:52:51.0410030Z         "end": 20,
+2026-11-05T04:52:51.0410190Z         "hasAnchor": true,
+2026-11-05T04:52:51.0410430Z         "inputConnected": true,
+2026-11-05T04:52:51.0411120Z         "inputFocused": true,
+2026-11-05T04:52:51.0411310Z         "layout": {
+2026-11-05T04:52:51.0411510Z           "firstNode": {
+2026-11-05T04:52:51.0411730Z             "column": 0,
+2026-11-05T04:52:51.0411920Z             "divide": 0,
+2026-11-05T04:52:51.0412090Z             "glyph": 0,
+2026-11-05T04:52:51.0412290Z             "isBack": true,
+2026-11-05T04:52:51.0412520Z             "line": 0,
+2026-11-05T04:52:51.0412720Z             "page": 0,
+2026-11-05T04:52:51.0412930Z             "pageType": 0,
+2026-11-05T04:52:51.0413140Z             "path": [
+2026-11-05T04:52:51.0413310Z               "pages",
+2026-11-05T04:52:51.0414890Z               0
+2026-11-05T04:52:51.0415040Z             ],
+2026-11-05T04:52:51.0415230Z             "section": 0,
+2026-11-05T04:52:51.0415460Z             "segmentPage": -1
+2026-11-05T04:52:51.0415660Z           },
+2026-11-05T04:52:51.0415850Z           "progress": null,
+2026-11-05T04:52:51.0416100Z           "viewportReady": true
+2026-11-05T04:52:51.0416280Z         },
+2026-11-05T04:52:51.0416420Z         "mobile": false,
+2026-11-05T04:52:51.0416590Z         "nativeRange": {
+2026-11-05T04:52:51.0416780Z           "collapsed": true,
+2026-11-05T04:52:51.0416960Z           "end": 20,
+2026-11-05T04:52:51.0417220Z           "segmentId": "",
+2026-11-05T04:52:51.0422320Z           "segmentPage": -1,
+2026-11-05T04:52:51.0423690Z           "start": 20
+2026-11-05T04:52:51.0426590Z         },
+2026-11-05T04:52:51.0426830Z         "observedAt": 2413,
+2026-11-05T04:52:51.0427140Z         "pendingSelection": false,
+2026-11-05T04:52:51.0427530Z         "pointerSelection": false,
+2026-11-05T04:52:51.0427830Z         "scale": {
+2026-11-05T04:52:51.0428090Z           "x": 1,
+2026-11-05T04:52:51.0428300Z           "y": 1
+2026-11-05T04:52:51.0428510Z         },
+2026-11-05T04:52:51.0428730Z         "scroll": 0,
+2026-11-05T04:52:51.0428970Z         "shortcutContext": {
+2026-11-05T04:52:51.0429250Z           "activated": false,
+2026-11-05T04:52:51.0430050Z           "doc": true,
+2026-11-05T04:52:51.0431340Z           "drawing": false,
+2026-11-05T04:52:51.0431690Z           "editor": true,
+2026-11-05T04:52:51.0431960Z           "formulaBar": false
+2026-11-05T04:52:51.0433020Z         },
+2026-11-05T04:52:51.0433340Z         "start": 20,
+2026-11-05T04:52:51.0433880Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T04:52:51.0435040Z         "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0435360Z         "unitLogicalRanges": [
+2026-11-05T04:52:51.0435540Z           {
+2026-11-05T04:52:51.0435710Z             "collapsed": true,
+2026-11-05T04:52:51.0435910Z             "end": 20,
+2026-11-05T04:52:51.0436400Z             "segmentId": "",
+2026-11-05T04:52:51.0436660Z             "segmentPage": -1,
+2026-11-05T04:52:51.0436850Z             "start": 20
+2026-11-05T04:52:51.0437010Z           }
+2026-11-05T04:52:51.0437140Z         ],
+2026-11-05T04:52:51.0438660Z         "unitSelectionOptions": {
+2026-11-05T04:52:51.0439000Z           "preserveInputStyle": true
+2026-11-05T04:52:51.0439250Z         },
+2026-11-05T04:52:51.0439480Z         "unitSelectionStyles": [
+2026-11-05T04:52:51.0439690Z           {
+2026-11-05T04:52:51.0439960Z             "fill": "rgba(103, 176, 255, 0.498)",
+2026-11-05T04:52:51.0440270Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T04:52:51.0440530Z           }
+2026-11-05T04:52:51.0440700Z         ],
+2026-11-05T04:52:51.0440830Z         "viewport": {
+2026-11-05T04:52:51.0441000Z           "active": true,
+2026-11-05T04:52:51.0441760Z           "bounds": {
+2026-11-05T04:52:51.0441950Z             "bottom": 402,
+2026-11-05T04:52:51.0442120Z             "left": 0,
+2026-11-05T04:52:51.0442300Z             "right": 1280,
+2026-11-05T04:52:51.0442510Z             "top": 0
+2026-11-05T04:52:51.0442720Z           },
+2026-11-05T04:52:51.0442890Z           "height": 402,
+2026-11-05T04:52:51.0443070Z           "key": "viewMain",
+2026-11-05T04:52:51.0443240Z           "scrollX": 0,
+2026-11-05T04:52:51.0443400Z           "scrollY": 0,
+2026-11-05T04:52:51.0443570Z           "width": 1280
+2026-11-05T04:52:51.0443980Z         }
+2026-11-05T04:52:51.0444110Z       },
+2026-11-05T04:52:51.0444240Z       "caret": {
+2026-11-05T04:52:51.0444390Z         "anchor": {
+2026-11-05T04:52:51.0444580Z           "height": 60,
+2026-11-05T04:52:51.0444820Z           "left": 226.66666666666669,
+2026-11-05T04:52:51.0445100Z           "top": 86.66666666666667,
+2026-11-05T04:52:51.0445350Z           "visible": true,
+2026-11-05T04:52:51.0445520Z           "width": 0
+2026-11-05T04:52:51.0445670Z         },
+2026-11-05T04:52:51.0445810Z         "bounds": {
+2026-11-05T04:52:51.0446000Z           "bottom": 311.6666666666667,
+2026-11-05T04:52:51.0446230Z           "left": 226.66666666666669,
+2026-11-05T04:52:51.0446460Z           "right": 226.66666666666669,
+2026-11-05T04:52:51.0446690Z           "top": 247.66666666666669
+2026-11-05T04:52:51.0447070Z         },
+2026-11-05T04:52:51.0447310Z         "commands": [
+2026-11-05T04:52:51.0447550Z           {
+2026-11-05T04:52:51.0447740Z             "at": 1944,
+2026-11-05T04:52:51.0448040Z             "direction": null,
+2026-11-05T04:52:51.0448320Z             "granularity": null,
+2026-11-05T04:52:51.0448600Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0448950Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0449200Z             "zoomRatio": null
+2026-11-05T04:52:51.0449390Z           },
+2026-11-05T04:52:51.0449570Z           {
+2026-11-05T04:52:51.0449740Z             "at": 2365,
+2026-11-05T04:52:51.0449960Z             "direction": null,
+2026-11-05T04:52:51.0450230Z             "granularity": null,
+2026-11-05T04:52:51.0450700Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0451110Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0451370Z             "zoomRatio": null
+2026-11-05T04:52:51.0451570Z           },
+2026-11-05T04:52:51.0451740Z           {
+2026-11-05T04:52:51.0451910Z             "at": 2390,
+2026-11-05T04:52:51.0452110Z             "direction": null,
+2026-11-05T04:52:51.0452330Z             "granularity": null,
+2026-11-05T04:52:51.0452590Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0452920Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0453170Z             "zoomRatio": null
+2026-11-05T04:52:51.0453340Z           },
+2026-11-05T04:52:51.0453480Z           {
+2026-11-05T04:52:51.0453640Z             "at": 2422,
+2026-11-05T04:52:51.0453810Z             "direction": 0,
+2026-11-05T04:52:51.0454020Z             "granularity": "document",
+2026-11-05T04:52:51.0454300Z             "id": "doc.operation.move-cursor",
+2026-11-05T04:52:51.0455000Z             "unitId": null,
+2026-11-05T04:52:51.0455220Z             "zoomRatio": null
+2026-11-05T04:52:51.0455400Z           },
+2026-11-05T04:52:51.0455530Z           {
+2026-11-05T04:52:51.0455670Z             "at": 2436,
+2026-11-05T04:52:51.0455860Z             "direction": null,
+2026-11-05T04:52:51.0456080Z             "granularity": null,
+2026-11-05T04:52:51.0456340Z             "id": "doc.operation.set-selections",
+2026-11-05T04:52:51.0456650Z             "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0456940Z             "zoomRatio": null
+2026-11-05T04:52:51.0457160Z           }
+2026-11-05T04:52:51.0457280Z         ],
+2026-11-05T04:52:51.0458720Z         "currentLogicalRange": {
+2026-11-05T04:52:51.0458970Z           "collapsed": true,
+2026-11-05T04:52:51.0459160Z           "end": 0,
+2026-11-05T04:52:51.0459320Z           "segmentId": "",
+2026-11-05T04:52:51.0461330Z           "segmentPage": -1,
+2026-11-05T04:52:51.0461590Z           "start": 0
+2026-11-05T04:52:51.0461800Z         },
+2026-11-05T04:52:51.0462450Z         "currentUnitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0462980Z         "editing": false,
+2026-11-05T04:52:51.0463200Z         "end": 0,
+2026-11-05T04:52:51.0463670Z         "hasAnchor": true,
+2026-11-05T04:52:51.0463880Z         "inputConnected": true,
+2026-11-05T04:52:51.0464100Z         "inputFocused": true,
+2026-11-05T04:52:51.0464590Z         "layout": {
+2026-11-05T04:52:51.0465300Z           "firstNode": {
+2026-11-05T04:52:51.0465530Z             "column": 0,
+2026-11-05T04:52:51.0465730Z             "divide": 0,
+2026-11-05T04:52:51.0466910Z             "glyph": 0,
+2026-11-05T04:52:51.0467100Z             "isBack": true,
+2026-11-05T04:52:51.0467260Z             "line": 0,
+2026-11-05T04:52:51.0467430Z             "page": 0,
+2026-11-05T04:52:51.0467620Z             "pageType": 0,
+2026-11-05T04:52:51.0468240Z             "path": [
+2026-11-05T04:52:51.0468440Z               "pages",
+2026-11-05T04:52:51.0468680Z               0
+2026-11-05T04:52:51.0468870Z             ],
+2026-11-05T04:52:51.0469030Z             "section": 0,
+2026-11-05T04:52:51.0473510Z             "segmentPage": -1
+2026-11-05T04:52:51.0474400Z           },
+2026-11-05T04:52:51.0474600Z           "progress": null,
+2026-11-05T04:52:51.0474860Z           "viewportReady": true
+2026-11-05T04:52:51.0475080Z         },
+2026-11-05T04:52:51.0475250Z         "mobile": false,
+2026-11-05T04:52:51.0475420Z         "nativeRange": {
+2026-11-05T04:52:51.0475600Z           "collapsed": true,
+2026-11-05T04:52:51.0475780Z           "end": 0,
+2026-11-05T04:52:51.0475940Z           "segmentId": "",
+2026-11-05T04:52:51.0476230Z           "segmentPage": -1,
+2026-11-05T04:52:51.0476450Z           "start": 0
+2026-11-05T04:52:51.0476610Z         },
+2026-11-05T04:52:51.0476760Z         "observedAt": 2456,
+2026-11-05T04:52:51.0476970Z         "pendingSelection": false,
+2026-11-05T04:52:51.0477200Z         "pointerSelection": false,
+2026-11-05T04:52:51.0477400Z         "scale": {
+2026-11-05T04:52:51.0477550Z           "x": 1,
+2026-11-05T04:52:51.0477700Z           "y": 1
+2026-11-05T04:52:51.0477830Z         },
+2026-11-05T04:52:51.0477970Z         "scroll": 0,
+2026-11-05T04:52:51.0478130Z         "shortcutContext": {
+2026-11-05T04:52:51.0478320Z           "activated": false,
+2026-11-05T04:52:51.0478510Z           "doc": true,
+2026-11-05T04:52:51.0478670Z           "drawing": false,
+2026-11-05T04:52:51.0478860Z           "editor": true,
+2026-11-05T04:52:51.0479080Z           "formulaBar": false
+2026-11-05T04:52:51.0479470Z         },
+2026-11-05T04:52:51.0479620Z         "start": 0,
+2026-11-05T04:52:51.0479850Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T04:52:51.0480140Z         "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0480430Z         "unitLogicalRanges": [
+2026-11-05T04:52:51.0480630Z           {
+2026-11-05T04:52:51.0480810Z             "collapsed": true,
+2026-11-05T04:52:51.0480990Z             "end": 0,
+2026-11-05T04:52:51.0482590Z             "segmentId": "",
+2026-11-05T04:52:51.0483020Z             "segmentPage": -1,
+2026-11-05T04:52:51.0483230Z             "start": 0
+2026-11-05T04:52:51.0483410Z           }
+2026-11-05T04:52:51.0483580Z         ],
+2026-11-05T04:52:51.0483790Z         "unitSelectionOptions": {
+2026-11-05T04:52:51.0484200Z           "preserveInputStyle": true
+2026-11-05T04:52:51.0484400Z         },
+2026-11-05T04:52:51.0484660Z         "unitSelectionStyles": [
+2026-11-05T04:52:51.0484890Z           {
+2026-11-05T04:52:51.0485120Z             "fill": "rgba(103, 176, 255, 0.498)",
+2026-11-05T04:52:51.0485430Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T04:52:51.0485640Z           }
+2026-11-05T04:52:51.0485820Z         ],
+2026-11-05T04:52:51.0485990Z         "viewport": {
+2026-11-05T04:52:51.0486190Z           "active": true,
+2026-11-05T04:52:51.0486360Z           "bounds": {
+2026-11-05T04:52:51.0486520Z             "bottom": 402,
+2026-11-05T04:52:51.0486690Z             "left": 0,
+2026-11-05T04:52:51.0486850Z             "right": 1280,
+2026-11-05T04:52:51.0487050Z             "top": 0
+2026-11-05T04:52:51.0487230Z           },
+2026-11-05T04:52:51.0487430Z           "height": 402,
+2026-11-05T04:52:51.0487650Z           "key": "viewMain",
+2026-11-05T04:52:51.0487870Z           "scrollX": 0,
+2026-11-05T04:52:51.0488040Z           "scrollY": 0,
+2026-11-05T04:52:51.0488200Z           "width": 1280
+2026-11-05T04:52:51.0488800Z         }
+2026-11-05T04:52:51.0488930Z       },
+2026-11-05T04:52:51.0489060Z       "visual": {
+2026-11-05T04:52:51.0489370Z         "file": "3479a293-556b-4fad-b3ee-0a81c6993c11-before-doc-input.png",
+2026-11-05T04:52:51.0489690Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0489870Z           4661
+2026-11-05T04:52:51.0490000Z         ],
+2026-11-05T04:52:51.0490140Z         "captures": 1
+2026-11-05T04:52:51.0490350Z       }
+2026-11-05T04:52:51.0501810Z     },
+2026-11-05T04:52:51.0502100Z     {
+2026-11-05T04:52:51.0502330Z       "name": "native-offline-edits-committed",
+2026-11-05T04:52:51.0502620Z       "time": "2026-11-05T04:52:05.893Z"
+2026-11-05T04:52:51.0502820Z     },
+2026-11-05T04:52:51.0502950Z     {
+2026-11-05T04:52:51.0503090Z       "name": "browser-stop",
+2026-11-05T04:52:51.0503320Z       "time": "2026-11-05T04:52:06.620Z",
+2026-11-05T04:52:51.0503520Z       "kind": "firefox",
+2026-11-05T04:52:51.0503700Z       "browserPid": 2869,
+2026-11-05T04:52:51.0503880Z       "driverPid": 2868,
+2026-11-05T04:52:51.0504070Z       "browserExited": true,
+2026-11-05T04:52:51.0504250Z       "driverExited": true,
+2026-11-05T04:52:51.0506530Z       "stoppedAt": "2026-11-05T04:52:06.620Z"
+2026-11-05T04:52:51.0507510Z     },
+2026-11-05T04:52:51.0507640Z     {
+2026-11-05T04:52:51.0507930Z       "name": "transport-still-disabled-before-pending-relaunch",
+2026-11-05T04:52:51.0508290Z       "time": "2026-11-05T04:52:06.635Z",
+2026-11-05T04:52:51.0508530Z       "forwardedRequests": 249,
+2026-11-05T04:52:51.0508740Z       "blockedRequests": 670,
+2026-11-05T04:52:51.0508940Z       "forwardedUpgrades": 4,
+2026-11-05T04:52:51.0509140Z       "blockedUpgrades": 3,
+2026-11-05T04:52:51.0511410Z       "logins": 1,
+2026-11-05T04:52:51.0512790Z       "offline": true,
+2026-11-05T04:52:51.0513070Z       "activeBrowserSockets": 0
+2026-11-05T04:52:51.0513260Z     },
+2026-11-05T04:52:51.0513390Z     {
+2026-11-05T04:52:51.0513570Z       "name": "browser-start",
+2026-11-05T04:52:51.0513790Z       "time": "2026-11-05T04:52:09.885Z",
+2026-11-05T04:52:51.0514300Z       "kind": "firefox",
+2026-11-05T04:52:51.0514500Z       "version": "159.0.1",
+2026-11-05T04:52:51.0516220Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0516990Z       "profile": {
+2026-11-05T04:52:51.0517220Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0518270Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0521020Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0522080Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0522330Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0522520Z       },
+2026-11-05T04:52:51.0524650Z       "browserPid": 3367,
+2026-11-05T04:52:51.0525440Z       "previousBrowserPid": 2869,
+2026-11-05T04:52:51.0526200Z       "driverPid": 3366,
+2026-11-05T04:52:51.0529590Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0532700Z       "startedAt": "2026-11-05T04:52:09.879Z",
+2026-11-05T04:52:51.0533770Z       "browserTab": true,
+2026-11-05T04:52:51.0534270Z       "secureContext": true,
+2026-11-05T04:52:51.0535800Z       "storagePersisted": true
+2026-11-05T04:52:51.0536070Z     },
+2026-11-05T04:52:51.0536200Z     {
+2026-11-05T04:52:51.0536400Z       "name": "native-clipboard-content",
+2026-11-05T04:52:51.0536660Z       "time": "2026-11-05T04:52:12.803Z",
+2026-11-05T04:52:51.0536870Z       "kind": "sheet",
+2026-11-05T04:52:51.0537030Z       "text": "731",
+2026-11-05T04:52:51.0537200Z       "selection": null
+2026-11-05T04:52:51.0537380Z     },
+2026-11-05T04:52:51.0537690Z     {
+2026-11-05T04:52:51.0537930Z       "name": "pending-restart-retained",
+2026-11-05T04:52:51.0538470Z       "time": "2026-11-05T04:52:12.805Z",
+2026-11-05T04:52:51.0538780Z       "itemId": "1ebb7ade-0cae-4a4c-9387-bf62459305e2",
+2026-11-05T04:52:51.0539190Z       "kind": "sheet",
+2026-11-05T04:52:51.0540860Z       "outcome": "normal",
+2026-11-05T04:52:51.0542570Z       "checkpointSha256": "b513d3b5c5e471573e8b14d8cef6bad5fc298a4bd569552ee03ba8ad4d208cfb",
+2026-11-05T04:52:51.0543630Z       "imageHashes": [
+2026-11-05T04:52:51.0544130Z         {
+2026-11-05T04:52:51.0545120Z           "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:52:51.0546700Z           "size": 248,
+2026-11-05T04:52:51.0548450Z           "source": "/api/items/1ebb7ade-0cae-4a4c-9387-bf62459305e2/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+2026-11-05T04:52:51.0549930Z         },
+2026-11-05T04:52:51.0550320Z         {
+2026-11-05T04:52:51.0551430Z           "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:52:51.0552400Z           "size": 242,
+2026-11-05T04:52:51.0553090Z           "source": "/api/items/1ebb7ade-0cae-4a4c-9387-bf62459305e2/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+2026-11-05T04:52:51.0553770Z         },
+2026-11-05T04:52:51.0553910Z         {
+2026-11-05T04:52:51.0554240Z           "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:52:51.0554600Z           "size": 247,
+2026-11-05T04:52:51.0555290Z           "source": "/api/items/1ebb7ade-0cae-4a4c-9387-bf62459305e2/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+2026-11-05T04:52:51.0556830Z         }
+2026-11-05T04:52:51.0557500Z       ],
+2026-11-05T04:52:51.0557910Z       "visual": {
+2026-11-05T04:52:51.0558490Z         "file": "sheet-normal-offline.png",
+2026-11-05T04:52:51.0559500Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0559780Z           7200,
+2026-11-05T04:52:51.0559940Z           7081,
+2026-11-05T04:52:51.0560100Z           340266
+2026-11-05T04:52:51.0560260Z         ],
+2026-11-05T04:52:51.0560430Z         "captures": 1
+2026-11-05T04:52:51.0560630Z       }
+2026-11-05T04:52:51.0560770Z     },
+2026-11-05T04:52:51.0560910Z     {
+2026-11-05T04:52:51.0561140Z       "name": "native-clipboard-content",
+2026-11-05T04:52:51.0561430Z       "time": "2026-11-05T04:52:14.923Z",
+2026-11-05T04:52:51.0561780Z       "kind": "sheet",
+2026-11-05T04:52:51.0561980Z       "text": "731",
+2026-11-05T04:52:51.0562150Z       "selection": null
+2026-11-05T04:52:51.0562310Z     },
+2026-11-05T04:52:51.0562430Z     {
+2026-11-05T04:52:51.0562910Z       "name": "pending-restart-retained",
+2026-11-05T04:52:51.0563170Z       "time": "2026-11-05T04:52:14.923Z",
+2026-11-05T04:52:51.0563460Z       "itemId": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+2026-11-05T04:52:51.0563700Z       "kind": "sheet",
+2026-11-05T04:52:51.0563880Z       "outcome": "conflict",
+2026-11-05T04:52:51.0564290Z       "checkpointSha256": "45c48edf4a73b7b3cd95b25d817b017742ffff16bc1c617dd8c6449e99a8814c",
+2026-11-05T04:52:51.0564670Z       "imageHashes": [
+2026-11-05T04:52:51.0564830Z         {
+2026-11-05T04:52:51.0565150Z           "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:52:51.0566180Z           "size": 248,
+2026-11-05T04:52:51.0566790Z           "source": "/api/items/bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+2026-11-05T04:52:51.0568220Z         },
+2026-11-05T04:52:51.0568650Z         {
+2026-11-05T04:52:51.0569340Z           "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:52:51.0569670Z           "size": 242,
+2026-11-05T04:52:51.0570200Z           "source": "/api/items/bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+2026-11-05T04:52:51.0570740Z         },
+2026-11-05T04:52:51.0570910Z         {
+2026-11-05T04:52:51.0572020Z           "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:52:51.0572910Z           "size": 247,
+2026-11-05T04:52:51.0573630Z           "source": "/api/items/bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+2026-11-05T04:52:51.0574140Z         }
+2026-11-05T04:52:51.0574270Z       ],
+2026-11-05T04:52:51.0574400Z       "visual": {
+2026-11-05T04:52:51.0574620Z         "file": "sheet-conflict-offline.png",
+2026-11-05T04:52:51.0574850Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0575040Z           7200,
+2026-11-05T04:52:51.0575200Z           7081,
+2026-11-05T04:52:51.0575350Z           340266
+2026-11-05T04:52:51.0575930Z         ],
+2026-11-05T04:52:51.0576480Z         "captures": 1
+2026-11-05T04:52:51.0577210Z       }
+2026-11-05T04:52:51.0577700Z     },
+2026-11-05T04:52:51.0578090Z     {
+2026-11-05T04:52:51.0578630Z       "name": "native-clipboard-content",
+2026-11-05T04:52:51.0579320Z       "time": "2026-11-05T04:52:17.145Z",
+2026-11-05T04:52:51.0579890Z       "kind": "doc",
+2026-11-05T04:52:51.0580530Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T04:52:51.0581170Z       "selection": {
+2026-11-05T04:52:51.0581820Z         "unitId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0582460Z         "nativeRange": {
+2026-11-05T04:52:51.0582960Z           "collapsed": false,
+2026-11-05T04:52:51.0583460Z           "end": 40,
+2026-11-05T04:52:51.0583900Z           "segmentId": "",
+2026-11-05T04:52:51.0584390Z           "segmentPage": -1,
+2026-11-05T04:52:51.0584880Z           "start": 0
+2026-11-05T04:52:51.0585520Z         },
+2026-11-05T04:52:51.0585740Z         "logicalRange": {
+2026-11-05T04:52:51.0585940Z           "collapsed": false,
+2026-11-05T04:52:51.0586130Z           "end": 40,
+2026-11-05T04:52:51.0586300Z           "segmentId": "",
+2026-11-05T04:52:51.0586520Z           "segmentPage": -1,
+2026-11-05T04:52:51.0586930Z           "start": 0
+2026-11-05T04:52:51.0587140Z         },
+2026-11-05T04:52:51.0587350Z         "pendingSelection": false
+2026-11-05T04:52:51.0587540Z       }
+2026-11-05T04:52:51.0587660Z     },
+2026-11-05T04:52:51.0587790Z     {
+2026-11-05T04:52:51.0588010Z       "name": "pending-restart-retained",
+2026-11-05T04:52:51.0588400Z       "time": "2026-11-05T04:52:17.145Z",
+2026-11-05T04:52:51.0588680Z       "itemId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0588970Z       "kind": "doc",
+2026-11-05T04:52:51.0589180Z       "outcome": "normal",
+2026-11-05T04:52:51.0589610Z       "checkpointSha256": "784795636e03048878ad98f0c3f3289624a8efff5670be197aa23094022d8376",
+2026-11-05T04:52:51.0590450Z       "imageHashes": [
+2026-11-05T04:52:51.0590630Z         {
+2026-11-05T04:52:51.0590950Z           "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:52:51.0591270Z           "size": 243,
+2026-11-05T04:52:51.0591960Z           "source": "/api/items/84faf3c7-6fcf-4436-82b9-f36d043175ee/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+2026-11-05T04:52:51.0592460Z         },
+2026-11-05T04:52:51.0592590Z         {
+2026-11-05T04:52:51.0593030Z           "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:52:51.0593400Z           "size": 244,
+2026-11-05T04:52:51.0593940Z           "source": "/api/items/84faf3c7-6fcf-4436-82b9-f36d043175ee/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+2026-11-05T04:52:51.0594500Z         },
+2026-11-05T04:52:51.0594650Z         {
+2026-11-05T04:52:51.0595590Z           "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:52:51.0596790Z           "size": 244,
+2026-11-05T04:52:51.0597490Z           "source": "/api/items/84faf3c7-6fcf-4436-82b9-f36d043175ee/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+2026-11-05T04:52:51.0598020Z         }
+2026-11-05T04:52:51.0598200Z       ],
+2026-11-05T04:52:51.0598360Z       "visual": {
+2026-11-05T04:52:51.0598590Z         "file": "doc-normal-offline.png",
+2026-11-05T04:52:51.0599150Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0600340Z           4720
+2026-11-05T04:52:51.0600500Z         ],
+2026-11-05T04:52:51.0600650Z         "captures": 1
+2026-11-05T04:52:51.0600840Z       }
+2026-11-05T04:52:51.0601000Z     },
+2026-11-05T04:52:51.0601150Z     {
+2026-11-05T04:52:51.0601660Z       "name": "native-clipboard-content",
+2026-11-05T04:52:51.0601980Z       "time": "2026-11-05T04:52:19.343Z",
+2026-11-05T04:52:51.0602240Z       "kind": "doc",
+2026-11-05T04:52:51.0602530Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T04:52:51.0602790Z       "selection": {
+2026-11-05T04:52:51.0603040Z         "unitId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0603280Z         "nativeRange": {
+2026-11-05T04:52:51.0603470Z           "collapsed": false,
+2026-11-05T04:52:51.0603700Z           "end": 40,
+2026-11-05T04:52:51.0603900Z           "segmentId": "",
+2026-11-05T04:52:51.0604090Z           "segmentPage": -1,
+2026-11-05T04:52:51.0604310Z           "start": 0
+2026-11-05T04:52:51.0604490Z         },
+2026-11-05T04:52:51.0604730Z         "logicalRange": {
+2026-11-05T04:52:51.0604950Z           "collapsed": false,
+2026-11-05T04:52:51.0605180Z           "end": 40,
+2026-11-05T04:52:51.0605340Z           "segmentId": "",
+2026-11-05T04:52:51.0605520Z           "segmentPage": -1,
+2026-11-05T04:52:51.0605690Z           "start": 0
+2026-11-05T04:52:51.0605840Z         },
+2026-11-05T04:52:51.0606020Z         "pendingSelection": false
+2026-11-05T04:52:51.0606240Z       }
+2026-11-05T04:52:51.0606390Z     },
+2026-11-05T04:52:51.0606550Z     {
+2026-11-05T04:52:51.0606740Z       "name": "pending-restart-retained",
+2026-11-05T04:52:51.0606990Z       "time": "2026-11-05T04:52:19.343Z",
+2026-11-05T04:52:51.0607280Z       "itemId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0607560Z       "kind": "doc",
+2026-11-05T04:52:51.0607730Z       "outcome": "conflict",
+2026-11-05T04:52:51.0608260Z       "checkpointSha256": "43f1e282f9779b313fcffa0e6b8697ba92b44c404fc80205ceccf67d071bbcb0",
+2026-11-05T04:52:51.0608640Z       "imageHashes": [
+2026-11-05T04:52:51.0608800Z         {
+2026-11-05T04:52:51.0609120Z           "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:52:51.0609440Z           "size": 243,
+2026-11-05T04:52:51.0610240Z           "source": "/api/items/3479a293-556b-4fad-b3ee-0a81c6993c11/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+2026-11-05T04:52:51.0610720Z         },
+2026-11-05T04:52:51.0610850Z         {
+2026-11-05T04:52:51.0611400Z           "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:52:51.0611740Z           "size": 244,
+2026-11-05T04:52:51.0612280Z           "source": "/api/items/3479a293-556b-4fad-b3ee-0a81c6993c11/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+2026-11-05T04:52:51.0612750Z         },
+2026-11-05T04:52:51.0612880Z         {
+2026-11-05T04:52:51.0614870Z           "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:52:51.0615270Z           "size": 244,
+2026-11-05T04:52:51.0615850Z           "source": "/api/items/3479a293-556b-4fad-b3ee-0a81c6993c11/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+2026-11-05T04:52:51.0616320Z         }
+2026-11-05T04:52:51.0616450Z       ],
+2026-11-05T04:52:51.0616580Z       "visual": {
+2026-11-05T04:52:51.0617660Z         "file": "doc-conflict-offline.png",
+2026-11-05T04:52:51.0618340Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0619040Z           4720
+2026-11-05T04:52:51.0619540Z         ],
+2026-11-05T04:52:51.0619960Z         "captures": 1
+2026-11-05T04:52:51.0620390Z       }
+2026-11-05T04:52:51.0630910Z     },
+2026-11-05T04:52:51.0631370Z     {
+2026-11-05T04:52:51.0631620Z       "name": "transport-restored",
+2026-11-05T04:52:51.0631940Z       "time": "2026-11-05T04:52:19.636Z"
+2026-11-05T04:52:51.0632140Z     },
+2026-11-05T04:52:51.0632380Z     {
+2026-11-05T04:52:51.0634640Z       "name": "normal-reconnect-exact-content-once",
+2026-11-05T04:52:51.0635020Z       "time": "2026-11-05T04:52:24.063Z",
+2026-11-05T04:52:51.0635340Z       "itemId": "1ebb7ade-0cae-4a4c-9387-bf62459305e2",
+2026-11-05T04:52:51.0635590Z       "revision": 2,
+2026-11-05T04:52:51.0635960Z       "snapshotSha256": "6f0a6a5d231c7db636b2626797308aa8fd76a52ee115b966e6e0f9d4cd6cabb8",
+2026-11-05T04:52:51.0636320Z       "images": [
+2026-11-05T04:52:51.0636470Z         {
+2026-11-05T04:52:51.0636850Z           "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:52:51.0637220Z           "mime": "image/png",
+2026-11-05T04:52:51.0640330Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+2026-11-05T04:52:51.0649460Z         },
+2026-11-05T04:52:51.0649900Z         {
+2026-11-05T04:52:51.0650900Z           "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:52:51.0653620Z           "mime": "image/png",
+2026-11-05T04:52:51.0657360Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+2026-11-05T04:52:51.0660820Z         },
+2026-11-05T04:52:51.0660960Z         {
+2026-11-05T04:52:51.0662070Z           "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:52:51.0662460Z           "mime": "image/png",
+2026-11-05T04:52:51.0665990Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+2026-11-05T04:52:51.0668730Z         }
+2026-11-05T04:52:51.0670100Z       ]
+2026-11-05T04:52:51.0670520Z     },
+2026-11-05T04:52:51.0670880Z     {
+2026-11-05T04:52:51.0671610Z       "name": "recovered-original-reconnect-outage",
+2026-11-05T04:52:51.0672630Z       "time": "2026-11-05T04:52:27.916Z",
+2026-11-05T04:52:51.0673790Z       "itemId": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+2026-11-05T04:52:51.0674520Z       "forwardedRequests": 331,
+2026-11-05T04:52:51.0675770Z       "blockedRequests": 1137,
+2026-11-05T04:52:51.0676320Z       "forwardedUpgrades": 8,
+2026-11-05T04:52:51.0677280Z       "blockedUpgrades": 4,
+2026-11-05T04:52:51.0677530Z       "logins": 1,
+2026-11-05T04:52:51.0677700Z       "offline": true,
+2026-11-05T04:52:51.0677900Z       "activeBrowserSockets": 0
+2026-11-05T04:52:51.0678090Z     },
+2026-11-05T04:52:51.0678220Z     {
+2026-11-05T04:52:51.0678670Z       "name": "native-clipboard-content",
+2026-11-05T04:52:51.0679060Z       "time": "2026-11-05T04:52:32.441Z",
+2026-11-05T04:52:51.0680570Z       "kind": "sheet",
+2026-11-05T04:52:51.0681240Z       "text": "731",
+2026-11-05T04:52:51.0681740Z       "selection": null
+2026-11-05T04:52:51.0682480Z     },
+2026-11-05T04:52:51.0682840Z     {
+2026-11-05T04:52:51.0683720Z       "name": "conflict-copy-preserves-original",
+2026-11-05T04:52:51.0684370Z       "time": "2026-11-05T04:52:32.443Z",
+2026-11-05T04:52:51.0684800Z       "itemId": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+2026-11-05T04:52:51.0685200Z       "copyId": "bacf47b2-04d9-49f2-b159-405513819c44",
+2026-11-05T04:52:51.0685510Z       "receipts": [
+2026-11-05T04:52:51.0685690Z         {
+2026-11-05T04:52:51.0685930Z           "user_id": "78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0686360Z           "recovery_id": "50b4ca17-64d9-4990-bd67-f098b453d8fb",
+2026-11-05T04:52:51.0686960Z           "request_hash": "0f16b641a4cd67cd70357952a36521239e29e5b9cbbb6a82e10b41f275176674",
+2026-11-05T04:52:51.0687450Z           "item_id": "bacf47b2-04d9-49f2-b159-405513819c44",
+2026-11-05T04:52:51.0687730Z           "possible_replay_crash": 0
+2026-11-05T04:52:51.0687940Z         }
+2026-11-05T04:52:51.0688070Z       ],
+2026-11-05T04:52:51.0689240Z       "snapshotSha256": "0fde0554bc4a945008dce857bf96fb49a3f888b483a8ef2d61cffcce9fcc51be",
+2026-11-05T04:52:51.0690800Z       "images": [
+2026-11-05T04:52:51.0691250Z         {
+2026-11-05T04:52:51.0692060Z           "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T04:52:51.0693120Z           "mime": "image/png",
+2026-11-05T04:52:51.0695620Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+2026-11-05T04:52:51.0698280Z         },
+2026-11-05T04:52:51.0698410Z         {
+2026-11-05T04:52:51.0698720Z           "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T04:52:51.0699060Z           "mime": "image/png",
+2026-11-05T04:52:51.0701690Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+2026-11-05T04:52:51.0703540Z         },
+2026-11-05T04:52:51.0703690Z         {
+2026-11-05T04:52:51.0704510Z           "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T04:52:51.0705020Z           "mime": "image/png",
+2026-11-05T04:52:51.0711280Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+2026-11-05T04:52:51.0714730Z         }
+2026-11-05T04:52:51.0714860Z       ],
+2026-11-05T04:52:51.0714990Z       "visual": {
+2026-11-05T04:52:51.0715200Z         "file": "sheet-recovered-copy.png",
+2026-11-05T04:52:51.0715440Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0715620Z           7200,
+2026-11-05T04:52:51.0715760Z           7081,
+2026-11-05T04:52:51.0715920Z           338286
+2026-11-05T04:52:51.0716060Z         ],
+2026-11-05T04:52:51.0716200Z         "captures": 1
+2026-11-05T04:52:51.0716350Z       }
+2026-11-05T04:52:51.0716480Z     },
+2026-11-05T04:52:51.0716600Z     {
+2026-11-05T04:52:51.0716840Z       "name": "normal-reconnect-exact-content-once",
+2026-11-05T04:52:51.0717130Z       "time": "2026-11-05T04:52:36.156Z",
+2026-11-05T04:52:51.0717890Z       "itemId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0718160Z       "revision": 2,
+2026-11-05T04:52:51.0718540Z       "snapshotSha256": "a06afea0f579979117ab516f000dff9f3e7fc14fcaf04be550a02a14da0fb97e",
+2026-11-05T04:52:51.0718980Z       "images": [
+2026-11-05T04:52:51.0719150Z         {
+2026-11-05T04:52:51.0719530Z           "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:52:51.0719870Z           "mime": "image/png",
+2026-11-05T04:52:51.0722480Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+2026-11-05T04:52:51.0722570Z         },
+2026-11-05T04:52:51.0722640Z         {
+2026-11-05T04:52:51.0722920Z           "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:52:51.0723030Z           "mime": "image/png",
+2026-11-05T04:52:51.0726940Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+2026-11-05T04:52:51.0727040Z         },
+2026-11-05T04:52:51.0727090Z         {
+2026-11-05T04:52:51.0727330Z           "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:52:51.0727430Z           "mime": "image/png",
+2026-11-05T04:52:51.0730830Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+2026-11-05T04:52:51.0730910Z         }
+2026-11-05T04:52:51.0731490Z       ]
+2026-11-05T04:52:51.0731610Z     },
+2026-11-05T04:52:51.0731680Z     {
+2026-11-05T04:52:51.0731870Z       "name": "recovered-original-reconnect-outage",
+2026-11-05T04:52:51.0731970Z       "time": "2026-11-05T04:52:39.833Z",
+2026-11-05T04:52:51.0732110Z       "itemId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0732230Z       "forwardedRequests": 481,
+2026-11-05T04:52:51.0732330Z       "blockedRequests": 1148,
+2026-11-05T04:52:51.0732430Z       "forwardedUpgrades": 14,
+2026-11-05T04:52:51.0732510Z       "blockedUpgrades": 5,
+2026-11-05T04:52:51.0732570Z       "logins": 1,
+2026-11-05T04:52:51.0732650Z       "offline": true,
+2026-11-05T04:52:51.0732770Z       "activeBrowserSockets": 0
+2026-11-05T04:52:51.0732840Z     },
+2026-11-05T04:52:51.0732900Z     {
+2026-11-05T04:52:51.0733050Z       "name": "native-clipboard-content",
+2026-11-05T04:52:51.0733160Z       "time": "2026-11-05T04:52:43.604Z",
+2026-11-05T04:52:51.0733220Z       "kind": "doc",
+2026-11-05T04:52:51.0733370Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T04:52:51.0733440Z       "selection": {
+2026-11-05T04:52:51.0733580Z         "unitId": "d96462c8-d961-4d2c-b193-b61d01b9e81c",
+2026-11-05T04:52:51.0733650Z         "nativeRange": {
+2026-11-05T04:52:51.0733740Z           "collapsed": false,
+2026-11-05T04:52:51.0733810Z           "end": 40,
+2026-11-05T04:52:51.0734030Z           "segmentId": "",
+2026-11-05T04:52:51.0734130Z           "segmentPage": -1,
+2026-11-05T04:52:51.0734270Z           "start": 0
+2026-11-05T04:52:51.0734360Z         },
+2026-11-05T04:52:51.0734450Z         "logicalRange": {
+2026-11-05T04:52:51.0734540Z           "collapsed": false,
+2026-11-05T04:52:51.0734630Z           "end": 40,
+2026-11-05T04:52:51.0734700Z           "segmentId": "",
+2026-11-05T04:52:51.0734800Z           "segmentPage": -1,
+2026-11-05T04:52:51.0734860Z           "start": 0
+2026-11-05T04:52:51.0734920Z         },
+2026-11-05T04:52:51.0735030Z         "pendingSelection": false
+2026-11-05T04:52:51.0735090Z       }
+2026-11-05T04:52:51.0735140Z     },
+2026-11-05T04:52:51.0735190Z     {
+2026-11-05T04:52:51.0735360Z       "name": "conflict-copy-preserves-original",
+2026-11-05T04:52:51.0735490Z       "time": "2026-11-05T04:52:43.605Z",
+2026-11-05T04:52:51.0735660Z       "itemId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0735820Z       "copyId": "d96462c8-d961-4d2c-b193-b61d01b9e81c",
+2026-11-05T04:52:51.0735900Z       "receipts": [
+2026-11-05T04:52:51.0735970Z         {
+2026-11-05T04:52:51.0736120Z           "user_id": "78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0736280Z           "recovery_id": "50b4ca17-64d9-4990-bd67-f098b453d8fb",
+2026-11-05T04:52:51.0736550Z           "request_hash": "0f16b641a4cd67cd70357952a36521239e29e5b9cbbb6a82e10b41f275176674",
+2026-11-05T04:52:51.0736690Z           "item_id": "bacf47b2-04d9-49f2-b159-405513819c44",
+2026-11-05T04:52:51.0736830Z           "possible_replay_crash": 0
+2026-11-05T04:52:51.0736900Z         },
+2026-11-05T04:52:51.0736970Z         {
+2026-11-05T04:52:51.0737160Z           "user_id": "78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0737330Z           "recovery_id": "89c79a62-5907-4e27-9c7d-7dccc6e0a846",
+2026-11-05T04:52:51.0737660Z           "request_hash": "888f6689618070db5a3d1e51cdfd15137a557105a4eb9527950e72ff3a811af8",
+2026-11-05T04:52:51.0737830Z           "item_id": "d96462c8-d961-4d2c-b193-b61d01b9e81c",
+2026-11-05T04:52:51.0737940Z           "possible_replay_crash": 0
+2026-11-05T04:52:51.0737990Z         }
+2026-11-05T04:52:51.0738050Z       ],
+2026-11-05T04:52:51.0738330Z       "snapshotSha256": "2296c3b8d48c413fc5ed2ed4ba9f132f85b725a87cccdeda6feba6e8f7166411",
+2026-11-05T04:52:51.0738400Z       "images": [
+2026-11-05T04:52:51.0738450Z         {
+2026-11-05T04:52:51.0738680Z           "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T04:52:51.0738800Z           "mime": "image/png",
+2026-11-05T04:52:51.0741240Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+2026-11-05T04:52:51.0741330Z         },
+2026-11-05T04:52:51.0741380Z         {
+2026-11-05T04:52:51.0741610Z           "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T04:52:51.0741700Z           "mime": "image/png",
+2026-11-05T04:52:51.0744410Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+2026-11-05T04:52:51.0744520Z         },
+2026-11-05T04:52:51.0744580Z         {
+2026-11-05T04:52:51.0744860Z           "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T04:52:51.0745240Z           "mime": "image/png",
+2026-11-05T04:52:51.0747620Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+2026-11-05T04:52:51.0748220Z         }
+2026-11-05T04:52:51.0748300Z       ],
+2026-11-05T04:52:51.0748390Z       "visual": {
+2026-11-05T04:52:51.0748540Z         "file": "doc-recovered-copy.png",
+2026-11-05T04:52:51.0748640Z         "colorPixelCounts": [
+2026-11-05T04:52:51.0748710Z           4720
+2026-11-05T04:52:51.0748760Z         ],
+2026-11-05T04:52:51.0748840Z         "captures": 1
+2026-11-05T04:52:51.0748900Z       }
+2026-11-05T04:52:51.0748950Z     },
+2026-11-05T04:52:51.0749010Z     {
+2026-11-05T04:52:51.0749130Z       "name": "storage-loss-tabs-prepared",
+2026-11-05T04:52:51.0749230Z       "time": "2026-11-05T04:52:44.372Z",
+2026-11-05T04:52:51.0749290Z       "before": [
+2026-11-05T04:52:51.0750110Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:52:51.0750190Z       ],
+2026-11-05T04:52:51.0750260Z       "after": [
+2026-11-05T04:52:51.0750430Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:52:51.0750490Z       ]
+2026-11-05T04:52:51.0750550Z     },
+2026-11-05T04:52:51.0750600Z     {
+2026-11-05T04:52:51.0750720Z       "name": "storage-loss-unregistration",
+2026-11-05T04:52:51.0750830Z       "time": "2026-11-05T04:52:44.386Z",
+2026-11-05T04:52:51.0750930Z       "preparation": {
+2026-11-05T04:52:51.0751190Z         "database": "spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0751270Z         "operations": [
+2026-11-05T04:52:51.0751340Z           {
+2026-11-05T04:52:51.0751420Z             "elapsedMs": 0,
+2026-11-05T04:52:51.0751550Z             "name": "verify-preparation-document",
+2026-11-05T04:52:51.0751680Z             "startedAt": "2026-11-05T04:52:44.375Z",
+2026-11-05T04:52:51.0751780Z             "status": "passed",
+2026-11-05T04:52:51.0751840Z             "value": {
+2026-11-05T04:52:51.0751940Z               "marker": "inert",
+2026-11-05T04:52:51.0752010Z               "scripts": 0,
+2026-11-05T04:52:51.0752180Z               "url": "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:52:51.0753100Z             }
+2026-11-05T04:52:51.0753270Z           },
+2026-11-05T04:52:51.0753540Z           {
+2026-11-05T04:52:51.0753640Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0753800Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T04:52:51.0753930Z             "startedAt": "2026-11-05T04:52:44.375Z",
+2026-11-05T04:52:51.0754050Z             "status": "passed",
+2026-11-05T04:52:51.0754130Z             "value": [
+2026-11-05T04:52:51.0754290Z               "https://localhost:8176/"
+2026-11-05T04:52:51.0754370Z             ]
+2026-11-05T04:52:51.0754440Z           },
+2026-11-05T04:52:51.0754570Z           {
+2026-11-05T04:52:51.0754660Z             "elapsedMs": 7,
+2026-11-05T04:52:51.0754920Z             "name": "serviceWorker.unregister:https://localhost:8176/",
+2026-11-05T04:52:51.0755090Z             "startedAt": "2026-11-05T04:52:44.376Z",
+2026-11-05T04:52:51.0755180Z             "status": "passed",
+2026-11-05T04:52:51.0755250Z             "value": true
+2026-11-05T04:52:51.0755320Z           },
+2026-11-05T04:52:51.0755450Z           {
+2026-11-05T04:52:51.0755540Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0755690Z             "name": "verify-unregistered",
+2026-11-05T04:52:51.0755840Z             "startedAt": "2026-11-05T04:52:44.382Z",
+2026-11-05T04:52:51.0755930Z             "status": "passed",
+2026-11-05T04:52:51.0756000Z             "value": {
+2026-11-05T04:52:51.0756370Z               "controller": "https://localhost:8176/service-worker.js",
+2026-11-05T04:52:51.0756620Z               "workers": []
+2026-11-05T04:52:51.0756690Z             }
+2026-11-05T04:52:51.0756750Z           }
+2026-11-05T04:52:51.0756810Z         ],
+2026-11-05T04:52:51.0756960Z         "phase": "unregister",
+2026-11-05T04:52:51.0757050Z         "status": "passed",
+2026-11-05T04:52:51.0757130Z         "timeoutMs": 28000
+2026-11-05T04:52:51.0757200Z       }
+2026-11-05T04:52:51.0757310Z     },
+2026-11-05T04:52:51.0757370Z     {
+2026-11-05T04:52:51.0757510Z       "name": "storage-loss-tabs-handed-off",
+2026-11-05T04:52:51.0757610Z       "time": "2026-11-05T04:52:44.474Z",
+2026-11-05T04:52:51.0757680Z       "before": [
+2026-11-05T04:52:51.0757850Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T04:52:51.0757900Z       ],
+2026-11-05T04:52:51.0757960Z       "after": [
+2026-11-05T04:52:51.0758180Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:52:51.0758240Z       ],
+2026-11-05T04:52:51.0758300Z       "documents": [
+2026-11-05T04:52:51.0758360Z         {
+2026-11-05T04:52:51.0758440Z           "controller": null,
+2026-11-05T04:52:51.0758510Z           "fresh": true,
+2026-11-05T04:52:51.0758580Z           "marker": "inert",
+2026-11-05T04:52:51.0758680Z           "ready": "complete",
+2026-11-05T04:52:51.0758750Z           "scripts": 0,
+2026-11-05T04:52:51.0758980Z           "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:52:51.0759030Z         }
+2026-11-05T04:52:51.0759090Z       ]
+2026-11-05T04:52:51.0759140Z     },
+2026-11-05T04:52:51.0759200Z     {
+2026-11-05T04:52:51.0759350Z       "name": "storage-loss-quiescence-before-stop",
+2026-11-05T04:52:51.0759460Z       "time": "2026-11-05T04:52:44.479Z",
+2026-11-05T04:52:51.0759520Z       "quiescence": {
+2026-11-05T04:52:51.0759730Z         "database": "spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0759790Z         "operations": [
+2026-11-05T04:52:51.0759850Z           {
+2026-11-05T04:52:51.0759920Z             "elapsedMs": 0,
+2026-11-05T04:52:51.0760090Z             "name": "verify-preparation-document",
+2026-11-05T04:52:51.0760240Z             "startedAt": "2026-11-05T04:52:44.478Z",
+2026-11-05T04:52:51.0760350Z             "status": "passed",
+2026-11-05T04:52:51.0760430Z             "value": {
+2026-11-05T04:52:51.0760530Z               "marker": "inert",
+2026-11-05T04:52:51.0760590Z               "scripts": 0,
+2026-11-05T04:52:51.0760830Z               "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:52:51.0760890Z             }
+2026-11-05T04:52:51.0760940Z           },
+2026-11-05T04:52:51.0761090Z           {
+2026-11-05T04:52:51.0761160Z             "elapsedMs": 0,
+2026-11-05T04:52:51.0761310Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T04:52:51.0761430Z             "startedAt": "2026-11-05T04:52:44.478Z",
+2026-11-05T04:52:51.0761520Z             "status": "passed",
+2026-11-05T04:52:51.0761580Z             "value": []
+2026-11-05T04:52:51.0761640Z           },
+2026-11-05T04:52:51.0761980Z           {
+2026-11-05T04:52:51.0762070Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0762210Z             "name": "verify-uncontrolled",
+2026-11-05T04:52:51.0762330Z             "startedAt": "2026-11-05T04:52:44.478Z",
+2026-11-05T04:52:51.0762420Z             "status": "passed",
+2026-11-05T04:52:51.0762480Z             "value": {
+2026-11-05T04:52:51.0762580Z               "controller": null,
+2026-11-05T04:52:51.0762650Z               "workers": []
+2026-11-05T04:52:51.0762700Z             }
+2026-11-05T04:52:51.0762760Z           }
+2026-11-05T04:52:51.0762820Z         ],
+2026-11-05T04:52:51.0762890Z         "phase": "verify",
+2026-11-05T04:52:51.0762960Z         "status": "passed",
+2026-11-05T04:52:51.0763030Z         "timeoutMs": 28000
+2026-11-05T04:52:51.0763080Z       }
+2026-11-05T04:52:51.0763140Z     },
+2026-11-05T04:52:51.0763190Z     {
+2026-11-05T04:52:51.0763320Z       "name": "browser-stop-before-storage-loss",
+2026-11-05T04:52:51.0763430Z       "time": "2026-11-05T04:52:45.357Z",
+2026-11-05T04:52:51.0763580Z       "kind": "firefox",
+2026-11-05T04:52:51.0763650Z       "browserPid": 3367,
+2026-11-05T04:52:51.0763710Z       "driverPid": 3366,
+2026-11-05T04:52:51.0763790Z       "browserExited": true,
+2026-11-05T04:52:51.0763850Z       "driverExited": true,
+2026-11-05T04:52:51.0763970Z       "stoppedAt": "2026-11-05T04:52:45.357Z"
+2026-11-05T04:52:51.0764040Z     },
+2026-11-05T04:52:51.0764110Z     {
+2026-11-05T04:52:51.0764230Z       "name": "browser-start",
+2026-11-05T04:52:51.0764360Z       "time": "2026-11-05T04:52:49.198Z",
+2026-11-05T04:52:51.0764440Z       "kind": "firefox",
+2026-11-05T04:52:51.0764500Z       "version": "159.0.1",
+2026-11-05T04:52:51.0764830Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0764890Z       "profile": {
+2026-11-05T04:52:51.0765010Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0765330Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0765650Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0765750Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0765860Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0765910Z       },
+2026-11-05T04:52:51.0765980Z       "browserPid": 4287,
+2026-11-05T04:52:51.0766090Z       "previousBrowserPid": 3367,
+2026-11-05T04:52:51.0766170Z       "driverPid": 4286,
+2026-11-05T04:52:51.0767380Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0767520Z       "startedAt": "2026-11-05T04:52:49.192Z",
+2026-11-05T04:52:51.0767590Z       "browserTab": true,
+2026-11-05T04:52:51.0767670Z       "secureContext": true,
+2026-11-05T04:52:51.0767770Z       "storagePersisted": true
+2026-11-05T04:52:51.0767820Z     },
+2026-11-05T04:52:51.0767880Z     {
+2026-11-05T04:52:51.0768000Z       "name": "storage-loss-tabs-restarted",
+2026-11-05T04:52:51.0768100Z       "time": "2026-11-05T04:52:49.228Z",
+2026-11-05T04:52:51.0768160Z       "before": [
+2026-11-05T04:52:51.0768370Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:52:51.0768430Z       ],
+2026-11-05T04:52:51.0768480Z       "after": [
+2026-11-05T04:52:51.0768920Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:52:51.0769000Z       ]
+2026-11-05T04:52:51.0769130Z     },
+2026-11-05T04:52:51.0769200Z     {
+2026-11-05T04:52:51.0769330Z       "name": "storage-deletion",
+2026-11-05T04:52:51.0769490Z       "time": "2026-11-05T04:52:49.261Z",
+2026-11-05T04:52:51.0769580Z       "deletion": {
+2026-11-05T04:52:51.0769790Z         "database": "spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0769870Z         "operations": [
+2026-11-05T04:52:51.0769920Z           {
+2026-11-05T04:52:51.0769990Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0770120Z             "name": "verify-preparation-document",
+2026-11-05T04:52:51.0770250Z             "startedAt": "2026-11-05T04:52:49.232Z",
+2026-11-05T04:52:51.0770350Z             "status": "passed",
+2026-11-05T04:52:51.0770510Z             "value": {
+2026-11-05T04:52:51.0777040Z               "marker": "inert",
+2026-11-05T04:52:51.0777170Z               "scripts": 0,
+2026-11-05T04:52:51.0777690Z               "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T04:52:51.0777770Z             }
+2026-11-05T04:52:51.0777840Z           },
+2026-11-05T04:52:51.0777900Z           {
+2026-11-05T04:52:51.0777990Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0778180Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T04:52:51.0778310Z             "startedAt": "2026-11-05T04:52:49.233Z",
+2026-11-05T04:52:51.0778680Z             "status": "passed",
+2026-11-05T04:52:51.0778750Z             "value": []
+2026-11-05T04:52:51.0778820Z           },
+2026-11-05T04:52:51.0778890Z           {
+2026-11-05T04:52:51.0778970Z             "elapsedMs": 0,
+2026-11-05T04:52:51.0779080Z             "name": "verify-uncontrolled",
+2026-11-05T04:52:51.0779210Z             "startedAt": "2026-11-05T04:52:49.233Z",
+2026-11-05T04:52:51.0779330Z             "status": "passed",
+2026-11-05T04:52:51.0779410Z             "value": {
+2026-11-05T04:52:51.0779530Z               "controller": null,
+2026-11-05T04:52:51.0779610Z               "workers": []
+2026-11-05T04:52:51.0779680Z             }
+2026-11-05T04:52:51.0779730Z           },
+2026-11-05T04:52:51.0779800Z           {
+2026-11-05T04:52:51.0779860Z             "elapsedMs": 8,
+2026-11-05T04:52:51.0779960Z             "name": "caches.keys",
+2026-11-05T04:52:51.0780080Z             "startedAt": "2026-11-05T04:52:49.233Z",
+2026-11-05T04:52:51.0780180Z             "status": "passed",
+2026-11-05T04:52:51.0780240Z             "value": [
+2026-11-05T04:52:51.0780360Z               "spinel-shell-603ae4b16bb36841"
+2026-11-05T04:52:51.0780410Z             ]
+2026-11-05T04:52:51.0780470Z           },
+2026-11-05T04:52:51.0780520Z           {
+2026-11-05T04:52:51.0780580Z             "elapsedMs": 2,
+2026-11-05T04:52:51.0780760Z             "name": "caches.delete:spinel-shell-603ae4b16bb36841",
+2026-11-05T04:52:51.0780880Z             "startedAt": "2026-11-05T04:52:49.242Z",
+2026-11-05T04:52:51.0780970Z             "status": "passed",
+2026-11-05T04:52:51.0781040Z             "value": true
+2026-11-05T04:52:51.0781120Z           },
+2026-11-05T04:52:51.0781190Z           {
+2026-11-05T04:52:51.0781270Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0781400Z             "name": "localStorage.clear",
+2026-11-05T04:52:51.0781540Z             "startedAt": "2026-11-05T04:52:49.244Z",
+2026-11-05T04:52:51.0781630Z             "status": "passed",
+2026-11-05T04:52:51.0781690Z             "value": 0
+2026-11-05T04:52:51.0782450Z           },
+2026-11-05T04:52:51.0782870Z           {
+2026-11-05T04:52:51.0783540Z             "elapsedMs": 3,
+2026-11-05T04:52:51.0785060Z             "name": "indexedDB.deleteDatabase:spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0785220Z             "startedAt": "2026-11-05T04:52:49.244Z",
+2026-11-05T04:52:51.0785320Z             "status": "passed",
+2026-11-05T04:52:51.0785380Z             "value": null
+2026-11-05T04:52:51.0785430Z           },
+2026-11-05T04:52:51.0785490Z           {
+2026-11-05T04:52:51.0785580Z             "elapsedMs": 1,
+2026-11-05T04:52:51.0785880Z             "name": "verify-service-workers",
+2026-11-05T04:52:51.0786030Z             "startedAt": "2026-11-05T04:52:49.249Z",
+2026-11-05T04:52:51.0786130Z             "status": "passed",
+2026-11-05T04:52:51.0786200Z             "value": []
+2026-11-05T04:52:51.0786260Z           },
+2026-11-05T04:52:51.0786310Z           {
+2026-11-05T04:52:51.0786380Z             "elapsedMs": 6,
+2026-11-05T04:52:51.0786500Z             "name": "verify-cache-names",
+2026-11-05T04:52:51.0786620Z             "startedAt": "2026-11-05T04:52:49.249Z",
+2026-11-05T04:52:51.0786710Z             "status": "passed",
+2026-11-05T04:52:51.0786780Z             "value": []
+2026-11-05T04:52:51.0786830Z           },
+2026-11-05T04:52:51.0786890Z           {
+2026-11-05T04:52:51.0786950Z             "elapsedMs": 2,
+2026-11-05T04:52:51.0787070Z             "name": "verify-database-names",
+2026-11-05T04:52:51.0787190Z             "startedAt": "2026-11-05T04:52:49.255Z",
+2026-11-05T04:52:51.0787280Z             "status": "passed",
+2026-11-05T04:52:51.0787340Z             "value": [
+2026-11-05T04:52:51.0787450Z               "UniverLocalStorage",
+2026-11-05T04:52:51.0787550Z               "spinel-offline-runtime"
+2026-11-05T04:52:51.0787610Z             ]
+2026-11-05T04:52:51.0787660Z           },
+2026-11-05T04:52:51.0787710Z           {
+2026-11-05T04:52:51.0787780Z             "elapsedMs": 0,
+2026-11-05T04:52:51.0787900Z             "name": "verify-storage-empty",
+2026-11-05T04:52:51.0788350Z             "startedAt": "2026-11-05T04:52:49.258Z",
+2026-11-05T04:52:51.0788460Z             "status": "passed",
+2026-11-05T04:52:51.0788530Z             "value": {
+2026-11-05T04:52:51.0788650Z               "cacheNames": [],
+2026-11-05T04:52:51.0788740Z               "databases": [
+2026-11-05T04:52:51.0788870Z                 "UniverLocalStorage",
+2026-11-05T04:52:51.0789010Z                 "spinel-offline-runtime"
+2026-11-05T04:52:51.0789070Z               ],
+2026-11-05T04:52:51.0789180Z               "localStorageEntries": 0,
+2026-11-05T04:52:51.0789250Z               "workers": []
+2026-11-05T04:52:51.0789310Z             }
+2026-11-05T04:52:51.0789370Z           }
+2026-11-05T04:52:51.0789420Z         ],
+2026-11-05T04:52:51.0789490Z         "phase": "delete",
+2026-11-05T04:52:51.0789560Z         "status": "passed",
+2026-11-05T04:52:51.0789630Z         "timeoutMs": 28000
+2026-11-05T04:52:51.0789690Z       }
+2026-11-05T04:52:51.0789770Z     },
+2026-11-05T04:52:51.0789850Z     {
+2026-11-05T04:52:51.0790030Z       "name": "cleared-storage-is-not-advertised",
+2026-11-05T04:52:51.0790160Z       "time": "2026-11-05T04:52:50.154Z",
+2026-11-05T04:52:51.0790220Z       "lost": {
+2026-11-05T04:52:51.0790290Z         "account": null,
+2026-11-05T04:52:51.0790350Z         "available": 0
+2026-11-05T04:52:51.0790410Z       }
+2026-11-05T04:52:51.0790480Z     },
+2026-11-05T04:52:51.0790550Z     {
+2026-11-05T04:52:51.0791710Z       "name": "post-deletion-outage",
+2026-11-05T04:52:51.0791870Z       "time": "2026-11-05T04:52:50.189Z",
+2026-11-05T04:52:51.0792010Z       "forwardedRequests": 589,
+2026-11-05T04:52:51.0792140Z       "blockedRequests": 1149,
+2026-11-05T04:52:51.0792240Z       "forwardedUpgrades": 16,
+2026-11-05T04:52:51.0792310Z       "blockedUpgrades": 6,
+2026-11-05T04:52:51.0792380Z       "logins": 1,
+2026-11-05T04:52:51.0792450Z       "offline": true,
+2026-11-05T04:52:51.0792660Z       "activeBrowserSockets": 0
+2026-11-05T04:52:51.0792740Z     },
+2026-11-05T04:52:51.0792820Z     {
+2026-11-05T04:52:51.0793000Z       "name": "missing-data-cannot-open-offline",
+2026-11-05T04:52:51.0793110Z       "time": "2026-11-05T04:52:50.371Z",
+2026-11-05T04:52:51.0793440Z       "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+2026-11-05T04:52:51.0793500Z     },
+2026-11-05T04:52:51.0793560Z     {
+2026-11-05T04:52:51.0793630Z       "name": "complete",
+2026-11-05T04:52:51.0793750Z       "time": "2026-11-05T04:52:50.372Z"
+2026-11-05T04:52:51.0793820Z     },
+2026-11-05T04:52:51.0793870Z     {
+2026-11-05T04:52:51.0794150Z       "name": "browser-stop",
+2026-11-05T04:52:51.0794280Z       "time": "2026-11-05T04:52:50.976Z",
+2026-11-05T04:52:51.0794340Z       "kind": "firefox",
+2026-11-05T04:52:51.0794410Z       "browserPid": 4287,
+2026-11-05T04:52:51.0794550Z       "driverPid": 4286,
+2026-11-05T04:52:51.0794670Z       "browserExited": true,
+2026-11-05T04:52:51.0794790Z       "driverExited": true,
+2026-11-05T04:52:51.0794940Z       "stoppedAt": "2026-11-05T04:52:50.976Z"
+2026-11-05T04:52:51.0795040Z     }
+2026-11-05T04:52:51.0795130Z   ],
+2026-11-05T04:52:51.0795470Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G332",
+2026-11-05T04:52:51.0795540Z   "machine": "arm64",
+2026-11-05T04:52:51.0795610Z   "release": {
+2026-11-05T04:52:51.0795790Z     "sourceSha": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+2026-11-05T04:52:51.0795910Z     "checkedAt": "2026-11-05T04:49:47.956Z",
+2026-11-05T04:52:51.0795990Z     "kind": "firefox",
+2026-11-05T04:52:51.0796070Z     "status": "passed",
+2026-11-05T04:52:51.0796150Z     "before": "159.0",
+2026-11-05T04:52:51.0796450Z     "releaseSource": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+2026-11-05T04:52:51.0796580Z     "requiredStable": "159.0.1",
+2026-11-05T04:52:51.0796950Z     "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+2026-11-05T04:52:51.0799110Z     "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-firefox/Firefox.app: accepted\nsource=Notarized Developer ID\n",
+2026-11-05T04:52:51.0800610Z     "download": "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US",
+2026-11-05T04:52:51.0801060Z     "installed": "159.0.1"
+2026-11-05T04:52:51.0801350Z   },
+2026-11-05T04:52:51.0801530Z   "actor": {
+2026-11-05T04:52:51.0801880Z     "id": "78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+2026-11-05T04:52:51.0802210Z     "role": "Collaborator with editor grants",
+2026-11-05T04:52:51.0802590Z     "ownerId": "4b13751d-ff8e-4d31-9b70-18c5d80d3a74"
+2026-11-05T04:52:51.0802750Z   },
+2026-11-05T04:52:51.0802960Z   "persistence": [
+2026-11-05T04:52:51.0803120Z     {
+2026-11-05T04:52:51.0803500Z       "itemId": "1ebb7ade-0cae-4a4c-9387-bf62459305e2",
+2026-11-05T04:52:51.0803700Z       "before": false,
+2026-11-05T04:52:51.0803890Z       "after": true,
+2026-11-05T04:52:51.0804080Z       "permission": {
+2026-11-05T04:52:51.0804280Z         "action": "allow",
+2026-11-05T04:52:51.0804910Z         "observedText": "Allow localhost:8176 to store data in persistent storage?",
+2026-11-05T04:52:51.0805200Z         "button": "Allow",
+2026-11-05T04:52:51.0805630Z         "reason": "observed-localhost-storage-permission",
+2026-11-05T04:52:51.0805970Z         "process": {
+2026-11-05T04:52:51.0806150Z           "pid": 2249,
+2026-11-05T04:52:51.0806440Z           "name": "firefox",
+2026-11-05T04:52:51.0806800Z           "bundleIdentifier": "org.mozilla.firefox",
+2026-11-05T04:52:51.0808450Z           "applicationRole": "AXApplication"
+2026-11-05T04:52:51.0808630Z         },
+2026-11-05T04:52:51.0809670Z         "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/firefox/firefox-storage-prompt-1.png",
+2026-11-05T04:52:51.0812670Z         "accessibility": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/firefox/firefox-storage-prompt-1.json"
+2026-11-05T04:52:51.0812880Z       },
+2026-11-05T04:52:51.0821210Z       "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+2026-11-05T04:52:51.0821460Z     },
+2026-11-05T04:52:51.0823450Z     {
+2026-11-05T04:52:51.0824130Z       "itemId": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+2026-11-05T04:52:51.0824210Z       "before": true,
+2026-11-05T04:52:51.0824280Z       "after": true,
+2026-11-05T04:52:51.0824350Z       "permission": null,
+2026-11-05T04:52:51.0825260Z       "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+2026-11-05T04:52:51.0826620Z     },
+2026-11-05T04:52:51.0826720Z     {
+2026-11-05T04:52:51.0826880Z       "itemId": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+2026-11-05T04:52:51.0826960Z       "before": true,
+2026-11-05T04:52:51.0827030Z       "after": true,
+2026-11-05T04:52:51.0827100Z       "permission": null,
+2026-11-05T04:52:51.0827810Z       "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+2026-11-05T04:52:51.0827890Z     },
+2026-11-05T04:52:51.0827970Z     {
+2026-11-05T04:52:51.0828930Z       "itemId": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+2026-11-05T04:52:51.0829170Z       "before": true,
+2026-11-05T04:52:51.0829360Z       "after": true,
+2026-11-05T04:52:51.0829560Z       "permission": null,
+2026-11-05T04:52:51.0832050Z       "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+2026-11-05T04:52:51.0832340Z     }
+2026-11-05T04:52:51.0832510Z   ],
+2026-11-05T04:52:51.0833750Z   "transport": {
+2026-11-05T04:52:51.0834090Z     "forwardedRequests": 589,
+2026-11-05T04:52:51.0834310Z     "blockedRequests": 1159,
+2026-11-05T04:52:51.0835060Z     "forwardedUpgrades": 16,
+2026-11-05T04:52:51.0835380Z     "blockedUpgrades": 6,
+2026-11-05T04:52:51.0835580Z     "logins": 1,
+2026-11-05T04:52:51.0836510Z     "offline": true,
+2026-11-05T04:52:51.0836830Z     "activeBrowserSockets": 0
+2026-11-05T04:52:51.0837700Z   },
+2026-11-05T04:52:51.0837790Z   "launches": [
+2026-11-05T04:52:51.0837850Z     {
+2026-11-05T04:52:51.0837940Z       "kind": "firefox",
+2026-11-05T04:52:51.0838030Z       "version": "159.0.1",
+2026-11-05T04:52:51.0838370Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0838450Z       "profile": {
+2026-11-05T04:52:51.0838590Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0839790Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0841080Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0841220Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0841730Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0846110Z       },
+2026-11-05T04:52:51.0846430Z       "browserPid": 2249,
+2026-11-05T04:52:51.0846860Z       "previousBrowserPid": null,
+2026-11-05T04:52:51.0847060Z       "driverPid": 2247,
+2026-11-05T04:52:51.0850140Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0850340Z       "startedAt": "2026-11-05T04:51:23.021Z"
+2026-11-05T04:52:51.0850400Z     },
+2026-11-05T04:52:51.0850470Z     {
+2026-11-05T04:52:51.0850540Z       "kind": "firefox",
+2026-11-05T04:52:51.0850620Z       "version": "159.0.1",
+2026-11-05T04:52:51.0850920Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0850990Z       "profile": {
+2026-11-05T04:52:51.0851100Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0851430Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0852040Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0852220Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0852330Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0852390Z       },
+2026-11-05T04:52:51.0852470Z       "browserPid": 2869,
+2026-11-05T04:52:51.0852580Z       "previousBrowserPid": 2249,
+2026-11-05T04:52:51.0852650Z       "driverPid": 2868,
+2026-11-05T04:52:51.0856210Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0856400Z       "startedAt": "2026-11-05T04:51:50.974Z"
+2026-11-05T04:52:51.0856480Z     },
+2026-11-05T04:52:51.0856560Z     {
+2026-11-05T04:52:51.0856640Z       "kind": "firefox",
+2026-11-05T04:52:51.0856710Z       "version": "159.0.1",
+2026-11-05T04:52:51.0857050Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0857140Z       "profile": {
+2026-11-05T04:52:51.0857900Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0859060Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0859900Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0860210Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0860480Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0860650Z       },
+2026-11-05T04:52:51.0860860Z       "browserPid": 3367,
+2026-11-05T04:52:51.0861130Z       "previousBrowserPid": 2869,
+2026-11-05T04:52:51.0861330Z       "driverPid": 3366,
+2026-11-05T04:52:51.0863410Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0863600Z       "startedAt": "2026-11-05T04:52:09.879Z"
+2026-11-05T04:52:51.0863700Z     },
+2026-11-05T04:52:51.0863770Z     {
+2026-11-05T04:52:51.0863840Z       "kind": "firefox",
+2026-11-05T04:52:51.0864180Z       "version": "159.0.1",
+2026-11-05T04:52:51.0864550Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+2026-11-05T04:52:51.0864620Z       "profile": {
+2026-11-05T04:52:51.0864740Z         "mode": "explicit-directory",
+2026-11-05T04:52:51.0865370Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0865700Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+2026-11-05T04:52:51.0866380Z         "directoryDevice": "16777231",
+2026-11-05T04:52:51.0866660Z         "directoryInode": "3079455"
+2026-11-05T04:52:51.0866840Z       },
+2026-11-05T04:52:51.0867040Z       "browserPid": 4287,
+2026-11-05T04:52:51.0867320Z       "previousBrowserPid": 3367,
+2026-11-05T04:52:51.0867870Z       "driverPid": 4286,
+2026-11-05T04:52:51.0868920Z       "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+2026-11-05T04:52:51.0869050Z       "startedAt": "2026-11-05T04:52:49.192Z"
+2026-11-05T04:52:51.0869110Z     }
+2026-11-05T04:52:51.0869170Z   ]
+2026-11-05T04:52:51.0869240Z }
+2026-11-05T04:52:51.1627360Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T04:52:51.1627850Z with:
+2026-11-05T04:52:51.1628080Z   name: desktop-offline-firefox-macos-26-41970163073-1
+2026-11-05T04:52:51.1628350Z   path: artifacts/desktop-offline/
+2026-11-05T04:52:51.1628570Z   if-no-files-found: error
+2026-11-05T04:52:51.1628750Z   retention-days: 14
+2026-11-05T04:52:51.1628910Z   compression-level: 6
+2026-11-05T04:52:51.1629070Z   overwrite: false
+2026-11-05T04:52:51.1629240Z   include-hidden-files: false
+2026-11-05T04:52:51.1629410Z   archive: true
+2026-11-05T04:52:51.1629550Z env:
+2026-11-05T04:52:51.1629720Z   SOURCE_SHA: 4e593fbaf9ea89585920053b9415f9a8eac0944f
+2026-11-05T04:52:51.1630870Z   DESKTOP_RUNNER: macos-26
+2026-11-05T04:52:51.1631440Z ##[endgroup]
+2026-11-05T04:52:51.8426530Z With the provided path, there will be 16 files uploaded
+2026-11-05T04:52:51.8432210Z Artifact name is valid!
+2026-11-05T04:52:51.8432940Z Root directory input is valid!
+2026-11-05T04:52:52.2815140Z Uploading artifact: desktop-offline-firefox-macos-26-41970163073-1.zip
+2026-11-05T04:52:52.2853090Z Beginning upload of artifact content to blob storage
+2026-11-05T04:52:53.0456860Z Uploaded bytes 453796
+2026-11-05T04:52:53.1274660Z Finished uploading artifact content to blob storage!
+2026-11-05T04:52:53.1374760Z SHA256 digest of uploaded artifact is 6c7798700d51177bf574849b8725ba0776d5b51532a9ac350d66697f536ed5ed
+2026-11-05T04:52:53.1476300Z Finalizing artifact upload
+2026-11-05T04:52:53.7979180Z Artifact desktop-offline-firefox-macos-26-41970163073-1 successfully finalized. Artifact ID 13389183629
+2026-11-05T04:52:53.7981920Z Artifact desktop-offline-firefox-macos-26-41970163073-1 has been successfully uploaded! Final size is 453796 bytes. Artifact ID is 13389183629
+2026-11-05T04:52:53.7984280Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41970163073/artifacts/13389183629
+2026-11-05T04:52:53.8186810Z Post job cleanup.
+2026-11-05T04:52:54.0462770Z Post job cleanup.
+2026-11-05T04:52:54.2063990Z [command]/opt/homebrew/bin/git version
+2026-11-05T04:52:54.2424180Z git version 2.56.0
+2026-11-05T04:52:54.2442410Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/f7f661d1-a7cc-41b8-9f34-fea79d52eccb/.gitconfig'
+2026-11-05T04:52:54.2453220Z Temporarily overriding HOME='/Users/runner/work/_temp/f7f661d1-a7cc-41b8-9f34-fea79d52eccb' before making global git config changes
+2026-11-05T04:52:54.2454190Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T04:52:54.2456130Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T04:52:54.2636250Z Removing SSH command configuration
+2026-11-05T04:52:54.2647670Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:52:54.2778230Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:52:54.4297130Z Removing HTTP extra header
+2026-11-05T04:52:54.4302910Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:52:54.4399360Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:52:54.6403210Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:52:54.6504230Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:52:54.6807470Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:52:54.9005940Z Cleaning up orphan processes
+2026-11-05T04:52:57.3030140Z Terminate orphan process: pid (2430) (System Events)

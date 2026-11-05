@@ -1,0 +1,23 @@
+1793854326660	geckodriver	INFO	Listening on 127.0.0.1:50570
+1793854326861	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" "/Applications/Firefox. ... nette" "--profile" "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile" "-foreground" "-no-remote"
+1793854327449	Marionette	INFO	Marionette enabled
+2026-11-05 04:52:07.611 Firefox GPU Helper[3370:15047] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-05 04:52:07.761 Firefox GPU Helper[3370:15062] Connection Invalid error for service com.apple.hiservices-xpcservice.
+2026-11-05 04:52:07.761 Firefox GPU Helper[3370:15047] Error received in message reply handler: Connection invalid
+1793854328019	Marionette	INFO	Listening on port 50571
+[GFX1-]: Failed GL context creation for WebRender: 0
+[GFX1-]: Failed to connect WebRenderBridgeChild. isParent=true
+[GFX1-]: Fallback WR to SW-WR
+1793854328261	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+console.error: RSLoader: 
+  Failed to retrieve recipes from Remote Settings
+  Message: Error: Could not sync nimbus-desktop-experiments: backwards-sync
+  Stack:
+    RemoteSettingsSyncError@resource://nimbus/lib/RemoteSettingsExperimentLoader.sys.mjs:1561:5
+updateSyncTimestamps@resource://nimbus/lib/Enrollments.sys.mjs:298:15
+getRecipesFromAllCollections@resource://nimbus/lib/RemoteSettingsExperimentLoader.sys.mjs:686:32
+
+console.error: [Exception... "Component returned failure code: 0x805e0006 (NS_ERROR_CONTENT_BLOCKED) [nsIChannel.asyncOpen]"  nsresult: "0x805e0006 (NS_ERROR_CONTENT_BLOCKED)"  location: "JS frame :: resource:///modules/FaviconLoader.sys.mjs :: load :: line 232"  data: no]
+console.error: [Exception... "Component returned failure code: 0x805e0006 (NS_ERROR_CONTENT_BLOCKED) [nsIChannel.asyncOpen]"  nsresult: "0x805e0006 (NS_ERROR_CONTENT_BLOCKED)"  location: "JS frame :: resource:///modules/FaviconLoader.sys.mjs :: load :: line 232"  data: no]
+1793854364481	Marionette	INFO	Stopped listening on port 50571
+1793854365146	webdriver::server	INFO	Shutting down

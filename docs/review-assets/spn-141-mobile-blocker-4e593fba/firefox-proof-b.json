@@ -1,0 +1,442 @@
+{
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": 41970163073,
+  "job": 127056281582,
+  "attempt": 1,
+  "zip": {
+    "bytes": 453796,
+    "sha256": "6c7798700d51177bf574849b8725ba0776d5b51532a9ac350d66697f536ed5ed"
+  },
+  "members": [
+    {
+      "name": "firefox/3479a293-556b-4fad-b3ee-0a81c6993c11-before-doc-input.png",
+      "bytes": 38952,
+      "sha256": "e94c22e2be36b24c0580134c7ff52ca3dfaaa5a51e1f4ec28163c7d01c1bd78a"
+    },
+    {
+      "name": "firefox/doc-conflict-offline.png",
+      "bytes": 39845,
+      "sha256": "727cd20678a2d678b3ce81c639c6591d9e441d9a5d482408f5ee6906fa5ed27a"
+    },
+    {
+      "name": "firefox/acceptance.json",
+      "bytes": 56443,
+      "sha256": "de932b152996872c5be8ed10808734dfcb7c18787035ad73234055d0068c66f9"
+    },
+    {
+      "name": "firefox/84faf3c7-6fcf-4436-82b9-f36d043175ee-before-doc-input.png",
+      "bytes": 38624,
+      "sha256": "396acfee0701d88a3f5875b32abf4716055493d0edc729a54e741d79594f6c0c"
+    },
+    {
+      "name": "firefox/doc-recovered-copy.png",
+      "bytes": 44143,
+      "sha256": "7882df88885f43702e7b0723e02b60e9fb8a9494e9059ffc372a75dbe59c10a6"
+    },
+    {
+      "name": "firefox/firefox-driver-1.log",
+      "bytes": 1760,
+      "sha256": "ac0cf118194f5aa9dee01f9ef3ccd3fda4b2e40937c7b337763abcbf1811562d"
+    },
+    {
+      "name": "firefox/doc-normal-offline.png",
+      "bytes": 39491,
+      "sha256": "434fc3bf423017f6a1eabcbdd85c367ead127d0eaea727ca148393a6b8881796"
+    },
+    {
+      "name": "firefox/firefox-driver-2.log",
+      "bytes": 2143,
+      "sha256": "349b67472ded99fc97403101d3cb4f4afc7f00b61614d1cd44cd2c7254e47c2d"
+    },
+    {
+      "name": "firefox/firefox-driver-3.log",
+      "bytes": 2269,
+      "sha256": "25bf7c21d92226c7961449bab89ad5f3caa8d208ce481e3d370d3dea2f958c34"
+    },
+    {
+      "name": "firefox/firefox-driver-4.log",
+      "bytes": 2034,
+      "sha256": "3eb557d29a035004b87e9ce92794d90cdcf7a21aab5f6a2e4d68f8536c789ca4"
+    },
+    {
+      "name": "firefox/firefox-storage-prompt-1.json",
+      "bytes": 21974,
+      "sha256": "4b9e6f7fe2ea35c373450ef21ac68a42c8f61daabbbafaa885465908fe03f3e3"
+    },
+    {
+      "name": "firefox/firefox-storage-prompt-1.png",
+      "bytes": 145735,
+      "sha256": "858ca04198dced60ffa97d8cc0cac6eb2cb60ee79366bda3276fe3aef74cfe89"
+    },
+    {
+      "name": "firefox/sheet-conflict-offline.png",
+      "bytes": 51811,
+      "sha256": "dcc7a1757ada5cd71c5a55d4fe56d6ce435ea8326f7581b1520476fe6017cba7"
+    },
+    {
+      "name": "firefox/sheet-normal-offline.png",
+      "bytes": 51421,
+      "sha256": "7893929a1fc2d07cc6b6e0cf8d66443489985705fb3dddad51688cb995a351dd"
+    },
+    {
+      "name": "firefox/sheet-recovered-copy.png",
+      "bytes": 55186,
+      "sha256": "8ec05d2f478796a31609cb40b65587a074aa8e92252928709533de956e663f08"
+    },
+    {
+      "name": "firefox/versions.json",
+      "bytes": 648,
+      "sha256": "b4cb91c8e5ef69b24d4a6d7e4faf36c9f0b3b644e61816f667f75585d517e504"
+    }
+  ],
+  "stageCount": 44,
+  "version": "159.0.1",
+  "launches": [
+    {
+      "pid": 2249,
+      "previous": null,
+      "driver": 2247,
+      "startedAt": "2026-11-05T04:51:23.021Z"
+    },
+    {
+      "pid": 2869,
+      "previous": 2249,
+      "driver": 2868,
+      "startedAt": "2026-11-05T04:51:50.974Z"
+    },
+    {
+      "pid": 3367,
+      "previous": 2869,
+      "driver": 3366,
+      "startedAt": "2026-11-05T04:52:09.879Z"
+    },
+    {
+      "pid": 4287,
+      "previous": 3367,
+      "driver": 4286,
+      "startedAt": "2026-11-05T04:52:49.192Z"
+    }
+  ],
+  "profile": {
+    "mode": "explicit-directory",
+    "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+    "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+    "directoryDevice": "16777231",
+    "directoryInode": "3079455"
+  },
+  "imageProof": [
+    {
+      "item": "1ebb7ade-0cae-4a4c-9387-bf62459305e2",
+      "image": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+      "size": 248
+    },
+    {
+      "item": "1ebb7ade-0cae-4a4c-9387-bf62459305e2",
+      "image": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+      "size": 242
+    },
+    {
+      "item": "1ebb7ade-0cae-4a4c-9387-bf62459305e2",
+      "image": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+      "size": 247
+    },
+    {
+      "item": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+      "image": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+      "size": 248
+    },
+    {
+      "item": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+      "image": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+      "size": 242
+    },
+    {
+      "item": "bc9ac3f2-84c4-46cc-8fe2-f290a4bf1c1b",
+      "image": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+      "size": 247
+    },
+    {
+      "item": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+      "image": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+      "size": 243
+    },
+    {
+      "item": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+      "image": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+      "size": 244
+    },
+    {
+      "item": "84faf3c7-6fcf-4436-82b9-f36d043175ee",
+      "image": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+      "size": 244
+    },
+    {
+      "item": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+      "image": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+      "size": 243
+    },
+    {
+      "item": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+      "image": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+      "size": 244
+    },
+    {
+      "item": "3479a293-556b-4fad-b3ee-0a81c6993c11",
+      "image": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+      "size": 244
+    }
+  ],
+  "unregistration": {
+    "database": "spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+    "operations": [
+      {
+        "elapsedMs": 0,
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T04:52:44.375Z",
+        "status": "passed",
+        "value": {
+          "marker": "inert",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss"
+        }
+      },
+      {
+        "elapsedMs": 1,
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T04:52:44.375Z",
+        "status": "passed",
+        "value": [
+          "https://localhost:8176/"
+        ]
+      },
+      {
+        "elapsedMs": 7,
+        "name": "serviceWorker.unregister:https://localhost:8176/",
+        "startedAt": "2026-11-05T04:52:44.376Z",
+        "status": "passed",
+        "value": true
+      },
+      {
+        "elapsedMs": 1,
+        "name": "verify-unregistered",
+        "startedAt": "2026-11-05T04:52:44.382Z",
+        "status": "passed",
+        "value": {
+          "controller": "https://localhost:8176/service-worker.js",
+          "workers": []
+        }
+      }
+    ],
+    "phase": "unregister",
+    "status": "passed",
+    "timeoutMs": 28000
+  },
+  "handoff": {
+    "name": "storage-loss-tabs-handed-off",
+    "time": "2026-11-05T04:52:44.474Z",
+    "before": [
+      "https://localhost:8176/_desktop-storage-loss"
+    ],
+    "after": [
+      "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+    ],
+    "documents": [
+      {
+        "controller": null,
+        "fresh": true,
+        "marker": "inert",
+        "ready": "complete",
+        "scripts": 0,
+        "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+      }
+    ]
+  },
+  "quiescence": {
+    "database": "spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+    "operations": [
+      {
+        "elapsedMs": 0,
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T04:52:44.478Z",
+        "status": "passed",
+        "value": {
+          "marker": "inert",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+        }
+      },
+      {
+        "elapsedMs": 0,
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T04:52:44.478Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 1,
+        "name": "verify-uncontrolled",
+        "startedAt": "2026-11-05T04:52:44.478Z",
+        "status": "passed",
+        "value": {
+          "controller": null,
+          "workers": []
+        }
+      }
+    ],
+    "phase": "verify",
+    "status": "passed",
+    "timeoutMs": 28000
+  },
+  "deletion": {
+    "database": "spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+    "operations": [
+      {
+        "elapsedMs": 1,
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T04:52:49.232Z",
+        "status": "passed",
+        "value": {
+          "marker": "inert",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+        }
+      },
+      {
+        "elapsedMs": 1,
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T04:52:49.233Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-uncontrolled",
+        "startedAt": "2026-11-05T04:52:49.233Z",
+        "status": "passed",
+        "value": {
+          "controller": null,
+          "workers": []
+        }
+      },
+      {
+        "elapsedMs": 8,
+        "name": "caches.keys",
+        "startedAt": "2026-11-05T04:52:49.233Z",
+        "status": "passed",
+        "value": [
+          "spinel-shell-603ae4b16bb36841"
+        ]
+      },
+      {
+        "elapsedMs": 2,
+        "name": "caches.delete:spinel-shell-603ae4b16bb36841",
+        "startedAt": "2026-11-05T04:52:49.242Z",
+        "status": "passed",
+        "value": true
+      },
+      {
+        "elapsedMs": 1,
+        "name": "localStorage.clear",
+        "startedAt": "2026-11-05T04:52:49.244Z",
+        "status": "passed",
+        "value": 0
+      },
+      {
+        "elapsedMs": 3,
+        "name": "indexedDB.deleteDatabase:spinel-offline-78deba1f-5996-4a30-bf83-6654c8c0c5ed",
+        "startedAt": "2026-11-05T04:52:49.244Z",
+        "status": "passed",
+        "value": null
+      },
+      {
+        "elapsedMs": 1,
+        "name": "verify-service-workers",
+        "startedAt": "2026-11-05T04:52:49.249Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 6,
+        "name": "verify-cache-names",
+        "startedAt": "2026-11-05T04:52:49.249Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 2,
+        "name": "verify-database-names",
+        "startedAt": "2026-11-05T04:52:49.255Z",
+        "status": "passed",
+        "value": [
+          "UniverLocalStorage",
+          "spinel-offline-runtime"
+        ]
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-storage-empty",
+        "startedAt": "2026-11-05T04:52:49.258Z",
+        "status": "passed",
+        "value": {
+          "cacheNames": [],
+          "databases": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ],
+          "localStorageEntries": 0,
+          "workers": []
+        }
+      }
+    ],
+    "phase": "delete",
+    "status": "passed",
+    "timeoutMs": 28000
+  },
+  "exits": [
+    {
+      "name": "browser-stop",
+      "time": "2026-11-05T04:51:47.174Z",
+      "kind": "firefox",
+      "browserPid": 2249,
+      "driverPid": 2247,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-05T04:51:47.174Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-05T04:52:06.620Z",
+      "kind": "firefox",
+      "browserPid": 2869,
+      "driverPid": 2868,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-05T04:52:06.620Z"
+    },
+    {
+      "name": "browser-stop-before-storage-loss",
+      "time": "2026-11-05T04:52:45.357Z",
+      "kind": "firefox",
+      "browserPid": 3367,
+      "driverPid": 3366,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-05T04:52:45.357Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-05T04:52:50.976Z",
+      "kind": "firefox",
+      "browserPid": 4287,
+      "driverPid": 4286,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-05T04:52:50.976Z"
+    }
+  ],
+  "postLoss": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again",
+  "limits": "Full snapshot equality is enforced by inspected exact executed source; raw full snapshots are not retained for independent replay. No browser rerun or older acceptance used.",
+  "result": "passed"
+}

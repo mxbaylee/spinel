@@ -1,0 +1,54 @@
+{
+  "root": 9169,
+  "started": 1793855109403,
+  "elapsedMs": 184,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91552,
+  "peakKiB": 91552,
+  "live": [
+    {
+      "pid": 9169,
+      "parent": 9143,
+      "group": 9169,
+      "rssKiB": 89952,
+      "started": "Wed Nov  4 21:05:09 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/finalize-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/finalize-desktop-a.ts"
+    },
+    {
+      "pid": 9220,
+      "parent": 9169,
+      "group": 9169,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:05:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 9169,
+      "parent": 9143,
+      "group": 9169,
+      "rssKiB": 89952,
+      "started": "Wed Nov  4 21:05:09 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-hosted/finalize-desktop-a-watchdog.json node /tmp/spn141-after144-hosted/finalize-desktop-a.ts"
+    },
+    {
+      "pid": 9188,
+      "parent": 9169,
+      "group": 9169,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:05:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 9220,
+      "parent": 9169,
+      "group": 9169,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:05:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

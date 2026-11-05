@@ -1,0 +1,56 @@
+{
+  "reviewer": "/root/spn120_review_a",
+  "independent": true,
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": 41970163073,
+  "attempt": 1,
+  "job": 127056281513,
+  "artifact": 13389144445,
+  "terminalJob": "success",
+  "owner": "native-safari",
+  "accepted": true,
+  "overallMergeApproved": false,
+  "findings": [],
+  "zip": {
+    "bytes": 768449,
+    "sha256": "327503bba223f47926ef1ff9f6f697b33f85415c1d9d1c06680ce676344bdb4b"
+  },
+  "members": 17,
+  "stages": 46,
+  "imagesInspected": 12,
+  "nativeTabCount": 1,
+  "usefulImages": [
+    "safari/safari/sheet-normal-offline.png",
+    "safari/safari/doc-recovered-copy.png",
+    "safari/safari-profile-probe-offline.png"
+  ],
+  "watchdog": {
+    "elapsedMs": 251,
+    "peakKiB": 93024,
+    "pressure": 1,
+    "firstExecution": true
+  },
+  "diagnostics": [
+    {
+      "kind": "optional-consent-screenshot",
+      "result": "SIGTERM; no PNG; recognized/approved dialog and title request1 preserved"
+    },
+    {
+      "kind": "optional-automation-log",
+      "result": "SIGTERM; sourceComplete=false; truncated=true;28 lines5323bytes retained"
+    }
+  ],
+  "limitations": [
+    "No storage persistence grant; no physical eviction/reclamation simulation.",
+    "One actual tab; multi-tab failures covered by deterministic controls.",
+    "Complete snapshots equality witnessed by executed source assertions; raw snapshots not separately exported.",
+    "No physical keyboard/IME coverage or historical cause proof.",
+    "SPN-140 constructor outcome remains separate.",
+    "Ordinary current-source gates and final publication/merge guards remain required."
+  ],
+  "proof": "safari-proof-a.json",
+  "report": "safari-acceptance-a.md"
+}

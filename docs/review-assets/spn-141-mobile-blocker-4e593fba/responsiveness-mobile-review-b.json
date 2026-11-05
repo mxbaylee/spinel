@@ -1,0 +1,376 @@
+{
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": 41970163093,
+  "attempt": 1,
+  "job": 127056548327,
+  "artifact": 13391071739,
+  "accepted": false,
+  "blocked": true,
+  "owner": "SPN-146",
+  "result": "two genuine current first-attempt capacity maximum failures",
+  "counts": {
+    "baselinePassed": 4,
+    "candidatePassed": 5,
+    "candidateFailed": 2,
+    "retries": 0,
+    "members": 23,
+    "metrics": 8
+  },
+  "failures": [
+    {
+      "sample": "plain-1",
+      "capacityIndex": 61,
+      "ordinal": 62,
+      "reason": "capacity",
+      "startedAt": 143736.09999999986,
+      "durationMs": 116.5,
+      "history": 32,
+      "collaboration": 32,
+      "endedAt": 143852.59999999986,
+      "native": [
+        {
+          "sequence": 185,
+          "unitId": "448d2011-9226-480d-b2b6-39cb71926ba9",
+          "phase": "history",
+          "origin": "policy-capacity",
+          "startedAt": 143736.09999999986,
+          "endedAt": 143793,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "outcome": "returned",
+          "epoch": "7e026139-98e0-43bf-80a7-ed8151d189c5",
+          "generation": "448d2011-9226-480d-b2b6-39cb71926ba9:1793855718049.8:1267.8000000000466:1",
+          "completedStates": 1984
+        },
+        {
+          "sequence": 186,
+          "unitId": "448d2011-9226-480d-b2b6-39cb71926ba9",
+          "phase": "collaboration",
+          "origin": "policy-capacity",
+          "startedAt": 143793,
+          "endedAt": 143852.59999999986,
+          "before": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "7e026139-98e0-43bf-80a7-ed8151d189c5",
+          "generation": "448d2011-9226-480d-b2b6-39cb71926ba9:1793855718049.8:1267.8000000000466:1",
+          "completedStates": 1984
+        },
+        {
+          "sequence": 184,
+          "unitId": "448d2011-9226-480d-b2b6-39cb71926ba9",
+          "phase": "pair",
+          "origin": "policy-capacity",
+          "startedAt": 143736.09999999986,
+          "endedAt": 143852.59999999986,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "7e026139-98e0-43bf-80a7-ed8151d189c5",
+          "generation": "448d2011-9226-480d-b2b6-39cb71926ba9:1793855718049.8:1267.8000000000466:1",
+          "completedStates": 1984
+        }
+      ],
+      "neighbors": [
+        {
+          "reason": "capacity",
+          "startedAt": 137156.30000000005,
+          "durationMs": 8,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 140532.19999999995,
+          "durationMs": 10.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 143736.09999999986,
+          "durationMs": 116.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 147126.5,
+          "durationMs": 9.099999999860302,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 150512.19999999995,
+          "durationMs": 10.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        }
+      ],
+      "longTasks": [
+        {
+          "startedAt": 143732.09999999986,
+          "durationMs": 197
+        }
+      ],
+      "longTaskShape": {
+        "startedAt": 2378.899999999907,
+        "durationMs": 80
+      },
+      "timingComplete": true,
+      "completed": null,
+      "finalReloads": [],
+      "profilePresent": false
+    },
+    {
+      "sample": "plain-3",
+      "capacityIndex": 16,
+      "ordinal": 17,
+      "reason": "capacity",
+      "startedAt": 25117.899999999907,
+      "durationMs": 122.30000000004657,
+      "history": 32,
+      "collaboration": 32,
+      "endedAt": 25240.199999999953,
+      "native": [
+        {
+          "sequence": 50,
+          "unitId": "56d18669-0183-4830-9256-3ed2697e0d8a",
+          "phase": "history",
+          "origin": "policy-capacity",
+          "startedAt": 25117.899999999907,
+          "endedAt": 25185.199999999953,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "outcome": "returned",
+          "epoch": "0258a422-02ee-48a2-a4ae-72a3f2e85b4f",
+          "generation": "56d18669-0183-4830-9256-3ed2697e0d8a:1793856065790.1:1194.3999999999069:1",
+          "completedStates": 544
+        },
+        {
+          "sequence": 51,
+          "unitId": "56d18669-0183-4830-9256-3ed2697e0d8a",
+          "phase": "collaboration",
+          "origin": "policy-capacity",
+          "startedAt": 25185.199999999953,
+          "endedAt": 25239.399999999907,
+          "before": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "0258a422-02ee-48a2-a4ae-72a3f2e85b4f",
+          "generation": "56d18669-0183-4830-9256-3ed2697e0d8a:1793856065790.1:1194.3999999999069:1",
+          "completedStates": 544
+        },
+        {
+          "sequence": 49,
+          "unitId": "56d18669-0183-4830-9256-3ed2697e0d8a",
+          "phase": "pair",
+          "origin": "policy-capacity",
+          "startedAt": 25117.899999999907,
+          "endedAt": 25239.399999999907,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "epoch": "0258a422-02ee-48a2-a4ae-72a3f2e85b4f",
+          "generation": "56d18669-0183-4830-9256-3ed2697e0d8a:1793856065790.1:1194.3999999999069:1",
+          "completedStates": 544
+        }
+      ],
+      "neighbors": [
+        {
+          "reason": "capacity",
+          "startedAt": 21842.09999999986,
+          "durationMs": 7.199999999953434,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 23528.299999999814,
+          "durationMs": 8,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 25117.899999999907,
+          "durationMs": 122.30000000004657,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 26941.5,
+          "durationMs": 8.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 28498.799999999814,
+          "durationMs": 8.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        }
+      ],
+      "longTasks": [
+        {
+          "startedAt": 25114.5,
+          "durationMs": 177
+        }
+      ],
+      "longTaskShape": {
+        "startedAt": 2333.6999999999534,
+        "durationMs": 76
+      },
+      "timingComplete": true,
+      "completed": null,
+      "finalReloads": [],
+      "profilePresent": false
+    }
+  ],
+  "comparison": {
+    "present": false,
+    "accepted": false,
+    "reason": "skipped after candidate failure"
+  },
+  "allRawIntegrityVerified": true,
+  "remainingSemanticWitnessesVerified": true,
+  "failedSampleProfileAvailable": false,
+  "causalAttribution": "unknown",
+  "cleanupLimitation": "finally awaited fixture closure; detach catches errors and no independent cleanup journal",
+  "overallMergeApproval": false,
+  "noRerunPerformed": true,
+  "evidence": [
+    {
+      "file": "responsiveness-mobile-review-b.md",
+      "bytes": 9218,
+      "sha256": "0e615f00d73ce0c6fa7968fcd055510e8258ec86d077c748a107883244d26729"
+    },
+    {
+      "file": "responsiveness-mobile-members-b.json",
+      "bytes": 8091,
+      "sha256": "3cab9b247dc8a8f951bf51931939be709abc0b5b5c4debcc7d7327a5aa5d64d0"
+    },
+    {
+      "file": "responsiveness-mobile-proof-b.json",
+      "bytes": 146440,
+      "sha256": "662f8de50ed2e112604340294a89ca3840cb01770c2a9375e2989dc8df3e12a9"
+    },
+    {
+      "file": "responsiveness-mobile-semantic-b.json",
+      "bytes": 10250,
+      "sha256": "e5a3c81d3b666a8273f8518516d90cd4643b61dfb6083d2924ed26b512bc6bd4"
+    },
+    {
+      "file": "responsiveness-mobile-failures-b.json",
+      "bytes": 6707,
+      "sha256": "8b384f7069a4e7b28bfbecc35556e462c877357cfff6512d742f054ece57f0f7"
+    },
+    {
+      "file": "responsiveness-mobile-native-spans-b.json",
+      "bytes": 548261,
+      "sha256": "35fd5ea0b4f6c115fb56e6f93653f07776343e5bea2d1f71ac53cfd40c263d92"
+    },
+    {
+      "file": "responsiveness-mobile-job.json",
+      "bytes": 4223,
+      "sha256": "542f43a77634c9b3165a2a1892e97cc807365e45a02c0efce9d500a7a37b3a1d"
+    },
+    {
+      "file": "responsiveness-mobile-job.log",
+      "bytes": 87743,
+      "sha256": "8210deb5e3c1b7b15023af51dcd110ad93a4e6d0e3243a39d0211e5bb0b7048c"
+    },
+    {
+      "file": "responsiveness-mobile-artifact.json",
+      "bytes": 795,
+      "sha256": "046ad830fa887347a8190421ec9aec2602b9bf0baddff2994005044f645403cb"
+    },
+    {
+      "file": "retain-responsiveness-mobile-b.ts",
+      "bytes": 2867,
+      "sha256": "be12ec9f4fb9f8114ca531914e8c440381782ff801f97292392d1fe1aa4de692"
+    },
+    {
+      "file": "retain-responsiveness-mobile-b.log",
+      "bytes": 203,
+      "sha256": "35f9616129bc439acb98529070c633927c5f6c941218100904403aa5d6fe3ffd"
+    },
+    {
+      "file": "retain-responsiveness-mobile-b-watchdog.json",
+      "bytes": 1627,
+      "sha256": "43d476a3fe4cfbc23a0078c58df70c16d5bab4661e38ab9fde42671760843e0a"
+    },
+    {
+      "file": "audit-responsiveness-mobile-b.ts",
+      "bytes": 9521,
+      "sha256": "64b12abc81ce7c41e5326122f63250f10442dda75837ca4089b769c09141edaa"
+    },
+    {
+      "file": "audit-responsiveness-mobile-b.log",
+      "bytes": 3256,
+      "sha256": "2b239b5390192a80fe18a04df47093db33911f8f27c047c60552fb5cba13e45d"
+    },
+    {
+      "file": "audit-responsiveness-mobile-b-watchdog.json",
+      "bytes": 2617,
+      "sha256": "b9dd64bdd64242594549ed79870b27840eb18d0224d00330c9c1a71904ce68d8"
+    },
+    {
+      "file": "audit-responsiveness-mobile-semantic-b.ts",
+      "bytes": 3984,
+      "sha256": "3d0970ffd03ac624b3fe9261edf4c8889436077376fa5c29821ad3eed541008b"
+    },
+    {
+      "file": "audit-responsiveness-mobile-semantic-b.log",
+      "bytes": 190,
+      "sha256": "b34190bac1a1a68bbf4c5c772a2b28adfc4fb30bf865cc6b9fe2b7cf666bac7b"
+    },
+    {
+      "file": "audit-responsiveness-mobile-semantic-b-watchdog.json",
+      "bytes": 1659,
+      "sha256": "f8f0c4fac2c1ae9ab68e8fca6d9735bee19a830ec8b384e7dd73c14acacbb7b0"
+    }
+  ]
+}

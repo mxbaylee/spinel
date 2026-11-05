@@ -1,0 +1,172 @@
+{
+  "reviewer": "B, independent nonimplementing",
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "accepted": false,
+  "mergeApproval": false,
+  "blocked": true,
+  "publicationReviewPassed": true,
+  "publicationCompleted": false,
+  "unchangedRerunAuthorized": false,
+  "remainingOwner": "SPN-146",
+  "ci": {
+    "run": 41970163093,
+    "attempt": 1,
+    "success": 31,
+    "failed": 2,
+    "failedJobs": [
+      127056548327,
+      127069617826
+    ],
+    "requiredGatesPassed": 6,
+    "totalRequiredGates": 7
+  },
+  "storybook": {
+    "run": 41970163084,
+    "attempt": 2,
+    "accepted": true,
+    "success": 8,
+    "inapplicableSkippedPages": 2,
+    "firstFailurePreserved": true,
+    "singleAllowanceExhausted": true
+  },
+  "native": {
+    "run": 41970163073,
+    "attempt": 1,
+    "ownersPassed": 3
+  },
+  "findings": [],
+  "publicationConditions": [
+    "Both final independent blocked-readiness reports present",
+    "Immutable orphan archive/tag built and independently remote payload-verified",
+    "Archive URL/count/image-prefix placeholders replaced before posting",
+    "Concrete posted receipt read back once and separate triggered metadata cancellation terminally retained"
+  ],
+  "rootWritesComplete": true,
+  "evidence": [
+    {
+      "file": "README.md",
+      "bytes": 14155,
+      "sha256": "e6487e6dbab7afb5478d01c5f8b9669bf48d658daa0ffdcb4e470c1b435b39bc"
+    },
+    {
+      "file": "pr-body-draft.md",
+      "bytes": 14229,
+      "sha256": "08532f9270a0e669d87b3752db5a4fa6b4aecdab5296377c02066351c993b591"
+    },
+    {
+      "file": "archive-build.ts",
+      "bytes": 8719,
+      "sha256": "0b310c4be91729f4ab0bed25428c9b53c5b9dfa00f83d925e01c8537cb151034"
+    },
+    {
+      "file": "ci-run.json",
+      "bytes": 12183,
+      "sha256": "132a5e33522a1163ced828bccd49cb5079c3e49d2472726cb81f8507bf7238cf"
+    },
+    {
+      "file": "ci-jobs.json",
+      "bytes": 101701,
+      "sha256": "248205c27092ef57329b295a06d8c9a6bd12663b11f83f4351bd4c5f9cfa7fc8"
+    },
+    {
+      "file": "required-gates.json",
+      "bytes": 1281,
+      "sha256": "eed4c2e35243f783852f18caa543b79946c02f622942d4af094cb76405e5c106"
+    },
+    {
+      "file": "native-run.json",
+      "bytes": 12208,
+      "sha256": "f33845912f3513981456fcca852c77620a2da815c3145e0aebbfb7ed22fdf0d9"
+    },
+    {
+      "file": "native-jobs.json",
+      "bytes": 10092,
+      "sha256": "bd7237732042f3e55389ec96df5107d01f5bffb9a552840b697a0aeb9f2ecdd3"
+    },
+    {
+      "file": "storybook-run.json",
+      "bytes": 12275,
+      "sha256": "a5dcad15a2239236bd74e16632f213aaa31b4aa7632a1beb4178fe56647351c1"
+    },
+    {
+      "file": "storybook-jobs.json",
+      "bytes": 24563,
+      "sha256": "55d0bfcf753792018e0c9d49d7dd4544530fc73e9a4c976e4239f44253918cdb"
+    },
+    {
+      "file": "storybook-retry-review-b.md",
+      "bytes": 5004,
+      "sha256": "909710211b2328706ff5620c2f74370b8fb422f248c77bea756e361cc07cc767"
+    },
+    {
+      "file": "storybook-retry-review-b.json",
+      "bytes": 5710,
+      "sha256": "c373f1f6aa3b722aba36b0f3f6448246c2eea8cf208a1f33a9c64376ffba5552"
+    },
+    {
+      "file": "responsiveness-mobile-review-b.md",
+      "bytes": 9218,
+      "sha256": "0e615f00d73ce0c6fa7968fcd055510e8258ec86d077c748a107883244d26729"
+    },
+    {
+      "file": "responsiveness-mobile-review-b.json",
+      "bytes": 11386,
+      "sha256": "93e032bc3e7311f59425d853b99880795413838c8c82d6f0b96fbab3028aa47b"
+    },
+    {
+      "file": "firefox-acceptance-b.md",
+      "bytes": 6427,
+      "sha256": "80d6a599aadac4d61b86144cc3db2a04c5879ae705ea9a85ad065f9c8e26ed28"
+    },
+    {
+      "file": "mobile-review-b.md",
+      "bytes": 8506,
+      "sha256": "ca644bbdafe870243bcceb792fcac73c5c44fe3f87db8547d6854aaa83bf607c"
+    },
+    {
+      "file": "desktop-review-a.md",
+      "bytes": 7283,
+      "sha256": "19300a591e03d30d903dc37f331794d099c095372f43b57c78e654e9ef8d9639"
+    },
+    {
+      "file": "responsiveness-desktop-review-a.md",
+      "bytes": 8369,
+      "sha256": "1249b3319769b993828b4004d820046ea5f3e6d90753d086448fc7ec7e54cd05"
+    },
+    {
+      "file": "chrome-acceptance-a.md",
+      "bytes": 7319,
+      "sha256": "d4c9f2a011166f07c16be4d8fd19ef32ad22a0798be5f1c98c3b503b4ff5dd85"
+    },
+    {
+      "file": "safari-acceptance-a.md",
+      "bytes": 9412,
+      "sha256": "29cac9f5a2ca20c5e447d8a159404a1644017501194886bdac77e5d9f17fff11"
+    },
+    {
+      "file": "blocked-ci-proof-a.json",
+      "bytes": 14362,
+      "sha256": "73b50606ef1d2235e8907dbcb1c49fd42342aead7da42e49b48d14c57ae27e11"
+    },
+    {
+      "file": "blocked-readiness-b.md",
+      "bytes": 7237,
+      "sha256": "a963b89f08fb5c46b3a867de21c8f45fdd630e71d99dce4b814f1052b9038b4c"
+    }
+  ],
+  "externalReadback": [
+    {
+      "path": "/tmp/spn141-after144-final-body.md",
+      "bytes": 14229,
+      "sha256": "08532f9270a0e669d87b3752db5a4fa6b4aecdab5296377c02066351c993b591"
+    },
+    {
+      "path": "/tmp/spn141-after144-blocked-build.ts",
+      "bytes": 8719,
+      "sha256": "0b310c4be91729f4ab0bed25428c9b53c5b9dfa00f83d925e01c8537cb151034"
+    }
+  ]
+}

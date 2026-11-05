@@ -1,0 +1,11 @@
+# 🔁 SPN-141 Storybook provisioning disposition
+
+Source `4e593fbaf9ea89585920053b9415f9a8eac0944f`, run `41970163084`, attempt 1, desktop-light job `127056809749` failed before application checks. The hosted image's Microsoft Ubuntu 24.04 package repository returned HTTP 403 while `npx playwright install --with-deps chromium` refreshed apt metadata. Apt exited 100; the wrapper exited 1. Ubuntu archive requests succeeded. The icon and story checks never started. Missing-files upload errors and aggregate job `127060009081` failure are consequences, not independent application assertions. Four sibling viewport checks passed on this source.
+
+The original run, all jobs, failing owner and aggregate logs are retained. The infrastructure-only retry allowance in `docs/run-backlog.md` applies. Prospectively allow exactly one failed-jobs-only rerun, including its dependent aggregate. Keep unchanged source, configuration, assertions and deadlines. Do not rerun successful CI/native owners or whole Storybook merely to obtain a green sample. This is attempt 2 infrastructure recovery, not first-attempt Storybook acceptance; the previously unexecuted desktop-light assertions must actually pass. A repeated provisioning failure or any application assertion failure requires a new investigation, not another unchanged retry.
+
+Parent and independent reviewer B separately inspected the original failure. Independent detailed assessment is retained alongside this plan. No application or dependency source change is proposed.
+
+The desktop-dark sibling fetched the same Microsoft InRelease successfully at 04:52:13 UTC. Its image `20261101.360.1` differs from the failing runner's `20261025.353.1`; this is supporting evidence for one diagnostic infrastructure retry, not proof of identical runners or the HTTP 403's underlying cause. The failed-jobs-only rerun API accepted the request. No second allowance is granted.
+
+The failed runner's setup banner and helper environment are themselves inconsistent: the latter reports `ImageVersion=20261026.354.1`. Preserve both rather than choosing one canonical image. Attempt2 API snapshots assign new IDs to carried successful sibling results; their actual start/end/step times remain those of attempt1. Final reconciliation must retain this mapping and distinguish it from the new desktop-light execution beginning05:15:12UTC.

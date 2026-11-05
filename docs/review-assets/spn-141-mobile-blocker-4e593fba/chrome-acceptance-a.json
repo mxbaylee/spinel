@@ -1,0 +1,44 @@
+{
+  "reviewer": "/root/spn120_review_a",
+  "independent": true,
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": 41970163073,
+  "attempt": 1,
+  "job": 127056281012,
+  "artifact": 13389835263,
+  "terminalJob": "success",
+  "owner": "native-chrome",
+  "accepted": true,
+  "overallMergeApproved": false,
+  "findings": [],
+  "zip": {
+    "bytes": 229104,
+    "sha256": "c86ad2984f304f7132e01600649c716bccf50a35ffc4362068cb3bbaf62b39b5"
+  },
+  "members": 14,
+  "stages": 44,
+  "imagesInspected": 8,
+  "nativeTabCount": 1,
+  "usefulImages": [
+    "chrome/chrome/sheet-normal-offline.png",
+    "chrome/chrome/doc-recovered-copy.png"
+  ],
+  "watchdog": {
+    "elapsedMs": 198,
+    "peakKiB": 93024,
+    "pressure": 1,
+    "firstExecution": true
+  },
+  "limitations": [
+    "Full snapshot equality is witnessed by executed source assertions; report retains hashes rather than complete snapshots.",
+    "One actual tab; multi-tab negatives are local deterministic controls.",
+    "Real native deletion APIs are not a spontaneous disk-eviction experiment.",
+    "No historical cause, future reliability or application performance guarantee.",
+    "Other native owners and current-head ordinary gates require separate acceptance."
+  ],
+  "proof": "chrome-proof-a.json",
+  "report": "chrome-acceptance-a.md"
+}

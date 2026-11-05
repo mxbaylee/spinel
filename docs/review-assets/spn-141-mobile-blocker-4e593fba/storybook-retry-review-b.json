@@ -1,0 +1,184 @@
+{
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "tree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "run": 41970163084,
+  "attempt": 2,
+  "accepted": true,
+  "firstAttemptPreserved": true,
+  "failedJobsOnly": true,
+  "carriedSiblingTimestampsVerified": true,
+  "firstAttemptSuccess": false,
+  "overallMergeApproval": false,
+  "retryAllowanceExhausted": true,
+  "blockers": [],
+  "newWorker": 127064750723,
+  "newAggregate": 127067720030,
+  "carriedJobCount": 6,
+  "lightChecks": 1041,
+  "additionalInteractionChecks": 13,
+  "iconChecks": 42,
+  "captures": 0,
+  "artifacts": [
+    {
+      "id": 13390553613,
+      "name": "storybook-check-desktop-light",
+      "bytes": 16350,
+      "sha256": "1f73ec7fe17e56afdabd38785870f591359b967f04f18f19a85758c0810463f5",
+      "members": [
+        {
+          "file": "controls-semantics-light.txt",
+          "bytes": 373,
+          "sha256": "174bc49604b97c3ea658d5671befd6c308d5281cca1d460a36595ab6fcc87cde"
+        },
+        {
+          "file": "manifest.json",
+          "bytes": 140859,
+          "sha256": "d9039faa4ae2e42733ed7208baa826a1ad71cc458bca6df46c146706588dc766"
+        },
+        {
+          "file": "bundle-size.json",
+          "bytes": 193,
+          "sha256": "16dfb9318334eb3760ae78541f585575582ed431000fd66f1803c0afc7cb3de5"
+        }
+      ]
+    },
+    {
+      "id": 13390113505,
+      "name": "entity-icon-checks",
+      "bytes": 509,
+      "sha256": "3c62ed35048f307659b9239efb7f8dda7bc0cb3772b3b246ff9232464e0f64a5",
+      "members": [
+        {
+          "file": "manifest.json",
+          "bytes": 3611,
+          "sha256": "4e7d3e59e598e95a6a5e644e38307bdc2f7291f75b37f8fc045d91595bf764d1"
+        }
+      ]
+    }
+  ],
+  "skippedPages": [
+    {
+      "id": 127064787467,
+      "name": "Publish PR preview to GitHub Pages",
+      "started": "2026-11-05T05:15:15Z",
+      "completed": "2026-11-05T04:51:04Z",
+      "notExecutedTest": true
+    },
+    {
+      "id": 127067836188,
+      "name": "Deploy to GitHub Pages",
+      "started": "2026-11-05T05:24:12Z",
+      "completed": "2026-11-05T05:24:12Z",
+      "notExecutedTest": true
+    }
+  ],
+  "evidence": [
+    {
+      "file": "storybook-retry-review-b.md",
+      "bytes": 5004,
+      "sha256": "909710211b2328706ff5620c2f74370b8fb422f248c77bea756e361cc07cc767"
+    },
+    {
+      "file": "storybook-provisioning-b.md",
+      "bytes": 5721,
+      "sha256": "39069475156814c399e00603ae336a6389fd07f15d77515f7850243ceee7cb7d"
+    },
+    {
+      "file": "storybook-provisioning-b.json",
+      "bytes": 3491,
+      "sha256": "602a764829dce6bee3a589b0121a18d6ee36f1adcd46d8f00f802296700340de"
+    },
+    {
+      "file": "storybook-provisioning-run.json",
+      "bytes": 12197,
+      "sha256": "6f7364b92d3bc6ce863d5ec789c2ad2f8054b40511d5b9582a53b2b36bb93eb1"
+    },
+    {
+      "file": "storybook-provisioning-jobs.json",
+      "bytes": 24545,
+      "sha256": "01f509cbe2af94658c9f8e290af17f733c57c417d5a3606bff431d8966f9214b"
+    },
+    {
+      "file": "storybook-provisioning-job.log",
+      "bytes": 26833,
+      "sha256": "4393e667cab4c1a9e9fc3aae1c82ac64ce5c24c75e3eff03fd09ec8d9a039aa9"
+    },
+    {
+      "file": "storybook-provisioning-aggregate.log",
+      "bytes": 18719,
+      "sha256": "f0b3226757205e52d293f4b04386e7e6ec101a36b190ddb8b078e4a1804daee9"
+    },
+    {
+      "file": "storybook-retry-plan.md",
+      "bytes": 2372,
+      "sha256": "2a117bf085975921d4d213f96fd9ceed80af21939bc70affd1b61e19f706e899"
+    },
+    {
+      "file": "storybook-retry-start.json",
+      "bytes": 12272,
+      "sha256": "5a2b534bcc94515e4340f955aeeca0ec5afbe16f2a581facf45eff6bd648dd49"
+    },
+    {
+      "file": "storybook-run.json",
+      "bytes": 12275,
+      "sha256": "a5dcad15a2239236bd74e16632f213aaa31b4aa7632a1beb4178fe56647351c1"
+    },
+    {
+      "file": "storybook-jobs.json",
+      "bytes": 24563,
+      "sha256": "55d0bfcf753792018e0c9d49d7dd4544530fc73e9a4c976e4239f44253918cdb"
+    },
+    {
+      "file": "storybook-retry-light-job.json",
+      "bytes": 3264,
+      "sha256": "f84cac5481a05be3bf84097d724835daac9830b4f5f50c5ede82200c9b606c06"
+    },
+    {
+      "file": "storybook-retry-light-job.log",
+      "bytes": 137483,
+      "sha256": "ce2c851ea81da7e0a21c1e26ba377b0291b2317db502cb1118895a7f48933acd"
+    },
+    {
+      "file": "storybook-retry-aggregate-job.json",
+      "bytes": 2227,
+      "sha256": "a54a75c861cb55629cee0e3144f600370acab2d29eaa27964428354caee2b771"
+    },
+    {
+      "file": "storybook-retry-aggregate.log",
+      "bytes": 17858,
+      "sha256": "e2c93095106aa25cb8538c4bf462defe2c30691112499ba3204709a2365464bf"
+    },
+    {
+      "file": "storybook-retry-artifacts.json",
+      "bytes": 5001,
+      "sha256": "57dc3498e8b1a348eea84f0ce67315585a7bff077d9c737bd4ca7651407fdc17"
+    },
+    {
+      "file": "storybook-retry-carried-mapping-b.json",
+      "bytes": 19698,
+      "sha256": "8cada106bb62ac3d2e727f27f958cf0dd0878e8ede13d8df73dce26464da7295"
+    },
+    {
+      "file": "storybook-retry-proof-b.json",
+      "bytes": 30434,
+      "sha256": "4d03d264773cf59e30d4aa10f0b93a0eba6aeb2220a9d04550754da2d5eb95e0"
+    },
+    {
+      "file": "audit-storybook-retry-b.ts",
+      "bytes": 5319,
+      "sha256": "162eb87c560f63e546b74f6fe32983683dfae6c300becf2c8e2feadf509310d5"
+    },
+    {
+      "file": "audit-storybook-retry-b.log",
+      "bytes": 216,
+      "sha256": "ce80182051706fc0003f885efd478efb5770379a03200411dd79036e444b52ea"
+    },
+    {
+      "file": "audit-storybook-retry-b-watchdog.json",
+      "bytes": 1599,
+      "sha256": "7640225604bd6f5049159173b4e50a1b27a233b8778cbeb55f26085f57107d13"
+    }
+  ]
+}

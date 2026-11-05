@@ -1,0 +1,20 @@
+{
+  "id": 13389454269,
+  "node_id": "MDg6QXJ0aWZhY3QxMzM4OTQ1NDI2OQ==",
+  "name": "doc-callback-lifetimes-mobile",
+  "size_in_bytes": 174312312,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13389454269",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13389454269/zip",
+  "expired": false,
+  "digest": "sha256:0760921faa5ae5eaa04b6faf0f8fa41806df4cc12f05617a48e3b7461662ef7c",
+  "created_at": "2026-11-05T05:04:15Z",
+  "updated_at": "2026-11-05T05:04:15Z",
+  "expires_at": "2026-11-12T05:04:06Z",
+  "workflow_run": {
+    "id": 41970163093,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-141-storage-quiescence",
+    "head_sha": "4e593fbaf9ea89585920053b9415f9a8eac0944f"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "artifact": 13389838658,
+  "zip": "Connected GitHub artifact download, then downloaded returned archive URL; expected byte/hash verification follows.",
+  "log": "Connected GitHub job log saved as text; normalized final newline only.",
+  "metadata": "GitHub CLI read-only REST artifact/job endpoints for full payloads unavailable from connector job-steps tool.",
+  "firstConnectorRequest": "Schema validation rejected repository_full_name before dispatch; corrected to repo_full_name. No runtime execution or retry occurred."
+}
