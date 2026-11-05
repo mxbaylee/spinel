@@ -136,12 +136,12 @@ function managerFixture(
   const timers = clock();
   const contextCore = {
     ...core,
-    getBodySliceForSplitTextXAction: (
-      ...args: Parameters<typeof core.getBodySliceForSplitTextXAction>
-    ) => {
-      costs.bodySlice?.();
-      return core.getBodySliceForSplitTextXAction(...args);
-    },
+    getBodySliceForSplitTextXAction: costs.bodySlice
+      ? (...args: Parameters<typeof core.getBodySliceForSplitTextXAction>) => {
+          costs.bodySlice!();
+          return core.getBodySliceForSplitTextXAction(...args);
+        }
+      : core.getBodySliceForSplitTextXAction,
     Inject: () => () => {},
     Optional: () => () => {},
   };
@@ -476,11 +476,16 @@ function flush(
   raw = false,
   counts?: { bodySlices: number },
 ) {
-  const fixture = managerFixture(source, {
-    bodySlice: () => {
-      if (counts) counts.bodySlices++;
-    },
-  });
+  const fixture = managerFixture(
+    source,
+    counts
+      ? {
+          bodySlice: () => {
+            counts.bodySlices++;
+          },
+        }
+      : {},
+  );
   try {
     // Native caches are distinct arrays even when their state objects coincide.
     const inputCache = { history: [...history], collaboration: [...collaboration] };

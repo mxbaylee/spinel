@@ -175,3 +175,33 @@ candidate on97d, so its source field is the predecessor, not a committed candida
 or hosted identity. Source hashes in the retained manifest bind the actual local
 files. No browser observation or converter ran. Existing application chunk-size
 and mixed static/dynamic import warnings remain warnings, not new failures.
+
+## 🛠️ Review finding: bind the native function when counters are absent
+
+Both independent reviews withheld candidate8872c05c at94/100. Its fixture always
+wrapped the public slicer, even without a counter, and the component builder
+copies that fixture into the timed bundle. This introduced candidate-only
+test-wrapper overhead. Production bytes were correct, but the native timing
+boundary was not ready for publication. No8872 runtime experiment was executed.
+
+The repair binds the exact Core export unless an actual slice counter is supplied;
+ordinary flush callers likewise omit the counting callback. The nine affected
+complete-module, linear-copy, single-clone, installer and hash controls passed
+19,595ms/568,352KiB. Full lint passed16,978ms/731,824KiB. Bundle preparation passed
+1,591ms/574,992KiB,4,465,453bytes/888modules; its source field names dirty8872,
+not a committed source identity. Production bytes remain exactly unchanged.
+
+The repeated full-project typecheck was **resource-aborted** when macOS pressure
+became2: first observed violation5,074ms/1,418,960KiB, retained peak1,601,648KiB.
+It is not a pass. An overlapping bundle admission was refused at pressure2 before
+execution; the later normal-pressure bundle preparation above is its first actual
+execution. After pressure returned to normal, the changed fixture root and its
+import graph passed the unchanged repository compiler options in311ms; sampled
+owned peak90,448KiB does not establish an instantaneous native compiler peak.
+Original full-project types passed before this test-only binding repair; current
+full-project acceptance remains hosted. No memory/deadline ceiling was relaxed.
+
+The initial51-payload manifest is explicitly bound to8872. A separate binding
+repair manifest retains both rejected reviews, the first pressure abort, focused
+scope/config, repaired checks and current source bindings. Both reviewers must
+regrade the final committed repair before publication; old94 grades do not pass.
