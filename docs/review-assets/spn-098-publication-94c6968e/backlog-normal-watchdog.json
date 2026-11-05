@@ -1,0 +1,70 @@
+{
+  "root": 73560,
+  "started": 1793879420955,
+  "elapsedMs": 327,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92816,
+  "peakKiB": 92816,
+  "live": [
+    {
+      "pid": 73560,
+      "parent": 73534,
+      "group": 73560,
+      "rssKiB": 91296,
+      "started": "Thu Nov  5 03:50:20 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn098-takeover/backlog-normal-watchdog.json npm run backlog:check"
+    },
+    {
+      "pid": 73636,
+      "parent": 73560,
+      "group": 73560,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 73560,
+      "parent": 73534,
+      "group": 73560,
+      "rssKiB": 91296,
+      "started": "Thu Nov  5 03:50:20 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn098-takeover/backlog-normal-watchdog.json npm run backlog:check"
+    },
+    {
+      "pid": 73579,
+      "parent": 73560,
+      "group": 73560,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 73605,
+      "parent": 73560,
+      "group": 73560,
+      "rssKiB": 0,
+      "started": "Thu Nov  5 03:50:20 2026",
+      "command": "<defunct>"
+    },
+    {
+      "pid": 73623,
+      "parent": 73560,
+      "group": 73560,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 73636,
+      "parent": 73560,
+      "group": 73560,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,6 @@
+
+> typecheck
+> tsc -p .
+
+WATCHDOG ABORT: {"pressure":"2","rssKiB":1209840,"elapsedMs":8089}
+serial: waiting for remaining workers.

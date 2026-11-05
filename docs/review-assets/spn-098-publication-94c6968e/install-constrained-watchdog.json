@@ -1,0 +1,118 @@
+{
+  "root": 71109,
+  "started": 1793878984856,
+  "elapsedMs": 1587,
+  "outcome": "resource-aborted",
+  "pressure": "2",
+  "rssKiB": 581504,
+  "peakKiB": 581504,
+  "live": [
+    {
+      "pid": 71109,
+      "parent": 71074,
+      "group": 71109,
+      "rssKiB": 67616,
+      "started": "Thu Nov  5 03:43:04 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn098-takeover/install-constrained-watchdog.json env NODE_OPTIONS=--max-old-space-size=192 npm ci --maxsockets=1"
+    },
+    {
+      "pid": 71140,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 512368,
+      "started": "Thu Nov  5 03:43:04 2026",
+      "command": "npm ci   "
+    },
+    {
+      "pid": 71230,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 71109,
+      "parent": 71074,
+      "group": 71109,
+      "rssKiB": 67616,
+      "started": "Thu Nov  5 03:43:04 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn098-takeover/install-constrained-watchdog.json env NODE_OPTIONS=--max-old-space-size=192 npm ci --maxsockets=1"
+    },
+    {
+      "pid": 71128,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:43:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71140,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 512368,
+      "started": "Thu Nov  5 03:43:04 2026",
+      "command": "npm ci   "
+    },
+    {
+      "pid": 71146,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71160,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71175,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71190,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71204,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71217,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71230,
+      "parent": 71109,
+      "group": 71109,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:43:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

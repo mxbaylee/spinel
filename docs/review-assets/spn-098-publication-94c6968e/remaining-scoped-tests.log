@@ -1,0 +1,13 @@
+
+ RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-098-production
+
+
+ Test Files  6 passed (6)
+      Tests  33 passed (33)
+   Start at  03:46:00
+   Duration  1.32s (import 42%, transform 30%, tests 28%, worker 1%)
+
+    Isolate  6 workers spawned · ~55ms startup each (spawn + environment, per file)
+             at least ~274ms faster with isolate: false — reuses workers across files instead of one per file
+
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":1762,"peakKiB":523664}

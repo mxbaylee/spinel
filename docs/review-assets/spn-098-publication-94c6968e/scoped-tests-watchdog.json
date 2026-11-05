@@ -1,0 +1,126 @@
+{
+  "root": 71401,
+  "started": 1793879090706,
+  "elapsedMs": 1736,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91632,
+  "peakKiB": 363680,
+  "live": [
+    {
+      "pid": 71401,
+      "parent": 71364,
+      "group": 71401,
+      "rssKiB": 90128,
+      "started": "Thu Nov  5 03:44:50 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn098-takeover/scoped-tests-watchdog.json node node_modules/vitest/vitest.mjs run src/server/diagnostics/feedback.test.ts src/server/diagnostics/feedback-capacity.test.ts src/ui/feedbackContext.test.ts"
+    },
+    {
+      "pid": 71538,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 71401,
+      "parent": 71364,
+      "group": 71401,
+      "rssKiB": 90128,
+      "started": "Thu Nov  5 03:44:50 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn098-takeover/scoped-tests-watchdog.json node node_modules/vitest/vitest.mjs run src/server/diagnostics/feedback.test.ts src/server/diagnostics/feedback-capacity.test.ts src/ui/feedbackContext.test.ts"
+    },
+    {
+      "pid": 71420,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71446,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 145072,
+      "started": "Thu Nov  5 03:44:50 2026",
+      "command": "node node_modules/vitest/vitest.mjs run src/server/diagnostics/feedback.test.ts src/server/diagnostics/feedback-capacity.test.ts src/ui/feedbackContext.test.ts"
+    },
+    {
+      "pid": 71452,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71460,
+      "parent": 71446,
+      "group": 71401,
+      "rssKiB": 126096,
+      "started": "Thu Nov  5 03:44:51 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --experimental-import-meta-resolve --require /Users/mxbaylee/projects/spinel/node_modules/vitest/suppress-warnings.cjs --conditions node --conditions development /Users/mxbaylee/projects/spinel/node_modules/vitest/dist/workers/forks.js"
+    },
+    {
+      "pid": 71466,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71479,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71495,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71508,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71516,
+      "parent": 71446,
+      "group": 71401,
+      "rssKiB": 121248,
+      "started": "Thu Nov  5 03:44:52 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --experimental-import-meta-resolve --require /Users/mxbaylee/projects/spinel/node_modules/vitest/suppress-warnings.cjs --conditions node --conditions development /Users/mxbaylee/projects/spinel/node_modules/vitest/dist/workers/forks.js"
+    },
+    {
+      "pid": 71522,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 03:44:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 71538,
+      "parent": 71401,
+      "group": 71401,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:44:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

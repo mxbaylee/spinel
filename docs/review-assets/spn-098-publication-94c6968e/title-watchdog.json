@@ -1,0 +1,86 @@
+{
+  "root": 73669,
+  "started": 1793879421395,
+  "elapsedMs": 509,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90208,
+  "peakKiB": 272512,
+  "live": [
+    {
+      "pid": 73669,
+      "parent": 73524,
+      "group": 73669,
+      "rssKiB": 88688,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn098-takeover/title-watchdog.json npm run backlog:pr -- --base main --title 📨 SPN-098 Send user feedback with diagnostic context"
+    },
+    {
+      "pid": 73970,
+      "parent": 73669,
+      "group": 73669,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 73669,
+      "parent": 73524,
+      "group": 73669,
+      "rssKiB": 88688,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn098-takeover/title-watchdog.json npm run backlog:pr -- --base main --title 📨 SPN-098 Send user feedback with diagnostic context"
+    },
+    {
+      "pid": 73688,
+      "parent": 73669,
+      "group": 73669,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 73714,
+      "parent": 73669,
+      "group": 73669,
+      "rssKiB": 78832,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "npm run backlog:pr --base main --title 📨 SPN-098 Send user feedback with diagnostic context        "
+    },
+    {
+      "pid": 73726,
+      "parent": 73714,
+      "group": 73669,
+      "rssKiB": 96992,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "node scripts/backlog/cli.ts pr --base main --title 📨 SPN-098 Send user feedback with diagnostic context"
+    },
+    {
+      "pid": 73796,
+      "parent": 73726,
+      "group": 73669,
+      "rssKiB": 6672,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 73802,
+      "parent": 73669,
+      "group": 73669,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 73970,
+      "parent": 73669,
+      "group": 73669,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:50:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,110 @@
+{
+  "root": 70566,
+  "started": 1793878863898,
+  "elapsedMs": 1364,
+  "outcome": "resource-aborted",
+  "pressure": "2",
+  "rssKiB": 390976,
+  "peakKiB": 442208,
+  "live": [
+    {
+      "pid": 70566,
+      "parent": 70528,
+      "group": 70566,
+      "rssKiB": 65056,
+      "started": "Thu Nov  5 03:41:03 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn098-takeover/install-watchdog.json npm ci"
+    },
+    {
+      "pid": 70611,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 324368,
+      "started": "Thu Nov  5 03:41:03 2026",
+      "command": "npm ci  "
+    },
+    {
+      "pid": 70684,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 03:41:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 70566,
+      "parent": 70528,
+      "group": 70566,
+      "rssKiB": 65056,
+      "started": "Thu Nov  5 03:41:03 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn098-takeover/install-watchdog.json npm ci"
+    },
+    {
+      "pid": 70585,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 03:41:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 70611,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 324368,
+      "started": "Thu Nov  5 03:41:03 2026",
+      "command": "npm ci  "
+    },
+    {
+      "pid": 70617,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 03:41:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 70630,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 03:41:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 70644,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:41:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 70658,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:41:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 70671,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:41:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 70684,
+      "parent": 70566,
+      "group": 70566,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 03:41:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
