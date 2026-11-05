@@ -302,8 +302,9 @@ not shown to help at the state that failed in CI. The ES 1,440 prior-candidate p
 the criterion (65%), which keeps order and measurement noise as open possibilities; nothing here
 identifies a cause. Limits are those of the analysis itself: Linux component only, GC spans may
 nest, no pause subtraction, no cross-environment pooling and no historical-maximum explanation.
-The artifact is retained on GitHub only until its retention expires; this section is the durable
-summary.
+The artifact is retained on GitHub only until its retention expires; the durable record is
+[summary.json](evidence/SPN-146/linux-component-42110760785/summary.json) (all 16 comparisons,
+per-interval durations, run/artifact identities and the analysis hash) plus this section.
 
 **Reading the three misses against absolute cost.** The run applied the 4× CPU throttle
 (acknowledged in `observation.json`). Across all 32 measured intervals the unrepaired build's whole
@@ -318,7 +319,7 @@ against those production maxima; only the unchanged native acceptance gate can, 
 preregistered question that explains the gap (document size, memory/GC state or runtime pauses in
 the real 2,086-key workload).
 
-**Redo-only scope.** The linear path is intentionally gated to `redoState` with more than four
+**Redo-only scope, not yet exercised at workload scale.** The linear path is intentionally gated to `redoState` with more than four
 qualified tail states. `undoState` keeps the unchanged native fold by design, not oversight;
 the raw-equality tests in `patch-univer-docs.test.ts` cover both states and show undo unchanged.
 
@@ -333,4 +334,36 @@ dependency are prepared in this PR as the process requires before grading
 ([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). They take effect only on
 merge, which still requires a causal repair or evidence-supported disposition and a green
 current-head native acceptance.
+
+## ⚖️ Pre-push review grades and owner decision to validate on CI
+
+**2026-11-05.** Four independent read-only reviewers graded two committed heads, each against the
+repository rubric (none was given a prior score or target):
+
+| Head | Reviewer | Score | Main deductions |
+| --- | --- | --- | --- |
+| `97d0b32` | A | 66 | no latency evidence; spent workflows; patcher/docs weight |
+| `97d0b32` | B | 86 | no latency evidence; dead workflow; historical variants |
+| `64f208d` | C | 52 | ticket closed before acceptance; SPN-089 unblocked; no repair or disposition |
+| `64f208d` | D | 66 | no repair or disposition; component numbers unretained; unreachable tooling |
+
+None reached the 95 bar, and no reviewer found a semantic or access-boundary defect in the patch.
+The recurring deduction is the ticket's own scope: neither a causal repair nor an evidence-supported
+disposition exists, and only the unchanged native acceptance gate can supply either. A pre-push
+grade cannot rise above that without the very run it gates.
+
+**Owner decision (chat, 2026-11-05).** The owner authorized pushing the candidate below the 95
+bar so the real mobile `doc-responsiveness` gate can run on the head, as a single first-attempt
+validation. This is an exception to the review-before-push gate for this push only. It does not
+raise any score, does not certify the pending hosted checks, and does not authorize merging.
+Merge still requires the unchanged gate to pass on the final head (p95 at most 50 ms and maximum at
+most 100 ms, zero retries, full workload) or an evidence-supported disposition, plus two grades
+above 95 on the merged head. A failing first attempt is recorded as failed; no unchanged rerun.
+
+**Bookkeeping stays in the PR, and takes effect only on merge.** Reviewers C and D asked to restore
+the ticket file and SPN-089's dependency. Both are deleted/removed here because the PR checker
+(required **Pull request** gate) fails a ticket-titled PR that keeps its ticket file or omits its
+`completed_since` entry. The PR is a draft and merging is gated by the acceptance above. If the
+validation fails, restore `docs/todo/SPN-146.md`, SPN-146's removal from `completed_since` and
+SPN-089's `depends_on: [SPN-146]` from `origin/main` before any other work.
 
