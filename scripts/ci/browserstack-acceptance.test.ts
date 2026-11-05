@@ -35,6 +35,10 @@ import {
   tapOffset,
   tapTraceDiagnostic,
   tapTraceInstallScript,
+  inputCounterInstallScript,
+  inputCounterReadScript,
+  inputCounterDiagnostic,
+  phoneNativeType,
   tapTraceReadScript,
   withTapTrace,
   readPhoneOpenedCopy,
@@ -1179,4 +1183,102 @@ test('an editor that never opens records the tap trace and keeps its own failure
     ['native-sheet-tap-trace', { installed: true, events: [], viewport: null, canvas: null }],
     ['native-doc-tap-trace', 'unavailable'],
   ]);
+});
+
+test('native typing sends one key per action and waits for each insertion; a dropped key fails with its index recorded', async () => {
+  const typed = async (dropAfter: number) => {
+    const calls: string[] = [];
+    const records: [string, unknown][] = [];
+    let inserted = 0;
+    const driver = {
+      execute: async (script: string) => {
+        if (script === inputCounterInstallScript) return (calls.push('install'), true);
+        if (script === inputCounterReadScript)
+          return { installed: true, count: inserted, focus: 'editor', editor: true };
+        calls.push('focus');
+        return { 'element-6066-11e4-a52e-4f735466cecf': 'editor-1' };
+      },
+      command: async (suffix: string, method = 'GET', body?: unknown) => {
+        if (method === 'POST') {
+          const keys = (body as { actions: { actions: { type: string; value: string }[] }[] })
+            .actions[0]!.actions;
+          calls.push(keys.map((key) => `${key.type}:${key.value}`).join(' '));
+          if (inserted < dropAfter) inserted++;
+        }
+        return null;
+      },
+      remaining: (maximum = 1) => maximum,
+      record: async (stage: string, value: unknown) => {
+        records.push([stage, value]);
+      },
+    } as unknown as PhoneAcceptanceDriver;
+    let error: unknown;
+    await phoneNativeType(driver, '731').catch((caught: unknown) => (error = caught));
+    return { calls, records, error };
+  };
+  const step = (index: number, count: number) => ({
+    index,
+    installed: true,
+    count,
+    focus: 'editor',
+    editor: true,
+  });
+  const whole = await typed(3);
+  assert.equal(whole.error, undefined);
+  assert.deepEqual(whole.calls, [
+    'install',
+    'focus',
+    'keyDown:7 keyUp:7',
+    'focus',
+    'keyDown:3 keyUp:3',
+    'focus',
+    'keyDown:1 keyUp:1',
+  ]);
+  assert.deepEqual(whole.records, [
+    ['native-input-keys', { keys: 3, steps: [step(0, 1), step(1, 2), step(2, 3)] }],
+  ]);
+  // Run 41938061698 kept only the first key: the second now fails, recorded.
+  const dropped = await typed(1);
+  assert.match(String(dropped.error), /native-input-character-dropped/);
+  assert.deepEqual(dropped.calls.slice(-1), ['keyDown:3 keyUp:3']);
+  assert.deepEqual(dropped.records, [
+    ['native-input-keys', { keys: 3, steps: [step(0, 1), step(1, 1)] }],
+  ]);
+  assert.deepEqual(inputCounterDiagnostic({ count: 1.5, focus: 'a b', editor: 'yes' }), {
+    installed: false,
+    count: null,
+    focus: null,
+    editor: false,
+  });
+});
+
+test('the input counter counts insertions only and reads the focused editor name, never text', () => {
+  const listeners = new Map<string, (event: unknown) => void>();
+  const editor = {
+    matches: () => true,
+    closest: () => ({ getAttribute: () => 'editor' }),
+    textContent: 'secret',
+  };
+  const document = {
+    activeElement: editor,
+    addEventListener: (type: string, listener: (event: unknown) => void) =>
+      listeners.set(type, listener),
+    removeEventListener: (type: string) => listeners.delete(type),
+  };
+  const window: Record<string, unknown> = {};
+  const context = createContext({ window, document });
+  const run = (script: string, args: unknown[] = []) =>
+    JSON.parse(
+      JSON.stringify(
+        runInContext(`(function(){${script}}).apply(null, args)`, Object.assign(context, { args })),
+      ),
+    );
+  assert.equal(run(inputCounterInstallScript), true);
+  for (const inputType of ['insertText', 'deleteContentBackward', 'insertText', undefined])
+    listeners.get('input')!({ inputType, data: 'secret' });
+  const read = run(inputCounterReadScript, [true]);
+  assert.deepEqual(read, { installed: true, count: 2, focus: 'editor', editor: true });
+  assert.equal(JSON.stringify(read).includes('secret'), false);
+  assert.equal(listeners.size, 0, 'a final read stops counting');
+  assert.equal('__spinelInputCount' in window, false);
 });

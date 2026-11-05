@@ -137,6 +137,7 @@ export {
   fixtureOperation as boundedPhoneFixtureOperation,
   actions as phoneActions,
   doubleTap as phoneDoubleTap,
+  nativeType as phoneNativeType,
 };
 
 /** Open only the existing database and issue readonly transactions. No data is seeded in the phone. */
@@ -621,28 +622,92 @@ async function docTextPoint(driver: PhoneAcceptanceDriver) {
   throw new Error('capability-acceptance-native-text-pixels-unavailable');
 }
 
+/**
+ * Counts the page's text insertions (`input` events whose `inputType` starts
+ * with `insert`) and reads the focused element's `data-u-comp` name. No text,
+ * value or content is read. A later install replaces it.
+ */
+export const inputCounterInstallScript = `
+  const key='__spinelInputCount';window[key]?.stop();const state={count:0};
+  const keep=(event)=>{if(typeof event.inputType==='string'&&event.inputType.startsWith('insert'))state.count++;};
+  document.addEventListener('input',keep,{capture:true,passive:true});
+  window[key]={state,stop:()=>{document.removeEventListener('input',keep,{capture:true});delete window[key];}};
+  return true;
+`;
+/** Returns the insertion count and the focused editor's name; `true` stops counting. */
+export const inputCounterReadScript = `
+  const counter=window.__spinelInputCount;const node=document.activeElement;
+  const comp=node?.closest?.('[data-u-comp]')?.getAttribute('data-u-comp');
+  const answer={installed:Boolean(counter),count:counter?counter.state.count:null,
+    focus:typeof comp==='string'?comp.slice(0,40):null,
+    editor:Boolean(node?.matches?.('[contenteditable="true"][data-u-comp="editor"]'))};
+  if(arguments[0]===true)counter?.stop();return answer;
+`;
+/** Keeps the bounded fields the counter returns. */
+export function inputCounterDiagnostic(value: unknown) {
+  const observed = value !== null && typeof value === 'object' ? (value as Row) : {};
+  return {
+    installed: observed.installed === true,
+    count:
+      typeof observed.count === 'number' && Number.isSafeInteger(observed.count)
+        ? observed.count
+        : null,
+    focus:
+      typeof observed.focus === 'string' && /^[\w-]{1,40}$/.test(observed.focus)
+        ? observed.focus
+        : null,
+    editor: observed.editor === true,
+  };
+}
+/** How long one key may take to reach the editor as an insertion. */
+export const keyInsertionMilliseconds = 2_000;
+
+// Run 41938061698 (owner's choice, 2026-11-04): three keys sent in one action
+// 40 ms apart left only the first, "7", in A1. Each key is now its own action,
+// sent once the native editor has focus, and the next waits until the page has
+// counted this one's insertion. Every step is recorded; a dropped key fails
+// with its index recorded.
 async function nativeType(driver: PhoneAcceptanceDriver, text: string) {
-  const focused = await until(
-    driver,
-    () =>
-      driver.execute(
-        `const node=document.activeElement;return node?.matches('[contenteditable="true"][data-u-comp="editor"]') ? node : null;`,
-      ),
-    (value) => value !== null,
-    'native-input-not-focused',
-  );
-  elementId(focused);
-  // Real key ticks let the native editor settle its caret between characters.
-  // No textContent assignment, synthetic InputEvent, command service or SDK edit is used.
-  await actions(driver, {
-    type: 'key',
-    id: 'phone-acceptance-keys',
-    actions: Array.from(text).flatMap((value) => [
-      { type: 'keyDown', value },
-      { type: 'keyUp', value },
-      { type: 'pause', duration: 40 },
-    ]),
-  });
+  await driver.execute(inputCounterInstallScript);
+  const steps: (ReturnType<typeof inputCounterDiagnostic> & { index: number })[] = [];
+  const keys = Array.from(text);
+  for (const [index, value] of keys.entries()) {
+    const focused = await until(
+      driver,
+      () =>
+        driver.execute(
+          `const node=document.activeElement;return node?.matches('[contenteditable="true"][data-u-comp="editor"]') ? node : null;`,
+        ),
+      (value) => value !== null,
+      'native-input-not-focused',
+    );
+    elementId(focused);
+    // Real key ticks only. No textContent assignment, synthetic InputEvent,
+    // command service or SDK edit is used.
+    await actions(driver, {
+      type: 'key',
+      id: 'phone-acceptance-keys',
+      actions: [
+        { type: 'keyDown', value },
+        { type: 'keyUp', value },
+      ],
+    });
+    let last = inputCounterDiagnostic(null);
+    try {
+      await until(
+        driver,
+        async () => (last = inputCounterDiagnostic(await driver.execute(inputCounterReadScript))),
+        (state) => state.count !== null && state.count >= index + 1,
+        'native-input-character-dropped',
+        keyInsertionMilliseconds,
+      );
+    } finally {
+      steps.push({ index, ...last });
+      if (steps.length === keys.length || (last.count ?? 0) < index + 1)
+        await driver.record('native-input-keys', { keys: keys.length, steps });
+    }
+  }
+  await driver.execute(inputCounterReadScript, [true]);
 }
 
 async function author(

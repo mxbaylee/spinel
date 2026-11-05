@@ -10,6 +10,7 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
+  firefoxOfflineScript,
   socketCloseDiagnostic,
   socketProbeScript,
   storageStateDiagnostic,
@@ -3979,24 +3980,53 @@ test('a blank page keeps only its scheme, error code and failed path', () => {
     assert.equal(blankPageDiagnostic({ ...page, text: '' }, origin).browserPageHost, null);
 });
 
-test('Firefox is cut by the test server refusing connections; Chrome and Safari keep no-network', () => {
+test('Firefox goes offline through its own switch in the privileged context; Chrome and Safari keep no-network', () => {
   assert.deepEqual((['chrome', 'firefox', 'safari'] as const).map(offlineNetworkProfile), [
     'no-network',
     null,
     'no-network',
   ]);
+  // The switch itself, against a fake privileged `Services`.
+  const Services = { io: { offline: false, manageOfflineStatus: true } };
+  const context = createContext({ Services });
+  const run = (offline: boolean) =>
+    runInContext(
+      `(function(){${firefoxOfflineScript}}).apply(null, args)`,
+      Object.assign(context, { args: [offline] }),
+    );
+  assert.equal(run(true), true);
+  assert.deepEqual(Services.io, { offline: true, manageOfflineStatus: false });
+  assert.equal(run(false), false);
   const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
-  // Neither offline cut hard-codes a profile, and no airplane-mode request is left.
+  // Neither offline cut hard-codes a profile; no airplane-mode or server refusal is left.
   assert.doesNotMatch(source, /networkProfile: 'no-network'/);
   assert.doesNotMatch(source, /'airplane-mode'/);
+  assert.doesNotMatch(source, /serverRefusal/);
   const cut = source.slice(
     source.indexOf('const cutNetwork = async () => {'),
     source.indexOf('const putNetwork = (networkProfile: string) =>'),
   );
-  assert.match(cut, /return \{ networkProfile, serverRefusal: false \};/);
-  assert.match(cut, /requireCondition\(serverRefusal, 'server-refusal-unavailable'\);/);
-  assert.match(cut, /return \{ networkProfile: null, serverRefusal: true \};/);
-  assert.match(source, /serverRefusal = \(\) => fixture\.setOffline\(true\);/);
+  assert.match(cut, /return \{ networkProfile, firefoxOffline: false \};/);
+  assert.match(
+    cut,
+    /await firefoxOffline\(true\);\n\s+return \{ networkProfile: null, firefoxOffline: true \};/,
+  );
+  // One attempt: chrome context, the switch, back to content only if switched;
+  // a refusal is recorded and fails as the observed limit.
+  assert.match(
+    cut,
+    /session\('moz\/context'\), 'POST', \{ context: 'chrome' \}\);\n\s+switched = true;/,
+  );
+  assert.match(
+    cut,
+    /if \(switched\) await command\(session\('moz\/context'\), 'POST', \{ context: 'content' \}\);/,
+  );
+  assert.match(cut, /throw new Error\('capability-firefox-offline-unavailable'\);/);
+  assert.equal(cut.match(/firefoxOfflineScript/g)?.length, 1);
+  assert.match(
+    source,
+    /if \(!offline && target\.browser === 'firefox'\) await firefoxOffline\(false\);/,
+  );
   assert.equal(source.match(/await cutNetwork\(\)/g)?.length, 3);
 });
 
@@ -4271,7 +4301,7 @@ test('a failed stored read records the offline account, database and window coun
       localStorage: { getItem: () => marker },
       location: { pathname: '/sign-in' },
       queueMicrotask,
-      ...(navigator ? { navigator } : {}),
+      ...(navigator ? { navigator, caches: { keys: async () => ['a', 'b'] } } : {}),
     });
   }
   const read = async (context: object) =>
@@ -4282,7 +4312,13 @@ test('a failed stored read records the offline account, database and window coun
         ),
       ),
     );
-  const unknownStorage = { quotaMegabytes: null, usageMegabytes: null, persisted: null };
+  const unknownStorage = {
+    quotaMegabytes: null,
+    usageMegabytes: null,
+    persisted: null,
+    usageDetailsMegabytes: null,
+    cacheCount: null,
+  };
   assert.deepEqual(await read(storage(null, ['other'], null)), {
     marker: 'absent',
     offlineDatabases: 0,
@@ -4293,7 +4329,17 @@ test('a failed stored read records the offline account, database and window coun
   });
   const navigator = {
     storage: {
-      estimate: async () => ({ quota: 128 * 1_048_576 + 1, usage: 1_572_864 }),
+      estimate: async () => ({
+        quota: 128 * 1_048_576 + 1,
+        usage: 1_572_864,
+        // Chrome's per-kind usage; only the named kinds are kept.
+        usageDetails: {
+          indexedDB: 1_048_576,
+          caches: 524_288,
+          serviceWorkerRegistrations: 0,
+          x: 9,
+        },
+      }),
       persisted: async () => false,
     },
   };
@@ -4308,6 +4354,13 @@ test('a failed stored read records the offline account, database and window coun
       quotaMegabytes: 128,
       usageMegabytes: 1.5,
       persisted: false,
+      usageDetailsMegabytes: {
+        indexedDB: 1,
+        caches: 0.5,
+        serviceWorkerRegistrations: 0,
+        fileSystem: null,
+      },
+      cacheCount: 2,
     },
   );
   assert.equal(
@@ -4320,8 +4373,9 @@ test('a failed stored read records the offline account, database and window coun
       listed: { offlineDatabases: -1 },
       open: 'y',
       path: '/?item=1',
-      estimate: { quota: -1, usage: 'many' },
+      estimate: { quota: -1, usage: 'many', details: 'big' },
       persisted: 'yes',
+      cacheCount: 100,
     }),
     {
       marker: 'other',

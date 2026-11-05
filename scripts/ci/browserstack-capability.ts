@@ -699,11 +699,15 @@ export function shortcutIntent(origin: string, browserPackage: string) {
 /**
  * No BrowserStack profile reaches Firefox: `no-network` left its ordinary
  * requests answering for 15 s (runs 41783320538, 41923855981) and
- * `airplane-mode` answered HTTP 422 (run 41911483521). Owner, chat 2026-11-04:
- * Firefox's cut is the test server refusing every connection instead, recorded
- * as such; the device network stays up and is not claimed as cut. `null` means
- * that server refusal.
+ * `airplane-mode` answered HTTP 422 (run 41911483521). The test server
+ * refusing connections reached the phone as BrowserStack Local's HTTP 502
+ * (run 41939094783), which Spinel rightly treats as online. Owner, chat
+ * 2026-11-04: Firefox goes offline through its own switch instead
+ * (`firefoxOfflineScript` in geckodriver's privileged context), recorded as
+ * such. `null` means that switch.
  */
+/** Sets Firefox's own offline state; runs in geckodriver's `chrome` context. */
+export const firefoxOfflineScript = `const [offline]=arguments;Services.io.manageOfflineStatus=false;Services.io.offline=offline;return Services.io.offline;`;
 export function offlineNetworkProfile(browser: Target['browser']) {
   return browser === 'firefox' ? null : 'no-network';
 }
@@ -1184,9 +1188,16 @@ const open=await new Promise(resolve=>{let request;try{request=indexedDB.open(na
   request.onupgradeneeded=()=>{request.transaction.abort();resolve({outcome:'missing'});};
   request.onerror=()=>resolve({outcome:'unavailable'});
   request.onsuccess=()=>{const database=request.result;const stores=['items','images'].every(store=>database.objectStoreNames.contains(store));database.close();resolve({outcome:stores?'opened':'stores-missing'});};});
-let estimate=null;try{const value=await navigator.storage.estimate();estimate={quota:value.quota,usage:value.usage};}catch{}
+let estimate=null;try{const value=await navigator.storage.estimate();estimate={quota:value.quota,usage:value.usage,details:value.usageDetails??null};}catch{}
 let persisted=null;try{persisted=await navigator.storage.persisted();}catch{}
-return {marker,listed,open:open.outcome,path:location.pathname,estimate,persisted};`;
+let cacheCount=null;try{cacheCount=(await caches.keys()).length;}catch{}
+return {marker,listed,open:open.outcome,path:location.pathname,estimate,persisted,cacheCount};`;
+/**
+ * Chrome's per-kind usage (`usageDetails`), kept for the kinds named here.
+ * Run 41938668159 saw usage fall from 30.5 MB to 0 across the relaunch while
+ * the worker still controlled the page (owner's choice, 2026-11-04).
+ */
+const usageKinds = ['indexedDB', 'caches', 'serviceWorkerRegistrations', 'fileSystem'] as const;
 const storageOpenOutcomes = new Set(['opened', 'stores-missing', 'missing', 'unavailable']);
 /** Keeps known outcomes, small counts and a plain path only. */
 export function storageStateDiagnostic(value: unknown) {
@@ -1215,6 +1226,19 @@ export function storageStateDiagnostic(value: unknown) {
     quotaMegabytes: megabytes(estimate?.quota, 1),
     usageMegabytes: megabytes(estimate?.usage, 10),
     persisted: typeof answer.persisted === 'boolean' ? answer.persisted : null,
+    usageDetailsMegabytes:
+      estimate?.details && typeof estimate.details === 'object'
+        ? Object.fromEntries(
+            usageKinds.map((kind) => [kind, megabytes((estimate.details as Row)[kind], 10)]),
+          )
+        : null,
+    cacheCount:
+      typeof answer.cacheCount === 'number' &&
+      Number.isInteger(answer.cacheCount) &&
+      answer.cacheCount >= 0 &&
+      answer.cacheCount < 100
+        ? answer.cacheCount
+        : null,
   };
 }
 /** Bytes as megabytes, rounded to `1 / scale`; null unless a finite non-negative number. */
@@ -1562,16 +1586,37 @@ export async function runCapability(
     });
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
   /** Set once the acceptance fixture exists: makes the test server refuse every connection. */
-  let serverRefusal: (() => Promise<void>) | undefined;
   const cutNetwork = async () => {
     const networkProfile = offlineNetworkProfile(target.browser);
     if (networkProfile) {
       await putNetwork(networkProfile);
-      return { networkProfile, serverRefusal: false };
+      return { networkProfile, firefoxOffline: false };
     }
-    requireCondition(serverRefusal, 'server-refusal-unavailable');
-    await serverRefusal();
-    return { networkProfile: null, serverRefusal: true };
+    await firefoxOffline(true);
+    return { networkProfile: null, firefoxOffline: true };
+  };
+  /**
+   * One attempt per call: switch geckodriver to its privileged context, set
+   * Firefox's offline state, switch back. A refusal is recorded and fails as
+   * `firefox-offline-unavailable`, the observed limit; it is never retried.
+   */
+  const firefoxOffline = async (offline: boolean) => {
+    let switched = false;
+    try {
+      await command(session('moz/context'), 'POST', { context: 'chrome' });
+      switched = true;
+      const state = await execute(firefoxOfflineScript, [offline]);
+      requireCondition(state === offline, 'firefox-offline-not-applied');
+    } catch (error) {
+      await record(`${result.stage}:firefox-offline`, {
+        offline,
+        contextSwitched: switched,
+        failure: failure(error),
+      });
+      throw new Error('capability-firefox-offline-unavailable');
+    } finally {
+      if (switched) await command(session('moz/context'), 'POST', { context: 'content' });
+    }
   };
   const putNetwork = (networkProfile: string) =>
     timedProviderCommand(
@@ -2556,7 +2601,6 @@ export async function runCapability(
     if (acceptanceScope) {
       requireAcceptanceFixture(fixture);
       acceptanceFixture = fixture;
-      serverRefusal = () => fixture.setOffline(true);
       acceptance = await import('./browserstack-acceptance.ts');
       requireCondition(
         acceptance.phoneAcceptanceLimits.operational === operationalMilliseconds &&
@@ -2809,9 +2853,10 @@ export async function runCapability(
             acceptanceFixture!.setOffline(false),
           );
         if (!offline) await putNetwork('4g-lte-good');
+        if (!offline && target.browser === 'firefox') await firefoxOffline(false);
         await record(
           `${result.stage}:network-control`,
-          offline ? await cutNetwork() : { networkProfile: '4g-lte-good', serverRefusal: false },
+          offline ? await cutNetwork() : { networkProfile: '4g-lte-good', firefoxOffline: false },
         );
         if (ticket) {
           await awaitDeviceOffline(ticket);
