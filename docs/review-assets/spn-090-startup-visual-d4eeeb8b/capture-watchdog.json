@@ -1,0 +1,222 @@
+{
+  "root": 23292,
+  "started": 1793899568733,
+  "elapsedMs": 3479,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93264,
+  "peakKiB": 685952,
+  "live": [
+    {
+      "pid": 23292,
+      "parent": 23256,
+      "group": 23292,
+      "rssKiB": 91712,
+      "started": "Thu Nov  5 09:26:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-startup-hosted/capture-watchdog.json node /tmp/spn090-startup-hosted/capture-pending.ts"
+    },
+    {
+      "pid": 23533,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 23292,
+      "parent": 23256,
+      "group": 23292,
+      "rssKiB": 91712,
+      "started": "Thu Nov  5 09:26:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-startup-hosted/capture-watchdog.json node /tmp/spn090-startup-hosted/capture-pending.ts"
+    },
+    {
+      "pid": 23311,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23337,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 191968,
+      "started": "Thu Nov  5 09:26:08 2026",
+      "command": "node /tmp/spn090-startup-hosted/capture-pending.ts"
+    },
+    {
+      "pid": 23347,
+      "parent": 23337,
+      "group": 23292,
+      "rssKiB": 2736,
+      "started": "Thu Nov  5 09:26:08 2026",
+      "command": "unzip -qo /tmp/spn090-startup-hosted/story-build.zip -d /tmp/spn090-startup-hosted/storybook-static"
+    },
+    {
+      "pid": 23353,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23366,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23379,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23387,
+      "parent": 23337,
+      "group": 23387,
+      "rssKiB": 92512,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/playwright_chromiumdev_profile-2HUqbw --remote-debugging-pipe --no-startup-window"
+    },
+    {
+      "pid": 23393,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23401,
+      "parent": 23387,
+      "group": 23387,
+      "rssKiB": 66448,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=gpu-process --gpu-recent-crash-count=0 --no-sandbox --disable-breakpad --headless --use-angle=swiftshader-webgl --enable-unsafe-swiftshader --gpu-preferences=WAAAAAAAAAAgAAAEAAAAAAAAAAAAAGAAQAAAAAAAAAAAAAAAAAAAADgAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAoAAAAAAAAAAgAAAAAAAAADAAAAAEAAAAAAAAAAAAAAAgAAAAAAAAACAAAAAAAAAA= --shared-files --field-trial-handle=1718379636,r,12652947981008268781,6850496375167160563,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,3131650474113673883,9264148312400359707,4 --trace-process-track-uuid=3190708988185955192"
+    },
+    {
+      "pid": 23402,
+      "parent": 23387,
+      "group": 23387,
+      "rssKiB": 48496,
+      "started": "Thu Nov  5 09:26:09 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --use-angle=swiftshader-webgl --use-gl=angle --mute-audio --headless=old --shared-files --field-trial-handle=1718379636,r,12652947981008268781,6850496375167160563,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,3131650474113673883,9264148312400359707,4 --trace-process-track-uuid=3190708989122997041"
+    },
+    {
+      "pid": 23403,
+      "parent": 23387,
+      "group": 23387,
+      "rssKiB": 177008,
+      "started": "Thu Nov  5 09:26:10 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --disable-gpu-compositing --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=4 --launch-time-ticks=383091344175 --shared-files --field-trial-handle=1718379636,r,12652947981008268781,6850496375167160563,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,3131650474113673883,9264148312400359707,4 --trace-process-track-uuid=3190708990060038890"
+    },
+    {
+      "pid": 23409,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23422,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23435,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23450,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 09:26:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23458,
+      "parent": 23387,
+      "group": 23387,
+      "rssKiB": 176096,
+      "started": "Thu Nov  5 09:26:10 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --disable-gpu-compositing --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=5 --launch-time-ticks=383092241851 --shared-files --field-trial-handle=1718379636,r,12652947981008268781,6850496375167160563,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,3131650474113673883,9264148312400359707,4 --trace-process-track-uuid=3190708990997080739"
+    },
+    {
+      "pid": 23464,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23477,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23488,
+      "parent": 23387,
+      "group": 23387,
+      "rssKiB": 168816,
+      "started": "Thu Nov  5 09:26:11 2026",
+      "command": "/Users/mxbaylee/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell --type=renderer --headless=old --no-sandbox --disable-back-forward-cache --disable-background-timer-throttling --disable-breakpad --force-color-profile=srgb --remote-debugging-pipe --allow-pre-commit-input --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --disable-gpu-compositing --lang=en-US --num-raster-threads=4 --enable-zero-copy --enable-gpu-memory-buffer-compositor-resources --enable-main-frame-before-activation --renderer-client-id=6 --launch-time-ticks=383092862131 --shared-files --field-trial-handle=1718379636,r,12652947981008268781,6850496375167160563,262144 --enable-features=CDPScreenshotNewSurface --disable-features=AimEnabled,AutoDeElevate,AvoidCorsURLLoaderRestartOnRedirect,AvoidUnnecessaryBeforeUnloadCheckSync,BlockOriginHeaderModificationOnRedirect,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,NetworkTimeServiceQuerying,OptimizationHints,PaintHolding,ThirdPartyStoragePartitioning,Translate,msEdgeUpdateLaunchServicesPreferredVersion,msForceBrowserSignIn --variations-seed-version --pseudonymization-salt-handle=1935764596,r,3131650474113673883,9264148312400359707,4 --trace-process-track-uuid=3190708991934122588"
+    },
+    {
+      "pid": 23494,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23507,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23520,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23533,
+      "parent": 23292,
+      "group": 23292,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:26:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

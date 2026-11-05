@@ -1,0 +1,3 @@
+# 👁️ SPN-090 current pending-storage visuals
+
+Currentd4eeeb8b source, tested1ac497cddf189165a95d2de5e5875e114fe452e3. Hosted Storybook13435559182 fromrun42072843530. Production OfflineAvailability with synthetic ProtectionPending story data, fixed2026-10-20T16:00:00Z fixture time. Actual result after ordinary Escape from storage guidance and verified restored focus: light/dark1280×900, light phone390×900. Independent reviewerA opened current PNGs and approved, agent review only. Capture3479ms/685952KiB, normalpressure and browser/server closed. No physical-phone, live persistence or complete Storybook workflow acceptance claim.
