@@ -1,0 +1,78 @@
+{
+  "root": 17787,
+  "started": 1793898409117,
+  "elapsedMs": 835,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90704,
+  "peakKiB": 315648,
+  "live": [
+    {
+      "pid": 17787,
+      "parent": 17752,
+      "group": 17787,
+      "rssKiB": 89168,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/review-repair-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write .github/workflows/ci.yml e2e/pwa.spec.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts scripts/ci/bootstrap-evidence.test.ts"
+    },
+    {
+      "pid": 17864,
+      "parent": 17787,
+      "group": 17787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 17787,
+      "parent": 17752,
+      "group": 17787,
+      "rssKiB": 89168,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/review-repair-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write .github/workflows/ci.yml e2e/pwa.spec.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts scripts/ci/bootstrap-evidence.test.ts"
+    },
+    {
+      "pid": 17806,
+      "parent": 17787,
+      "group": 17787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 17832,
+      "parent": 17787,
+      "group": 17787,
+      "rssKiB": 225216,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write .github/workflows/ci.yml e2e/pwa.spec.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts scripts/ci/bootstrap-evidence.test.ts"
+    },
+    {
+      "pid": 17838,
+      "parent": 17787,
+      "group": 17787,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 17851,
+      "parent": 17787,
+      "group": 17787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 17864,
+      "parent": 17787,
+      "group": 17787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:06:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

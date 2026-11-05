@@ -1,0 +1,54 @@
+{
+  "root": 14198,
+  "started": 1793897898999,
+  "elapsedMs": 188,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 89648,
+  "peakKiB": 89648,
+  "live": [
+    {
+      "pid": 14198,
+      "parent": 14163,
+      "group": 14198,
+      "rssKiB": 88112,
+      "started": "Thu Nov  5 08:58:18 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/lint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint e2e/pwa.spec.ts e2e/sync-client.spec.ts scripts/ci/browserstack-build-inspection.ts scripts/ci/browserstack-capability.test.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack.test.ts scripts/ci/bootstrap-evidence.test.ts src/shared/bootstrapEvidence.ts web/main.tsx"
+    },
+    {
+      "pid": 14249,
+      "parent": 14198,
+      "group": 14198,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:58:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 14198,
+      "parent": 14163,
+      "group": 14198,
+      "rssKiB": 88112,
+      "started": "Thu Nov  5 08:58:18 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/lint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint e2e/pwa.spec.ts e2e/sync-client.spec.ts scripts/ci/browserstack-build-inspection.ts scripts/ci/browserstack-capability.test.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack.test.ts scripts/ci/bootstrap-evidence.test.ts src/shared/bootstrapEvidence.ts web/main.tsx"
+    },
+    {
+      "pid": 14217,
+      "parent": 14198,
+      "group": 14198,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:58:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 14249,
+      "parent": 14198,
+      "group": 14198,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:58:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

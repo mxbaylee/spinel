@@ -1,0 +1,54 @@
+{
+  "root": 20787,
+  "started": 1793898580755,
+  "elapsedMs": 226,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90624,
+  "peakKiB": 90624,
+  "live": [
+    {
+      "pid": 20787,
+      "parent": 20761,
+      "group": 20787,
+      "rssKiB": 89088,
+      "started": "Thu Nov  5 09:09:40 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/review-repair-doc-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write docs/implementation/SPN-090-startup-acceptance.md"
+    },
+    {
+      "pid": 20838,
+      "parent": 20787,
+      "group": 20787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:09:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 20787,
+      "parent": 20761,
+      "group": 20787,
+      "rssKiB": 89088,
+      "started": "Thu Nov  5 09:09:40 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/review-repair-doc-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write docs/implementation/SPN-090-startup-acceptance.md"
+    },
+    {
+      "pid": 20806,
+      "parent": 20787,
+      "group": 20787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:09:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20838,
+      "parent": 20787,
+      "group": 20787,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:09:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

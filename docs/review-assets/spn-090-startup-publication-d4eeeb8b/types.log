@@ -1,0 +1,5 @@
+src/server/diagnostics/routes.ts(200,13): error TS2353: Object literal may only specify known properties, and 'dotfiles' does not exist in type 'DownloadOptions'.
+src/server/pwa.ts(21,9): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'dotfiles' does not exist in type 'SendFileOptions'.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":2021,"peakKiB":880976}

@@ -1,0 +1,54 @@
+{
+  "root": 20676,
+  "started": 1793898554446,
+  "elapsedMs": 183,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90128,
+  "peakKiB": 90128,
+  "live": [
+    {
+      "pid": 20676,
+      "parent": 20641,
+      "group": 20676,
+      "rssKiB": 88592,
+      "started": "Thu Nov  5 09:09:14 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/review-repair-lint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts scripts/ci/bootstrap-evidence.test.ts e2e/pwa.spec.ts"
+    },
+    {
+      "pid": 20727,
+      "parent": 20676,
+      "group": 20676,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:09:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 20676,
+      "parent": 20641,
+      "group": 20676,
+      "rssKiB": 88592,
+      "started": "Thu Nov  5 09:09:14 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/review-repair-lint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts scripts/ci/bootstrap-evidence.test.ts e2e/pwa.spec.ts"
+    },
+    {
+      "pid": 20695,
+      "parent": 20676,
+      "group": 20676,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:09:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20727,
+      "parent": 20676,
+      "group": 20676,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:09:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,94 @@
+{
+  "root": 10627,
+  "started": 1793897790600,
+  "elapsedMs": 1167,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91888,
+  "peakKiB": 351392,
+  "live": [
+    {
+      "pid": 10627,
+      "parent": 10591,
+      "group": 10627,
+      "rssKiB": 90352,
+      "started": "Thu Nov  5 08:56:30 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write .github/workflows/browserstack.yml e2e/pwa.spec.ts e2e/sync-client.spec.ts scripts/ci/browserstack-build-inspection.ts scripts/ci/browserstack-capability.test.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack.test.ts scripts/ci/bootstrap-evidence.test.ts src/shared/bootstrapEvidence.ts web/main.tsx"
+    },
+    {
+      "pid": 10731,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 10627,
+      "parent": 10591,
+      "group": 10627,
+      "rssKiB": 90352,
+      "started": "Thu Nov  5 08:56:30 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-bootstrap/format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write .github/workflows/browserstack.yml e2e/pwa.spec.ts e2e/sync-client.spec.ts scripts/ci/browserstack-build-inspection.ts scripts/ci/browserstack-capability.test.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack.test.ts scripts/ci/bootstrap-evidence.test.ts src/shared/bootstrapEvidence.ts web/main.tsx"
+    },
+    {
+      "pid": 10646,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10672,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 260048,
+      "started": "Thu Nov  5 08:56:30 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write .github/workflows/browserstack.yml e2e/pwa.spec.ts e2e/sync-client.spec.ts scripts/ci/browserstack-build-inspection.ts scripts/ci/browserstack-capability.test.ts scripts/ci/browserstack-capability.ts scripts/ci/browserstack.test.ts scripts/ci/bootstrap-evidence.test.ts src/shared/bootstrapEvidence.ts web/main.tsx"
+    },
+    {
+      "pid": 10678,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10691,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10704,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10718,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10731,
+      "parent": 10627,
+      "group": 10627,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:56:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

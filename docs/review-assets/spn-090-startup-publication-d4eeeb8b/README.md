@@ -1,0 +1,3 @@
+# 🔎 SPN-090 startup publication evidence
+
+Exactd4eeeb8b4871695a0efc9b2c09259cc801784894, independent A98/B97. Original1a9 withheld/A and94/B findings are preserved; both tested-event identity and ordinary build/test mode defects repaired before publication.83focused controls, scoped types, repository lint, actionlint, formatting, backlog and committed PR checks pass. First scoped typing failed missing send mapping under partial local dependency installation; explicit donor type resolution repaired it, no unrelated server source changed. No full donor-app, new phone or visual pass is claimed. Full current CI/Story/native/runtime/phone/visual acceptance remains pending.

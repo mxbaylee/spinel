@@ -1,0 +1,10 @@
+✔ a launched window that is blank at first is attached once Spinel appears, fails only after the wait, and an uncontrolled page records its worker state (11353.347416ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11523.480125
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":11701,"peakKiB":284208}

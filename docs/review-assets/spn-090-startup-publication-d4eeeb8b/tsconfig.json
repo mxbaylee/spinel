@@ -1,0 +1,63 @@
+{
+  "extends": "/Users/mxbaylee/projects/spinel-spn-090-production/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": [
+      "/Users/mxbaylee/projects/spinel/node_modules/@types"
+    ],
+    "paths": {
+      "*": [
+        "/Users/mxbaylee/projects/spinel/node_modules/*"
+      ],
+      "vite": [
+        "/Users/mxbaylee/projects/spinel/node_modules/vite/dist/node/index.d.ts"
+      ],
+      "sharp": [
+        "/Users/mxbaylee/projects/spinel/node_modules/sharp/dist/index.d.mts"
+      ],
+      "@univerjs/core": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/core/./lib/types/index.d.ts"
+      ],
+      "@univerjs/docs": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/docs/./lib/types/index.d.ts"
+      ],
+      "rxjs": [
+        "/Users/mxbaylee/projects/spinel/node_modules/rxjs/dist/types/index.d.ts"
+      ],
+      "@playwright/test": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/index.d.ts"
+      ],
+      "@univerjs/docs-ui": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/docs-ui/lib/types/index.d.ts"
+      ],
+      "@univerjs/engine-render": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/engine-render/lib/types/index.d.ts"
+      ],
+      "@simplewebauthn/server": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@simplewebauthn/server/esm/index.d.ts"
+      ],
+      "@modelcontextprotocol/sdk/*.js": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@modelcontextprotocol/sdk/dist/esm/*.d.ts"
+      ],
+      "send": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@types/send/index.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-build-graph.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-build-graph.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-build-inspection.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/vite.config.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/src/build/rendererChunks.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/renderer-chunks.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/src/shared/bootstrapEvidence.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/bootstrap-evidence.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-capability.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-capability.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/e2e/pwa.spec.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/e2e/sync-client.spec.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/web/main.tsx",
+    "/Users/mxbaylee/projects/spinel/node_modules/vite/client.d.ts"
+  ]
+}
