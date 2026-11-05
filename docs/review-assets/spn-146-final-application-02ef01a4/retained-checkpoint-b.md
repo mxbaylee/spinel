@@ -1,0 +1,29 @@
+# ⚠️ SPN-146 retained checkpoint — independent Safari disposition B
+
+Reviewed read-only source **02ef01a40fe8369b79477909673c76de6d2a4edf**, native run **42013542571**, attempt **1**, Safari job **127198261182**, tested merge **6fdb243eb5728b91f935a4bea258fa3882458ccb**. Inspected the full failure context, terminal native job/artifact metadata, small acceptance/versions records directly from the retained Safari ZIP, relevant native source and archive README at **6977e3a1b9a488772efd1ad1f019b99316fae248**, prefix `docs/review-assets/spn-146-qualification-outcome-02ef01a4`. No rerun, browser execution or heavy integrity scan. Original ZIP digest verification is the parent's retained evidence, not independently repeated here.
+
+**Safari acceptance failed and remains incomplete. No retry is supported by the evidence currently available. This is an additional native acceptance blocker, separate from the already failed/inconclusive component criterion. Neither Chrome/Firefox successes nor eventual ordinary CI green can waive either blocker.**
+
+## 🔎 Exact failure and dispatch uncertainty
+
+The failing command is `/usr/bin/osascript`, code 1, no signal, `killed:false`, configured timeout 30,000 ms, empty stdout. Stderr reports `System Events got an error: Connection is invalid. (-609)` at script character range 49:75. The stack identifies `desktop-browser.ts:1139`, `nativeText` at `desktop-offline.ts:220`, and the first pending-restart readback at line 561.
+
+The sheet readback first focuses the defined-name input and completes `SelectAll`, then calls `browser.type('D1')`. The Safari type implementation completes its foreground operation and invokes an AppleScript System Events `keystroke` command. That command reports failure. The subsequent `Enter`, selection copy and expected `731` visible-text assertion are not reached. The log proves an attempted keystroke operation, **not whether either character reached the application, whether the whole string was delivered, or whether it had no effect**. A nonzero process exit is not a transaction rollback witness.
+
+This is not SPN-140's exact pre-action `Application(pid)` constructor error -2700. The failure occurred in the System Events action call, after the scenario was running, so constructor-only recovery cannot be widened to cover it. The numerical error alone does not establish a transient cause, identify which connection failed, prove a browser crash, or prove lost document data.
+
+## 🧾 What completed and what did not
+
+The retained acceptance record is explicitly `status:"failed"`. It records all-four downloads, original offline records retained after restart, native offline edits committed and a further pending-data restart. The first sheet's persisted data/checkpoint and visible-image checks precede the failing native readback in source, but no `pending-restart-retained` stage was emitted. Full pending native content acceptance therefore did not finish. Reconnect/conflict resolution, storage-loss preparation/deletion and post-loss assertions were not reached.
+
+The three Safari launches use the same ordinary hosted profile identity, with browser PIDs 6024, 9465 and 11235. The final `browser-stop` records PID 11235 exited at 10:54:27.823 UTC; no browser or fixture teardown error appears in the report. The source awaits fixture closure before writing the report, although it does not emit an independent detailed fixture-close receipt. This supports cleanup completion without claiming a broader process inventory proof.
+
+Chrome job 127198260720 and Firefox job 127198261154 are terminal success. Safari artifact **13408433114** retains 15 members, including the failed acceptance JSON, profile capability, pointer/render diagnostics and useful failure PNGs; metadata pins this source and a 970,517-byte ZIP with SHA256 `fc56f708953cb5aaf32545578331a378202197738883b0f56dd75fe45c4658ab`. Their application acceptance is separate from Safari's failure. The desktop browser/offline source is unchanged from base 2f442317; that establishes source separation from the SPN-146 composition patch, not harmlessness or root cause.
+
+## 🧭 Retry and checkpoint decision
+
+The runbook allows a transient infrastructure retry only with evidence. This record is not an unacquired runner or pre-test dependency-download failure. The native scenario reached an action with uncertain delivery, and there is no demonstrated transient mechanism or safe no-effect boundary. Do not replay the keystroke, rerun the unchanged Safari scenario, or classify this as provision-only retry on the error code alone. A future repair/investigation needs a separately recorded native authority/transport scope, original failure preservation, exact action-boundary diagnosis and controls that never repeat an uncertain action. This review selects no new execution allowance and no code change.
+
+The archive README correctly preserves the component's complete 8/16 inconclusive result, closes its allowance, records native failure, retains all three artifacts and treats still-running ordinary CI/Storybook as pending at archive time. Its phrase **“dispatched keystroke failure”** should be read as **“failure while attempting the System Events keystroke action; delivery unknown.”** Prefer that precise wording in a subsequent maintained receipt/addendum; the adjacent statement that D1's effect is unknown already prevents a successful-delivery claim. The immutable archive need not be rewritten to conceal the original wording.
+
+This is an accurate blocked checkpoint with that dispatch-language qualification. It supplies no merge approval, no historical runtime-cause claim and no retry authorization. Finish and retain the already-running independent checks, then reconcile their terminal status without allowing them to replace either failed acceptance obligation.
