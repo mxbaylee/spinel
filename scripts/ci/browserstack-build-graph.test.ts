@@ -1,0 +1,172 @@
+import assert from 'node:assert/strict';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { test } from 'node:test';
+import { runInNewContext } from 'node:vm';
+import { inspectBuildGraph, inspectFinalBuild, sha256 } from './browserstack-build-graph.ts';
+
+const chunk = (fileName: string, imports: string[] = [], dynamicImports: string[] = []) => ({
+  type: 'chunk' as const,
+  fileName,
+  name: fileName === 'application.js' ? 'application' : fileName,
+  isEntry: fileName === 'application.js',
+  imports,
+  dynamicImports,
+  modules: { ['/repo/web/' + fileName]: { renderedLength: 300 } },
+});
+const fixture = () => ({
+  'application.js': chunk('application.js', ['shared.js'], ['editor.js']),
+  'shared.js': chunk('shared.js', ['application.js']),
+  'editor.js': chunk('editor.js', ['shared.js']),
+  'app.css': { type: 'asset' as const, fileName: 'app.css' },
+});
+
+test('actual emitted bytes bind a deduplicated static closure, excluding dynamic-only chunks', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn090-build-'));
+  try {
+    const bundle = fixture();
+    for (const file of Object.keys(bundle)) await writeFile(join(directory, file), file);
+    const inspect = () =>
+      inspectBuildGraph(bundle, (file) => readFile(join(directory, file)), '/repo');
+    const result = await inspect();
+    assert.deepEqual(result.staticJavaScriptClosure, ['application.js', 'shared.js']);
+    assert.equal(result.staticBytes, Buffer.byteLength('application.jsshared.js'));
+    assert.equal(
+      result.files.find((row) => row.file === 'editor.js')?.initialApplicationDependency,
+      false,
+    );
+    assert.deepEqual(result.files.find((row) => row.file === 'application.js')?.modules, [
+      { id: 'web/application.js', renderedLength: 300 },
+    ]);
+    await writeFile(join(directory, 'shared.js'), 'changed emitted bytes');
+    const changed = await inspect();
+    assert.equal(
+      changed.files.find((row) => row.file === 'shared.js')?.sha256,
+      sha256('changed emitted bytes'),
+    );
+    assert.notEqual(changed.staticBytes, result.staticBytes);
+    await rm(join(directory, 'editor.js'));
+    await assert.rejects(inspect(), /ENOENT/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('final settled files bind descriptor CSS, copied assets, and unchanged declared bytes', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn090-final-build-'));
+  try {
+    await mkdir(join(directory, 'assets'));
+    const descriptor = {
+      protocol: 1,
+      version: 'a'.repeat(16),
+      compatibility: { format: 1, sdkVersion: '1.1.0' },
+      entry: '/assets/application.js',
+      css: ['/assets/editor.css'],
+      files: ['/assets/application.js', '/assets/editor.css'],
+    };
+    const html = `<script type="module" src="/assets/application.js"></script><script id="spinel-runtime" type="application/json">${JSON.stringify(descriptor)}</script>`;
+    const values = {
+      'index.html': html,
+      'service-worker.js': 'worker',
+      'assets/application.js': 'app',
+      'assets/editor.css': 'editor CSS',
+      'copied.txt': 'public copy',
+    };
+    for (const [file, value] of Object.entries(values))
+      await writeFile(join(directory, file), value);
+    const bundle = {
+      'index.html': { type: 'asset' as const, fileName: 'index.html' },
+      'service-worker.js': chunk('service-worker.js'),
+      'assets/application.js': {
+        ...chunk('assets/application.js'),
+        name: 'application',
+        isEntry: true,
+      },
+      'assets/editor.css': { type: 'asset' as const, fileName: 'assets/editor.css' },
+    };
+    const hashes = Object.fromEntries(
+      Object.entries(values).map(([file, value]) => [file, sha256(value)]),
+    );
+    const inspect = () => inspectFinalBuild(directory, bundle, '/repo', hashes);
+    const result = await inspect();
+    assert.equal(result.complete, true);
+    assert.deepEqual(result.staticJavaScriptClosure, ['assets/application.js']);
+    assert.deepEqual(result.preRenderStylesheets, ['/assets/editor.css']);
+    assert.equal(
+      result.finalFiles.find((row) => row.file === 'copied.txt')?.copiedOutsideBundle,
+      true,
+    );
+    await writeFile(join(directory, 'assets/application.js'), 'changed');
+    await assert.rejects(inspect(), /Changed final emitted member/);
+    await writeFile(join(directory, 'assets/application.js'), 'app');
+    const wrongHtml = html.replaceAll('/assets/application.js', '/assets/missing.js');
+    await writeFile(join(directory, 'index.html'), wrongHtml);
+    hashes['index.html'] = sha256(wrongHtml);
+    await assert.rejects(inspect(), /descriptor entry mismatch/);
+    await writeFile(join(directory, 'index.html'), html);
+    hashes['index.html'] = sha256(html);
+    await symlink('/etc/hosts', join(directory, 'escaped'));
+    await assert.rejects(inspect(), /Symlink/);
+    await rm(join(directory, 'escaped'));
+    await rm(join(directory, 'assets/editor.css'));
+    await assert.rejects(inspect(), /Missing final emitted member/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test('missing entry, unresolved static or dynamic dependencies and unsafe paths fail closed', async () => {
+  const read = async (file: string) => Buffer.from(file);
+  await assert.rejects(inspectBuildGraph({}, read, '/repo'), /file count/);
+  await assert.rejects(
+    inspectBuildGraph({ 'other.js': chunk('other.js') }, read, '/repo'),
+    /application entry/,
+  );
+  for (const dynamic of [false, true]) {
+    const bundle = fixture();
+    if (dynamic) bundle['application.js'].dynamicImports.push('missing.js');
+    else bundle['application.js'].imports.push('missing.js');
+    await assert.rejects(inspectBuildGraph(bundle, read, '/repo'), /Missing emitted dependency/);
+  }
+  for (const path of [
+    '../escape.js',
+    '/absolute.js',
+    'a/../escape.js',
+    'a\\escape.js',
+    './alias.js',
+  ])
+    await assert.rejects(
+      inspectBuildGraph({ ...fixture(), [path]: chunk(path) }, read, '/repo'),
+      /emitted path/,
+    );
+  await assert.rejects(
+    inspectBuildGraph({ ...fixture(), 'alias.js': chunk('shared.js') }, read, '/repo'),
+    /conflicting emitted path/,
+  );
+});
+
+test('one build-only branch transition cannot route provider or browser work', async () => {
+  const workflow = await readFile('.github/workflows/phone-build-inspection.yml', 'utf8');
+  assert.match(workflow, /branches: \[codex\/spn-090-production-integration\]/);
+  assert.doesNotMatch(
+    workflow,
+    /workflow_dispatch|pull_request:|schedule:|secrets\.|BS_USERNAME|setup-local|playwright|browserstack-capability/,
+  );
+  assert.match(workflow, /test "\$GITHUB_RUN_ATTEMPT" = 1/);
+  assert.match(workflow, /timeout-minutes: 15/);
+  assert.match(workflow, /timeout-minutes: 10/);
+  assert.match(workflow, /if: always\(\)/);
+  assert.match(workflow, /if-no-files-found: error/);
+  const expression = workflow.match(/^    if: (.+)$/m)?.[1];
+  assert.ok(expression);
+  for (const [repository, before, expected] of [
+    ['mxbaylee/spinel', '5bb97d17484ca7df151114ad2f6e28a03b4630c2', true],
+    ['fork/spinel', '5bb97d17484ca7df151114ad2f6e28a03b4630c2', false],
+    ['mxbaylee/spinel', 'later-head', false],
+  ])
+    assert.equal(
+      runInNewContext(expression, { github: { repository, event: { before } } }),
+      expected,
+    );
+});
