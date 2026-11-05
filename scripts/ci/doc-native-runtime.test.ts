@@ -10,6 +10,20 @@ import { test } from 'node:test';
 import { analyzeRuntime, validateRuntimeJournal } from './doc-native-runtime/analysis.ts';
 import { firstResourceViolation, owned, resourceFailure } from './doc-native-runtime/watchdog.ts';
 
+test('linear-copy qualification admits only the reviewed predecessor and first attempt', () => {
+  const workflow = readFileSync('.github/workflows/doc-native-runtime.yml', 'utf8');
+  assert.match(workflow, /types: \[synchronize\]/);
+  assert.match(workflow, /github.event.before == '8b6828196266f1fac6c46e2cc16b16321db72cf7'/);
+  assert.match(workflow, /github.event.pull_request.head.repo.full_name == github.repository/);
+  assert.match(workflow, /github.event.pull_request.head.ref == 'codex\/spn-146-mobile-flush'/);
+  assert.match(workflow, /test "\$GITHUB_RUN_ATTEMPT" = 1/);
+  assert.doesNotMatch(workflow, /continue-on-error|workflow_dispatch|workflow_run/);
+  for (const phase of ['build', 'run', 'convert']) {
+    assert.ok(workflow.includes(`node scripts/ci/doc-native-runtime/${phase}.ts`));
+  }
+  assert.match(workflow, /if-no-files-found: error/);
+});
+
 test('one changed-launcher window retains source admission, direct guarded CLI and mandatory preparation', () => {
   const workflow = readFileSync('.github/workflows/doc-native-diagnostic.yml', 'utf8');
   const before = 'a4eb19e4c5b95ba589042fe181cbcec2aa848990';

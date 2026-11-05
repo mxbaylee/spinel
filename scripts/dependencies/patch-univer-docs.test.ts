@@ -1518,87 +1518,112 @@ for (const format of ['es', 'cjs'] as const) {
     }
   });
 
-  test(`${format}: reuse qualified ranges without changing any composition operand or tiny-head fold`, async () => {
-    const { patched, paragraphTailPatched } = prepareDocsPatch(await readBuild(format), format);
-    const measured = (source: string, states: State[], key: 'redoState' | 'undoState') => {
-      const counts: Record<string, number> = {};
-      const calls: unknown[] = [];
-      const results: unknown[] = [];
-      const tick = (name: string) => {
-        counts[name] = (counts[name] ?? 0) + 1;
-      };
-      const identity = (value: unknown) => {
-        if (value === null) return 'null';
-        const input = states.findIndex((state) => state[key].actions === value);
-        return input >= 0 ? `input:${input}` : `result:${results.indexOf(value)}`;
-      };
-      const json = {
-        compose(left: JSONXActions, right: JSONXActions) {
-          calls.push({
-            left: ownDataShape(left),
-            right: ownDataShape(right),
-            leftIdentity: identity(left),
-            rightIdentity: identity(right),
-          });
-          const result = core.JSONX.compose(left, right);
-          results.push(result);
-          return result;
-        },
-      };
-      for (const name of [
-        'docInsertPrefixLength',
-        'docDeletePrefixLength',
-        'hasOnlyDocInsertKeys',
-      ]) {
-        const expression = new RegExp(`function ${name}\\([^)]*\\) \\{`);
-        assert.equal(source.match(new RegExp(expression.source, 'g'))?.length, 1);
-        source = source.replace(expression, (match) => `${match} __spn146Guard('${name}');`);
-      }
+  test(`${format}: linear paragraph ranges preserve raw ownership and reduce repeated native copies`, async () => {
+    const { patched, qualifiedRangesPatched, linearTailPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const helper = (source: string) => {
       const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
       const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
-      const compose = runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
-        ...core,
-        JSONX: json,
-        _univerjs_core: { ...core, JSONX: json },
-        Object,
-        Array,
-        __spn146Guard: tick,
-      }) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
-      const before = ownDataShape(states);
-      const output = compose(states, key);
-      assert.deepEqual(ownDataShape(states), before);
-      return { output, calls, counts };
+      // Same realm keeps prototype/descriptor comparisons about native semantics.
+      // Only the complete hash-verified public manager region is evaluated.
+      return Function(
+        'core',
+        `const {${Object.keys(core).join(',')}}=core; const _univerjs_core=core;\n${source.slice(start, end)}\nreturn composeDocStateActions;`,
+      )(core) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
     };
+    const current = helper(qualifiedRangesPatched),
+      candidate = helper(patched);
     for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
-      for (let position = 0; position < 32; position++) {
-        const { states } = paragraphSequence(position, 32, cover, 7);
-        for (const key of ['redoState', 'undoState'] as const) {
-          const before = measured(paragraphTailPatched, states, key);
-          const after = measured(patched, states, key);
-          assert.deepEqual(after.output, before.output);
-          assert.deepEqual(
-            after.calls,
-            before.calls,
-            `${cover}/${position}/${key}: exact operand values, identities and call order`,
-          );
-          if (key === 'redoState' && position < 28) {
-            const reduced = (counts: Record<string, number>) => {
-              for (const name of Object.keys(before.counts))
-                assert.ok(
-                  counts[name] < before.counts[name],
-                  `${name}: duplicate qualification removed`,
-                );
-            };
-            reduced(after.counts);
-            assert.throws(() => reduced(before.counts), /duplicate qualification removed/);
-          } else
+      for (const offset of [0, 7])
+        for (let position = 0; position < 32; position++) {
+          const scenario = paragraphSequence(position, 32, cover, offset);
+          const label = `${format}/${cover}/${offset}/${position}`;
+          const originalShape = ownDataShape(scenario.states);
+          for (const key of ['redoState', 'undoState'] as const) {
+            const before = current(scenario.states, key),
+              after = candidate(scenario.states, key);
+            assert.deepEqual(after, before, `${label}/${key}: every native field`);
             assert.deepEqual(
-              after.counts,
-              before.counts,
-              'Unadmitted tails and undo retain the original checks.',
+              ownDataShape({ input: scenario.states, output: after }),
+              ownDataShape({ input: scenario.states, output: before }),
+              `${label}/${key}: descriptors, prototypes and alias topology`,
             );
+          }
+          assert.deepEqual(ownDataShape(scenario.states), originalShape);
+          const before = measuredFlush(qualifiedRangesPatched, scenario.states);
+          const tailOnly = measuredFlush(linearTailPatched, scenario.states);
+          const after = measuredFlush(patched, scenario.states);
+          assertNativePreservation(before.output, after.output, scenario, label);
+          assert.deepEqual(after.output, tailOnly.output);
+          if (position < 28) {
+            assert.ok(
+              after.counts.allocations < before.counts.allocations,
+              'Admitted native copying falls',
+            );
+            if (position >= 4)
+              for (const counter of [
+                'textCompose',
+                'iteratorNext',
+                'bodySlices',
+                'allocations',
+              ] as const)
+                assert.ok(
+                  after.counts[counter] < tailOnly.counts[counter],
+                  `${label}: isolated prefix ${counter}`,
+                );
+            else
+              assert.deepEqual(
+                after.counts,
+                tailOnly.counts,
+                'Tiny head keeps its original null fold',
+              );
+          } else assert.deepEqual(after.counts, before.counts, 'Short tail is not admitted');
         }
-      }
+    for (const position of [3, 4, 23])
+      for (const repetitions of [0, 1, 3])
+        for (const equalStyle of [false, true]) {
+          const scenario = paragraphSequence(
+            position,
+            32,
+            core.UpdateDocsAttributeType.REPLACE,
+            7,
+            (body, enter) => {
+              if (equalStyle) body.textRuns![0].ts = { bl: 1, cl: { rgb: '#123456' } };
+              if (!enter)
+                for (let index = 0; index < repetitions; index++) {
+                  const normalized = new core.ActionIterator([
+                    { t: core.TextXActionType.INSERT, len: 1, body },
+                  ]).next(1);
+                  assert.ok(normalized.t === core.TextXActionType.INSERT);
+                  for (const key of Object.keys(body)) delete (body as any)[key];
+                  Object.assign(body, normalized.body);
+                }
+            },
+          );
+          const before = current(scenario.states, 'redoState'),
+            after = candidate(scenario.states, 'redoState');
+          assert.deepEqual(after, before);
+          assert.deepEqual(
+            ownDataShape({ input: scenario.states, output: after }),
+            ownDataShape({ input: scenario.states, output: before }),
+          );
+          const originalShape = ownDataShape(scenario.states),
+            expected = structuredClone(after);
+          const edits = (after as any)[1].e;
+          edits.find((edit: any) => edit.t === 'i').body.dataStream = 'changed output';
+          assert.deepEqual(
+            ownDataShape(scenario.states),
+            originalShape,
+            'Output mutation cannot alter inputs',
+          );
+          assert.deepEqual(
+            candidate(scenario.states, 'redoState'),
+            expected,
+            'Independent calls own their result',
+          );
+        }
   });
 
   test(`${format}: REPLACE paragraph tails preserve the non-null accumulator and own their result`, async () => {
@@ -1954,7 +1979,7 @@ for (const format of ['es', 'cjs'] as const) {
     ];
     for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
       for (const [name, decorate] of cases) {
-        const scenario = paragraphSequence(3, 16, cover, 5, decorate);
+        const scenario = paragraphSequence(4, 16, cover, 5, decorate);
         const current = measuredFlush(constantGuardPatched, scenario.states, scenario.states, true);
         const candidate = measuredFlush(patched, scenario.states, scenario.states, true);
         assertNativePreservation(
@@ -2042,8 +2067,8 @@ for (const format of ['es', 'cjs'] as const) {
               ]
             : []),
         ]) {
-          const scenario = paragraphSequence(3, 16, cover, 5);
-          mutate((scenario.states[3].redoState.actions as any)[1].e[2][target]);
+          const scenario = paragraphSequence(4, 16, cover, 5);
+          mutate((scenario.states[4].redoState.actions as any)[1].e[2][target]);
           const native = measuredFlush(original, scenario.states, scenario.states, true);
           const before = measuredFlush(
             constantGuardPatched,
@@ -2151,6 +2176,8 @@ for (const format of ['es', 'cjs'] as const) {
       deletePrefixPatched,
       constantGuardPatched,
       paragraphTailPatched,
+      qualifiedRangesPatched,
+      linearTailPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
@@ -2206,6 +2233,27 @@ for (const format of ['es', 'cjs'] as const) {
     }[format];
     assert.equal(createHash('sha256').update(previousPatched).digest('hex'), previousHash);
     assert.equal(prepareDocsPatch(previousPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(qualifiedRangesPatched).digest('hex'),
+      {
+        es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
+        cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(qualifiedRangesPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(qualifiedRangesPatched + '\n// unknown edit', format));
+    assert.throws(
+      () => prepareDocsPatch(linearTailPatched, format),
+      /Unrecognized/,
+      'Unpublished intermediate is not an accepted installed build',
+    );
+    assert.equal(
+      createHash('sha256').update(patched).digest('hex'),
+      {
+        es: 'e47c9319b3c85c737add0e7807edbc27aeafcc81b81dd6ad870058e4fe3da093',
+        cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+      }[format],
+    );
     assert.equal(prepareDocsPatch(patched, format).patched, patched);
     assert.throws(() => prepareDocsPatch(original + '\n// unknown edit', format), /Unrecognized/);
     assert.throws(
