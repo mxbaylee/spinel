@@ -42,7 +42,7 @@ try {
     execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim(),
   );
   assert.equal(preparation.nativeReference, '2f442317dd2e1c188ae4a810ac094fd1162a4a2a');
-  assert.equal(preparation.eventBefore, 'df76fb78fa0258f8c28c068767970e8e869a5838');
+  assert.equal(preparation.eventBefore, 'a4eb19e4c5b95ba589042fe181cbcec2aa848990');
   assert.deepEqual(metrics.nativeDiagnosticBuild, preparation);
   assert.deepEqual(metrics.nativeSourcePreparation, sourcePreparation);
   assert.equal(sourcePreparation.source, source);

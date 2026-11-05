@@ -14,9 +14,9 @@ concurrency:
 
 jobs:
   observation:
-    # One changed-collector validation after the qualified retained-data memory probe.
-    # The superseding finite decision is in SPN-146-resource-preparation.md.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == 'df76fb78fa0258f8c28c068767970e8e869a5838'
+    # One changed-launcher validation after the qualified no-browser comparison.
+    # The superseding finite decision is in SPN-146-direct-launcher.md.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == 'a4eb19e4c5b95ba589042fe181cbcec2aa848990'
     name: One prior-native fixed-window observation
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -59,7 +59,7 @@ jobs:
       - name: One diagnostic first attempt
         run: |
           mkdir -p test-results
-          node scripts/ci/doc-native-runtime/watchdog.ts --application-window test-results/spn146-window-watchdog.json npx playwright test --project=doc-responsiveness --grep 'mobile sustained native typing profile$' --retries=0
+          node scripts/ci/doc-native-runtime/watchdog.ts --application-window test-results/spn146-window-watchdog.json node node_modules/@playwright/test/cli.js test --project=doc-responsiveness --grep 'mobile sustained native typing profile$' --retries=0
       - name: Convert and inspect the complete fixed window
         run: node scripts/ci/doc-native-runtime/watchdog.ts test-results/spn146-window-analysis-watchdog.json node scripts/ci/doc-native-runtime/window-convert.ts
       - name: Preserve complete or partial observation
