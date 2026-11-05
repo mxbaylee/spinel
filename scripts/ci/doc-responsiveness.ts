@@ -491,9 +491,11 @@ const requiredHashes = [
   'e2e/doc-responsiveness.spec.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness-boundaries.ts',
+  'e2e/doc-responsiveness-native-trace.ts',
   'web/docResponsivenessEvidence.ts',
   'src/ui/docIdleEpisode.ts',
   'src/ui/nativeDocFlush.ts',
+  'src/ui/nativeDocFlushDiagnostic.ts',
   'playwright.config.ts',
   'package-lock.json',
 ];

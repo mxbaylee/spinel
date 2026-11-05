@@ -1,4 +1,9 @@
-import { IUndoRedoService, IUniverInstanceService, UniverInstanceType } from '@univerjs/core';
+import {
+  IUndoRedoService,
+  IUniverInstanceService,
+  JSONX,
+  UniverInstanceType,
+} from '@univerjs/core';
 import type { DocumentDataModel, Univer } from '@univerjs/core';
 import {
   DocSelectionManagerService,
@@ -12,6 +17,8 @@ import type { DocFlushObservation } from '../src/ui/boundedDocHistory.ts';
 import type { NativeDocFlushManager } from '../src/ui/nativeDocFlush.ts';
 import { terminalIdleEpisode } from '../src/ui/docIdleEpisode.ts';
 import type { DocIdleEpisode, DocTerminalState, EpochDocFlush } from '../src/ui/docIdleEpisode.ts';
+import { observeNativeDocComposition } from '../src/ui/nativeDocFlushDiagnostic.ts';
+import type { DiagnosticManager } from '../src/ui/nativeDocFlushDiagnostic.ts';
 
 type CacheCounts = { history: number; collaboration: number };
 type HistoryCounts = { undos: number; redos: number };
@@ -64,6 +71,31 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
   const injector = univer.__getInjector();
   // Instantiate the native subscriber before ours so these are post-capture counts.
   const manager = injector.get(DocStateChangeManagerService);
+  let diagnostic: ReturnType<typeof observeNativeDocComposition> | undefined;
+  const diagnosticRequest = (event: Event) => {
+    const action = (event as CustomEvent<{ action?: string }>).detail?.action;
+    let result: unknown;
+    try {
+      if (action === 'start') {
+        if (diagnostic) throw new Error('Native diagnostic already started.');
+        diagnostic = observeNativeDocComposition(
+          manager as unknown as DiagnosticManager,
+          JSONX,
+          unitId,
+        );
+        result = { started: true, unitId, timeOrigin: performance.timeOrigin };
+      } else if (action === 'finish')
+        result = diagnostic?.finish() ?? { error: 'Native diagnostic never started.' };
+      else throw new Error('Unknown native diagnostic action.');
+    } catch (error) {
+      result = { error: String(error) };
+    }
+    window.dispatchEvent(
+      new CustomEvent('spinel-doc-native-diagnostic-evidence', { detail: result }),
+    );
+  };
+  if (import.meta.env.VITE_DOC_FLUSH_DIAGNOSTIC === '1')
+    window.addEventListener('spinel-doc-native-diagnostic', diagnosticRequest);
   const highWater = { history: 0, collaboration: 0 };
   const flushes: DocFlushObservation[] = [];
   const undoRedo = injector.get(IUndoRedoService);
@@ -374,6 +406,8 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       else invalidate('policy-flush-overflow');
     },
     dispose() {
+      diagnostic?.finish();
+      window.removeEventListener('spinel-doc-native-diagnostic', diagnosticRequest);
       invalidate('disposed-before-seal');
       disposed = true;
       nativeObservation?.dispose();
