@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150",
+    "error": "Error: Incomplete coverage doc-callback-lifetimes: selected=true, result=failure",
+    "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"success\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"failure\"}"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "root": 45329,
+  "started": 1793841735065,
+  "elapsedMs": 377,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91520,
+  "peakKiB": 308928,
+  "live": [
+    {
+      "pid": 45329,
+      "parent": 45294,
+      "group": 45329,
+      "rssKiB": 89952,
+      "started": "Wed Nov  4 17:22:14 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/callback-desktop-semantic-a-watchdog.json node /tmp/spn141-after143-hosted/audit-callback-desktop-semantic-a.ts"
+    },
+    {
+      "pid": 45400,
+      "parent": 45329,
+      "group": 45329,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 45329,
+      "parent": 45294,
+      "group": 45329,
+      "rssKiB": 89952,
+      "started": "Wed Nov  4 17:22:14 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/callback-desktop-semantic-a-watchdog.json node /tmp/spn141-after143-hosted/audit-callback-desktop-semantic-a.ts"
+    },
+    {
+      "pid": 45349,
+      "parent": 45329,
+      "group": 45329,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45380,
+      "parent": 45329,
+      "group": 45329,
+      "rssKiB": 217552,
+      "started": "Wed Nov  4 17:22:15 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 45386,
+      "parent": 45329,
+      "group": 45329,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45400,
+      "parent": 45329,
+      "group": 45329,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

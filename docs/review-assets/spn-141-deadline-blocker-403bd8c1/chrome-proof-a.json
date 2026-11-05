@@ -1,0 +1,286 @@
+{
+  "status": "passed",
+  "source": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+  "tested": "28897ac1e143492bae980abf29f73c0e3daa8717",
+  "tree": "4893ed46f3c483d1da1d9e753b106af22d6cb65a",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41945378569",
+  "attempt": "1",
+  "zip": {
+    "bytes": 227818,
+    "sha256": "24ad74c46ba266f205c613835e94b9a5c40e8588ebf8a5887c890c7391db6f94"
+  },
+  "members": [
+    {
+      "name": "chrome/1e542044-775a-41f2-8233-d14f25286755-before-doc-input.png",
+      "bytes": 27873,
+      "sha256": "70069908cfc97a9a0d8c829216866ae1570db29e60b5d36f1bb41456765a2c8e"
+    },
+    {
+      "name": "chrome/7c30d7b7-a036-40f8-b73c-e9477a52d9c8-before-doc-input.png",
+      "bytes": 27942,
+      "sha256": "8d8391ba451a97b6684f93f39f2b5f9f1a166260a624ecd35f7eb66a55b7b08a"
+    },
+    {
+      "name": "chrome/acceptance.json",
+      "bytes": 55229,
+      "sha256": "e3048a701d6020f00f039e009bd7c371dafabb4017d909f76ed7af73203699d0"
+    },
+    {
+      "name": "chrome/chrome-driver-1.log",
+      "bytes": 352,
+      "sha256": "626ac70e8f2eb4e71fc789740838cd0f5809523d5a7a77796ec88fbf4d7acbe1"
+    },
+    {
+      "name": "chrome/chrome-driver-2.log",
+      "bytes": 352,
+      "sha256": "ef0dc603b1790071bcd59e388dbbb2c8b24975b3a19c00ca1a02dbef58635f1e"
+    },
+    {
+      "name": "chrome/chrome-driver-3.log",
+      "bytes": 352,
+      "sha256": "c62f689124e6e9548959eb1bebc4162339978e33dbfe0f05b69b0e85c90671a1"
+    },
+    {
+      "name": "chrome/chrome-driver-4.log",
+      "bytes": 352,
+      "sha256": "3839622e25ca56d5b745dc31842789b7778dff6fd58e6f225cb506b226221851"
+    },
+    {
+      "name": "chrome/doc-conflict-offline.png",
+      "bytes": 29566,
+      "sha256": "a6277dcae70499fcd3c240f8ceb611173e4b27b5de9a3375e1f5e38ebd888473"
+    },
+    {
+      "name": "chrome/doc-normal-offline.png",
+      "bytes": 29267,
+      "sha256": "c96968112ba447d0dca51c36c4aa6be4410647520f775ae2efabf1928ba61288"
+    },
+    {
+      "name": "chrome/doc-recovered-copy.png",
+      "bytes": 32543,
+      "sha256": "33ae4971576a1237fe6634e6b8508f054a2cef305781f43a038c10bd248e39dc"
+    },
+    {
+      "name": "chrome/sheet-conflict-offline.png",
+      "bytes": 29189,
+      "sha256": "3810754b2dceb54cb02a0c3d56a7ae2cab750985592a3ec42ab75773502bdba8"
+    },
+    {
+      "name": "chrome/sheet-normal-offline.png",
+      "bytes": 29263,
+      "sha256": "62e2e35e330e56bad4a92301fae8478d82f159f838c9eff53a9e6c713886b979"
+    },
+    {
+      "name": "chrome/sheet-recovered-copy.png",
+      "bytes": 31998,
+      "sha256": "b2342159f40b9790b1faa1a0e2ba0d9e92d6e40d3654b39ae00cf03519deceb4"
+    },
+    {
+      "name": "chrome/versions.json",
+      "bytes": 824,
+      "sha256": "f6cbfd579294d120e75fc77f3c6d93914de455a23e52b667a9c74dc1268eb59c"
+    }
+  ],
+  "stages": 44,
+  "profile": {
+    "mode": "explicit-directory",
+    "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+    "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+    "directoryDevice": "16777226",
+    "directoryInode": "3039256"
+  },
+  "pids": [
+    3699,
+    4204,
+    4674,
+    5757
+  ],
+  "version": "157.0.8103.39",
+  "preparation": {
+    "database": "spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+    "operations": [
+      {
+        "elapsedMs": 0,
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T01:04:12.704Z",
+        "status": "passed",
+        "value": {
+          "marker": "inert",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss"
+        }
+      },
+      {
+        "elapsedMs": 1,
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T01:04:12.704Z",
+        "status": "passed",
+        "value": [
+          "https://localhost:8176/"
+        ]
+      },
+      {
+        "elapsedMs": 2631,
+        "name": "serviceWorker.unregister:https://localhost:8176/",
+        "startedAt": "2026-11-05T01:04:12.705Z",
+        "status": "passed",
+        "value": true
+      },
+      {
+        "elapsedMs": 2,
+        "name": "verify-unregistered",
+        "startedAt": "2026-11-05T01:04:15.336Z",
+        "status": "passed",
+        "value": {
+          "controller": "https://localhost:8176/service-worker.js",
+          "workers": []
+        }
+      }
+    ],
+    "phase": "unregister",
+    "status": "passed",
+    "timeoutMs": 28000
+  },
+  "quiescence": {
+    "database": "spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+    "operations": [
+      {
+        "elapsedMs": 0,
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T01:04:15.485Z",
+        "status": "passed",
+        "value": {
+          "marker": "inert",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+        }
+      },
+      {
+        "elapsedMs": 0,
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T01:04:15.485Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-uncontrolled",
+        "startedAt": "2026-11-05T01:04:15.486Z",
+        "status": "passed",
+        "value": {
+          "controller": null,
+          "workers": []
+        }
+      }
+    ],
+    "phase": "verify",
+    "status": "passed",
+    "timeoutMs": 28000
+  },
+  "deletion": {
+    "database": "spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+    "operations": [
+      {
+        "elapsedMs": 1,
+        "name": "verify-preparation-document",
+        "startedAt": "2026-11-05T01:04:18.824Z",
+        "status": "passed",
+        "value": {
+          "marker": "inert",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+        }
+      },
+      {
+        "elapsedMs": 1,
+        "name": "serviceWorker.getRegistrations",
+        "startedAt": "2026-11-05T01:04:18.825Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-uncontrolled",
+        "startedAt": "2026-11-05T01:04:18.826Z",
+        "status": "passed",
+        "value": {
+          "controller": null,
+          "workers": []
+        }
+      },
+      {
+        "elapsedMs": 3,
+        "name": "caches.keys",
+        "startedAt": "2026-11-05T01:04:18.826Z",
+        "status": "passed",
+        "value": [
+          "spinel-shell-603ae4b16bb36841"
+        ]
+      },
+      {
+        "elapsedMs": 4,
+        "name": "caches.delete:spinel-shell-603ae4b16bb36841",
+        "startedAt": "2026-11-05T01:04:18.830Z",
+        "status": "passed",
+        "value": true
+      },
+      {
+        "elapsedMs": 3,
+        "name": "localStorage.clear",
+        "startedAt": "2026-11-05T01:04:18.833Z",
+        "status": "passed",
+        "value": 0
+      },
+      {
+        "elapsedMs": 47,
+        "name": "indexedDB.deleteDatabase:spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+        "startedAt": "2026-11-05T01:04:18.836Z",
+        "status": "passed",
+        "value": null
+      },
+      {
+        "elapsedMs": 2,
+        "name": "verify-service-workers",
+        "startedAt": "2026-11-05T01:04:18.883Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-cache-names",
+        "startedAt": "2026-11-05T01:04:18.885Z",
+        "status": "passed",
+        "value": []
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-database-names",
+        "startedAt": "2026-11-05T01:04:18.885Z",
+        "status": "passed",
+        "value": [
+          "UniverLocalStorage",
+          "spinel-offline-runtime"
+        ]
+      },
+      {
+        "elapsedMs": 0,
+        "name": "verify-storage-empty",
+        "startedAt": "2026-11-05T01:04:18.885Z",
+        "status": "passed",
+        "value": {
+          "cacheNames": [],
+          "databases": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ],
+          "localStorageEntries": 0,
+          "workers": []
+        }
+      }
+    ],
+    "phase": "delete",
+    "status": "passed",
+    "timeoutMs": 28000
+  },
+  "postLoss": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+}

@@ -1,0 +1,54 @@
+{
+  "root": 41773,
+  "started": 1793841003657,
+  "elapsedMs": 282,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90704,
+  "peakKiB": 90704,
+  "live": [
+    {
+      "pid": 41773,
+      "parent": 41738,
+      "group": 41773,
+      "rssKiB": 89136,
+      "started": "Wed Nov  4 17:10:03 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/firefox-proof-watchdog-b.json node /tmp/spn141-after143-hosted/audit-firefox-b.ts"
+    },
+    {
+      "pid": 41911,
+      "parent": 41773,
+      "group": 41773,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:10:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 41773,
+      "parent": 41738,
+      "group": 41773,
+      "rssKiB": 89136,
+      "started": "Wed Nov  4 17:10:03 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/firefox-proof-watchdog-b.json node /tmp/spn141-after143-hosted/audit-firefox-b.ts"
+    },
+    {
+      "pid": 41792,
+      "parent": 41773,
+      "group": 41773,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:10:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 41911,
+      "parent": 41773,
+      "group": 41773,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:10:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

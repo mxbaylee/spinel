@@ -1,0 +1,1007 @@
+﻿2026-11-05T01:20:12.2694585Z Current runner version: '2.338.2'
+2026-11-05T01:20:12.2730904Z ##[group]Runner Image Provisioner
+2026-11-05T01:20:12.2732222Z Hosted Compute Agent
+2026-11-05T01:20:12.2733468Z Version: 20261028.624
+2026-11-05T01:20:12.2734684Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-05T01:20:12.2735884Z Build Date: 2026-10-28T21:51:42Z
+2026-11-05T01:20:12.2737155Z Worker ID: {3ef63d21-4d9a-46f4-bb75-1b16412efb5a}
+2026-11-05T01:20:12.2738369Z Region: eastus2
+2026-11-05T01:20:12.2739357Z Cloud: Azure
+2026-11-05T01:20:12.2740342Z ##[endgroup]
+2026-11-05T01:20:12.2743450Z ##[group]Operating System
+2026-11-05T01:20:12.2744601Z Ubuntu
+2026-11-05T01:20:12.2745418Z 24.04.5
+2026-11-05T01:20:12.2746374Z LTS
+2026-11-05T01:20:12.2747338Z ##[endgroup]
+2026-11-05T01:20:12.2748225Z ##[group]Runner Image
+2026-11-05T01:20:12.2749349Z Image: ubuntu-24.04
+2026-11-05T01:20:12.2750417Z Version: 20261101.360.1
+2026-11-05T01:20:12.2752544Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261101.360/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-05T01:20:12.2755567Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261101.360
+2026-11-05T01:20:12.2757434Z ##[endgroup]
+2026-11-05T01:20:12.2759146Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T01:20:12.2762317Z Contents: read
+2026-11-05T01:20:12.2763585Z Metadata: read
+2026-11-05T01:20:12.2764622Z ##[endgroup]
+2026-11-05T01:20:12.2767791Z Secret source: Actions
+2026-11-05T01:20:12.2769413Z Cache mode: write
+2026-11-05T01:20:12.2771117Z Prepare workflow directory
+2026-11-05T01:20:12.3266630Z Prepare all required actions
+2026-11-05T01:20:12.3343711Z Getting action download info
+2026-11-05T01:20:12.5784514Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T01:20:12.6791505Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T01:20:12.7787780Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T01:20:12.9536547Z Complete job name: Lib tests
+2026-11-05T01:20:13.0434149Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T01:20:13.0435289Z with:
+2026-11-05T01:20:13.0435762Z   persist-credentials: false
+2026-11-05T01:20:13.0436311Z   repository: mxbaylee/spinel
+2026-11-05T01:20:13.0440159Z   token: ***
+2026-11-05T01:20:13.0440619Z   ssh-strict: true
+2026-11-05T01:20:13.0441081Z   ssh-user: git
+2026-11-05T01:20:13.0441514Z   clean: true
+2026-11-05T01:20:13.0442068Z   sparse-checkout-cone-mode: true
+2026-11-05T01:20:13.0442625Z   fetch-depth: 1
+2026-11-05T01:20:13.0443299Z   fetch-tags: false
+2026-11-05T01:20:13.0443822Z   show-progress: true
+2026-11-05T01:20:13.0444339Z   lfs: false
+2026-11-05T01:20:13.0444819Z   submodules: false
+2026-11-05T01:20:13.0445338Z   set-safe-directory: true
+2026-11-05T01:20:13.0445900Z   allow-unsafe-pr-checkout: false
+2026-11-05T01:20:13.0447278Z ##[endgroup]
+2026-11-05T01:20:13.3895184Z Syncing repository: mxbaylee/spinel
+2026-11-05T01:20:13.3898029Z ##[group]Getting Git version info
+2026-11-05T01:20:13.3899287Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-05T01:20:13.3900624Z [command]/usr/bin/git version
+2026-11-05T01:20:13.3996820Z git version 2.56.0
+2026-11-05T01:20:13.4022144Z ##[endgroup]
+2026-11-05T01:20:13.4034121Z Temporarily overriding HOME='/home/runner/work/_temp/082714ad-b8f1-4ecf-9d2f-f8262a1233e5' before making global git config changes
+2026-11-05T01:20:13.4036862Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T01:20:13.4038969Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-05T01:20:13.4099821Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-05T01:20:13.4103577Z ##[group]Determining repository object format
+2026-11-05T01:20:13.4105144Z ##[endgroup]
+2026-11-05T01:20:13.4106936Z ##[group]Initializing the repository
+2026-11-05T01:20:13.4109559Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-05T01:20:13.4258682Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T01:20:13.4260505Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T01:20:13.4262010Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T01:20:13.4263708Z hint: call:
+2026-11-05T01:20:13.4264351Z hint:
+2026-11-05T01:20:13.4265149Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T01:20:13.4266133Z hint:
+2026-11-05T01:20:13.4267506Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T01:20:13.4269071Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T01:20:13.4270269Z hint:
+2026-11-05T01:20:13.4270918Z hint: 	git branch -m <name>
+2026-11-05T01:20:13.4271905Z hint:
+2026-11-05T01:20:13.4273024Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T01:20:13.4275547Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-05T01:20:13.4289329Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T01:20:13.4349121Z ##[endgroup]
+2026-11-05T01:20:13.4350445Z ##[group]Disabling automatic garbage collection
+2026-11-05T01:20:13.4353715Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-05T01:20:13.4393393Z ##[endgroup]
+2026-11-05T01:20:13.4395064Z ##[group]Setting up auth
+2026-11-05T01:20:13.4396101Z Removing SSH command configuration
+2026-11-05T01:20:13.4402521Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T01:20:13.4477135Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T01:20:13.4915716Z Removing HTTP extra header
+2026-11-05T01:20:13.4922281Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T01:20:13.4971737Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T01:20:13.5215192Z Removing includeIf entries pointing to credentials config files
+2026-11-05T01:20:13.5221116Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T01:20:13.5269981Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T01:20:13.5528965Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T01:20:13.5579275Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:13.5623811Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:13.5668304Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:13.5713456Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:13.5755132Z ##[endgroup]
+2026-11-05T01:20:13.5756551Z ##[group]Fetching the repository
+2026-11-05T01:20:13.5763718Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +28897ac1e143492bae980abf29f73c0e3daa8717:refs/remotes/pull/258/merge
+2026-11-05T01:20:15.6440877Z From https://github.com/mxbaylee/spinel
+2026-11-05T01:20:15.6448209Z  * [new ref]         28897ac1e143492bae980abf29f73c0e3daa8717 -> pull/258/merge
+2026-11-05T01:20:15.6452199Z ##[endgroup]
+2026-11-05T01:20:15.6454364Z ##[group]Determining the checkout info
+2026-11-05T01:20:15.6456409Z ##[endgroup]
+2026-11-05T01:20:15.6457222Z [command]/usr/bin/git sparse-checkout disable
+2026-11-05T01:20:15.6524325Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T01:20:15.6575233Z ##[group]Checking out the ref
+2026-11-05T01:20:15.6580031Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/258/merge
+2026-11-05T01:20:16.2121199Z Note: switching to 'refs/remotes/pull/258/merge'.
+2026-11-05T01:20:16.2121838Z 
+2026-11-05T01:20:16.2122155Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-05T01:20:16.2122848Z changes and commit them, and you can discard any commits you make in this
+2026-11-05T01:20:16.2124030Z state without impacting any branches by switching back to a branch.
+2026-11-05T01:20:16.2124423Z 
+2026-11-05T01:20:16.2124742Z If you want to create a new branch to retain commits you create, you may
+2026-11-05T01:20:16.2125362Z do so (now or later) by using -c with the switch command. Example:
+2026-11-05T01:20:16.2125709Z 
+2026-11-05T01:20:16.2125898Z   git switch -c <new-branch-name>
+2026-11-05T01:20:16.2126148Z 
+2026-11-05T01:20:16.2126346Z Or undo this operation with:
+2026-11-05T01:20:16.2126586Z 
+2026-11-05T01:20:16.2126736Z   git switch -
+2026-11-05T01:20:16.2127005Z 
+2026-11-05T01:20:16.2127365Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-05T01:20:16.2127759Z 
+2026-11-05T01:20:16.2128205Z HEAD is now at 28897ac Merge 403bd8c1dfdf0b266ca93c0354abef0ef37cea64 into 5c565b61e11ce29780581f33410749436ecef42f
+2026-11-05T01:20:16.2155194Z ##[endgroup]
+2026-11-05T01:20:16.2217056Z [command]/usr/bin/git log -1 --format=%H
+2026-11-05T01:20:16.2256493Z 28897ac1e143492bae980abf29f73c0e3daa8717
+2026-11-05T01:20:16.2266969Z ##[group]Removing auth
+2026-11-05T01:20:16.2366214Z Removing SSH command configuration
+2026-11-05T01:20:16.2368824Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T01:20:16.2373372Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T01:20:16.2595049Z Removing HTTP extra header
+2026-11-05T01:20:16.2599276Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T01:20:16.2645695Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T01:20:16.2894079Z Removing includeIf entries pointing to credentials config files
+2026-11-05T01:20:16.2898058Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T01:20:16.2939928Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-05T01:20:16.2941049Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T01:20:16.2941840Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T01:20:16.2942544Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T01:20:16.2950474Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-05T01:20:16.2986031Z /home/runner/work/_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:16.2999288Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-592cca0f\-1386\-4637\-92e6\-32f87273771b\.config
+2026-11-05T01:20:16.3063524Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T01:20:16.3099913Z /home/runner/work/_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:16.3109834Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-592cca0f\-1386\-4637\-92e6\-32f87273771b\.config
+2026-11-05T01:20:16.3158593Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T01:20:16.3194656Z /github/runner_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:16.3203897Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-592cca0f\-1386\-4637\-92e6\-32f87273771b\.config
+2026-11-05T01:20:16.3252609Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T01:20:16.3288785Z /github/runner_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config
+2026-11-05T01:20:16.3297395Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-592cca0f\-1386\-4637\-92e6\-32f87273771b\.config
+2026-11-05T01:20:16.3344530Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T01:20:16.3598413Z Removing credentials config '/home/runner/work/_temp/git-credentials-592cca0f-1386-4637-92e6-32f87273771b.config'
+2026-11-05T01:20:16.3609040Z ##[endgroup]
+2026-11-05T01:20:16.3901242Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T01:20:16.3901917Z with:
+2026-11-05T01:20:16.3902324Z   node-version-file: .nvmrc
+2026-11-05T01:20:16.3902784Z   package-manager-cache: false
+2026-11-05T01:20:16.3903608Z   check-latest: false
+2026-11-05T01:20:16.3906601Z   token: ***
+2026-11-05T01:20:16.3906998Z ##[endgroup]
+2026-11-05T01:20:16.5300341Z Node version file is not JSON file
+2026-11-05T01:20:16.5306191Z Node version file is not TOML file
+2026-11-05T01:20:16.5307017Z Resolved .nvmrc as 26.12.1
+2026-11-05T01:20:16.5329757Z Attempting to download 26.12.1...
+2026-11-05T01:20:17.1259951Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-05T01:20:17.5964346Z Extracting ...
+2026-11-05T01:20:17.6122300Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/f005a190-5f29-4156-a235-71032ab77c35 -f /home/runner/work/_temp/32d02a1a-3c29-400f-ab16-f10b68a02524
+2026-11-05T01:20:18.9679268Z Adding to the cache ...
+2026-11-05T01:20:20.7832636Z ##[group]Environment details
+2026-11-05T01:20:21.0164709Z node: v26.12.1
+2026-11-05T01:20:21.0165323Z npm: 11.20.0
+2026-11-05T01:20:21.0165739Z yarn: 1.22.22
+2026-11-05T01:20:21.0166576Z ##[endgroup]
+2026-11-05T01:20:21.0419037Z ##[group]Run node scripts/ci/coverage-result.ts lib
+2026-11-05T01:20:21.0419601Z [36;1mnode scripts/ci/coverage-result.ts lib[0m
+2026-11-05T01:20:21.0446539Z shell: /usr/bin/bash -e {0}
+2026-11-05T01:20:21.0446858Z env:
+2026-11-05T01:20:21.0447131Z   CLASSIFICATION: success
+2026-11-05T01:20:21.0568048Z   COVERAGE_PLAN: {"version":1,"event":"pull_request","action":"synchronize","base":"5c565b61e11ce29780581f33410749436ecef42f","head":"403bd8c1dfdf0b266ca93c0354abef0ef37cea64","tested":"28897ac1e143492bae980abf29f73c0e3daa8717","mode":"full","labels":[],"paths":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"suites":{"backlog":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"pull-request":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"lint":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"typecheck":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"unit-tests":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"lib-test-run":{"selected":true,"dependencies":["lib/**","scripts/dependencies/**","package{,-lock}.json","vitest.config.ts","tsconfig.json",".nvmrc",".github/workflows/ci.yml"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"playwright-run":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"container-smoke":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"restore-timing":{"selected":true,"dependencies":["server/**","src/{server,shared}/**","lib/**","web/** and src/ui/** (shared application/authentication bundle)","e2e restore/shared helpers","runtime/build/dependency/workflow inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"sync-transition":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"doc-responsiveness":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"doc-callback-lifetimes":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"responsiveness-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"callback-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."},"phone-compatibility":{"selected":true,"dependencies":["full plan backstop; ordinary phone owners remain in routine browser coverage"],"inputs":["docs/implementation/SPN-141.md","docs/implementation/evidence/SPN-141-after143/README.md","docs/implementation/evidence/SPN-141-after143/backlog.log.gz","docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/format.log.gz","docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/lint.log.gz","docs/implementation/evidence/SPN-141-after143/local.json","docs/implementation/evidence/SPN-141-after143/pr.log.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz","docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz","docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz","docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/tests.log.gz","docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz","docs/implementation/evidence/SPN-141-after143/types.log.gz","docs/implementation/evidence/SPN-141-handoff.json","docs/implementation/evidence/SPN-141-integration.json","docs/todo/SPN-120.md","docs/todo/SPN-140.md","docs/todo/SPN-141.md","docs/todo/backlog.json","docs/todo/readme.md","scripts/ci/desktop-browser.ts","scripts/ci/desktop-offline-fixture.ts","scripts/ci/desktop-offline.ts","scripts/ci/desktop-storage.test.ts","scripts/ci/desktop-storage.ts"],"reason":"Unknown paths require full coverage."}}}
+2026-11-05T01:20:21.0688880Z   COVERAGE_PLAN_SHA256: 3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150
+2026-11-05T01:20:21.0689378Z   COVERAGE_RESULTS: {"lib-test-run":"success"}
+2026-11-05T01:20:21.0689699Z ##[endgroup]
+2026-11-05T01:20:21.1544100Z {
+2026-11-05T01:20:21.1544705Z   "passed": true,
+2026-11-05T01:20:21.1545120Z   "evidence": {
+2026-11-05T01:20:21.1545995Z     "planSha256": "3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150",
+2026-11-05T01:20:21.1546780Z     "plan": {
+2026-11-05T01:20:21.1547191Z       "version": 1,
+2026-11-05T01:20:21.1547644Z       "event": "pull_request",
+2026-11-05T01:20:21.1548179Z       "action": "synchronize",
+2026-11-05T01:20:21.1548850Z       "base": "5c565b61e11ce29780581f33410749436ecef42f",
+2026-11-05T01:20:21.1549578Z       "head": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+2026-11-05T01:20:21.1550266Z       "tested": "28897ac1e143492bae980abf29f73c0e3daa8717",
+2026-11-05T01:20:21.1550835Z       "mode": "full",
+2026-11-05T01:20:21.1551257Z       "labels": [],
+2026-11-05T01:20:21.1551603Z       "paths": [
+2026-11-05T01:20:21.1552027Z         "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1552704Z         "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1553771Z         "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1554712Z         "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1555626Z         "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1557027Z         "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1558234Z         "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1559088Z         "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1559913Z         "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1560909Z         "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1562100Z         "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1563753Z         "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1565140Z         "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1566511Z         "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1567731Z         "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1568892Z         "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1570487Z         "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1571643Z         "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1572790Z         "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1573939Z         "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1574892Z         "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1575796Z         "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1576744Z         "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1577673Z         "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1578384Z         "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1578876Z         "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1579335Z         "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1579798Z         "docs/todo/backlog.json",
+2026-11-05T01:20:21.1580261Z         "docs/todo/readme.md",
+2026-11-05T01:20:21.1580741Z         "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1581310Z         "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1581925Z         "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1582536Z         "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1583419Z         "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1583940Z       ],
+2026-11-05T01:20:21.1584302Z       "suites": {
+2026-11-05T01:20:21.1584721Z         "backlog": {
+2026-11-05T01:20:21.1585151Z           "selected": true,
+2026-11-05T01:20:21.1585618Z           "dependencies": [
+2026-11-05T01:20:21.1586420Z             "complete immutable change range and current event metadata"
+2026-11-05T01:20:21.1587137Z           ],
+2026-11-05T01:20:21.1587534Z           "inputs": [
+2026-11-05T01:20:21.1588059Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1588890Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1589769Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1590696Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1591604Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1592499Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1595201Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1596136Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1596945Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1598168Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1599394Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1600673Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1601977Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1603515Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1604771Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1605928Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1607064Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1608099Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1609103Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1610208Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1611160Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1612051Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1612855Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1613806Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1614437Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1614903Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1615359Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1615830Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1616315Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1616869Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1617478Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1618259Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1618836Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1619395Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1619840Z           ],
+2026-11-05T01:20:21.1620311Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1620841Z         },
+2026-11-05T01:20:21.1621172Z         "pull-request": {
+2026-11-05T01:20:21.1621560Z           "selected": true,
+2026-11-05T01:20:21.1622070Z           "dependencies": [
+2026-11-05T01:20:21.1622914Z             "complete immutable change range and current event metadata"
+2026-11-05T01:20:21.1624579Z           ],
+2026-11-05T01:20:21.1625038Z           "inputs": [
+2026-11-05T01:20:21.1625601Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1626438Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1627364Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1628308Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1629255Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1630199Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1631188Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1632071Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1632961Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1634327Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1635632Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1637174Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1638565Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1639911Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1640717Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1641400Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1642362Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1643503Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1644149Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1644702Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1645533Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1646081Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1646547Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1647008Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1647392Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1647871Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1648176Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1648477Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1648780Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1649094Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1649462Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1649820Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1650177Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1650568Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1650855Z           ],
+2026-11-05T01:20:21.1651148Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1651463Z         },
+2026-11-05T01:20:21.1651665Z         "lint": {
+2026-11-05T01:20:21.1651885Z           "selected": true,
+2026-11-05T01:20:21.1652139Z           "dependencies": [
+2026-11-05T01:20:21.1652509Z             "complete immutable change range and current event metadata"
+2026-11-05T01:20:21.1652868Z           ],
+2026-11-05T01:20:21.1653072Z           "inputs": [
+2026-11-05T01:20:21.1653706Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1654126Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1655028Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1656112Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1657099Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1658220Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1659195Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1660207Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1661300Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1662626Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1665285Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1666599Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1668179Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1669260Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1670013Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1671221Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1671888Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1672520Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1673734Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1674551Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1675420Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1676153Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1677240Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1678114Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1678774Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1679281Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1679835Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1680361Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1680864Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1681446Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1682116Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1682738Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1683533Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1684296Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1684916Z           ],
+2026-11-05T01:20:21.1685571Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1686269Z         },
+2026-11-05T01:20:21.1686718Z         "typecheck": {
+2026-11-05T01:20:21.1687280Z           "selected": true,
+2026-11-05T01:20:21.1687785Z           "dependencies": [
+2026-11-05T01:20:21.1688619Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1689344Z           ],
+2026-11-05T01:20:21.1689673Z           "inputs": [
+2026-11-05T01:20:21.1690137Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1690858Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1691722Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1692687Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1693941Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1694906Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1695836Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1696666Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1697476Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1698519Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1699845Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1701393Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1702776Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1704135Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1704946Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1705661Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1706352Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1706979Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1707758Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1708313Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1708867Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1709402Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1709864Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1710325Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1710883Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1711204Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1711499Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1711799Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1712107Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1712429Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1712799Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1713419Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1713790Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1714144Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1714423Z           ],
+2026-11-05T01:20:21.1714725Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1715046Z         },
+2026-11-05T01:20:21.1715250Z         "unit-tests": {
+2026-11-05T01:20:21.1715499Z           "selected": true,
+2026-11-05T01:20:21.1715750Z           "dependencies": [
+2026-11-05T01:20:21.1716248Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1716701Z           ],
+2026-11-05T01:20:21.1716913Z           "inputs": [
+2026-11-05T01:20:21.1717194Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1717912Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1718796Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1719760Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1720711Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1721652Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1722574Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1723607Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1724449Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1725510Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1726764Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1727569Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1728689Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1729460Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1730195Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1731435Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1732411Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1733708Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1734356Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1735076Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1735626Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1736165Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1736794Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1737261Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1737652Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1737966Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1738439Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1738732Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1739100Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1739418Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1739781Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1740146Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1740494Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1740847Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1741135Z           ],
+2026-11-05T01:20:21.1741428Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1741739Z         },
+2026-11-05T01:20:21.1741949Z         "lib-test-run": {
+2026-11-05T01:20:21.1742189Z           "selected": true,
+2026-11-05T01:20:21.1742432Z           "dependencies": [
+2026-11-05T01:20:21.1742676Z             "lib/**",
+2026-11-05T01:20:21.1742941Z             "scripts/dependencies/**",
+2026-11-05T01:20:21.1743526Z             "package{,-lock}.json",
+2026-11-05T01:20:21.1743826Z             "vitest.config.ts",
+2026-11-05T01:20:21.1744089Z             "tsconfig.json",
+2026-11-05T01:20:21.1744335Z             ".nvmrc",
+2026-11-05T01:20:21.1744606Z             ".github/workflows/ci.yml"
+2026-11-05T01:20:21.1744872Z           ],
+2026-11-05T01:20:21.1745079Z           "inputs": [
+2026-11-05T01:20:21.1745360Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1745783Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1746305Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1746869Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1747415Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1747960Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1748493Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1748988Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1749498Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1750100Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1750806Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1751537Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1752305Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1753229Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1754192Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1774950Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1775665Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1776307Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1776923Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1777468Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1778015Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1778555Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1779020Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1779494Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1780104Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1780408Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1780697Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1780988Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1781288Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1781604Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1781978Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1782342Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1782702Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1783057Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1783699Z           ],
+2026-11-05T01:20:21.1784021Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1784351Z         },
+2026-11-05T01:20:21.1784575Z         "playwright-run": {
+2026-11-05T01:20:21.1784852Z           "selected": true,
+2026-11-05T01:20:21.1785102Z           "dependencies": [
+2026-11-05T01:20:21.1785587Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1786040Z           ],
+2026-11-05T01:20:21.1786255Z           "inputs": [
+2026-11-05T01:20:21.1786541Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1786971Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1787474Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1788039Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1788593Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1789138Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1789668Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1790157Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1790634Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1791229Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1791947Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1792683Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1793596Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1794356Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1795075Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1795895Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1796566Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1797170Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1797759Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1798301Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1798834Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1799361Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1799820Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1800265Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1800651Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1800952Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1801381Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1801679Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1801981Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1802303Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1802668Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1803026Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1803534Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1803883Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1804166Z           ],
+2026-11-05T01:20:21.1804459Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1804768Z         },
+2026-11-05T01:20:21.1804982Z         "container-smoke": {
+2026-11-05T01:20:21.1805240Z           "selected": true,
+2026-11-05T01:20:21.1805490Z           "dependencies": [
+2026-11-05T01:20:21.1805976Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1806437Z           ],
+2026-11-05T01:20:21.1806638Z           "inputs": [
+2026-11-05T01:20:21.1806917Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1807330Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1807825Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1808383Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1808923Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1809481Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1810020Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1810502Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1810989Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1811583Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1812280Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1813004Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1813915Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1814661Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1815372Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1816040Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1816831Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1817475Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1818064Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1818595Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1819129Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1819660Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1820120Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1820567Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1820947Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1821237Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1821526Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1821839Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1822281Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1822594Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1822955Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1823624Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1823993Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1824346Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1824629Z           ],
+2026-11-05T01:20:21.1824916Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1825226Z         },
+2026-11-05T01:20:21.1825438Z         "restore-timing": {
+2026-11-05T01:20:21.1825692Z           "selected": true,
+2026-11-05T01:20:21.1825938Z           "dependencies": [
+2026-11-05T01:20:21.1826179Z             "server/**",
+2026-11-05T01:20:21.1826451Z             "src/{server,shared}/**",
+2026-11-05T01:20:21.1826723Z             "lib/**",
+2026-11-05T01:20:21.1827097Z             "web/** and src/ui/** (shared application/authentication bundle)",
+2026-11-05T01:20:21.1827520Z             "e2e restore/shared helpers",
+2026-11-05T01:20:21.1827869Z             "runtime/build/dependency/workflow inputs"
+2026-11-05T01:20:21.1828172Z           ],
+2026-11-05T01:20:21.1828378Z           "inputs": [
+2026-11-05T01:20:21.1828657Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1829068Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1829570Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1830124Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1830667Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1831200Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1831733Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1832215Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1832687Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1833647Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1834361Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1835100Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1835857Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1836602Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1837313Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1838147Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1838819Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1839432Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1840029Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1840561Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1841151Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1841683Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1842149Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1842598Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1842976Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1843508Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1844043Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1844351Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1844656Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1844975Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1845341Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1845699Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1846051Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1846411Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1846688Z           ],
+2026-11-05T01:20:21.1846977Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1847287Z         },
+2026-11-05T01:20:21.1847498Z         "sync-transition": {
+2026-11-05T01:20:21.1847759Z           "selected": true,
+2026-11-05T01:20:21.1848001Z           "dependencies": [
+2026-11-05T01:20:21.1848488Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1848944Z           ],
+2026-11-05T01:20:21.1849144Z           "inputs": [
+2026-11-05T01:20:21.1849418Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1849841Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1850329Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1850899Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1851447Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1851980Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1852512Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1852993Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1853708Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1854307Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1855015Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1855766Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1856532Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1857280Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1857992Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1858673Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1859490Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1860127Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1860719Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1861256Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1861785Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1862308Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1862764Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1863378Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1863782Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1864074Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1864365Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1864664Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1865114Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1865429Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1865795Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1866152Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1866507Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1866854Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1867129Z           ],
+2026-11-05T01:20:21.1867421Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1867727Z         },
+2026-11-05T01:20:21.1867964Z         "doc-responsiveness": {
+2026-11-05T01:20:21.1868229Z           "selected": true,
+2026-11-05T01:20:21.1868470Z           "dependencies": [
+2026-11-05T01:20:21.1868946Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1869397Z           ],
+2026-11-05T01:20:21.1869604Z           "inputs": [
+2026-11-05T01:20:21.1869886Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1870300Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1870793Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1871338Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1871880Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1872413Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1872942Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1873568Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1874046Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1874644Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1875344Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1876069Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1876837Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1877590Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1878302Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1878973Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1879605Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1880352Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1880961Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1881521Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1882059Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1882589Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1883059Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1883635Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1884013Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1884306Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1884593Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1884889Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1885187Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1885506Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1886013Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1886366Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1886712Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1887069Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1887343Z           ],
+2026-11-05T01:20:21.1887630Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1887937Z         },
+2026-11-05T01:20:21.1888176Z         "doc-callback-lifetimes": {
+2026-11-05T01:20:21.1888446Z           "selected": true,
+2026-11-05T01:20:21.1888700Z           "dependencies": [
+2026-11-05T01:20:21.1889174Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T01:20:21.1889626Z           ],
+2026-11-05T01:20:21.1889825Z           "inputs": [
+2026-11-05T01:20:21.1890104Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1890531Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1891038Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1891588Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1892128Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1892663Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1893318Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1893801Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1894273Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1894865Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1895571Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1896320Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1897083Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1897828Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1898544Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1899224Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1899861Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1900471Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1901189Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1901753Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1902296Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1902823Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1903457Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1903904Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1904291Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1904584Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1904870Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1905160Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1905454Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1905759Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1906120Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1906494Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1906994Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1907339Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1907614Z           ],
+2026-11-05T01:20:21.1907899Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1908213Z         },
+2026-11-05T01:20:21.1908453Z         "responsiveness-baseline": {
+2026-11-05T01:20:21.1908730Z           "selected": true,
+2026-11-05T01:20:21.1908979Z           "dependencies": [
+2026-11-05T01:20:21.1909213Z             "web/**",
+2026-11-05T01:20:21.1909439Z             "server/**",
+2026-11-05T01:20:21.1909673Z             "lib/**",
+2026-11-05T01:20:21.1909885Z             "e2e/**",
+2026-11-05T01:20:21.1910105Z             "src/shared/**",
+2026-11-05T01:20:21.1910429Z             "src/server/{sync,history,collaboration}/**",
+2026-11-05T01:20:21.1910864Z             "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-05T01:20:21.1911316Z             "build/runtime/dependency/workflow configuration"
+2026-11-05T01:20:21.1911645Z           ],
+2026-11-05T01:20:21.1911850Z           "inputs": [
+2026-11-05T01:20:21.1912130Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1912539Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1913034Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1913740Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1914280Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1914818Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1915343Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1915832Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1916318Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1916916Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1917612Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1918336Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1919103Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1919855Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1920567Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1921236Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1922007Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1922651Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1923372Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1923912Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1924444Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1924980Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1925443Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1925891Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1926265Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1926558Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1926834Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1927135Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1927430Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1927888Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1928245Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1928597Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1928951Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1929301Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1929581Z           ],
+2026-11-05T01:20:21.1929865Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1930174Z         },
+2026-11-05T01:20:21.1930408Z         "callback-baseline": {
+2026-11-05T01:20:21.1930680Z           "selected": true,
+2026-11-05T01:20:21.1930927Z           "dependencies": [
+2026-11-05T01:20:21.1931165Z             "web/**",
+2026-11-05T01:20:21.1931390Z             "server/**",
+2026-11-05T01:20:21.1931618Z             "lib/**",
+2026-11-05T01:20:21.1931832Z             "e2e/**",
+2026-11-05T01:20:21.1932070Z             "src/shared/**",
+2026-11-05T01:20:21.1932407Z             "src/server/{sync,history,collaboration}/**",
+2026-11-05T01:20:21.1932820Z             "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-05T01:20:21.1933393Z             "build/runtime/dependency/workflow configuration"
+2026-11-05T01:20:21.1933721Z           ],
+2026-11-05T01:20:21.1933925Z           "inputs": [
+2026-11-05T01:20:21.1934208Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1934619Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1935120Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1935675Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1936224Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1936825Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1937369Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1937858Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1938332Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1938919Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1939646Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1940375Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1941134Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1941884Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1942742Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1943573Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1944214Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1944820Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1945418Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1945952Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1946485Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1947011Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1947476Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1947950Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1948330Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1948798Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1949084Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1949377Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1949679Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1950002Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1950367Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1950723Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1951064Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1951411Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1951694Z           ],
+2026-11-05T01:20:21.1951980Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1952293Z         },
+2026-11-05T01:20:21.1952535Z         "phone-compatibility": {
+2026-11-05T01:20:21.1952807Z           "selected": true,
+2026-11-05T01:20:21.1953228Z           "dependencies": [
+2026-11-05T01:20:21.1953698Z             "full plan backstop; ordinary phone owners remain in routine browser coverage"
+2026-11-05T01:20:21.1954117Z           ],
+2026-11-05T01:20:21.1954323Z           "inputs": [
+2026-11-05T01:20:21.1954603Z             "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1955023Z             "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1955526Z             "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1956086Z             "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1956628Z             "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1957164Z             "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1957687Z             "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1958172Z             "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1958652Z             "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1959242Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1959941Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1960672Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1961437Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1962184Z             "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1962898Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1963861Z             "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1964516Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1965133Z             "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1965725Z             "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1966254Z             "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1966794Z             "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1967326Z             "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1967785Z             "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1968239Z             "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1968623Z             "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1968919Z             "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1969215Z             "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1969655Z             "docs/todo/backlog.json",
+2026-11-05T01:20:21.1969959Z             "docs/todo/readme.md",
+2026-11-05T01:20:21.1970271Z             "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1970637Z             "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1970996Z             "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1971350Z             "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1971696Z             "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1971982Z           ],
+2026-11-05T01:20:21.1972271Z           "reason": "Unknown paths require full coverage."
+2026-11-05T01:20:21.1972591Z         }
+2026-11-05T01:20:21.1972785Z       }
+2026-11-05T01:20:21.1972985Z     },
+2026-11-05T01:20:21.1973330Z     "gateResults": {},
+2026-11-05T01:20:21.1973566Z     "results": [
+2026-11-05T01:20:21.1973773Z       {
+2026-11-05T01:20:21.1974004Z         "suite": "lib-test-run",
+2026-11-05T01:20:21.1974277Z         "selected": true,
+2026-11-05T01:20:21.1974530Z         "dependencies": [
+2026-11-05T01:20:21.1974763Z           "lib/**",
+2026-11-05T01:20:21.1975014Z           "scripts/dependencies/**",
+2026-11-05T01:20:21.1975317Z           "package{,-lock}.json",
+2026-11-05T01:20:21.1975583Z           "vitest.config.ts",
+2026-11-05T01:20:21.1975835Z           "tsconfig.json",
+2026-11-05T01:20:21.1976073Z           ".nvmrc",
+2026-11-05T01:20:21.1976318Z           ".github/workflows/ci.yml"
+2026-11-05T01:20:21.1976582Z         ],
+2026-11-05T01:20:21.1976779Z         "inputs": [
+2026-11-05T01:20:21.1977044Z           "docs/implementation/SPN-141.md",
+2026-11-05T01:20:21.1977447Z           "docs/implementation/evidence/SPN-141-after143/README.md",
+2026-11-05T01:20:21.1977943Z           "docs/implementation/evidence/SPN-141-after143/backlog.log.gz",
+2026-11-05T01:20:21.1978490Z           "docs/implementation/evidence/SPN-141-after143/format-watchdog.json.gz",
+2026-11-05T01:20:21.1979062Z           "docs/implementation/evidence/SPN-141-after143/format.log.gz",
+2026-11-05T01:20:21.1979615Z           "docs/implementation/evidence/SPN-141-after143/lint-watchdog.json.gz",
+2026-11-05T01:20:21.1980135Z           "docs/implementation/evidence/SPN-141-after143/lint.log.gz",
+2026-11-05T01:20:21.1980613Z           "docs/implementation/evidence/SPN-141-after143/local.json",
+2026-11-05T01:20:21.1981079Z           "docs/implementation/evidence/SPN-141-after143/pr.log.gz",
+2026-11-05T01:20:21.1981665Z           "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-jobs.json.gz",
+2026-11-05T01:20:21.1982359Z           "docs/implementation/evidence/SPN-141-after143/previous-integration-ci-run.json.gz",
+2026-11-05T01:20:21.1983194Z           "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-jobs.json.gz",
+2026-11-05T01:20:21.1983965Z           "docs/implementation/evidence/SPN-141-after143/previous-integration-storybook-run.json.gz",
+2026-11-05T01:20:21.1984837Z           "docs/implementation/evidence/SPN-141-after143/previous-integration-unit-aggregate.log.gz",
+2026-11-05T01:20:21.1985583Z           "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.json.gz",
+2026-11-05T01:20:21.1986259Z           "docs/implementation/evidence/SPN-141-after143/spn143-final-publication-a.md.gz",
+2026-11-05T01:20:21.1986902Z           "docs/implementation/evidence/SPN-141-after143/spn143-receipt-jobs.json.gz",
+2026-11-05T01:20:21.1987504Z           "docs/implementation/evidence/SPN-141-after143/spn143-receipt-run.json.gz",
+2026-11-05T01:20:21.1988086Z           "docs/implementation/evidence/SPN-141-after143/tests-watchdog.json.gz",
+2026-11-05T01:20:21.1988625Z           "docs/implementation/evidence/SPN-141-after143/tests.log.gz",
+2026-11-05T01:20:21.1989178Z           "docs/implementation/evidence/SPN-141-after143/types-watchdog.json.gz",
+2026-11-05T01:20:21.1989716Z           "docs/implementation/evidence/SPN-141-after143/types.log.gz",
+2026-11-05T01:20:21.1990348Z           "docs/implementation/evidence/SPN-141-handoff.json",
+2026-11-05T01:20:21.1990959Z           "docs/implementation/evidence/SPN-141-integration.json",
+2026-11-05T01:20:21.1991342Z           "docs/todo/SPN-120.md",
+2026-11-05T01:20:21.1991632Z           "docs/todo/SPN-140.md",
+2026-11-05T01:20:21.1991923Z           "docs/todo/SPN-141.md",
+2026-11-05T01:20:21.1992215Z           "docs/todo/backlog.json",
+2026-11-05T01:20:21.1992524Z           "docs/todo/readme.md",
+2026-11-05T01:20:21.1992830Z           "scripts/ci/desktop-browser.ts",
+2026-11-05T01:20:21.1993329Z           "scripts/ci/desktop-offline-fixture.ts",
+2026-11-05T01:20:21.1993695Z           "scripts/ci/desktop-offline.ts",
+2026-11-05T01:20:21.1994036Z           "scripts/ci/desktop-storage.test.ts",
+2026-11-05T01:20:21.1994378Z           "scripts/ci/desktop-storage.ts"
+2026-11-05T01:20:21.1994654Z         ],
+2026-11-05T01:20:21.1994949Z         "reason": "Unknown paths require full coverage.",
+2026-11-05T01:20:21.1995280Z         "result": "success"
+2026-11-05T01:20:21.1995530Z       }
+2026-11-05T01:20:21.1995728Z     ]
+2026-11-05T01:20:21.1995920Z   }
+2026-11-05T01:20:21.1996114Z }
+2026-11-05T01:20:21.2274060Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T01:20:21.2274533Z with:
+2026-11-05T01:20:21.2274739Z   name: ci-results-lib
+2026-11-05T01:20:21.2274983Z   path: ci-results-lib.json
+2026-11-05T01:20:21.2275230Z   retention-days: 30
+2026-11-05T01:20:21.2275451Z   if-no-files-found: warn
+2026-11-05T01:20:21.2275687Z   compression-level: 6
+2026-11-05T01:20:21.2275900Z   overwrite: false
+2026-11-05T01:20:21.2276119Z   include-hidden-files: false
+2026-11-05T01:20:21.2276360Z   archive: true
+2026-11-05T01:20:21.2276565Z ##[endgroup]
+2026-11-05T01:20:21.3774071Z With the provided path, there will be 1 file uploaded
+2026-11-05T01:20:21.3779906Z Artifact name is valid!
+2026-11-05T01:20:21.3781120Z Root directory input is valid!
+2026-11-05T01:20:21.5949878Z Uploading artifact: ci-results-lib.zip
+2026-11-05T01:20:21.6009911Z Beginning upload of artifact content to blob storage
+2026-11-05T01:20:21.6926016Z Uploaded bytes 2001
+2026-11-05T01:20:21.7093460Z Finished uploading artifact content to blob storage!
+2026-11-05T01:20:21.7094970Z SHA256 digest of uploaded artifact is eb34cc26cad817784654c626608627c8d34064744c6bc229c1c531f668df84d0
+2026-11-05T01:20:21.7095705Z Finalizing artifact upload
+2026-11-05T01:20:22.1994949Z Artifact ci-results-lib successfully finalized. Artifact ID 13379830786
+2026-11-05T01:20:22.1996146Z Artifact ci-results-lib has been successfully uploaded! Final size is 2001 bytes. Artifact ID is 13379830786
+2026-11-05T01:20:22.2000977Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41945378505/artifacts/13379830786
+2026-11-05T01:20:22.2224453Z Post job cleanup.
+2026-11-05T01:20:22.3582720Z Post job cleanup.
+2026-11-05T01:20:22.4584246Z [command]/usr/bin/git version
+2026-11-05T01:20:22.4630466Z git version 2.56.0
+2026-11-05T01:20:22.4671734Z Temporarily overriding HOME='/home/runner/work/_temp/8ded85d6-62a1-4d49-80a7-2b69c3d93c76' before making global git config changes
+2026-11-05T01:20:22.4673737Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T01:20:22.4678858Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-05T01:20:22.4718356Z Removing SSH command configuration
+2026-11-05T01:20:22.4737561Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T01:20:22.4784824Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T01:20:22.5063730Z Removing HTTP extra header
+2026-11-05T01:20:22.5071726Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T01:20:22.5119607Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T01:20:22.5402804Z Removing includeIf entries pointing to credentials config files
+2026-11-05T01:20:22.5412137Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T01:20:22.5465153Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T01:20:22.5884757Z Cleaning up orphan processes

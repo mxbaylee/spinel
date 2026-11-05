@@ -1,0 +1,705 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/26.12.1/x64/bin/node",
+      "/home/runner/work/spinel/spinel/baseline-callback-source/node_modules/.bin/playwright",
+      "test",
+      "--project=doc-callback-lifetimes",
+      "--grep",
+      "mobile "
+    ],
+    "configFile": "/home/runner/work/spinel/spinel/baseline-callback-source/playwright.config.ts",
+    "rootDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+        "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+        "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+        "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+        "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+        "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+      },
+      "gitCommit": {
+        "shortHash": "0e1df47",
+        "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+        "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+        "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+        "author": {
+          "name": "Baylee Schmeisser",
+          "email": "119542904+mxbaylee@users.noreply.github.com",
+          "time": 1793150589000
+        },
+        "committer": {
+          "name": "GitHub",
+          "email": "noreply@github.com",
+          "time": 1793150589000
+        },
+        "branch": "HEAD"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "development",
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "supervised-restore",
+        "name": "supervised-restore",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/supervised-restore.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/28897ac1e143492bae980abf29f73c0e3daa8717",
+            "commitHash": "28897ac1e143492bae980abf29f73c0e3daa8717",
+            "prHref": "https://github.com/mxbaylee/spinel/pull/258",
+            "prTitle": "🧽 SPN-141 Make native storage-loss preparation quiescent",
+            "prBaseHash": "5c565b61e11ce29780581f33410749436ecef42f",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/41945378505"
+          },
+          "gitCommit": {
+            "shortHash": "0e1df47",
+            "hash": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+            "subject": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "body": "⌨️ SPN-108 Keep Docs responsive after sustained typing",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "119542904+mxbaylee@users.noreply.github.com",
+              "time": 1793150589000
+            },
+            "committer": {
+              "name": "GitHub",
+              "email": "noreply@github.com",
+              "time": 1793150589000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "snapshotDir": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e",
+        "testIgnore": [],
+        "testMatch": "**/doc-responsiveness-callbacks.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "trace": "off",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3109"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "doc-callback-lifetimes"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/doc-callback-lifetimes.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "doc-responsiveness-callbacks.spec.ts",
+      "file": "doc-responsiveness-callbacks.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mobile native callback lifetimes",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 420000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "doc-callback-lifetimes",
+              "projectName": "doc-callback-lifetimes",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 420193,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts",
+                        "column": 26,
+                        "line": 111
+                      },
+                      "message": "Error: Callback observation timedOut.\n\n  109 |       detach: () => {},\n  110 |       abort: () =>\n> 111 |         controller.abort(new Error(`Callback observation ${info.status ?? 'interrupted'}.`)),\n      |                          ^\n  112 |       interrupt: async () => {},\n  113 |     };\n  114 |     observations.set(info, observation);\n    at Object.abort (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:111:26)\n    at settleCallbackObservation (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callback-progress.ts:45:17)\n    at /home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:92:11"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T01:15:17.619Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-1.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-2.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/error-context.md"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "4bc83eed197a8a4b9790-14b3c4382b108a6c716d",
+          "file": "doc-responsiveness-callbacks.spec.ts",
+          "line": 103,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T01:15:09.772Z",
+    "duration": 428640.09400000004,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

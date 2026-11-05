@@ -1,0 +1,14 @@
+{
+  "sourceSha": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+  "checkedAt": "2026-11-05T01:01:04.379Z",
+  "kind": "chrome",
+  "status": "passed",
+  "before": "156.0.8078.48",
+  "releaseSource": "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json",
+  "requiredStable": "157.0.8103.38",
+  "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+  "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/Google Chrome.app: accepted\nsource=Notarized Developer ID\n",
+  "download": "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg",
+  "driver": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})\n",
+  "installed": "157.0.8103.39"
+}

@@ -1,0 +1,111 @@
+{
+  "source": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+  "base": "5c565b61e11ce29780581f33410749436ecef42f",
+  "tested": "28897ac1e143492bae980abf29f73c0e3daa8717",
+  "proofs": [
+    {
+      "owner": "browser",
+      "artifact": 13380591600,
+      "zipBytes": 469,
+      "zipSha256": "843b11951e3d5beb8eb422dbab8b7092581b59552b6d5b03171293b1ffd795b2",
+      "memberSha256": "b84900f6599b34b2a11c869bd0de073fc880ed555e013e566674834ce1f53c22",
+      "planSha256": "3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150",
+      "passed": false,
+      "error": "Error: Incomplete coverage doc-callback-lifetimes: selected=true, result=failure",
+      "results": [
+        {
+          "suite": "backlog",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "pull-request",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "lint",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "typecheck",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "playwright-run",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "container-smoke",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "restore-timing",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "sync-transition",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "doc-responsiveness",
+          "selected": true,
+          "result": "success"
+        },
+        {
+          "suite": "doc-callback-lifetimes",
+          "selected": true,
+          "result": "failure"
+        }
+      ]
+    },
+    {
+      "owner": "unit",
+      "artifact": 13379830329,
+      "zipBytes": 1982,
+      "zipSha256": "b06b86b35bad944dd59282eb383d38b4c8a7bd0be48c0c7fa62c87cf30126b47",
+      "memberSha256": "182950e24e7798e520824677fc371dd54b68a0be61aea305db8520bc49612438",
+      "planSha256": "3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150",
+      "passed": true,
+      "results": [
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "owner": "lib",
+      "artifact": 13379830786,
+      "zipBytes": 2001,
+      "zipSha256": "eb34cc26cad817784654c626608627c8d34064744c6bc229c1c531f668df84d0",
+      "memberSha256": "1f43795b46a55f01139c59321a212cba2971da1d520f484b5cc5e7d4604b5019",
+      "planSha256": "3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150",
+      "passed": true,
+      "results": [
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "result": "success"
+        }
+      ]
+    }
+  ]
+}

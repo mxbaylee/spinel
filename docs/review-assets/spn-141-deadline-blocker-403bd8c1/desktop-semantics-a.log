@@ -1,0 +1,44 @@
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   {
++     clean: false,
++     observedAt: 75276.5,
++     reason: 'capacity',
++     sourceObservedAt: 75276.5,
++     sourceTimeOrigin: 1793841367629.3,
++     surface: 'sender',
++     unitId: 'fc714662-c127-4ca3-96d6-ac7682b0aa89'
++   }
++ ]
+- []
+
+    at file:///private/tmp/spn141-after143-hosted/audit-desktop-semantics-a.ts:4:509
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [
+    {
+      unitId: 'fc714662-c127-4ca3-96d6-ac7682b0aa89',
+      reason: 'capacity',
+      clean: false,
+      observedAt: 75276.5,
+      surface: 'sender',
+      sourceObservedAt: 75276.5,
+      sourceTimeOrigin: 1793841367629.3
+    }
+  ],
+  expected: [],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.12.1
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":190,"peakKiB":91152}

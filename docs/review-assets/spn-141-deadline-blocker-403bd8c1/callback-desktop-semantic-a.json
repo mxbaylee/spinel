@@ -1,0 +1,28 @@
+{
+  "jsonFilesMatched": 7,
+  "comparisonAccepted": true,
+  "comparisonMatchesManifestAnalysis": true,
+  "rawAnalysisNotReparsed": true,
+  "timing": [
+    {
+      "role": "baselineObservation",
+      "behaviorCompleteMs": 98274.240757,
+      "completionWaitMs": 91688.477095,
+      "readCompressStoreMs": 10067.97630899999,
+      "parseMs": 10183.399717000022,
+      "attributionMs": 770.6955420000013,
+      "analysisMs": 549.4659759999777,
+      "cleanupCompleteMs": 211616.76528199998
+    },
+    {
+      "role": "candidate",
+      "behaviorCompleteMs": 74033.782137,
+      "completionWaitMs": 98748.03289799998,
+      "readCompressStoreMs": 9865.68080500001,
+      "parseMs": 10052.73996799998,
+      "attributionMs": 681.2349570000079,
+      "analysisMs": 515.8239360000007,
+      "cleanupCompleteMs": 193986.008542
+    }
+  ]
+}

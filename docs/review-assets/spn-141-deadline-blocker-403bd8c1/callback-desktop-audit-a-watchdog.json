@@ -1,0 +1,294 @@
+{
+  "root": 44479,
+  "started": 1793841721251,
+  "elapsedMs": 5319,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 75616,
+  "peakKiB": 348992,
+  "live": [
+    {
+      "pid": 44479,
+      "parent": 44443,
+      "group": 44479,
+      "rssKiB": 74048,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/callback-desktop-audit-a-watchdog.json node /tmp/spn141-after143-hosted/audit-callback-desktop-a.ts"
+    },
+    {
+      "pid": 45273,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 44479,
+      "parent": 44443,
+      "group": 44479,
+      "rssKiB": 74048,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/callback-desktop-audit-a-watchdog.json node /tmp/spn141-after143-hosted/audit-callback-desktop-a.ts"
+    },
+    {
+      "pid": 44498,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44524,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 222032,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "node /tmp/spn141-after143-hosted/audit-callback-desktop-a.ts"
+    },
+    {
+      "pid": 44545,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44570,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44571,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 640,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 44601,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 0,
+      "started": "Wed Nov  4 17:22:01 2026",
+      "command": "<defunct>"
+    },
+    {
+      "pid": 44608,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44685,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 2448,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "unzip -p /tmp/spn141-after143-hosted/callback-desktop.zip baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-univer-renderer-Cqyj3Y79.js"
+    },
+    {
+      "pid": 44691,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44758,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 2464,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 44764,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44811,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 2512,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "unzip -p /tmp/spn141-after143-hosted/callback-desktop.zip baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 44825,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44838,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44859,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44872,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44885,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44906,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 44930,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 2448,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "unzip -p /tmp/spn141-after143-hosted/callback-desktop.zip test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json"
+    },
+    {
+      "pid": 44936,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45025,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 2512,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 45032,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45070,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1648,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45075,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 1056,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 45158,
+      "parent": 44524,
+      "group": 44479,
+      "rssKiB": 2512,
+      "started": "Wed Nov  4 17:22:04 2026",
+      "command": "unzip -p /tmp/spn141-after143-hosted/callback-desktop.zip test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 45164,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45177,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45190,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45203,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45224,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45237,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 45273,
+      "parent": 44479,
+      "group": 44479,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:22:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

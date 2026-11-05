@@ -1,0 +1,128 @@
+{
+  "members": 18,
+  "metrics": 8,
+  "testCount": 11,
+  "budgets": [
+    {
+      "sample": "plain-1",
+      "capacity": {
+        "count": 65,
+        "p50": 9.300000000046566,
+        "p95": 25.399999999906868,
+        "max": 66.19999999995343,
+        "sum": 821.1999999999534
+      },
+      "idle": {
+        "count": 1,
+        "p50": 3,
+        "p95": 3,
+        "max": 3,
+        "sum": 3
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 54.10000000009313,
+        "p95": 83.60000000009313,
+        "max": 167,
+        "sum": 111723.39999999804
+      },
+      "tasks": {
+        "count": 888,
+        "p50": 62,
+        "p95": 89,
+        "max": 150,
+        "sum": 58057
+      },
+      "drain": 336.9000000001397,
+      "groups": 66
+    },
+    {
+      "sample": "plain-2",
+      "capacity": {
+        "count": 65,
+        "p50": 9.5,
+        "p95": 23.9000000001397,
+        "max": 60.5,
+        "sum": 803.5999999991618
+      },
+      "idle": {
+        "count": 1,
+        "p50": 1.8000000000465661,
+        "p95": 1.8000000000465661,
+        "max": 1.8000000000465661,
+        "sum": 1.8000000000465661
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 56.4000000001397,
+        "p95": 90,
+        "max": 191.0999999998603,
+        "sum": 116601.89999999572
+      },
+      "tasks": {
+        "count": 969,
+        "p50": 65,
+        "p95": 96,
+        "max": 177,
+        "sum": 66428
+      },
+      "drain": 321.10000000009313,
+      "groups": 1
+    },
+    {
+      "sample": "plain-3",
+      "capacity": {
+        "count": 65,
+        "p50": 9.099999999860302,
+        "p95": 23.899999999906868,
+        "max": 42,
+        "sum": 785.7000000006519
+      },
+      "idle": {
+        "count": 1,
+        "p50": 1.3999999999068677,
+        "p95": 1.3999999999068677,
+        "max": 1.3999999999068677,
+        "sum": 1.3999999999068677
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 59.199999999953434,
+        "p95": 89.5,
+        "max": 186.80000000004657,
+        "sum": 120098.49999999604
+      },
+      "tasks": {
+        "count": 1022,
+        "p50": 63,
+        "p95": 92,
+        "max": 169,
+        "sum": 67945
+      },
+      "drain": 371.69999999995343,
+      "groups": 1
+    }
+  ],
+  "clocks": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "uncertaintyMs": 1448.4000000000233
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "uncertaintyMs": 1510.6000000000931
+    }
+  ],
+  "postSummary": {
+    "finalOriginalKeyAt": 126226.09999999986,
+    "continuationKeyAt": 126660.69999999995,
+    "continuationFrameAt": 126752.59999999986,
+    "browserQuietGapMs": 434.60000000009313,
+    "continuationKeyToFrameMs": 91.89999999990687,
+    "continuationKeyToNativeReadMs": 92.5,
+    "continuationRequestReturnMs": 109.45632200001273,
+    "finalOriginalKeyToContinuationFrameMs": 526.5,
+    "finalOriginalKeyToContinuationNativeReadMs": 527.1000000000931
+  }
+}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":1292,"peakKiB":219472}

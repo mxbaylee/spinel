@@ -1,0 +1,41 @@
+# 🚫 SPN-141 integrated head remains blocked — reviewer A
+
+Final disposition: **not merge-ready**. This is a read-only terminal-evidence reconciliation, not a new source grade or merge authorization. Source `403bd8c1dfdf0b266ca93c0354abef0ef37cea64` has one underlying selected acceptance failure: historical-baseline mobile callback completion. Required browser aggregate correctly fails. Other successful evidence is preserved with its exact scope; none substitutes for the failed pair.
+
+## 🔎 Identities and selected work
+
+`identities.json`, the downloaded CI plan and workflow runs agree on PR258 synchronization source `403bd8c1dfdf0b266ca93c0354abef0ef37cea64`, accepted base `5c565b61e11ce29780581f33410749436ecef42f`, tested merge `28897ac1e143492bae980abf29f73c0e3daa8717`. Git independently resolves both source/tested trees to `4893ed46f3c483d1da1d9e753b106af22d6cb65a`.
+
+The plan is full mode, with all fifteen plan suites/flags selected, including historical responsiveness/callback pairs and phone compatibility. Plan digest is `3ed844085184479f8058af3a29143ab76d398d2653dc483b1a34b966ab1dc150`. Unknown-path backstop selected full coverage; no missing-work shortcut is used.
+
+CI **41945378505 attempt1** is terminal failure: **33 jobs, 31 success, two failure, zero cancelled/skipped/pending jobs**. The failures are mobile callback job **126977563768** and required Playwright smoke aggregate **126991142971**. All other selected work exists and is terminal success: classification; Backlog/Pull request/Lint/Typecheck; all three unit workers and Unit tests aggregate; all four lib workers and Lib tests aggregate; all eleven ordinary smoke matrix workers; container smoke, sized restore and retained sync transition; both responsiveness presets; desktop callback. Thus six of the seven required gates pass, while Playwright smoke fails. There is no second hidden failed/cancelled selected worker in the retained final job inventory.
+
+## 🧾 Aggregate identity and fail-closed evidence
+
+Independently verified the three small aggregate artifact ZIP digests/sizes against `artifacts.json`, exact extracted member bytes, and their common plan digest. Unit/lib embedded plans equal the downloaded plan. Proof: `blocked-aggregate-proof-a.json`.
+
+- Browser result artifact13380591600, ZIP SHA256 `843b11951e3d5beb8eb422dbab8b7092581b59552b6d5b03171293b1ffd795b2`: `passed: false`, error **`Incomplete coverage doc-callback-lifetimes: selected=true, result=failure`**. All eleven other reported suite results are success. This agrees with the aggregate log's selected plan and typecheck/unit/lib gate results.
+- Unit result artifact13379830329, ZIP SHA256 `b06b86b35bad944dd59282eb383d38b4c8a7bd0be48c0c7fa62c87cf30126b47`: selected unit suite success, aggregate passed.
+- Lib result artifact13379830786, ZIP SHA256 `eb34cc26cad817784654c626608627c8d34064744c6bc229c1c531f668df84d0`: selected lib suite success, aggregate passed.
+
+The failed browser result intentionally retains its raw results as JSON text rather than the successful result's structured row array; the proof decodes that field before reconciling suite outcomes. It is not an empty or missing result. Current source `coverage-result.ts` workflow wiring includes callbacks in the required browser aggregate; their failure cannot pass by omission.
+
+## ✅ Accepted owners retained, without overall acceptance
+
+Native run **41945378569 attempt1** is terminal success on this exact source. Chrome126976177937, Firefox126976176807 and Safari126976177250 all succeeded, with independent current-source artifact/source/visual/cleanup audits in `chrome-acceptance-a.md`, `firefox-acceptance-b.md` and `safari-acceptance-a.md`. They retain full original/offline-edited records and image contracts, normal reconnect and recovered copies, same-profile process lifecycles, fresh uncontrolled all-owned-tab handoff, zero registrations before stop and strict one-pass postrestart deletion, both postloss assertions and owned cleanup. Observed native inventories have one actual tab; explicit API deletion is not actual eviction; no historical root-cause claim is made.
+
+Desktop callback and desktop responsiveness have independent current-source raw acceptance reports and proofs. Mobile responsiveness job126977563661 is terminal success; reviewer B's completed `mobile-acceptance-b.md` and `mobile-proof-b.json` independently accept all18 retained members and11 first-attempt cases on403bd8c1, including full66-group history/content/access. I read that report before finalizing this note. The recorded mobile capacity maxima66.2/60.5/42ms and idle3/1.8/1.4ms meet that preset's own unchanged budgets; they are not substituted for desktop thresholds. Mobile callback candidate success is preserved only as candidate evidence: its historical pair is failed, as independently diagnosed in `callback-mobile-diagnosis-a.md` and `callback-mobile-failure-b.md`.
+
+Storybook **41945378439 attempt1** is terminal success on403bd8c1: eight selected classification/build/light-dark desktop/light-dark mobile/tablet/state-interaction jobs succeed. The PR-preview Pages publish and deployment jobs are skipped; these are publication outcomes, not missing selected rendering acceptance. This is not a claim that a Pages preview was published.
+
+Accepted SPN-143 main CI **41944387711 attempt1**, head5c565b61, is also terminal success:32 successful jobs plus the push-inapplicable Pull request job skipped. Main Storybook **41944387709** has nine successes (including deployment) and the PR-preview job skipped. These predecessor results remain historical acceptance, not fallback acceptance for403bd8c1's failed selected pair.
+
+## 🔬 Blocker and next outcome
+
+The baseline completed behavior at357.089775s and received the Tracing.end response by357.101761s, leaving approximately62.898s of the unchanged420-second overall budget. First timeout at420.039582s occurred awaiting `Tracing.tracingComplete`, before any baseline stream/read/local gzip/parser work. No complete baseline trace/attribution exists. Owned detach/page/context/fixture cleanup now positively completes by420.176955s, while terminal stays `timedOut` and `complete/passed` remain false. Generic comparator “successful owned cleanup” text also checks terminal success; it must not erase the actual cleanup witnesses. No trace-data-loss/product-data-loss or definite browser-hang inference is warranted.
+
+The callback/harness/dependency paths are byte-identical to accepted143 base, while141 changes native storage preparation. A separately registered **SPN-144 XL historical paired-trace deadline/transport outcome** is coherent. It must retain the357s pre-export time and full end-to-end headroom question, not presume export or browser compression is the root cause. Preserve immutable baseline, full workload/throttle/categories/buffer, callback/behavior/access contracts, complete bytes/source/cleanup and420s budget. Public version-pinned capability research may precede one prospectively bounded discriminating checkpoint; no new probe, implementation, unchanged retry, threshold change or waiver is admitted by this note. Registration itself repairs nothing and keeps141→140→120 integration blocked.
+
+Before treating this episode as durably closed evidence, publish and independently verify the immutable **blocked** archive: all terminal run/jobs/plan/aggregate records; exact prepush reviews and source identities; both successful and failed owner records; first failures and reviewer verifier corrections; native useful images; callback raw/source/map members and original ZIP identities/member proofs; truthful source/phase/cleanup limitations. Exclude only explicitly documented disposable databases, retaining complete raw traces where they exist. No baseline trace can be invented. Do not mutate frozen inputs during archive publication. This note does not assert that archive publication, SPN144 registration, repair or any merge has already occurred.
+
+All work in this reconciliation was small-file read-only metadata/source comparison and aggregate hash/member verification. No application/native run, profile reanalysis, source mutation or heavy concurrent workload occurred.

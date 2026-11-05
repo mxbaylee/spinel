@@ -1,0 +1,65 @@
+{
+  "archive": {
+    "bytes": 124419209,
+    "sha256": "95d6ff52c1a8511c058fec287cd518a84b0bc1048331d28debf5a2f4aaa63fcd"
+  },
+  "membersVerified": 77,
+  "manifests": 2,
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T01:11:53.504Z",
+        "duration": 218561.89299999998,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 211949,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T01:15:38.023Z",
+        "duration": 198348.32200000001,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 194190,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":5319,"peakKiB":348992}

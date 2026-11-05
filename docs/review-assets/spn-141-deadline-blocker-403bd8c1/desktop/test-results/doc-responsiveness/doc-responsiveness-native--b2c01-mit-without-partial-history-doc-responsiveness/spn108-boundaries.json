@@ -1,0 +1,2554 @@
+{
+  "preset": "desktop",
+  "physicalIme": false,
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "HeadlessChrome/156.0.8078.4",
+    "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+    "jsVersion": "15.6.75"
+  },
+  "beforeCancellation": {
+    "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+    "mobile": false,
+    "observedAt": 3225.6999999999534,
+    "pending": {
+      "history": 31,
+      "collaboration": 31
+    },
+    "highWater": {
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushes": [
+      {
+        "reason": "capacity",
+        "startedAt": 2644.29999999993,
+        "durationMs": 5.900000000023283,
+        "history": 32,
+        "collaboration": 32
+      }
+    ],
+    "history": {
+      "undos": 1,
+      "redos": 0
+    },
+    "drainWitness": null,
+    "selection": {
+      "start": 63,
+      "end": 63,
+      "segmentId": ""
+    }
+  },
+  "intermediate": {
+    "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+    "mobile": false,
+    "observedAt": 4587.5,
+    "pending": {
+      "history": 0,
+      "collaboration": 0
+    },
+    "highWater": {
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushes": [
+      {
+        "reason": "capacity",
+        "startedAt": 2644.29999999993,
+        "durationMs": 5.900000000023283,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "idle",
+        "startedAt": 3535.1999999999534,
+        "durationMs": 2.599999999976717,
+        "history": 31,
+        "collaboration": 31,
+        "quietForMs": 330.29999999993015
+      }
+    ],
+    "history": {
+      "undos": 2,
+      "redos": 0
+    },
+    "drainWitness": null,
+    "selection": {
+      "start": 66,
+      "end": 66,
+      "segmentId": ""
+    }
+  },
+  "composingEnter": {
+    "before": {
+      "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+      "mobile": false,
+      "observedAt": 4618.099999999977,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "flushes": [
+        {
+          "reason": "capacity",
+          "startedAt": 2644.29999999993,
+          "durationMs": 5.900000000023283,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "idle",
+          "startedAt": 3535.1999999999534,
+          "durationMs": 2.599999999976717,
+          "history": 31,
+          "collaboration": 31,
+          "quietForMs": 330.29999999993015
+        }
+      ],
+      "history": {
+        "undos": 2,
+        "redos": 0
+      },
+      "drainWitness": null,
+      "selection": {
+        "start": 66,
+        "end": 66,
+        "segmentId": ""
+      },
+      "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+    },
+    "after": {
+      "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+      "mobile": false,
+      "observedAt": 4668.400000000023,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "flushes": [
+        {
+          "reason": "capacity",
+          "startedAt": 2644.29999999993,
+          "durationMs": 5.900000000023283,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "idle",
+          "startedAt": 3535.1999999999534,
+          "durationMs": 2.599999999976717,
+          "history": 31,
+          "collaboration": 31,
+          "quietForMs": 330.29999999993015
+        }
+      ],
+      "history": {
+        "undos": 2,
+        "redos": 0
+      },
+      "drainWitness": null,
+      "selection": {
+        "start": 66,
+        "end": 66,
+        "segmentId": ""
+      },
+      "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+    }
+  },
+  "beforeFinalComposition": {
+    "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+    "mobile": false,
+    "observedAt": 5200.099999999977,
+    "pending": {
+      "history": 31,
+      "collaboration": 31
+    },
+    "highWater": {
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushes": [
+      {
+        "reason": "capacity",
+        "startedAt": 2644.29999999993,
+        "durationMs": 5.900000000023283,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "idle",
+        "startedAt": 3535.1999999999534,
+        "durationMs": 2.599999999976717,
+        "history": 31,
+        "collaboration": 31,
+        "quietForMs": 330.29999999993015
+      }
+    ],
+    "history": {
+      "undos": 2,
+      "redos": 0
+    },
+    "drainWitness": null,
+    "selection": {
+      "start": 94,
+      "end": 94,
+      "segmentId": ""
+    }
+  },
+  "afterFinalComposition": {
+    "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+    "mobile": false,
+    "observedAt": 5403.29999999993,
+    "pending": {
+      "history": 0,
+      "collaboration": 0
+    },
+    "highWater": {
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushes": [
+      {
+        "reason": "capacity",
+        "startedAt": 2644.29999999993,
+        "durationMs": 5.900000000023283,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "idle",
+        "startedAt": 3535.1999999999534,
+        "durationMs": 2.599999999976717,
+        "history": 31,
+        "collaboration": 31,
+        "quietForMs": 330.29999999993015
+      }
+    ],
+    "history": {
+      "undos": 3,
+      "redos": 0
+    },
+    "drainWitness": null,
+    "selection": {
+      "start": 96,
+      "end": 96,
+      "segmentId": ""
+    }
+  },
+  "final": {
+    "unitId": "52e09b22-aca7-4c45-9882-182b7abe90a2",
+    "mobile": false,
+    "observedAt": 5646.699999999953,
+    "pending": {
+      "history": 0,
+      "collaboration": 0
+    },
+    "highWater": {
+      "history": 32,
+      "collaboration": 32
+    },
+    "flushes": [
+      {
+        "reason": "capacity",
+        "startedAt": 2644.29999999993,
+        "durationMs": 5.900000000023283,
+        "history": 32,
+        "collaboration": 32
+      },
+      {
+        "reason": "idle",
+        "startedAt": 3535.1999999999534,
+        "durationMs": 2.599999999976717,
+        "history": 31,
+        "collaboration": 31,
+        "quietForMs": 330.29999999993015
+      }
+    ],
+    "history": {
+      "undos": 3,
+      "redos": 0
+    },
+    "drainWitness": null,
+    "selection": {
+      "start": 96,
+      "end": 96,
+      "segmentId": ""
+    }
+  },
+  "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+  "compositionEvents": {
+    "events": [
+      {
+        "order": 0,
+        "phase": "cancellation-updates",
+        "type": "compositionstart",
+        "data": "",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3259
+      },
+      {
+        "order": 1,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮0",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3260.4000000000233
+      },
+      {
+        "order": 2,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮0",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3307.6999999999534
+      },
+      {
+        "order": 3,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮0",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3312.0999999999767
+      },
+      {
+        "order": 4,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮1",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3333.9000000000233
+      },
+      {
+        "order": 5,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮1",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3350.9000000000233
+      },
+      {
+        "order": 6,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮1",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3351.29999999993
+      },
+      {
+        "order": 7,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮2",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3372.29999999993
+      },
+      {
+        "order": 8,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮2",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3387.6999999999534
+      },
+      {
+        "order": 9,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮2",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3388
+      },
+      {
+        "order": 10,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮3",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3395
+      },
+      {
+        "order": 11,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮3",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3408.4000000000233
+      },
+      {
+        "order": 12,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮3",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3408.6999999999534
+      },
+      {
+        "order": 13,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮4",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3416.0999999999767
+      },
+      {
+        "order": 14,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮4",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3429.1999999999534
+      },
+      {
+        "order": 15,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮4",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3429.5
+      },
+      {
+        "order": 16,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮5",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3435.5999999999767
+      },
+      {
+        "order": 17,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮5",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3450.0999999999767
+      },
+      {
+        "order": 18,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮5",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3450.4000000000233
+      },
+      {
+        "order": 19,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮6",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3461.5999999999767
+      },
+      {
+        "order": 20,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮6",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3484.4000000000233
+      },
+      {
+        "order": 21,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮6",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3484.6999999999534
+      },
+      {
+        "order": 22,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮7",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3490
+      },
+      {
+        "order": 23,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮7",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3502.5999999999767
+      },
+      {
+        "order": 24,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮7",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3502.79999999993
+      },
+      {
+        "order": 25,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮8",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3508.4000000000233
+      },
+      {
+        "order": 26,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮8",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3520.4000000000233
+      },
+      {
+        "order": 27,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮8",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3520.6999999999534
+      },
+      {
+        "order": 28,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮9",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3522.79999999993
+      },
+      {
+        "order": 29,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮9",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3533.29999999993
+      },
+      {
+        "order": 30,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮9",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3533.6999999999534
+      },
+      {
+        "order": 31,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮10",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3540.6999999999534
+      },
+      {
+        "order": 32,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮10",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3550.79999999993
+      },
+      {
+        "order": 33,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮10",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3551
+      },
+      {
+        "order": 34,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮11",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3556
+      },
+      {
+        "order": 35,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮11",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3565
+      },
+      {
+        "order": 36,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮11",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3565.1999999999534
+      },
+      {
+        "order": 37,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮12",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3570.4000000000233
+      },
+      {
+        "order": 38,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮12",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3579.9000000000233
+      },
+      {
+        "order": 39,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮12",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3580.0999999999767
+      },
+      {
+        "order": 40,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮13",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3584.9000000000233
+      },
+      {
+        "order": 41,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮13",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3595.79999999993
+      },
+      {
+        "order": 42,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮13",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3596.0999999999767
+      },
+      {
+        "order": 43,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮14",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3611.5999999999767
+      },
+      {
+        "order": 44,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮14",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3623.29999999993
+      },
+      {
+        "order": 45,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮14",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3623.5999999999767
+      },
+      {
+        "order": 46,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮15",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3625.1999999999534
+      },
+      {
+        "order": 47,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮15",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3635
+      },
+      {
+        "order": 48,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮15",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3635.4000000000233
+      },
+      {
+        "order": 49,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮16",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3639.9000000000233
+      },
+      {
+        "order": 50,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮16",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3650.0999999999767
+      },
+      {
+        "order": 51,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮16",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3650.5
+      },
+      {
+        "order": 52,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮17",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3656.0999999999767
+      },
+      {
+        "order": 53,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮17",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3665.5
+      },
+      {
+        "order": 54,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮17",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3665.79999999993
+      },
+      {
+        "order": 55,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮18",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3671.1999999999534
+      },
+      {
+        "order": 56,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮18",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3687.9000000000233
+      },
+      {
+        "order": 57,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮18",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3688.0999999999767
+      },
+      {
+        "order": 58,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮19",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3693.1999999999534
+      },
+      {
+        "order": 59,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮19",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3703.79999999993
+      },
+      {
+        "order": 60,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮19",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3704
+      },
+      {
+        "order": 61,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮20",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3712.6999999999534
+      },
+      {
+        "order": 62,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮20",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3726
+      },
+      {
+        "order": 63,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮20",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3726.29999999993
+      },
+      {
+        "order": 64,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮21",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3731.5
+      },
+      {
+        "order": 65,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮21",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3741.1999999999534
+      },
+      {
+        "order": 66,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮21",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3741.5
+      },
+      {
+        "order": 67,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮22",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3745.5
+      },
+      {
+        "order": 68,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮22",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3754.9000000000233
+      },
+      {
+        "order": 69,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮22",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3755.1999999999534
+      },
+      {
+        "order": 70,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮23",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3760.1999999999534
+      },
+      {
+        "order": 71,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮23",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3772.1999999999534
+      },
+      {
+        "order": 72,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮23",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3772.5
+      },
+      {
+        "order": 73,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮24",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3777.1999999999534
+      },
+      {
+        "order": 74,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮24",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3789.5
+      },
+      {
+        "order": 75,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮24",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3789.79999999993
+      },
+      {
+        "order": 76,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮25",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3796.1999999999534
+      },
+      {
+        "order": 77,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮25",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3806.0999999999767
+      },
+      {
+        "order": 78,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮25",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3806.5
+      },
+      {
+        "order": 79,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮26",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3812.5999999999767
+      },
+      {
+        "order": 80,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮26",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3822.29999999993
+      },
+      {
+        "order": 81,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮26",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3822.6999999999534
+      },
+      {
+        "order": 82,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮27",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3827.6999999999534
+      },
+      {
+        "order": 83,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮27",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3846.6999999999534
+      },
+      {
+        "order": 84,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮27",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3847
+      },
+      {
+        "order": 85,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮28",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3850.79999999993
+      },
+      {
+        "order": 86,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮28",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3860.5999999999767
+      },
+      {
+        "order": 87,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮28",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3860.79999999993
+      },
+      {
+        "order": 88,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮29",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3866.4000000000233
+      },
+      {
+        "order": 89,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮29",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3877.5999999999767
+      },
+      {
+        "order": 90,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮29",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3877.9000000000233
+      },
+      {
+        "order": 91,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮30",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3883.29999999993
+      },
+      {
+        "order": 92,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮30",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3895.5
+      },
+      {
+        "order": 93,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮30",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3895.79999999993
+      },
+      {
+        "order": 94,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮31",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3900.79999999993
+      },
+      {
+        "order": 95,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮31",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3911.9000000000233
+      },
+      {
+        "order": 96,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮31",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3912.1999999999534
+      },
+      {
+        "order": 97,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮32",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3918.9000000000233
+      },
+      {
+        "order": 98,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮32",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3929.4000000000233
+      },
+      {
+        "order": 99,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮32",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3929.6999999999534
+      },
+      {
+        "order": 100,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮33",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3933.5
+      },
+      {
+        "order": 101,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮33",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3943.0999999999767
+      },
+      {
+        "order": 102,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮33",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3943.29999999993
+      },
+      {
+        "order": 103,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮34",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3947.29999999993
+      },
+      {
+        "order": 104,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮34",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3956.5999999999767
+      },
+      {
+        "order": 105,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮34",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3956.9000000000233
+      },
+      {
+        "order": 106,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮35",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3958.1999999999534
+      },
+      {
+        "order": 107,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮35",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3969
+      },
+      {
+        "order": 108,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮35",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3969.4000000000233
+      },
+      {
+        "order": 109,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮36",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3974.6999999999534
+      },
+      {
+        "order": 110,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮36",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3985
+      },
+      {
+        "order": 111,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮36",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 3985.29999999993
+      },
+      {
+        "order": 112,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮37",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 3993
+      },
+      {
+        "order": 113,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮37",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4003.5
+      },
+      {
+        "order": 114,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮37",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4003.79999999993
+      },
+      {
+        "order": 115,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮38",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4009
+      },
+      {
+        "order": 116,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮38",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4020
+      },
+      {
+        "order": 117,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮38",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4020.1999999999534
+      },
+      {
+        "order": 118,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮39",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4024.9000000000233
+      },
+      {
+        "order": 119,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮39",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4034.9000000000233
+      },
+      {
+        "order": 120,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮39",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4035.1999999999534
+      },
+      {
+        "order": 121,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮40",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4040.79999999993
+      },
+      {
+        "order": 122,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮40",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4059.6999999999534
+      },
+      {
+        "order": 123,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮40",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4060
+      },
+      {
+        "order": 124,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮41",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4065.0999999999767
+      },
+      {
+        "order": 125,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮41",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4074.4000000000233
+      },
+      {
+        "order": 126,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮41",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4074.6999999999534
+      },
+      {
+        "order": 127,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮42",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4086.79999999993
+      },
+      {
+        "order": 128,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮42",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4101.099999999977
+      },
+      {
+        "order": 129,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮42",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4101.29999999993
+      },
+      {
+        "order": 130,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮43",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4106.29999999993
+      },
+      {
+        "order": 131,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮43",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4115.29999999993
+      },
+      {
+        "order": 132,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮43",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4115.5
+      },
+      {
+        "order": 133,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮44",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4120
+      },
+      {
+        "order": 134,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮44",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4129.699999999953
+      },
+      {
+        "order": 135,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮44",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4129.900000000023
+      },
+      {
+        "order": 136,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮45",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4136.5
+      },
+      {
+        "order": 137,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮45",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4148.099999999977
+      },
+      {
+        "order": 138,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮45",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4148.5
+      },
+      {
+        "order": 139,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮46",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4155.699999999953
+      },
+      {
+        "order": 140,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮46",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4166.29999999993
+      },
+      {
+        "order": 141,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮46",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4166.599999999977
+      },
+      {
+        "order": 142,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮47",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4173.199999999953
+      },
+      {
+        "order": 143,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮47",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4185.199999999953
+      },
+      {
+        "order": 144,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮47",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4185.5
+      },
+      {
+        "order": 145,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮48",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4187.29999999993
+      },
+      {
+        "order": 146,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮48",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4195.400000000023
+      },
+      {
+        "order": 147,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮48",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4195.699999999953
+      },
+      {
+        "order": 148,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮49",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4200
+      },
+      {
+        "order": 149,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮49",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4209.400000000023
+      },
+      {
+        "order": 150,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮49",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4209.599999999977
+      },
+      {
+        "order": 151,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮50",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4213.199999999953
+      },
+      {
+        "order": 152,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮50",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4222.900000000023
+      },
+      {
+        "order": 153,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮50",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4223.29999999993
+      },
+      {
+        "order": 154,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮51",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4227.099999999977
+      },
+      {
+        "order": 155,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮51",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4235.900000000023
+      },
+      {
+        "order": 156,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮51",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4236.099999999977
+      },
+      {
+        "order": 157,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮52",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4241.5
+      },
+      {
+        "order": 158,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮52",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4253.5
+      },
+      {
+        "order": 159,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮52",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4253.79999999993
+      },
+      {
+        "order": 160,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮53",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4258.699999999953
+      },
+      {
+        "order": 161,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮53",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4269.900000000023
+      },
+      {
+        "order": 162,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮53",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4270.29999999993
+      },
+      {
+        "order": 163,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮54",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4275.199999999953
+      },
+      {
+        "order": 164,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮54",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4295.5
+      },
+      {
+        "order": 165,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮54",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4295.79999999993
+      },
+      {
+        "order": 166,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮55",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4302
+      },
+      {
+        "order": 167,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮55",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4312.099999999977
+      },
+      {
+        "order": 168,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮55",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4312.400000000023
+      },
+      {
+        "order": 169,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮56",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4316
+      },
+      {
+        "order": 170,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮56",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4325.400000000023
+      },
+      {
+        "order": 171,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮56",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4325.699999999953
+      },
+      {
+        "order": 172,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮57",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4330.400000000023
+      },
+      {
+        "order": 173,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮57",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4340.699999999953
+      },
+      {
+        "order": 174,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮57",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4341
+      },
+      {
+        "order": 175,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮58",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4346.199999999953
+      },
+      {
+        "order": 176,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮58",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4358.599999999977
+      },
+      {
+        "order": 177,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮58",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4358.900000000023
+      },
+      {
+        "order": 178,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮59",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4364.400000000023
+      },
+      {
+        "order": 179,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮59",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4376.79999999993
+      },
+      {
+        "order": 180,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮59",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4377.199999999953
+      },
+      {
+        "order": 181,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮60",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4384
+      },
+      {
+        "order": 182,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮60",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4396.699999999953
+      },
+      {
+        "order": 183,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮60",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4397
+      },
+      {
+        "order": 184,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮61",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4401.199999999953
+      },
+      {
+        "order": 185,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮61",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4411.900000000023
+      },
+      {
+        "order": 186,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮61",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4412.099999999977
+      },
+      {
+        "order": 187,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮62",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4416.29999999993
+      },
+      {
+        "order": 188,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮62",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4426.699999999953
+      },
+      {
+        "order": 189,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮62",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4427
+      },
+      {
+        "order": 190,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮63",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4432.5
+      },
+      {
+        "order": 191,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮63",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4442.79999999993
+      },
+      {
+        "order": 192,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮63",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4443
+      },
+      {
+        "order": 193,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮64",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4447.599999999977
+      },
+      {
+        "order": 194,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮64",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4458.099999999977
+      },
+      {
+        "order": 195,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮64",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4458.400000000023
+      },
+      {
+        "order": 196,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮65",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4463.400000000023
+      },
+      {
+        "order": 197,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮65",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4476.699999999953
+      },
+      {
+        "order": 198,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮65",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4477
+      },
+      {
+        "order": 199,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮66",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4483.79999999993
+      },
+      {
+        "order": 200,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮66",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4493.199999999953
+      },
+      {
+        "order": 201,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮66",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4493.5
+      },
+      {
+        "order": 202,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮67",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4497.699999999953
+      },
+      {
+        "order": 203,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮67",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4511.900000000023
+      },
+      {
+        "order": 204,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮67",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4512.199999999953
+      },
+      {
+        "order": 205,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮68",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4516.099999999977
+      },
+      {
+        "order": 206,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮68",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4527
+      },
+      {
+        "order": 207,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮68",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4527.199999999953
+      },
+      {
+        "order": 208,
+        "phase": "cancellation-updates",
+        "type": "compositionupdate",
+        "data": "仮69",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4533.29999999993
+      },
+      {
+        "order": 209,
+        "phase": "cancellation-updates",
+        "type": "beforeinput",
+        "data": "仮69",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4545.400000000023
+      },
+      {
+        "order": 210,
+        "phase": "cancellation-updates",
+        "type": "input",
+        "data": "仮69",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4547.79999999993
+      },
+      {
+        "order": 211,
+        "phase": "cancellation-end",
+        "type": "compositionupdate",
+        "data": "",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 4678.699999999953
+      },
+      {
+        "order": 212,
+        "phase": "cancellation-end",
+        "type": "beforeinput",
+        "data": "",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4678.79999999993
+      },
+      {
+        "order": 213,
+        "phase": "cancellation-end",
+        "type": "input",
+        "data": "仮69",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 4679.5
+      },
+      {
+        "order": 214,
+        "phase": "cancellation-end",
+        "type": "compositionend",
+        "data": "",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": false,
+        "observedAt": 4679.5
+      },
+      {
+        "order": 215,
+        "phase": "converted-updates",
+        "type": "compositionstart",
+        "data": "",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 5218.599999999977
+      },
+      {
+        "order": 216,
+        "phase": "converted-updates",
+        "type": "compositionupdate",
+        "data": "か",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 5219.699999999953
+      },
+      {
+        "order": 217,
+        "phase": "converted-updates",
+        "type": "beforeinput",
+        "data": "か",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 5237.099999999977
+      },
+      {
+        "order": 218,
+        "phase": "converted-updates",
+        "type": "input",
+        "data": "か",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 5237.5
+      },
+      {
+        "order": 219,
+        "phase": "converted-updates",
+        "type": "compositionupdate",
+        "data": "かん",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 5243.599999999977
+      },
+      {
+        "order": 220,
+        "phase": "converted-updates",
+        "type": "beforeinput",
+        "data": "かん",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 5267.79999999993
+      },
+      {
+        "order": 221,
+        "phase": "converted-updates",
+        "type": "input",
+        "data": "かん",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 5268
+      },
+      {
+        "order": 222,
+        "phase": "converted-commit",
+        "type": "compositionupdate",
+        "data": "漢字",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": true,
+        "observedAt": 5308
+      },
+      {
+        "order": 223,
+        "phase": "converted-commit",
+        "type": "beforeinput",
+        "data": "漢字",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 5325.900000000023
+      },
+      {
+        "order": 224,
+        "phase": "converted-commit",
+        "type": "input",
+        "data": "漢字",
+        "inputType": "insertCompositionText",
+        "isComposing": true,
+        "isTrusted": true,
+        "observedAt": 5326.5
+      },
+      {
+        "order": 225,
+        "phase": "converted-commit",
+        "type": "compositionend",
+        "data": "漢字",
+        "inputType": null,
+        "isComposing": null,
+        "isTrusted": false,
+        "observedAt": 5326.5
+      }
+    ],
+    "dropped": 0
+  },
+  "errors": []
+}

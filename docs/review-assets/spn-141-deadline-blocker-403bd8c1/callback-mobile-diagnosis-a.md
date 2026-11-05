@@ -1,0 +1,41 @@
+# 🚫 SPN-141 current mobile callback failure — independent diagnosis A
+
+The current paired mobile callback gate is legitimately failed. `403bd8c1dfdf0b266ca93c0354abef0ef37cea64` cannot merge on the candidate-only pass, three native storage passes or accepted prerequisite evidence. No unchanged rerun, deadline extension, reduced workload/categories, incomplete baseline acceptance or storage-scope edit is justified by this record.
+
+## 🔎 Immediate observed boundary
+
+Reviewed current raw baseline/candidate progress, baseline manifest, failed comparison and job log under `callback-mobile-retained`, plus executed trace/spec/comparator source. CI `41945378505`, attempt 1, job `126977563768`; source `403bd8c1dfdf0b266ca93c0354abef0ef37cea64`, tested `28897ac1e143492bae980abf29f73c0e3daa8717`, base `5c565b61e11ce29780581f33410749436ecef42f`. Historical baseline is immutable `0e1df4725d9eccb77574d25e3eecdf678fe6ff44`, local test attempt 0.
+
+Baseline completes all sixteen paragraphs and 2,086 keydowns. Manifest preserves exact 2,088-character text/hash, selection 2086:2086, zero pending history/collaboration, no application errors, and `behaviorPassed: true`. Current source requires saved text, caret blink, ordinary zoom, route disposal and the postdisposal observation before that flag. Raw phase times in the same progress clock are:
+
+- Last paragraph/input count: 339.463 s; native drain begins 345.718 s; content begins 345.850 s.
+- Behavior complete: **357.089775 s**.
+- `Tracing.end` requested: **357.095106 s**; `trace-completion` phase: **357.101761 s**. Source emits that phase only after the end request resolves.
+- First failure: **420.039582 s**, kind `timedOut`, phase `trace-completion`.
+- CDP detach phase: **420.041120 s**; fixture cleanup begins **420.043376 s**; page/context close at **420.163872 / 420.170541 s**; fixture-cleanup-complete **420.176955 s**.
+
+No `trace-stream-open`, `trace-stream-read`, parse, attribution or analysis phase exists for baseline. Current source installs its completion listener before `Tracing.end`, then awaits completion before opening the output/reading CDP or creating the gzip pipeline. Thus the immediate failure is waiting for the completion event within the remaining deadline, **before** stream transfer/local gzip/parser work. There were only approximately **62.898 s** of the 420-second budget remaining when that wait began. This proves neither a permanent browser hang nor that an event could not arrive later; interruption ends observation. It does not establish whether producer flush, serialization, scheduling, delivery or capture overhead caused the delay. Tweaking read chunks/local compression alone does not directly execute earlier on this observed failing path.
+
+## 🧹 Cleanup is confirmed; acceptance still fails
+
+Baseline manifest has `complete: false`, `passed: false`, `collectionError: Error: Callback observation timedOut.`, and `cleanup: {sessionDetached: true, fixtureClosed: true}`. Progress terminal is **`timedOut`**, with the original trace-completion first failure retained, zero dropped progress events and no persistence failure. The later repeated timeout record does not convert the first failure into a cleanup failure. There is no baseline trace or attribution to accept.
+
+This differs materially from the older failed record that motivated SPN-143: there, no baseline stream, attribution or owned-cleanup completion evidence was retained. Current owned cancellation/detachment/fixture cleanup executes and is positively witnessed, slightly after deadline, while terminal success remains prohibited. SPN-143's ownership repair is working on this failure path; its accepted native first attempts did not establish reliable completion under every future execution.
+
+The comparison has seven baseline failures and rejects the pair. Its generic message “Terminal callback progress does not confirm successful owned cleanup” checks terminal passed/no first failure **as well as** the cleanup event. It must not be paraphrased here as “cleanup did not happen.” Likewise missing trace data-loss fields do not prove actual Chromium data loss or user-data loss. They mean the required complete trace was not obtained.
+
+Candidate progress is passed: behavior completes at243.909 s, waits **110.597 s** for trace completion, opens the stream at354.520 s, closes it at364.843 s and completes fixture cleanup at376.601 s. Its first test passes around376.8 s. Reviewer B owns independent candidate ZIP/stream/source integrity; I did not duplicate its large-data workload. Candidate's longer successful completion wait is contextual evidence of limited headroom, not a counterfactual estimate for this baseline or proof of a common cause.
+
+## 🧭 Relationship and coherent next ownership
+
+The earlier instrumented SPN-134 receipt-run failure retained behavior at348.004 s and end response348.014 s before the420-second deadline at the same completion boundary. Current uncompressed CDP transport removes the earlier browser gzip finalization dependency but the boundary recurs. Neither the old gzip hypothesis nor the new local gzip pipeline is thereby established as root cause. Earlier uninstrumented timeouts keep their unknown interrupted operation.
+
+I verified the base→current Git diff: all callback specs/helpers, source/analysis/comparison code, fixture, shared observation/UI helpers, Playwright configuration, lockfile and ordinary CI workflow are byte-identical to accepted SPN-143 main. SPN-141's runtime changes are confined to native desktop storage/preparation code. No evidence ties this timeout to those edits; source isolation is strong scope evidence, not proof against all runner/environment interactions.
+
+A separately registered historical paired-trace **deadline/transport investigation** is coherent. It should retain this recurrence as an unsatisfied acceptance contract and include the full outcome: public version-pinned capability research, supported capture/export feasibility, resource/cancellation ownership, justified implementation if supported, deterministic negative controls, complete unchanged paired desktop/mobile native acceptance, integration and final evidence. Estimate the uncertainty and verification work as a whole (XL remains reasonable), not merely the size of a prospective transport diff. Do not silently attach it to SPN-141 storage or SPN-140 constructor work, reuse a completed ticket ID, or claim that registration repairs the failure.
+
+The scope must explicitly include **end-to-end 420-second headroom**, not assume “export is slow” fully explains the failed outcome: this baseline consumed357.1 s before waiting for completion. Preserve the immutable baseline, full16-paragraph workload, throttle, trace categories/buffer/completeness, callback caps and every behavior/access requirement. Alternative supported capture/export capabilities may be researched statically, but no alternative is admitted by this review. No production/native probe is authorized by elapsed time, an earlier pass or a plausible hypothesis.
+
+Before any probe, prospectively record its precise discriminating question, pinned source/protocol, finite count and original budgets, what observation admits or rejects an implementation, retained complete byte/source evidence, memory/ownership limits and stop/cleanup conditions. A capability result must precede implementation; the eventual candidate still needs feasible local validation, two exact-head qualifying reviews and fresh first-attempt selected acceptance. Keep SPN-141 blocked on the registered outcome and preserve dependencies through SPN-140→SPN-120 without double-counting completed SPN-143 ownership work.
+
+Operator needs a bounded failed result with truthful cleanup; Owner/Collaborator retain exact editing/history/callback guarantees; Link guest retains access revocation. All four favor a separately accountable investigation over a retry, larger deadline or incomplete baseline. No source changes, browser reruns, profile/event reanalysis or new capability probes occurred during this diagnosis. B's streaming proof supplies independent package integrity; this document is the separate source/boundary/scope assessment.

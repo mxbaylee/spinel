@@ -1,0 +1,205 @@
+{
+  "status": "passed",
+  "summaries": [
+    {
+      "sample": "plain-1",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.30000000004656613,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.09999999997671694,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.5,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 328.80000000004657,
+      "groups": 66
+    },
+    {
+      "sample": "plain-2",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "history-timer",
+          "durationMs": 0.40000000002328306,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "collaboration-timer",
+          "durationMs": 0.2000000000698492,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 301.4000000000233,
+      "groups": 1
+    },
+    {
+      "sample": "plain-3",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "history-timer",
+          "durationMs": 0.2999999999301508,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "collaboration-timer",
+          "durationMs": 0.09999999997671694,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 301.30000000004657,
+      "groups": 1
+    },
+    {
+      "sample": "profile",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.40000000002328306,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.5999999999767169,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 303.5,
+      "groups": 1
+    },
+    {
+      "scenario": "resume-native-typing-after-quiet-pause",
+      "summary": {
+        "finalOriginalKeyAt": 44105.20000000007,
+        "continuationKeyAt": 44485.30000000005,
+        "continuationFrameAt": 44523,
+        "browserQuietGapMs": 380.0999999999767,
+        "continuationKeyToFrameMs": 37.699999999953434,
+        "continuationKeyToNativeReadMs": 37.90000000002328,
+        "continuationRequestReturnMs": 43.35091999999713,
+        "finalOriginalKeyToContinuationFrameMs": 417.79999999993015,
+        "finalOriginalKeyToContinuationNativeReadMs": 418
+      }
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+      "eventCount": 4,
+      "physicalIme": false
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+      "eventCount": 226,
+      "physicalIme": false
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "root": 42513,
+  "started": 1793841132636,
+  "elapsedMs": 380,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91680,
+  "peakKiB": 91680,
+  "live": [
+    {
+      "pid": 42513,
+      "parent": 42477,
+      "group": 42513,
+      "rssKiB": 90112,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/safari-audit-a-watchdog.json node /tmp/spn141-after143-hosted/audit-safari-a.ts"
+    },
+    {
+      "pid": 42682,
+      "parent": 42513,
+      "group": 42513,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 42513,
+      "parent": 42477,
+      "group": 42513,
+      "rssKiB": 90112,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/safari-audit-a-watchdog.json node /tmp/spn141-after143-hosted/audit-safari-a.ts"
+    },
+    {
+      "pid": 42532,
+      "parent": 42513,
+      "group": 42513,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 42558,
+      "parent": 42513,
+      "group": 42513,
+      "rssKiB": 0,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "<defunct>"
+    },
+    {
+      "pid": 42669,
+      "parent": 42513,
+      "group": 42513,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 42682,
+      "parent": 42513,
+      "group": 42513,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:12:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

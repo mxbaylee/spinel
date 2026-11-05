@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "id": 13379342274,
+      "name": "doc-callback-lifetimes-desktop",
+      "size_in_bytes": 124419209,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13379342274",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13379342274/zip",
+      "expired": false,
+      "created_at": "2026-11-05T01:19:25Z",
+      "expires_at": "2026-11-12T01:19:18Z",
+      "updated_at": "2026-11-05T01:19:25Z",
+      "digest": "sha256:95d6ff52c1a8511c058fec287cd518a84b0bc1048331d28debf5a2f4aaa63fcd",
+      "workflow_run": {
+        "id": 41945378505,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-141-storage-quiescence",
+        "head_sha": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64"
+      }
+    }
+  ]
+}

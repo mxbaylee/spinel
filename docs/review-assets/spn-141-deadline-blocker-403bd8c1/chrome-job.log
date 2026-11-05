@@ -1,0 +1,1993 @@
+﻿2026-11-05T01:00:47.0153450Z Current runner version: '2.338.2'
+2026-11-05T01:00:47.0181220Z ##[group]Runner Image Provisioner
+2026-11-05T01:00:47.0182200Z Hosted Compute Agent
+2026-11-05T01:00:47.0182770Z Version: 20261021.618
+2026-11-05T01:00:47.0183280Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-05T01:00:47.0184380Z Build Date: 2026-10-21T00:45:21Z
+2026-11-05T01:00:47.0184940Z Worker ID: {d672443e-8e21-460d-8d57-14aece4fd97b}
+2026-11-05T01:00:47.0185570Z Region: westus
+2026-11-05T01:00:47.0186030Z Cloud: MacCloud
+2026-11-05T01:00:47.0186540Z ##[endgroup]
+2026-11-05T01:00:47.0187800Z ##[group]Operating System
+2026-11-05T01:00:47.0188310Z macOS
+2026-11-05T01:00:47.0188780Z 26.6.2
+2026-11-05T01:00:47.0189240Z 25G83
+2026-11-05T01:00:47.0189590Z ##[endgroup]
+2026-11-05T01:00:47.0190050Z ##[group]Runner Image
+2026-11-05T01:00:47.0190590Z Image: macos-26-arm64
+2026-11-05T01:00:47.0190980Z Version: 20261026.0455.2
+2026-11-05T01:00:47.0192320Z Included Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261026.0455/images/macos/macos-26-arm64-Readme.md
+2026-11-05T01:00:47.0193650Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261026.0455
+2026-11-05T01:00:47.0194420Z ##[endgroup]
+2026-11-05T01:00:47.0195290Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T01:00:47.0197200Z Contents: read
+2026-11-05T01:00:47.0197840Z Metadata: read
+2026-11-05T01:00:47.0198370Z ##[endgroup]
+2026-11-05T01:00:47.0200340Z Secret source: Actions
+2026-11-05T01:00:47.0203690Z Cache mode: write
+2026-11-05T01:00:47.0205380Z Prepare workflow directory
+2026-11-05T01:00:47.0898330Z Prepare all required actions
+2026-11-05T01:00:47.0969320Z Getting action download info
+2026-11-05T01:00:47.5327200Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T01:00:47.9202110Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T01:00:48.0669260Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T01:00:48.2422690Z Complete job name: Native desktop offline (chrome, macos-26)
+2026-11-05T01:00:48.3257950Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T01:00:48.3260110Z with:
+2026-11-05T01:00:48.3261020Z   persist-credentials: false
+2026-11-05T01:00:48.3262080Z   repository: mxbaylee/spinel
+2026-11-05T01:00:48.3270680Z   token: ***
+2026-11-05T01:00:48.3271590Z   ssh-strict: true
+2026-11-05T01:00:48.3272500Z   ssh-user: git
+2026-11-05T01:00:48.3273370Z   clean: true
+2026-11-05T01:00:48.3274260Z   sparse-checkout-cone-mode: true
+2026-11-05T01:00:48.3275300Z   fetch-depth: 1
+2026-11-05T01:00:48.3276210Z   fetch-tags: false
+2026-11-05T01:00:48.3277130Z   show-progress: true
+2026-11-05T01:00:48.3278040Z   lfs: false
+2026-11-05T01:00:48.3278890Z   submodules: false
+2026-11-05T01:00:48.3279810Z   set-safe-directory: true
+2026-11-05T01:00:48.3281010Z   allow-unsafe-pr-checkout: false
+2026-11-05T01:00:48.3283620Z env:
+2026-11-05T01:00:48.3284630Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:00:48.3285880Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:00:48.3286930Z ##[endgroup]
+2026-11-05T01:00:48.9564790Z Syncing repository: mxbaylee/spinel
+2026-11-05T01:00:48.9570120Z ##[group]Getting Git version info
+2026-11-05T01:00:48.9572450Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-05T01:00:48.9575130Z [command]/opt/homebrew/bin/git version
+2026-11-05T01:00:48.9974130Z git version 2.56.0
+2026-11-05T01:00:49.0009970Z ##[endgroup]
+2026-11-05T01:00:49.0025000Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/5d74555a-1db2-4b32-8e58-3fca96228bd9/.gitconfig'
+2026-11-05T01:00:49.0039880Z Temporarily overriding HOME='/Users/runner/work/_temp/5d74555a-1db2-4b32-8e58-3fca96228bd9' before making global git config changes
+2026-11-05T01:00:49.0050470Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T01:00:49.0062500Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T01:00:49.0300150Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-05T01:00:49.0304110Z ##[group]Determining repository object format
+2026-11-05T01:00:49.0306460Z ##[endgroup]
+2026-11-05T01:00:49.0313530Z ##[group]Initializing the repository
+2026-11-05T01:00:49.0314500Z [command]/opt/homebrew/bin/git init /Users/runner/work/spinel/spinel
+2026-11-05T01:00:49.0678020Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T01:00:49.0681010Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T01:00:49.0684410Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T01:00:49.0686970Z hint: call:
+2026-11-05T01:00:49.0687350Z hint:
+2026-11-05T01:00:49.0687840Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T01:00:49.0688410Z hint:
+2026-11-05T01:00:49.0690760Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T01:00:49.0693520Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T01:00:49.0695500Z hint:
+2026-11-05T01:00:49.0696580Z hint: 	git branch -m <name>
+2026-11-05T01:00:49.0697760Z hint:
+2026-11-05T01:00:49.0699270Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T01:00:49.0716210Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-05T01:00:49.0732240Z [command]/opt/homebrew/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T01:00:49.0832470Z ##[endgroup]
+2026-11-05T01:00:49.0833360Z ##[group]Disabling automatic garbage collection
+2026-11-05T01:00:49.0834620Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-11-05T01:00:49.0981950Z ##[endgroup]
+2026-11-05T01:00:49.0989220Z ##[group]Setting up auth
+2026-11-05T01:00:49.0994570Z Removing SSH command configuration
+2026-11-05T01:00:49.1001010Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T01:00:49.1218590Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T01:00:49.3042690Z Removing HTTP extra header
+2026-11-05T01:00:49.3053670Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T01:00:49.3166150Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T01:00:49.4565560Z Removing includeIf entries pointing to credentials config files
+2026-11-05T01:00:49.4647980Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T01:00:49.4715600Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T01:00:49.6256570Z [command]/opt/homebrew/bin/git config --file /Users/runner/work/_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T01:00:49.6278990Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:49.6514600Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:49.6533150Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:49.6557210Z [command]/opt/homebrew/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:49.6563180Z ##[endgroup]
+2026-11-05T01:00:49.6564940Z ##[group]Fetching the repository
+2026-11-05T01:00:49.6568230Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +28897ac1e143492bae980abf29f73c0e3daa8717:refs/remotes/pull/258/merge
+2026-11-05T01:00:53.4112630Z From https://github.com/mxbaylee/spinel
+2026-11-05T01:00:53.4116560Z  * [new ref]         28897ac1e143492bae980abf29f73c0e3daa8717 -> pull/258/merge
+2026-11-05T01:00:53.4131020Z ##[endgroup]
+2026-11-05T01:00:53.4134200Z ##[group]Determining the checkout info
+2026-11-05T01:00:53.4135730Z ##[endgroup]
+2026-11-05T01:00:53.4160290Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-11-05T01:00:53.4266040Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T01:00:53.4373310Z ##[group]Checking out the ref
+2026-11-05T01:00:53.4376860Z [command]/opt/homebrew/bin/git checkout --progress --force refs/remotes/pull/258/merge
+2026-11-05T01:00:54.4936880Z Updating files:  77% (1953/2516)
+2026-11-05T01:00:54.5000130Z Updating files:  78% (1963/2516)
+2026-11-05T01:00:54.5053860Z Updating files:  79% (1988/2516)
+2026-11-05T01:00:54.5298070Z Updating files:  80% (2013/2516)
+2026-11-05T01:00:54.5473710Z Updating files:  81% (2038/2516)
+2026-11-05T01:00:54.5561530Z Updating files:  82% (2064/2516)
+2026-11-05T01:00:54.5635260Z Updating files:  83% (2089/2516)
+2026-11-05T01:00:54.5672060Z Updating files:  84% (2114/2516)
+2026-11-05T01:00:54.6314560Z Updating files:  85% (2139/2516)
+2026-11-05T01:00:54.6399650Z Updating files:  86% (2164/2516)
+2026-11-05T01:00:54.6439180Z Updating files:  87% (2189/2516)
+2026-11-05T01:00:54.6488400Z Updating files:  88% (2215/2516)
+2026-11-05T01:00:54.6528270Z Updating files:  89% (2240/2516)
+2026-11-05T01:00:54.6584710Z Updating files:  90% (2265/2516)
+2026-11-05T01:00:54.6664300Z Updating files:  91% (2290/2516)
+2026-11-05T01:00:54.6723820Z Updating files:  92% (2315/2516)
+2026-11-05T01:00:54.6808530Z Updating files:  93% (2340/2516)
+2026-11-05T01:00:54.6851060Z Updating files:  94% (2366/2516)
+2026-11-05T01:00:54.6924370Z Updating files:  95% (2391/2516)
+2026-11-05T01:00:54.6974310Z Updating files:  96% (2416/2516)
+2026-11-05T01:00:54.7012110Z Updating files:  97% (2441/2516)
+2026-11-05T01:00:54.7059310Z Updating files:  98% (2466/2516)
+2026-11-05T01:00:54.7082840Z Updating files:  99% (2491/2516)
+2026-11-05T01:00:54.7083980Z Updating files: 100% (2516/2516)
+2026-11-05T01:00:54.7084800Z Updating files: 100% (2516/2516), done.
+2026-11-05T01:00:54.7153960Z HEAD is now at 28897ac Merge 403bd8c1dfdf0b266ca93c0354abef0ef37cea64 into 5c565b61e11ce29780581f33410749436ecef42f
+2026-11-05T01:00:54.7178440Z ##[endgroup]
+2026-11-05T01:00:54.7368460Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-11-05T01:00:54.7484140Z 28897ac1e143492bae980abf29f73c0e3daa8717
+2026-11-05T01:00:54.7503820Z ##[group]Removing auth
+2026-11-05T01:00:54.7505430Z Removing SSH command configuration
+2026-11-05T01:00:54.7507000Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T01:00:54.7610240Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T01:00:54.9155440Z Removing HTTP extra header
+2026-11-05T01:00:54.9164260Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T01:00:54.9257650Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T01:00:55.0902630Z Removing includeIf entries pointing to credentials config files
+2026-11-05T01:00:55.1006310Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T01:00:55.1111940Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T01:00:55.1176380Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T01:00:55.1179530Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T01:00:55.1180480Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T01:00:55.1187060Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T01:00:55.1189200Z /Users/runner/work/_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:55.1194160Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-65ea62e7\-cba3\-498b\-839e\-45822267b0c7\.config
+2026-11-05T01:00:55.1241480Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T01:00:55.1369090Z /Users/runner/work/_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:55.1377930Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-65ea62e7\-cba3\-498b\-839e\-45822267b0c7\.config
+2026-11-05T01:00:55.1511240Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T01:00:55.1579570Z /github/runner_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:55.1590640Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-65ea62e7\-cba3\-498b\-839e\-45822267b0c7\.config
+2026-11-05T01:00:55.1670900Z [command]/opt/homebrew/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T01:00:55.1740480Z /github/runner_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config
+2026-11-05T01:00:55.1747380Z [command]/opt/homebrew/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-65ea62e7\-cba3\-498b\-839e\-45822267b0c7\.config
+2026-11-05T01:00:55.1821220Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T01:00:55.3390090Z Removing credentials config '/Users/runner/work/_temp/git-credentials-65ea62e7-cba3-498b-839e-45822267b0c7.config'
+2026-11-05T01:00:55.3391450Z ##[endgroup]
+2026-11-05T01:00:55.3839230Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T01:00:55.3839730Z with:
+2026-11-05T01:00:55.3840000Z   node-version-file: .nvmrc
+2026-11-05T01:00:55.3840290Z   package-manager-cache: false
+2026-11-05T01:00:55.3840580Z   check-latest: false
+2026-11-05T01:00:55.3843100Z   token: ***
+2026-11-05T01:00:55.3843380Z env:
+2026-11-05T01:00:55.3843660Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:00:55.3843960Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:00:55.3844220Z ##[endgroup]
+2026-11-05T01:00:55.6475760Z Node version file is not JSON file
+2026-11-05T01:00:55.6488500Z Node version file is not TOML file
+2026-11-05T01:00:55.6489280Z Resolved .nvmrc as 26.12.1
+2026-11-05T01:00:55.6496680Z Attempting to download 26.12.1...
+2026-11-05T01:00:56.4418930Z Acquiring 26.12.1 - arm64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-darwin-arm64.tar.gz
+2026-11-05T01:00:57.2015120Z Extracting ...
+2026-11-05T01:00:57.2289900Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/51c506a8-f2dc-4ce8-8527-af95a247b677 -f /Users/runner/work/_temp/28dce5d3-73ea-4ae7-801b-b52f9007147e
+2026-11-05T01:00:59.2379890Z Adding to the cache ...
+2026-11-05T01:01:03.3140200Z ##[group]Environment details
+2026-11-05T01:01:04.0766590Z node: v26.12.1
+2026-11-05T01:01:04.0798690Z npm: 11.20.0
+2026-11-05T01:01:04.0799350Z yarn: 1.22.22
+2026-11-05T01:01:04.0813550Z ##[endgroup]
+2026-11-05T01:01:04.1082790Z ##[group]Run node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+2026-11-05T01:01:04.1083400Z [36;1mnode scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T01:01:04.1302260Z shell: /bin/bash -e {0}
+2026-11-05T01:01:04.1302680Z env:
+2026-11-05T01:01:04.1303090Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:01:04.1303560Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:01:04.1303820Z   DESKTOP_BROWSER: chrome
+2026-11-05T01:01:04.1304220Z ##[endgroup]
+2026-11-05T01:02:30.3373340Z {
+2026-11-05T01:02:30.3374450Z   "sourceSha": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+2026-11-05T01:02:30.3374920Z   "checkedAt": "2026-11-05T01:01:04.379Z",
+2026-11-05T01:02:30.3375640Z   "kind": "chrome",
+2026-11-05T01:02:30.3375960Z   "status": "passed",
+2026-11-05T01:02:30.3376200Z   "before": "156.0.8078.48",
+2026-11-05T01:02:30.3377450Z   "releaseSource": "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json",
+2026-11-05T01:02:30.3378120Z   "requiredStable": "157.0.8103.38",
+2026-11-05T01:02:30.3378760Z   "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+2026-11-05T01:02:30.3379900Z   "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/Google Chrome.app: accepted\nsource=Notarized Developer ID\n",
+2026-11-05T01:02:30.3380760Z   "download": "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg",
+2026-11-05T01:02:30.3381530Z   "driver": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})\n",
+2026-11-05T01:02:30.3382170Z   "installed": "157.0.8103.39"
+2026-11-05T01:02:30.3382460Z }
+2026-11-05T01:02:30.5577760Z ##[group]Run npm ci
+2026-11-05T01:02:30.5578410Z [36;1mnpm ci[0m
+2026-11-05T01:02:30.5900700Z shell: /bin/bash -e {0}
+2026-11-05T01:02:30.5901270Z env:
+2026-11-05T01:02:30.5901710Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:02:30.5902340Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:02:30.5903000Z   CHROMEWEBDRIVER: /Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/chromedriver-mac-arm64
+2026-11-05T01:02:30.5903590Z ##[endgroup]
+2026-11-05T01:02:52.6798710Z 
+2026-11-05T01:02:52.6801860Z > postinstall
+2026-11-05T01:02:52.6804070Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-05T01:02:52.6805390Z 
+2026-11-05T01:02:53.3023440Z 
+2026-11-05T01:02:53.3024550Z added 493 packages, and audited 501 packages in 22s
+2026-11-05T01:02:53.3025910Z 
+2026-11-05T01:02:53.3027760Z 132 packages are looking for funding
+2026-11-05T01:02:53.3029190Z   run `npm fund` for details
+2026-11-05T01:02:53.3244000Z 
+2026-11-05T01:02:53.3245250Z 4 moderate severity vulnerabilities
+2026-11-05T01:02:53.3245550Z 
+2026-11-05T01:02:53.3245930Z To address all issues (including breaking changes), run:
+2026-11-05T01:02:53.3246500Z   npm audit fix --force
+2026-11-05T01:02:53.3246730Z 
+2026-11-05T01:02:53.3246910Z Run `npm audit` for details.
+2026-11-05T01:02:53.3252760Z npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-11-05T01:02:53.3253690Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-05T01:02:53.3266060Z npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+2026-11-05T01:02:53.3267120Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-05T01:02:53.3267760Z npm warn install-scripts
+2026-11-05T01:02:53.3271700Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-05T01:02:53.4642590Z ##[group]Run npm run build
+2026-11-05T01:02:53.4642870Z [36;1mnpm run build[0m
+2026-11-05T01:02:53.4694880Z shell: /bin/bash -e {0}
+2026-11-05T01:02:53.4695120Z env:
+2026-11-05T01:02:53.4695520Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:02:53.4695870Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:02:53.4696400Z   CHROMEWEBDRIVER: /Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/chromedriver-mac-arm64
+2026-11-05T01:02:53.4696910Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-05T01:02:53.4697220Z ##[endgroup]
+2026-11-05T01:02:53.8410060Z 
+2026-11-05T01:02:53.8410960Z > build
+2026-11-05T01:02:53.8411490Z > vite build
+2026-11-05T01:02:53.8411820Z 
+2026-11-05T01:02:54.3022770Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-05T01:02:54.3108760Z transforming...
+2026-11-05T01:02:55.3574970Z ✓ 4368 modules transformed.
+2026-11-05T01:02:55.7363850Z rendering chunks...
+2026-11-05T01:02:56.4076200Z computing gzip size...
+2026-11-05T01:02:56.5240390Z dist/index.html                                    3.50 kB │ gzip:     1.29 kB
+2026-11-05T01:02:56.5341510Z [33m[plugin builtin:vite-reporter] 
+2026-11-05T01:02:56.5342380Z dist/assets/nativeCopy-mVcC3r32.css                2.53 kB │ gzip:     0.88 kB
+2026-11-05T01:02:56.5443940Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-05T01:02:56.5445090Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-05T01:02:56.5467440Z - Using dynamic import() to code-split the application
+2026-11-05T01:02:56.5468540Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-05T01:02:56.5473410Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-05T01:02:56.5474380Z dist/assets/CopyFile-Bp41xbsr.css                 16.91 kB │ gzip:     3.69 kB
+2026-11-05T01:02:56.5558290Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-05T01:02:56.5559180Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-05T01:02:56.5562680Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-05T01:02:56.5563900Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-05T01:02:56.5564840Z [39m
+2026-11-05T01:02:56.5565320Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-05T01:02:56.5566400Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-05T01:02:56.5569590Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB
+2026-11-05T01:02:56.5570790Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-05T01:02:56.5571730Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB
+2026-11-05T01:02:56.5573060Z dist/assets/OfflineViewer-DxPRhgPs.js              1.96 kB │ gzip:     1.00 kB
+2026-11-05T01:02:56.5574050Z dist/assets/rendering-Y2ZaHuhz.js                  2.48 kB │ gzip:     1.14 kB
+2026-11-05T01:02:56.5575220Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB
+2026-11-05T01:02:56.5579140Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB
+2026-11-05T01:02:56.5592420Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB
+2026-11-05T01:02:56.5594550Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB
+2026-11-05T01:02:56.5595250Z dist/assets/main-B45aDqO7.js                       3.75 kB │ gzip:     1.84 kB
+2026-11-05T01:02:56.5595910Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB
+2026-11-05T01:02:56.5619200Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB
+2026-11-05T01:02:56.5620000Z dist/assets/SheetEditor-FiU1acjF.js                6.14 kB │ gzip:     2.85 kB
+2026-11-05T01:02:56.5620830Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB
+2026-11-05T01:02:56.5621620Z dist/assets/native-DuYzNdfP.js                     7.10 kB │ gzip:     3.11 kB
+2026-11-05T01:02:56.5622500Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB
+2026-11-05T01:02:56.5623250Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB
+2026-11-05T01:02:56.5624480Z dist/assets/useDiagnostics-DuPOOcXt.js            13.20 kB │ gzip:     4.32 kB
+2026-11-05T01:02:56.5625250Z dist/service-worker.js                            15.37 kB │ gzip:     5.88 kB
+2026-11-05T01:02:56.5625770Z dist/assets/DocEditor-B2R16Ts9.js                 16.71 kB │ gzip:     6.95 kB
+2026-11-05T01:02:56.5626480Z dist/assets/HistoryBrowser-N_mUDGVn.js            20.97 kB │ gzip:     7.45 kB
+2026-11-05T01:02:56.5627100Z dist/assets/offlineStore-CNblyHxf.js              31.15 kB │ gzip:     9.16 kB
+2026-11-05T01:02:56.5627830Z dist/assets/model-C-KJgbHu.js                    119.35 kB │ gzip:    34.23 kB
+2026-11-05T01:02:56.5628420Z dist/assets/nativeCopy-DPYNV4NP.js               124.52 kB │ gzip:    40.05 kB
+2026-11-05T01:02:56.5629140Z dist/assets/documentReady-BTwXpX3d.js            178.33 kB │ gzip:    48.46 kB
+2026-11-05T01:02:56.5629920Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB
+2026-11-05T01:02:56.5630650Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB
+2026-11-05T01:02:56.5631310Z dist/assets/application-Bmpgmib6.js              341.50 kB │ gzip:    96.86 kB
+2026-11-05T01:02:56.5631890Z dist/assets/lib-BHp9PmuQ.js                      378.77 kB │ gzip:   104.54 kB
+2026-11-05T01:02:56.5632420Z dist/assets/theme-CqYTemgo.js                    590.29 kB │ gzip:   151.12 kB
+2026-11-05T01:02:56.5633140Z dist/assets/CopyFile-qR382OFY.js                 637.50 kB │ gzip:   110.32 kB
+2026-11-05T01:02:56.5633980Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB
+2026-11-05T01:02:56.5634760Z dist/assets/nativeSyncPermissions-SuF-rts9.js  3,806.09 kB │ gzip: 1,017.74 kB
+2026-11-05T01:02:56.5635320Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB
+2026-11-05T01:02:56.5635570Z 
+2026-11-05T01:02:56.5636310Z [32m✓ built in 2.23s[39m
+2026-11-05T01:02:56.5827630Z ##[group]Run test "$RUNNER_ENVIRONMENT" = github-hosted
+2026-11-05T01:02:56.5828000Z [36;1mtest "$RUNNER_ENVIRONMENT" = github-hosted[0m
+2026-11-05T01:02:56.5828290Z [36;1mmkdir -p test-results/desktop-tls[0m
+2026-11-05T01:02:56.5828580Z [36;1mopenssl req -x509 -newkey rsa:2048 -nodes \[0m
+2026-11-05T01:02:56.5828940Z [36;1m  -keyout test-results/desktop-tls/key.pem \[0m
+2026-11-05T01:02:56.5829300Z [36;1m  -out test-results/desktop-tls/cert.pem -days 1 \[0m
+2026-11-05T01:02:56.5829740Z [36;1m  -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'[0m
+2026-11-05T01:02:56.5830130Z [36;1msudo security add-trusted-cert -d -r trustRoot \[0m
+2026-11-05T01:02:56.5830530Z [36;1m  -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem[0m
+2026-11-05T01:02:56.5866220Z shell: /bin/bash -e {0}
+2026-11-05T01:02:56.5866400Z env:
+2026-11-05T01:02:56.5866590Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:02:56.5866890Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:02:56.5867310Z   CHROMEWEBDRIVER: /Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/chromedriver-mac-arm64
+2026-11-05T01:02:56.5867750Z ##[endgroup]
+2026-11-05T01:02:56.7570850Z ..+..................+.......+...+..+....+...+..+.........+.+.....+.+...+..+...+....+++++++++++++++++++++++++++++++++++++++*..........+....+.....+......+.+......+++++++++++++++++++++++++++++++++++++++*...+....+.....+...+.........+....+...........+...+............+...+.......+........+...+.............+.....+.+.....+....+..+.........+.+........+.......+...+.........+........+....+...+..+.........+.......+........+.......+.................+.+..+...+.........+...+.............+.........+..+...+...+.........+...+...+.......+........+...+.+...+.....+...............+.+..+...+....+...............+..+.+...+.........+..+...+.+...........+......+...............+....+.........+...............+...........+...+...+.......+...+...............+...+..+....+.....+.........+.+...+......+............+..+.+.....+.......+..+.+.....+......+...+...+..........+..............+.............+..+...+...+....+...+......+..+...+.+.....+................+..+.+............+.........+...........+.........+.+...+...........................+..+...+...+.......+..+.............+..+...+....+...+..+.....................+.......+..+.+..+...+.......+.....+.......+......+..+.+..+....+...+............+.....+...+.+.........+...+...............+...+..+...+......++++++
+2026-11-05T01:02:56.8438820Z ............+...+..+++++++++++++++++++++++++++++++++++++++*........+...+++++++++++++++++++++++++++++++++++++++*....+........+............+..........+..............+....+...+.....+............+...+...+....+...+..+.+............+.........+.....+.+...............+..+......+....+...........+....+......+......+.....+....+.........+...+...+......+.....+....+...............+..+...+....+..+................+............+...+...+..+....+...........+..........+..+......+......+...+.+............+..+......+.+......+..............+.........+....+.....+.+.........+..+..........+...+...+.....+...+.........+............+................+........+.+...+......+..+...+.......+..+............+...+.+..+...............+....+......+.........+.....+....+..+...............+...+............+.......+...+.....+....+.....+.........+....+...+...+.........+.....+......+......+...+......+....+...........+..........+..+.........+...+...+....+.........+..+....+...+.....+......+....+..+.+..+......+.+...........+............+......+..........+..+...+.......+...+..+.......+..................+..+......+......................+..+.+......+...+.......................+...+......+.+..+...+............+.+..+...+.+..............+...............+..........+...........+.........+..........+..+...+.......+..+............+..........+...+...........+.......+........+.+........+.......+...............++++++
+2026-11-05T01:02:56.8542910Z -----
+2026-11-05T01:02:57.0564660Z ##[group]Run node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+2026-11-05T01:02:57.0565370Z [36;1mnode --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T01:02:57.0615330Z shell: /bin/bash -e {0}
+2026-11-05T01:02:57.0615580Z env:
+2026-11-05T01:02:57.0615850Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:02:57.0616180Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:02:57.0616740Z   CHROMEWEBDRIVER: /Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/chromedriver-mac-arm64
+2026-11-05T01:02:57.0617410Z   DESKTOP_BROWSER: chrome
+2026-11-05T01:02:57.0617660Z ##[endgroup]
+2026-11-05T01:03:05.8013540Z Desktop chrome: browser-start
+2026-11-05T01:03:20.6533460Z Desktop chrome: all-four-downloads-complete
+2026-11-05T01:03:20.6960270Z Desktop chrome: transport-disabled-before-quit
+2026-11-05T01:03:21.2449180Z Desktop chrome: exact-records-captured-before-quit
+2026-11-05T01:03:22.2896180Z Desktop chrome: browser-stop
+2026-11-05T01:03:22.3020380Z Desktop chrome: transport-disabled-before-relaunch
+2026-11-05T01:03:25.0918320Z Desktop chrome: browser-start
+2026-11-05T01:03:25.7935130Z Desktop chrome: offline-catalog-and-original-records-retained
+2026-11-05T01:03:31.9153730Z Desktop chrome: native-doc-input-caret
+2026-11-05T01:03:34.4883410Z Desktop chrome: native-doc-input-caret
+2026-11-05T01:03:35.3465340Z Desktop chrome: native-offline-edits-committed
+2026-11-05T01:03:35.9962870Z Desktop chrome: browser-stop
+2026-11-05T01:03:36.0064530Z Desktop chrome: transport-still-disabled-before-pending-relaunch
+2026-11-05T01:03:38.0705230Z Desktop chrome: browser-start
+2026-11-05T01:03:40.8218860Z Desktop chrome: native-clipboard-content
+2026-11-05T01:03:40.8276850Z Desktop chrome: pending-restart-retained
+2026-11-05T01:03:42.8009760Z Desktop chrome: native-clipboard-content
+2026-11-05T01:03:42.8111460Z Desktop chrome: pending-restart-retained
+2026-11-05T01:03:45.1633160Z Desktop chrome: native-clipboard-content
+2026-11-05T01:03:45.1634040Z Desktop chrome: pending-restart-retained
+2026-11-05T01:03:46.9884730Z Desktop chrome: native-clipboard-content
+2026-11-05T01:03:46.9986470Z Desktop chrome: pending-restart-retained
+2026-11-05T01:03:47.3337200Z Desktop chrome: transport-restored
+2026-11-05T01:03:52.0287540Z Desktop chrome: normal-reconnect-exact-content-once
+2026-11-05T01:03:56.7388340Z Desktop chrome: recovered-original-reconnect-outage
+2026-11-05T01:04:01.4922480Z Desktop chrome: native-clipboard-content
+2026-11-05T01:04:01.4946230Z Desktop chrome: conflict-copy-preserves-original
+2026-11-05T01:04:04.2540200Z Desktop chrome: normal-reconnect-exact-content-once
+2026-11-05T01:04:07.4860610Z Desktop chrome: recovered-original-reconnect-outage
+2026-11-05T01:04:11.8759830Z Desktop chrome: native-clipboard-content
+2026-11-05T01:04:11.8866680Z Desktop chrome: conflict-copy-preserves-original
+2026-11-05T01:04:12.6995370Z Desktop chrome: storage-loss-tabs-prepared
+2026-11-05T01:04:15.3444950Z Desktop chrome: storage-loss-unregistration
+2026-11-05T01:04:15.4814120Z Desktop chrome: storage-loss-tabs-handed-off
+2026-11-05T01:04:15.4883960Z Desktop chrome: storage-loss-quiescence-before-stop
+2026-11-05T01:04:16.1911370Z Desktop chrome: browser-stop-before-storage-loss
+2026-11-05T01:04:18.7570670Z Desktop chrome: browser-start
+2026-11-05T01:04:18.8195490Z Desktop chrome: storage-loss-tabs-restarted
+2026-11-05T01:04:18.8908710Z Desktop chrome: storage-deletion
+2026-11-05T01:04:20.0625320Z Desktop chrome: cleared-storage-is-not-advertised
+2026-11-05T01:04:20.1174930Z Desktop chrome: post-deletion-outage
+2026-11-05T01:04:20.3770240Z Desktop chrome: missing-data-cannot-open-offline
+2026-11-05T01:04:20.3873070Z Desktop chrome: complete
+2026-11-05T01:04:21.0509520Z Desktop chrome: browser-stop
+2026-11-05T01:04:21.0918660Z {
+2026-11-05T01:04:21.0925060Z   "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+2026-11-05T01:04:21.0928180Z   "sourceSha": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+2026-11-05T01:04:21.0932170Z   "testedSha": "28897ac1e143492bae980abf29f73c0e3daa8717",
+2026-11-05T01:04:21.0932760Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/41945378569",
+2026-11-05T01:04:21.0933340Z   "attempt": "1",
+2026-11-05T01:04:21.0933780Z   "runner": {
+2026-11-05T01:04:21.0934050Z     "label": "macos-26",
+2026-11-05T01:04:21.0934490Z     "arch": "arm64",
+2026-11-05T01:04:21.0934830Z     "imageOS": "macos26",
+2026-11-05T01:04:21.0935270Z     "imageVersion": "20261026.0455.2"
+2026-11-05T01:04:21.0935580Z   },
+2026-11-05T01:04:21.0935960Z   "browser": "chrome",
+2026-11-05T01:04:21.0936310Z   "status": "passed",
+2026-11-05T01:04:21.0936620Z   "stages": [
+2026-11-05T01:04:21.0937160Z     {
+2026-11-05T01:04:21.0937450Z       "name": "browser-start",
+2026-11-05T01:04:21.0937910Z       "time": "2026-11-05T01:03:05.796Z",
+2026-11-05T01:04:21.0938320Z       "kind": "chrome",
+2026-11-05T01:04:21.0938670Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.0939470Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.0940080Z       "profile": {
+2026-11-05T01:04:21.0940480Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.0941110Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.0941860Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.0942530Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.0942890Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.0944150Z       },
+2026-11-05T01:04:21.0944410Z       "browserPid": 3699,
+2026-11-05T01:04:21.0944850Z       "previousBrowserPid": null,
+2026-11-05T01:04:21.0945300Z       "driverPid": 3652,
+2026-11-05T01:04:21.0946410Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.0947170Z       "startedAt": "2026-11-05T01:03:05.766Z",
+2026-11-05T01:04:21.0947540Z       "browserTab": true,
+2026-11-05T01:04:21.0947910Z       "secureContext": true,
+2026-11-05T01:04:21.0948730Z       "storagePersisted": false
+2026-11-05T01:04:21.0949410Z     },
+2026-11-05T01:04:21.0949840Z     {
+2026-11-05T01:04:21.0950210Z       "name": "all-four-downloads-complete",
+2026-11-05T01:04:21.0950670Z       "time": "2026-11-05T01:03:20.651Z"
+2026-11-05T01:04:21.0951190Z     },
+2026-11-05T01:04:21.0951580Z     {
+2026-11-05T01:04:21.0952170Z       "name": "transport-disabled-before-quit",
+2026-11-05T01:04:21.0952870Z       "time": "2026-11-05T01:03:20.695Z",
+2026-11-05T01:04:21.0953300Z       "forwardedRequests": 242,
+2026-11-05T01:04:21.0953770Z       "blockedRequests": 2,
+2026-11-05T01:04:21.0954230Z       "forwardedUpgrades": 4,
+2026-11-05T01:04:21.0954610Z       "blockedUpgrades": 1,
+2026-11-05T01:04:21.0955060Z       "logins": 1,
+2026-11-05T01:04:21.0955380Z       "offline": true,
+2026-11-05T01:04:21.0955860Z       "activeBrowserSockets": 0
+2026-11-05T01:04:21.0956260Z     },
+2026-11-05T01:04:21.0956720Z     {
+2026-11-05T01:04:21.0957190Z       "name": "exact-records-captured-before-quit",
+2026-11-05T01:04:21.0957640Z       "time": "2026-11-05T01:03:21.230Z"
+2026-11-05T01:04:21.0958080Z     },
+2026-11-05T01:04:21.0958550Z     {
+2026-11-05T01:04:21.0958820Z       "name": "browser-stop",
+2026-11-05T01:04:21.0959330Z       "time": "2026-11-05T01:03:22.281Z",
+2026-11-05T01:04:21.0959870Z       "kind": "chrome",
+2026-11-05T01:04:21.0960230Z       "browserPid": 3699,
+2026-11-05T01:04:21.0960700Z       "driverPid": 3652,
+2026-11-05T01:04:21.0961040Z       "browserExited": true,
+2026-11-05T01:04:21.0961440Z       "driverExited": true,
+2026-11-05T01:04:21.0962050Z       "stoppedAt": "2026-11-05T01:03:22.281Z"
+2026-11-05T01:04:21.0962400Z     },
+2026-11-05T01:04:21.0962740Z     {
+2026-11-05T01:04:21.0963060Z       "name": "transport-disabled-before-relaunch",
+2026-11-05T01:04:21.0964210Z       "time": "2026-11-05T01:03:22.301Z",
+2026-11-05T01:04:21.0964750Z       "forwardedRequests": 242,
+2026-11-05T01:04:21.0965090Z       "blockedRequests": 10,
+2026-11-05T01:04:21.0965420Z       "forwardedUpgrades": 4,
+2026-11-05T01:04:21.0965710Z       "blockedUpgrades": 2,
+2026-11-05T01:04:21.0966030Z       "logins": 1,
+2026-11-05T01:04:21.0966260Z       "offline": true,
+2026-11-05T01:04:21.0966620Z       "activeBrowserSockets": 0
+2026-11-05T01:04:21.0966930Z     },
+2026-11-05T01:04:21.0967140Z     {
+2026-11-05T01:04:21.0967460Z       "name": "browser-start",
+2026-11-05T01:04:21.0967760Z       "time": "2026-11-05T01:03:25.091Z",
+2026-11-05T01:04:21.0968180Z       "kind": "chrome",
+2026-11-05T01:04:21.0968460Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.0969120Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.0971280Z       "profile": {
+2026-11-05T01:04:21.0971650Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.0972270Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.0973350Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.0973840Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.0974280Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.0979460Z       },
+2026-11-05T01:04:21.0980000Z       "browserPid": 4204,
+2026-11-05T01:04:21.0980460Z       "previousBrowserPid": 3699,
+2026-11-05T01:04:21.0980750Z       "driverPid": 4179,
+2026-11-05T01:04:21.0983150Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.0983940Z       "startedAt": "2026-11-05T01:03:25.086Z",
+2026-11-05T01:04:21.0984330Z       "browserTab": true,
+2026-11-05T01:04:21.0984640Z       "secureContext": true,
+2026-11-05T01:04:21.0985150Z       "storagePersisted": false
+2026-11-05T01:04:21.0985650Z     },
+2026-11-05T01:04:21.0985930Z     {
+2026-11-05T01:04:21.1047730Z       "name": "offline-catalog-and-original-records-retained",
+2026-11-05T01:04:21.1048360Z       "time": "2026-11-05T01:03:25.793Z"
+2026-11-05T01:04:21.1048860Z     },
+2026-11-05T01:04:21.1049340Z     {
+2026-11-05T01:04:21.1049750Z       "name": "native-doc-input-caret",
+2026-11-05T01:04:21.1050210Z       "time": "2026-11-05T01:03:31.915Z",
+2026-11-05T01:04:21.1050550Z       "itemId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1050900Z       "before": {
+2026-11-05T01:04:21.1051130Z         "anchor": {
+2026-11-05T01:04:21.1051530Z           "height": 16.000000000000014,
+2026-11-05T01:04:21.1052010Z           "left": 316.3831431070964,
+2026-11-05T01:04:21.1052390Z           "top": 133.66666666666669,
+2026-11-05T01:04:21.1052830Z           "visible": true,
+2026-11-05T01:04:21.1053130Z           "width": 0
+2026-11-05T01:04:21.1053420Z         },
+2026-11-05T01:04:21.1053680Z         "bounds": {
+2026-11-05T01:04:21.1054040Z           "bottom": 310.6666666666667,
+2026-11-05T01:04:21.1054330Z           "left": 316.3831431070964,
+2026-11-05T01:04:21.1054690Z           "right": 316.3831431070964,
+2026-11-05T01:04:21.1055060Z           "top": 247.66666666666669
+2026-11-05T01:04:21.1055290Z         },
+2026-11-05T01:04:21.1055540Z         "commands": [
+2026-11-05T01:04:21.1055750Z           {
+2026-11-05T01:04:21.1056040Z             "at": 1224.600000000035,
+2026-11-05T01:04:21.1056560Z             "direction": null,
+2026-11-05T01:04:21.1057350Z             "granularity": null,
+2026-11-05T01:04:21.1057910Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1058590Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1059360Z             "zoomRatio": null
+2026-11-05T01:04:21.1118950Z           },
+2026-11-05T01:04:21.1119930Z           {
+2026-11-05T01:04:21.1120420Z             "at": 1840.100000000035,
+2026-11-05T01:04:21.1120780Z             "direction": null,
+2026-11-05T01:04:21.1121830Z             "granularity": null,
+2026-11-05T01:04:21.1122310Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1125070Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1125540Z             "zoomRatio": null
+2026-11-05T01:04:21.1125870Z           },
+2026-11-05T01:04:21.1126180Z           {
+2026-11-05T01:04:21.1126660Z             "at": 1854.7999999999884,
+2026-11-05T01:04:21.1127200Z             "direction": null,
+2026-11-05T01:04:21.1127580Z             "granularity": null,
+2026-11-05T01:04:21.1128240Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1128840Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1129240Z             "zoomRatio": null
+2026-11-05T01:04:21.1130860Z           }
+2026-11-05T01:04:21.1131110Z         ],
+2026-11-05T01:04:21.1134110Z         "currentLogicalRange": {
+2026-11-05T01:04:21.1134450Z           "collapsed": true,
+2026-11-05T01:04:21.1134910Z           "end": 20,
+2026-11-05T01:04:21.1135690Z           "segmentId": "",
+2026-11-05T01:04:21.1136840Z           "segmentPage": -1,
+2026-11-05T01:04:21.1137150Z           "start": 20
+2026-11-05T01:04:21.1137460Z         },
+2026-11-05T01:04:21.1137800Z         "currentUnitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1195560Z         "editing": false,
+2026-11-05T01:04:21.1196240Z         "end": 20,
+2026-11-05T01:04:21.1196500Z         "hasAnchor": true,
+2026-11-05T01:04:21.1196890Z         "inputConnected": true,
+2026-11-05T01:04:21.1197160Z         "inputFocused": true,
+2026-11-05T01:04:21.1199460Z         "layout": {
+2026-11-05T01:04:21.1200140Z           "firstNode": {
+2026-11-05T01:04:21.1200320Z             "column": 0,
+2026-11-05T01:04:21.1200590Z             "divide": 0,
+2026-11-05T01:04:21.1200850Z             "glyph": 0,
+2026-11-05T01:04:21.1201030Z             "isBack": true,
+2026-11-05T01:04:21.1201400Z             "line": 0,
+2026-11-05T01:04:21.1201600Z             "page": 0,
+2026-11-05T01:04:21.1201810Z             "pageType": 0,
+2026-11-05T01:04:21.1202030Z             "path": [
+2026-11-05T01:04:21.1202200Z               "pages",
+2026-11-05T01:04:21.1202370Z               0
+2026-11-05T01:04:21.1202520Z             ],
+2026-11-05T01:04:21.1202680Z             "section": 0,
+2026-11-05T01:04:21.1202970Z             "segmentPage": -1
+2026-11-05T01:04:21.1203170Z           },
+2026-11-05T01:04:21.1203490Z           "progress": null,
+2026-11-05T01:04:21.1203830Z           "viewportReady": true
+2026-11-05T01:04:21.1204380Z         },
+2026-11-05T01:04:21.1206430Z         "mobile": false,
+2026-11-05T01:04:21.1207230Z         "nativeRange": {
+2026-11-05T01:04:21.1207940Z           "collapsed": true,
+2026-11-05T01:04:21.1211490Z           "end": 20,
+2026-11-05T01:04:21.1211900Z           "segmentId": "",
+2026-11-05T01:04:21.1226570Z           "segmentPage": -1,
+2026-11-05T01:04:21.1227490Z           "start": 20
+2026-11-05T01:04:21.1244200Z         },
+2026-11-05T01:04:21.1245460Z         "observedAt": 1909.2999999999884,
+2026-11-05T01:04:21.1249030Z         "pendingSelection": false,
+2026-11-05T01:04:21.1249500Z         "pointerSelection": false,
+2026-11-05T01:04:21.1249780Z         "scale": {
+2026-11-05T01:04:21.1250400Z           "x": 1,
+2026-11-05T01:04:21.1250830Z           "y": 1
+2026-11-05T01:04:21.1251040Z         },
+2026-11-05T01:04:21.1251800Z         "scroll": 0,
+2026-11-05T01:04:21.1252130Z         "shortcutContext": {
+2026-11-05T01:04:21.1252400Z           "activated": false,
+2026-11-05T01:04:21.1252720Z           "doc": true,
+2026-11-05T01:04:21.1252970Z           "drawing": false,
+2026-11-05T01:04:21.1253300Z           "editor": true,
+2026-11-05T01:04:21.1253540Z           "formulaBar": false
+2026-11-05T01:04:21.1254310Z         },
+2026-11-05T01:04:21.1254560Z         "start": 20,
+2026-11-05T01:04:21.1254840Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T01:04:21.1255220Z         "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1255960Z         "unitLogicalRanges": [
+2026-11-05T01:04:21.1256270Z           {
+2026-11-05T01:04:21.1256590Z             "collapsed": true,
+2026-11-05T01:04:21.1256810Z             "end": 20,
+2026-11-05T01:04:21.1257100Z             "segmentId": "",
+2026-11-05T01:04:21.1257360Z             "segmentPage": -1,
+2026-11-05T01:04:21.1257680Z             "start": 20
+2026-11-05T01:04:21.1257930Z           }
+2026-11-05T01:04:21.1258190Z         ],
+2026-11-05T01:04:21.1258500Z         "unitSelectionOptions": {
+2026-11-05T01:04:21.1258790Z           "preserveInputStyle": true
+2026-11-05T01:04:21.1259110Z         },
+2026-11-05T01:04:21.1259280Z         "unitSelectionStyles": [
+2026-11-05T01:04:21.1259630Z           {
+2026-11-05T01:04:21.1259880Z             "fill": "rgba(128, 188, 254, 0.6)",
+2026-11-05T01:04:21.1260170Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T01:04:21.1260460Z           }
+2026-11-05T01:04:21.1260660Z         ],
+2026-11-05T01:04:21.1260850Z         "viewport": {
+2026-11-05T01:04:21.1261050Z           "active": true,
+2026-11-05T01:04:21.1261350Z           "bounds": {
+2026-11-05T01:04:21.1261600Z             "bottom": 332,
+2026-11-05T01:04:21.1261810Z             "left": 0,
+2026-11-05T01:04:21.1261970Z             "right": 1024,
+2026-11-05T01:04:21.1262130Z             "top": 0
+2026-11-05T01:04:21.1262270Z           },
+2026-11-05T01:04:21.1262410Z           "height": 332,
+2026-11-05T01:04:21.1262580Z           "key": "viewMain",
+2026-11-05T01:04:21.1262760Z           "scrollX": 0,
+2026-11-05T01:04:21.1262910Z           "scrollY": 0,
+2026-11-05T01:04:21.1263070Z           "width": 1024
+2026-11-05T01:04:21.1263220Z         }
+2026-11-05T01:04:21.1263350Z       },
+2026-11-05T01:04:21.1263720Z       "caret": {
+2026-11-05T01:04:21.1263870Z         "anchor": {
+2026-11-05T01:04:21.1264020Z           "height": 60,
+2026-11-05T01:04:21.1264210Z           "left": 98.66666666666667,
+2026-11-05T01:04:21.1264430Z           "top": 86.66666666666667,
+2026-11-05T01:04:21.1264620Z           "visible": true,
+2026-11-05T01:04:21.1264800Z           "width": 0
+2026-11-05T01:04:21.1264950Z         },
+2026-11-05T01:04:21.1265080Z         "bounds": {
+2026-11-05T01:04:21.1265270Z           "bottom": 310.6666666666667,
+2026-11-05T01:04:21.1265490Z           "left": 98.66666666666667,
+2026-11-05T01:04:21.1265710Z           "right": 98.66666666666667,
+2026-11-05T01:04:21.1265930Z           "top": 247.66666666666669
+2026-11-05T01:04:21.1266110Z         },
+2026-11-05T01:04:21.1266240Z         "commands": [
+2026-11-05T01:04:21.1266390Z           {
+2026-11-05T01:04:21.1266560Z             "at": 1224.600000000035,
+2026-11-05T01:04:21.1266780Z             "direction": null,
+2026-11-05T01:04:21.1266990Z             "granularity": null,
+2026-11-05T01:04:21.1267240Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1267550Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1267800Z             "zoomRatio": null
+2026-11-05T01:04:21.1267970Z           },
+2026-11-05T01:04:21.1268090Z           {
+2026-11-05T01:04:21.1268260Z             "at": 1840.100000000035,
+2026-11-05T01:04:21.1268480Z             "direction": null,
+2026-11-05T01:04:21.1268690Z             "granularity": null,
+2026-11-05T01:04:21.1268930Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1269240Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1269470Z             "zoomRatio": null
+2026-11-05T01:04:21.1269650Z           },
+2026-11-05T01:04:21.1269780Z           {
+2026-11-05T01:04:21.1269950Z             "at": 1854.7999999999884,
+2026-11-05T01:04:21.1270170Z             "direction": null,
+2026-11-05T01:04:21.1270370Z             "granularity": null,
+2026-11-05T01:04:21.1270620Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1270930Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1271160Z             "zoomRatio": null
+2026-11-05T01:04:21.1271330Z           },
+2026-11-05T01:04:21.1271460Z           {
+2026-11-05T01:04:21.1271590Z             "at": 1917,
+2026-11-05T01:04:21.1272170Z             "direction": 0,
+2026-11-05T01:04:21.1272430Z             "granularity": "document",
+2026-11-05T01:04:21.1272680Z             "id": "doc.operation.move-cursor",
+2026-11-05T01:04:21.1272900Z             "unitId": null,
+2026-11-05T01:04:21.1273080Z             "zoomRatio": null
+2026-11-05T01:04:21.1273250Z           },
+2026-11-05T01:04:21.1273380Z           {
+2026-11-05T01:04:21.1273550Z             "at": 1923.7999999999884,
+2026-11-05T01:04:21.1273780Z             "direction": null,
+2026-11-05T01:04:21.1273990Z             "granularity": null,
+2026-11-05T01:04:21.1274250Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1274550Z             "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1274800Z             "zoomRatio": null
+2026-11-05T01:04:21.1274970Z           }
+2026-11-05T01:04:21.1275100Z         ],
+2026-11-05T01:04:21.1275270Z         "currentLogicalRange": {
+2026-11-05T01:04:21.1275470Z           "collapsed": true,
+2026-11-05T01:04:21.1275640Z           "end": 0,
+2026-11-05T01:04:21.1275790Z           "segmentId": "",
+2026-11-05T01:04:21.1275970Z           "segmentPage": -1,
+2026-11-05T01:04:21.1276140Z           "start": 0
+2026-11-05T01:04:21.1276280Z         },
+2026-11-05T01:04:21.1276530Z         "currentUnitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1276790Z         "editing": false,
+2026-11-05T01:04:21.1276960Z         "end": 0,
+2026-11-05T01:04:21.1277120Z         "hasAnchor": true,
+2026-11-05T01:04:21.1277330Z         "inputConnected": true,
+2026-11-05T01:04:21.1277520Z         "inputFocused": true,
+2026-11-05T01:04:21.1278070Z         "layout": {
+2026-11-05T01:04:21.1278220Z           "firstNode": {
+2026-11-05T01:04:21.1278390Z             "column": 0,
+2026-11-05T01:04:21.1278560Z             "divide": 0,
+2026-11-05T01:04:21.1278720Z             "glyph": 0,
+2026-11-05T01:04:21.1278890Z             "isBack": true,
+2026-11-05T01:04:21.1279060Z             "line": 0,
+2026-11-05T01:04:21.1279230Z             "page": 0,
+2026-11-05T01:04:21.1279400Z             "pageType": 0,
+2026-11-05T01:04:21.1279570Z             "path": [
+2026-11-05T01:04:21.1279740Z               "pages",
+2026-11-05T01:04:21.1279910Z               0
+2026-11-05T01:04:21.1280050Z             ],
+2026-11-05T01:04:21.1280190Z             "section": 0,
+2026-11-05T01:04:21.1280370Z             "segmentPage": -1
+2026-11-05T01:04:21.1280540Z           },
+2026-11-05T01:04:21.1280690Z           "progress": null,
+2026-11-05T01:04:21.1280900Z           "viewportReady": true
+2026-11-05T01:04:21.1281070Z         },
+2026-11-05T01:04:21.1281210Z         "mobile": false,
+2026-11-05T01:04:21.1281380Z         "nativeRange": {
+2026-11-05T01:04:21.1281550Z           "collapsed": true,
+2026-11-05T01:04:21.1281730Z           "end": 0,
+2026-11-05T01:04:21.1281880Z           "segmentId": "",
+2026-11-05T01:04:21.1282060Z           "segmentPage": -1,
+2026-11-05T01:04:21.1282230Z           "start": 0
+2026-11-05T01:04:21.1282380Z         },
+2026-11-05T01:04:21.1282520Z         "observedAt": 1935,
+2026-11-05T01:04:21.1282730Z         "pendingSelection": false,
+2026-11-05T01:04:21.1282960Z         "pointerSelection": false,
+2026-11-05T01:04:21.1283140Z         "scale": {
+2026-11-05T01:04:21.1283290Z           "x": 1,
+2026-11-05T01:04:21.1283430Z           "y": 1
+2026-11-05T01:04:21.1283570Z         },
+2026-11-05T01:04:21.1283700Z         "scroll": 0,
+2026-11-05T01:04:21.1283860Z         "shortcutContext": {
+2026-11-05T01:04:21.1284040Z           "activated": false,
+2026-11-05T01:04:21.1285800Z           "doc": true,
+2026-11-05T01:04:21.1285970Z           "drawing": false,
+2026-11-05T01:04:21.1286150Z           "editor": true,
+2026-11-05T01:04:21.1286320Z           "formulaBar": false
+2026-11-05T01:04:21.1286490Z         },
+2026-11-05T01:04:21.1286620Z         "start": 0,
+2026-11-05T01:04:21.1286820Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T01:04:21.1287110Z         "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1287540Z         "unitLogicalRanges": [
+2026-11-05T01:04:21.1287720Z           {
+2026-11-05T01:04:21.1287890Z             "collapsed": true,
+2026-11-05T01:04:21.1288070Z             "end": 0,
+2026-11-05T01:04:21.1288230Z             "segmentId": "",
+2026-11-05T01:04:21.1288440Z             "segmentPage": -1,
+2026-11-05T01:04:21.1288620Z             "start": 0
+2026-11-05T01:04:21.1288770Z           }
+2026-11-05T01:04:21.1288890Z         ],
+2026-11-05T01:04:21.1289060Z         "unitSelectionOptions": {
+2026-11-05T01:04:21.1289290Z           "preserveInputStyle": true
+2026-11-05T01:04:21.1289480Z         },
+2026-11-05T01:04:21.1289640Z         "unitSelectionStyles": [
+2026-11-05T01:04:21.1289820Z           {
+2026-11-05T01:04:21.1290010Z             "fill": "rgba(128, 188, 254, 0.6)",
+2026-11-05T01:04:21.1290260Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T01:04:21.1290450Z           }
+2026-11-05T01:04:21.1290580Z         ],
+2026-11-05T01:04:21.1290710Z         "viewport": {
+2026-11-05T01:04:21.1290880Z           "active": true,
+2026-11-05T01:04:21.1291050Z           "bounds": {
+2026-11-05T01:04:21.1291210Z             "bottom": 332,
+2026-11-05T01:04:21.1291380Z             "left": 0,
+2026-11-05T01:04:21.1291540Z             "right": 1024,
+2026-11-05T01:04:21.1291700Z             "top": 0
+2026-11-05T01:04:21.1291850Z           },
+2026-11-05T01:04:21.1291990Z           "height": 332,
+2026-11-05T01:04:21.1292160Z           "key": "viewMain",
+2026-11-05T01:04:21.1292330Z           "scrollX": 0,
+2026-11-05T01:04:21.1292500Z           "scrollY": 0,
+2026-11-05T01:04:21.1292660Z           "width": 1024
+2026-11-05T01:04:21.1292810Z         }
+2026-11-05T01:04:21.1293110Z       },
+2026-11-05T01:04:21.1293240Z       "visual": {
+2026-11-05T01:04:21.1293550Z         "file": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8-before-doc-input.png",
+2026-11-05T01:04:21.1293860Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1294040Z           4661
+2026-11-05T01:04:21.1294160Z         ],
+2026-11-05T01:04:21.1294300Z         "captures": 1
+2026-11-05T01:04:21.1294450Z       }
+2026-11-05T01:04:21.1294580Z     },
+2026-11-05T01:04:21.1294710Z     {
+2026-11-05T01:04:21.1294890Z       "name": "native-doc-input-caret",
+2026-11-05T01:04:21.1295130Z       "time": "2026-11-05T01:03:34.488Z",
+2026-11-05T01:04:21.1295400Z       "itemId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1303840Z       "before": {
+2026-11-05T01:04:21.1304000Z         "anchor": {
+2026-11-05T01:04:21.1304180Z           "height": 16.000000000000014,
+2026-11-05T01:04:21.1304410Z           "left": 316.3831431070964,
+2026-11-05T01:04:21.1304620Z           "top": 133.66666666666669,
+2026-11-05T01:04:21.1304830Z           "visible": true,
+2026-11-05T01:04:21.1305000Z           "width": 0
+2026-11-05T01:04:21.1305160Z         },
+2026-11-05T01:04:21.1305290Z         "bounds": {
+2026-11-05T01:04:21.1305480Z           "bottom": 310.6666666666667,
+2026-11-05T01:04:21.1305700Z           "left": 316.3831431070964,
+2026-11-05T01:04:21.1305920Z           "right": 316.3831431070964,
+2026-11-05T01:04:21.1306150Z           "top": 247.66666666666669
+2026-11-05T01:04:21.1306330Z         },
+2026-11-05T01:04:21.1306470Z         "commands": [
+2026-11-05T01:04:21.1306620Z           {
+2026-11-05T01:04:21.1306780Z             "at": 1466.1999999999534,
+2026-11-05T01:04:21.1307000Z             "direction": null,
+2026-11-05T01:04:21.1307200Z             "granularity": null,
+2026-11-05T01:04:21.1307450Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1307760Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1308000Z             "zoomRatio": null
+2026-11-05T01:04:21.1308180Z           },
+2026-11-05T01:04:21.1308330Z           {
+2026-11-05T01:04:21.1308500Z             "at": 1705.5999999999767,
+2026-11-05T01:04:21.1308710Z             "direction": null,
+2026-11-05T01:04:21.1308930Z             "granularity": null,
+2026-11-05T01:04:21.1309170Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1310160Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1310440Z             "zoomRatio": null
+2026-11-05T01:04:21.1310600Z           },
+2026-11-05T01:04:21.1310730Z           {
+2026-11-05T01:04:21.1310900Z             "at": 1733.0999999999767,
+2026-11-05T01:04:21.1311120Z             "direction": null,
+2026-11-05T01:04:21.1311330Z             "granularity": null,
+2026-11-05T01:04:21.1311580Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1311890Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1312120Z             "zoomRatio": null
+2026-11-05T01:04:21.1312290Z           }
+2026-11-05T01:04:21.1312420Z         ],
+2026-11-05T01:04:21.1312600Z         "currentLogicalRange": {
+2026-11-05T01:04:21.1312790Z           "collapsed": true,
+2026-11-05T01:04:21.1312960Z           "end": 20,
+2026-11-05T01:04:21.1313120Z           "segmentId": "",
+2026-11-05T01:04:21.1313290Z           "segmentPage": -1,
+2026-11-05T01:04:21.1313470Z           "start": 20
+2026-11-05T01:04:21.1313610Z         },
+2026-11-05T01:04:21.1313850Z         "currentUnitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1314100Z         "editing": false,
+2026-11-05T01:04:21.1314270Z         "end": 20,
+2026-11-05T01:04:21.1314420Z         "hasAnchor": true,
+2026-11-05T01:04:21.1314710Z         "inputConnected": true,
+2026-11-05T01:04:21.1314900Z         "inputFocused": true,
+2026-11-05T01:04:21.1315090Z         "layout": {
+2026-11-05T01:04:21.1315240Z           "firstNode": {
+2026-11-05T01:04:21.1315410Z             "column": 0,
+2026-11-05T01:04:21.1315570Z             "divide": 0,
+2026-11-05T01:04:21.1315730Z             "glyph": 0,
+2026-11-05T01:04:21.1316140Z             "isBack": true,
+2026-11-05T01:04:21.1316310Z             "line": 0,
+2026-11-05T01:04:21.1316460Z             "page": 0,
+2026-11-05T01:04:21.1316630Z             "pageType": 0,
+2026-11-05T01:04:21.1316790Z             "path": [
+2026-11-05T01:04:21.1316960Z               "pages",
+2026-11-05T01:04:21.1317100Z               0
+2026-11-05T01:04:21.1317250Z             ],
+2026-11-05T01:04:21.1317400Z             "section": 0,
+2026-11-05T01:04:21.1317580Z             "segmentPage": -1
+2026-11-05T01:04:21.1317760Z           },
+2026-11-05T01:04:21.1317900Z           "progress": null,
+2026-11-05T01:04:21.1318100Z           "viewportReady": true
+2026-11-05T01:04:21.1318270Z         },
+2026-11-05T01:04:21.1318410Z         "mobile": false,
+2026-11-05T01:04:21.1318580Z         "nativeRange": {
+2026-11-05T01:04:21.1318740Z           "collapsed": true,
+2026-11-05T01:04:21.1318910Z           "end": 20,
+2026-11-05T01:04:21.1319070Z           "segmentId": "",
+2026-11-05T01:04:21.1319250Z           "segmentPage": -1,
+2026-11-05T01:04:21.1319430Z           "start": 20
+2026-11-05T01:04:21.1319580Z         },
+2026-11-05T01:04:21.1319750Z         "observedAt": 1805.1999999999534,
+2026-11-05T01:04:21.1319980Z         "pendingSelection": false,
+2026-11-05T01:04:21.1320210Z         "pointerSelection": false,
+2026-11-05T01:04:21.1320390Z         "scale": {
+2026-11-05T01:04:21.1320540Z           "x": 1,
+2026-11-05T01:04:21.1320680Z           "y": 1
+2026-11-05T01:04:21.1320810Z         },
+2026-11-05T01:04:21.1320940Z         "scroll": 0,
+2026-11-05T01:04:21.1321110Z         "shortcutContext": {
+2026-11-05T01:04:21.1321290Z           "activated": false,
+2026-11-05T01:04:21.1321470Z           "doc": true,
+2026-11-05T01:04:21.1321630Z           "drawing": false,
+2026-11-05T01:04:21.1321800Z           "editor": true,
+2026-11-05T01:04:21.1321980Z           "formulaBar": false
+2026-11-05T01:04:21.1322140Z         },
+2026-11-05T01:04:21.1322270Z         "start": 20,
+2026-11-05T01:04:21.1322470Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T01:04:21.1322760Z         "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1323020Z         "unitLogicalRanges": [
+2026-11-05T01:04:21.1323190Z           {
+2026-11-05T01:04:21.1323350Z             "collapsed": true,
+2026-11-05T01:04:21.1323530Z             "end": 20,
+2026-11-05T01:04:21.1323870Z             "segmentId": "",
+2026-11-05T01:04:21.1324090Z             "segmentPage": -1,
+2026-11-05T01:04:21.1324270Z             "start": 20
+2026-11-05T01:04:21.1324420Z           }
+2026-11-05T01:04:21.1324550Z         ],
+2026-11-05T01:04:21.1324730Z         "unitSelectionOptions": {
+2026-11-05T01:04:21.1324970Z           "preserveInputStyle": true
+2026-11-05T01:04:21.1325160Z         },
+2026-11-05T01:04:21.1325340Z         "unitSelectionStyles": [
+2026-11-05T01:04:21.1325530Z           {
+2026-11-05T01:04:21.1325710Z             "fill": "rgba(128, 188, 254, 0.6)",
+2026-11-05T01:04:21.1325960Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T01:04:21.1326160Z           }
+2026-11-05T01:04:21.1326290Z         ],
+2026-11-05T01:04:21.1326430Z         "viewport": {
+2026-11-05T01:04:21.1326630Z           "active": true,
+2026-11-05T01:04:21.1326840Z           "bounds": {
+2026-11-05T01:04:21.1327010Z             "bottom": 332,
+2026-11-05T01:04:21.1327190Z             "left": 0,
+2026-11-05T01:04:21.1327390Z             "right": 1024,
+2026-11-05T01:04:21.1330730Z             "top": 0
+2026-11-05T01:04:21.1331040Z           },
+2026-11-05T01:04:21.1331190Z           "height": 332,
+2026-11-05T01:04:21.1331370Z           "key": "viewMain",
+2026-11-05T01:04:21.1331560Z           "scrollX": 0,
+2026-11-05T01:04:21.1332080Z           "scrollY": 0,
+2026-11-05T01:04:21.1332260Z           "width": 1024
+2026-11-05T01:04:21.1332410Z         }
+2026-11-05T01:04:21.1332540Z       },
+2026-11-05T01:04:21.1332670Z       "caret": {
+2026-11-05T01:04:21.1332810Z         "anchor": {
+2026-11-05T01:04:21.1332970Z           "height": 60,
+2026-11-05T01:04:21.1333160Z           "left": 98.66666666666667,
+2026-11-05T01:04:21.1333930Z           "top": 86.66666666666667,
+2026-11-05T01:04:21.1334120Z           "visible": true,
+2026-11-05T01:04:21.1334290Z           "width": 0
+2026-11-05T01:04:21.1334440Z         },
+2026-11-05T01:04:21.1334560Z         "bounds": {
+2026-11-05T01:04:21.1334750Z           "bottom": 310.6666666666667,
+2026-11-05T01:04:21.1334990Z           "left": 98.66666666666667,
+2026-11-05T01:04:21.1335200Z           "right": 98.66666666666667,
+2026-11-05T01:04:21.1335420Z           "top": 247.66666666666669
+2026-11-05T01:04:21.1335590Z         },
+2026-11-05T01:04:21.1335730Z         "commands": [
+2026-11-05T01:04:21.1335880Z           {
+2026-11-05T01:04:21.1336060Z             "at": 1466.1999999999534,
+2026-11-05T01:04:21.1336270Z             "direction": null,
+2026-11-05T01:04:21.1336480Z             "granularity": null,
+2026-11-05T01:04:21.1336750Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1337140Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1337390Z             "zoomRatio": null
+2026-11-05T01:04:21.1337570Z           },
+2026-11-05T01:04:21.1337710Z           {
+2026-11-05T01:04:21.1337920Z             "at": 1705.5999999999767,
+2026-11-05T01:04:21.1338180Z             "direction": null,
+2026-11-05T01:04:21.1338390Z             "granularity": null,
+2026-11-05T01:04:21.1342990Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1343340Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1343800Z             "zoomRatio": null
+2026-11-05T01:04:21.1344040Z           },
+2026-11-05T01:04:21.1344180Z           {
+2026-11-05T01:04:21.1344410Z             "at": 1733.0999999999767,
+2026-11-05T01:04:21.1345070Z             "direction": null,
+2026-11-05T01:04:21.1345280Z             "granularity": null,
+2026-11-05T01:04:21.1345540Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1345930Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1346220Z             "zoomRatio": null
+2026-11-05T01:04:21.1346440Z           },
+2026-11-05T01:04:21.1346600Z           {
+2026-11-05T01:04:21.1346830Z             "at": 1817.7999999999884,
+2026-11-05T01:04:21.1347170Z             "direction": 0,
+2026-11-05T01:04:21.1347380Z             "granularity": "document",
+2026-11-05T01:04:21.1348070Z             "id": "doc.operation.move-cursor",
+2026-11-05T01:04:21.1348460Z             "unitId": null,
+2026-11-05T01:04:21.1348700Z             "zoomRatio": null
+2026-11-05T01:04:21.1348890Z           },
+2026-11-05T01:04:21.1349020Z           {
+2026-11-05T01:04:21.1349200Z             "at": 1855.7999999999884,
+2026-11-05T01:04:21.1349420Z             "direction": null,
+2026-11-05T01:04:21.1349660Z             "granularity": null,
+2026-11-05T01:04:21.1349960Z             "id": "doc.operation.set-selections",
+2026-11-05T01:04:21.1350350Z             "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1350610Z             "zoomRatio": null
+2026-11-05T01:04:21.1350790Z           }
+2026-11-05T01:04:21.1350920Z         ],
+2026-11-05T01:04:21.1351090Z         "currentLogicalRange": {
+2026-11-05T01:04:21.1351300Z           "collapsed": true,
+2026-11-05T01:04:21.1351480Z           "end": 0,
+2026-11-05T01:04:21.1351640Z           "segmentId": "",
+2026-11-05T01:04:21.1351820Z           "segmentPage": -1,
+2026-11-05T01:04:21.1351990Z           "start": 0
+2026-11-05T01:04:21.1352140Z         },
+2026-11-05T01:04:21.1352380Z         "currentUnitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1353380Z         "editing": false,
+2026-11-05T01:04:21.1353600Z         "end": 0,
+2026-11-05T01:04:21.1353750Z         "hasAnchor": true,
+2026-11-05T01:04:21.1354080Z         "inputConnected": true,
+2026-11-05T01:04:21.1354320Z         "inputFocused": true,
+2026-11-05T01:04:21.1354530Z         "layout": {
+2026-11-05T01:04:21.1354740Z           "firstNode": {
+2026-11-05T01:04:21.1354930Z             "column": 0,
+2026-11-05T01:04:21.1355120Z             "divide": 0,
+2026-11-05T01:04:21.1355780Z             "glyph": 0,
+2026-11-05T01:04:21.1355940Z             "isBack": true,
+2026-11-05T01:04:21.1356130Z             "line": 0,
+2026-11-05T01:04:21.1356330Z             "page": 0,
+2026-11-05T01:04:21.1356520Z             "pageType": 0,
+2026-11-05T01:04:21.1356700Z             "path": [
+2026-11-05T01:04:21.1356900Z               "pages",
+2026-11-05T01:04:21.1357110Z               0
+2026-11-05T01:04:21.1357250Z             ],
+2026-11-05T01:04:21.1357400Z             "section": 0,
+2026-11-05T01:04:21.1357740Z             "segmentPage": -1
+2026-11-05T01:04:21.1358050Z           },
+2026-11-05T01:04:21.1358240Z           "progress": null,
+2026-11-05T01:04:21.1358490Z           "viewportReady": true
+2026-11-05T01:04:21.1359460Z         },
+2026-11-05T01:04:21.1359630Z         "mobile": false,
+2026-11-05T01:04:21.1359860Z         "nativeRange": {
+2026-11-05T01:04:21.1360090Z           "collapsed": true,
+2026-11-05T01:04:21.1360260Z           "end": 0,
+2026-11-05T01:04:21.1360630Z           "segmentId": "",
+2026-11-05T01:04:21.1361020Z           "segmentPage": -1,
+2026-11-05T01:04:21.1361260Z           "start": 0
+2026-11-05T01:04:21.1361450Z         },
+2026-11-05T01:04:21.1361640Z         "observedAt": 1898.7999999999884,
+2026-11-05T01:04:21.1361920Z         "pendingSelection": false,
+2026-11-05T01:04:21.1362150Z         "pointerSelection": false,
+2026-11-05T01:04:21.1362350Z         "scale": {
+2026-11-05T01:04:21.1362500Z           "x": 1,
+2026-11-05T01:04:21.1362670Z           "y": 1
+2026-11-05T01:04:21.1363200Z         },
+2026-11-05T01:04:21.1363380Z         "scroll": 0,
+2026-11-05T01:04:21.1363590Z         "shortcutContext": {
+2026-11-05T01:04:21.1363830Z           "activated": false,
+2026-11-05T01:04:21.1364170Z           "doc": true,
+2026-11-05T01:04:21.1364340Z           "drawing": false,
+2026-11-05T01:04:21.1364530Z           "editor": true,
+2026-11-05T01:04:21.1364760Z           "formulaBar": false
+2026-11-05T01:04:21.1374380Z         },
+2026-11-05T01:04:21.1374560Z         "start": 0,
+2026-11-05T01:04:21.1374840Z         "text": "\bRecovery base notes\r\n",
+2026-11-05T01:04:21.1375330Z         "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1375610Z         "unitLogicalRanges": [
+2026-11-05T01:04:21.1375790Z           {
+2026-11-05T01:04:21.1375960Z             "collapsed": true,
+2026-11-05T01:04:21.1376150Z             "end": 0,
+2026-11-05T01:04:21.1376730Z             "segmentId": "",
+2026-11-05T01:04:21.1376950Z             "segmentPage": -1,
+2026-11-05T01:04:21.1377120Z             "start": 0
+2026-11-05T01:04:21.1377280Z           }
+2026-11-05T01:04:21.1377410Z         ],
+2026-11-05T01:04:21.1377580Z         "unitSelectionOptions": {
+2026-11-05T01:04:21.1377870Z           "preserveInputStyle": true
+2026-11-05T01:04:21.1378100Z         },
+2026-11-05T01:04:21.1378320Z         "unitSelectionStyles": [
+2026-11-05T01:04:21.1378540Z           {
+2026-11-05T01:04:21.1378770Z             "fill": "rgba(128, 188, 254, 0.6)",
+2026-11-05T01:04:21.1379280Z             "stroke": "rgba(0, 0, 0, 1)"
+2026-11-05T01:04:21.1379560Z           }
+2026-11-05T01:04:21.1379690Z         ],
+2026-11-05T01:04:21.1379840Z         "viewport": {
+2026-11-05T01:04:21.1380410Z           "active": true,
+2026-11-05T01:04:21.1380620Z           "bounds": {
+2026-11-05T01:04:21.1380810Z             "bottom": 332,
+2026-11-05T01:04:21.1381340Z             "left": 0,
+2026-11-05T01:04:21.1381550Z             "right": 1024,
+2026-11-05T01:04:21.1381760Z             "top": 0
+2026-11-05T01:04:21.1381940Z           },
+2026-11-05T01:04:21.1382140Z           "height": 332,
+2026-11-05T01:04:21.1382460Z           "key": "viewMain",
+2026-11-05T01:04:21.1382630Z           "scrollX": 0,
+2026-11-05T01:04:21.1382790Z           "scrollY": 0,
+2026-11-05T01:04:21.1382950Z           "width": 1024
+2026-11-05T01:04:21.1383100Z         }
+2026-11-05T01:04:21.1383240Z       },
+2026-11-05T01:04:21.1383410Z       "visual": {
+2026-11-05T01:04:21.1383760Z         "file": "1e542044-775a-41f2-8233-d14f25286755-before-doc-input.png",
+2026-11-05T01:04:21.1384310Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1384500Z           4661
+2026-11-05T01:04:21.1384640Z         ],
+2026-11-05T01:04:21.1388370Z         "captures": 1
+2026-11-05T01:04:21.1388520Z       }
+2026-11-05T01:04:21.1388650Z     },
+2026-11-05T01:04:21.1388790Z     {
+2026-11-05T01:04:21.1389000Z       "name": "native-offline-edits-committed",
+2026-11-05T01:04:21.1389700Z       "time": "2026-11-05T01:03:35.346Z"
+2026-11-05T01:04:21.1390340Z     },
+2026-11-05T01:04:21.1390500Z     {
+2026-11-05T01:04:21.1390680Z       "name": "browser-stop",
+2026-11-05T01:04:21.1390980Z       "time": "2026-11-05T01:03:35.987Z",
+2026-11-05T01:04:21.1391220Z       "kind": "chrome",
+2026-11-05T01:04:21.1391390Z       "browserPid": 4204,
+2026-11-05T01:04:21.1391570Z       "driverPid": 4179,
+2026-11-05T01:04:21.1391750Z       "browserExited": true,
+2026-11-05T01:04:21.1391940Z       "driverExited": true,
+2026-11-05T01:04:21.1392160Z       "stoppedAt": "2026-11-05T01:03:35.987Z"
+2026-11-05T01:04:21.1393320Z     },
+2026-11-05T01:04:21.1393450Z     {
+2026-11-05T01:04:21.1393730Z       "name": "transport-still-disabled-before-pending-relaunch",
+2026-11-05T01:04:21.1394060Z       "time": "2026-11-05T01:03:36.000Z",
+2026-11-05T01:04:21.1394290Z       "forwardedRequests": 242,
+2026-11-05T01:04:21.1394500Z       "blockedRequests": 71,
+2026-11-05T01:04:21.1394740Z       "forwardedUpgrades": 4,
+2026-11-05T01:04:21.1395450Z       "blockedUpgrades": 3,
+2026-11-05T01:04:21.1395630Z       "logins": 1,
+2026-11-05T01:04:21.1395780Z       "offline": true,
+2026-11-05T01:04:21.1396010Z       "activeBrowserSockets": 0
+2026-11-05T01:04:21.1396220Z     },
+2026-11-05T01:04:21.1396370Z     {
+2026-11-05T01:04:21.1396660Z       "name": "browser-start",
+2026-11-05T01:04:21.1396930Z       "time": "2026-11-05T01:03:38.068Z",
+2026-11-05T01:04:21.1397130Z       "kind": "chrome",
+2026-11-05T01:04:21.1397320Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.1397850Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.1398290Z       "profile": {
+2026-11-05T01:04:21.1398480Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.1399330Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1400530Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1400960Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.1401200Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.1401390Z       },
+2026-11-05T01:04:21.1401530Z       "browserPid": 4674,
+2026-11-05T01:04:21.1401740Z       "previousBrowserPid": 4204,
+2026-11-05T01:04:21.1402440Z       "driverPid": 4669,
+2026-11-05T01:04:21.1403050Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.1403660Z       "startedAt": "2026-11-05T01:03:38.057Z",
+2026-11-05T01:04:21.1403940Z       "browserTab": true,
+2026-11-05T01:04:21.1404150Z       "secureContext": true,
+2026-11-05T01:04:21.1404420Z       "storagePersisted": false
+2026-11-05T01:04:21.1404620Z     },
+2026-11-05T01:04:21.1404750Z     {
+2026-11-05T01:04:21.1404930Z       "name": "native-clipboard-content",
+2026-11-05T01:04:21.1405190Z       "time": "2026-11-05T01:03:40.821Z",
+2026-11-05T01:04:21.1405390Z       "kind": "sheet",
+2026-11-05T01:04:21.1405560Z       "text": "731",
+2026-11-05T01:04:21.1405870Z       "selection": null
+2026-11-05T01:04:21.1406160Z     },
+2026-11-05T01:04:21.1406350Z     {
+2026-11-05T01:04:21.1406600Z       "name": "pending-restart-retained",
+2026-11-05T01:04:21.1406860Z       "time": "2026-11-05T01:03:40.822Z",
+2026-11-05T01:04:21.1407200Z       "itemId": "9a727a2e-5380-434f-9c30-172bb739eae8",
+2026-11-05T01:04:21.1407570Z       "kind": "sheet",
+2026-11-05T01:04:21.1407780Z       "outcome": "normal",
+2026-11-05T01:04:21.1408170Z       "checkpointSha256": "520acb2d97a38763f3bfd8bd9ad0b3ccb230979ab7aaaf60f4f3f24684109e25",
+2026-11-05T01:04:21.1408900Z       "imageHashes": [
+2026-11-05T01:04:21.1409110Z         {
+2026-11-05T01:04:21.1409490Z           "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T01:04:21.1410050Z           "size": 248,
+2026-11-05T01:04:21.1410650Z           "source": "/api/items/9a727a2e-5380-434f-9c30-172bb739eae8/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+2026-11-05T01:04:21.1411120Z         },
+2026-11-05T01:04:21.1411240Z         {
+2026-11-05T01:04:21.1411550Z           "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T01:04:21.1411850Z           "size": 242,
+2026-11-05T01:04:21.1412580Z           "source": "/api/items/9a727a2e-5380-434f-9c30-172bb739eae8/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+2026-11-05T01:04:21.1413130Z         },
+2026-11-05T01:04:21.1413250Z         {
+2026-11-05T01:04:21.1413570Z           "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T01:04:21.1413950Z           "size": 247,
+2026-11-05T01:04:21.1414680Z           "source": "/api/items/9a727a2e-5380-434f-9c30-172bb739eae8/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+2026-11-05T01:04:21.1415210Z         }
+2026-11-05T01:04:21.1415330Z       ],
+2026-11-05T01:04:21.1415460Z       "visual": {
+2026-11-05T01:04:21.1415670Z         "file": "sheet-normal-offline.png",
+2026-11-05T01:04:21.1415890Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1416070Z           7200,
+2026-11-05T01:04:21.1416240Z           7081,
+2026-11-05T01:04:21.1416710Z           264719
+2026-11-05T01:04:21.1416850Z         ],
+2026-11-05T01:04:21.1417000Z         "captures": 1
+2026-11-05T01:04:21.1417150Z       }
+2026-11-05T01:04:21.1417270Z     },
+2026-11-05T01:04:21.1417440Z     {
+2026-11-05T01:04:21.1417690Z       "name": "native-clipboard-content",
+2026-11-05T01:04:21.1417970Z       "time": "2026-11-05T01:03:42.800Z",
+2026-11-05T01:04:21.1418220Z       "kind": "sheet",
+2026-11-05T01:04:21.1418430Z       "text": "731",
+2026-11-05T01:04:21.1418650Z       "selection": null
+2026-11-05T01:04:21.1418850Z     },
+2026-11-05T01:04:21.1419000Z     {
+2026-11-05T01:04:21.1419190Z       "name": "pending-restart-retained",
+2026-11-05T01:04:21.1419440Z       "time": "2026-11-05T01:03:42.800Z",
+2026-11-05T01:04:21.1419960Z       "itemId": "5d45e675-5d88-4d00-9ba3-b3463b9d1c59",
+2026-11-05T01:04:21.1420200Z       "kind": "sheet",
+2026-11-05T01:04:21.1420370Z       "outcome": "conflict",
+2026-11-05T01:04:21.1420770Z       "checkpointSha256": "a6a4d583e9c13c24eb732f29f109507899d150ddd1bc6a3b7efe4672a3b31406",
+2026-11-05T01:04:21.1421510Z       "imageHashes": [
+2026-11-05T01:04:21.1421720Z         {
+2026-11-05T01:04:21.1422320Z           "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T01:04:21.1422680Z           "size": 248,
+2026-11-05T01:04:21.1423540Z           "source": "/api/items/5d45e675-5d88-4d00-9ba3-b3463b9d1c59/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+2026-11-05T01:04:21.1424280Z         },
+2026-11-05T01:04:21.1424460Z         {
+2026-11-05T01:04:21.1424810Z           "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T01:04:21.1425240Z           "size": 242,
+2026-11-05T01:04:21.1425970Z           "source": "/api/items/5d45e675-5d88-4d00-9ba3-b3463b9d1c59/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+2026-11-05T01:04:21.1426820Z         },
+2026-11-05T01:04:21.1430470Z         {
+2026-11-05T01:04:21.1431180Z           "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T01:04:21.1431500Z           "size": 247,
+2026-11-05T01:04:21.1432030Z           "source": "/api/items/5d45e675-5d88-4d00-9ba3-b3463b9d1c59/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+2026-11-05T01:04:21.1432620Z         }
+2026-11-05T01:04:21.1432790Z       ],
+2026-11-05T01:04:21.1433130Z       "visual": {
+2026-11-05T01:04:21.1433340Z         "file": "sheet-conflict-offline.png",
+2026-11-05T01:04:21.1433580Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1433750Z           7200,
+2026-11-05T01:04:21.1433890Z           7081,
+2026-11-05T01:04:21.1434030Z           264719
+2026-11-05T01:04:21.1434170Z         ],
+2026-11-05T01:04:21.1434310Z         "captures": 1
+2026-11-05T01:04:21.1434460Z       }
+2026-11-05T01:04:21.1435070Z     },
+2026-11-05T01:04:21.1435210Z     {
+2026-11-05T01:04:21.1435390Z       "name": "native-clipboard-content",
+2026-11-05T01:04:21.1435650Z       "time": "2026-11-05T01:03:45.162Z",
+2026-11-05T01:04:21.1436220Z       "kind": "doc",
+2026-11-05T01:04:21.1436500Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T01:04:21.1438540Z       "selection": {
+2026-11-05T01:04:21.1439180Z         "unitId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1439600Z         "nativeRange": {
+2026-11-05T01:04:21.1439820Z           "collapsed": false,
+2026-11-05T01:04:21.1440010Z           "end": 40,
+2026-11-05T01:04:21.1440200Z           "segmentId": "",
+2026-11-05T01:04:21.1440420Z           "segmentPage": -1,
+2026-11-05T01:04:21.1440630Z           "start": 0
+2026-11-05T01:04:21.1440770Z         },
+2026-11-05T01:04:21.1440940Z         "logicalRange": {
+2026-11-05T01:04:21.1441130Z           "collapsed": false,
+2026-11-05T01:04:21.1441310Z           "end": 40,
+2026-11-05T01:04:21.1441480Z           "segmentId": "",
+2026-11-05T01:04:21.1441660Z           "segmentPage": -1,
+2026-11-05T01:04:21.1441860Z           "start": 0
+2026-11-05T01:04:21.1442060Z         },
+2026-11-05T01:04:21.1442410Z         "pendingSelection": false
+2026-11-05T01:04:21.1442630Z       }
+2026-11-05T01:04:21.1442750Z     },
+2026-11-05T01:04:21.1442870Z     {
+2026-11-05T01:04:21.1443040Z       "name": "pending-restart-retained",
+2026-11-05T01:04:21.1443280Z       "time": "2026-11-05T01:03:45.163Z",
+2026-11-05T01:04:21.1443560Z       "itemId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1443790Z       "kind": "doc",
+2026-11-05T01:04:21.1444210Z       "outcome": "normal",
+2026-11-05T01:04:21.1444930Z       "checkpointSha256": "5f1d8a08046009791926769494fc1d2c35d3f53efdd7a0a720ef275e3b244a8d",
+2026-11-05T01:04:21.1445370Z       "imageHashes": [
+2026-11-05T01:04:21.1445530Z         {
+2026-11-05T01:04:21.1446350Z           "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T01:04:21.1446750Z           "size": 243,
+2026-11-05T01:04:21.1447280Z           "source": "/api/items/7c30d7b7-a036-40f8-b73c-e9477a52d9c8/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+2026-11-05T01:04:21.1448050Z         },
+2026-11-05T01:04:21.1448180Z         {
+2026-11-05T01:04:21.1448480Z           "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T01:04:21.1448870Z           "size": 244,
+2026-11-05T01:04:21.1449600Z           "source": "/api/items/7c30d7b7-a036-40f8-b73c-e9477a52d9c8/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+2026-11-05T01:04:21.1450130Z         },
+2026-11-05T01:04:21.1450290Z         {
+2026-11-05T01:04:21.1450610Z           "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T01:04:21.1451710Z           "size": 244,
+2026-11-05T01:04:21.1452340Z           "source": "/api/items/7c30d7b7-a036-40f8-b73c-e9477a52d9c8/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+2026-11-05T01:04:21.1452850Z         }
+2026-11-05T01:04:21.1453010Z       ],
+2026-11-05T01:04:21.1453500Z       "visual": {
+2026-11-05T01:04:21.1454340Z         "file": "doc-normal-offline.png",
+2026-11-05T01:04:21.1454600Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1454830Z           4661
+2026-11-05T01:04:21.1454980Z         ],
+2026-11-05T01:04:21.1455140Z         "captures": 1
+2026-11-05T01:04:21.1455350Z       }
+2026-11-05T01:04:21.1455480Z     },
+2026-11-05T01:04:21.1455600Z     {
+2026-11-05T01:04:21.1455800Z       "name": "native-clipboard-content",
+2026-11-05T01:04:21.1456430Z       "time": "2026-11-05T01:03:46.981Z",
+2026-11-05T01:04:21.1456730Z       "kind": "doc",
+2026-11-05T01:04:21.1457370Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T01:04:21.1457660Z       "selection": {
+2026-11-05T01:04:21.1457890Z         "unitId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1458180Z         "nativeRange": {
+2026-11-05T01:04:21.1458530Z           "collapsed": false,
+2026-11-05T01:04:21.1458750Z           "end": 40,
+2026-11-05T01:04:21.1459180Z           "segmentId": "",
+2026-11-05T01:04:21.1466870Z           "segmentPage": -1,
+2026-11-05T01:04:21.1467190Z           "start": 0
+2026-11-05T01:04:21.1467350Z         },
+2026-11-05T01:04:21.1467520Z         "logicalRange": {
+2026-11-05T01:04:21.1467760Z           "collapsed": false,
+2026-11-05T01:04:21.1467970Z           "end": 40,
+2026-11-05T01:04:21.1468180Z           "segmentId": "",
+2026-11-05T01:04:21.1468380Z           "segmentPage": -1,
+2026-11-05T01:04:21.1468880Z           "start": 0
+2026-11-05T01:04:21.1469070Z         },
+2026-11-05T01:04:21.1469250Z         "pendingSelection": false
+2026-11-05T01:04:21.1469420Z       }
+2026-11-05T01:04:21.1469590Z     },
+2026-11-05T01:04:21.1470210Z     {
+2026-11-05T01:04:21.1470450Z       "name": "pending-restart-retained",
+2026-11-05T01:04:21.1471060Z       "time": "2026-11-05T01:03:46.981Z",
+2026-11-05T01:04:21.1471560Z       "itemId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1471850Z       "kind": "doc",
+2026-11-05T01:04:21.1472040Z       "outcome": "conflict",
+2026-11-05T01:04:21.1472870Z       "checkpointSha256": "b90a455a5a34aea2cd2e5f27499a0dec31286a0aa69531cb85f020119e66c8a4",
+2026-11-05T01:04:21.1473450Z       "imageHashes": [
+2026-11-05T01:04:21.1473660Z         {
+2026-11-05T01:04:21.1474030Z           "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T01:04:21.1474780Z           "size": 243,
+2026-11-05T01:04:21.1476320Z           "source": "/api/items/1e542044-775a-41f2-8233-d14f25286755/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+2026-11-05T01:04:21.1476880Z         },
+2026-11-05T01:04:21.1477040Z         {
+2026-11-05T01:04:21.1477350Z           "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T01:04:21.1477660Z           "size": 244,
+2026-11-05T01:04:21.1478430Z           "source": "/api/items/1e542044-775a-41f2-8233-d14f25286755/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+2026-11-05T01:04:21.1478970Z         },
+2026-11-05T01:04:21.1479110Z         {
+2026-11-05T01:04:21.1479800Z           "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T01:04:21.1480150Z           "size": 244,
+2026-11-05T01:04:21.1480690Z           "source": "/api/items/1e542044-775a-41f2-8233-d14f25286755/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+2026-11-05T01:04:21.1481150Z         }
+2026-11-05T01:04:21.1481280Z       ],
+2026-11-05T01:04:21.1481450Z       "visual": {
+2026-11-05T01:04:21.1481720Z         "file": "doc-conflict-offline.png",
+2026-11-05T01:04:21.1481960Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1482140Z           4661
+2026-11-05T01:04:21.1482270Z         ],
+2026-11-05T01:04:21.1482420Z         "captures": 1
+2026-11-05T01:04:21.1482580Z       }
+2026-11-05T01:04:21.1482720Z     },
+2026-11-05T01:04:21.1482860Z     {
+2026-11-05T01:04:21.1483030Z       "name": "transport-restored",
+2026-11-05T01:04:21.1483300Z       "time": "2026-11-05T01:03:47.328Z"
+2026-11-05T01:04:21.1483570Z     },
+2026-11-05T01:04:21.1483760Z     {
+2026-11-05T01:04:21.1484470Z       "name": "normal-reconnect-exact-content-once",
+2026-11-05T01:04:21.1484810Z       "time": "2026-11-05T01:03:52.027Z",
+2026-11-05T01:04:21.1485120Z       "itemId": "9a727a2e-5380-434f-9c30-172bb739eae8",
+2026-11-05T01:04:21.1485400Z       "revision": 2,
+2026-11-05T01:04:21.1485750Z       "snapshotSha256": "0bbae194f5a19d168f056f31700f581ad0293f66060f15e1cc25736298880589",
+2026-11-05T01:04:21.1486380Z       "images": [
+2026-11-05T01:04:21.1486520Z         {
+2026-11-05T01:04:21.1486890Z           "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T01:04:21.1487270Z           "mime": "image/png",
+2026-11-05T01:04:21.1489770Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+2026-11-05T01:04:21.1492090Z         },
+2026-11-05T01:04:21.1492250Z         {
+2026-11-05T01:04:21.1492610Z           "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T01:04:21.1493000Z           "mime": "image/png",
+2026-11-05T01:04:21.1495440Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+2026-11-05T01:04:21.1497260Z         },
+2026-11-05T01:04:21.1497390Z         {
+2026-11-05T01:04:21.1497890Z           "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T01:04:21.1498240Z           "mime": "image/png",
+2026-11-05T01:04:21.1500410Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+2026-11-05T01:04:21.1502490Z         }
+2026-11-05T01:04:21.1502630Z       ]
+2026-11-05T01:04:21.1502750Z     },
+2026-11-05T01:04:21.1502870Z     {
+2026-11-05T01:04:21.1503090Z       "name": "recovered-original-reconnect-outage",
+2026-11-05T01:04:21.1503360Z       "time": "2026-11-05T01:03:56.732Z",
+2026-11-05T01:04:21.1503630Z       "itemId": "5d45e675-5d88-4d00-9ba3-b3463b9d1c59",
+2026-11-05T01:04:21.1503890Z       "forwardedRequests": 318,
+2026-11-05T01:04:21.1504090Z       "blockedRequests": 133,
+2026-11-05T01:04:21.1504290Z       "forwardedUpgrades": 8,
+2026-11-05T01:04:21.1504470Z       "blockedUpgrades": 4,
+2026-11-05T01:04:21.1504790Z       "logins": 1,
+2026-11-05T01:04:21.1504950Z       "offline": true,
+2026-11-05T01:04:21.1505240Z       "activeBrowserSockets": 0
+2026-11-05T01:04:21.1505450Z     },
+2026-11-05T01:04:21.1505600Z     {
+2026-11-05T01:04:21.1505780Z       "name": "native-clipboard-content",
+2026-11-05T01:04:21.1506030Z       "time": "2026-11-05T01:04:01.492Z",
+2026-11-05T01:04:21.1506220Z       "kind": "sheet",
+2026-11-05T01:04:21.1506370Z       "text": "731",
+2026-11-05T01:04:21.1506530Z       "selection": null
+2026-11-05T01:04:21.1506690Z     },
+2026-11-05T01:04:21.1506800Z     {
+2026-11-05T01:04:21.1507000Z       "name": "conflict-copy-preserves-original",
+2026-11-05T01:04:21.1507280Z       "time": "2026-11-05T01:04:01.494Z",
+2026-11-05T01:04:21.1507540Z       "itemId": "5d45e675-5d88-4d00-9ba3-b3463b9d1c59",
+2026-11-05T01:04:21.1507840Z       "copyId": "1fc5fea3-b7e7-4808-bb88-f733341a87cd",
+2026-11-05T01:04:21.1508070Z       "receipts": [
+2026-11-05T01:04:21.1508220Z         {
+2026-11-05T01:04:21.1508450Z           "user_id": "3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1508900Z           "recovery_id": "f44770b6-5b83-498b-8e90-3acb6bde9f7c",
+2026-11-05T01:04:21.1509330Z           "request_hash": "a71392e0a9257766c572de109d1c7fe8e420283183ca28701986927e42544459",
+2026-11-05T01:04:21.1509740Z           "item_id": "1fc5fea3-b7e7-4808-bb88-f733341a87cd",
+2026-11-05T01:04:21.1510020Z           "possible_replay_crash": 0
+2026-11-05T01:04:21.1510200Z         }
+2026-11-05T01:04:21.1510320Z       ],
+2026-11-05T01:04:21.1510660Z       "snapshotSha256": "f98063374924aabe720cdd057253e12ddbf46d236fbfbd1f3f937ab2dcb2a011",
+2026-11-05T01:04:21.1511000Z       "images": [
+2026-11-05T01:04:21.1511130Z         {
+2026-11-05T01:04:21.1511420Z           "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+2026-11-05T01:04:21.1511750Z           "mime": "image/png",
+2026-11-05T01:04:21.1513950Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+2026-11-05T01:04:21.1516590Z         },
+2026-11-05T01:04:21.1516720Z         {
+2026-11-05T01:04:21.1517010Z           "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+2026-11-05T01:04:21.1517350Z           "mime": "image/png",
+2026-11-05T01:04:21.1519450Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+2026-11-05T01:04:21.1521250Z         },
+2026-11-05T01:04:21.1521400Z         {
+2026-11-05T01:04:21.1521700Z           "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+2026-11-05T01:04:21.1522280Z           "mime": "image/png",
+2026-11-05T01:04:21.1524420Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+2026-11-05T01:04:21.1526250Z         }
+2026-11-05T01:04:21.1526390Z       ],
+2026-11-05T01:04:21.1526530Z       "visual": {
+2026-11-05T01:04:21.1526730Z         "file": "sheet-recovered-copy.png",
+2026-11-05T01:04:21.1526970Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1527140Z           7200,
+2026-11-05T01:04:21.1527290Z           7081,
+2026-11-05T01:04:21.1527430Z           262783
+2026-11-05T01:04:21.1527570Z         ],
+2026-11-05T01:04:21.1527710Z         "captures": 1
+2026-11-05T01:04:21.1527860Z       }
+2026-11-05T01:04:21.1527980Z     },
+2026-11-05T01:04:21.1528100Z     {
+2026-11-05T01:04:21.1528310Z       "name": "normal-reconnect-exact-content-once",
+2026-11-05T01:04:21.1528590Z       "time": "2026-11-05T01:04:04.253Z",
+2026-11-05T01:04:21.1528850Z       "itemId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1529080Z       "revision": 2,
+2026-11-05T01:04:21.1529440Z       "snapshotSha256": "04955711d24a554bd9ed459fcfbc7af88a57e2966e2b7c806111234101cd69a7",
+2026-11-05T01:04:21.1529770Z       "images": [
+2026-11-05T01:04:21.1529910Z         {
+2026-11-05T01:04:21.1530270Z           "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T01:04:21.1530600Z           "mime": "image/png",
+2026-11-05T01:04:21.1532790Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+2026-11-05T01:04:21.1532850Z         },
+2026-11-05T01:04:21.1532900Z         {
+2026-11-05T01:04:21.1533120Z           "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T01:04:21.1533210Z           "mime": "image/png",
+2026-11-05T01:04:21.1535270Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+2026-11-05T01:04:21.1535340Z         },
+2026-11-05T01:04:21.1535400Z         {
+2026-11-05T01:04:21.1535620Z           "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T01:04:21.1535720Z           "mime": "image/png",
+2026-11-05T01:04:21.1537770Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+2026-11-05T01:04:21.1537820Z         }
+2026-11-05T01:04:21.1537880Z       ]
+2026-11-05T01:04:21.1537930Z     },
+2026-11-05T01:04:21.1537980Z     {
+2026-11-05T01:04:21.1538660Z       "name": "recovered-original-reconnect-outage",
+2026-11-05T01:04:21.1538890Z       "time": "2026-11-05T01:04:07.485Z",
+2026-11-05T01:04:21.1539020Z       "itemId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1539120Z       "forwardedRequests": 454,
+2026-11-05T01:04:21.1539200Z       "blockedRequests": 135,
+2026-11-05T01:04:21.1539290Z       "forwardedUpgrades": 14,
+2026-11-05T01:04:21.1539360Z       "blockedUpgrades": 5,
+2026-11-05T01:04:21.1539410Z       "logins": 1,
+2026-11-05T01:04:21.1539480Z       "offline": true,
+2026-11-05T01:04:21.1539570Z       "activeBrowserSockets": 0
+2026-11-05T01:04:21.1539630Z     },
+2026-11-05T01:04:21.1539680Z     {
+2026-11-05T01:04:21.1539800Z       "name": "native-clipboard-content",
+2026-11-05T01:04:21.1539900Z       "time": "2026-11-05T01:04:11.842Z",
+2026-11-05T01:04:21.1539950Z       "kind": "doc",
+2026-11-05T01:04:21.1540090Z       "text": "Desktop offline 731 Recovery base notes",
+2026-11-05T01:04:21.1540160Z       "selection": {
+2026-11-05T01:04:21.1540310Z         "unitId": "d1d117e8-3c80-47f9-a9f7-3ca57cd618ee",
+2026-11-05T01:04:21.1540370Z         "nativeRange": {
+2026-11-05T01:04:21.1540460Z           "collapsed": false,
+2026-11-05T01:04:21.1540520Z           "end": 40,
+2026-11-05T01:04:21.1540580Z           "segmentId": "",
+2026-11-05T01:04:21.1540660Z           "segmentPage": -1,
+2026-11-05T01:04:21.1540720Z           "start": 0
+2026-11-05T01:04:21.1540770Z         },
+2026-11-05T01:04:21.1540840Z         "logicalRange": {
+2026-11-05T01:04:21.1540900Z           "collapsed": false,
+2026-11-05T01:04:21.1540960Z           "end": 40,
+2026-11-05T01:04:21.1541330Z           "segmentId": "",
+2026-11-05T01:04:21.1541400Z           "segmentPage": -1,
+2026-11-05T01:04:21.1541460Z           "start": 0
+2026-11-05T01:04:21.1541510Z         },
+2026-11-05T01:04:21.1541610Z         "pendingSelection": false
+2026-11-05T01:04:21.1541670Z       }
+2026-11-05T01:04:21.1541720Z     },
+2026-11-05T01:04:21.1541770Z     {
+2026-11-05T01:04:21.1541910Z       "name": "conflict-copy-preserves-original",
+2026-11-05T01:04:21.1542010Z       "time": "2026-11-05T01:04:11.844Z",
+2026-11-05T01:04:21.1542170Z       "itemId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1542340Z       "copyId": "d1d117e8-3c80-47f9-a9f7-3ca57cd618ee",
+2026-11-05T01:04:21.1542420Z       "receipts": [
+2026-11-05T01:04:21.1542490Z         {
+2026-11-05T01:04:21.1542650Z           "user_id": "3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1542820Z           "recovery_id": "76bc67ab-6e04-4c09-9825-f5699a9966f7",
+2026-11-05T01:04:21.1543080Z           "request_hash": "a1265355217208def32a67b0968a1c18444c540a4197fee87c01f2db127bac33",
+2026-11-05T01:04:21.1543250Z           "item_id": "d1d117e8-3c80-47f9-a9f7-3ca57cd618ee",
+2026-11-05T01:04:21.1543370Z           "possible_replay_crash": 0
+2026-11-05T01:04:21.1543440Z         },
+2026-11-05T01:04:21.1543500Z         {
+2026-11-05T01:04:21.1544660Z           "user_id": "3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1544850Z           "recovery_id": "f44770b6-5b83-498b-8e90-3acb6bde9f7c",
+2026-11-05T01:04:21.1545100Z           "request_hash": "a71392e0a9257766c572de109d1c7fe8e420283183ca28701986927e42544459",
+2026-11-05T01:04:21.1546850Z           "item_id": "1fc5fea3-b7e7-4808-bb88-f733341a87cd",
+2026-11-05T01:04:21.1546990Z           "possible_replay_crash": 0
+2026-11-05T01:04:21.1547050Z         }
+2026-11-05T01:04:21.1547110Z       ],
+2026-11-05T01:04:21.1547460Z       "snapshotSha256": "1e235fee283deb1c263c14ec72bbc5d3336f521678345c7ff9ca3861ab20de10",
+2026-11-05T01:04:21.1547540Z       "images": [
+2026-11-05T01:04:21.1547610Z         {
+2026-11-05T01:04:21.1547850Z           "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+2026-11-05T01:04:21.1547970Z           "mime": "image/png",
+2026-11-05T01:04:21.1552890Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+2026-11-05T01:04:21.1552970Z         },
+2026-11-05T01:04:21.1553020Z         {
+2026-11-05T01:04:21.1553250Z           "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+2026-11-05T01:04:21.1553340Z           "mime": "image/png",
+2026-11-05T01:04:21.1555610Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+2026-11-05T01:04:21.1555680Z         },
+2026-11-05T01:04:21.1555730Z         {
+2026-11-05T01:04:21.1555960Z           "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+2026-11-05T01:04:21.1556050Z           "mime": "image/png",
+2026-11-05T01:04:21.1558590Z           "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+2026-11-05T01:04:21.1558830Z         }
+2026-11-05T01:04:21.1558920Z       ],
+2026-11-05T01:04:21.1559000Z       "visual": {
+2026-11-05T01:04:21.1559170Z         "file": "doc-recovered-copy.png",
+2026-11-05T01:04:21.1559250Z         "colorPixelCounts": [
+2026-11-05T01:04:21.1559320Z           4661
+2026-11-05T01:04:21.1559380Z         ],
+2026-11-05T01:04:21.1559460Z         "captures": 1
+2026-11-05T01:04:21.1559530Z       }
+2026-11-05T01:04:21.1559590Z     },
+2026-11-05T01:04:21.1559650Z     {
+2026-11-05T01:04:21.1559810Z       "name": "storage-loss-tabs-prepared",
+2026-11-05T01:04:21.1559920Z       "time": "2026-11-05T01:04:12.699Z",
+2026-11-05T01:04:21.1559980Z       "before": [
+2026-11-05T01:04:21.1560960Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T01:04:21.1561030Z       ],
+2026-11-05T01:04:21.1561090Z       "after": [
+2026-11-05T01:04:21.1561240Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T01:04:21.1561300Z       ]
+2026-11-05T01:04:21.1561360Z     },
+2026-11-05T01:04:21.1561420Z     {
+2026-11-05T01:04:21.1561550Z       "name": "storage-loss-unregistration",
+2026-11-05T01:04:21.1561670Z       "time": "2026-11-05T01:04:15.343Z",
+2026-11-05T01:04:21.1561740Z       "preparation": {
+2026-11-05T01:04:21.1562020Z         "database": "spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1562100Z         "operations": [
+2026-11-05T01:04:21.1562160Z           {
+2026-11-05T01:04:21.1562250Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1562400Z             "name": "verify-preparation-document",
+2026-11-05T01:04:21.1562540Z             "startedAt": "2026-11-05T01:04:12.704Z",
+2026-11-05T01:04:21.1562630Z             "status": "passed",
+2026-11-05T01:04:21.1562690Z             "value": {
+2026-11-05T01:04:21.1562790Z               "marker": "inert",
+2026-11-05T01:04:21.1562870Z               "scripts": 0,
+2026-11-05T01:04:21.1563050Z               "url": "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T01:04:21.1563130Z             }
+2026-11-05T01:04:21.1563200Z           },
+2026-11-05T01:04:21.1563260Z           {
+2026-11-05T01:04:21.1563340Z             "elapsedMs": 1,
+2026-11-05T01:04:21.1563660Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T01:04:21.1563790Z             "startedAt": "2026-11-05T01:04:12.704Z",
+2026-11-05T01:04:21.1563890Z             "status": "passed",
+2026-11-05T01:04:21.1563950Z             "value": [
+2026-11-05T01:04:21.1564050Z               "https://localhost:8176/"
+2026-11-05T01:04:21.1564110Z             ]
+2026-11-05T01:04:21.1564160Z           },
+2026-11-05T01:04:21.1564210Z           {
+2026-11-05T01:04:21.1564300Z             "elapsedMs": 2631,
+2026-11-05T01:04:21.1564490Z             "name": "serviceWorker.unregister:https://localhost:8176/",
+2026-11-05T01:04:21.1565410Z             "startedAt": "2026-11-05T01:04:12.705Z",
+2026-11-05T01:04:21.1565530Z             "status": "passed",
+2026-11-05T01:04:21.1565600Z             "value": true
+2026-11-05T01:04:21.1565650Z           },
+2026-11-05T01:04:21.1565700Z           {
+2026-11-05T01:04:21.1565770Z             "elapsedMs": 2,
+2026-11-05T01:04:21.1565880Z             "name": "verify-unregistered",
+2026-11-05T01:04:21.1566010Z             "startedAt": "2026-11-05T01:04:15.336Z",
+2026-11-05T01:04:21.1566100Z             "status": "passed",
+2026-11-05T01:04:21.1566170Z             "value": {
+2026-11-05T01:04:21.1566350Z               "controller": "https://localhost:8176/service-worker.js",
+2026-11-05T01:04:21.1566420Z               "workers": []
+2026-11-05T01:04:21.1566470Z             }
+2026-11-05T01:04:21.1566520Z           }
+2026-11-05T01:04:21.1566570Z         ],
+2026-11-05T01:04:21.1566670Z         "phase": "unregister",
+2026-11-05T01:04:21.1566740Z         "status": "passed",
+2026-11-05T01:04:21.1566830Z         "timeoutMs": 28000
+2026-11-05T01:04:21.1567050Z       }
+2026-11-05T01:04:21.1567110Z     },
+2026-11-05T01:04:21.1567170Z     {
+2026-11-05T01:04:21.1567310Z       "name": "storage-loss-tabs-handed-off",
+2026-11-05T01:04:21.1567410Z       "time": "2026-11-05T01:04:15.481Z",
+2026-11-05T01:04:21.1567470Z       "before": [
+2026-11-05T01:04:21.1567620Z         "https://localhost:8176/_desktop-storage-loss"
+2026-11-05T01:04:21.1567670Z       ],
+2026-11-05T01:04:21.1567730Z       "after": [
+2026-11-05T01:04:21.1567940Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T01:04:21.1568000Z       ],
+2026-11-05T01:04:21.1568050Z       "documents": [
+2026-11-05T01:04:21.1568110Z         {
+2026-11-05T01:04:21.1568180Z           "controller": null,
+2026-11-05T01:04:21.1568240Z           "fresh": true,
+2026-11-05T01:04:21.1568310Z           "marker": "inert",
+2026-11-05T01:04:21.1568400Z           "ready": "complete",
+2026-11-05T01:04:21.1568460Z           "scripts": 0,
+2026-11-05T01:04:21.1568700Z           "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T01:04:21.1568750Z         }
+2026-11-05T01:04:21.1568800Z       ]
+2026-11-05T01:04:21.1568850Z     },
+2026-11-05T01:04:21.1568910Z     {
+2026-11-05T01:04:21.1569230Z       "name": "storage-loss-quiescence-before-stop",
+2026-11-05T01:04:21.1569350Z       "time": "2026-11-05T01:04:15.488Z",
+2026-11-05T01:04:21.1570620Z       "quiescence": {
+2026-11-05T01:04:21.1570890Z         "database": "spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1570960Z         "operations": [
+2026-11-05T01:04:21.1571030Z           {
+2026-11-05T01:04:21.1577710Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1577890Z             "name": "verify-preparation-document",
+2026-11-05T01:04:21.1578020Z             "startedAt": "2026-11-05T01:04:15.485Z",
+2026-11-05T01:04:21.1578110Z             "status": "passed",
+2026-11-05T01:04:21.1578180Z             "value": {
+2026-11-05T01:04:21.1578280Z               "marker": "inert",
+2026-11-05T01:04:21.1578370Z               "scripts": 0,
+2026-11-05T01:04:21.1578610Z               "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T01:04:21.1578670Z             }
+2026-11-05T01:04:21.1578720Z           },
+2026-11-05T01:04:21.1578770Z           {
+2026-11-05T01:04:21.1578840Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1579210Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T01:04:21.1579330Z             "startedAt": "2026-11-05T01:04:15.485Z",
+2026-11-05T01:04:21.1579430Z             "status": "passed",
+2026-11-05T01:04:21.1579490Z             "value": []
+2026-11-05T01:04:21.1579540Z           },
+2026-11-05T01:04:21.1579600Z           {
+2026-11-05T01:04:21.1579670Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1579780Z             "name": "verify-uncontrolled",
+2026-11-05T01:04:21.1579900Z             "startedAt": "2026-11-05T01:04:15.486Z",
+2026-11-05T01:04:21.1579980Z             "status": "passed",
+2026-11-05T01:04:21.1580050Z             "value": {
+2026-11-05T01:04:21.1580150Z               "controller": null,
+2026-11-05T01:04:21.1580210Z               "workers": []
+2026-11-05T01:04:21.1580270Z             }
+2026-11-05T01:04:21.1580320Z           }
+2026-11-05T01:04:21.1580380Z         ],
+2026-11-05T01:04:21.1580440Z         "phase": "verify",
+2026-11-05T01:04:21.1580510Z         "status": "passed",
+2026-11-05T01:04:21.1580570Z         "timeoutMs": 28000
+2026-11-05T01:04:21.1580630Z       }
+2026-11-05T01:04:21.1580680Z     },
+2026-11-05T01:04:21.1580730Z     {
+2026-11-05T01:04:21.1580870Z       "name": "browser-stop-before-storage-loss",
+2026-11-05T01:04:21.1580970Z       "time": "2026-11-05T01:04:16.190Z",
+2026-11-05T01:04:21.1581040Z       "kind": "chrome",
+2026-11-05T01:04:21.1581100Z       "browserPid": 4674,
+2026-11-05T01:04:21.1581170Z       "driverPid": 4669,
+2026-11-05T01:04:21.1581250Z       "browserExited": true,
+2026-11-05T01:04:21.1581310Z       "driverExited": true,
+2026-11-05T01:04:21.1581420Z       "stoppedAt": "2026-11-05T01:04:16.190Z"
+2026-11-05T01:04:21.1581580Z     },
+2026-11-05T01:04:21.1581640Z     {
+2026-11-05T01:04:21.1581740Z       "name": "browser-start",
+2026-11-05T01:04:21.1581840Z       "time": "2026-11-05T01:04:18.750Z",
+2026-11-05T01:04:21.1581910Z       "kind": "chrome",
+2026-11-05T01:04:21.1582000Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.1582430Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.1582490Z       "profile": {
+2026-11-05T01:04:21.1582600Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.1582930Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1583230Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1583340Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.1583440Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.1583500Z       },
+2026-11-05T01:04:21.1583580Z       "browserPid": 5757,
+2026-11-05T01:04:21.1583680Z       "previousBrowserPid": 4674,
+2026-11-05T01:04:21.1583750Z       "driverPid": 5755,
+2026-11-05T01:04:21.1584130Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.1584260Z       "startedAt": "2026-11-05T01:04:18.739Z",
+2026-11-05T01:04:21.1584320Z       "browserTab": true,
+2026-11-05T01:04:21.1584390Z       "secureContext": true,
+2026-11-05T01:04:21.1584490Z       "storagePersisted": false
+2026-11-05T01:04:21.1584540Z     },
+2026-11-05T01:04:21.1584590Z     {
+2026-11-05T01:04:21.1584720Z       "name": "storage-loss-tabs-restarted",
+2026-11-05T01:04:21.1584820Z       "time": "2026-11-05T01:04:18.817Z",
+2026-11-05T01:04:21.1584880Z       "before": [
+2026-11-05T01:04:21.1585090Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T01:04:21.1585140Z       ],
+2026-11-05T01:04:21.1585210Z       "after": [
+2026-11-05T01:04:21.1585410Z         "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T01:04:21.1585460Z       ]
+2026-11-05T01:04:21.1585520Z     },
+2026-11-05T01:04:21.1585570Z     {
+2026-11-05T01:04:21.1585670Z       "name": "storage-deletion",
+2026-11-05T01:04:21.1586120Z       "time": "2026-11-05T01:04:18.890Z",
+2026-11-05T01:04:21.1586260Z       "deletion": {
+2026-11-05T01:04:21.1586460Z         "database": "spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1586530Z         "operations": [
+2026-11-05T01:04:21.1586580Z           {
+2026-11-05T01:04:21.1586650Z             "elapsedMs": 1,
+2026-11-05T01:04:21.1586780Z             "name": "verify-preparation-document",
+2026-11-05T01:04:21.1586900Z             "startedAt": "2026-11-05T01:04:18.824Z",
+2026-11-05T01:04:21.1587000Z             "status": "passed",
+2026-11-05T01:04:21.1587060Z             "value": {
+2026-11-05T01:04:21.1587150Z               "marker": "inert",
+2026-11-05T01:04:21.1587230Z               "scripts": 0,
+2026-11-05T01:04:21.1587470Z               "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+2026-11-05T01:04:21.1587520Z             }
+2026-11-05T01:04:21.1587580Z           },
+2026-11-05T01:04:21.1587630Z           {
+2026-11-05T01:04:21.1587690Z             "elapsedMs": 1,
+2026-11-05T01:04:21.1587830Z             "name": "serviceWorker.getRegistrations",
+2026-11-05T01:04:21.1587950Z             "startedAt": "2026-11-05T01:04:18.825Z",
+2026-11-05T01:04:21.1588040Z             "status": "passed",
+2026-11-05T01:04:21.1588100Z             "value": []
+2026-11-05T01:04:21.1588150Z           },
+2026-11-05T01:04:21.1588210Z           {
+2026-11-05T01:04:21.1588280Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1588390Z             "name": "verify-uncontrolled",
+2026-11-05T01:04:21.1588510Z             "startedAt": "2026-11-05T01:04:18.826Z",
+2026-11-05T01:04:21.1588590Z             "status": "passed",
+2026-11-05T01:04:21.1588940Z             "value": {
+2026-11-05T01:04:21.1589030Z               "controller": null,
+2026-11-05T01:04:21.1589090Z               "workers": []
+2026-11-05T01:04:21.1589150Z             }
+2026-11-05T01:04:21.1589210Z           },
+2026-11-05T01:04:21.1589260Z           {
+2026-11-05T01:04:21.1589330Z             "elapsedMs": 3,
+2026-11-05T01:04:21.1589430Z             "name": "caches.keys",
+2026-11-05T01:04:21.1589550Z             "startedAt": "2026-11-05T01:04:18.826Z",
+2026-11-05T01:04:21.1589650Z             "status": "passed",
+2026-11-05T01:04:21.1589710Z             "value": [
+2026-11-05T01:04:21.1589830Z               "spinel-shell-603ae4b16bb36841"
+2026-11-05T01:04:21.1589880Z             ]
+2026-11-05T01:04:21.1589940Z           },
+2026-11-05T01:04:21.1589990Z           {
+2026-11-05T01:04:21.1590060Z             "elapsedMs": 4,
+2026-11-05T01:04:21.1590240Z             "name": "caches.delete:spinel-shell-603ae4b16bb36841",
+2026-11-05T01:04:21.1590360Z             "startedAt": "2026-11-05T01:04:18.830Z",
+2026-11-05T01:04:21.1590450Z             "status": "passed",
+2026-11-05T01:04:21.1590520Z             "value": true
+2026-11-05T01:04:21.1590570Z           },
+2026-11-05T01:04:21.1590620Z           {
+2026-11-05T01:04:21.1590690Z             "elapsedMs": 3,
+2026-11-05T01:04:21.1590800Z             "name": "localStorage.clear",
+2026-11-05T01:04:21.1590920Z             "startedAt": "2026-11-05T01:04:18.833Z",
+2026-11-05T01:04:21.1591010Z             "status": "passed",
+2026-11-05T01:04:21.1591070Z             "value": 0
+2026-11-05T01:04:21.1591120Z           },
+2026-11-05T01:04:21.1591170Z           {
+2026-11-05T01:04:21.1591240Z             "elapsedMs": 47,
+2026-11-05T01:04:21.1591530Z             "name": "indexedDB.deleteDatabase:spinel-offline-3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1591660Z             "startedAt": "2026-11-05T01:04:18.836Z",
+2026-11-05T01:04:21.1591740Z             "status": "passed",
+2026-11-05T01:04:21.1591810Z             "value": null
+2026-11-05T01:04:21.1591860Z           },
+2026-11-05T01:04:21.1591920Z           {
+2026-11-05T01:04:21.1591990Z             "elapsedMs": 2,
+2026-11-05T01:04:21.1592100Z             "name": "verify-service-workers",
+2026-11-05T01:04:21.1592220Z             "startedAt": "2026-11-05T01:04:18.883Z",
+2026-11-05T01:04:21.1592310Z             "status": "passed",
+2026-11-05T01:04:21.1592370Z             "value": []
+2026-11-05T01:04:21.1592510Z           },
+2026-11-05T01:04:21.1592570Z           {
+2026-11-05T01:04:21.1592640Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1592750Z             "name": "verify-cache-names",
+2026-11-05T01:04:21.1592870Z             "startedAt": "2026-11-05T01:04:18.885Z",
+2026-11-05T01:04:21.1592970Z             "status": "passed",
+2026-11-05T01:04:21.1593030Z             "value": []
+2026-11-05T01:04:21.1593090Z           },
+2026-11-05T01:04:21.1593140Z           {
+2026-11-05T01:04:21.1593210Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1593320Z             "name": "verify-database-names",
+2026-11-05T01:04:21.1593450Z             "startedAt": "2026-11-05T01:04:18.885Z",
+2026-11-05T01:04:21.1593550Z             "status": "passed",
+2026-11-05T01:04:21.1593610Z             "value": [
+2026-11-05T01:04:21.1593710Z               "UniverLocalStorage",
+2026-11-05T01:04:21.1593820Z               "spinel-offline-runtime"
+2026-11-05T01:04:21.1593880Z             ]
+2026-11-05T01:04:21.1593940Z           },
+2026-11-05T01:04:21.1594000Z           {
+2026-11-05T01:04:21.1594060Z             "elapsedMs": 0,
+2026-11-05T01:04:21.1594180Z             "name": "verify-storage-empty",
+2026-11-05T01:04:21.1594300Z             "startedAt": "2026-11-05T01:04:18.885Z",
+2026-11-05T01:04:21.1594400Z             "status": "passed",
+2026-11-05T01:04:21.1594460Z             "value": {
+2026-11-05T01:04:21.1594550Z               "cacheNames": [],
+2026-11-05T01:04:21.1594620Z               "databases": [
+2026-11-05T01:04:21.1594720Z                 "UniverLocalStorage",
+2026-11-05T01:04:21.1594820Z                 "spinel-offline-runtime"
+2026-11-05T01:04:21.1594950Z               ],
+2026-11-05T01:04:21.1595050Z               "localStorageEntries": 0,
+2026-11-05T01:04:21.1595110Z               "workers": []
+2026-11-05T01:04:21.1611350Z             }
+2026-11-05T01:04:21.1611570Z           }
+2026-11-05T01:04:21.1611630Z         ],
+2026-11-05T01:04:21.1611710Z         "phase": "delete",
+2026-11-05T01:04:21.1611800Z         "status": "passed",
+2026-11-05T01:04:21.1611870Z         "timeoutMs": 28000
+2026-11-05T01:04:21.1611930Z       }
+2026-11-05T01:04:21.1611980Z     },
+2026-11-05T01:04:21.1612030Z     {
+2026-11-05T01:04:21.1612170Z       "name": "cleared-storage-is-not-advertised",
+2026-11-05T01:04:21.1612280Z       "time": "2026-11-05T01:04:20.061Z",
+2026-11-05T01:04:21.1612330Z       "lost": {
+2026-11-05T01:04:21.1612400Z         "account": null,
+2026-11-05T01:04:21.1612460Z         "available": 0
+2026-11-05T01:04:21.1612510Z       }
+2026-11-05T01:04:21.1612560Z     },
+2026-11-05T01:04:21.1612620Z     {
+2026-11-05T01:04:21.1612720Z       "name": "post-deletion-outage",
+2026-11-05T01:04:21.1612830Z       "time": "2026-11-05T01:04:20.117Z",
+2026-11-05T01:04:21.1612930Z       "forwardedRequests": 590,
+2026-11-05T01:04:21.1613000Z       "blockedRequests": 136,
+2026-11-05T01:04:21.1613100Z       "forwardedUpgrades": 16,
+2026-11-05T01:04:21.1613180Z       "blockedUpgrades": 6,
+2026-11-05T01:04:21.1613290Z       "logins": 1,
+2026-11-05T01:04:21.1613370Z       "offline": true,
+2026-11-05T01:04:21.1613490Z       "activeBrowserSockets": 0
+2026-11-05T01:04:21.1613560Z     },
+2026-11-05T01:04:21.1613610Z     {
+2026-11-05T01:04:21.1613750Z       "name": "missing-data-cannot-open-offline",
+2026-11-05T01:04:21.1613850Z       "time": "2026-11-05T01:04:20.369Z",
+2026-11-05T01:04:21.1614170Z       "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+2026-11-05T01:04:21.1614220Z     },
+2026-11-05T01:04:21.1614410Z     {
+2026-11-05T01:04:21.1614500Z       "name": "complete",
+2026-11-05T01:04:21.1614630Z       "time": "2026-11-05T01:04:20.369Z"
+2026-11-05T01:04:21.1614700Z     },
+2026-11-05T01:04:21.1614760Z     {
+2026-11-05T01:04:21.1614830Z       "name": "browser-stop",
+2026-11-05T01:04:21.1614930Z       "time": "2026-11-05T01:04:21.046Z",
+2026-11-05T01:04:21.1614980Z       "kind": "chrome",
+2026-11-05T01:04:21.1615060Z       "browserPid": 5757,
+2026-11-05T01:04:21.1615120Z       "driverPid": 5755,
+2026-11-05T01:04:21.1615580Z       "browserExited": true,
+2026-11-05T01:04:21.1615680Z       "driverExited": true,
+2026-11-05T01:04:21.1615820Z       "stoppedAt": "2026-11-05T01:04:21.046Z"
+2026-11-05T01:04:21.1615880Z     }
+2026-11-05T01:04:21.1615950Z   ],
+2026-11-05T01:04:21.1616190Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+2026-11-05T01:04:21.1616260Z   "machine": "arm64",
+2026-11-05T01:04:21.1616320Z   "release": {
+2026-11-05T01:04:21.1616490Z     "sourceSha": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+2026-11-05T01:04:21.1616620Z     "checkedAt": "2026-11-05T01:01:04.379Z",
+2026-11-05T01:04:21.1616700Z     "kind": "chrome",
+2026-11-05T01:04:21.1616770Z     "status": "passed",
+2026-11-05T01:04:21.1616890Z     "before": "156.0.8078.48",
+2026-11-05T01:04:21.1617350Z     "releaseSource": "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json",
+2026-11-05T01:04:21.1617450Z     "requiredStable": "157.0.8103.38",
+2026-11-05T01:04:21.1617750Z     "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+2026-11-05T01:04:21.1619830Z     "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/Google Chrome.app: accepted\nsource=Notarized Developer ID\n",
+2026-11-05T01:04:21.1620370Z     "download": "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg",
+2026-11-05T01:04:21.1621190Z     "driver": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})\n",
+2026-11-05T01:04:21.1621450Z     "installed": "157.0.8103.39"
+2026-11-05T01:04:21.1622100Z   },
+2026-11-05T01:04:21.1622270Z   "actor": {
+2026-11-05T01:04:21.1622430Z     "id": "3a94e082-58c6-46ca-9ee3-977cda3c827b",
+2026-11-05T01:04:21.1622580Z     "role": "Collaborator with editor grants",
+2026-11-05T01:04:21.1622810Z     "ownerId": "0c047b58-ac38-4495-afef-4e92a2dc47dd"
+2026-11-05T01:04:21.1622940Z   },
+2026-11-05T01:04:21.1623030Z   "persistence": [
+2026-11-05T01:04:21.1623110Z     {
+2026-11-05T01:04:21.1623360Z       "itemId": "9a727a2e-5380-434f-9c30-172bb739eae8",
+2026-11-05T01:04:21.1623460Z       "before": false,
+2026-11-05T01:04:21.1623520Z       "after": false,
+2026-11-05T01:04:21.1623590Z       "permission": null,
+2026-11-05T01:04:21.1746210Z       "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T01:04:21.1746300Z     },
+2026-11-05T01:04:21.1746350Z     {
+2026-11-05T01:04:21.1746500Z       "itemId": "5d45e675-5d88-4d00-9ba3-b3463b9d1c59",
+2026-11-05T01:04:21.1746610Z       "before": false,
+2026-11-05T01:04:21.1746670Z       "after": false,
+2026-11-05T01:04:21.1746740Z       "permission": null,
+2026-11-05T01:04:21.1747580Z       "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T01:04:21.1747640Z     },
+2026-11-05T01:04:21.1747690Z     {
+2026-11-05T01:04:21.1747840Z       "itemId": "7c30d7b7-a036-40f8-b73c-e9477a52d9c8",
+2026-11-05T01:04:21.1747900Z       "before": false,
+2026-11-05T01:04:21.1747960Z       "after": false,
+2026-11-05T01:04:21.1748020Z       "permission": null,
+2026-11-05T01:04:21.1748800Z       "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T01:04:21.1748870Z     },
+2026-11-05T01:04:21.1748920Z     {
+2026-11-05T01:04:21.1749060Z       "itemId": "1e542044-775a-41f2-8233-d14f25286755",
+2026-11-05T01:04:21.1749120Z       "before": false,
+2026-11-05T01:04:21.1749180Z       "after": false,
+2026-11-05T01:04:21.1749250Z       "permission": null,
+2026-11-05T01:04:21.1750390Z       "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T01:04:21.1750470Z     }
+2026-11-05T01:04:21.1750540Z   ],
+2026-11-05T01:04:21.1750600Z   "transport": {
+2026-11-05T01:04:21.1750680Z     "forwardedRequests": 590,
+2026-11-05T01:04:21.1750760Z     "blockedRequests": 139,
+2026-11-05T01:04:21.1750830Z     "forwardedUpgrades": 16,
+2026-11-05T01:04:21.1750900Z     "blockedUpgrades": 6,
+2026-11-05T01:04:21.1750950Z     "logins": 1,
+2026-11-05T01:04:21.1751010Z     "offline": true,
+2026-11-05T01:04:21.1751090Z     "activeBrowserSockets": 0
+2026-11-05T01:04:21.1751150Z   },
+2026-11-05T01:04:21.1751210Z   "launches": [
+2026-11-05T01:04:21.1751260Z     {
+2026-11-05T01:04:21.1751330Z       "kind": "chrome",
+2026-11-05T01:04:21.1752280Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.1754150Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.1754410Z       "profile": {
+2026-11-05T01:04:21.1754580Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.1754980Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1755290Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1755390Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.1755500Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.1755550Z       },
+2026-11-05T01:04:21.1755630Z       "browserPid": 3699,
+2026-11-05T01:04:21.1755990Z       "previousBrowserPid": null,
+2026-11-05T01:04:21.1756070Z       "driverPid": 3652,
+2026-11-05T01:04:21.1756620Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.1756760Z       "startedAt": "2026-11-05T01:03:05.766Z"
+2026-11-05T01:04:21.1756810Z     },
+2026-11-05T01:04:21.1756880Z     {
+2026-11-05T01:04:21.1757050Z       "kind": "chrome",
+2026-11-05T01:04:21.1757170Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.1757660Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.1757740Z       "profile": {
+2026-11-05T01:04:21.1757860Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.1758180Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1758510Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1758620Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.1758710Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.1758760Z       },
+2026-11-05T01:04:21.1758840Z       "browserPid": 4204,
+2026-11-05T01:04:21.1758940Z       "previousBrowserPid": 3699,
+2026-11-05T01:04:21.1759000Z       "driverPid": 4179,
+2026-11-05T01:04:21.1759410Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.1759530Z       "startedAt": "2026-11-05T01:03:25.086Z"
+2026-11-05T01:04:21.1759600Z     },
+2026-11-05T01:04:21.1759670Z     {
+2026-11-05T01:04:21.1759750Z       "kind": "chrome",
+2026-11-05T01:04:21.1759860Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.1760270Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.1760340Z       "profile": {
+2026-11-05T01:04:21.1760440Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.1760750Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1761050Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1761840Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.1762120Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.1762190Z       },
+2026-11-05T01:04:21.1762260Z       "browserPid": 4674,
+2026-11-05T01:04:21.1762360Z       "previousBrowserPid": 4204,
+2026-11-05T01:04:21.1762430Z       "driverPid": 4669,
+2026-11-05T01:04:21.1762920Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.1763040Z       "startedAt": "2026-11-05T01:03:38.057Z"
+2026-11-05T01:04:21.1763100Z     },
+2026-11-05T01:04:21.1763150Z     {
+2026-11-05T01:04:21.1763220Z       "kind": "chrome",
+2026-11-05T01:04:21.1763320Z       "version": "157.0.8103.39",
+2026-11-05T01:04:21.1763730Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+2026-11-05T01:04:21.1763800Z       "profile": {
+2026-11-05T01:04:21.1763900Z         "mode": "explicit-directory",
+2026-11-05T01:04:21.1764230Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1764540Z         "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+2026-11-05T01:04:21.1764640Z         "directoryDevice": "16777226",
+2026-11-05T01:04:21.1764740Z         "directoryInode": "3039256"
+2026-11-05T01:04:21.1764800Z       },
+2026-11-05T01:04:21.1764870Z       "browserPid": 5757,
+2026-11-05T01:04:21.1764990Z       "previousBrowserPid": 4674,
+2026-11-05T01:04:21.1765070Z       "driverPid": 5755,
+2026-11-05T01:04:21.1765500Z       "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+2026-11-05T01:04:21.1766160Z       "startedAt": "2026-11-05T01:04:18.739Z"
+2026-11-05T01:04:21.1766210Z     }
+2026-11-05T01:04:21.1766270Z   ]
+2026-11-05T01:04:21.1766330Z }
+2026-11-05T01:04:21.3072160Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T01:04:21.3072240Z with:
+2026-11-05T01:04:21.3072360Z   name: desktop-offline-chrome-macos-26-41945378569-1
+2026-11-05T01:04:21.3072430Z   path: artifacts/desktop-offline/
+2026-11-05T01:04:21.3072490Z   if-no-files-found: error
+2026-11-05T01:04:21.3072550Z   retention-days: 14
+2026-11-05T01:04:21.3072610Z   compression-level: 6
+2026-11-05T01:04:21.3072670Z   overwrite: false
+2026-11-05T01:04:21.3072750Z   include-hidden-files: false
+2026-11-05T01:04:21.3072820Z   archive: true
+2026-11-05T01:04:21.3072880Z env:
+2026-11-05T01:04:21.3073010Z   SOURCE_SHA: 403bd8c1dfdf0b266ca93c0354abef0ef37cea64
+2026-11-05T01:04:21.3073090Z   DESKTOP_RUNNER: macos-26
+2026-11-05T01:04:21.3073440Z   CHROMEWEBDRIVER: /Users/runner/work/spinel/spinel/test-results/desktop-browser-release-chrome/chromedriver-mac-arm64
+2026-11-05T01:04:21.3073490Z ##[endgroup]
+2026-11-05T01:04:22.2094090Z With the provided path, there will be 14 files uploaded
+2026-11-05T01:04:22.2095760Z Artifact name is valid!
+2026-11-05T01:04:22.2100980Z Root directory input is valid!
+2026-11-05T01:04:22.7353840Z Uploading artifact: desktop-offline-chrome-macos-26-41945378569-1.zip
+2026-11-05T01:04:22.7354790Z Beginning upload of artifact content to blob storage
+2026-11-05T01:04:23.4695800Z Uploaded bytes 227818
+2026-11-05T01:04:23.5501400Z Finished uploading artifact content to blob storage!
+2026-11-05T01:04:23.5602530Z SHA256 digest of uploaded artifact is 24ad74c46ba266f205c613835e94b9a5c40e8588ebf8a5887c890c7391db6f94
+2026-11-05T01:04:23.5703010Z Finalizing artifact upload
+2026-11-05T01:04:24.2210210Z Artifact desktop-offline-chrome-macos-26-41945378569-1 successfully finalized. Artifact ID 13377254905
+2026-11-05T01:04:24.2281310Z Artifact desktop-offline-chrome-macos-26-41945378569-1 has been successfully uploaded! Final size is 227818 bytes. Artifact ID is 13377254905
+2026-11-05T01:04:24.2308700Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41945378569/artifacts/13377254905
+2026-11-05T01:04:24.2512550Z Post job cleanup.
+2026-11-05T01:04:24.5827730Z Post job cleanup.
+2026-11-05T01:04:24.8552900Z [command]/opt/homebrew/bin/git version
+2026-11-05T01:04:24.8964390Z git version 2.56.0
+2026-11-05T01:04:24.9012930Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/97a26270-14f5-483a-beb2-6c1581c1e4e6/.gitconfig'
+2026-11-05T01:04:24.9020790Z Temporarily overriding HOME='/Users/runner/work/_temp/97a26270-14f5-483a-beb2-6c1581c1e4e6' before making global git config changes
+2026-11-05T01:04:24.9023630Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T01:04:24.9027750Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T01:04:24.9172080Z Removing SSH command configuration
+2026-11-05T01:04:24.9178970Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T01:04:24.9326580Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T01:04:25.1100890Z Removing HTTP extra header
+2026-11-05T01:04:25.1111390Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T01:04:25.1209030Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T01:04:25.3031740Z Removing includeIf entries pointing to credentials config files
+2026-11-05T01:04:25.3130480Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T01:04:25.3437660Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T01:04:25.5359520Z Cleaning up orphan processes

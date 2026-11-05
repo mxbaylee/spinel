@@ -1,0 +1,19 @@
+{
+  "id": 13379041312,
+  "name": "desktop-offline-safari-macos-15-intel-41945378569-1",
+  "size_in_bytes": 1017259,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13379041312",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13379041312/zip",
+  "expired": false,
+  "created_at": "2026-11-05T01:09:51Z",
+  "expires_at": "2026-11-19T01:09:49Z",
+  "updated_at": "2026-11-05T01:09:51Z",
+  "digest": "sha256:6b1deb917f24508e9ad7d85daab8712ad87ccc32cb897dbc4db96542e66ccb2c",
+  "workflow_run": {
+    "id": 41945378569,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-141-storage-quiescence",
+    "head_sha": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64"
+  }
+}

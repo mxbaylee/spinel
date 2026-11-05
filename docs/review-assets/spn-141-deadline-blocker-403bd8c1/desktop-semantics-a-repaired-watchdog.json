@@ -1,0 +1,54 @@
+{
+  "root": 46759,
+  "started": 1793842088828,
+  "elapsedMs": 302,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90480,
+  "peakKiB": 90480,
+  "live": [
+    {
+      "pid": 46759,
+      "parent": 46722,
+      "group": 46759,
+      "rssKiB": 88912,
+      "started": "Wed Nov  4 17:28:08 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/desktop-semantics-a-repaired-watchdog.json node /tmp/spn141-after143-hosted/audit-desktop-semantics-a.ts"
+    },
+    {
+      "pid": 46819,
+      "parent": 46759,
+      "group": 46759,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:28:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 46759,
+      "parent": 46722,
+      "group": 46759,
+      "rssKiB": 88912,
+      "started": "Wed Nov  4 17:28:08 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after143-hosted/desktop-semantics-a-repaired-watchdog.json node /tmp/spn141-after143-hosted/audit-desktop-semantics-a.ts"
+    },
+    {
+      "pid": 46778,
+      "parent": 46759,
+      "group": 46759,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:28:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 46819,
+      "parent": 46759,
+      "group": 46759,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:28:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

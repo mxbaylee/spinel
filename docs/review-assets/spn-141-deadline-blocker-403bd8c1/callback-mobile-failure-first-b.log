@@ -1,0 +1,77 @@
+{
+  "archive": {
+    "bytes": 57927690,
+    "sha256": "2aff1f12cdab865db5d61e19052874a0e977242cc1aa3054802d6429cf5132a0"
+  },
+  "membersVerified": 46,
+  "manifests": 2,
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T01:15:09.772Z",
+        "duration": 428640.09400000004,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "timedOut",
+              "duration": 420193,
+              "errors": [
+                {
+                  "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+                },
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts",
+                    "column": 26,
+                    "line": 111
+                  },
+                  "message": "Error: Callback observation timedOut.\n\n  109 |       detach: () => {},\n  110 |       abort: () =>\n> 111 |         controller.abort(new Error(`Callback observation ${info.status ?? 'interrupted'}.`)),\n      |                          ^\n  112 |       interrupt: async () => {},\n  113 |     };\n  114 |     observations.set(info, observation);\n    at Object.abort (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:111:26)\n    at settleCallbackObservation (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callback-progress.ts:45:17)\n    at /home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:92:11"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T01:22:24.630Z",
+        "duration": 381203.86100000003,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 376784,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":2798,"peakKiB":308304}

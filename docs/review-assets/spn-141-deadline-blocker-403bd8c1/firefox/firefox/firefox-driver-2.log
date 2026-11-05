@@ -1,0 +1,22 @@
+1793840540840	geckodriver	INFO	Listening on 127.0.0.1:49326
+1793840541099	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" "/Applications/Firefox. ... nette" "--profile" "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile" "-foreground" "-no-remote"
+console.warn: services.settings: Ignoring preference override of remote settings server
+console.warn: services.settings: Allow by setting MOZ_REMOTE_SETTINGS_DEVTOOLS=1 in the environment
+1793840542310	Marionette	INFO	Marionette enabled
+2026-11-05 01:02:22.560 Firefox GPU Helper[4209:18059] Failure on line 688 in function id scheduleApplicationNotification(LSNotificationCode, NSWorkspaceNotificationCenter *): noErr == _LSModifyNotification(notificationID, 1, &code, 0, NULL, NULL, NULL)
+2026-11-05 01:02:22.882 Firefox GPU Helper[4209:18059] Error received in message reply handler: Connection invalid
+2026-11-05 01:02:22.882 Firefox GPU Helper[4209:18096] Connection Invalid error for service com.apple.hiservices-xpcservice.
+1793840543579	Marionette	INFO	Listening on port 49327
+1793840543657	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+[GFX1-]: Failed GL context creation for WebRender: 0
+[GFX1-]: Failed to connect WebRenderBridgeChild. isParent=true
+[GFX1-]: Fallback WR to SW-WR
+console.error: "Experiment desktop-release-rollout-show-relay-to-all-browsers-next-sign-up-modal-cta has unknown featureId: email-autocomplete-relay"
+console.error: "Experiment visual-card-updates has unknown featureId: newtabRefinedCardsLayout"
+console.error: "Experiment enable-nimbus-unenrollment-synchronization has unknown featureId: nimbusStore"
+console.error: "Experiment private-window-visual-refresh-design-change-only has unknown featureId: feltPrivacy"
+1793840561490	Marionette	INFO	Stopped listening on port 49327
+JavaScript warning: https://localhost:8176/assets/floating-ui.react-dom-BtIrzXdr.js, line 9: Script terminated by timeout at:
+yh@https://localhost:8176/assets/floating-ui.react-dom-BtIrzXdr.js:9:42493
+
+1793840562113	webdriver::server	INFO	Shutting down

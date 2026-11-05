@@ -1,0 +1,2095 @@
+{
+  "comparison": {
+    "accepted": false,
+    "failures": [
+      "baseline: Terminal callback progress does not confirm successful owned cleanup.",
+      "baseline: Retained source attribution artifacts are missing.",
+      "baseline: callback collection or native behavior did not complete successfully.",
+      "baseline: trace completion reports missing/lost data.",
+      "baseline: trace completion/storage/transport provenance is incomplete or changed.",
+      "baseline: unmapped source observations were not retained.",
+      "baseline: recomputed callback evidence is incomplete or rejected."
+    ]
+  },
+  "identities": {
+    "source": "403bd8c1dfdf0b266ca93c0354abef0ef37cea64",
+    "base": "5c565b61e11ce29780581f33410749436ecef42f",
+    "tested": "28897ac1e143492bae980abf29f73c0e3daa8717",
+    "tree": "4893ed46f3c483d1da1d9e753b106af22d6cb65a",
+    "pr": 258,
+    "ci": 41945378505,
+    "native": 41945378569,
+    "storybook": 41945378439,
+    "attempt": 1,
+    "prepushReviews": {
+      "A": 98,
+      "B": 97
+    }
+  },
+  "archive": {
+    "bytes": 57927690,
+    "sha256": "2aff1f12cdab865db5d61e19052874a0e977242cc1aa3054802d6429cf5132a0"
+  },
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T01:15:09.772Z",
+        "duration": 428640.09400000004,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "timedOut",
+              "duration": 420193,
+              "errors": [
+                {
+                  "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+                },
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts",
+                    "column": 26,
+                    "line": 111
+                  },
+                  "message": "Error: Callback observation timedOut.\n\n  109 |       detach: () => {},\n  110 |       abort: () =>\n> 111 |         controller.abort(new Error(`Callback observation ${info.status ?? 'interrupted'}.`)),\n      |                          ^\n  112 |       interrupt: async () => {},\n  113 |     };\n  114 |     observations.set(info, observation);\n    at Object.abort (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:111:26)\n    at settleCallbackObservation (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callback-progress.ts:45:17)\n    at /home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:92:11"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T01:22:24.630Z",
+        "duration": 381203.86100000003,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 376784,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "dirtyPaths": "M e2e/doc-responsiveness-fixture.ts\n M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts",
+      "complete": false,
+      "passed": false,
+      "behaviorPassed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "collectionError": "Error: Callback observation timedOut.",
+      "firstFailure": {
+        "atMs": 420039.58150499995,
+        "phase": "trace-completion",
+        "kind": "timedOut"
+      },
+      "terminal": "timedOut",
+      "events": [
+        {
+          "atMs": 0.11293100000011691,
+          "phase": "fixture",
+          "kind": "started"
+        },
+        {
+          "atMs": 286.5534480000001,
+          "phase": "before-navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 293.60899500000005,
+          "phase": "trace-start",
+          "kind": "phase"
+        },
+        {
+          "atMs": 298.7108109999999,
+          "phase": "navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 1303.2240969999998,
+          "phase": "native-mount",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3928.8056410000004,
+          "phase": "native-focus",
+          "kind": "phase"
+        },
+        {
+          "atMs": 4274.973019999999,
+          "phase": "typing",
+          "kind": "phase"
+        },
+        {
+          "atMs": 4275.802890999999,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 13933.165949999999,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 13933.704335999999,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 14018.221684,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 24688.202327000003,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 24688.692714,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 24760.877701,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 36223.462812,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 36223.885743,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 36308.645154,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 49152.71373,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 49153.091567,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 49265.305837,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 63508.745341,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 63509.159055000004,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 63614.901989,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 79405.498488,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 79405.903937,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 79530.91402099999,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 97839.33532,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 97839.74709399999,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 97955.134572,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 117985.589346,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 117986.00622699999,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 118146.210368,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 140127.661518,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 140128.104877,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 140296.21763,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 163832.77762900002,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 163833.140278,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 163983.21664600002,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 188378.935629,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 188379.393646,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 188561.567321,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 215432.45029100002,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 215432.88005100001,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 215663.0309,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 243773.931296,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 243774.43171200002,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 244124.04439700002,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 274129.169781,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 274131.249293,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 274440.08418099995,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 306127.36937599996,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 306127.88688099995,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 306457.631365,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 339462.86393,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 339463.363249,
+          "phase": "input-key-count",
+          "kind": "phase"
+        },
+        {
+          "atMs": 345207.334061,
+          "phase": "input-observation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 345717.816025,
+          "phase": "native-drain",
+          "kind": "phase"
+        },
+        {
+          "atMs": 345849.917219,
+          "phase": "native-content",
+          "kind": "phase"
+        },
+        {
+          "atMs": 352856.77142299997,
+          "phase": "live-caret",
+          "kind": "phase"
+        },
+        {
+          "atMs": 355196.382075,
+          "phase": "ordinary-zoom",
+          "kind": "phase"
+        },
+        {
+          "atMs": 355546.957733,
+          "phase": "ordinary-route-disposal",
+          "kind": "phase"
+        },
+        {
+          "atMs": 357089.77524399996,
+          "phase": "behavior-complete",
+          "kind": "phase"
+        },
+        {
+          "atMs": 357095.105651,
+          "phase": "trace-end-request",
+          "kind": "phase"
+        },
+        {
+          "atMs": 357101.760855,
+          "phase": "trace-completion",
+          "kind": "phase"
+        },
+        {
+          "atMs": 420039.592065,
+          "phase": "trace-completion",
+          "kind": "timedOut"
+        },
+        {
+          "atMs": 420040.68422,
+          "phase": "trace-completion",
+          "kind": "trace"
+        },
+        {
+          "atMs": 420041.12027699995,
+          "phase": "cdp-detach",
+          "kind": "phase"
+        },
+        {
+          "atMs": 420043.376182,
+          "phase": "fixture-cleanup",
+          "kind": "phase"
+        },
+        {
+          "atMs": 420044.043401,
+          "phase": "fixture-cleanup",
+          "kind": "trace"
+        },
+        {
+          "atMs": 420049.637628,
+          "phase": "fixture-cleanup",
+          "kind": "trace"
+        },
+        {
+          "atMs": 420163.871552,
+          "phase": "fixture-cleanup",
+          "kind": "page-close",
+          "expected": true
+        },
+        {
+          "atMs": 420170.54092,
+          "phase": "fixture-cleanup",
+          "kind": "context-close",
+          "expected": true
+        },
+        {
+          "atMs": 420176.954731,
+          "phase": "fixture-cleanup-complete",
+          "kind": "phase"
+        },
+        {
+          "atMs": 420188.68965099996,
+          "phase": "fixture-cleanup-complete",
+          "kind": "timedOut"
+        }
+      ]
+    },
+    {
+      "role": "candidate",
+      "source": "28897ac1e143492bae980abf29f73c0e3daa8717",
+      "dirtyPaths": "",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeKeydowns": 2086,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "instrumentation": {
+        "categories": [
+          "devtools.timeline",
+          "disabled-by-default-devtools.timeline.stack",
+          "toplevel",
+          "v8",
+          "blink.user_timing",
+          "disabled-by-default-renderer.scheduler"
+        ],
+        "traceConfig": {
+          "recordMode": "recordUntilFull",
+          "traceBufferSizeInKb": 1048576,
+          "includedCategories": [
+            "devtools.timeline",
+            "disabled-by-default-devtools.timeline.stack",
+            "toplevel",
+            "v8",
+            "blink.user_timing",
+            "disabled-by-default-renderer.scheduler"
+          ]
+        },
+        "transferMode": "ReturnAsStream",
+        "streamFormat": "json",
+        "streamCompression": "none",
+        "bufferUsageReportingInterval": 1000,
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "sourceMaps": "hidden; exact built bundle source content",
+        "cpuThrottle": 4,
+        "mountedEditors": 1,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "touch": true,
+        "deviceScaleFactor": 1,
+        "playwrightTrace": false,
+        "latencyBudgetsEnforced": false,
+        "postDisposalMs": 1200,
+        "buildFlags": {
+          "VITE_DOC_RESPONSIVENESS_EVIDENCE": "1",
+          "VITE_DOC_SELECTION_EVIDENCE": "1",
+          "VITE_SYNC_EVIDENCE": "0"
+        }
+      },
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "none"
+        },
+        "bytes": 47044968,
+        "sha256": "b4e3f8bb6396ee93b35d454de85ddb0744bc2b222c61c44344e876b00fb9acfe",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 604455443,
+          "sha256": "c7926ef2f7060affe867d631b4fbbee5b8d33d62ee616f318b3612791bafecf4"
+        }
+      },
+      "traceRead": {
+        "sourceEvents": 878820,
+        "retainedEvents": 878820,
+        "callbackEvents": 144632,
+        "uncompressedBytes": 604455443,
+        "uncompressedSha256": "c7926ef2f7060affe867d631b4fbbee5b8d33d62ee616f318b3612791bafecf4",
+        "maxEventBytes": 17403
+      },
+      "analysisKeys": [
+        "schema",
+        "role",
+        "complete",
+        "bounded",
+        "accepted",
+        "evidenceFailures",
+        "candidateViolations",
+        "frameId",
+        "renderer",
+        "phaseAtUs",
+        "caps",
+        "families",
+        "ledger",
+        "orphans",
+        "noOpRemovals",
+        "ignoredOtherFrames",
+        "unrelatedTimers",
+        "mainThreadTasks"
+      ],
+      "analysisComplete": true,
+      "analysisAccepted": true,
+      "analysisBounded": true,
+      "families": {
+        "cursor": {
+          "pendingHighWater": 4,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 2,
+            "finalKey": 2,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 16733
+        },
+        "zoom-init": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 1
+        },
+        "zoom-update": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 2087
+        }
+      },
+      "attribution": {
+        "unmapped": 10,
+        "artifacts": 35
+      },
+      "phaseEvents": [
+        {
+          "atMs": 447.3168790000001,
+          "phase": "before-navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 454.64566100000013,
+          "phase": "trace-start",
+          "kind": "phase"
+        },
+        {
+          "atMs": 458.9735200000001,
+          "phase": "navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 1464.0076470000004,
+          "phase": "native-mount",
+          "kind": "phase"
+        },
+        {
+          "atMs": 4106.4580160000005,
+          "phase": "native-focus",
+          "kind": "phase"
+        },
+        {
+          "atMs": 4448.796072,
+          "phase": "typing",
+          "kind": "phase"
+        },
+        {
+          "atMs": 4449.590788,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 13136.772985,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 13137.193553,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 13201.448327,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 22133.369804,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 22133.81065,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 22200.455851000002,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 31643.840746,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 31644.236598,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 31699.689700000003,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 41765.472718000005,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 41765.897043000004,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 41842.772255,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 52562.507345,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 52562.918135,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 52639.043955,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 64565.085367,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 64565.470658,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 64632.197107,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 77520.794853,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 77521.200713,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 77622.583981,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 92091.076086,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 92091.486204,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 92167.903008,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 107175.70221,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 107176.152173,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 107287.372416,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 123344.58174,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 123345.020171,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 123439.384384,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 140012.518075,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 140012.936328,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 140102.785335,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 157699.572351,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 157699.99187600001,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 157832.995919,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 176227.450042,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 176230.181695,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 176364.39804200002,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 195150.664552,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 195151.103874,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 195374.631301,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 214551.292982,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 214551.660821,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 214705.349482,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 234936.248248,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 234936.67873400002,
+          "phase": "input-key-count",
+          "kind": "phase"
+        },
+        {
+          "atMs": 235623.589279,
+          "phase": "input-observation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 236030.230065,
+          "phase": "native-drain",
+          "kind": "phase"
+        },
+        {
+          "atMs": 236134.236694,
+          "phase": "native-content",
+          "kind": "phase"
+        },
+        {
+          "atMs": 239696.231925,
+          "phase": "live-caret",
+          "kind": "phase"
+        },
+        {
+          "atMs": 242034.57618,
+          "phase": "ordinary-zoom",
+          "kind": "phase"
+        },
+        {
+          "atMs": 242374.541451,
+          "phase": "ordinary-route-disposal",
+          "kind": "phase"
+        },
+        {
+          "atMs": 243909.211027,
+          "phase": "behavior-complete",
+          "kind": "phase"
+        },
+        {
+          "atMs": 243913.976938,
+          "phase": "trace-end-request",
+          "kind": "phase"
+        },
+        {
+          "atMs": 243923.125989,
+          "phase": "trace-completion",
+          "kind": "phase"
+        },
+        {
+          "atMs": 354520.242989,
+          "phase": "trace-stream-open",
+          "kind": "phase"
+        },
+        {
+          "atMs": 354524.111323,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 0
+        },
+        {
+          "atMs": 354551.754419,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 1048576
+        },
+        {
+          "atMs": 354580.246548,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 2097152
+        },
+        {
+          "atMs": 354640.572884,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 4194304
+        },
+        {
+          "atMs": 354742.207902,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 8388608
+        },
+        {
+          "atMs": 354875.207825,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 16777216
+        },
+        {
+          "atMs": 355148.793768,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 33554432
+        },
+        {
+          "atMs": 355671.145687,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 67108864
+        },
+        {
+          "atMs": 356813.585042,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 134217728
+        },
+        {
+          "atMs": 359117.262714,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 268435456
+        },
+        {
+          "atMs": 363673.132752,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 536870912
+        },
+        {
+          "atMs": 364843.047625,
+          "phase": "trace-stream-close",
+          "kind": "phase",
+          "count": 604455443
+        },
+        {
+          "atMs": 364846.805035,
+          "phase": "trace-parse",
+          "kind": "phase"
+        },
+        {
+          "atMs": 375196.799889,
+          "phase": "trace-attribution",
+          "kind": "phase"
+        },
+        {
+          "atMs": 376081.335115,
+          "phase": "trace-analysis",
+          "kind": "phase"
+        },
+        {
+          "atMs": 376558.154883,
+          "phase": "cdp-detach",
+          "kind": "phase"
+        },
+        {
+          "atMs": 376560.812927,
+          "phase": "fixture-cleanup",
+          "kind": "phase"
+        },
+        {
+          "atMs": 376600.800215,
+          "phase": "fixture-cleanup-complete",
+          "kind": "phase"
+        }
+      ],
+      "terminal": "passed",
+      "dropped": 0,
+      "behaviorKeys": [
+        "schema",
+        "cleanup",
+        "role",
+        "preset",
+        "attempt",
+        "runner",
+        "source",
+        "dirtyPaths",
+        "browser",
+        "runtime",
+        "playwright",
+        "harnessSha256",
+        "fixture",
+        "instrumentation",
+        "heapLimitations",
+        "complete",
+        "passed",
+        "phase",
+        "traceCategoryEnumeration",
+        "frameId",
+        "timeOrigin",
+        "environment",
+        "heapBefore",
+        "typingWallMs",
+        "observedKeydowns",
+        "nativeAfterTyping",
+        "textSha256",
+        "blink",
+        "zoom",
+        "heapBeforeDisposal",
+        "heapAfterDisposal",
+        "behaviorPassed",
+        "trace",
+        "traceRead",
+        "errors"
+      ],
+      "blink": {
+        "count": 133,
+        "allVisible": true,
+        "strokes": [
+          "rgba(0, 0, 0, 0)",
+          "spinel-primary-strong.0"
+        ]
+      },
+      "zoom": {
+        "before": {
+          "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+          "mobile": true,
+          "observedAt": 241473.3999999999,
+          "currentUnitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 212.87014770507812,
+            "top": 1370.166666666667,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 390,
+            "height": 668,
+            "scrollX": 0,
+            "scrollY": 796.1333333333337,
+            "bounds": {
+              "left": 0,
+              "right": 390,
+              "top": 796,
+              "bottom": 1464
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 232915.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 232954.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233086.8999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233123.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233238.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233280.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233430.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233471.19999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233595.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233635.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233763.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233806.29999999993,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233930.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233969,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234091.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234132.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234250.8999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234291.19999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234416.79999999993,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234466.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            }
+          ],
+          "editing": true,
+          "bounds": {
+            "left": 212.87014770507812,
+            "right": 212.87014770507812,
+            "top": 745.3333333333333,
+            "bottom": 768.7333333333333
+          },
+          "scroll": 796.1333333333337,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        },
+        "changed": {
+          "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+          "mobile": true,
+          "observedAt": 241735.8999999999,
+          "currentUnitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": false,
+            "left": 212.87014770507812,
+            "top": 1370.166666666667,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 390,
+            "height": 668,
+            "scrollX": 0,
+            "scrollY": 796.1333333333337,
+            "bounds": {
+              "left": 0,
+              "right": 390,
+              "top": 796,
+              "bottom": 1464
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 233123.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233238.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233280.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233430.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233471.19999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233595.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233635.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233763.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233806.29999999993,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233930.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233969,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234091.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234132.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234250.8999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234291.19999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234416.79999999993,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234466.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 241644.19999999995,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+              "zoomRatio": 1.14
+            },
+            {
+              "at": 241645.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 241645.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            }
+          ],
+          "editing": false,
+          "bounds": {
+            "left": 212.87014770507812,
+            "right": 212.87014770507812,
+            "top": 745.3333333333333,
+            "bottom": 768.7333333333333
+          },
+          "scroll": 796.1333333333337,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        },
+        "restored": {
+          "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+          "mobile": true,
+          "observedAt": 241873.09999999998,
+          "currentUnitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": false,
+            "left": 212.87014770507812,
+            "top": 1370.166666666667,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 390,
+            "height": 668,
+            "scrollX": 0,
+            "scrollY": 796.1333333333337,
+            "bounds": {
+              "left": 0,
+              "right": 390,
+              "top": 796,
+              "bottom": 1464
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 233430.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233471.19999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233595.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233635.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233763.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233806.29999999993,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233930.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 233969,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234091.09999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234132.59999999998,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234250.8999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234291.19999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234416.79999999993,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 234466.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 241644.19999999995,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+              "zoomRatio": 1.14
+            },
+            {
+              "at": 241645.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 241645.3999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 241798.5,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a",
+              "zoomRatio": 1
+            },
+            {
+              "at": 241798.69999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            },
+            {
+              "at": 241798.69999999995,
+              "id": "doc.operation.set-selections",
+              "unitId": "8cfa69fa-21e4-4fae-8700-0917f50faf1a"
+            }
+          ],
+          "editing": false,
+          "bounds": {
+            "left": 212.87014770507812,
+            "right": 212.87014770507812,
+            "top": 745.3333333333333,
+            "bottom": 768.7333333333333
+          },
+          "scroll": 796.1333333333337,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "bufferUsageCount": 243
+    }
+  ],
+  "proofs": [
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/error-context.md",
+      "bytes": 13285,
+      "sha256": "3351e78df26688aa1273cf80e12d55cfa1f2a31b9de433cd5d762f7df25fc1e8"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 354267,
+      "sha256": "e1fca0faf9bd3c23a362b5299b4ad2cae1823a614245c3ffc98fab37d0380672"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "bytes": 5564,
+      "sha256": "5797d23f8bb40d45eb7588b5924566e84edca8e7997c4f1fa25c486bb0dd8ce4"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-1.png",
+      "bytes": 38040,
+      "sha256": "883a9f3f61c1f742e90accc09fda29080ed728e877fd4948a39924f1582737d1"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-2.png",
+      "bytes": 2740,
+      "sha256": "fb32313e11bc8ffbd5310a1660e630b64cedb4622f8462a5eae2d5464ac8279e"
+    },
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 28869,
+      "sha256": "8468e686f6e5a3fadf3b5b4ae45b01200c3e12e809567c26febc2b6b13b27bf2"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 16085615,
+      "sha256": "ea7cee6bdb316e9c92e149ad5902cb7571734a7305344beacccf5dacf6674df6"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js",
+      "bytes": 2630,
+      "sha256": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map",
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-documentAccess-BpTD8alm.js",
+      "bytes": 3543,
+      "sha256": "e82196b4dadcbcec0a88ffe775e55898c57862e1ee3585df7067c9705b3b2035"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-documentAccess-BpTD8alm.js.map",
+      "bytes": 12434,
+      "sha256": "1c0832139b3566d9de4d9856f488b53049ebfef98112115f69448f8a4d25904c"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-application-D2glhAcP.js",
+      "bytes": 341507,
+      "sha256": "a2e2cb400c9c49e09d1618c2e7f22fd66f7b7606286170fe5aa97df144f523d9"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-application-D2glhAcP.js.map",
+      "bytes": 1132137,
+      "sha256": "7a5fca648c59cf2ff5b06b568f74e10bd1c70e01d0e2a57655ed95e2112d51dc"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-download-BPGf4w79.js",
+      "bytes": 3481,
+      "sha256": "570752f32765f636f82c347910c6bde324c51d8b707e5e958e4bb45f6f8b66f5"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-download-BPGf4w79.js.map",
+      "bytes": 12275,
+      "sha256": "67db225ce30b7689379d2e8710d821755cdab2de48274508ebaf886d0a34cebe"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-useDiagnostics-DuPOOcXt.js",
+      "bytes": 13208,
+      "sha256": "2cf868e1c96b1950048c992c0d64b61e3565d7a53a0c9d673e0036558601c776"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-useDiagnostics-DuPOOcXt.js.map",
+      "bytes": 47338,
+      "sha256": "81a379920b78fad5c612120d050c8abd014655d568a7824f5a626e83a0e4f3e6"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-CopyFile-qR382OFY.js",
+      "bytes": 637505,
+      "sha256": "ad8dd97fcb8b38fae1ccf7673425ad1e45252eb0762ba1ec0bf580a63745073a"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-CopyFile-qR382OFY.js.map",
+      "bytes": 222275,
+      "sha256": "985d91134450f7bef519aa87f8fac4aa38c0332e4915308d6d2ad0225ed600a8"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js",
+      "bytes": 15370,
+      "sha256": "9cefb2d9d82e0428400f948cc280e2a316b2f8ffe4f126891c5295134f9d9d57"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-nativeSyncPermissions-SuF-rts9.js",
+      "bytes": 3806095,
+      "sha256": "6a3e6c1c1a2a830cbec9c12de055139614aa63514b6dd3e1ff21e83c4ff575be"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-nativeSyncPermissions-SuF-rts9.js.map",
+      "bytes": 12092734,
+      "sha256": "cadd336053fc190a28740dadc77100028a788371a52389be1808b6912f8f6fa9"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-univer-renderer-Cqyj3Y79.js",
+      "bytes": 5916007,
+      "sha256": "9d7e0ecfd029bf41605ce931cda85c1747eec94ed1ddd3cc51feab4ff202506f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-univer-renderer-Cqyj3Y79.js.map",
+      "bytes": 13418035,
+      "sha256": "67a8b0011690f55e9153b7213c686f210aa0c559be49936e794b9b0bb297e09f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-docs-ui.js",
+      "bytes": 1447887,
+      "sha256": "635dced08421d4f9710af399cd84224678d1fbd3cb11ac7bd37510d9d99d40bc"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-documentReady-BTwXpX3d.js",
+      "bytes": 178333,
+      "sha256": "d6a385cc2889271186413fabd6f53ab6448ecfe3c3fe3700406785575c3eab44"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-documentReady-BTwXpX3d.js.map",
+      "bytes": 649015,
+      "sha256": "853cdb447a3f5998d9108427ff01fea6633de08dcb6bcfe15c04d8ea9ab70c73"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-DocEditor-DqfcJsZo.js",
+      "bytes": 26083,
+      "sha256": "0cb9636c7f7c8c065bbbe5174dbb96554b4a8be7e1ca652fd33e64775fced851"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-DocEditor-DqfcJsZo.js.map",
+      "bytes": 108756,
+      "sha256": "3ff72b9fef4813be5c61b3b3634dac31d0a245c25d4ab18a3ba5280b006cce6f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-nativeCopy-DPYNV4NP.js",
+      "bytes": 124524,
+      "sha256": "45ac6b29c12113c4e3b5155e168b849e749fdcf21403c49c092cd2e80f8c9d6f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map",
+      "bytes": 46566,
+      "sha256": "07cbb1a8bfd3d4acce73dc7f152c708bb0f617aba23859d2624e3bff2085f20f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-model-C-KJgbHu.js",
+      "bytes": 119357,
+      "sha256": "553c4ef1e01a609e8b7758ad57f63982fde186e7e86994bb22380b064dcbeec9"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-nativeCopy-DPYNV4NP.js.map",
+      "bytes": 526289,
+      "sha256": "e9428a89ee1a969a5ab7c32e24d9c88fb9c8b1e7be5d19bdefc02a3b584ad2cc"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-model-C-KJgbHu.js.map",
+      "bytes": 471069,
+      "sha256": "5c8ea64ce878e6b0feb89370d21cc8506d6504807bba538044e7611c793e927b"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/33-es-QsSEw2iP.js",
+      "bytes": 1166054,
+      "sha256": "eca07f3346de0702bc4261237dcf8e97b3e19c40a8463a8c55f547c12f293629"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/34-es-QsSEw2iP.js.map",
+      "bytes": 4025072,
+      "sha256": "b9c1d3f391514965725113c4652068bd1aaf6b91d0883d512256ae144c5fe99e"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js",
+      "bytes": 8292,
+      "sha256": "0a9b1f8d524aec5186d46e91b5e6c1d9bb2a062f0e9e09e2ed47a6de4fe0715e"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map",
+      "bytes": 19181,
+      "sha256": "bc3ffdc7d9972e80a79b5345c82132d09e460a1d9962725592fab22faeec1483"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-CAHwd6Ow.js",
+      "bytes": 3752,
+      "sha256": "bd6ea76a28330991c36e267ef20465bf5d4acec541de8d12df86538929ae143f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-CAHwd6Ow.js.map",
+      "bytes": 7918,
+      "sha256": "459812f5dfffa972949f9c8d5b19762befcc9991384ed42cfcdd59180837da66"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-BtIrzXdr.js",
+      "bytes": 214315,
+      "sha256": "487dad52f87342f5bcd543dbdd070226af9019e1aa296bd0fb075adcc56ca6f2"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-BtIrzXdr.js.map",
+      "bytes": 1031396,
+      "sha256": "5a249df0eca1e44d593e7a7c6794ca06b58bfdbdfcc97925e961ca515a57ce43"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz",
+      "bytes": 47044968,
+      "sha256": "b4e3f8bb6396ee93b35d454de85ddb0744bc2b222c61c44344e876b00fb9acfe",
+      "raw": {
+        "bytes": 604455443,
+        "sha256": "c7926ef2f7060affe867d631b4fbbee5b8d33d62ee616f318b3612791bafecf4"
+      }
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "bytes": 6402,
+      "sha256": "82c1efbb6afb2355b568af5fe978ba99a3a6e6a461d54e9b57bd5606eb874311"
+    },
+    {
+      "file": "test-results/spn113-comparison-mobile.json",
+      "bytes": 5677,
+      "sha256": "00beb430a61b66e0b54306c5d158ed71fbd145089076f8bec73371926e0c2f54"
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1400721,
+      "sha256": "45d234bda0c978e129ab8fb37687982e161ff0a3ce8056afe85fb0c94bade5d7"
+    }
+  ]
+}
