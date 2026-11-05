@@ -8,6 +8,10 @@ import { prepareDocsPatch } from '../dependencies/patch-univer-docs.ts';
 // this clean runner installation. The candidate application policy is unchanged.
 assert.equal(process.argv[2], '--prior-native');
 const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const reviewedHead = process.env.SPN146_REVIEWED_HEAD;
+assert.match(reviewedHead ?? '', /^[a-f0-9]{40}$/);
+assert.equal(source, reviewedHead, 'Diagnostic checkout must equal the reviewed source.');
+const tree = execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim();
 assert.equal(execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(), '');
 const hash = (bytes: string | Buffer) => createHash('sha256').update(bytes).digest('hex');
 const builds = [];
@@ -50,6 +54,8 @@ const sources = Object.fromEntries(
       'web/docResponsivenessEvidence.ts',
       'e2e/doc-responsiveness.spec.ts',
       'e2e/doc-responsiveness-native-trace.ts',
+      'e2e/doc-responsiveness-callback-trace.ts',
+      'e2e/doc-responsiveness-callback-progress.ts',
       'node_modules/@univerjs/core/lib/es/index.js',
       'node_modules/@univerjs/core/lib/cjs/index.js',
     ].map(async (path) => [path, hash(await readFile(path))]),
@@ -62,8 +68,10 @@ await writeFile(
       diagnosticOnly: true,
       role: 'prior-native',
       source,
+      reviewedHead,
+      tree,
       nativeReference: '2f442317dd2e1c188ae4a810ac094fd1162a4a2a',
-    builds: builds.map(({ prior: _prior, ...build }) => build),
+      builds: builds.map(({ prior: _prior, ...build }) => build),
       sources,
       limits:
         'One 2086-key mobile profile at 4x throttle; instrumented diagnostic, no latency acceptance or historical execution reconstruction.',
