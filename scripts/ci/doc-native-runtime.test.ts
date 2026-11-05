@@ -236,13 +236,18 @@ test('synchronous GC pairs require matching closed endpoints on the measured thr
 test('same resource policy rejects final-only memory/deadline/missing observations', () => {
   const good = { elapsedMs: 1, rssKiB: 1000, availableKiB: 2 * 1024 ** 2 };
   assert.equal(resourceFailure(good), null);
+  assert.equal(resourceFailure({ ...good, elapsedMs: 449999 }, 'application-window'), null);
+  assert.ok(resourceFailure({ ...good, elapsedMs: 450000 }, 'application-window'));
   for (const change of [
     { elapsedMs: 60000 },
     { rssKiB: 2 * 1024 ** 2 + 1 },
     { availableKiB: 1024 ** 2 - 1 },
     { availableKiB: NaN },
-  ])
+  ]) {
     assert.ok(resourceFailure({ ...good, ...change }));
+    if (!('elapsedMs' in change))
+      assert.ok(resourceFailure({ ...good, ...change }, 'application-window'));
+  }
 });
 
 test('terminal-only persistence failure and missing cleanup cannot pass analysis', () => {

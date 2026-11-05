@@ -248,6 +248,8 @@ function fixture() {
             'e2e/doc-responsiveness-fixture.ts',
             'e2e/doc-responsiveness-boundaries.ts',
             'e2e/doc-responsiveness-native-trace.ts',
+            'e2e/doc-responsiveness-native-window.ts',
+            'e2e/doc-responsiveness-native-sources.ts',
             'e2e/doc-responsiveness-callback-trace.ts',
             'e2e/doc-responsiveness-callback-progress.ts',
             'web/docResponsivenessEvidence.ts',
@@ -1339,6 +1341,8 @@ test('acceptance helpers require exact harness identities and sealed native evid
     'src/ui/nativeDocFlush.ts',
     'src/ui/nativeDocFlushDiagnostic.ts',
     'e2e/doc-responsiveness-native-trace.ts',
+    'e2e/doc-responsiveness-native-window.ts',
+    'e2e/doc-responsiveness-native-sources.ts',
     'e2e/doc-responsiveness-callback-trace.ts',
     'e2e/doc-responsiveness-callback-progress.ts',
   ]) {
