@@ -14,6 +14,7 @@ import { snapshotIdentity } from '../../src/shared/snapshotIdentity.ts';
 import type { WorkspaceItem } from '../../src/shared/workspace.ts';
 import type { StoredItem } from '../../web/offline/offlineStore.ts';
 import { reconstructOffline } from '../../web/offline/recovery.ts';
+import { editorNeutrals } from '../../src/ui/palette.ts';
 import type { BrowserstackFixture } from './browserstack-fixture.ts';
 import type { DesktopSnapshot } from './desktop-offline-fixture.ts';
 import {
@@ -1237,7 +1238,14 @@ export function verifyAuthoredContent(
     const sheet = expected.sheets[expected.sheetOrder[0]];
     sheet.cellData ??= {};
     sheet.cellData[0] ??= {};
-    sheet.cellData[0][0] = { v: Number(text), t: 2 };
+    // Native mobile formula input saves its default text color, even for an
+    // initially empty cell (SPN-090 local native reproduction, November 5).
+    // Compare this exact authored style; never discard styles from the workbook.
+    sheet.cellData[0][0] = {
+      v: Number(text),
+      t: 2,
+      s: { cl: { rgb: editorNeutrals[900] } },
+    };
     sameContent(comparable(snapshot), comparable(expected), 'authored-sheet-changed-other-content');
   } else {
     requireCondition(

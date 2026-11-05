@@ -4641,3 +4641,100 @@ test('Android Home waits for another app and presses at most twice; a stalled wo
   assert.match(recorded, /reregistered \? 'attempted-during-wait' : 'not-attempted'/);
   assert.match(recorded, /!reregistered &&/);
 });
+
+test('only installed Chrome acceptance requests keep-data in the single W3C payload', async () => {
+  const { DatabaseSync } = await import('../../server/database.ts');
+  const { AuthStore } = await import('../../src/server/auth/store.ts');
+  const { WorkspaceStore } = await import('../../src/server/workspace/store.ts');
+  const { migrateSpaceSchema } = await import('../../src/server/workspace/space-schema.ts');
+  const scopes = [
+    'all',
+    'chrome-navigation-diagnostic',
+    'chrome-acceptance',
+    'safari-acceptance',
+    'chrome-tab-acceptance',
+    'firefox-tab-acceptance',
+    'safari-tab-acceptance',
+  ] as const;
+  for (const scope of scopes) {
+    const browser = capabilityScopeDefinition(scope).browser ?? 'chrome';
+    const database = new DatabaseSync(':memory:');
+    const auth = new AuthStore(database);
+    new WorkspaceStore(auth, { spacesEnabled: true });
+    migrateSpaceSchema(database);
+    const owner = auth.createUser('Capability owner'),
+      actor = auth.createUser('Capability collaborator');
+    let closed = 0,
+      allocations = 0;
+    const notReached = () => assert.fail('Payload control stops before application preparation.');
+    const supplied = {
+      ...fixture(() => {
+        closed++;
+        database.close();
+      }),
+      db: database,
+      owner,
+      actor,
+      read: notReached,
+      originalState: notReached,
+      recoveryMetadata: notReached,
+      remoteEdit: notReached,
+      setOffline: notReached,
+      verifyDisconnected: notReached,
+    };
+    supplied.items = [
+      ...supplied.items,
+      ...supplied.items.map((item) => ({
+        ...item,
+        id: item.id + '-conflict',
+        outcome: 'conflict' as const,
+      })),
+    ];
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      if (path === 'session') {
+        allocations++;
+        const payload = JSON.parse(String(init?.body));
+        assert.deepEqual(Object.keys(payload), ['capabilities']);
+        assert.deepEqual(Object.keys(payload.capabilities), ['alwaysMatch']);
+        const caps = payload.capabilities.alwaysMatch;
+        assert.deepEqual(
+          caps['goog:chromeOptions'],
+          scope === 'chrome-acceptance' ? { androidKeepAppDataDir: true } : undefined,
+        );
+        for (const key of [
+          'chromeOptions',
+          'appium:chromeOptions',
+          'noReset',
+          'fullReset',
+          'appium:noReset',
+          'appium:fullReset',
+        ])
+          assert.equal(Object.hasOwn(caps, key), false);
+        return Response.json({
+          value: {
+            sessionId,
+            capabilities: {
+              browserName: browser,
+              ...(browser === 'safari' ? { pageLoadStrategy: 'eager' } : {}),
+            },
+          },
+        });
+      }
+      if (path.endsWith('/url'))
+        return Response.json({ value: { error: 'unknown error' } }, { status: 500 });
+      return Response.json({ value: null });
+    });
+    const result = await runCapability(client, { ...target, browser }, supplied, {
+      scope,
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async () => {},
+      screenshot: async (name) => name,
+    });
+    assert.equal(allocations, 1, scope);
+    assert.equal(result.failure, 'http-500');
+    assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(closed, 1);
+  }
+});

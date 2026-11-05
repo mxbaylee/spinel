@@ -12,6 +12,10 @@ import {
 } from './browserstack-fixture.ts';
 import { observeChromeReadinessFailure } from './browserstack-chrome-readiness.ts';
 import {
+  initialChromeStorageScript,
+  verifyInitialChromeStorage,
+} from './browserstack-initial-storage.ts';
+import {
   capabilityScopeDefinition,
   readCapabilityScope,
   type CapabilityScope,
@@ -2658,6 +2662,9 @@ export async function runCapability(
           alwaysMatch: {
             browserName: target.browser,
             acceptInsecureCerts: true,
+            ...(target.browser === 'chrome' && scope === 'chrome-acceptance'
+              ? { 'goog:chromeOptions': { androidKeepAppDataDir: true } }
+              : {}),
             ...(target.browser === 'safari'
               ? {
                   // The runner separately proves secure worker/application readiness.
@@ -2747,6 +2754,14 @@ export async function runCapability(
       await execute('browserstack_executor: {"action":"acceptSsl"}');
     const anonymous = await secureEnvironment(true);
     verifyBrowserIdentity(target, anonymous);
+    if (target.browser === 'chrome' && scope === 'chrome-acceptance') {
+      const initialStorage = await executeAsync(
+        initialChromeStorageScript,
+        [],
+        'initial-chrome-storage',
+      );
+      await record('initial-chrome-storage', verifyInitialChromeStorage(initialStorage));
+    }
     const initialWindows = await command(session('window/handles'));
     requireCondition(
       Array.isArray(initialWindows) && initialWindows.every((handle) => typeof handle === 'string'),

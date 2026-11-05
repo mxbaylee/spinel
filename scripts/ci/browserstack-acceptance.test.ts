@@ -363,11 +363,20 @@ test('native Sheet acceptance requires the intended A1 value and preserves every
     },
   };
   const expected = structuredClone(baseline);
-  expected.sheets.tab.cellData![0] = { 0: { v: 731, t: 2 } };
+  expected.sheets.tab.cellData![0] = { 0: { v: 731, t: 2, s: { cl: { rgb: '#221832' } } } };
   verifyAuthoredContent(expected, baseline, 'sheet', '731');
   for (const corrupt of [
     (sheet: IWorkbookData) => {
       sheet.sheets.tab.cellData![0][0]!.v = 732;
+    },
+    (sheet: IWorkbookData) => {
+      delete sheet.sheets.tab.cellData![0][0]!.s;
+    },
+    (sheet: IWorkbookData) => {
+      sheet.sheets.tab.cellData![0][0]!.s = { cl: { rgb: '#ffffff' } };
+    },
+    (sheet: IWorkbookData) => {
+      sheet.sheets.tab.cellData![0][0]!.s = { cl: { rgb: '#221832' }, bl: 1 };
     },
     (sheet: IWorkbookData) => {
       delete sheet.sheets.tab.cellData![1];
