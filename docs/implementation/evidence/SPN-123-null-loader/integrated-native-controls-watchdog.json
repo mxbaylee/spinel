@@ -1,0 +1,54 @@
+{
+  "root": 83462,
+  "started": 1793883068366,
+  "elapsedMs": 266,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90144,
+  "peakKiB": 90144,
+  "live": [
+    {
+      "pid": 83462,
+      "parent": 83436,
+      "group": 83462,
+      "rssKiB": 88592,
+      "started": "Thu Nov  5 04:51:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/integrated-native-controls-watchdog.json node --test scripts/ci/desktop-safari-identity.test.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-pointer.test.ts"
+    },
+    {
+      "pid": 83516,
+      "parent": 83462,
+      "group": 83462,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:51:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 83462,
+      "parent": 83436,
+      "group": 83462,
+      "rssKiB": 88592,
+      "started": "Thu Nov  5 04:51:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/integrated-native-controls-watchdog.json node --test scripts/ci/desktop-safari-identity.test.ts scripts/ci/desktop-storage.test.ts scripts/ci/desktop-pointer.test.ts"
+    },
+    {
+      "pid": 83481,
+      "parent": 83462,
+      "group": 83462,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:51:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 83516,
+      "parent": 83462,
+      "group": 83462,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:51:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
