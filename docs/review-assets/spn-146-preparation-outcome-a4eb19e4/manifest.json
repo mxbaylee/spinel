@@ -1,0 +1,110 @@
+{
+  "source": "a4eb19e4c5b95ba589042fe181cbcec2aa848990",
+  "run": 42070582339,
+  "job": 127397071510,
+  "attempt": 1,
+  "outcome": "resource-failed at trace startup after384; no timing window or semantic completion",
+  "allowance": "closed",
+  "payloads": [
+    {
+      "path": "observation.zip",
+      "bytes": 10583842,
+      "sha256": "4bd044aa36232291dbdad0c80a43b36a5edc30abb29cf7ae818296189be8972c"
+    },
+    {
+      "path": "run.json",
+      "bytes": 12233,
+      "sha256": "c8844c7dacf03b86486328dc9578092876bc1adb4df85550faf1c5f7f36b39ec"
+    },
+    {
+      "path": "jobs.json",
+      "bytes": 3685,
+      "sha256": "8aa9339b4bd46e74155e3ae24777239c7ad192b19fee29ad64f9714a73abd784"
+    },
+    {
+      "path": "artifacts.json",
+      "bytes": 746,
+      "sha256": "f09c678c8617dc4eadf416268351f156f9c62fcbf03a6314d09d5a099e1e7b2f"
+    },
+    {
+      "path": "outcome-review-b.md",
+      "bytes": 6196,
+      "sha256": "cedff5feb46a544faf32d3f31f9e43e8481cbb2f3ad8927ed3d0039a113350f3"
+    },
+    {
+      "path": "integrity.json",
+      "bytes": 19795,
+      "sha256": "9a1073951cb63373d750428fb966cc6565104a647be05d011f05aa6b81f3c3bf"
+    },
+    {
+      "path": "inspect.ts",
+      "bytes": 2661,
+      "sha256": "a1f475cb4fa8133ee3fdb450171004be2927415b683b29a278cb4eb040582848"
+    },
+    {
+      "path": "inspection.log",
+      "bytes": 132,
+      "sha256": "903e64fe23399070f7e2a4dd03b2fa203beed73aa5975fca5401b813656a50ab"
+    },
+    {
+      "path": "inspection-watchdog.json",
+      "bytes": 3797,
+      "sha256": "120de414e7455b96ba2f0d5be58dd5ea0d7ac185f5ded046a697b135d7778739"
+    },
+    {
+      "path": "run-42070582374.json",
+      "bytes": 12209,
+      "sha256": "42ca1f53db5ee4eab629d5fdfe43a6fd25a4c55d097a15ce09965f8445c897ce"
+    },
+    {
+      "path": "jobs-42070582374.json",
+      "bytes": 5239,
+      "sha256": "3ebd959f8bc3af0c61438911ba6cbd07b9f38b0397d721c0e3503e3c21d1f5b2"
+    },
+    {
+      "path": "run-42070582304.json",
+      "bytes": 12195,
+      "sha256": "90384ba5f4c4289dcb552fe40b54c4884da013722b2688619fe578bfcf6ccfac"
+    },
+    {
+      "path": "jobs-42070582304.json",
+      "bytes": 43626,
+      "sha256": "48074ab0228ccc1b1735462c736c0a1d0da9d4eabc15b0664f6a24c2534dfbae"
+    },
+    {
+      "path": "run-42070582369.json",
+      "bytes": 12220,
+      "sha256": "a2d68545cb561ea76983af000c1c53da8a46307b06940575eae44795005f2d1c"
+    },
+    {
+      "path": "jobs-42070582369.json",
+      "bytes": 7620,
+      "sha256": "48cf52d4dca2101378b21aaf8994137ded4ffc2578324336cbb00a3a281590aa"
+    },
+    {
+      "path": "run-42070582067.json",
+      "bytes": 12235,
+      "sha256": "1a6515dadfb678b2f08cdd10a52c1a8d00cce3df2df4c5b4a2ad9a8ddcfc9084"
+    },
+    {
+      "path": "jobs-42070582067.json",
+      "bytes": 906,
+      "sha256": "f4fa4412bce55841101dc1eb38a42e3840c4a7a11e4eb3aea06a58e7514bd0b0"
+    },
+    {
+      "path": "run-42070539649.json",
+      "bytes": 12191,
+      "sha256": "e150775d4b4a8a368abb8e8189cd075de402d11eea99d62bce5528beb3594280"
+    },
+    {
+      "path": "jobs-42070539649.json",
+      "bytes": 25468,
+      "sha256": "fadac54545c49aee02bdf4c9bb61fe53d40328b4a82e8f09c71c7207d68d7380"
+    },
+    {
+      "path": "job.log.gz",
+      "bytes": 14212,
+      "sha256": "065e33583772568dd9d31362bf52c783675d9679902736b288865de8d66cc355"
+    }
+  ]
+}
