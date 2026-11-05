@@ -1,0 +1,48 @@
+{
+  "source": "ab8966044fdc9c7645d5768956d84852ff308df3",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "prior": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+  "purpose": "Exact-source review for one finite fixed-window diagnostic. Not hosted or merge acceptance.",
+  "payloads": [
+    {
+      "path": "window-source-review-a.md",
+      "bytes": 11165,
+      "sha256": "b58e0a695bdebca288677b6f90f330fbaf15101b7824a6d974c9a5eb7d284c8f"
+    },
+    {
+      "path": "window-source-review-b.md",
+      "bytes": 9541,
+      "sha256": "eb903588be61d58ceb16505c273592f42495e3a49cbe9a041e226ce998dbfe54"
+    },
+    {
+      "path": "window-repaired-review-a.md",
+      "bytes": 10331,
+      "sha256": "73a1b013c6ee25922a8c7dd45b1d68e177a5a33e2a095332c1e4f0e45d16a997"
+    },
+    {
+      "path": "window-repaired-review-b.md",
+      "bytes": 11442,
+      "sha256": "7277e190522ff1c5044eb789e5d83bae8b1d7fd1d971d42642b83ed123abf442"
+    },
+    {
+      "path": "window-repaired-evidence-proof-a.json",
+      "bytes": 11130,
+      "sha256": "8015c69c54b644dbb953217972b79a08c4e23218d381b3da5dc113a0754d33bd"
+    },
+    {
+      "path": "window-repaired-evidence-watchdog-a.json",
+      "bytes": 2225,
+      "sha256": "d2d8952d1acc6400837fe87fb0ae70dcd26b41dbe05131cbd7c3c659fb19c3aa"
+    },
+    {
+      "path": "window-final-committed-pr-watchdog.json",
+      "bytes": 2847,
+      "sha256": "6c69cdb8860102ea274d4a33ee74592e46f94bb9db3414e7ac077274ab2a20d9"
+    },
+    {
+      "path": "window-pr-before.json",
+      "bytes": 9967,
+      "sha256": "1f6f6ebf4c5c7f61cbb98b1a7c2a566b2c2d944bc51a9eac678d0b52c98727d8"
+    }
+  ]
+}
