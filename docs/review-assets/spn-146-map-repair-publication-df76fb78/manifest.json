@@ -1,0 +1,33 @@
+{
+  "source": "df76fb78fa0258f8c28c068767970e8e869a5838",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "predecessor": "ab8966044fdc9c7645d5768956d84852ff308df3",
+  "purpose": "One explicitly superseding changed-source collection validation; original failed attempt remains counted; no production acceptance.",
+  "payloads": [
+    {
+      "path": "map-repair-review-a.md",
+      "bytes": 10734,
+      "sha256": "ae09bb78448412c6a247975f7ad7b26b3899e4f8147d667c3b6669765dd94e2c"
+    },
+    {
+      "path": "map-repair-review-b.md",
+      "bytes": 10382,
+      "sha256": "3a8fc709acd1a0dd8f6ec6bcc03e37b77300b01d156632e4defa08bf1180a168"
+    },
+    {
+      "path": "map-repair-evidence-proof-a.json",
+      "bytes": 3951,
+      "sha256": "5d6fd8c443abe7ec08a3668298640afd85889f713e6b9c72ac87c6bbf35add26"
+    },
+    {
+      "path": "map-repair-evidence-watchdog-a.json",
+      "bytes": 1591,
+      "sha256": "df5e55c882806e442c03e281aa79ebb507556cf4af7849274a607521b94ddf4f"
+    },
+    {
+      "path": "map-repair-pr-watchdog.json",
+      "bytes": 2883,
+      "sha256": "924036baa7ced4fe36961a642d3f3933d76eb52c050f7811aca26a1858e82b56"
+    }
+  ]
+}

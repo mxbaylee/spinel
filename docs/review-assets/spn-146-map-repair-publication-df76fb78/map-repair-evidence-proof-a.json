@@ -1,0 +1,126 @@
+{
+  "source": "df76fb78fa0258f8c28c068767970e8e869a5838",
+  "checks": [
+    {
+      "kind": "payloads",
+      "path": "source-map-repair-plan-review-a.md",
+      "bytes": 9441,
+      "sha256": "e26c1e5981e9fbcec7fe2d14e88b599406676ea1a3686b999516d1e1ca2ff7d8"
+    },
+    {
+      "kind": "payloads",
+      "path": "outcome-review-b.md",
+      "bytes": 8733,
+      "sha256": "18d86eadb907aabe60fc9dca80061f4ab8a8b70bc2a6fb244a7247a7edb3839e"
+    },
+    {
+      "kind": "payloads",
+      "path": "outcome-metadata-run.json",
+      "bytes": 12185,
+      "sha256": "86a41dbdc485246cbf9f0b51fbc8e1498dd027ffec8afdbb1d82cea31cdfd4d6"
+    },
+    {
+      "kind": "payloads",
+      "path": "outcome-metadata-jobs.json",
+      "bytes": 94285,
+      "sha256": "26e355c9bc0272af852c2f077eb4acbe5ab093c09eb49c363b65109121617b8c"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-format-watchdog.json",
+      "bytes": 2696,
+      "sha256": "55a3534ffff9d8604bd6e2f5eede59e82331270e7044a1caedc3da85564d5384"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-tests-watchdog.json",
+      "bytes": 1559,
+      "sha256": "64959f0fc66e4ec3f81fe046d43f7cf0f68664934117ec8b746f2916f54e390a"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-tests.log.gz",
+      "bytes": 633,
+      "sha256": "d81c8d8eee8e57299762013fad3c5af0e7fde39ce9266686fe6781ecd7f73488"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-lifecycle-format-watchdog.json",
+      "bytes": 1731,
+      "sha256": "f1601359370328ea1f8ce5c318a20b9d999db2fe940792da710cea00ff362789"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-lifecycle-watchdog.json",
+      "bytes": 4566,
+      "sha256": "06b70ca62471b6091a3b7cd8a7bd25a0cf7686e1e26e3fbe976ee30b64186b0a"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-lifecycle.log.gz",
+      "bytes": 418,
+      "sha256": "f304717c52a6543dd1bdad4468618f274385537b78676fe49d02ec53361faa5b"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-types-watchdog.json",
+      "bytes": 2758,
+      "sha256": "093276481154eb0d8cf453a68c708c2f6e9d11d613698d11ae84b208877c9aaa"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-types.log.gz",
+      "bytes": 88,
+      "sha256": "885f307cf9a7ca80062d8d6f6ac6d25f8fcdb603b0181b1610248ec7118766c5"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-lint-watchdog.json",
+      "bytes": 1999,
+      "sha256": "8fc4588d1ade2af3661a9dc1eaf935344cd631ae4c2e180cf8e557785f24824c"
+    },
+    {
+      "kind": "payloads",
+      "path": "map-repair-workflow-watchdog.json",
+      "bytes": 1622,
+      "sha256": "2e18d30e9b63227308d9a2efb7f47cf9314db1615b27a3ec2d79312ad3e29312"
+    },
+    {
+      "kind": "sources",
+      "path": ".github/workflows/doc-native-diagnostic.yml",
+      "bytes": 3335,
+      "sha256": "3626c965d8661d6483ac28e52bc3ad0c5cbf1bcaec865bcf4497a759de352fce"
+    },
+    {
+      "kind": "sources",
+      "path": "e2e/doc-responsiveness-native-sources.ts",
+      "bytes": 8430,
+      "sha256": "a06a1aed5b1e1c932405b24e162e9318de089b2ae68e2ff81415b72f66150293"
+    },
+    {
+      "kind": "sources",
+      "path": "e2e/doc-responsiveness.spec.ts",
+      "bytes": 65202,
+      "sha256": "57df06e3727628cd8e49df3b02a020253d4090cdee3a6e16250fbf8031d81ad7"
+    },
+    {
+      "kind": "sources",
+      "path": "scripts/ci/doc-native-lifecycle.test.ts",
+      "bytes": 6278,
+      "sha256": "618a5908594e4c19393fe17557c16016552d1faba3f4a93500bcddd551ec7ae5"
+    },
+    {
+      "kind": "sources",
+      "path": "scripts/ci/doc-native-runtime/window-convert.ts",
+      "bytes": 6279,
+      "sha256": "54d0c5319a1d209b09250844733ef014c407d878039936d4103ead17ef3269b4"
+    },
+    {
+      "kind": "sources",
+      "path": "scripts/ci/doc-native-window.test.ts",
+      "bytes": 17674,
+      "sha256": "ab4216623b424575035d28953e6526c474c78c61a77f4c3ff452e2f274f8ad65"
+    }
+  ],
+  "complete": true
+}

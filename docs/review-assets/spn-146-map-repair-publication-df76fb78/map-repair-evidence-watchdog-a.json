@@ -1,0 +1,54 @@
+{
+  "root": 95554,
+  "started": 1793887926091,
+  "elapsedMs": 304,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92704,
+  "peakKiB": 92704,
+  "live": [
+    {
+      "pid": 95554,
+      "parent": 95518,
+      "group": 95554,
+      "rssKiB": 91168,
+      "started": "Thu Nov  5 06:12:06 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn146-window-hosted/map-repair-evidence-watchdog-a.json node /tmp/spn146-window-hosted/map-repair-evidence-check-a.ts"
+    },
+    {
+      "pid": 95626,
+      "parent": 95554,
+      "group": 95554,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:12:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 95554,
+      "parent": 95518,
+      "group": 95554,
+      "rssKiB": 91168,
+      "started": "Thu Nov  5 06:12:06 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn146-window-hosted/map-repair-evidence-watchdog-a.json node /tmp/spn146-window-hosted/map-repair-evidence-check-a.ts"
+    },
+    {
+      "pid": 95573,
+      "parent": 95554,
+      "group": 95554,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:12:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 95626,
+      "parent": 95554,
+      "group": 95554,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:12:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
