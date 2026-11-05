@@ -43,6 +43,8 @@ import {
   withTapTrace,
   readPhoneOpenedCopy,
   verifyAuthoredContent,
+  contentDifferences,
+  contentDifferenceLimit,
   verifyEditablePhone,
   verifyRetainedEdit,
   type PhoneAcceptanceCases,
@@ -381,6 +383,40 @@ test('native Sheet acceptance requires the intended A1 value and preserves every
       /capability-acceptance-authored-sheet-/,
     );
   }
+});
+
+test('a content mismatch reports differing paths and value types, never values', () => {
+  const expected = { sheets: { tab: { cellData: { 0: { 0: { v: 731 } } }, rowCount: 30 } } };
+  const actual = {
+    sheets: {
+      tab: { cellData: { 0: { 0: { v: 731, p: { body: 'secret text' } } } }, rowCount: '30' },
+    },
+    'odd key!': null,
+  };
+  const report = contentDifferences(actual, expected);
+  assert.deepEqual(report, {
+    differences: [
+      { path: '?', change: 'added', actual: 'null', expected: 'absent' },
+      { path: 'sheets.tab.cellData.0.0.p', change: 'added', actual: 'object', expected: 'absent' },
+      { path: 'sheets.tab.rowCount', change: 'changed', actual: 'string', expected: 'number' },
+    ],
+    omitted: 0,
+  });
+  assert.doesNotMatch(JSON.stringify(report), /secret|731/);
+  const many = Object.fromEntries(
+    Array.from({ length: contentDifferenceLimit + 5 }, (_, index) => [`k${index}`, index]),
+  );
+  const bounded = contentDifferences({}, many);
+  assert.equal(bounded.differences.length, contentDifferenceLimit);
+  assert.equal(bounded.omitted, 5);
+  assert.equal(bounded.differences[0].change, 'removed');
+  // The sheet check raises the same code, now carrying that report for the journal.
+  const source = readFileSync(new URL('./browserstack-acceptance.ts', import.meta.url), 'utf8');
+  assert.equal(source.match(/await verifyAuthoredRecorded\(driver, /g)?.length, 2);
+  assert.match(
+    source,
+    /if \(error instanceof ContentMismatch\)\n\s+await driver\.record\('authored-content-differences', \{ kind: args\[2\], \.\.\.error\.report \}\);\n\s+throw error;/,
+  );
 });
 
 function retained(snapshot = getDocsEmptySnapshot('unit')) {

@@ -10,7 +10,7 @@ import {
   blankPageDiagnostic,
   browserPageOpened,
   offlineNetworkProfile,
-  firefoxOfflineScript,
+  firefoxOfflineBlocker,
   socketCloseDiagnostic,
   socketProbeScript,
   storageStateDiagnostic,
@@ -1321,6 +1321,17 @@ test('Safari acceptance binds its own journal, allocates only Safari and cannot 
   assert.equal(capabilityOutcome(lanes), 'incomplete');
   assert.deepEqual(capabilityRunOutcome(lanes, 'safari-acceptance'), {
     status: 'failed',
+    fullMatrixStatus: 'incomplete',
+    exitCode: 1,
+  });
+  // A selected lane that ends on a maintained blocker never reads as a pass.
+  const firefoxBlocked = lanes.map((lane) =>
+    lane.target.browser === 'firefox'
+      ? { ...lane, status: 'blocked' as const }
+      : { ...lane, status: 'not-run' as const },
+  );
+  assert.deepEqual(capabilityRunOutcome(firefoxBlocked, 'firefox-tab-acceptance'), {
+    status: 'incomplete',
     fullMatrixStatus: 'incomplete',
     exitCode: 1,
   });
@@ -3980,52 +3991,46 @@ test('a blank page keeps only its scheme, error code and failed path', () => {
     assert.equal(blankPageDiagnostic({ ...page, text: '' }, origin).browserPageHost, null);
 });
 
-test('Firefox goes offline through its own switch in the privileged context; Chrome and Safari keep no-network', () => {
+test('Firefox ends blocked at the cut on recorded evidence; Chrome and Safari keep no-network', () => {
   assert.deepEqual((['chrome', 'firefox', 'safari'] as const).map(offlineNetworkProfile), [
     'no-network',
     null,
     'no-network',
   ]);
-  // The switch itself, against a fake privileged `Services`.
-  const Services = { io: { offline: false, manageOfflineStatus: true } };
-  const context = createContext({ Services });
-  const run = (offline: boolean) =>
-    runInContext(
-      `(function(){${firefoxOfflineScript}}).apply(null, args)`,
-      Object.assign(context, { args: [offline] }),
-    );
-  assert.equal(run(true), true);
-  assert.deepEqual(Services.io, { offline: true, manageOfflineStatus: false });
-  assert.equal(run(false), false);
+  // The cited evidence is the committed artifact and shows the refused command.
+  const evidence = firefoxOfflineBlocker.evidence;
+  const bytes = readFileSync(new URL(`../../${evidence.path}`, import.meta.url));
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), evidence.sha256);
+  const run = JSON.parse(bytes.toString('utf8'));
+  assert.equal(run.runId, evidence.runId);
+  assert.equal(run.sourceSha, evidence.sourceSha);
+  const lane = run.lanes.find((entry: any) => entry.sessionId === evidence.sessionId);
+  assert.equal(lane.target.browser, 'firefox');
+  assert.ok(
+    lane.timing.commands.some(
+      (entry: any) =>
+        entry.command === evidence.command &&
+        entry.outcome === 'failed' &&
+        entry.failure === evidence.failure,
+    ),
+  );
   const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
-  // Neither offline cut hard-codes a profile; no airplane-mode or server refusal is left.
+  // No cut hard-codes a profile; no airplane-mode, server refusal or privileged switch is left.
   assert.doesNotMatch(source, /networkProfile: 'no-network'/);
   assert.doesNotMatch(source, /'airplane-mode'/);
   assert.doesNotMatch(source, /serverRefusal/);
+  assert.doesNotMatch(source, /session\('moz\/context'\)|Services\.io/);
   const cut = source.slice(
     source.indexOf('const cutNetwork = async () => {'),
     source.indexOf('const putNetwork = (networkProfile: string) =>'),
   );
-  assert.match(cut, /return \{ networkProfile, firefoxOffline: false \};/);
   assert.match(
     cut,
-    /await firefoxOffline\(true\);\n\s+return \{ networkProfile: null, firefoxOffline: true \};/,
+    /if \(!networkProfile\) throw new LaneBlocked\('capability-firefox-offline-blocked'\);/,
   );
-  // One attempt: chrome context, the switch, back to content only if switched;
-  // a refusal is recorded and fails as the observed limit.
-  assert.match(
-    cut,
-    /session\('moz\/context'\), 'POST', \{ context: 'chrome' \}\);\n\s+switched = true;/,
-  );
-  assert.match(
-    cut,
-    /if \(switched\) await command\(session\('moz\/context'\), 'POST', \{ context: 'content' \}\);/,
-  );
-  assert.match(cut, /throw new Error\('capability-firefox-offline-unavailable'\);/);
-  assert.equal(cut.match(/firefoxOfflineScript/g)?.length, 1);
   assert.match(
     source,
-    /if \(!offline && target\.browser === 'firefox'\) await firefoxOffline\(false\);/,
+    /if \(error instanceof LaneBlocked\) \{\n\s+result\.status = 'blocked';\n\s+result\.observations\.push\(\{ stage: 'maintained-blocker', value: firefoxOfflineBlocker \}\);/,
   );
   assert.equal(source.match(/await cutNetwork\(\)/g)?.length, 3);
 });
@@ -4321,6 +4326,7 @@ test('a failed stored read records the offline account, database and window coun
   };
   assert.deepEqual(await read(storage(null, ['other'], null)), {
     marker: 'absent',
+    boundaryCookie: 'unavailable',
     offlineDatabases: 0,
     accountDatabase: false,
     open: 'missing',
@@ -4347,6 +4353,7 @@ test('a failed stored read records the offline account, database and window coun
     await read(storage('a1', ['spinel-offline-a1'], ['items', 'images'], navigator)),
     {
       marker: 'matches',
+      boundaryCookie: 'unavailable',
       offlineDatabases: 1,
       accountDatabase: true,
       open: 'opened',
@@ -4379,6 +4386,7 @@ test('a failed stored read records the offline account, database and window coun
     }),
     {
       marker: 'other',
+      boundaryCookie: 'other',
       offlineDatabases: null,
       accountDatabase: null,
       open: 'other',
@@ -4386,6 +4394,39 @@ test('a failed stored read records the offline account, database and window coun
       ...unknownStorage,
     },
   );
+  // The boundary cookie: written once with this lane's token, then read back.
+  const jar: string[] = [];
+  const document = {
+    get cookie() {
+      return jar.join('; ');
+    },
+    set cookie(value: string) {
+      const [pair] = value.split(';');
+      const name = pair.slice(0, pair.indexOf('='));
+      const kept = jar.filter((entry) => !entry.startsWith(`${name}=`));
+      jar.splice(0, jar.length, ...kept, pair);
+    },
+  };
+  const cookie = async (token: string, write: boolean) => {
+    const context = storage(null, [], null);
+    Object.assign(context, { document });
+    return storageStateDiagnostic(
+      JSON.parse(
+        JSON.stringify(
+          await runInContext(
+            `(async function () {${storageStateScript}})('a1', ${JSON.stringify(token)}, ${write})`,
+            context,
+          ),
+        ),
+      ),
+    ).boundaryCookie;
+  };
+  assert.equal(await cookie('t1', false), 'absent');
+  jar.push('other=1');
+  assert.equal(await cookie('t1', true), 'matches');
+  assert.equal(await cookie('t1', false), 'matches');
+  assert.equal(await cookie('t2', false), 'other');
+  assert.equal(jar.length, 2);
   const source = readFileSync(new URL('./browserstack-capability.ts', import.meta.url), 'utf8');
   const body = source.slice(
     source.indexOf('async function storedItems('),
@@ -4414,7 +4455,9 @@ test('Safari alone taps natively, and the first close is preceded by a storage s
     source.indexOf('async function restartInstalled('),
     source.indexOf('const observedForeground = await foreground();'),
   );
-  assert.match(restart, /if \(prefix === ''\) await recordStorageState\(\);/);
+  // The snapshot before the first close writes the boundary cookie; later ones only read it.
+  assert.match(restart, /if \(prefix === ''\) await recordStorageState\(true\);/);
+  assert.equal(source.match(/await recordStorageState\(true\)/g)?.length, 1);
 });
 
 test('a worker registration has stalled only with no controller and no worker registering', () => {

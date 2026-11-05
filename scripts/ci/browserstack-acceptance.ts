@@ -83,6 +83,64 @@ function row(value: unknown): Row {
 function same(actual: unknown, expected: unknown, code: string) {
   requireCondition(isDeepStrictEqual(actual, expected), code);
 }
+
+export const contentDifferenceLimit = 20;
+export type ContentDifference = {
+  path: string;
+  change: 'added' | 'removed' | 'changed';
+  actual: string;
+  expected: string;
+};
+const valueType = (value: unknown) =>
+  value === undefined
+    ? 'absent'
+    : value === null
+      ? 'null'
+      : Array.isArray(value)
+        ? 'array'
+        : typeof value;
+const pathKey = (key: string) => (/^[\w.-]{1,64}$/.test(key) ? key : '?');
+
+/**
+ * Lists where two comparable snapshots differ by path, change and value type.
+ * Values are never returned, so a mismatch report cannot carry document text.
+ */
+export function contentDifferences(actual: unknown, expected: unknown) {
+  const differences: ContentDifference[] = [];
+  let total = 0;
+  const visit = (left: unknown, right: unknown, path: string[]) => {
+    if (isDeepStrictEqual(left, right)) return;
+    const container = (value: unknown) => value !== null && typeof value === 'object';
+    if (container(left) && container(right) && Array.isArray(left) === Array.isArray(right)) {
+      const keys = new Set([...Object.keys(left as object), ...Object.keys(right as object)]);
+      for (const key of [...keys].sort())
+        visit((left as Row)[key], (right as Row)[key], [...path, pathKey(key)]);
+      return;
+    }
+    total += 1;
+    if (differences.length < contentDifferenceLimit)
+      differences.push({
+        path: path.join('.').slice(0, 240),
+        change: left === undefined ? 'removed' : right === undefined ? 'added' : 'changed',
+        actual: valueType(left),
+        expected: valueType(right),
+      });
+  };
+  visit(actual, expected, []);
+  return { differences, omitted: total - differences.length };
+}
+
+class ContentMismatch extends Error {
+  readonly report: ReturnType<typeof contentDifferences>;
+  constructor(code: string, report: ReturnType<typeof contentDifferences>) {
+    super(`capability-acceptance-${code}`);
+    this.report = report;
+  }
+}
+function sameContent(actual: unknown, expected: unknown, code: string) {
+  if (!isDeepStrictEqual(actual, expected))
+    throw new ContentMismatch(code, contentDifferences(actual, expected));
+}
 const digest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const uuid = /^[a-f\d]{8}-[a-f\d]{4}-4[a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i;
 const itemPath = (id: string) => `/?item=${id}`;
@@ -1112,7 +1170,7 @@ async function createDraft(
     unitId,
     kind,
   });
-  verifyAuthoredContent(expected, snapshot, kind, text, caret);
+  await verifyAuthoredRecorded(driver, expected, snapshot, kind, text, caret);
   await assertNative(driver, unitId, expected);
   await driver.record('offline-created-draft', {
     itemId,
@@ -1125,6 +1183,20 @@ async function createDraft(
     serverItemAbsent: true,
   });
   return { id: itemId, unitId, kind, text, before, expected, rejected };
+}
+
+/** Records a bounded path-only difference list before a content mismatch fails. */
+async function verifyAuthoredRecorded(
+  driver: PhoneAcceptanceDriver,
+  ...args: Parameters<typeof verifyAuthoredContent>
+) {
+  try {
+    verifyAuthoredContent(...args);
+  } catch (error) {
+    if (error instanceof ContentMismatch)
+      await driver.record('authored-content-differences', { kind: args[2], ...error.report });
+    throw error;
+  }
 }
 
 export function verifyAuthoredContent(
@@ -1145,7 +1217,7 @@ export function verifyAuthoredContent(
     sheet.cellData ??= {};
     sheet.cellData[0] ??= {};
     sheet.cellData[0][0] = { v: Number(text), t: 2 };
-    same(comparable(snapshot), comparable(expected), 'authored-sheet-changed-other-content');
+    sameContent(comparable(snapshot), comparable(expected), 'authored-sheet-changed-other-content');
   } else {
     requireCondition(
       !('sheets' in snapshot) && !('sheets' in baseline) && typeof caret === 'number',
@@ -1166,7 +1238,7 @@ export function verifyAuthoredContent(
     // The independent public TextX transform shifts every body/image/range
     // anchor. Comparing the entire Doc prevents a matching text string from
     // blessing lost images, paragraphs, notes or unrelated native metadata.
-    same(comparable(snapshot), comparable(expected), 'authored-doc-changed-other-content');
+    sameContent(comparable(snapshot), comparable(expected), 'authored-doc-changed-other-content');
   }
 }
 
@@ -1241,7 +1313,7 @@ export async function runPhoneAcceptance(
       unitId: item.unitId,
       kind: item.kind,
     });
-    verifyAuthoredContent(snapshot, item.baseline.snapshot, item.kind, text, caret);
+    await verifyAuthoredRecorded(driver, snapshot, item.baseline.snapshot, item.kind, text, caret);
     verifyImages(captured, imageHashes(fixture, item.id));
     await assertNative(driver, item.unitId, snapshot);
     same(

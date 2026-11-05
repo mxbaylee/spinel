@@ -412,6 +412,31 @@ function notRunLane(target: Target, stage: string, reason: string): CapabilityRe
     cleanup: { network: 'not-allocated', session: 'not-allocated', fixture: 'not-created' },
   };
 }
+/**
+ * Owner's choice, 2026-11-04: the ordinary-tab Firefox lane runs every stage
+ * up to the network cut, then ends blocked on this recorded evidence. Offline
+ * Firefox behaviour stays unobserved on phones; the attempt is not repeated.
+ */
+export const firefoxOfflineBlocker = {
+  classification: 'observed-provider-route-limitation',
+  underlyingCause: 'unclassified',
+  reason:
+    'No tried BrowserStack route takes real Android Firefox offline: the no-network profile left requests answering, airplane-mode answered HTTP 422, a refusing test server reached the phone as BrowserStack Local HTTP 502, and geckodriver answered its privileged moz/context command with HTTP 404. Offline Firefox behaviour on phones remains unobserved; this does not establish a general Firefox limitation.',
+  evidence: {
+    path: 'docs/implementation/evidence/SPN-090-capability-41949596977.json',
+    sha256: '33c103f7cbe32fc7900d48c7f7f6a2873f49e0f7926a3117b93d7958ca1ce655',
+    runId: '41949596977',
+    sourceSha: 'bad94033a7c479587b836008b42480aeedcda777',
+    testedSha: 'bad94033a7c479587b836008b42480aeedcda777',
+    sessionId: '1ec2e77fa130da7d77f2d86826d67011b78fb2dc',
+    command: 'POST session/{sessionId}/moz/context',
+    failure: 'http-404',
+  },
+  removalCondition:
+    'Revisit when concrete public BrowserStack Automate evidence establishes a supported way to take real Android Firefox offline. Keep this limitation and the unobserved offline coverage visible alongside successful supported-scope results.',
+} as const;
+class LaneBlocked extends Error {}
+
 /** A maintained blocker is evidence, not a successful or silently skipped lane. */
 export async function runCapabilityLane(
   target: Target,
@@ -697,17 +722,14 @@ export function shortcutIntent(origin: string, browserPackage: string) {
   return { url: `${origin}/`, package: browserPackage };
 }
 /**
- * No BrowserStack profile reaches Firefox: `no-network` left its ordinary
- * requests answering for 15 s (runs 41783320538, 41923855981) and
- * `airplane-mode` answered HTTP 422 (run 41911483521). The test server
+ * No BrowserStack route takes Firefox offline: `no-network` left its ordinary
+ * requests answering for 15 s (runs 41783320538, 41923855981),
+ * `airplane-mode` answered HTTP 422 (run 41911483521), the test server
  * refusing connections reached the phone as BrowserStack Local's HTTP 502
- * (run 41939094783), which Spinel rightly treats as online. Owner, chat
- * 2026-11-04: Firefox goes offline through its own switch instead
- * (`firefoxOfflineScript` in geckodriver's privileged context), recorded as
- * such. `null` means that switch.
+ * (run 41939094783), which Spinel rightly treats as online, and geckodriver's
+ * privileged context answered `moz/context` with HTTP 404 (run 41949596977).
+ * `null` means Firefox's lane ends at the cut as `firefoxOfflineBlocker`.
  */
-/** Sets Firefox's own offline state; runs in geckodriver's `chrome` context. */
-export const firefoxOfflineScript = `const [offline]=arguments;Services.io.manageOfflineStatus=false;Services.io.offline=offline;return Services.io.offline;`;
 export function offlineNetworkProfile(browser: Target['browser']) {
   return browser === 'firefox' ? null : 'no-network';
 }
@@ -1180,9 +1202,17 @@ export function socketCloseDiagnostic(value: unknown) {
  * the origin's storage quota, usage and persistence, bounded. Chrome run
  * 41922691566 had both before its close and neither after; the quota tells a
  * different kind of storage from the same one emptied (owner, chat 2026-11-04).
+ * The snapshot before the first close also writes a capability-owned cookie,
+ * and later snapshots read it: run 41948772457 lost every stored kind across
+ * the relaunch, and a surviving cookie tells evicted storage from a reset
+ * profile (owner's choice, 2026-11-04). `persisted` already reports whether
+ * the browser granted Spinel's own persistence request, so it is not asked again.
  */
-export const storageStateScript = `const [account]=arguments;const name='spinel-offline-'+account;
+export const storageStateScript = `const [account,token,write]=arguments;const name='spinel-offline-'+account;
 let marker='unavailable';try{const value=localStorage.getItem('spinel.offline.account');marker=value===null?'absent':value===account?'matches':'other';}catch{}
+let cookie='unavailable';try{if(write===true)document.cookie='spinel-capability-boundary='+token+';path=/;max-age=3600;secure;samesite=strict';
+  const values=document.cookie.split('; ').filter(entry=>entry.startsWith('spinel-capability-boundary=')).map(entry=>entry.slice(27));
+  cookie=values.length===0?'absent':values.includes(token)?'matches':'other';}catch{}
 let listed=null;try{const list=await indexedDB.databases();listed={offlineDatabases:list.filter(entry=>typeof entry.name==='string'&&entry.name.startsWith('spinel-offline-')).length,accountDatabase:list.some(entry=>entry.name===name)};}catch{}
 const open=await new Promise(resolve=>{let request;try{request=indexedDB.open(name);}catch{resolve({outcome:'unavailable'});return;}
   request.onupgradeneeded=()=>{request.transaction.abort();resolve({outcome:'missing'});};
@@ -1191,7 +1221,7 @@ const open=await new Promise(resolve=>{let request;try{request=indexedDB.open(na
 let estimate=null;try{const value=await navigator.storage.estimate();estimate={quota:value.quota,usage:value.usage,details:value.usageDetails??null};}catch{}
 let persisted=null;try{persisted=await navigator.storage.persisted();}catch{}
 let cacheCount=null;try{cacheCount=(await caches.keys()).length;}catch{}
-return {marker,listed,open:open.outcome,path:location.pathname,estimate,persisted,cacheCount};`;
+return {marker,cookie,listed,open:open.outcome,path:location.pathname,estimate,persisted,cacheCount};`;
 /**
  * Chrome's per-kind usage (`usageDetails`), kept for the kinds named here.
  * Run 41938668159 saw usage fall from 30.5 MB to 0 across the relaunch while
@@ -1209,6 +1239,9 @@ export function storageStateDiagnostic(value: unknown) {
   return {
     marker: ['absent', 'matches', 'other', 'unavailable'].includes(answer.marker as string)
       ? answer.marker
+      : 'other',
+    boundaryCookie: ['absent', 'matches', 'other', 'unavailable'].includes(answer.cookie as string)
+      ? answer.cookie
       : 'other',
     offlineDatabases:
       typeof listed?.offlineDatabases === 'number' &&
@@ -1428,6 +1461,8 @@ export async function runCapability(
   const operationalMilliseconds = acceptanceScope
     ? authoredAcceptanceMilliseconds
     : laneMilliseconds;
+  // Never recorded: it only tells this lane's boundary cookie from any other.
+  const boundaryToken = randomUUID();
   const began = Date.now();
   const timing: CapabilityTiming = {
     laneLimitMilliseconds: operationalMilliseconds,
@@ -1585,38 +1620,12 @@ export async function runCapability(
       return value;
     });
   const session = (suffix: string) => `session/${result.sessionId}/${suffix}`;
-  /** Set once the acceptance fixture exists: makes the test server refuse every connection. */
+  /** The device network profile; Firefox, which none reaches, ends blocked here. */
   const cutNetwork = async () => {
     const networkProfile = offlineNetworkProfile(target.browser);
-    if (networkProfile) {
-      await putNetwork(networkProfile);
-      return { networkProfile, firefoxOffline: false };
-    }
-    await firefoxOffline(true);
-    return { networkProfile: null, firefoxOffline: true };
-  };
-  /**
-   * One attempt per call: switch geckodriver to its privileged context, set
-   * Firefox's offline state, switch back. A refusal is recorded and fails as
-   * `firefox-offline-unavailable`, the observed limit; it is never retried.
-   */
-  const firefoxOffline = async (offline: boolean) => {
-    let switched = false;
-    try {
-      await command(session('moz/context'), 'POST', { context: 'chrome' });
-      switched = true;
-      const state = await execute(firefoxOfflineScript, [offline]);
-      requireCondition(state === offline, 'firefox-offline-not-applied');
-    } catch (error) {
-      await record(`${result.stage}:firefox-offline`, {
-        offline,
-        contextSwitched: switched,
-        failure: failure(error),
-      });
-      throw new Error('capability-firefox-offline-unavailable');
-    } finally {
-      if (switched) await command(session('moz/context'), 'POST', { context: 'content' });
-    }
+    if (!networkProfile) throw new LaneBlocked('capability-firefox-offline-blocked');
+    await putNetwork(networkProfile);
+    return { networkProfile };
   };
   const putNetwork = (networkProfile: string) =>
     timedProviderCommand(
@@ -2286,13 +2295,17 @@ export async function runCapability(
    * still there, how the database opens, the page path and the window count.
    * The failed command and the original failure stay the lane's.
    */
-  async function recordStorageState() {
+  async function recordStorageState(writeBoundary = false) {
     const failedCommand = result.command;
     let page: unknown = 'unavailable';
     let windows: unknown = 'unavailable';
     try {
       page = storageStateDiagnostic(
-        await executeAsync(storageStateScript, [fixture.actor.id], 'storage-state'),
+        await executeAsync(
+          storageStateScript,
+          [fixture.actor.id, boundaryToken, writeBoundary],
+          'storage-state',
+        ),
       );
     } catch (error) {
       page = { unavailable: failure(error) };
@@ -2454,7 +2467,7 @@ export async function runCapability(
     // gone after the same window had reloaded signed in offline. The snapshot
     // just before the close says whether they were gone already (owner, chat
     // 2026-11-04).
-    if (prefix === '') await recordStorageState();
+    if (prefix === '') await recordStorageState(true);
     const observedForeground = await foreground();
     requireCondition(observedForeground === foregroundApp, 'foreground-app-changed');
     const app =
@@ -2853,10 +2866,9 @@ export async function runCapability(
             acceptanceFixture!.setOffline(false),
           );
         if (!offline) await putNetwork('4g-lte-good');
-        if (!offline && target.browser === 'firefox') await firefoxOffline(false);
         await record(
           `${result.stage}:network-control`,
-          offline ? await cutNetwork() : { networkProfile: '4g-lte-good', firefoxOffline: false },
+          offline ? await cutNetwork() : { networkProfile: '4g-lte-good' },
         );
         if (ticket) {
           await awaitDeviceOffline(ticket);
@@ -2931,6 +2943,10 @@ export async function runCapability(
     result.status = 'passed';
   } catch (error) {
     result.failure = failure(error);
+    if (error instanceof LaneBlocked) {
+      result.status = 'blocked';
+      result.observations.push({ stage: 'maintained-blocker', value: firefoxOfflineBlocker });
+    }
     timing.failure = {
       elapsedMilliseconds: Date.now() - began,
       remainingMilliseconds: Math.max(0, deadline - Date.now()),
