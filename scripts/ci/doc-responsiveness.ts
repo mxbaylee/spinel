@@ -492,6 +492,8 @@ const requiredHashes = [
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness-boundaries.ts',
   'e2e/doc-responsiveness-native-trace.ts',
+  'e2e/doc-responsiveness-callback-trace.ts',
+  'e2e/doc-responsiveness-callback-progress.ts',
   'web/docResponsivenessEvidence.ts',
   'src/ui/docIdleEpisode.ts',
   'src/ui/nativeDocFlush.ts',
