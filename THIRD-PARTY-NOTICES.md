@@ -15,6 +15,12 @@ single-character deletes, retaining the lowest-offset native deleted body; SPN-1
 extends this to qualified leading delete prefixes with the original sequential
 tail, preserving every unsupported action's call order. SPN-142 reuses private
 fixed qualification lists without changing their contents or iteration order.
+🔎 SPN-146 additionally recognizes one native Enter between contiguous plain
+append inserts. It keeps that Enter and its style retain in the original head,
+balances the qualified final run, and composes the two raw-equivalent results
+once. Other structural/metadata shapes retain the existing fold. Tests preserve
+the exact earlier build as a work negative and compare raw publications,
+metadata, accumulator ownership and complete applied snapshots.
 SPN-135 also
 adds opt-in scalar flush observations covering native timer and public entry paths.
 It preserves native operation
