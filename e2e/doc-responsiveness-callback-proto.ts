@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
+import type { FileHandle } from 'node:fs/promises';
 import { finished } from 'node:stream/promises';
 import { createGunzip } from 'node:zlib';
 
@@ -98,4 +99,47 @@ export async function readDocCallbackProto(
     source.destroy();
     await Promise.all(settled);
   }
+}
+
+/** Own and close the working file while preserving validation's first failure. */
+export async function materializeDocCallbackProto(
+  path: string,
+  output: FileHandle,
+  expected: DocCallbackProtoIdentity,
+  signal: AbortSignal,
+) {
+  const result = {
+    framing: undefined as Awaited<ReturnType<typeof validateDocCallbackProto>> | undefined,
+    failed: false,
+    failure: undefined as unknown,
+    closeFailure: undefined as unknown,
+  };
+  const source = createReadStream(path, { signal });
+  const input = source.pipe(createGunzip());
+  const settled = [source, input].map((stream) => finished(stream).catch(() => {}));
+  source.once('error', (error) => input.destroy(error));
+  try {
+    async function* retained() {
+      for await (const chunk of input) {
+        await output.writeFile(chunk);
+        yield chunk;
+      }
+    }
+    result.framing = await validateDocCallbackProto(retained(), expected, signal);
+  } catch (error) {
+    result.failed = true;
+    result.failure = error;
+  } finally {
+    input.destroy();
+    source.destroy();
+    await Promise.all(settled);
+    try {
+      await output.close();
+    } catch (error) {
+      result.closeFailure = error;
+      if (!result.failed) result.failure = error;
+      result.failed = true;
+    }
+  }
+  return result;
 }

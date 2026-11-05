@@ -1,13 +1,12 @@
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { createReadStream } from 'node:fs';
 import { mkdtemp, open, rm, writeFile } from 'node:fs/promises';
 import { basename, dirname, join } from 'node:path';
 import { Transform } from 'node:stream';
-import { finished, pipeline } from 'node:stream/promises';
-import { createGunzip, createGzip } from 'node:zlib';
+import { pipeline } from 'node:stream/promises';
+import { createGzip } from 'node:zlib';
 import { verifyDocTraceProcessor } from '../scripts/ci/doc-trace-processor.ts';
-import { validateDocCallbackProto } from './doc-responsiveness-callback-proto.ts';
+import { materializeDocCallbackProto } from './doc-responsiveness-callback-proto.ts';
 import type { DocCallbackProtoIdentity } from './doc-responsiveness-callback-proto.ts';
 import { DOC_CALLBACK_TRACE_STORAGE } from './doc-responsiveness-callback-trace.ts';
 
@@ -33,6 +32,7 @@ export async function runDocTraceProcessor(
     elapsedMs: 0,
     childClosed: false,
     outputRemoved: false,
+    outputCloseFailure: null as string | null,
   };
   let failure: unknown;
   let failed = false;
@@ -52,6 +52,8 @@ export async function runDocTraceProcessor(
       receipt.code = code;
       receipt.signal = signal;
       receipt.childClosed = true;
+      if (code !== 0 || signal !== null)
+        remember(new Error(`Trace converter exit ${code}, signal ${signal}.`));
       resolve();
     });
   });
@@ -114,12 +116,11 @@ export async function runDocTraceProcessor(
     try {
       await output?.close();
     } catch (error) {
+      receipt.outputCloseFailure = String(error);
       remember(error);
     }
     receipt.elapsedMs = performance.now() - started;
   }
-  if (receipt.code !== 0 || receipt.signal !== null)
-    remember(new Error(`Trace converter exit ${receipt.code}, signal ${receipt.signal}.`));
   if (options.signal.aborted) remember(options.signal.reason);
   if (failed && output && options.output) {
     try {
@@ -171,24 +172,16 @@ export async function convertDocCallbackTrace(options: {
   try {
     options.phase('trace-proto-validate');
     const raw = await open(inputPath, 'wx');
-    const source = createReadStream(options.input, { signal: options.signal });
-    const decoded = source.pipe(createGunzip());
-    const settled = [source, decoded].map((stream) => finished(stream).catch(() => {}));
-    source.once('error', (error) => decoded.destroy(error));
-    try {
-      async function* retained() {
-        for await (const chunk of decoded) {
-          await raw.writeFile(chunk);
-          yield chunk;
-        }
-      }
-      record.framing = await validateDocCallbackProto(retained(), options.identity, options.signal);
-    } finally {
-      decoded.destroy();
-      source.destroy();
-      await Promise.all(settled);
-      await raw.close();
-    }
+    const materialized = await materializeDocCallbackProto(
+      options.input,
+      raw,
+      options.identity,
+      options.signal,
+    );
+    record.framing = materialized.framing;
+    if (materialized.closeFailure !== undefined)
+      record.inputCloseFailure = String(materialized.closeFailure);
+    if (materialized.failed) throw materialized.failure;
     options.phase('trace-convert');
     const converted = await runDocTraceProcessor(options.binary, ['convert', 'json', inputPath], {
       signal: options.signal,

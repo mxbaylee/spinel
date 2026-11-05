@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, open, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import { gzipSync } from 'node:zlib';
 import {
   readDocCallbackProto,
+  materializeDocCallbackProto,
   validateDocCallbackProto,
 } from '../../e2e/doc-responsiveness-callback-proto.ts';
 
@@ -135,3 +136,39 @@ test('gzip EOF, corruption and missing files remain failures before protobuf acc
   await assert.rejects(readDocCallbackProto(path, identity(packet)), /incorrect data check/i);
   await assert.rejects(readDocCallbackProto(join(dir, 'missing.gz'), identity(packet)), /ENOENT/);
 });
+
+for (const scenario of ['validation-and-close', 'write-and-close', 'close-only'] as const)
+  test(`working input ${scenario} preserves its first failure and records close failure`, async (t) => {
+    const dir = await mkdtemp(join(tmpdir(), 'spinel-proto-close-'));
+    t.after(() => rm(dir, { recursive: true, force: true }));
+    const input = join(dir, 'input.gz');
+    const bytes =
+      scenario === 'validation-and-close' ? packet.subarray(0, packet.length - 1) : packet;
+    await writeFile(input, gzipSync(bytes));
+    const output = await open(join(dir, 'working.pftrace'), 'wx');
+    const originalClose = output.close.bind(output);
+    const closeFailure = new Error('secondary file-close failure');
+    t.mock.method(output, 'close', async () => {
+      await originalClose();
+      throw closeFailure;
+    });
+    const writeFailure = new Error('original write failure');
+    if (scenario === 'write-and-close')
+      t.mock.method(output, 'writeFile', async () => {
+        throw writeFailure;
+      });
+    const result = await materializeDocCallbackProto(
+      input,
+      output,
+      identity(packet),
+      new AbortController().signal,
+    );
+    assert.equal(result.failed, true);
+    assert.equal(result.closeFailure, closeFailure);
+    assert.equal(output.fd, -1);
+    if (scenario === 'validation-and-close') {
+      assert.match(String(result.failure), /Truncated/);
+      assert.notEqual(result.failure, closeFailure);
+    } else
+      assert.equal(result.failure, scenario === 'write-and-close' ? writeFailure : closeFailure);
+  });

@@ -203,10 +203,12 @@ export async function loadDocCallbackEvidence(
     const [platform, arch] = String(conversion.authority?.platform).split('-');
     if (
       !isDeepStrictEqual(conversion.authority, docTraceProcessorAuthority(platform, arch)) ||
+      !isDeepStrictEqual(conversion.authority, manifest.instrumentation?.converterAuthority) ||
       conversion.passed !== true ||
       conversion.temporaryRemoved !== true ||
       Object.hasOwn(conversion, 'failure') ||
       Object.hasOwn(conversion, 'cleanupFailure') ||
+      Object.hasOwn(conversion, 'inputCloseFailure') ||
       !isDeepStrictEqual(conversion.input, manifest.trace.transport) ||
       !isDeepStrictEqual(conversion.framing, framing) ||
       !isDeepStrictEqual(conversion.output, manifest.convertedTrace)
@@ -227,6 +229,7 @@ export async function loadDocCallbackEvidence(
         command.signal !== null ||
         command.childClosed !== true ||
         command.outputRemoved !== false ||
+        command.outputCloseFailure !== null ||
         command.diagnosticsTruncated !== false ||
         typeof command.stderr !== 'string' ||
         Buffer.byteLength(command.stderr) > 256 * 1024 ||
@@ -405,6 +408,12 @@ export function compareDocCallbackEvidence(
     check(
       isDeepStrictEqual(value.instrumentation?.storage, DOC_CALLBACK_TRACE_STORAGE),
       `${label}: registered local trace storage changed.`,
+    );
+    check(
+      validHash(
+        (value.instrumentation?.converterAuthority as { sha256?: unknown } | undefined)?.sha256,
+      ),
+      `${label}: converter authority is missing from the paired instrumentation.`,
     );
     for (const [key, expected] of Object.entries(DOC_CALLBACK_TRACE_SETTINGS))
       check(

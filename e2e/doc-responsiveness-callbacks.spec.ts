@@ -120,7 +120,7 @@ for (const preset of ['desktop', 'mobile'] as const)
     const running = (async () => {
       const converter = process.env.SPINEL_TRACE_PROCESSOR;
       if (!converter) throw new Error('Missing explicitly prepared callback trace converter.');
-      await verifyDocTraceProcessor(converter);
+      const converterAuthority = await verifyDocTraceProcessor(converter);
       const mobile = preset === 'mobile';
       const f = await fixture(browser, baseURL!, info, mobile, controller.signal);
       let detachPromise: Promise<void> | undefined;
@@ -202,6 +202,7 @@ for (const preset of ['desktop', 'mobile'] as const)
             input: 'keyboard.type, zero requested delay; Enter between all sixteen paragraphs',
           },
           instrumentation: {
+            converterAuthority,
             categories,
             ...DOC_CALLBACK_TRACE_SETTINGS,
             storage: DOC_CALLBACK_TRACE_STORAGE,

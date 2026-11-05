@@ -107,6 +107,7 @@ function conversionRecord(output = convertedTrace) {
     elapsedMs: 1,
     childClosed: true,
     outputRemoved: false,
+    outputCloseFailure: null,
   };
   return {
     authority: docTraceProcessorAuthority('linux', 'x64'),
@@ -187,6 +188,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
       input: 'original native keyboard workload',
     },
     instrumentation: {
+      converterAuthority: docTraceProcessorAuthority('linux', 'x64'),
       categories,
       traceConfig: {
         recordMode: 'recordUntilFull',
@@ -794,6 +796,12 @@ test('missing or modified conversion authority, statistics and cleanup cannot bo
     (record: ReturnType<typeof conversionRecord>) => {
       record.conversion.diagnosticsTruncated = true;
     },
+    (record: ReturnType<typeof conversionRecord>) => {
+      Object.assign(record, { inputCloseFailure: 'late close failed' });
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      Object.assign(record.conversion, { outputCloseFailure: 'late output close failed' });
+    },
   ]) {
     const manifest = await retain(directory);
     const record = conversionRecord(structuredClone(manifest.convertedTrace));
@@ -827,5 +835,32 @@ test('complete-looking raw protobuf truncation cannot be hidden by updating its 
   assert.equal(
     compareDocCallbackEvidence('desktop', null, loaded, candidateSource).accepted,
     false,
+  );
+});
+
+test('individually supported converter artifacts still must match across the pair', async (t) => {
+  const directory = await temporary(t),
+    manifest = await retain(directory);
+  const record = conversionRecord();
+  record.authority = docTraceProcessorAuthority('darwin', 'arm64');
+  const bytes = Buffer.from(JSON.stringify(record));
+  manifest.conversionReceipt = receiptArtifact(bytes);
+  await writeFile(join(directory, manifest.conversionReceipt.file), bytes);
+  // A valid alternative binary cannot silently replace the declared instrument.
+  await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+  assert.match((await loadDocCallbackEvidence(directory)).failures.join('\n'), /authority/);
+  manifest.instrumentation.converterAuthority = record.authority;
+  await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+  const candidate = await loadDocCallbackEvidence(directory);
+  assert.deepEqual(candidate.failures, []);
+  const baseline = evidence('baselineObservation');
+  assert.match(
+    compareDocCallbackEvidence('desktop', baseline, candidate, candidateSource).failures.join('\n'),
+    /Paired instrumentation differs/,
+  );
+  baseline.manifest.instrumentation.converterAuthority = record.authority;
+  assert.equal(
+    compareDocCallbackEvidence('desktop', baseline, candidate, candidateSource).accepted,
+    true,
   );
 });

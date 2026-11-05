@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, open, readFile, rm, writeFile } from 'node:fs/promises';
+import type { FileHandle } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { Writable } from 'node:stream';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { gunzipSync } from 'node:zlib';
@@ -53,6 +55,43 @@ test('nonzero conversion removes partial output and retains the failure diagnost
   assert.equal(result.receipt.code, 7);
   assert.equal(result.receipt.childClosed, true);
   assert.equal(result.receipt.stderr, 'original converter failure\n');
+  assert.match(String(result.failure), /exit 7/);
+  assert.equal(result.receipt.outputRemoved, true);
+  assert.equal(existsSync(output), false);
+});
+
+test('a failed child stays the first cause when its later output-file close also fails', async (t) => {
+  const dir = await directory(t),
+    probe = await open(join(dir, 'prototype'), 'wx');
+  const prototype = Object.getPrototypeOf(probe);
+  await probe.close();
+  const closeFailure = new Error('later output file-close failure');
+  t.mock.method(prototype, 'createWriteStream', function (this: FileHandle) {
+    const originalClose = this.close.bind(this);
+    const write = this.writeFile.bind(this);
+    t.mock.method(this, 'close', async () => {
+      await originalClose();
+      throw closeFailure;
+    });
+    // Real writes, with descriptor closure deferred to the runner's final close.
+    return new Writable({
+      write(chunk, _encoding, callback) {
+        void write(chunk).then(
+          () => callback(),
+          (error) => callback(error),
+        );
+      },
+    });
+  });
+  const output = join(dir, 'partial.gz');
+  const result = await runDocTraceProcessor(process.execPath, [fixture, 'failed'], {
+    signal: new AbortController().signal,
+    output,
+  });
+  assert.equal(result.failed, true);
+  assert.match(String(result.failure), /exit 7/);
+  assert.equal(result.receipt.outputCloseFailure, String(closeFailure));
+  assert.equal(result.receipt.childClosed, true);
   assert.equal(result.receipt.outputRemoved, true);
   assert.equal(existsSync(output), false);
 });
