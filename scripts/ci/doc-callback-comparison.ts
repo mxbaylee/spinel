@@ -13,6 +13,12 @@ import {
   readDocCallbackTrace,
 } from '../../e2e/doc-responsiveness-callback-trace.ts';
 import type { DocCallbackTraceSummary } from '../../e2e/doc-responsiveness-callback-trace.ts';
+import { readDocCallbackProto } from '../../e2e/doc-responsiveness-callback-proto.ts';
+import {
+  DOC_CALLBACK_CLEAN_STATS,
+  DOC_CALLBACK_STATS_SQL,
+} from '../../e2e/doc-responsiveness-callback-converter.ts';
+import { docTraceProcessorAuthority } from './doc-trace-processor.ts';
 
 type Preset = 'desktop' | 'mobile';
 type Analysis = ReturnType<typeof analyzeDocCallbackLifetimes>;
@@ -31,6 +37,9 @@ const harnessPaths = [
   'e2e/doc-responsiveness-callbacks.spec.ts',
   'e2e/doc-responsiveness-callback-sources.ts',
   'e2e/doc-responsiveness-callback-trace.ts',
+  'e2e/doc-responsiveness-callback-proto.ts',
+  'e2e/doc-responsiveness-callback-converter.ts',
+  'scripts/ci/doc-trace-processor.ts',
   'e2e/doc-responsiveness-callback-progress.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness.ts',
@@ -75,6 +84,11 @@ export interface DocCallbackManifest {
     transport: { bytes: number; sha256: string };
   };
   traceRead?: DocCallbackTraceSummary;
+  convertedTrace: DocCallbackArtifactFile & {
+    storage: typeof DOC_CALLBACK_TRACE_STORAGE;
+    decoded: { bytes: number; sha256: string };
+  };
+  conversionReceipt: DocCallbackArtifactFile;
   attribution: {
     callsites: DocCallbackCallsite[];
     unmapped: unknown[];
@@ -153,7 +167,12 @@ export async function loadDocCallbackEvidence(
       )
     )
       failures.push('Terminal callback progress does not confirm successful owned cleanup.');
-    const files = [manifest.trace, ...(manifest.attribution?.artifacts ?? [])];
+    const files = [
+      manifest.trace,
+      manifest.convertedTrace,
+      manifest.conversionReceipt,
+      ...(manifest.attribution?.artifacts ?? []),
+    ];
     if (!manifest.attribution?.artifacts?.length)
       throw new Error('Retained source attribution artifacts are missing.');
     const kinds = new Set(manifest.attribution.artifacts.map((artifact) => artifact.kind));
@@ -174,15 +193,64 @@ export async function loadDocCallbackEvidence(
       );
     if (manifest.trace.completion.streamCompression !== 'none')
       throw new Error('Retained trace transport is not uncompressed.');
-    const compression = manifest.trace.storage.compression;
-    const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.trace.file), {
-      compression,
+    const framing = await readDocCallbackProto(
+      resolve(dirname(path), manifest.trace.file),
+      manifest.trace.transport,
+    );
+    const conversion = JSON.parse(
+      await readFile(resolve(dirname(path), manifest.conversionReceipt.file), 'utf8'),
+    );
+    const [platform, arch] = String(conversion.authority?.platform).split('-');
+    if (
+      !isDeepStrictEqual(conversion.authority, docTraceProcessorAuthority(platform, arch)) ||
+      conversion.passed !== true ||
+      conversion.temporaryRemoved !== true ||
+      Object.hasOwn(conversion, 'failure') ||
+      Object.hasOwn(conversion, 'cleanupFailure') ||
+      !isDeepStrictEqual(conversion.input, manifest.trace.transport) ||
+      !isDeepStrictEqual(conversion.framing, framing) ||
+      !isDeepStrictEqual(conversion.output, manifest.convertedTrace)
+    )
+      throw new Error(
+        'Converter authority, input/output binding, framing or cleanup is incomplete.',
+      );
+    const workingInput = conversion.conversion?.args?.[2];
+    if (typeof workingInput !== 'string' || !workingInput.endsWith('/input.pftrace'))
+      throw new Error('Converter working input identity is missing.');
+    for (const [command, args] of [
+      [conversion.conversion, ['convert', 'json', workingInput]],
+      [conversion.statistics, ['query', '--format', 'csv', workingInput, DOC_CALLBACK_STATS_SQL]],
+    ] as const) {
+      if (
+        !command ||
+        command.code !== 0 ||
+        command.signal !== null ||
+        command.childClosed !== true ||
+        command.outputRemoved !== false ||
+        command.diagnosticsTruncated !== false ||
+        typeof command.stderr !== 'string' ||
+        Buffer.byteLength(command.stderr) > 256 * 1024 ||
+        !Number.isFinite(command.elapsedMs) ||
+        command.elapsedMs < 0 ||
+        !isDeepStrictEqual(command.args, args)
+      )
+        throw new Error('Converter command did not complete with bound arguments and diagnostics.');
+    }
+    if (
+      conversion.statistics.stdout !== DOC_CALLBACK_CLEAN_STATS ||
+      conversion.conversion.stdout !== ''
+    )
+      throw new Error('Retained converter statistics are incomplete or report errors/data loss.');
+    if (!isDeepStrictEqual(manifest.convertedTrace.storage, DOC_CALLBACK_TRACE_STORAGE))
+      throw new Error('Derived trace storage differs from the registered lossless method.');
+    const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.convertedTrace.file), {
+      compression: manifest.convertedTrace.storage.compression,
     });
     if (
-      raw.summary.uncompressedBytes !== manifest.trace.transport?.bytes ||
-      raw.summary.uncompressedSha256 !== manifest.trace.transport?.sha256
+      raw.summary.uncompressedBytes !== manifest.convertedTrace.decoded?.bytes ||
+      raw.summary.uncompressedSha256 !== manifest.convertedTrace.decoded?.sha256
     )
-      failures.push('Retained decoded bytes differ from the received transport hash/length.');
+      failures.push('Retained derived bytes differ from the converter output hash/length.');
     if (manifest.traceRead && !isDeepStrictEqual(raw.summary, manifest.traceRead))
       failures.push('Stored trace read summary differs from retained raw evidence.');
     analysis = analyzeDocCallbackLifetimes({
@@ -224,7 +292,7 @@ export function compareDocCallbackEvidence(
     failures.push(...evidence.failures.map((failure) => `${label}: ${failure}`));
     const value = evidence.manifest;
     check(
-      value.schema === 1 && value.role === role && value.preset === preset && value.attempt === 0,
+      value.schema === 2 && value.role === role && value.preset === preset && value.attempt === 0,
       `${label}: wrong schema, role, preset, or first-attempt identity.`,
     );
     check(
@@ -248,13 +316,23 @@ export function compareDocCallbackEvidence(
       `${label}: trace completion reports missing/lost data.`,
     );
     check(
-      value.trace?.completion?.traceFormat === 'json' &&
+      value.trace?.completion?.traceFormat === 'proto' &&
         value.trace.completion.streamCompression === 'none' &&
         isDeepStrictEqual(value.trace.storage, DOC_CALLBACK_TRACE_STORAGE) &&
         Number.isSafeInteger(value.trace.transport?.bytes) &&
         value.trace.transport.bytes > 0 &&
         validHash(value.trace.transport?.sha256),
       `${label}: trace completion/storage/transport provenance is incomplete or changed.`,
+    );
+    check(
+      validHash(value.conversionReceipt?.sha256) &&
+        value.conversionReceipt.bytes > 0 &&
+        validHash(value.convertedTrace?.sha256) &&
+        value.convertedTrace.bytes > 0 &&
+        validHash(value.convertedTrace?.decoded?.sha256) &&
+        value.convertedTrace.decoded.bytes > 0 &&
+        isDeepStrictEqual(value.convertedTrace.storage, DOC_CALLBACK_TRACE_STORAGE),
+      `${label}: derived trace or converter receipt is missing.`,
     );
     // The mapper also records arbitrary FunctionCall positions. Only unknown
     // measured timer ownership blocks completeness in the recomputed analyzer;

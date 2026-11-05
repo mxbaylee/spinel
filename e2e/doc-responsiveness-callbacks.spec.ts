@@ -23,6 +23,8 @@ import {
 } from './doc-responsiveness-callback-progress.ts';
 import type { CallbackObservation } from './doc-responsiveness-callback-progress.ts';
 import { observeInput, readDocResponsiveness } from './doc-responsiveness.ts';
+import { convertDocCallbackTrace } from './doc-responsiveness-callback-converter.ts';
+import { verifyDocTraceProcessor } from '../scripts/ci/doc-trace-processor.ts';
 
 // Separate traced observations preserve all existing unprofiled SPN-108 gates.
 const paragraphs = Array.from(
@@ -40,6 +42,9 @@ const harnessPaths = [
   'e2e/doc-responsiveness-callbacks.spec.ts',
   'e2e/doc-responsiveness-callback-sources.ts',
   'e2e/doc-responsiveness-callback-trace.ts',
+  'e2e/doc-responsiveness-callback-proto.ts',
+  'e2e/doc-responsiveness-callback-converter.ts',
+  'scripts/ci/doc-trace-processor.ts',
   'e2e/doc-responsiveness-callback-progress.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness.ts',
@@ -113,6 +118,9 @@ for (const preset of ['desktop', 'mobile'] as const)
     };
     observations.set(info, observation);
     const running = (async () => {
+      const converter = process.env.SPINEL_TRACE_PROCESSOR;
+      if (!converter) throw new Error('Missing explicitly prepared callback trace converter.');
+      await verifyDocTraceProcessor(converter);
       const mobile = preset === 'mobile';
       const f = await fixture(browser, baseURL!, info, mobile, controller.signal);
       let detachPromise: Promise<void> | undefined;
@@ -164,7 +172,7 @@ for (const preset of ['desktop', 'mobile'] as const)
         let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
         const output = info.outputPath('spn113-evidence.json');
         const evidence: Record<string, unknown> = {
-          schema: 1,
+          schema: 2,
           cleanup: { sessionDetached: false, fixtureClosed: false },
           role: baseline ? 'baselineObservation' : 'candidate',
           preset,
@@ -452,25 +460,42 @@ for (const preset of ['desktop', 'mobile'] as const)
               tracing = false;
               const trace = await retainDocCallbackTrace(
                 activeCdp,
-                info.outputPath('spn113-trace.json.gz'),
+                info.outputPath('spn144-trace.pftrace.gz'),
                 progress,
                 { signal: controller.signal, interrupt: detachSession },
               );
               evidence.trace = trace;
-              expect(trace.completion.traceFormat, 'Registered trace format').toBe('json');
+              expect(trace.completion.traceFormat, 'Registered trace format').toBe('proto');
               expect(trace.completion.streamCompression, 'Registered transport compression').toBe(
                 'none',
               );
               expect(trace.storage, 'Registered lossless local storage').toEqual(
                 DOC_CALLBACK_TRACE_STORAGE,
               );
+              const receiptPath = info.outputPath('spn144-conversion.json');
+              const converted = await convertDocCallbackTrace({
+                binary: converter,
+                input: info.outputPath(trace.file),
+                identity: trace.transport,
+                output: info.outputPath('spn144-derived.json.gz'),
+                receipt: receiptPath,
+                signal: controller.signal,
+                phase,
+              });
+              const receiptBytes = await readFile(receiptPath);
+              evidence.convertedTrace = converted.output;
+              evidence.conversionReceipt = {
+                file: basename(receiptPath),
+                bytes: receiptBytes.length,
+                sha256: hash(receiptBytes),
+              };
               progress.phase('trace-parse');
-              const raw = await readDocCallbackTrace(info.outputPath(trace.file), {
+              const raw = await readDocCallbackTrace(info.outputPath(converted.output.file), {
                 compression: 'gzip',
                 signal: controller.signal,
               });
-              expect(raw.summary.uncompressedBytes).toBe(trace.transport.bytes);
-              expect(raw.summary.uncompressedSha256).toBe(trace.transport.sha256);
+              expect(raw.summary.uncompressedBytes).toBe(converted.output.decoded.bytes);
+              expect(raw.summary.uncompressedSha256).toBe(converted.output.decoded.sha256);
               evidence.traceRead = raw.summary;
               progress.phase('trace-attribution');
               const attribution = await attributeDocCallbackSources({
