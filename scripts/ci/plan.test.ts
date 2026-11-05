@@ -112,6 +112,9 @@ test('dependency closure and unknown paths fail closed, including old rename/del
     'vite.config.ts',
     'e2e/doc-responsiveness.spec.ts',
     'e2e/doc-responsiveness-callback-progress.ts',
+    'e2e/doc-responsiveness-callback-proto.ts',
+    'e2e/doc-responsiveness-callback-converter.ts',
+    'scripts/ci/doc-trace-processor.ts',
     'scripts/dependencies/patch-univer-docs.ts',
   ]) {
     const plan = coveragePlan('pull_request', pr(), [path, 'docs/deleted.md']);
