@@ -1,0 +1,498 @@
+{
+  "complete": true,
+  "phase": "settled",
+  "source": "a4eb19e4c5b95ba589042fe181cbcec2aa848990",
+  "order": [
+    "npm",
+    "direct"
+  ],
+  "criterion": "Same selected real CLI/test/worker/result/cleanup, wrapper ancestors removed, >=65536KiB lower concurrently owned RSS at first ready barrier",
+  "samples": [
+    {
+      "mode": "npm",
+      "complete": true,
+      "phase": "settled",
+      "peakKiB": 575200,
+      "ready": {
+        "pid": 24216,
+        "parent": 24040,
+        "node": "v26.12.1",
+        "execPath": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node",
+        "title": "same launcher barrier",
+        "retry": 0,
+        "workerIndex": 0,
+        "program": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/program.js",
+        "modules": [
+          "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/browsers.json",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/bootstrap.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/coreBundle.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/utilsBundle.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/package.json",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/common/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/errorContext.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/globals.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/matchers/expect.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/mcp/test/browserBackend.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/package.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/util.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/package.json",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/test.js"
+        ],
+        "npmEnvironmentKeys": [
+          "INIT_CWD",
+          "PATH",
+          "npm_command",
+          "npm_config_audit",
+          "npm_config_cache",
+          "npm_config_fund",
+          "npm_config_global_prefix",
+          "npm_config_globalconfig",
+          "npm_config_init_module",
+          "npm_config_local_prefix",
+          "npm_config_node_gyp",
+          "npm_config_noproxy",
+          "npm_config_npm_version",
+          "npm_config_offline",
+          "npm_config_prefix",
+          "npm_config_user_agent",
+          "npm_config_userconfig",
+          "npm_config_yes",
+          "npm_execpath",
+          "npm_lifecycle_event",
+          "npm_lifecycle_script",
+          "npm_node_execpath",
+          "npm_package_json",
+          "npm_package_name",
+          "npm_package_version"
+        ],
+        "nodeOptions": null
+      },
+      "barrier": {
+        "elapsedMs": 1672.076,
+        "rssKiB": 570608,
+        "live": [
+          {
+            "pid": 23918,
+            "parent": 23873,
+            "group": 23873,
+            "rssKiB": 104704,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "node /tmp/spn146-launcher-probe/run.ts"
+          },
+          {
+            "pid": 23921,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 105200,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "npm exec playwright test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0        "
+          },
+          {
+            "pid": 24040,
+            "parent": 23921,
+            "group": 23873,
+            "rssKiB": 199952,
+            "started": "Thu Nov  5 09:27:22 2026",
+            "command": "node /private/tmp/spn146-launcher-probe/run/fixture/node_modules/.bin/playwright test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0"
+          },
+          {
+            "pid": 24216,
+            "parent": 24040,
+            "group": 23873,
+            "rssKiB": 159200,
+            "started": "Thu Nov  5 09:27:23 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          },
+          {
+            "pid": 24297,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 1552,
+            "started": "Thu Nov  5 09:27:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ]
+      },
+      "cleanup": true,
+      "command": {
+        "executable": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node",
+        "args": [
+          "/Users/mxbaylee/.nvm/versions/node/v26.12.1/lib/node_modules/npm/bin/npx-cli.js",
+          "--offline",
+          "--yes=false",
+          "playwright",
+          "test",
+          "--config",
+          "/tmp/spn146-launcher-probe/run/fixture/playwright.config.ts",
+          "--retries=0"
+        ]
+      },
+      "last": {
+        "elapsedMs": 1748.455916,
+        "rssKiB": 107088,
+        "live": [
+          {
+            "pid": 23918,
+            "parent": 23873,
+            "group": 23873,
+            "rssKiB": 105536,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "node /tmp/spn146-launcher-probe/run.ts"
+          },
+          {
+            "pid": 24309,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 1552,
+            "started": "Thu Nov  5 09:27:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ]
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "settled": {
+        "title": "same launcher barrier",
+        "status": "passed",
+        "retry": 0,
+        "workerIndex": 0
+      },
+      "reportStats": {
+        "startTime": "2026-11-05T17:27:23.174Z",
+        "duration": 437.26599999999996,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "final": {
+        "elapsedMs": 1798.967458,
+        "rssKiB": 107152,
+        "live": [
+          {
+            "pid": 23918,
+            "parent": 23873,
+            "group": 23873,
+            "rssKiB": 105600,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "node /tmp/spn146-launcher-probe/run.ts"
+          },
+          {
+            "pid": 24321,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 1552,
+            "started": "Thu Nov  5 09:27:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ]
+      },
+      "ancestors": [
+        {
+          "pid": 24216,
+          "parent": 24040,
+          "group": 23873,
+          "rssKiB": 159200,
+          "started": "Thu Nov  5 09:27:23 2026",
+          "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+        },
+        {
+          "pid": 24040,
+          "parent": 23921,
+          "group": 23873,
+          "rssKiB": 199952,
+          "started": "Thu Nov  5 09:27:22 2026",
+          "command": "node /private/tmp/spn146-launcher-probe/run/fixture/node_modules/.bin/playwright test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0"
+        },
+        {
+          "pid": 23921,
+          "parent": 23918,
+          "group": 23873,
+          "rssKiB": 105200,
+          "started": "Thu Nov  5 09:27:21 2026",
+          "command": "npm exec playwright test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0        "
+        }
+      ]
+    },
+    {
+      "mode": "direct",
+      "complete": true,
+      "phase": "settled",
+      "peakKiB": 453392,
+      "ready": {
+        "pid": 24423,
+        "parent": 24322,
+        "node": "v26.12.1",
+        "execPath": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node",
+        "title": "same launcher barrier",
+        "retry": 0,
+        "workerIndex": 0,
+        "program": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/program.js",
+        "modules": [
+          "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/browsers.json",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/bootstrap.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/coreBundle.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/utilsBundle.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/package.json",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/common/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/errorContext.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/globals.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/index.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/matchers/expect.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/mcp/test/browserBackend.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/package.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/util.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/package.json",
+          "/Users/mxbaylee/projects/spinel/node_modules/playwright/test.js"
+        ],
+        "npmEnvironmentKeys": [
+          "PATH",
+          "npm_config_audit",
+          "npm_config_fund",
+          "npm_config_offline",
+          "npm_config_yes"
+        ],
+        "nodeOptions": null
+      },
+      "barrier": {
+        "elapsedMs": 824.1832079999999,
+        "rssKiB": 449152,
+        "live": [
+          {
+            "pid": 23918,
+            "parent": 23873,
+            "group": 23873,
+            "rssKiB": 108752,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "node /tmp/spn146-launcher-probe/run.ts"
+          },
+          {
+            "pid": 24322,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 179408,
+            "started": "Thu Nov  5 09:27:23 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/@playwright/test/cli.js test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0"
+          },
+          {
+            "pid": 24423,
+            "parent": 24322,
+            "group": 23873,
+            "rssKiB": 159440,
+            "started": "Thu Nov  5 09:27:24 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          },
+          {
+            "pid": 24512,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 1552,
+            "started": "Thu Nov  5 09:27:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ]
+      },
+      "cleanup": true,
+      "command": {
+        "executable": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node",
+        "args": [
+          "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/cli.js",
+          "test",
+          "--config",
+          "/tmp/spn146-launcher-probe/run/fixture/playwright.config.ts",
+          "--retries=0"
+        ]
+      },
+      "last": {
+        "elapsedMs": 901.5506660000001,
+        "rssKiB": 110960,
+        "live": [
+          {
+            "pid": 23918,
+            "parent": 23873,
+            "group": 23873,
+            "rssKiB": 109408,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "node /tmp/spn146-launcher-probe/run.ts"
+          },
+          {
+            "pid": 24539,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 1552,
+            "started": "Thu Nov  5 09:27:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ]
+      },
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "settled": {
+        "title": "same launcher barrier",
+        "status": "passed",
+        "retry": 0,
+        "workerIndex": 0
+      },
+      "reportStats": {
+        "startTime": "2026-11-05T17:27:24.131Z",
+        "duration": 441.57800000000003,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "final": {
+        "elapsedMs": 951.283375,
+        "rssKiB": 111888,
+        "live": [
+          {
+            "pid": 23918,
+            "parent": 23873,
+            "group": 23873,
+            "rssKiB": 110336,
+            "started": "Thu Nov  5 09:27:21 2026",
+            "command": "node /tmp/spn146-launcher-probe/run.ts"
+          },
+          {
+            "pid": 24551,
+            "parent": 23918,
+            "group": 23873,
+            "rssKiB": 1552,
+            "started": "Thu Nov  5 09:27:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ]
+      },
+      "ancestors": [
+        {
+          "pid": 24423,
+          "parent": 24322,
+          "group": 23873,
+          "rssKiB": 159440,
+          "started": "Thu Nov  5 09:27:24 2026",
+          "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+        },
+        {
+          "pid": 24322,
+          "parent": 23918,
+          "group": 23873,
+          "rssKiB": 179408,
+          "started": "Thu Nov  5 09:27:23 2026",
+          "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/@playwright/test/cli.js test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0"
+        }
+      ]
+    }
+  ],
+  "secondaryErrors": [],
+  "identities": {
+    "node": "v26.12.1",
+    "executable": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node",
+    "npm": "11.20.0",
+    "npmEntry": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/lib/node_modules/npm/bin/npx-cli.js",
+    "npmEntrySha256": "237adf8f3747cad8b9b62fcfd0d9c8d509a64e550337707f55100afcb79e8900",
+    "package": "1.64.1",
+    "cli": "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/cli.js",
+    "cliSha256": "79e23e6a249176295b8490567daa7717448a75866d6ea6f6b296ff3d23305c69",
+    "program": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/program.js",
+    "programSha256": "2b30a16dad83631a0783f7863ac1ce0ff78bcd27869f8a1059ac2595d21580b0",
+    "helperSha256": "b65a8ad7aae2a77b7bab9c751b0e4b3e9498cb5ce5f478eacf32a6d7104724e1",
+    "runnerSha256": "d97175b753efd12e3a5e7cce937e2190f025beae768bcb62d45ddddffe16dcc2"
+  },
+  "fixtureHashes": {
+    "package.json": "183c2c76cfd690d1b7033080164f7f72d47a090547858aa5d79475d0054326b7",
+    "playwright.config.ts": "76f0f2ac8829ec5cf4fe91b5d4bd3417752640e375c2a6ab60869cfd19dfb714",
+    "barrier.spec.ts": "ee76ea3415d0bb384e8f5afa44f3b1c9d6479a666bbfcf62a3cc0e6925ca0b6c"
+  },
+  "dependencyClosure": [
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/index.js",
+      "sha256": "499da5dd8585212108a1443793de31ebc061ca7db02343f107955f261180cdfc"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/browsers.json",
+      "sha256": "2cfd419f71ac6475d81e1301fa86c34cf2a2a6bae2a0da4b5a2b18310216b6bf"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/index.js",
+      "sha256": "a58fb2cec4293e7dcf73c58a179898a4f3986666451a19da4e731fa3af63265b"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/bootstrap.js",
+      "sha256": "39dd64cc9472275d1b25c170fefa2a98353bcca598b741788faac2e6e15fc737"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/coreBundle.js",
+      "sha256": "829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/lib/utilsBundle.js",
+      "sha256": "75f1431ea7ee00b2b291a0a72d4fa1c07ae04d999f21a00cd03b8f454a5840fc"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright-core/package.json",
+      "sha256": "8aa1c9863fa8dea324e674254158cdc79440f4124ef2d84d38053013541cb7d6"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/index.js",
+      "sha256": "4e98f65f0a9d9bcab8cffc0c5cfdd87fd3f5b0be74fc494ff166a466b204cd44"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/common/index.js",
+      "sha256": "763942536de84a031a24c86dbfe8be1a971382ad1d66ffcef1201e77cd05d5ea"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/errorContext.js",
+      "sha256": "ffc1843cebb3e90e1674c07ee2607a4a63152eff609e5f9865bbb2f9eb02e9a1"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/globals.js",
+      "sha256": "f5922eb1fb6051900157492eb9c218e62d07378eed135bca4b2f173ed1184d1c"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/index.js",
+      "sha256": "90336f507074874af66f1d681d4fd7727f5946d1f37a3621d748caa3a8ae0485"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/matchers/expect.js",
+      "sha256": "0e5d49c2c2b2fb2a20f60726153cb0bd109d0124394029035f43497a82b05eed"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/mcp/test/browserBackend.js",
+      "sha256": "703f307d1c3e746291b625f886af3d3d28fc0a868b8b2a66173a75bd895ccddc"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/package.js",
+      "sha256": "544a18417ea51dd4c8a9f3dbc4e2b47e46c80f452e0cd23d55e9b3680bc6241e"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/util.js",
+      "sha256": "874c55495773da8c5a2ec46551c2265937bf08446231c09a8b5966e8bea2b1f7"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js",
+      "sha256": "b7ae55d578fb3a2a6bd4d9acc0abf93146ae1d9062330bbc0e3f82acbff751b8"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/package.json",
+      "sha256": "313d23ce667d93962d3a1ab4be80908cefe840e4d9e48f1cd5863b91f65e8e39"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel/node_modules/playwright/test.js",
+      "sha256": "b97fa53a6ab864f51c9c48b5e4647d0acae45ba2948c5d78e38bfeb56755d974"
+    }
+  ],
+  "reductionKiB": 121456
+}

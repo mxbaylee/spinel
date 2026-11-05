@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "typeRoots": [
+      "/Users/mxbaylee/projects/spinel/node_modules/@types"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "/tmp/spn146-launcher-probe/run.ts",
+    "/tmp/spn135-local-processes.ts"
+  ]
+}

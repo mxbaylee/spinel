@@ -1,0 +1,138 @@
+{
+  "config": {
+    "argv": [
+      "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node",
+      "/private/tmp/spn146-launcher-probe/run/fixture/node_modules/.bin/playwright",
+      "test",
+      "--config",
+      "/tmp/spn146-launcher-probe/run/fixture/playwright.config.ts",
+      "--retries=0"
+    ],
+    "configFile": "/tmp/spn146-launcher-probe/run/fixture/playwright.config.ts",
+    "rootDir": "/tmp/spn146-launcher-probe/run/fixture",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/spn146-launcher-probe/run/fixture/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/tmp/spn146-launcher-probe/run/fixture",
+        "testIgnore": [],
+        "testMatch": [
+          "barrier.spec.ts"
+        ],
+        "timeout": 6000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/tmp/spn146-launcher-probe/run/fixture/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/tmp/spn146-launcher-probe/run/fixture",
+        "snapshotDir": "/tmp/spn146-launcher-probe/run/fixture",
+        "testIgnore": [],
+        "testMatch": "barrier.spec.ts",
+        "timeout": 6000,
+        "use": {},
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "barrier.spec.ts",
+      "file": "barrier.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "same launcher barrier",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 6000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 35,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T17:27:23.535Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "1cb5388d70bdaf1b7742-c79aaccb7b59fb9d829a",
+          "file": "../../../../private/tmp/spn146-launcher-probe/run/fixture/barrier.spec.ts",
+          "line": 9,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-05T17:27:23.174Z",
+    "duration": 437.26599999999996,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

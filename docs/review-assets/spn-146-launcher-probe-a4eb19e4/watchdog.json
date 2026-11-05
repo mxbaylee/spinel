@@ -1,0 +1,254 @@
+{
+  "root": 23873,
+  "started": 1793899641703,
+  "elapsedMs": 3009,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93264,
+  "peakKiB": 647200,
+  "live": [
+    {
+      "pid": 23873,
+      "parent": 23836,
+      "group": 23873,
+      "rssKiB": 91712,
+      "started": "Thu Nov  5 09:27:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/watchdog.json node /tmp/spn146-launcher-probe/run.ts"
+    },
+    {
+      "pid": 24557,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 23873,
+      "parent": 23836,
+      "group": 23873,
+      "rssKiB": 91712,
+      "started": "Thu Nov  5 09:27:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/watchdog.json node /tmp/spn146-launcher-probe/run.ts"
+    },
+    {
+      "pid": 23892,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23918,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 108752,
+      "started": "Thu Nov  5 09:27:21 2026",
+      "command": "node /tmp/spn146-launcher-probe/run.ts"
+    },
+    {
+      "pid": 23921,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 105200,
+      "started": "Thu Nov  5 09:27:21 2026",
+      "command": "npm exec playwright test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0        "
+    },
+    {
+      "pid": 23945,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 23994,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 2544,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "(ps)"
+    },
+    {
+      "pid": 24000,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24040,
+      "parent": 23921,
+      "group": 23873,
+      "rssKiB": 199936,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "node /private/tmp/spn146-launcher-probe/run/fixture/node_modules/.bin/playwright test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0"
+    },
+    {
+      "pid": 24064,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24070,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 448,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24116,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 3136,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "(ps)"
+    },
+    {
+      "pid": 24122,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24171,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24216,
+      "parent": 24040,
+      "group": 23873,
+      "rssKiB": 145536,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+    },
+    {
+      "pid": 24222,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 2784,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "(ps)"
+    },
+    {
+      "pid": 24228,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24278,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24322,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 179408,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/@playwright/test/cli.js test --config /tmp/spn146-launcher-probe/run/fixture/playwright.config.ts --retries=0"
+    },
+    {
+      "pid": 24334,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 3072,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "(ps)"
+    },
+    {
+      "pid": 24340,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24390,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 1920,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24396,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24423,
+      "parent": 24322,
+      "group": 23873,
+      "rssKiB": 159456,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+    },
+    {
+      "pid": 24457,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 3088,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "(ps)"
+    },
+    {
+      "pid": 24463,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24512,
+      "parent": 23918,
+      "group": 23873,
+      "rssKiB": 2784,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "(ps)"
+    },
+    {
+      "pid": 24519,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24557,
+      "parent": 23873,
+      "group": 23873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:27:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,73 @@
+../../../../tmp/spn135-local-processes.ts(1,30): error TS2591: Cannot find name 'node:child_process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn135-local-processes.ts(8,29): error TS7006: Parameter 'line' implicitly has an 'any' type.
+../../../../tmp/spn135-local-processes.ts(29,69): error TS2503: Cannot find namespace 'NodeJS'.
+../../../../tmp/spn135-local-processes.ts(35,24): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn135-local-processes.ts(36,21): error TS2503: Cannot find namespace 'NodeJS'.
+../../../../tmp/spn146-launcher-probe/run.ts(1,20): error TS2591: Cannot find name 'node:assert/strict'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(2,37): error TS2591: Cannot find name 'node:child_process'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(3,28): error TS2591: Cannot find name 'node:crypto'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(4,71): error TS2591: Cannot find name 'node:fs/promises'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(5,31): error TS2591: Cannot find name 'node:module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(6,31): error TS2591: Cannot find name 'node:path'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(12,1): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(14,22): error TS2591: Cannot find name 'Buffer'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node` and then add 'node' to the types field in your tsconfig.
+../../../../tmp/spn146-launcher-probe/run.ts(19,1): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(27,26): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(30,15): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(31,19): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(32,28): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(33,31): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(33,60): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(33,94): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,176): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,218): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,283): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,334): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,379): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,449): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(33,464): error TS1470: The 'import.meta' meta-property is not allowed in files which will build into CommonJS output.
+../../../../tmp/spn146-launcher-probe/run.ts(33,476): error TS2339: Property 'filename' does not exist on type 'ImportMeta'.
+../../../../tmp/spn146-launcher-probe/run.ts(35,3): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(36,3): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(37,3): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(38,3): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(39,3): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(52,44): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(55,3): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(57,28): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(57,223): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(60,5): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(62,90): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(63,18): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(64,85): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(67,5): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(71,36): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(72,25): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(75,25): error TS7006: Parameter 'error' implicitly has an 'any' type.
+../../../../tmp/spn146-launcher-probe/run.ts(76,26): error TS7006: Parameter 'code' implicitly has an 'any' type.
+../../../../tmp/spn146-launcher-probe/run.ts(76,32): error TS7006: Parameter 'signal' implicitly has an 'any' type.
+../../../../tmp/spn146-launcher-probe/run.ts(78,30): error TS7006: Parameter 'data' implicitly has an 'any' type.
+../../../../tmp/spn146-launcher-probe/run.ts(79,30): error TS7006: Parameter 'data' implicitly has an 'any' type.
+../../../../tmp/spn146-launcher-probe/run.ts(81,48): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(95,39): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(98,13): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(99,13): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(100,43): error TS2503: Cannot find namespace 'NodeJS'.
+../../../../tmp/spn146-launcher-probe/run.ts(103,9): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(105,21): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(109,35): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(112,39): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(121,59): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(124,22): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(126,83): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(126,113): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(127,9): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(128,9): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(131,9): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(136,65): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(141,20): error TS2552: Cannot find name 'process'. Did you mean 'processes'?
+../../../../tmp/spn146-launcher-probe/run.ts(149,30): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(150,21): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(151,21): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+../../../../tmp/spn146-launcher-probe/run.ts(158,9): error TS1309: The current file is a CommonJS module and cannot use 'await' at the top level.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":193,"peakKiB":90496}

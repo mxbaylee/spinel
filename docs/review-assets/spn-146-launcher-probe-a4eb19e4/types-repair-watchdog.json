@@ -1,0 +1,54 @@
+{
+  "root": 22745,
+  "started": 1793899295425,
+  "elapsedMs": 206,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90208,
+  "peakKiB": 90208,
+  "live": [
+    {
+      "pid": 22745,
+      "parent": 22709,
+      "group": 22745,
+      "rssKiB": 88672,
+      "started": "Thu Nov  5 09:21:35 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/types-repair-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc --project /tmp/spn146-launcher-probe/tsconfig.json"
+    },
+    {
+      "pid": 22796,
+      "parent": 22745,
+      "group": 22745,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:21:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 22745,
+      "parent": 22709,
+      "group": 22745,
+      "rssKiB": 88672,
+      "started": "Thu Nov  5 09:21:35 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/types-repair-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc --project /tmp/spn146-launcher-probe/tsconfig.json"
+    },
+    {
+      "pid": 22764,
+      "parent": 22745,
+      "group": 22745,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:21:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 22796,
+      "parent": 22745,
+      "group": 22745,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 09:21:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

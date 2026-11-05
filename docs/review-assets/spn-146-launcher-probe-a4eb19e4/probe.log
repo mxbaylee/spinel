@@ -1,0 +1,2 @@
+{"complete":true,"reductionKiB":121456,"samples":[{"mode":"npm","barrierKiB":570608,"peakKiB":575200},{"mode":"direct","barrierKiB":449152,"peakKiB":453392}]}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":3009,"peakKiB":647200}
