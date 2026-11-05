@@ -1,0 +1,176 @@
+{
+  "reviewedAt": "2026-11-05T02:38:00.123Z",
+  "durationMs": 33414,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "redesign-native-editors--make-copy-dialog",
+    "redesign-controls--long-modal-title",
+    "redesign-controls--emoji-modal-title"
+  ],
+  "checked": [
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light",
+      "filename": "redesign-native-editors--make-copy-dialog-light.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--long-modal-title-light.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--emoji-modal-title-light.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark",
+      "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--long-modal-title-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--emoji-modal-title-dark.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone",
+      "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--long-modal-title-phone.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--emoji-modal-title-phone.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark",
+      "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--long-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet",
+      "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--long-modal-title-tablet.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--emoji-modal-title-tablet.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

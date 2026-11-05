@@ -1,0 +1,554 @@
+{
+  "passed": true,
+  "evidence": {
+    "planSha256": "2a8c42d7c5858edfcb2fc5aef249805a92ecd86e4a757d28fab7c47f8bd77eb5",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "opened",
+      "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "head": "067aeb03a493b782fffd97c318c441a4633640f1",
+      "tested": "c52ddfd2a8f9915566f908052988b2a2c577bc5c",
+      "mode": "targeted",
+      "labels": [],
+      "paths": [
+        "docs/implementation/SPN-145.md",
+        "docs/implementation/SPN-146.md",
+        "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+        "docs/todo/SPN-089.md",
+        "docs/todo/SPN-145.md",
+        "docs/todo/SPN-146.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md"
+      ],
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Automatic coverage for the complete change range."
+        },
+        "typecheck": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No typecheck dependency changed; explicit inapplicability."
+        },
+        "unit-tests": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No unit-tests dependency changed; explicit inapplicability."
+        },
+        "lib-test-run": {
+          "selected": false,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No lib-test-run dependency changed; explicit inapplicability."
+        },
+        "playwright-run": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No playwright-run dependency changed; explicit inapplicability."
+        },
+        "container-smoke": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No container-smoke dependency changed; explicit inapplicability."
+        },
+        "restore-timing": {
+          "selected": false,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No restore-timing dependency changed; explicit inapplicability."
+        },
+        "sync-transition": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No sync-transition dependency changed; explicit inapplicability."
+        },
+        "doc-responsiveness": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No doc-responsiveness dependency changed; explicit inapplicability."
+        },
+        "doc-callback-lifetimes": {
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No doc-callback-lifetimes dependency changed; explicit inapplicability."
+        },
+        "responsiveness-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No responsiveness-baseline dependency changed; explicit inapplicability."
+        },
+        "callback-baseline": {
+          "selected": false,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No callback-baseline dependency changed; explicit inapplicability."
+        },
+        "phone-compatibility": {
+          "selected": false,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-145.md",
+            "docs/implementation/SPN-146.md",
+            "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+            "docs/todo/SPN-089.md",
+            "docs/todo/SPN-145.md",
+            "docs/todo/SPN-146.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Routine phone contract owners cover every assertion; full duplicate compatibility reserved for backstop."
+        }
+      }
+    },
+    "gateResults": {
+      "typecheck": "success",
+      "unit-tests": "success",
+      "lib-tests": "success"
+    },
+    "results": [
+      {
+        "suite": "backlog",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "pull-request",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "lint",
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "Automatic coverage for the complete change range.",
+        "result": "success"
+      },
+      {
+        "suite": "typecheck",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No typecheck dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "unit-tests",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No unit-tests dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "lib-test-run",
+        "selected": false,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No lib-test-run dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "playwright-run",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No playwright-run dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "container-smoke",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No container-smoke dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "restore-timing",
+        "selected": false,
+        "dependencies": [
+          "server/**",
+          "src/{server,shared}/**",
+          "lib/**",
+          "web/** and src/ui/** (shared application/authentication bundle)",
+          "e2e restore/shared helpers",
+          "runtime/build/dependency/workflow inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No restore-timing dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "sync-transition",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No sync-transition dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "doc-responsiveness",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No doc-responsiveness dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      },
+      {
+        "suite": "doc-callback-lifetimes",
+        "selected": false,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "docs/implementation/SPN-145.md",
+          "docs/implementation/SPN-146.md",
+          "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+          "docs/todo/SPN-089.md",
+          "docs/todo/SPN-145.md",
+          "docs/todo/SPN-146.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md"
+        ],
+        "reason": "No doc-callback-lifetimes dependency changed; explicit inapplicability.",
+        "result": "skipped"
+      }
+    ]
+  }
+}

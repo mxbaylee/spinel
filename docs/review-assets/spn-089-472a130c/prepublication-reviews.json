@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "kind": "Historical prepublication source-review snapshots",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "disposition": "Both reviews preceded C validation and permitted its one necessary source validation. C subsequently failed ordinary CI. These are not acceptance or reviews of this archival commit.",
+  "representation": "Original structured review snapshots retained by root; not newly scored or reinterpreted.",
+  "reviews": [
+    {
+      "reviewer": "/root/verification_plan",
+      "source": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "tree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+      "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "grade": 96,
+      "rubric": {
+        "scope": 35,
+        "correctnessAndAccess": 25,
+        "regressionAndEvidence": 16,
+        "ciAndOperations": 10,
+        "maintainabilityAndProcess": 10
+      },
+      "deductions": [
+        "2: Repaired-head Sheet/Doc history has not executed in either hosted owner.",
+        "1: Complete current-head CI/native/Storybook/visual acceptance pending.",
+        "1: B's newly observed129.1ms capacity-flush failure remains undiagnosed; unchanged strict contract is mandatory on new source."
+      ],
+      "sourceBlockers": [],
+      "disposition": "Qualifies for ONE necessary validation push; not CI acceptance, visual approval or merge approval.",
+      "verified": [
+        "Cookie-authoritative session route and preserved browser/cleanup assertions",
+        "Exact terminal/frozen B receipts and nine-file mobile evidence manifest",
+        "Full failed metrics and raw log decompression",
+        "Canonical main144/dependency and original offline144 archives",
+        "CLI145/146 and final backlog23/20/147",
+        "Complete45owner/114preview inventory",
+        "Identical executable sources and local-check hashes",
+        "Clean exact HEAD, actual current base and22422-line PR check"
+      ]
+    },
+    {
+      "reviewer": "/root/repair_independent_review",
+      "source": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "tree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+      "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "grade": 97,
+      "rubric": {
+        "scope": 35,
+        "correctnessAndAccess": 25,
+        "regressionAndEvidence": 17,
+        "ciAndOperations": 10,
+        "maintainabilityAndProcess": 10
+      },
+      "deductions": [
+        "2: Current-C history/native/Storybook/visual acceptance remains unexecuted; actual local full-app startup is resource/environment blocked.",
+        "1: B's valid129.1ms mobile maximum has no causal attribution or repair; SPN-146 retains it without waiving fresh-head acceptance."
+      ],
+      "sourceBlockers": [],
+      "disposition": "Approve ONE necessary validation publication of substantive history-identity repair; not merge approval. Current source must pass every selected unchanged first-attempt gate.",
+      "verified": [
+        "All19 final delta files docs/evidence only",
+        "Terminal and frozen B receipts",
+        "Current nine-file mobile manifest, original manifest and exact raw log gzip/newline normalization",
+        "Source and backlog23/20/147 equivalence,87local links",
+        "Clean worktree and exact committed PR check22422lines"
+      ]
+    }
+  ]
+}

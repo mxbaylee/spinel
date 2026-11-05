@@ -1,0 +1,76 @@
+{
+  "verifiedAt": "2026-11-05T02:45:01.720119+00:00",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "all15HashesVerified": true,
+  "fourFullPngMatchesVerifiedAgainstCommittedC": [
+    {
+      "filename": "redesign-controls--emoji-modal-title-light.png",
+      "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-light.png"
+    },
+    {
+      "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+      "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-phone-dark.png"
+    },
+    {
+      "filename": "redesign-controls--long-modal-title-phone.png",
+      "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-controls--long-modal-title-phone.png"
+    },
+    {
+      "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+      "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-phone.png"
+    }
+  ],
+  "nativeDesktopComparison": [
+    {
+      "variant": "light",
+      "freshFilename": "redesign-native-editors--make-copy-dialog-light.png",
+      "freshSha256": "fd0dd8e8a82d8e2a9dc1d594766afe1263d82abaa779a082c19b67525e03c1a8",
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-light.png",
+      "retainedSha256": "7cd955f8a65c4be85de1cec68ff75f6b2ccf4a3aca96099cee951f65096fbf17",
+      "fullPngBytesEqual": false,
+      "differentPixelBounds": [
+        226,
+        164,
+        229,
+        209
+      ],
+      "differentPixelCount": 92,
+      "inspectedDialogBounds": [
+        400,
+        290,
+        880,
+        610
+      ],
+      "allDialogRegionRGBPixelsEqual": true,
+      "interpretation": "Different pixels lie in the background document area; visual inspection shows the document caret differs. This does not make the entire screenshots byte-identical or establish a timing cause."
+    },
+    {
+      "variant": "dark",
+      "freshFilename": "redesign-native-editors--make-copy-dialog-dark.png",
+      "freshSha256": "37454fe6931f2e05e158d6d968f0957d659c5d5e2bdc7c0d4113fb4a7bad259c",
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-dark.png",
+      "retainedSha256": "92ae0a431921ab81f1e194b6ee5f5aad8456f61a73ffe40ebd3c090d2710dbce",
+      "fullPngBytesEqual": false,
+      "differentPixelBounds": [
+        226,
+        164,
+        229,
+        209
+      ],
+      "differentPixelCount": 91,
+      "inspectedDialogBounds": [
+        400,
+        290,
+        880,
+        610
+      ],
+      "allDialogRegionRGBPixelsEqual": true,
+      "interpretation": "Different pixels lie in the background document area; visual inspection shows the document caret differs. This does not make the entire screenshots byte-identical or establish a timing cause."
+    }
+  ],
+  "boundary": "Read-only image analysis of existing screenshots; no new image generated, no capture/test rerun, and no claim that full native desktop screenshots match C."
+}

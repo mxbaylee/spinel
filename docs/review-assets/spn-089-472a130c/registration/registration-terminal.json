@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 1,
+  "kind": "Final focused registration outcome; supersedes initial pending PR checkpoint",
+  "pr": {
+    "number": 266,
+    "url": "https://github.com/mxbaylee/spinel/pull/266",
+    "title": "🧹 Groom backlog: register SPN-089 native flush prerequisite",
+    "merged": true,
+    "mergedAt": "2026-11-05T03:53:53Z"
+  },
+  "source": {
+    "reviewedHead": "067aeb03a493b782fffd97c318c441a4633640f1",
+    "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "testedMerge": "c52ddfd2a8f9915566f908052988b2a2c577bc5c",
+    "squash": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+    "reviewedTestedAndSquashTree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+    "treeEqualityVerified": true
+  },
+  "acceptedScope": "Eight-file documentation/backlog registration only. No application, native, performance, container, or Storybook rendering acceptance is inferred from docs applicability.",
+  "initialHosted": {
+    "ordinary": {
+      "id": 41963991172,
+      "attempt": 1,
+      "event": "pull_request",
+      "action": "opened",
+      "conclusion": "success",
+      "updatedAt": "2026-11-05T03:51:24Z",
+      "counts": {
+        "success": 8,
+        "skipped": 8
+      }
+    },
+    "storybook": {
+      "id": 41963991228,
+      "attempt": 1,
+      "event": "pull_request",
+      "action": "opened",
+      "conclusion": "success",
+      "updatedAt": "2026-11-05T03:50:34Z",
+      "counts": {
+        "success": 3,
+        "skipped": 5
+      }
+    },
+    "requiredGates": [
+      {
+        "id": 127037119923,
+        "name": "Playwright smoke",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127037119923",
+        "startedAt": "2026-11-05T03:51:11Z",
+        "completedAt": "2026-11-05T03:51:24Z",
+        "runAttempt": 1
+      },
+      {
+        "id": 127036843712,
+        "name": "Unit tests",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127036843712",
+        "startedAt": "2026-11-05T03:50:21Z",
+        "completedAt": "2026-11-05T03:50:33Z",
+        "runAttempt": 1
+      },
+      {
+        "id": 127036843457,
+        "name": "Lib tests",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127036843457",
+        "startedAt": "2026-11-05T03:50:21Z",
+        "completedAt": "2026-11-05T03:50:36Z",
+        "runAttempt": 1
+      },
+      {
+        "id": 127036843064,
+        "name": "Backlog",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127036843064",
+        "startedAt": "2026-11-05T03:50:20Z",
+        "completedAt": "2026-11-05T03:50:32Z",
+        "runAttempt": 1
+      },
+      {
+        "id": 127036843007,
+        "name": "Lint",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127036843007",
+        "startedAt": "2026-11-05T03:50:20Z",
+        "completedAt": "2026-11-05T03:51:09Z",
+        "runAttempt": 1
+      },
+      {
+        "id": 127036842981,
+        "name": "Typecheck",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127036842981",
+        "startedAt": "2026-11-05T03:50:20Z",
+        "completedAt": "2026-11-05T03:50:23Z",
+        "runAttempt": 1
+      },
+      {
+        "id": 127036622799,
+        "name": "Pull request",
+        "headSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "status": "completed",
+        "conclusion": "success",
+        "appId": 15368,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41963991172/job/127036622799",
+        "startedAt": "2026-11-05T03:49:40Z",
+        "completedAt": "2026-11-05T03:50:11Z",
+        "runAttempt": 1
+      }
+    ],
+    "fullReceipt": {
+      "path": "ci-terminal.json",
+      "bytes": 16758,
+      "sha256": "0abaa29657ae44e92277f0617e58cd617b821fc2300aa8f502c5c29233903bd2"
+    },
+    "plan": {
+      "selected": [
+        "backlog",
+        "pull-request",
+        "lint"
+      ],
+      "inapplicable": 12,
+      "exactDiffMatched": true,
+      "path": "hosted-artifacts/ci-plan.json",
+      "fileSha256": "4b2dd5d8b5ae66c1d62e4b3171f8aaf2f1ac91374b58bffa20202a32e9eff52a",
+      "canonicalSha256": "2a8c42d7c5858edfcb2fc5aef249805a92ecd86e4a757d28fab7c47f8bd77eb5"
+    },
+    "firstFailures": [],
+    "retryDisposition": "Initial attempt1 only; no retry, rerun, cancellation or missing selected evidence."
+  },
+  "reviewsAndLocalChecks": {
+    "path": "reviews-and-local-checks.json",
+    "grades": [
+      {
+        "reviewer": "/root/verification_plan",
+        "sourceSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "tree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+        "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+        "grade": 100,
+        "rubric": {
+          "scope": 35,
+          "correctnessAndAccess": 25,
+          "regressionAndEvidence": 20,
+          "ciAndOperations": 10,
+          "maintainabilityAndProcess": 10
+        },
+        "findings": [],
+        "resolved": [
+          "Distinct23.0ms outer/22.9ms native-pair timing now explicit",
+          "Ordinary prose spacing fixed"
+        ],
+        "disposition": "Documentation/backlog source review only; qualifies for validation publication; hosted gates pending; C remains rejected."
+      },
+      {
+        "reviewer": "/root/repair_independent_review",
+        "sourceSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+        "tree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+        "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+        "grade": 100,
+        "rubric": {
+          "scope": 35,
+          "correctnessAndAccess": 25,
+          "regressionAndEvidence": 20,
+          "ciAndOperations": 10,
+          "maintainabilityAndProcess": 10
+        },
+        "findings": [],
+        "resolved": [
+          "RIR-REG-1 fixed:23.0ms outer/22.9ms native-pair explicitly distinguished"
+        ],
+        "disposition": "Documentation/backlog source review only; exact committed registration suitable for validation publication; no runtime acceptance or PR260 merge approval."
+      }
+    ],
+    "localChecks": {
+      "backlog-index.json": {
+        "startedAt": "2026-11-05T03:28:16.943Z",
+        "finishedAt": "2026-11-05T03:28:17.694Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spn146-registration",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "scripts/backlog/cli.ts",
+          "index"
+        ],
+        "elapsedMs": 747,
+        "peakKiB": 252876,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "backlog-check.json": {
+        "startedAt": "2026-11-05T03:28:18.129Z",
+        "finishedAt": "2026-11-05T03:28:18.818Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spn146-registration",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "scripts/backlog/cli.ts",
+          "check"
+        ],
+        "elapsedMs": 688,
+        "peakKiB": 250152,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "final-pr-check-067aeb03.json": {
+        "startedAt": "2026-11-05T03:44:32.783Z",
+        "finishedAt": "2026-11-05T03:44:35.814Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spn146-registration",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "scripts/backlog/cli.ts",
+          "pr",
+          "--base",
+          "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+          "--title",
+          "🧹 Groom backlog: register SPN-089 native flush prerequisite"
+        ],
+        "elapsedMs": 3030,
+        "peakKiB": 256320,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    }
+  },
+  "landing": {
+    "expectedHeadGuard": "067aeb03a493b782fffd97c318c441a4633640f1",
+    "mergeMethod": "squash",
+    "mainImmediatelyBefore": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "mergeableBefore": true,
+    "mergeableStateBefore": "clean",
+    "unresolvedReviewThreads": 0,
+    "ruleset": 25319790,
+    "noBypass": true,
+    "mainAfterObserved": "89d93c8b23db65d3fe6a83d1853acc716c024b80"
+  },
+  "postMergeMainPushSnapshot": {
+    "observedAt": "2026-11-05T03:57:02Z",
+    "ordinary": {
+      "id": 41964421735,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41964421735",
+      "event": "push",
+      "attempt": 1,
+      "headSha": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+      "status": "completed",
+      "conclusion": "success",
+      "createdAt": "2026-11-05T03:53:55Z",
+      "updatedAt": "2026-11-05T03:56:06Z",
+      "totalJobs": 16,
+      "jobColumns": [
+        "id",
+        "name",
+        "status",
+        "conclusion",
+        "attempt",
+        "completedAt"
+      ],
+      "jobs": [
+        [
+          127038008295,
+          "Classify changes (41964421735)",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038010004,
+          "Pull request",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:53:56Z"
+        ],
+        [
+          127038327550,
+          "Typecheck",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:55:00Z"
+        ],
+        [
+          127038327587,
+          "Lint",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:55:44Z"
+        ],
+        [
+          127038327603,
+          "Backlog",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:55:10Z"
+        ],
+        [
+          127038327990,
+          "Unit tests",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:55:13Z"
+        ],
+        [
+          127038328065,
+          "Lib tests",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:55:10Z"
+        ],
+        [
+          127038328628,
+          "Unit tests (${{ matrix.suite }})",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038328824,
+          "Doc responsiveness (${{ matrix.preset }})",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038328932,
+          "Lib tests (${{ matrix.suite }})",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038328974,
+          "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038329053,
+          "Container smoke",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038329290,
+          "Sized restore acceptance",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038329448,
+          "Retained sync transition",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038329632,
+          "Doc callback lifetimes (${{ matrix.preset }})",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:54:55Z"
+        ],
+        [
+          127038595173,
+          "Playwright smoke",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:56:05Z"
+        ]
+      ]
+    },
+    "storybook": {
+      "id": 41964421701,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41964421701",
+      "event": "push",
+      "attempt": 1,
+      "headSha": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+      "status": "in_progress",
+      "conclusion": null,
+      "createdAt": "2026-11-05T03:53:55Z",
+      "updatedAt": "2026-11-05T03:55:44Z",
+      "totalJobs": 8,
+      "jobColumns": [
+        "id",
+        "name",
+        "status",
+        "conclusion",
+        "attempt",
+        "completedAt"
+      ],
+      "jobs": [
+        [
+          127038008025,
+          "Classify changes",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:54:32Z"
+        ],
+        [
+          127038205877,
+          "Build Storybook",
+          "completed",
+          "success",
+          1,
+          "2026-11-05T03:55:30Z"
+        ],
+        [
+          127038518885,
+          "Review Storybook desktop (dark)",
+          "in_progress",
+          null,
+          1,
+          null
+        ],
+        [
+          127038518947,
+          "Review Storybook mobile (light)",
+          "in_progress",
+          null,
+          1,
+          null
+        ],
+        [
+          127038518950,
+          "Review Storybook mobile (dark)",
+          "in_progress",
+          null,
+          1,
+          null
+        ],
+        [
+          127038518975,
+          "Review Storybook tablet",
+          "in_progress",
+          null,
+          1,
+          null
+        ],
+        [
+          127038519060,
+          "Review Storybook desktop (light)",
+          "in_progress",
+          null,
+          1,
+          null
+        ],
+        [
+          127038520644,
+          "Publish PR preview to GitHub Pages",
+          "completed",
+          "skipped",
+          1,
+          "2026-11-05T03:55:30Z"
+        ]
+      ]
+    },
+    "boundary": "Separate automatically triggered push executions. Ordinary CI is terminal success; Storybook is still in progress at this observation. No PR result is reused and no terminal Storybook outcome is claimed."
+  },
+  "cleanup": {
+    "completedAt": "2026-11-05 03:55:43 UTC",
+    "scope": "Only focused registration PR266 branch/worktree",
+    "branch": "codex/spn-146-register-prerequisite-20261105",
+    "expectedHead": "067aeb03a493b782fffd97c318c441a4633640f1",
+    "remoteHead": "Automatically deleted; matching-refs read returned empty after confirmed merge",
+    "localWorktree": "/workspace/scratch/ce40e94380e1/spn146-registration",
+    "localStatusBefore": "No tracked, untracked or ignored changes",
+    "localWorktreeRemoved": true,
+    "localRefRemovedWithExpectedHead": true,
+    "remainingLocalRegistrationRefs": [],
+    "preservation": {
+      "squash": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+      "sourceAndSquashTree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+      "pullRef": "refs/pull/266/head",
+      "pullRefHead": "067aeb03a493b782fffd97c318c441a4633640f1"
+    },
+    "boundary": "Active PR260 source and its necessary evidence helpers retained; unrelated work untouched. C archival helper will remain while it owns unique necessary evidence."
+  },
+  "dependabotReview": {
+    "path": "dependabot-review.json",
+    "sha256": "eb6f03ad56b6ddbefe73d4a695133fc2c65e61a52a6f07f403a4d63c745c68f2",
+    "bytes": 22404,
+    "scope": "All seven then-open existing PRs inspected; none changed or merged; dispositions in initial body and receipt."
+  },
+  "dependentPR260": {
+    "head": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+    "testedBase": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "accepted": false,
+    "failedOrdinaryRun": 41956095276,
+    "firstAttemptMobileMaximumMs": 114.39999999990687,
+    "maximumBudgetMs": 100,
+    "gitHubMergeableAfterRegistration": false,
+    "gitHubMergeableStateAfterRegistration": "dirty",
+    "currentMainIntegration": "Registration advanced main; C's original integration was tested against1045. A supported SPN146 outcome and its accepted main must be integrated before a genuine next SPN089 validation publication. No bookkeeping-only PR260 push was made.",
+    "executionBoundary": "Current environment cannot start the required Linux abstract Unix workspace lease (EPERM); the connector lacks workflow-dispatch. No diagnostic or causal repair has been invented. Preserve registered finite next observation and unchanged gates."
+  },
+  "recordBoundary": "This maintained repository receipt is the final registration acceptance/merge/cleanup record and supersedes publication-checkpoint.md. It neither accepts C nor closes SPN145, SPN146 or SPN089. The archive ref must remain while it is the sole owner of necessary evidence."
+}

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-05T03:34:31.116255+00:00",
+  "root": "/workspace/scratch/ce40e94380e1/validation/spn089-merge/c",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceAndTestedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "ordinaryCI": {
+    "run": 41956095276,
+    "attempt": 1,
+    "conclusion": "failure",
+    "jobs": 33,
+    "success": 31,
+    "failure": 2,
+    "failedJobs": [
+      127011430611,
+      127025959343
+    ]
+  },
+  "nativeCI": {
+    "run": 41956095255,
+    "attempt": 1,
+    "conclusion": "success"
+  },
+  "fileCount": 16,
+  "totalBytes": 679315,
+  "files": [
+    {
+      "path": "ci-terminal.json",
+      "bytes": 345334,
+      "sha256": "be243fd86a4d9c3533607d28dc8be494ede854d25648e31ea8595c6a6071457f"
+    },
+    {
+      "path": "ci-pr-capsule.json",
+      "bytes": 18743,
+      "sha256": "0fa7bd3578e6d4f0da7650ff9f3d3fdda11b8787bbfdb05dce8e87b33f536ce7"
+    },
+    {
+      "path": "ci-plan.json",
+      "bytes": 3922,
+      "sha256": "1dedbb018fcc84a26ba9a6c70bdf6dff9ab31993647169cbafbce0967b964cb3"
+    },
+    {
+      "path": "ci-plan-provenance.json",
+      "bytes": 1215,
+      "sha256": "95e21645f12a74b107b63b6a6fe119f4c2896cc4de57f96e8b40ab4936f30047"
+    },
+    {
+      "path": "ci-coverage.json",
+      "bytes": 1917,
+      "sha256": "5a87fe65041f9da40084a6d6e12325c3bee22f5b905b2e5b297ceed4cca4edee"
+    },
+    {
+      "path": "native-terminal.json",
+      "bytes": 21611,
+      "sha256": "7ea4c0e9086f7eb200f28bd15862a60756f3cb2582fa5b55f572b34b2d159b71"
+    },
+    {
+      "path": "mobile-existing-diagnostics.json",
+      "bytes": 12261,
+      "sha256": "db774fb3ed94cc0d82db49aaaad871af199f8d70eb4fbd10a077b3e191c2f3b2"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/README.md",
+      "bytes": 1054,
+      "sha256": "d306052d6294c5a4f443c8c002475079ab955025dfbd770d063957dbac38f98c"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/error-context.md",
+      "bytes": 11920,
+      "sha256": "181072dbb789ba99af44e6504ab67937ff8840bd8cee34de28c0ee9239eb5b82"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failed-plain-3-metrics.json.gz",
+      "bytes": 41448,
+      "sha256": "52cc0dcd448b78ddb59ec8a73844afde133cc52d1ee9843af85d89fcba081f7e"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-log.raw.txt.gz",
+      "bytes": 665,
+      "sha256": "ae657ab82934db10234fa75e5552a7ab4d1396c40e7371b74d83df88b521d993"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-log.txt",
+      "bytes": 3055,
+      "sha256": "3bfff0e37996a5d0be04069b8288ba5c590c36b2953bbcc3a007c4ca7f2cc05c"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-receipt.json",
+      "bytes": 63442,
+      "sha256": "a5dbed2ea6ba85a34381b8f663663f56f55e1bc19a1742019fbb0360568a1c21"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/manifest.json",
+      "bytes": 2141,
+      "sha256": "3b33806f88713075894d03065dfce6cc1afca425e999ff4fedb371feea403768"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/test-failed-1.png",
+      "bytes": 79368,
+      "sha256": "17f6f375c215c8923b9c49a77a6b7f75aa6e430e6bfbd8009adb9f6ecfc23b8e"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/test-failed-2.png",
+      "bytes": 71219,
+      "sha256": "f0e343789866b88d6eb58061d0457aea626371acd3e50769a8ac14b309734a7a"
+    }
+  ],
+  "sanitizer": {
+    "selectedTextAndDecompressedGzipScanned": true,
+    "credentialPatternFindings": [],
+    "urlHosts": {
+      "github.com": 49,
+      "api.github.com": 4
+    },
+    "credentialBearingUrlUserinfo": false,
+    "twoPngsVisuallyInspected": true,
+    "fixedFixtureMetricsCredentialKeys": [],
+    "safeBundleHashesReverified": true,
+    "failedMetricsGzipToOriginalBytesVerified": true,
+    "boundary": "Only these selected receipts and safe failure files are covered. Raw full reports, driver/session logs, signed artifact download references and unrelated embedded images are excluded. Full original ZIP identities remain recorded without publishing those ZIPs here."
+  },
+  "scopeBoundary": "Storybook, current visual/capture evidence and source-review receipts are root/other-reviewer-owned and must be added separately. This is rejected C evidence, not current merge acceptance."
+}

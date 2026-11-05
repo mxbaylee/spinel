@@ -1,0 +1,763 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-05T02:46:29.102067+00:00",
+  "reviewer": "/root/dialog_audit",
+  "reviewMode": "Independent agent visual review only. No implementation authorship in SPN-089 product/CSS/stories/E2E/assertions/runners; audit files only outside repository.",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "testedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "disposition": "APPROVED for the SPN-089 visual gate at exact C source. Full current catalogue and other CI/native gates remain separate requirements.",
+  "scope": "Personally inspected all15 actual current-C images after independently verifying the recovered immutable hosted archive and all363 existing extracted build inputs. No CSS injection, app instrumentation, new capture or test rerun.",
+  "evidenceIndependentlyInspected": {
+    "artifact": {
+      "reviewer": "/root/dialog_audit",
+      "verifiedAt": "2026-11-05T02:43:31.842514+00:00",
+      "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "tree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+      "artifactId": 13382719809,
+      "runId": 41956095281,
+      "archivePath": "storybook-review-recovered.zip",
+      "archiveBytes": 6192895,
+      "archiveSha256": "9415a2c66657882449ff78eba53d065915011946ecc54355e8e6e2d0bc881a5a",
+      "embeddedShaJson": {
+        "sha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+        "checkedOutSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+        "branch": "codex/spn-089-dialog-title-icons",
+        "pullRequest": 260,
+        "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41956095281",
+        "builtAt": "2026-11-05T02:35:47.889Z"
+      },
+      "archiveFiles": 363,
+      "allExistingExtractedFilesComparedByteForByte": true,
+      "mismatches": [],
+      "catalogueStories": 1056,
+      "catalogueIdsSha256": "1a0b189097f45c53ab6b216eb2882b4d9ee70adf05cdde56512c5bedd293141e",
+      "indexSha256": "0b3279bc24df52ae9557f9053058b93827f00211a1fa33c97cfcbce4dc208be1",
+      "inventoryOwners": 45,
+      "inventoryIds": 114,
+      "allListedIdsAreStories": true,
+      "inventorySourceSha256": "00f5e7e214a871d2bc1c36fc7b145d4466a0e75899bf7efae03343fbb3afb3b3",
+      "archiveRecovery": {
+        "sameImmutableArtifact": true,
+        "originalObservationFile": "storybook-archive-observation.json",
+        "originalObservationSha256": "3a090f506eede0b9f2cab3f67c033cb66a6121aed14ef01038da360d4aa3cc18",
+        "rootRecoveryFile": "archive-recovery.json",
+        "rootRecoverySha256": "56a97fa9c9b56a5603653833d9f9a8a114a99f92c84baa6ab24a03b594ba8d12",
+        "rootFileComparisonFile": "archive-recovery-files.json",
+        "rootFileComparisonSha256": "d731412bde31938568d4f3fb16d5e1a55739c933f939c05f798e86737edec21c",
+        "disposition": "Recovered immutable archive independently matches the API size/digest and all363 existing extracted build inputs. The original mismatched ZIP/observation remain preserved; cause unknown. No capture, test or CI rerun occurred."
+      },
+      "executionBoundary": "Artifact/source inspection only; no catalogue plays, local tests/builds or visual approval performed by this verification script."
+    },
+    "captureProtocol": {
+      "purpose": "One bounded current-C capture from C's verified hosted Storybook build following substantive history-identity repair and current-main integration.",
+      "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "sourceTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+      "testedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+      "storybookRun": 41956095281,
+      "attempt": 1,
+      "artifactRequirement": "Verify archive digest/size, every extracted file, sha.json, source/tested trees, and all45 owner/114 story IDs before capture.",
+      "runner": "Unchanged committed scripts/screenshots.ts",
+      "runnerSha256": "826076ecf86911398978c8d802e03f3fdc0f6053078843029b93e0b48870da54",
+      "stories": [
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "variants": [
+        "light",
+        "dark",
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "expectedStates": 15,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "runtime": {
+        "node": "26.12.1",
+        "playwright": "1.64.1",
+        "chromiumHeadlessShell": "156.0.8078.4",
+        "playwrightChromiumRevision": "1248"
+      },
+      "resourcePolicy": {
+        "serialized": true,
+        "maximumCombinedRSSKiB": 2097152,
+        "maximumRuntimeMs": 480000
+      },
+      "environmentOnlyAdaptation": "Existing network-interfaces.ts fallback returns an empty interface inventory only for this container's ERR_SYSTEM_ERROR. No application, fixture, CSS, timeout or assertion changes.",
+      "acceptance": "All original play functions/title/accessibility/bounds/first-line assertions pass; independent visual reviewer inspects actual current-C images. Fresh full hosted CI/native/Storybook remain independently required.",
+      "stopCondition": "Preserve any first failure and diagnose before further execution. No unchanged reruns or weakened assertions/budgets.",
+      "sourceEquivalence": "Current C application/styles/Storybook/runtime/runner objects match B; only history identity assertion changed executable source. Old owner images retain original captions unless exact fresh-C bytes match."
+    },
+    "manifestSha256": "9e1d0b75326a26ca5a79ae9ea5fbb9df6b8243b140b7028b6e08a41af218b34a",
+    "manifest": {
+      "reviewedAt": "2026-11-05T02:38:00.123Z",
+      "durationMs": 33414,
+      "captureScreenshots": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "viewport": "all",
+      "theme": "all",
+      "variants": [
+        "light",
+        "dark",
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "requested": [
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "checked": [
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "tablet"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "tablet"
+        }
+      ],
+      "captures": [
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "light",
+          "filename": "redesign-native-editors--make-copy-dialog-light.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light",
+          "filename": "redesign-controls--long-modal-title-light.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "light",
+          "filename": "redesign-controls--emoji-modal-title-light.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "dark",
+          "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark",
+          "filename": "redesign-controls--long-modal-title-dark.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "dark",
+          "filename": "redesign-controls--emoji-modal-title-dark.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone",
+          "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone",
+          "filename": "redesign-controls--long-modal-title-phone.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone",
+          "filename": "redesign-controls--emoji-modal-title-phone.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone-dark",
+          "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark",
+          "filename": "redesign-controls--long-modal-title-phone-dark.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone-dark",
+          "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "tablet",
+          "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet",
+          "filename": "redesign-controls--long-modal-title-tablet.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "tablet",
+          "filename": "redesign-controls--emoji-modal-title-tablet.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        }
+      ],
+      "verifications": [],
+      "failures": []
+    },
+    "watchdogSha256": "2be3dd494576b8f941b973ccc65997a97612949c4df0fdc87a02062196b95633",
+    "watchdog": {
+      "startedAt": "2026-11-05T02:37:25.341Z",
+      "finishedAt": "2026-11-05T02:38:00.184Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/validation/spn089-merge/c/hosted",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "node",
+        "--import",
+        "/workspace/scratch/ce40e94380e1/validation/network-interfaces.ts",
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/screenshots.ts",
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "elapsedMs": 34843,
+      "peakKiB": 1050408,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "retentionReceiptSha256": "661aee1102eb0682bd74a2661986a129e1c5acc8b26573c6c6a3eb4f05d8dea2",
+    "integrityChecks": {
+      "expectedStates": 15,
+      "checked": 15,
+      "captured": 15,
+      "failures": 0,
+      "all15ImageHashesMatchRetentionMap": true,
+      "all4RetainedAssetBytesMatchGitShowAtC": true,
+      "captureDurationMs": 33414,
+      "watchdogElapsedMs": 34843,
+      "peakRSSKiB": 1050408
+    },
+    "inspectionMethod": "Viewed each original full PNG directly. First-line alignment/bounds judgments are visual, supported by unchanged successful story assertions. The bounded desktop pixel comparison records image equality only, not new alignment-distance or numerical contrast measurements."
+  },
+  "inspectedFilenames": [
+    "redesign-native-editors--make-copy-dialog-light.png",
+    "redesign-controls--long-modal-title-light.png",
+    "redesign-controls--emoji-modal-title-light.png",
+    "redesign-native-editors--make-copy-dialog-dark.png",
+    "redesign-controls--long-modal-title-dark.png",
+    "redesign-controls--emoji-modal-title-dark.png",
+    "redesign-native-editors--make-copy-dialog-phone.png",
+    "redesign-controls--long-modal-title-phone.png",
+    "redesign-controls--emoji-modal-title-phone.png",
+    "redesign-native-editors--make-copy-dialog-phone-dark.png",
+    "redesign-controls--long-modal-title-phone-dark.png",
+    "redesign-controls--emoji-modal-title-phone-dark.png",
+    "redesign-native-editors--make-copy-dialog-tablet.png",
+    "redesign-controls--long-modal-title-tablet.png",
+    "redesign-controls--emoji-modal-title-tablet.png"
+  ],
+  "inspectedImages": [
+    {
+      "filename": "redesign-native-editors--make-copy-dialog-light.png",
+      "storyId": "redesign-native-editors--make-copy-dialog",
+      "variant": "light",
+      "dimensions": {
+        "width": 1280,
+        "height": 900
+      },
+      "sha256": "fd0dd8e8a82d8e2a9dc1d594766afe1263d82abaa779a082c19b67525e03c1a8",
+      "bytes": 75127,
+      "personallyViewed": true,
+      "observations": [
+        "The copy SVG aligns with the single-line Make a copy title in the centered SDK dialog.",
+        "Name, Folder, helper text, Cancel and Make a copy stay inside the owner bounds, with visible focus/selection.",
+        "Both current desktop modal regions match the retained historical dialog pixels; only the background document caret differs in the full screenshots."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--long-modal-title-light.png",
+      "storyId": "redesign-controls--long-modal-title",
+      "variant": "light",
+      "dimensions": {
+        "width": 1280,
+        "height": 900
+      },
+      "sha256": "65241e8a2dcd6e57819ba38e77ac8930c67b96afe06aaf9c01d3ba0700956cac",
+      "bytes": 40989,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 3 lines. The trash SVG is aligned with the first line, not the whole heading block.",
+        "Close control and focus ring remain inside the panel without colliding with the heading. Body text wraps without clipping.",
+        "Heading, cue, explanatory text and focus state remain visually distinguishable in the light theme."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--emoji-modal-title-light.png",
+      "storyId": "redesign-controls--emoji-modal-title",
+      "variant": "light",
+      "dimensions": {
+        "width": 1280,
+        "height": 900
+      },
+      "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+      "bytes": 34402,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 2 lines. The leaf emoji is present, unclipped, and centered beside the first line.",
+        "The separate close control fits within the panel without overlapping the wrapped heading or explanatory text.",
+        "Text remains readable in the light theme; no numerical WCAG contrast measurement is claimed."
+      ],
+      "currentByteIdenticalRetainedPaths": [
+        "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-light.png"
+      ]
+    },
+    {
+      "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+      "storyId": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark",
+      "dimensions": {
+        "width": 1280,
+        "height": 900
+      },
+      "sha256": "37454fe6931f2e05e158d6d968f0957d659c5d5e2bdc7c0d4113fb4a7bad259c",
+      "bytes": 75094,
+      "personallyViewed": true,
+      "observations": [
+        "The copy SVG aligns with the single-line Make a copy title in the centered SDK dialog.",
+        "Name, Folder, helper text, Cancel and Make a copy stay inside the owner bounds, with visible focus/selection.",
+        "Both current desktop modal regions match the retained historical dialog pixels; only the background document caret differs in the full screenshots."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--long-modal-title-dark.png",
+      "storyId": "redesign-controls--long-modal-title",
+      "variant": "dark",
+      "dimensions": {
+        "width": 1280,
+        "height": 900
+      },
+      "sha256": "426bec22e1fa538438a47b3bc7e6f017e9670fbe508ab6636b03f66989927403",
+      "bytes": 45900,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 3 lines. The trash SVG is aligned with the first line, not the whole heading block.",
+        "Close control and focus ring remain inside the panel without colliding with the heading. Body text wraps without clipping.",
+        "Heading, cue, explanatory text and focus state remain visually distinguishable in the dark theme."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--emoji-modal-title-dark.png",
+      "storyId": "redesign-controls--emoji-modal-title",
+      "variant": "dark",
+      "dimensions": {
+        "width": 1280,
+        "height": 900
+      },
+      "sha256": "4eb725adc03f9e63f526de28e5e004918b83d6d3ac8f5f61fc9a3eb001d3b41a",
+      "bytes": 39272,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 2 lines. The leaf emoji is present, unclipped, and centered beside the first line.",
+        "The separate close control fits within the panel without overlapping the wrapped heading or explanatory text.",
+        "Text remains readable in the dark theme; no numerical WCAG contrast measurement is claimed."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+      "storyId": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone",
+      "dimensions": {
+        "width": 390,
+        "height": 900
+      },
+      "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+      "bytes": 22688,
+      "personallyViewed": true,
+      "observations": [
+        "The copy SVG aligns with the single-line Make a copy title in the SDK bottom drawer.",
+        "Name, Folder, helper text, Cancel and Make a copy stay inside the owner bounds, with visible focus/selection.",
+        "Known P3 persists: square/default compact Name-input styling."
+      ],
+      "currentByteIdenticalRetainedPaths": [
+        "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-phone.png"
+      ]
+    },
+    {
+      "filename": "redesign-controls--long-modal-title-phone.png",
+      "storyId": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "dimensions": {
+        "width": 390,
+        "height": 900
+      },
+      "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+      "bytes": 34570,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 5 lines. The trash SVG is aligned with the first line, not the whole heading block.",
+        "Close control and focus ring remain inside the panel without colliding with the heading. Body text wraps without clipping.",
+        "Heading, cue, explanatory text and focus state remain visually distinguishable in the light theme."
+      ],
+      "currentByteIdenticalRetainedPaths": [
+        "docs/review-assets/spn-089-ee996e95/redesign-controls--long-modal-title-phone.png"
+      ]
+    },
+    {
+      "filename": "redesign-controls--emoji-modal-title-phone.png",
+      "storyId": "redesign-controls--emoji-modal-title",
+      "variant": "phone",
+      "dimensions": {
+        "width": 390,
+        "height": 900
+      },
+      "sha256": "80d900797eff7fa09202bbe9e3af6c3f7d04ff9352ed76d685775270ae5cbc95",
+      "bytes": 28196,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 3 lines. The leaf emoji is present, unclipped, and centered beside the first line.",
+        "The separate close control fits within the panel without overlapping the wrapped heading or explanatory text.",
+        "Text remains readable in the light theme; no numerical WCAG contrast measurement is claimed."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "storyId": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark",
+      "dimensions": {
+        "width": 390,
+        "height": 900
+      },
+      "sha256": "1613e4847da98f3a9d43fec17b2f33d7952207983892bc545d18a2b696c6ecef",
+      "bytes": 22705,
+      "personallyViewed": true,
+      "observations": [
+        "The copy SVG aligns with the single-line Make a copy title in the SDK bottom drawer.",
+        "Name, Folder, helper text, Cancel and Make a copy stay inside the owner bounds, with visible focus/selection.",
+        "Known P3 persists: square/default compact Name-input styling with a gray dark-theme background."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--long-modal-title-phone-dark.png",
+      "storyId": "redesign-controls--long-modal-title",
+      "variant": "phone-dark",
+      "dimensions": {
+        "width": 390,
+        "height": 900
+      },
+      "sha256": "13d8857e56b991de7cac0af525fe5d4bb259199d89fdfbead39ef0b4172b804c",
+      "bytes": 37809,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 5 lines. The trash SVG is aligned with the first line, not the whole heading block.",
+        "Close control and focus ring remain inside the panel without colliding with the heading. Body text wraps without clipping.",
+        "Heading, cue, explanatory text and focus state remain visually distinguishable in the dark theme."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+      "storyId": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark",
+      "dimensions": {
+        "width": 390,
+        "height": 900
+      },
+      "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+      "bytes": 31424,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 3 lines. The leaf emoji is present, unclipped, and centered beside the first line.",
+        "The separate close control fits within the panel without overlapping the wrapped heading or explanatory text.",
+        "Text remains readable in the dark theme; no numerical WCAG contrast measurement is claimed."
+      ],
+      "currentByteIdenticalRetainedPaths": [
+        "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-phone-dark.png"
+      ]
+    },
+    {
+      "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+      "storyId": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet",
+      "dimensions": {
+        "width": 768,
+        "height": 900
+      },
+      "sha256": "6ec639ee8602d36f246200d0a9f26f3087c63e0b07ec6ddc799d7525625228db",
+      "bytes": 26043,
+      "personallyViewed": true,
+      "observations": [
+        "The copy SVG aligns with the single-line Make a copy title in the SDK bottom drawer.",
+        "Name, Folder, helper text, Cancel and Make a copy stay inside the owner bounds, with visible focus/selection.",
+        "Known P3 persists: square/default compact Name-input styling."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--long-modal-title-tablet.png",
+      "storyId": "redesign-controls--long-modal-title",
+      "variant": "tablet",
+      "dimensions": {
+        "width": 768,
+        "height": 900
+      },
+      "sha256": "ed084770ae1a29f2bcf32524c351a16a0f3691d85850b76b587c47419cec8a1a",
+      "bytes": 39083,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 3 lines. The trash SVG is aligned with the first line, not the whole heading block.",
+        "Close control and focus ring remain inside the panel without colliding with the heading. Body text wraps without clipping.",
+        "Heading, cue, explanatory text and focus state remain visually distinguishable in the light theme."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    },
+    {
+      "filename": "redesign-controls--emoji-modal-title-tablet.png",
+      "storyId": "redesign-controls--emoji-modal-title",
+      "variant": "tablet",
+      "dimensions": {
+        "width": 768,
+        "height": 900
+      },
+      "sha256": "306dc2e6890b207295dbb4338be31b3c585a05286496ea4dc899f6c90e59dc9a",
+      "bytes": 32389,
+      "personallyViewed": true,
+      "observations": [
+        "The title visibly wraps to 2 lines. The leaf emoji is present, unclipped, and centered beside the first line.",
+        "The separate close control fits within the panel without overlapping the wrapped heading or explanatory text.",
+        "Text remains readable in the light theme; no numerical WCAG contrast measurement is claimed."
+      ],
+      "currentByteIdenticalRetainedPaths": []
+    }
+  ],
+  "findings": [
+    {
+      "id": "SPN089-title-first-line-alignment",
+      "severity": "P2 historical",
+      "status": "closed at exact C",
+      "disposition": "All current SVG and emoji cues align to the first heading line, including five-line phone wrapping; native desktop and compact titles have no renewed offset. Controls and fields remain within bounds."
+    },
+    {
+      "id": "SPN089-compact-native-name-field-fixture-fidelity",
+      "severity": "P3",
+      "status": "known nonblocking caveat retained",
+      "affectedVariants": [
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "disposition": "Compact native-preview Name inputs retain square/default styling and the dark gray background. This predates the title correction and is outside its scope. Do not claim these fixture forms are pixel-identical production forms or that this styling difference was repaired."
+    },
+    {
+      "id": "C-local-archive-provenance-discrepancy",
+      "severity": "evidence hold",
+      "status": "resolved by immutable artifact recovery; cause unknown",
+      "disposition": "The original local ZIP failed size/digest verification and is preserved. A distinct recovered copy of the same artifact matches the API size/digest and all363 existing extracted files. This closes the provenance hold for the existing captures without repeating capture, test or CI. It does not establish why the original local file differed.",
+      "observationSha256": "3a090f506eede0b9f2cab3f67c033cb66a6121aed14ef01038da360d4aa3cc18",
+      "recoverySha256": "56a97fa9c9b56a5603653833d9f9a8a114a99f92c84baa6ab24a03b594ba8d12"
+    }
+  ],
+  "newBlockingVisualFindings": [],
+  "personas": {
+    "owner": "Long destructive headings and native copy titles remain clear, with separate close/cancel controls and complete form bounds.",
+    "collaborator": "Shared headings remain readable at compact widths and in both themes. No session/permission correctness is inferred from images.",
+    "operator": "The unchanged shared title and previously inspected operator/loading/error owner sources preserve explicit cues alongside text; those images retain original source labels.",
+    "linkGuest": "Native compact title remains legible and bounded. The unchanged guest Space drawer and other owner previews retain prior source-specific approval; current access behavior is owned by CI/native tests."
+  },
+  "carryForward": {
+    "sourceEquivalenceReceipt": "storybook-source-equivalence-472a130c.json",
+    "sourceEquivalenceSha256": "042735cfdec8f29a618ef0f5e4d6860598aa0b3a901dbd49f35c2c56a9100548",
+    "historicalBSource": "95d52be36061315bff866dec615544104ca4767c",
+    "currentSource": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+    "identicalApplicationRuntimeReviewObjects": [
+      "src",
+      "web",
+      "lib",
+      ".storybook",
+      "scripts/screenshots.ts",
+      "scripts/serial.ts",
+      "scripts/ci/icon-screenshots.ts",
+      "scripts/ci/storybook-review.ts",
+      "scripts/ci/storybook-review-gate.ts",
+      "scripts/dependencies",
+      "package.json",
+      "package-lock.json",
+      ".nvmrc",
+      ".github/workflows/storybook.yml",
+      "AGENTS.md",
+      "docs/todo/process.md",
+      "docs/product/personas.md",
+      "docs/design/README.md",
+      "docs/design/states.md"
+    ],
+    "previousOwnerSource": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+    "coverage": "Previously inspected common/loading/error, Formula Insert/Edit, Profile icon picker, nested Appearance and Space drawer retain original-source approval because their application/style/story/native-runtime/review inputs are unchanged through A/B/C. Older production-native images keep their original production source labels.",
+    "boundary": "C changes the history identity assertion. B ordinary CI was rejected for identity and responsiveness failures; prior visual/Storybook success does not waive them or establish C ordinary CI success."
+  },
+  "retentionPlan": {
+    "adequateWithoutEvidenceOnlyCommit": true,
+    "indispensableUnretainedCapture": null,
+    "fullPngMatchCount": 4,
+    "fullPngMatches": [
+      {
+        "filename": "redesign-controls--emoji-modal-title-light.png",
+        "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+        "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-light.png"
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+        "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+        "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-phone-dark.png"
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-phone.png",
+        "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+        "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-controls--long-modal-title-phone.png"
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+        "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+        "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-phone.png"
+      }
+    ],
+    "nativeDesktopComparison": [
+      {
+        "variant": "light",
+        "freshFilename": "redesign-native-editors--make-copy-dialog-light.png",
+        "freshSha256": "fd0dd8e8a82d8e2a9dc1d594766afe1263d82abaa779a082c19b67525e03c1a8",
+        "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-light.png",
+        "retainedSha256": "7cd955f8a65c4be85de1cec68ff75f6b2ccf4a3aca96099cee951f65096fbf17",
+        "fullPngBytesEqual": false,
+        "differentPixelBounds": [
+          226,
+          164,
+          229,
+          209
+        ],
+        "differentPixelCount": 92,
+        "inspectedDialogBounds": [
+          400,
+          290,
+          880,
+          610
+        ],
+        "allDialogRegionRGBPixelsEqual": true,
+        "interpretation": "Different pixels lie in the background document area; visual inspection shows the document caret differs. This does not make the entire screenshots byte-identical or establish a timing cause."
+      },
+      {
+        "variant": "dark",
+        "freshFilename": "redesign-native-editors--make-copy-dialog-dark.png",
+        "freshSha256": "37454fe6931f2e05e158d6d968f0957d659c5d5e2bdc7c0d4113fb4a7bad259c",
+        "retainedPath": "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-dark.png",
+        "retainedSha256": "92ae0a431921ab81f1e194b6ee5f5aad8456f61a73ffe40ebd3c090d2710dbce",
+        "fullPngBytesEqual": false,
+        "differentPixelBounds": [
+          226,
+          164,
+          229,
+          209
+        ],
+        "differentPixelCount": 91,
+        "inspectedDialogBounds": [
+          400,
+          290,
+          880,
+          610
+        ],
+        "allDialogRegionRGBPixelsEqual": true,
+        "interpretation": "Different pixels lie in the background document area; visual inspection shows the document caret differs. This does not make the entire screenshots byte-identical or establish a timing cause."
+      }
+    ],
+    "conditions": [
+      "Publish exact C source/base/tested/tree/run/archive identities, the complete15-state manifest and all15 image hashes, this independent review and archive-recovery disposition in durable PR evidence.",
+      "Only emoji desktop light, emoji phone-dark, long-title phone and native-copy phone can be labeled full-PNG byte-identical to fresh C captures.",
+      "Both retained native desktop views keep historical captions. Their entire dialog regions match C, but their full PNGs differ only in the background document caret region. Do not inherit B desktop-light current-match labeling.",
+      "Keep at least one clearly labeled historical native desktop view for that owner; current C desktop inspection and bounded equality analysis are recorded alongside it.",
+      "Other unchanged owner images retain original source/theme/viewport labels and documented source equivalence.",
+      "Expiring hosted artifacts supplement the durable manifest/hash/review record and maintained useful screenshots."
+    ],
+    "reason": "Four fresh byte-equivalent views cover all three captured families, desktop/phone layouts and light/dark presentation. Both actual current native desktop views were inspected and differ from retained images only outside the dialog. The complete15-state evidence and source-bound historical desktop view preserve the relevant title proof; no further nonmatching screenshot is indispensable."
+  },
+  "acceptanceBoundaries": [
+    "Independent agent visual approval only; no human approval is claimed.",
+    "Current full hosted catalogue, additional/icon assertions, aggregate, ordinary CI/native and final PR/base checks remain independently required.",
+    "The local archive mismatch is preserved with unknown cause; artifact retrieval recovery was not a new test/capture/CI attempt.",
+    "Historical A/B CI failures, SPN-145 offline activation and SPN-146 responsiveness evidence are not erased or waived by this visual approval.",
+    "No repository source, styles, tests, stories, assertions or runners were modified by this reviewer."
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "kind": "independent-prospective-diagnostic-capability-review",
+  "reviewer": "/root/dialog_audit",
+  "source": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "tested": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "status": "PROSPECTIVE ONLY: no experiment, test, build, browser, source edit, workflow action or credential probe performed",
+  "decision": "A finite headless replay is technically feasible for a narrower deterministic-work question. Neither the retained cache corpus nor current static Storybook can establish the cause of the historical B/C maximum failures or settle a causal repair. C remains rejected and no production optimization is selected.",
+  "knownCapabilityLimits": [
+    "Actual local full-app execution is already blocked before tests by the required abstract Unix workspace-lease EPERM. This review does not propose bypassing or disabling the lease.",
+    "The available GitHub connector has no workflow-dispatch/cancel tool; signed-out GitHub browser state was already observed. No new capability or credential probes were made.",
+    "verification_plan recursively inspected both failed metrics: no action/cache/operation/undo-stack/redo-stack contents are retained; history fields are counts. Both failed samples declare perMutationSnapshot=false, profiler=false, Playwright trace=false. Fixed input/text/selection evidence cannot reconstruct the exact historical cache or heap.",
+    "The retained matching-source successful profile/callback cases contain no comparable >=80ms paired interval. They cannot attribute the failed events. Existing comparison inventory is c/mobile-existing-diagnostics.json."
+  ],
+  "oneOptionalFeasibleExperiment": {
+    "name": "Phase-and-direction primitive-work decomposition of the existing retained native cache corpus",
+    "hypothesis": "Within the eight retained SPN-142 32-state cache pairs, a structural group's extra native work is located in unsupported sequential composition tails, rather than publication endpoints or qualification traversal. This is a hypothesis about those retained shapes, not about the missing B/C failing caches.",
+    "whyNotAnUnchangedRerun": "Existing tests already compare whole-pair primitive counts and exact publication. The only new discriminating output would be attribution by native phase and forward/inverse fold, plus qualification traversal versus unsupported-tail work. If that decomposition cannot be collected without changing the native operation order, stop rather than merely rerun existing assertions.",
+    "inputs": [
+      "The exact eight losslessly encoded history/collaboration pairs in docs/implementation/evidence/SPN-142/native-caches.json.gz; independently verify decompressed SHA-256 714376723b3ef6a048796f7a1903a58181098960960cecb111e22e0594a2e7c8 and count8 before execution.",
+      "The actual pinned Docs ES/CJS manager regions, validated through the existing complete-file hash guards. Compare exact upstream original and exact current-C patched output; do not introduce a candidate optimization.",
+      "The existing manager-fixture and measuredFlush mechanisms in scripts/dependencies/patch-univer-docs.test.ts. Keep original distinct history/collaboration arrays, native output ownership, synchronous endpoint order and full metadata. A diagnostic wrapper would live outside the repository and would not become a new test or production path."
+    ],
+    "finiteCount": "8 captured pairs x2 supported build formats x2 exact versions =32 paired flush executions, once each, serial, fixed order. No warmup/success-seeking repetition, new generated cases or expanded input matrix.",
+    "budget": {"maxWallSeconds": 60, "maxPeakKiB": 2097152, "workers": 1, "maxPairedExecutions": 32, "network": false, "server": false, "browser": false},
+    "requiredData": [
+      "Source/input/helper/runtime hashes and versions; explicit diagnostic instrumentation identity; all32 executions including failures.",
+      "Per history/collaboration phase and forward/inverse fold: TextX compose calls, action-iterator visits, body slices, clone visits/allocations; qualification predicate/traversal counts; admitted prefix lengths and unchanged unsupported-tail call positions.",
+      "Complete raw native outputs, own undefined properties, paragraph IDs/styles, input ownership/unchanged-state shape, intermediate publication/cache order, exceptions, and final queue state.",
+      "Endpoint counts, whether counters themselves changed the call graph, and bounded cleanup/exit result. Wall time is only a resource receipt; it is not compared with browser latency budgets."
+    ],
+    "decisionRule": "A shape-specific deterministic work difference is established only if the measured extra work is localized to a particular unchanged native fold/qualification path and both versions preserve complete outputs and publication semantics. The eight samples define this claim's entire domain. A high operation count does not establish that this work caused either historical >100ms event, and a low count does not prove a runtime pause.",
+    "stopConditions": [
+      "Any source/input identity mismatch, native output/ownership/order difference, incomplete observation, counter failure, process error, resource cap or missing required data stops the experiment and is retained.",
+      "If all32 executions finish, stop regardless of whether a useful difference appears. No mutation, parameter search, new cache capture, additional repetition or production optimization follows automatically.",
+      "If the proposed per-fold decomposition would itself require an unbounded instrumentation project or altered manager semantics, do not execute; report the capability checkpoint as inconclusive."
+    ],
+    "cleanup": "Use a private temporary directory and one process. In finally blocks dispose the native manager and subscriptions and restore any temporary core-method counter wrappers. Reap the owned process. Retain compact protocol/results/source hashes outside the repo, then remove only the private temporary harness/input copies. No refs, production files, caches, unrelated worktrees or credentials are touched.",
+    "canSettleHistoricalCause": false,
+    "canAuthorizeMergeOrBudgetChange": false,
+    "executionAuthorizedByThisReview": false,
+    "recommendation": "Optional hypothesis pruning only. Do not run it solely to obtain a new green result: most semantic/count assertions already exist, and a result cannot remove the need for matching full-app evidence."
+  },
+  "staticStorybookAssessment": {
+    "nativeEditors": "src/ui/redesign/NativeEditors.tsx and its story explicitly omit collaboration, accounts and persistence, and do not install boundDocHistory.",
+    "docMobile": "web/DocMobile.stories.tsx uses a local production-preset fixture with fixture save/connection labels; live persistence is explicitly owned by Playwright.",
+    "syncNative": "web/SyncNative.stories.tsx uses a real client with send:()=>{} and deliberately unacknowledged pending edits for drawing inspection. It is not the responsiveness fixture.",
+    "conclusion": "These are valid visual/native-component environments, but not the C full-app sustained-typing contract. Injecting a capacity policy, accounts or synchronization would create a new diagnostic fixture. It could help identify a renderer or native-shape issue, but cannot be represented as the original workload, acceptance or historical-tail attribution. No Storybook run is recommended for this question."
+  },
+  "requiredExternalCapabilityForDirectAttribution": {
+    "minimum": "An authorized runner capable of starting the unchanged real app under its required workspace lease, or a reviewed one-shot diagnostic workflow callable through a legitimate authorized capability. Merely gaining a dispatch button is insufficient without a reviewed diagnostic protocol and evidence collection.",
+    "dataNeeded": "A new full-workload event with an aligned outer-pair and native-phase timeline, directly attributable CPU/runtime trace spanning the event, lossless before-flush history/collaboration state shape, source/browser/throttle identity and exact content/selection/undo/access/cleanup results. Preserve observer overhead and mark any instrumented run diagnostic, not acceptance.",
+    "finiteProtocolBoundary": "Preregister one existing mobile2086-input diagnostic sample, one attempt,4x throttle, unchanged data/permissions/policy and budgets, bounded observer buffers, no automatic retries. If it does not produce a comparable interval or evidence is incomplete, conclude inconclusive and stop; do not expand into repeat-until-slow or repeat-until-green collection.",
+    "limitation": "Because the original B/C failing caches and traces are absent, even a later reproducer must be described as a new observed event with matching conditions, not the recovered historical cause. A demonstrated deterministic source defect plus controls can support a repair, but new unchanged full-app first-attempt acceptance remains necessary afterward.",
+    "currentAvailability": "Not established with current capabilities; local full-app startup is concretely blocked and no authorized workflow dispatch tool is available. No alternative execution bypass or credential probe is proposed."
+  },
+  "scope": "Keep this in SPN-146's L-sized native/runtime capability checkpoint, separate from SPN-089 title work and SPN-145 offline activation. Registration and preserved evidence do not change any current acceptance gate."
+}

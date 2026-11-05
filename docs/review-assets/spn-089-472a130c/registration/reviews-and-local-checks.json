@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+  "tree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "reviews": [
+    {
+      "reviewer": "/root/verification_plan",
+      "sourceSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+      "tree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+      "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "grade": 100,
+      "rubric": {
+        "scope": 35,
+        "correctnessAndAccess": 25,
+        "regressionAndEvidence": 20,
+        "ciAndOperations": 10,
+        "maintainabilityAndProcess": 10
+      },
+      "findings": [],
+      "resolved": [
+        "Distinct23.0ms outer/22.9ms native-pair timing now explicit",
+        "Ordinary prose spacing fixed"
+      ],
+      "disposition": "Documentation/backlog source review only; qualifies for validation publication; hosted gates pending; C remains rejected."
+    },
+    {
+      "reviewer": "/root/repair_independent_review",
+      "sourceSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+      "tree": "44b954bda2f88c4cf4af5505ccfdf377fa3694c4",
+      "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "grade": 100,
+      "rubric": {
+        "scope": 35,
+        "correctnessAndAccess": 25,
+        "regressionAndEvidence": 20,
+        "ciAndOperations": 10,
+        "maintainabilityAndProcess": 10
+      },
+      "findings": [],
+      "resolved": [
+        "RIR-REG-1 fixed:23.0ms outer/22.9ms native-pair explicitly distinguished"
+      ],
+      "disposition": "Documentation/backlog source review only; exact committed registration suitable for validation publication; no runtime acceptance or PR260 merge approval."
+    }
+  ],
+  "localChecks": {
+    "backlog-index.json": {
+      "startedAt": "2026-11-05T03:28:16.943Z",
+      "finishedAt": "2026-11-05T03:28:17.694Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spn146-registration",
+      "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+      "args": [
+        "scripts/serial.ts",
+        "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "scripts/backlog/cli.ts",
+        "index"
+      ],
+      "elapsedMs": 747,
+      "peakKiB": 252876,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "backlog-check.json": {
+      "startedAt": "2026-11-05T03:28:18.129Z",
+      "finishedAt": "2026-11-05T03:28:18.818Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spn146-registration",
+      "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+      "args": [
+        "scripts/serial.ts",
+        "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "elapsedMs": 688,
+      "peakKiB": 250152,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "final-pr-check-067aeb03.json": {
+      "startedAt": "2026-11-05T03:44:32.783Z",
+      "finishedAt": "2026-11-05T03:44:35.814Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spn146-registration",
+      "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+      "args": [
+        "scripts/serial.ts",
+        "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "scripts/backlog/cli.ts",
+        "pr",
+        "--base",
+        "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+        "--title",
+        "🧹 Groom backlog: register SPN-089 native flush prerequisite"
+      ],
+      "elapsedMs": 3030,
+      "peakKiB": 256320,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    }
+  },
+  "localBoundaries": [
+    "The final exact committed PR checker includes current backlog validation.",
+    "Earlier index/check inputs unchanged by final implementation prose amendments.",
+    "No app build/browser/native test or diagnostic was run for documentation registration.",
+    "All required hosted gates were separately verified before actual squash."
+  ]
+}

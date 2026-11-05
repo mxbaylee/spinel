@@ -1,0 +1,242 @@
+{
+  "verifiedAt": "2026-11-05T02:33:15.937670+00:00",
+  "reviewer": "/root/dialog_audit",
+  "preparedCheckpoint": "ec68084ef1f8eb2fa0231b188fbbf48b9ec8c118",
+  "currentSource": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "historicalBSource": "95d52be36061315bff866dec615544104ca4767c",
+  "currentTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "parents": [
+    "ec68084ef1f8eb2fa0231b188fbbf48b9ec8c118"
+  ],
+  "localHead": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "localWorktreeClean": true,
+  "preparedCheckpointReceipt": {
+    "file": "storybook-source-equivalence.json",
+    "sha256": "4af001bba87d8c1bef1dc1a489506caae12de0133b0d31785ceeaed0cc8cdeeb"
+  },
+  "changedPathsFromPreparedCheckpoint": [
+    "docs/implementation/SPN-089.md",
+    "docs/implementation/SPN-146.md",
+    "docs/implementation/evidence/SPN-089/final-candidate-preparation.json",
+    "docs/implementation/evidence/SPN-089/integrated-95d52be-terminal.json",
+    "docs/implementation/evidence/SPN-089/offline-activation-registration.md",
+    "docs/review-assets/spn-089-95d52be3/README.md",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/error-context-excerpt.md",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/failed-plain-1-metrics.json.gz",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/failure-log.txt",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/failure-log.txt.raw.gz",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/manifest.json",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/original-safe-evidence-manifest.json",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/peer-failure.png",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/receipt.json",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/sender-failure.png",
+    "docs/review-assets/spn-089-95d52be3/mobile-responsiveness-first-failure/source-overlap.json",
+    "docs/todo/SPN-146.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "onlyDocumentationChangesFromPreparedCheckpoint": true,
+  "equivalence": [
+    {
+      "path": "src",
+      "historicalBObject": "d5bec485bdfbdedfa079dab310f276515dd2efb0",
+      "preparedCheckpointObject": "d5bec485bdfbdedfa079dab310f276515dd2efb0",
+      "currentObject": "d5bec485bdfbdedfa079dab310f276515dd2efb0",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "web",
+      "historicalBObject": "23c7a7440142128cec78e9d47ec59765afbf3bb6",
+      "preparedCheckpointObject": "23c7a7440142128cec78e9d47ec59765afbf3bb6",
+      "currentObject": "23c7a7440142128cec78e9d47ec59765afbf3bb6",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "lib",
+      "historicalBObject": "8ae87a1e7e322f9820914b9b1614f831d66c48ab",
+      "preparedCheckpointObject": "8ae87a1e7e322f9820914b9b1614f831d66c48ab",
+      "currentObject": "8ae87a1e7e322f9820914b9b1614f831d66c48ab",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": ".storybook",
+      "historicalBObject": "ad8d6c1336a81e149a0eeb53977f94daa0abd188",
+      "preparedCheckpointObject": "ad8d6c1336a81e149a0eeb53977f94daa0abd188",
+      "currentObject": "ad8d6c1336a81e149a0eeb53977f94daa0abd188",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "scripts/screenshots.ts",
+      "historicalBObject": "2ef0a367c87da9ece0153fceea98ea0863aaf22e",
+      "preparedCheckpointObject": "2ef0a367c87da9ece0153fceea98ea0863aaf22e",
+      "currentObject": "2ef0a367c87da9ece0153fceea98ea0863aaf22e",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "scripts/serial.ts",
+      "historicalBObject": "86b17290e1c8451039d0ed48db3d7d6ded767188",
+      "preparedCheckpointObject": "86b17290e1c8451039d0ed48db3d7d6ded767188",
+      "currentObject": "86b17290e1c8451039d0ed48db3d7d6ded767188",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "scripts/ci/icon-screenshots.ts",
+      "historicalBObject": "382ae2b9d0353fab61ec43eac94f8b7d7c278981",
+      "preparedCheckpointObject": "382ae2b9d0353fab61ec43eac94f8b7d7c278981",
+      "currentObject": "382ae2b9d0353fab61ec43eac94f8b7d7c278981",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "scripts/ci/storybook-review.ts",
+      "historicalBObject": "55e4720741c4279bdc4a4652f38ee356d7e7f6f7",
+      "preparedCheckpointObject": "55e4720741c4279bdc4a4652f38ee356d7e7f6f7",
+      "currentObject": "55e4720741c4279bdc4a4652f38ee356d7e7f6f7",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "scripts/ci/storybook-review-gate.ts",
+      "historicalBObject": "b4b94e63a18f9184f35305077dadf1beb39653de",
+      "preparedCheckpointObject": "b4b94e63a18f9184f35305077dadf1beb39653de",
+      "currentObject": "b4b94e63a18f9184f35305077dadf1beb39653de",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "scripts/dependencies",
+      "historicalBObject": "d050a903a23dd4ab0ded991b01c3e2204825a320",
+      "preparedCheckpointObject": "d050a903a23dd4ab0ded991b01c3e2204825a320",
+      "currentObject": "d050a903a23dd4ab0ded991b01c3e2204825a320",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "package.json",
+      "historicalBObject": "f5772edccf157465975964205d30d37af2633288",
+      "preparedCheckpointObject": "f5772edccf157465975964205d30d37af2633288",
+      "currentObject": "f5772edccf157465975964205d30d37af2633288",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "package-lock.json",
+      "historicalBObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "preparedCheckpointObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "currentObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": ".nvmrc",
+      "historicalBObject": "63f87c20ef9fd0ace28f8d0a3b74b5ef2e24feff",
+      "preparedCheckpointObject": "63f87c20ef9fd0ace28f8d0a3b74b5ef2e24feff",
+      "currentObject": "63f87c20ef9fd0ace28f8d0a3b74b5ef2e24feff",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": ".github/workflows/storybook.yml",
+      "historicalBObject": "54758abff8770ba497402841c400a3f9ee3eb370",
+      "preparedCheckpointObject": "54758abff8770ba497402841c400a3f9ee3eb370",
+      "currentObject": "54758abff8770ba497402841c400a3f9ee3eb370",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "AGENTS.md",
+      "historicalBObject": "55f6d963058e70791b2336d4ed001952c96a611a",
+      "preparedCheckpointObject": "55f6d963058e70791b2336d4ed001952c96a611a",
+      "currentObject": "55f6d963058e70791b2336d4ed001952c96a611a",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "docs/todo/process.md",
+      "historicalBObject": "5f429f22ea9391f4d09aa930ec7e2fd450dccf85",
+      "preparedCheckpointObject": "5f429f22ea9391f4d09aa930ec7e2fd450dccf85",
+      "currentObject": "5f429f22ea9391f4d09aa930ec7e2fd450dccf85",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "docs/product/personas.md",
+      "historicalBObject": "770a6692bf006123b1e02ad58e3b78dd7e58d57d",
+      "preparedCheckpointObject": "770a6692bf006123b1e02ad58e3b78dd7e58d57d",
+      "currentObject": "770a6692bf006123b1e02ad58e3b78dd7e58d57d",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "docs/design/README.md",
+      "historicalBObject": "ee9a33b1e8aed8392193a35d31d76d0b06fab7ba",
+      "preparedCheckpointObject": "ee9a33b1e8aed8392193a35d31d76d0b06fab7ba",
+      "currentObject": "ee9a33b1e8aed8392193a35d31d76d0b06fab7ba",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "docs/design/states.md",
+      "historicalBObject": "d3eb36adcbe2d80a8d32a8ff135ebc5b11958514",
+      "preparedCheckpointObject": "d3eb36adcbe2d80a8d32a8ff135ebc5b11958514",
+      "currentObject": "d3eb36adcbe2d80a8d32a8ff135ebc5b11958514",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": true
+    },
+    {
+      "path": "e2e/history.spec.ts",
+      "historicalBObject": "8f36da93be833f57443dc3ffed0105f0c8c90290",
+      "preparedCheckpointObject": "fe2341b67254a73ba8f4c48c23dd06efa509dc0d",
+      "currentObject": "fe2341b67254a73ba8f4c48c23dd06efa509dc0d",
+      "equalToPreparedCheckpoint": true,
+      "equalToHistoricalB": false
+    }
+  ],
+  "inventory": {
+    "owners": 45,
+    "ids": 114,
+    "sectionIdenticalToPreparedCheckpointAndB": true,
+    "sectionSha256": "7de149be423ea04568a58134cfa447f4aded59f664cb729ee7b30f91a62ba271",
+    "currentDocumentBlob": "f51354193f82cdbb94e6fd1142a3ee0c85516c15",
+    "currentDocumentSha256": "00f5e7e214a871d2bc1c36fc7b145d4466a0e75899bf7efae03343fbb3afb3b3"
+  },
+  "expectedFreshValidation": {
+    "catalogueStories": 1056,
+    "inventoryStoryIds": 114,
+    "variants": [
+      "light",
+      "dark",
+      "phone",
+      "phone-dark",
+      "tablet"
+    ],
+    "focusedStories": [
+      "redesign-controls--long-modal-title",
+      "redesign-controls--emoji-modal-title",
+      "redesign-native-editors--make-copy-dialog"
+    ],
+    "focusedStates": 15,
+    "perVariantAdditionalAssertions": {
+      "light": 13,
+      "dark": 9,
+      "phone": 9,
+      "phone-dark": 9,
+      "tablet": 9
+    },
+    "iconIntegrationStates": 42
+  },
+  "boundaries": [
+    "Preparation only for exact final C before publication; no fresh C CI/build/play/preview/capture/visual success is claimed.",
+    "Historical B ordinary CI is rejected; its preserved Storybook and visual successes do not waive either recorded B ordinary-CI failure.",
+    "The substantive history identity fix is unchanged from prepared ec68084e and differs from B. Do not call all E2E code unchanged relative to B.",
+    "Application/style/story/native-runtime/review-runner sources are unchanged from B; old image captions retain original source attribution until a fresh C comparison proves equal bytes.",
+    "No further captures, tests, builds, reruns or cancellations were initiated by this reviewer."
+  ]
+}

@@ -1,0 +1,1965 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T03:23:58.096711+00:00",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "runId": 41956095276,
+  "jobId": 127011430611,
+  "attempt": 1,
+  "sourceTreeEqualsTestedTree": true,
+  "runConclusion": "failure",
+  "jobConclusion": "failure",
+  "caseRetry": 0,
+  "assertion": {
+    "file": "e2e/doc-responsiveness.spec.ts",
+    "caseLine": 320,
+    "assertionLine": 718,
+    "column": 40,
+    "metric": "capacityFlushPairMs.max",
+    "maximumMs": 100,
+    "actualMs": 114.39999999990687
+  },
+  "artifact": {
+    "id": 13385112595,
+    "name": "doc-responsiveness-mobile",
+    "size_in_bytes": 2698069,
+    "digest": "sha256:f7f53c8bd5140fe27fff8037fd74ed1285d5fbb23a1c0840b20a6c8cb0ec841f",
+    "created_at": "2026-11-05T03:17:25Z",
+    "expires_at": "2026-11-12T03:17:22Z",
+    "expired": false,
+    "workflow_run": {
+      "id": 41956095276,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-089-dialog-title-icons",
+      "head_sha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e"
+    }
+  },
+  "reports": {
+    "baseline": {
+      "entry": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 29983,
+      "sha256": "a5e644e2cb9de43a53adfeef563661141ba7f850c3665418d4b7c9c987e6ab41",
+      "stats": {
+        "startTime": "2026-11-05T02:36:18.574Z",
+        "duration": 1520694.8530000001,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing plain-1",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T02:36:25.363Z",
+              "durationMs": 391681,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing plain-2",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T02:42:57.309Z",
+              "durationMs": 357593,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing plain-3",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T02:48:54.920Z",
+              "durationMs": 376904,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing profile",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T02:55:11.853Z",
+              "durationMs": 387294,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        }
+      ]
+    },
+    "candidate": {
+      "entry": "playwright-report/doc-responsiveness.json",
+      "bytes": 1391585,
+      "sha256": "043c9e3c7052b678915b8f8e17d71323d8a8d2487006b078bb9d8f7c12de0086",
+      "stats": {
+        "startTime": "2026-11-05T03:01:42.774Z",
+        "duration": 939941.787,
+        "expected": 6,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing plain-1",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T03:01:46.869Z",
+              "durationMs": 195504,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing plain-2",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T03:05:02.470Z",
+              "durationMs": 190497,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing plain-3",
+          "project": "doc-responsiveness",
+          "status": "unexpected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "failed",
+              "startTime": "2026-11-05T03:08:12.982Z",
+              "durationMs": 182012,
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/doc-responsiveness.spec.ts",
+                    "column": 40,
+                    "line": 718
+                  },
+                  "message": "Error: expect(received).toBeLessThanOrEqual(expected)\n\nExpected: <= 100\nReceived:    114.39999999990687\n\n  716 |             // Idle samples must never dilute the registered capacity distribution.\n  717 |             expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);\n> 718 |             expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);\n      |                                        ^\n  719 |             expect(idleFlush).not.toBeNull();\n  720 |             {\n  721 |               expect(idleFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);\n    at /home/runner/work/spinel/spinel/e2e/doc-responsiveness.spec.ts:718:40"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/test-failed-2.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/error-context.md"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 320,
+          "title": "mobile sustained native typing profile",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T03:11:15.940Z",
+              "durationMs": 184407,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness.spec.ts",
+          "line": 833,
+          "title": "mobile resumes native typing after a quiet pause",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T03:14:20.441Z",
+              "durationMs": 172481,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness-boundaries.ts",
+          "line": 131,
+          "title": "mobile pending composition crosses the group limit without partial history",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T03:17:12.945Z",
+              "durationMs": 5251,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "file": "doc-responsiveness-boundaries.ts",
+          "line": 283,
+          "title": "mobile revocation refuses pending guest input and a late composition event",
+          "project": "doc-responsiveness",
+          "status": "expected",
+          "attempts": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "startTime": "2026-11-05T03:17:18.211Z",
+              "durationMs": 4399,
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "samples": [
+    {
+      "role": "baseline-observation",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "sample": "plain-1",
+      "attempt": 0,
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": false,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 122.10000000000582,
+          "p95": 209.10000000003492,
+          "max": 325.80000000004657,
+          "sum": 257873.40000000055
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 133,
+          "p95": 220.89999999996508,
+          "max": 405.70000000001164,
+          "sum": 282051.10000000003
+        },
+        "debounceBreakingGaps": 21,
+        "longTaskMs": {
+          "count": 1836,
+          "p50": 118,
+          "p95": 202,
+          "max": 44451,
+          "sum": 313078
+        },
+        "totalBlockingMs": 221278,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 93077.29999999999,
+        "firstVerifiedBrowserLocalDrainMs": 92386.09999999998,
+        "lateReadMinusLocalWitnessMs": 691.2000000000116,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 600000,
+      "nativeDrainObservationTimeoutMs": 120000,
+      "typingWallMs": 282278.260798,
+      "timingComplete": true,
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "entry": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 262041,
+      "sha256": "be2ee237d0ad1a0ce573ee13848cd4bf7932b86d7eb8406148ba0fce9accb636",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 1,
+      "undoRedoOutcome": "baseline-capacity-refusal",
+      "undoRedoRequested": 1
+    },
+    {
+      "role": "baseline-observation",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "sample": "plain-2",
+      "attempt": 0,
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 108,
+          "p95": 191.19999999995343,
+          "max": 312.79999999993015,
+          "sum": 232811.1999999963
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 116.59999999997672,
+          "p95": 203.80000000004657,
+          "max": 424.0999999999767,
+          "sum": 254282.60000000003
+        },
+        "debounceBreakingGaps": 8,
+        "longTaskMs": {
+          "count": 1777,
+          "p50": 108,
+          "p95": 186,
+          "max": 42466,
+          "sum": 284148
+        },
+        "totalBlockingMs": 195299,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 87794.69999999995,
+        "firstVerifiedBrowserLocalDrainMs": 87474.8999999999,
+        "lateReadMinusLocalWitnessMs": 319.80000000004657,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 600000,
+      "nativeDrainObservationTimeoutMs": 120000,
+      "typingWallMs": 254448.86107699992,
+      "timingComplete": true,
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "entry": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 270595,
+      "sha256": "2bbd1c289d4ee9986aaa02d2cc61a36a798a7a04ebc58c0efbddd303e976001e",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 1,
+      "undoRedoOutcome": "baseline-capacity-refusal",
+      "undoRedoRequested": 1
+    },
+    {
+      "role": "baseline-observation",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "sample": "plain-3",
+      "attempt": 0,
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": false,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 119.19999999995343,
+          "p95": 204.9000000001397,
+          "max": 326.19999999995343,
+          "sum": 247705.39999999758
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 129.40000000002328,
+          "p95": 216.89999999990687,
+          "max": 367,
+          "sum": 270850.79999999993
+        },
+        "debounceBreakingGaps": 20,
+        "longTaskMs": {
+          "count": 1771,
+          "p50": 119,
+          "p95": 198,
+          "max": 43230,
+          "sum": 300025
+        },
+        "totalBlockingMs": 211475,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 89739.1000000001,
+        "firstVerifiedBrowserLocalDrainMs": 89086.5,
+        "lateReadMinusLocalWitnessMs": 652.6000000000931,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 600000,
+      "nativeDrainObservationTimeoutMs": 120000,
+      "typingWallMs": 271088.19408000004,
+      "timingComplete": true,
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "entry": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 269853,
+      "sha256": "695824cf1a8502d06d58df9c626f104268a473e52959ccfc076a64da03239218",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 1,
+      "undoRedoOutcome": "baseline-capacity-refusal",
+      "undoRedoRequested": 1
+    },
+    {
+      "role": "baseline-observation",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "sample": "profile",
+      "attempt": 0,
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": false,
+        "capacityFlushP95": null,
+        "idleFlushP95": null,
+        "flushMaximum": null,
+        "boundedHistory": false,
+        "boundedCollaboration": false,
+        "observedCapacityFlushes": false,
+        "browserLocalDrainedWithinOneSecond": false
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 123.4000000001397,
+          "p95": 193.39999999990687,
+          "max": 309.89999999990687,
+          "sum": 251357.59999999963
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 133.60000000009313,
+          "p95": 204.80000000004657,
+          "max": 377.70000000018626,
+          "sum": 274770.19999999995
+        },
+        "debounceBreakingGaps": 15,
+        "longTaskMs": {
+          "count": 1861,
+          "p50": 116,
+          "p95": 193,
+          "max": 45688,
+          "sum": 307135
+        },
+        "totalBlockingMs": 214085,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 93368,
+        "firstVerifiedBrowserLocalDrainMs": 92622,
+        "lateReadMinusLocalWitnessMs": 746,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 600000,
+      "nativeDrainObservationTimeoutMs": 120000,
+      "typingWallMs": 274948.91092000017,
+      "timingComplete": true,
+      "correctness": "baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state",
+      "entry": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 275945,
+      "sha256": "9eb7b48c73252bba9264c50bd9cdef39fd509f1c654c96bd5ced21fd780f308a",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 1,
+      "undoRedoOutcome": "baseline-capacity-refusal",
+      "undoRedoRequested": 1
+    },
+    {
+      "role": "candidate",
+      "source": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "sample": "plain-1",
+      "attempt": 0,
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 70.5,
+          "p95": 110.0999999998603,
+          "max": 198.69999999995343,
+          "sum": 147030.70000000205
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 80.10000000009313,
+          "p95": 119.79999999981374,
+          "max": 211,
+          "sum": 167800.2999999998
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1360,
+          "p50": 71,
+          "p95": 111,
+          "max": 176,
+          "sum": 101481
+        },
+        "totalBlockingMs": 33481,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.800000000046566,
+          "p95": 33,
+          "max": 45.10000000009313,
+          "sum": 1064.300000000745
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 4.900000000139698,
+          "p95": 4.900000000139698,
+          "max": 4.900000000139698,
+          "sum": 4.900000000139698
+        },
+        "pairedFlushMaximumMs": 45.10000000009313,
+        "postFinalKeyDrainUpperBoundMs": 1244.1000000000931,
+        "firstVerifiedBrowserLocalDrainMs": 454.10000000009313,
+        "lateReadMinusLocalWitnessMs": 790,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 300000,
+      "nativeDrainObservationTimeoutMs": 30000,
+      "typingWallMs": 167932.9124,
+      "timingComplete": true,
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 644360,
+      "sha256": "367179dcf330e6083565b98d81afc74116c7682cd5a04eeb58ecbc32c10a66a8",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 0,
+      "undoRedoOutcome": "passed",
+      "undoRedoRequested": 66,
+      "maximumPair": {
+        "indexZeroBased": 4,
+        "pair": {
+          "reason": "capacity",
+          "startedAt": 9561.300000000047,
+          "durationMs": 45.10000000009313,
+          "history": 32,
+          "collaboration": 32
+        },
+        "endedAt": 9606.40000000014,
+        "nativeWitnesses": [
+          {
+            "sequence": 14,
+            "phase": "history",
+            "origin": "policy-capacity",
+            "startedAt": 9561.300000000047,
+            "endedAt": 9589,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          },
+          {
+            "sequence": 15,
+            "phase": "collaboration",
+            "origin": "policy-capacity",
+            "startedAt": 9589,
+            "endedAt": 9606.40000000014,
+            "before": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          },
+          {
+            "sequence": 13,
+            "phase": "pair",
+            "origin": "policy-capacity",
+            "startedAt": 9561.300000000047,
+            "endedAt": 9606.40000000014,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          }
+        ],
+        "adjacentPairs": [
+          {
+            "indexZeroBased": 2,
+            "reason": "capacity",
+            "startedAt": 6819.90000000014,
+            "durationMs": 13.399999999906868,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 3,
+            "reason": "capacity",
+            "startedAt": 8204,
+            "durationMs": 11.199999999953434,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 4,
+            "reason": "capacity",
+            "startedAt": 9561.300000000047,
+            "durationMs": 45.10000000009313,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 5,
+            "reason": "capacity",
+            "startedAt": 11048,
+            "durationMs": 25.800000000046566,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 6,
+            "reason": "capacity",
+            "startedAt": 12690.199999999953,
+            "durationMs": 16.4000000001397,
+            "history": 32,
+            "collaboration": 32
+          }
+        ],
+        "overlappingLongTasks": [
+          {
+            "startedAt": 9557,
+            "durationMs": 95
+          }
+        ],
+        "pairsAtLeast80Ms": []
+      }
+    },
+    {
+      "role": "candidate",
+      "source": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "sample": "plain-2",
+      "attempt": 0,
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 75.69999999995343,
+          "p95": 111,
+          "max": 217.19999999995343,
+          "sum": 152592.09999999497
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 86.0999999998603,
+          "p95": 121.79999999981374,
+          "max": 232.0999999998603,
+          "sum": 174205.80000000005
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1408,
+          "p50": 75,
+          "p95": 115,
+          "max": 205,
+          "sum": 109795
+        },
+        "totalBlockingMs": 39395,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 13.199999999953434,
+          "p95": 32.10000000009313,
+          "max": 45.39999999990687,
+          "sum": 1078.7000000001863
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 4.800000000046566,
+          "p95": 4.800000000046566,
+          "max": 4.800000000046566,
+          "sum": 4.800000000046566
+        },
+        "pairedFlushMaximumMs": 45.39999999990687,
+        "postFinalKeyDrainUpperBoundMs": 1209.1999999999534,
+        "firstVerifiedBrowserLocalDrainMs": 483.5,
+        "lateReadMinusLocalWitnessMs": 725.6999999999534,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 300000,
+      "nativeDrainObservationTimeoutMs": 30000,
+      "typingWallMs": 174299.493055,
+      "timingComplete": true,
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 641586,
+      "sha256": "493644c58de7ff4f097e89fc7e2e2432285d36c3d1cae9d7f0f1e8ad161d5c63",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 0,
+      "undoRedoOutcome": "passed",
+      "undoRedoRequested": 1,
+      "maximumPair": {
+        "indexZeroBased": 4,
+        "pair": {
+          "reason": "capacity",
+          "startedAt": 9117.90000000014,
+          "durationMs": 45.39999999990687,
+          "history": 32,
+          "collaboration": 32
+        },
+        "endedAt": 9163.300000000047,
+        "nativeWitnesses": [
+          {
+            "sequence": 14,
+            "phase": "history",
+            "origin": "policy-capacity",
+            "startedAt": 9117.90000000014,
+            "endedAt": 9145.199999999953,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          },
+          {
+            "sequence": 15,
+            "phase": "collaboration",
+            "origin": "policy-capacity",
+            "startedAt": 9145.199999999953,
+            "endedAt": 9163.300000000047,
+            "before": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          },
+          {
+            "sequence": 13,
+            "phase": "pair",
+            "origin": "policy-capacity",
+            "startedAt": 9117.90000000014,
+            "endedAt": 9163.300000000047,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          }
+        ],
+        "adjacentPairs": [
+          {
+            "indexZeroBased": 2,
+            "reason": "capacity",
+            "startedAt": 6511.5,
+            "durationMs": 12.600000000093132,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 3,
+            "reason": "capacity",
+            "startedAt": 7816.90000000014,
+            "durationMs": 11.399999999906868,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 4,
+            "reason": "capacity",
+            "startedAt": 9117.90000000014,
+            "durationMs": 45.39999999990687,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 5,
+            "reason": "capacity",
+            "startedAt": 10536.699999999953,
+            "durationMs": 24.9000000001397,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 6,
+            "reason": "capacity",
+            "startedAt": 12039.100000000093,
+            "durationMs": 15.899999999906868,
+            "history": 32,
+            "collaboration": 32
+          }
+        ],
+        "overlappingLongTasks": [
+          {
+            "startedAt": 9113.699999999953,
+            "durationMs": 81
+          }
+        ],
+        "pairsAtLeast80Ms": []
+      }
+    },
+    {
+      "role": "candidate",
+      "source": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "sample": "plain-3",
+      "attempt": 0,
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": false,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 71.79999999981374,
+          "p95": 109.6999999997206,
+          "max": 221.79999999981374,
+          "sum": 145600.30000000633
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 81.5,
+          "p95": 120,
+          "max": 241,
+          "sum": 165773.3999999999
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1332,
+          "p50": 74,
+          "p95": 111,
+          "max": 191,
+          "sum": 101941
+        },
+        "totalBlockingMs": 35341,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.700000000186265,
+          "p95": 33.199999999953434,
+          "max": 114.39999999990687,
+          "sum": 1137.9000000003725
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2.7000000001862645,
+          "p95": 2.7000000001862645,
+          "max": 2.7000000001862645,
+          "sum": 2.7000000001862645
+        },
+        "pairedFlushMaximumMs": 114.39999999990687,
+        "postFinalKeyDrainUpperBoundMs": 1078.2000000001863,
+        "firstVerifiedBrowserLocalDrainMs": 526.3000000002794,
+        "lateReadMinusLocalWitnessMs": 551.8999999999069,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 300000,
+      "nativeDrainObservationTimeoutMs": 30000,
+      "typingWallMs": 165893.98808100005,
+      "timingComplete": true,
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 648838,
+      "sha256": "63525f50b66aade0c81592898acacec0441f2b8f0b98e6b4f9d296b2a75f41fa",
+      "completedFieldPresent": false,
+      "completed": null,
+      "errors": [],
+      "finalReloadCount": 0,
+      "undoRedoOutcome": "passed",
+      "undoRedoRequested": 1,
+      "maximumPair": {
+        "indexZeroBased": 44,
+        "pair": {
+          "reason": "capacity",
+          "startedAt": 97280.80000000005,
+          "durationMs": 114.39999999990687,
+          "history": 32,
+          "collaboration": 32
+        },
+        "endedAt": 97395.19999999995,
+        "nativeWitnesses": [
+          {
+            "sequence": 134,
+            "phase": "history",
+            "origin": "policy-capacity",
+            "startedAt": 97280.80000000005,
+            "endedAt": 97337.80000000005,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "outcome": "returned",
+            "completedStates": 1440
+          },
+          {
+            "sequence": 135,
+            "phase": "collaboration",
+            "origin": "policy-capacity",
+            "startedAt": 97337.80000000005,
+            "endedAt": 97395.19999999995,
+            "before": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 1440
+          },
+          {
+            "sequence": 133,
+            "phase": "pair",
+            "origin": "policy-capacity",
+            "startedAt": 97280.80000000005,
+            "endedAt": 97395.19999999995,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 1440
+          }
+        ],
+        "adjacentPairs": [
+          {
+            "indexZeroBased": 42,
+            "reason": "capacity",
+            "startedAt": 91112.19999999995,
+            "durationMs": 11.200000000186265,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 43,
+            "reason": "capacity",
+            "startedAt": 94220.49999999977,
+            "durationMs": 12.700000000186265,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 44,
+            "reason": "capacity",
+            "startedAt": 97280.80000000005,
+            "durationMs": 114.39999999990687,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 45,
+            "reason": "capacity",
+            "startedAt": 100351.40000000014,
+            "durationMs": 11.399999999906868,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 46,
+            "reason": "capacity",
+            "startedAt": 103517.30000000005,
+            "durationMs": 14.399999999906868,
+            "history": 32,
+            "collaboration": 32
+          }
+        ],
+        "overlappingLongTasks": [
+          {
+            "startedAt": 97277.59999999986,
+            "durationMs": 186
+          }
+        ],
+        "pairsAtLeast80Ms": [
+          {
+            "indexZeroBased": 44,
+            "reason": "capacity",
+            "startedAt": 97280.80000000005,
+            "durationMs": 114.39999999990687,
+            "history": 32,
+            "collaboration": 32
+          }
+        ]
+      }
+    },
+    {
+      "role": "candidate",
+      "source": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "sample": "profile",
+      "attempt": 0,
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetResults": {
+        "inputP95": true,
+        "longestTask": true,
+        "capacityFlushP95": true,
+        "idleFlushP95": true,
+        "flushMaximum": true,
+        "boundedHistory": true,
+        "boundedCollaboration": true,
+        "observedCapacityFlushes": true,
+        "browserLocalDrainedWithinOneSecond": true
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 70.39999999990687,
+          "p95": 110.90000000037253,
+          "max": 213.70000000018626,
+          "sum": 146449.3999999985
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 79.29999999981374,
+          "p95": 121.10000000009313,
+          "max": 229,
+          "sum": 165532.5
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1314,
+          "p50": 75,
+          "p95": 113,
+          "max": 164,
+          "sum": 102680
+        },
+        "totalBlockingMs": 36980,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 14.700000000186265,
+          "p95": 35.09999999962747,
+          "max": 55.299999999813735,
+          "sum": 1171.7000000029802
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 3.5,
+          "p95": 3.5,
+          "max": 3.5,
+          "sum": 3.5
+        },
+        "pairedFlushMaximumMs": 55.299999999813735,
+        "postFinalKeyDrainUpperBoundMs": 1054.1000000000931,
+        "firstVerifiedBrowserLocalDrainMs": 412.79999999981374,
+        "lateReadMinusLocalWitnessMs": 641.3000000002794,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "runtime": "v26.12.1",
+      "browser": "156.0.8078.4",
+      "playwright": "1.64.1",
+      "runner": {
+        "name": "GitHub Actions 1000042077",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41956095276",
+        "attempt": "1"
+      },
+      "caseObservationTimeoutMs": 300000,
+      "nativeDrainObservationTimeoutMs": 30000,
+      "typingWallMs": 165654.713146,
+      "timingComplete": true,
+      "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 641908,
+      "sha256": "68363769cded0e9be4061dcb36474d145f951a6dedfaf899174763616cc6cd25",
+      "completedFieldPresent": true,
+      "completed": true,
+      "errors": [],
+      "finalReloadCount": 0,
+      "undoRedoOutcome": "passed",
+      "undoRedoRequested": 1,
+      "maximumPair": {
+        "indexZeroBased": 4,
+        "pair": {
+          "reason": "capacity",
+          "startedAt": 10702.700000000186,
+          "durationMs": 55.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        "endedAt": 10758.0,
+        "nativeWitnesses": [
+          {
+            "sequence": 14,
+            "phase": "history",
+            "origin": "policy-capacity",
+            "startedAt": 10702.700000000186,
+            "endedAt": 10737.399999999907,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          },
+          {
+            "sequence": 15,
+            "phase": "collaboration",
+            "origin": "policy-capacity",
+            "startedAt": 10737.399999999907,
+            "endedAt": 10758,
+            "before": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          },
+          {
+            "sequence": 13,
+            "phase": "pair",
+            "origin": "policy-capacity",
+            "startedAt": 10702.700000000186,
+            "endedAt": 10758,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 160
+          }
+        ],
+        "adjacentPairs": [
+          {
+            "indexZeroBased": 2,
+            "reason": "capacity",
+            "startedAt": 8196.700000000186,
+            "durationMs": 13.100000000093132,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 3,
+            "reason": "capacity",
+            "startedAt": 9452.899999999907,
+            "durationMs": 14.100000000093132,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 4,
+            "reason": "capacity",
+            "startedAt": 10702.700000000186,
+            "durationMs": 55.299999999813735,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 5,
+            "reason": "capacity",
+            "startedAt": 12094.399999999907,
+            "durationMs": 27.40000000037253,
+            "history": 32,
+            "collaboration": 32
+          },
+          {
+            "indexZeroBased": 6,
+            "reason": "capacity",
+            "startedAt": 13522.5,
+            "durationMs": 17,
+            "history": 32,
+            "collaboration": 32
+          }
+        ],
+        "overlappingLongTasks": [
+          {
+            "startedAt": 10698.80000000028,
+            "durationMs": 87
+          }
+        ],
+        "pairsAtLeast80Ms": []
+      }
+    }
+  ],
+  "comparison": {
+    "selected": true,
+    "step": "Verify candidate evidence and selected paired comparison",
+    "status": "skipped",
+    "reason": "The current-source candidate command failed. No paired comparison result was produced."
+  },
+  "diagnosisBoundary": "Repeated current-source capacity maximum assertion failure; source B had 129.1 ms at state672 and C has 114.4 ms at state1440. No same-source rerun, budget waiver, or claim of environmental noise. The internal cause is not established by an unprofiled interval. Current C cannot merge on this run.",
+  "failedSample": {
+    "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "bytes": 648838,
+    "sha256": "63525f50b66aade0c81592898acacec0441f2b8f0b98e6b4f9d296b2a75f41fa",
+    "maximumPair": {
+      "indexZeroBased": 44,
+      "pair": {
+        "reason": "capacity",
+        "startedAt": 97280.80000000005,
+        "durationMs": 114.39999999990687,
+        "history": 32,
+        "collaboration": 32
+      },
+      "endedAt": 97395.19999999995,
+      "nativeWitnesses": [
+        {
+          "sequence": 134,
+          "phase": "history",
+          "origin": "policy-capacity",
+          "startedAt": 97280.80000000005,
+          "endedAt": 97337.80000000005,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "outcome": "returned",
+          "completedStates": 1440
+        },
+        {
+          "sequence": 135,
+          "phase": "collaboration",
+          "origin": "policy-capacity",
+          "startedAt": 97337.80000000005,
+          "endedAt": 97395.19999999995,
+          "before": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 1440
+        },
+        {
+          "sequence": 133,
+          "phase": "pair",
+          "origin": "policy-capacity",
+          "startedAt": 97280.80000000005,
+          "endedAt": 97395.19999999995,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 1440
+        }
+      ],
+      "adjacentPairs": [
+        {
+          "indexZeroBased": 42,
+          "reason": "capacity",
+          "startedAt": 91112.19999999995,
+          "durationMs": 11.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 43,
+          "reason": "capacity",
+          "startedAt": 94220.49999999977,
+          "durationMs": 12.700000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 44,
+          "reason": "capacity",
+          "startedAt": 97280.80000000005,
+          "durationMs": 114.39999999990687,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 45,
+          "reason": "capacity",
+          "startedAt": 100351.40000000014,
+          "durationMs": 11.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 46,
+          "reason": "capacity",
+          "startedAt": 103517.30000000005,
+          "durationMs": 14.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        }
+      ],
+      "overlappingLongTasks": [
+        {
+          "startedAt": 97277.59999999986,
+          "durationMs": 186
+        }
+      ],
+      "pairsAtLeast80Ms": [
+        {
+          "indexZeroBased": 44,
+          "reason": "capacity",
+          "startedAt": 97280.80000000005,
+          "durationMs": 114.39999999990687,
+          "history": 32,
+          "collaboration": 32
+        }
+      ]
+    },
+    "inputKeydownCount": 2086,
+    "inputFrameCount": 2086,
+    "preUndoIntegrityPassed": true,
+    "undoRedoOutcome": "passed",
+    "undoRedoRequested": 1,
+    "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+    "timingComplete": true,
+    "completedFieldPresent": false,
+    "recordedErrors": [],
+    "finalReloads": [],
+    "finalPending": {
+      "history": 0,
+      "collaboration": 0
+    },
+    "nativeHistory": {
+      "undos": 66,
+      "redos": 0
+    },
+    "localDrainMs": 526.3000000002794,
+    "lateReadUpperBoundMs": 1078.2000000001863,
+    "lateReadDiagnostic": {
+      "withinOneSecond": false,
+      "acceptanceGate": false
+    },
+    "availableEntries": [
+      "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/error-context.md",
+      "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/test-failed-1.png",
+      "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/test-failed-2.png"
+    ],
+    "cpuProfileAvailable": false,
+    "playwrightTraceAvailable": false
+  },
+  "runtime": {
+    "runtime": "v26.12.1",
+    "browser": "156.0.8078.4",
+    "playwright": "1.64.1",
+    "system": {
+      "platform": "linux",
+      "architecture": "x64",
+      "release": "7.0.0-1017-azure",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "cpus": 4,
+      "totalmem": 16760340480
+    },
+    "runner": {
+      "name": "GitHub Actions 1000042077",
+      "os": "Linux",
+      "arch": "X64",
+      "run": "41956095276",
+      "attempt": "1"
+    },
+    "cgroupLimit": "unavailable",
+    "instrumentation": {
+      "profiler": false,
+      "cpuThrottle": 4,
+      "longTaskObserver": true,
+      "perKeyRequestAnimationFrame": true,
+      "playwrightTrace": false,
+      "perMutationSnapshot": false,
+      "physicalDevice": false,
+      "nativeDrainWitness": "browser-local-events-microtask"
+    },
+    "browserEnvironment": {
+      "configured": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "isMobile": true,
+        "hasTouch": true,
+        "deviceScaleFactor": 1
+      },
+      "observed": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "screen": {
+          "width": 1920,
+          "height": 1080
+        },
+        "devicePixelRatio": 1,
+        "coarsePointer": true,
+        "touchEvent": true,
+        "maxTouchPoints": 1,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36"
+      }
+    }
+  },
+  "sourceHashes": {
+    "e2e/doc-responsiveness.ts": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+    "e2e/doc-responsiveness.spec.ts": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+    "e2e/doc-responsiveness-fixture.ts": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+    "e2e/doc-responsiveness-boundaries.ts": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+    "web/docResponsivenessEvidence.ts": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+    "src/ui/docIdleEpisode.ts": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+    "src/ui/nativeDocFlush.ts": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+    "playwright.config.ts": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "dirtyPaths": "?? baseline-doc-source/",
+  "fixture": {
+    "paragraphs": 16,
+    "typedCharacters": 2071,
+    "enterKeys": 15,
+    "nativeTextLength": 2088,
+    "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+  },
+  "priorBProfileObservation": {
+    "archiveId": 13382342973,
+    "archiveSha256": "b1d6d17d1b5f71e29c6149c4a85c649ce184699a8d934ba7eca3ebb8e6805b49",
+    "source": "679ad75636799820e47bf0214ade771c3fe859e2",
+    "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "bytes": 646996,
+    "sha256": "e5a9c06982473da98619175e766082479f061118f57dc9de3390b16769851dbe",
+    "maximumPair": {
+      "indexZeroBased": 4,
+      "pair": {
+        "reason": "capacity",
+        "startedAt": 10916.100000000093,
+        "durationMs": 46.89999999990687,
+        "history": 32,
+        "collaboration": 32
+      },
+      "endedAt": 10963.0,
+      "nativeWitnesses": [
+        {
+          "sequence": 14,
+          "phase": "history",
+          "origin": "policy-capacity",
+          "startedAt": 10916.100000000093,
+          "endedAt": 10946,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        },
+        {
+          "sequence": 15,
+          "phase": "collaboration",
+          "origin": "policy-capacity",
+          "startedAt": 10946,
+          "endedAt": 10963,
+          "before": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        },
+        {
+          "sequence": 13,
+          "phase": "pair",
+          "origin": "policy-capacity",
+          "startedAt": 10916.100000000093,
+          "endedAt": 10963,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        }
+      ],
+      "adjacentPairs": [
+        {
+          "indexZeroBased": 2,
+          "reason": "capacity",
+          "startedAt": 8201.5,
+          "durationMs": 11.300000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 3,
+          "reason": "capacity",
+          "startedAt": 9541,
+          "durationMs": 11.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 4,
+          "reason": "capacity",
+          "startedAt": 10916.100000000093,
+          "durationMs": 46.89999999990687,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 5,
+          "reason": "capacity",
+          "startedAt": 12395.100000000093,
+          "durationMs": 23.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "indexZeroBased": 6,
+          "reason": "capacity",
+          "startedAt": 13853.100000000093,
+          "durationMs": 18.399999999906868,
+          "history": 32,
+          "collaboration": 32
+        }
+      ],
+      "overlappingLongTasks": [
+        {
+          "startedAt": 10911.600000000093,
+          "durationMs": 98
+        }
+      ],
+      "pairsAtLeast80Ms": []
+    },
+    "capacitySummary": {
+      "count": 65,
+      "p50": 14,
+      "p95": 34.59999999962747,
+      "max": 46.89999999990687,
+      "sum": 1095.0000000018626
+    },
+    "qualification": "No >=80ms pair in this separate profiled sample; it cannot reconstruct either unprofiled failure."
+  },
+  "sourceVerification": {
+    "e2e/doc-responsiveness.ts": {
+      "recordedSha256": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+      "committedCandidateSha256": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+      "matched": true
+    },
+    "e2e/doc-responsiveness.spec.ts": {
+      "recordedSha256": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+      "committedCandidateSha256": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+      "matched": true
+    },
+    "e2e/doc-responsiveness-fixture.ts": {
+      "recordedSha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+      "committedCandidateSha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+      "matched": true
+    },
+    "e2e/doc-responsiveness-boundaries.ts": {
+      "recordedSha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+      "committedCandidateSha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+      "matched": true
+    },
+    "web/docResponsivenessEvidence.ts": {
+      "recordedSha256": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+      "committedCandidateSha256": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+      "matched": true
+    },
+    "src/ui/docIdleEpisode.ts": {
+      "recordedSha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+      "committedCandidateSha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+      "matched": true
+    },
+    "src/ui/nativeDocFlush.ts": {
+      "recordedSha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+      "committedCandidateSha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+      "matched": true
+    },
+    "playwright.config.ts": {
+      "recordedSha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+      "committedCandidateSha256": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+      "matched": true
+    },
+    "package-lock.json": {
+      "recordedSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+      "committedCandidateSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+      "matched": true
+    }
+  },
+  "context": {
+    "bytes": 11920,
+    "sha256": "181072dbb789ba99af44e6504ab67937ff8840bd8cee34de28c0ee9239eb5b82",
+    "pageSnapshotHeadingPresent": false
+  },
+  "log": {
+    "source": "Decoded GitHub job log excerpt from the failed plain-3 header to before profile case start.",
+    "originalExcerptBytes": 3056,
+    "originalExcerptSha256": "592d2a0e4b80791af4313da6ed8e13ede830c17d2c96f66d5625c88d52c60963",
+    "rawGzipBytes": 665,
+    "rawGzipSha256": "ae657ab82934db10234fa75e5552a7ab4d1396c40e7371b74d83df88b521d993",
+    "readableDerivation": "ANSI formatting removed; final whitespace normalized to one newline. Original decoded excerpt preserved in deterministic gzip."
+  },
+  "safetyReview": {
+    "credentialNamedMetricFields": [],
+    "credentialPatternsFound": 0,
+    "dataClass": "Fixed synthetic native typing fixture telemetry",
+    "imagesInspected": "Both PNGs show synthetic Sustained typing Doc/peer content and ordinary app chrome.",
+    "excluded": [
+      "full raw reports with embedded content",
+      "raw driver/session logs",
+      "unrelated embedded images",
+      "CPU profiles from unrelated attempts"
+    ]
+  },
+  "verification": {
+    "archiveSize": true,
+    "archiveSha256": true,
+    "allZipCrc": true,
+    "allElevenCaseRetriesZero": true,
+    "noSampleDropped": true
+  }
+}

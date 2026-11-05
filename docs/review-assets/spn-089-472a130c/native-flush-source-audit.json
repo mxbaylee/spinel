@@ -1,0 +1,973 @@
+{
+  "kind": "independent-read-only-native-flush-source-audit",
+  "reviewer": "/root/dialog_audit",
+  "observedAt": "2026-11-05T03:25:56.802882+00:00",
+  "source": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "runId": 41956095276,
+  "jobId": 127011430611,
+  "disposition": "C remains failed and merge-blocked. No causal repair or metric defect has been established. Storybook and visual successes retain only their own scope.",
+  "independence": {
+    "sourceEdits": false,
+    "testsBuildsBrowsersReruns": false,
+    "artifactRedownloads": false,
+    "sourceAndExistingArtifactReadsOnly": true
+  },
+  "sourceEquivalence": [
+    {
+      "path": "e2e/doc-responsiveness.spec.ts",
+      "sourceObject": "38b4704bb2815d170814575d3855d873fd26669c",
+      "baseObject": "38b4704bb2815d170814575d3855d873fd26669c",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness.ts",
+      "sourceObject": "f53279146fb8b988e890d5541a72bd603fed0d9b",
+      "baseObject": "f53279146fb8b988e890d5541a72bd603fed0d9b",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-fixture.ts",
+      "sourceObject": "573a0ed60e4aace758e7a20c65af8015c254c773",
+      "baseObject": "573a0ed60e4aace758e7a20c65af8015c254c773",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-boundaries.ts",
+      "sourceObject": "97bd2d6de242997fe48f60e43e941d21fabcb4eb",
+      "baseObject": "97bd2d6de242997fe48f60e43e941d21fabcb4eb",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-responsiveness.ts",
+      "sourceObject": "bfc5da6885a59e240d2f51335af29d90b9172f4e",
+      "baseObject": "bfc5da6885a59e240d2f51335af29d90b9172f4e",
+      "identical": true
+    },
+    {
+      "path": "src/ui/boundedDocHistory.ts",
+      "sourceObject": "cc82ad9da174e9b3084c1d4989388e4a153cd9ba",
+      "baseObject": "cc82ad9da174e9b3084c1d4989388e4a153cd9ba",
+      "identical": true
+    },
+    {
+      "path": "src/ui/nativeDocFlush.ts",
+      "sourceObject": "c466701cf94600a31da475e07aca9100ac471534",
+      "baseObject": "c466701cf94600a31da475e07aca9100ac471534",
+      "identical": true
+    },
+    {
+      "path": "src/ui/docIdleEpisode.ts",
+      "sourceObject": "e90f280c0167c286ab0780a8a62def53a3944106",
+      "baseObject": "e90f280c0167c286ab0780a8a62def53a3944106",
+      "identical": true
+    },
+    {
+      "path": "web/docResponsivenessEvidence.ts",
+      "sourceObject": "4ff943c5e07b32a972b23c004256fcbf1a37b1e0",
+      "baseObject": "4ff943c5e07b32a972b23c004256fcbf1a37b1e0",
+      "identical": true
+    },
+    {
+      "path": "web/DocEditor.tsx",
+      "sourceObject": "3e84285cff521fee82239ee9f33f6201839e2b2b",
+      "baseObject": "3e84285cff521fee82239ee9f33f6201839e2b2b",
+      "identical": true
+    },
+    {
+      "path": "lib/sync-client",
+      "sourceObject": "14b19df9f1d160bf5e107d28c9c27bc12405173e",
+      "baseObject": "14b19df9f1d160bf5e107d28c9c27bc12405173e",
+      "identical": true
+    },
+    {
+      "path": "lib/sync-transform",
+      "sourceObject": "df2c5502bcc08bde6e977278ad46753bbb32d440",
+      "baseObject": "df2c5502bcc08bde6e977278ad46753bbb32d440",
+      "identical": true
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs.ts",
+      "sourceObject": "d0aeae203b93965634508bc8e7b567012f7cff0a",
+      "baseObject": "d0aeae203b93965634508bc8e7b567012f7cff0a",
+      "identical": true
+    },
+    {
+      "path": "scripts/dependencies/doc-flush-observation.ts",
+      "sourceObject": "e2e6fa16fa2243c2d9b85c64d13fb19d622e6a7c",
+      "baseObject": "e2e6fa16fa2243c2d9b85c64d13fb19d622e6a7c",
+      "identical": true
+    },
+    {
+      "path": "package.json",
+      "sourceObject": "f5772edccf157465975964205d30d37af2633288",
+      "baseObject": "f5772edccf157465975964205d30d37af2633288",
+      "identical": true
+    },
+    {
+      "path": "package-lock.json",
+      "sourceObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "baseObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "identical": true
+    }
+  ],
+  "observedFailure": {
+    "path": "/workspace/scratch/ce40e94380e1/validation/spn089-merge/c/mobile-responsiveness-raw/failed-plain-3-metrics.json",
+    "bytes": 648838,
+    "sha256": "63525f50b66aade0c81592898acacec0441f2b8f0b98e6b4f9d296b2a75f41fa",
+    "sample": "plain-3",
+    "outer": {
+      "reason": "capacity",
+      "startedAt": 97280.80000000005,
+      "durationMs": 114.39999999990687,
+      "history": 32,
+      "collaboration": 32
+    },
+    "nativePhases": [
+      {
+        "sequence": 134,
+        "unitId": "245b4a36-8d1f-4ff4-bbdd-368eadb78b8b",
+        "phase": "history",
+        "origin": "policy-capacity",
+        "startedAt": 97280.80000000005,
+        "endedAt": 97337.80000000005,
+        "before": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 32
+        },
+        "outcome": "returned",
+        "epoch": "d730ae2c-5ff5-4a4a-b1f8-9653800ae0ec",
+        "generation": "245b4a36-8d1f-4ff4-bbdd-368eadb78b8b:1793848093114.9:1289.0999999998603:1",
+        "completedStates": 1440
+      },
+      {
+        "sequence": 135,
+        "unitId": "245b4a36-8d1f-4ff4-bbdd-368eadb78b8b",
+        "phase": "collaboration",
+        "origin": "policy-capacity",
+        "startedAt": 97337.80000000005,
+        "endedAt": 97395.19999999995,
+        "before": {
+          "history": 0,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "epoch": "d730ae2c-5ff5-4a4a-b1f8-9653800ae0ec",
+        "generation": "245b4a36-8d1f-4ff4-bbdd-368eadb78b8b:1793848093114.9:1289.0999999998603:1",
+        "completedStates": 1440
+      },
+      {
+        "sequence": 133,
+        "unitId": "245b4a36-8d1f-4ff4-bbdd-368eadb78b8b",
+        "phase": "pair",
+        "origin": "policy-capacity",
+        "startedAt": 97280.80000000005,
+        "endedAt": 97395.19999999995,
+        "before": {
+          "history": 32,
+          "collaboration": 32
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "epoch": "d730ae2c-5ff5-4a4a-b1f8-9653800ae0ec",
+        "generation": "245b4a36-8d1f-4ff4-bbdd-368eadb78b8b:1793848093114.9:1289.0999999998603:1",
+        "completedStates": 1440
+      }
+    ],
+    "summary": {
+      "frameOpportunityMs": {
+        "count": 2086,
+        "p50": 71.79999999981374,
+        "p95": 109.6999999997206,
+        "max": 221.79999999981374,
+        "sum": 145600.30000000633
+      },
+      "interKeyGapMs": {
+        "count": 2085,
+        "p50": 81.5,
+        "p95": 120,
+        "max": 241,
+        "sum": 165773.3999999999
+      },
+      "debounceBreakingGaps": 0,
+      "longTaskMs": {
+        "count": 1332,
+        "p50": 74,
+        "p95": 111,
+        "max": 191,
+        "sum": 101941
+      },
+      "totalBlockingMs": 35341,
+      "capacityFlushPairMs": {
+        "count": 65,
+        "p50": 12.700000000186265,
+        "p95": 33.199999999953434,
+        "max": 114.39999999990687,
+        "sum": 1137.9000000003725
+      },
+      "idleFlushPairMs": {
+        "count": 1,
+        "p50": 2.7000000001862645,
+        "p95": 2.7000000001862645,
+        "max": 2.7000000001862645,
+        "sum": 2.7000000001862645
+      },
+      "pairedFlushMaximumMs": 114.39999999990687,
+      "postFinalKeyDrainUpperBoundMs": 1078.2000000001863,
+      "firstVerifiedBrowserLocalDrainMs": 526.3000000002794,
+      "lateReadMinusLocalWitnessMs": 551.8999999999069,
+      "drainAcceptanceMetric": "first-verified-browser-local-empty"
+    },
+    "budgetResults": {
+      "inputP95": true,
+      "longestTask": true,
+      "capacityFlushP95": true,
+      "idleFlushP95": true,
+      "flushMaximum": false,
+      "boundedHistory": true,
+      "boundedCollaboration": true,
+      "observedCapacityFlushes": true,
+      "browserLocalDrainedWithinOneSecond": true
+    },
+    "overlappingLongTask": {
+      "startedAt": 97277.59999999986,
+      "durationMs": 186
+    },
+    "noFailedSampleCpuProfileOrTrace": true
+  },
+  "measurementBoundary": {
+    "policy": "src/ui/boundedDocHistory.ts:52-78 measures performance.now immediately before flushPendingChanges and after synchronous return, before optional outer measurement/diagnostic callback.",
+    "native": "scripts/dependencies/doc-flush-observation.ts:35-76 wraps a synchronous history then collaboration pair. Native phase endedAt precedes that phase observer notification; the enclosing native pair and outer interval include the phase notifications.",
+    "history": "Pinned @univerjs/docs ES manager:3706-3745 constructs redo composition, reverses its history cache for undo composition, publishes one undo/redo item including synchronous status subscribers, then empties history cache.",
+    "collaboration": "Pinned @univerjs/docs ES manager:3750-3782 composes redo and reversed undo independently, empties its distinct cache, and calls docStateChange$.next synchronously.",
+    "transportCorrection": "The actual Spinel captureNative transport uses ICommandService.onMutationExecutedForCollab (lib/sync-client/src/capture.ts:131; native.ts:217-222), which runs after the native mutation handler returns. The capacity policy runs during synchronous DocStateEmitService emission inside that handler (pinned Docs:1474; core sync command:2236-2242). No production bridge from docStateChange$ to captureNative was found. Therefore ordinary transport capture/admission/enqueue is outside this capacity pair, although part of the surrounding input task. This corrects an earlier preliminary message that over-included enqueue.",
+    "asyncExclusions": "Queued microtasks, client persistence, 25ms transport batching, server acknowledgement and peer convergence are not included simply by being downstream of the edit. Synchronous status or stream subscribers are included.",
+    "notAnInstrumentationConclusion": "For the failed pair outer start/end equals native pair start/end and equals 57.0+57.4ms phase elapsed at reported precision. This supplies no evidence of inflation by outer observation, but does not isolate internal computation from pauses.",
+    "idle": "src/ui/docIdleEpisode.ts reconciles terminal idle phase spans and any interval between them; it is not the source of the capacity sample at assertion718. Idle is separately checked, never used to dilute capacity p95/max."
+  },
+  "boundedPolicy": {
+    "stateLimit": 32,
+    "historyRetention": 100,
+    "idleQuietMs": 300,
+    "workloadInputs": 2086,
+    "description": "SDK capture subscriber is resolved first; policy observes completed local same-unit states, ignores sync/noHistory/reentrant changes, and flushes synchronously when max(history.length, collaboration.length)>=32. Native IME interception, segment/immediate/history boundaries and separate cache ownership remain native. This bounds state count, not action/body/metadata size or CPU elapsed.",
+    "observedC": "65 capacity groups of32 plus one terminal six-state idle group; all2086 inputs retained, no >=300ms inter-key gaps. 66 actual history groups are below retention100.",
+    "notAProposedFix": "Lowering32, adding structural early flushes, moving work outside timing, splitting one group or raising limits changes the established policy/history/acceptance contract and is not justified by the current evidence."
+  },
+  "enterMapping": {
+    "scope": "Arithmetic from the exact keyboard fixture and observed completed-state boundaries only; no native action/cache capture exists for the failing sample, so this does not prove actual action shape.",
+    "enterStates": [
+      130,
+      260,
+      390,
+      520,
+      650,
+      780,
+      910,
+      1040,
+      1170,
+      1301,
+      1432,
+      1563,
+      1694,
+      1825,
+      1956
+    ],
+    "allCapacityPairs": [
+      {
+        "group": 1,
+        "completedStateWindow": [
+          1,
+          32
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 33.0
+      },
+      {
+        "group": 2,
+        "completedStateWindow": [
+          33,
+          64
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 18.300000000046566
+      },
+      {
+        "group": 3,
+        "completedStateWindow": [
+          65,
+          96
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.199999999953434
+      },
+      {
+        "group": 4,
+        "completedStateWindow": [
+          97,
+          128
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.300000000046566
+      },
+      {
+        "group": 5,
+        "completedStateWindow": [
+          129,
+          160
+        ],
+        "mappedEnterStates": [
+          130
+        ],
+        "pairMs": 48.5999999998603
+      },
+      {
+        "group": 6,
+        "completedStateWindow": [
+          161,
+          192
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 19.300000000046566
+      },
+      {
+        "group": 7,
+        "completedStateWindow": [
+          193,
+          224
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 21.0999999998603
+      },
+      {
+        "group": 8,
+        "completedStateWindow": [
+          225,
+          256
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 10.800000000046566
+      },
+      {
+        "group": 9,
+        "completedStateWindow": [
+          257,
+          288
+        ],
+        "mappedEnterStates": [
+          260
+        ],
+        "pairMs": 35.199999999953434
+      },
+      {
+        "group": 10,
+        "completedStateWindow": [
+          289,
+          320
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 18.300000000046566
+      },
+      {
+        "group": 11,
+        "completedStateWindow": [
+          321,
+          352
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.699999999953434
+      },
+      {
+        "group": 12,
+        "completedStateWindow": [
+          353,
+          384
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.200000000186265
+      },
+      {
+        "group": 13,
+        "completedStateWindow": [
+          385,
+          416
+        ],
+        "mappedEnterStates": [
+          390
+        ],
+        "pairMs": 26.5
+      },
+      {
+        "group": 14,
+        "completedStateWindow": [
+          417,
+          448
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 9.100000000093132
+      },
+      {
+        "group": 15,
+        "completedStateWindow": [
+          449,
+          480
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 9.899999999906868
+      },
+      {
+        "group": 16,
+        "completedStateWindow": [
+          481,
+          512
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.100000000093132
+      },
+      {
+        "group": 17,
+        "completedStateWindow": [
+          513,
+          544
+        ],
+        "mappedEnterStates": [
+          520
+        ],
+        "pairMs": 27.199999999953434
+      },
+      {
+        "group": 18,
+        "completedStateWindow": [
+          545,
+          576
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.0
+      },
+      {
+        "group": 19,
+        "completedStateWindow": [
+          577,
+          608
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 14.100000000093132
+      },
+      {
+        "group": 20,
+        "completedStateWindow": [
+          609,
+          640
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 10.099999999860302
+      },
+      {
+        "group": 21,
+        "completedStateWindow": [
+          641,
+          672
+        ],
+        "mappedEnterStates": [
+          650
+        ],
+        "pairMs": 22.9000000001397
+      },
+      {
+        "group": 22,
+        "completedStateWindow": [
+          673,
+          704
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 18.300000000046566
+      },
+      {
+        "group": 23,
+        "completedStateWindow": [
+          705,
+          736
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 13.400000000139698
+      },
+      {
+        "group": 24,
+        "completedStateWindow": [
+          737,
+          768
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 8.5
+      },
+      {
+        "group": 25,
+        "completedStateWindow": [
+          769,
+          800
+        ],
+        "mappedEnterStates": [
+          780
+        ],
+        "pairMs": 27.5999999998603
+      },
+      {
+        "group": 26,
+        "completedStateWindow": [
+          801,
+          832
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 9.600000000093132
+      },
+      {
+        "group": 27,
+        "completedStateWindow": [
+          833,
+          864
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.5
+      },
+      {
+        "group": 28,
+        "completedStateWindow": [
+          865,
+          896
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 8.899999999906868
+      },
+      {
+        "group": 29,
+        "completedStateWindow": [
+          897,
+          928
+        ],
+        "mappedEnterStates": [
+          910
+        ],
+        "pairMs": 23.700000000186265
+      },
+      {
+        "group": 30,
+        "completedStateWindow": [
+          929,
+          960
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.900000000139698
+      },
+      {
+        "group": 31,
+        "completedStateWindow": [
+          961,
+          992
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 13.199999999953434
+      },
+      {
+        "group": 32,
+        "completedStateWindow": [
+          993,
+          1024
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.100000000093132
+      },
+      {
+        "group": 33,
+        "completedStateWindow": [
+          1025,
+          1056
+        ],
+        "mappedEnterStates": [
+          1040
+        ],
+        "pairMs": 21.800000000046566
+      },
+      {
+        "group": 34,
+        "completedStateWindow": [
+          1057,
+          1088
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 9.300000000046566
+      },
+      {
+        "group": 35,
+        "completedStateWindow": [
+          1089,
+          1120
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.800000000046566
+      },
+      {
+        "group": 36,
+        "completedStateWindow": [
+          1121,
+          1152
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.100000000093132
+      },
+      {
+        "group": 37,
+        "completedStateWindow": [
+          1153,
+          1184
+        ],
+        "mappedEnterStates": [
+          1170
+        ],
+        "pairMs": 27.0999999998603
+      },
+      {
+        "group": 38,
+        "completedStateWindow": [
+          1185,
+          1216
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 9.100000000093132
+      },
+      {
+        "group": 39,
+        "completedStateWindow": [
+          1217,
+          1248
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 8.899999999906868
+      },
+      {
+        "group": 40,
+        "completedStateWindow": [
+          1249,
+          1280
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 13.100000000093132
+      },
+      {
+        "group": 41,
+        "completedStateWindow": [
+          1281,
+          1312
+        ],
+        "mappedEnterStates": [
+          1301
+        ],
+        "pairMs": 26.800000000279397
+      },
+      {
+        "group": 42,
+        "completedStateWindow": [
+          1313,
+          1344
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 13.200000000186265
+      },
+      {
+        "group": 43,
+        "completedStateWindow": [
+          1345,
+          1376
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.200000000186265
+      },
+      {
+        "group": 44,
+        "completedStateWindow": [
+          1377,
+          1408
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.700000000186265
+      },
+      {
+        "group": 45,
+        "completedStateWindow": [
+          1409,
+          1440
+        ],
+        "mappedEnterStates": [
+          1432
+        ],
+        "pairMs": 114.39999999990687
+      },
+      {
+        "group": 46,
+        "completedStateWindow": [
+          1441,
+          1472
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.300000000279397
+      },
+      {
+        "group": 47,
+        "completedStateWindow": [
+          1473,
+          1504
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 14.399999999906868
+      },
+      {
+        "group": 48,
+        "completedStateWindow": [
+          1505,
+          1536
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.099999999627471
+      },
+      {
+        "group": 49,
+        "completedStateWindow": [
+          1537,
+          1568
+        ],
+        "mappedEnterStates": [
+          1563
+        ],
+        "pairMs": 20.0
+      },
+      {
+        "group": 50,
+        "completedStateWindow": [
+          1569,
+          1600
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.899999999906868
+      },
+      {
+        "group": 51,
+        "completedStateWindow": [
+          1601,
+          1632
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.100000000093132
+      },
+      {
+        "group": 52,
+        "completedStateWindow": [
+          1633,
+          1664
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.199999999720603
+      },
+      {
+        "group": 53,
+        "completedStateWindow": [
+          1665,
+          1696
+        ],
+        "mappedEnterStates": [
+          1694
+        ],
+        "pairMs": 26.0
+      },
+      {
+        "group": 54,
+        "completedStateWindow": [
+          1697,
+          1728
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 13.799999999813735
+      },
+      {
+        "group": 55,
+        "completedStateWindow": [
+          1729,
+          1760
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 10.199999999720603
+      },
+      {
+        "group": 56,
+        "completedStateWindow": [
+          1761,
+          1792
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 14.100000000093132
+      },
+      {
+        "group": 57,
+        "completedStateWindow": [
+          1793,
+          1824
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.399999999906868
+      },
+      {
+        "group": 58,
+        "completedStateWindow": [
+          1825,
+          1856
+        ],
+        "mappedEnterStates": [
+          1825
+        ],
+        "pairMs": 26.40000000037253
+      },
+      {
+        "group": 59,
+        "completedStateWindow": [
+          1857,
+          1888
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.800000000279397
+      },
+      {
+        "group": 60,
+        "completedStateWindow": [
+          1889,
+          1920
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 8.299999999813735
+      },
+      {
+        "group": 61,
+        "completedStateWindow": [
+          1921,
+          1952
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.100000000093132
+      },
+      {
+        "group": 62,
+        "completedStateWindow": [
+          1953,
+          1984
+        ],
+        "mappedEnterStates": [
+          1956
+        ],
+        "pairMs": 27.199999999720603
+      },
+      {
+        "group": 63,
+        "completedStateWindow": [
+          1985,
+          2016
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 13.100000000093132
+      },
+      {
+        "group": 64,
+        "completedStateWindow": [
+          2017,
+          2048
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 11.600000000093132
+      },
+      {
+        "group": 65,
+        "completedStateWindow": [
+          2049,
+          2080
+        ],
+        "mappedEnterStates": [],
+        "pairMs": 12.199999999720603
+      }
+    ],
+    "BFailureWindow": [
+      641,
+      672
+    ],
+    "BEnterState": 650,
+    "CWindow": [
+      1409,
+      1440
+    ],
+    "CEnterState": 1432,
+    "sameLogicalBWindowInC": {
+      "group": 21,
+      "completedStateWindow": [
+        641,
+        672
+      ],
+      "mappedEnterStates": [
+        650
+      ],
+      "pairMs": 22.9000000001397
+    },
+    "interpretation": "Both failed logical windows include Enter. C group21 corresponding to B failure is22.9ms; all other C Enter groups are20.0-48.6ms. Enter presence alone does not establish a sufficient cause or exclude pauses."
+  },
+  "sourceLeads": [
+    {
+      "lead": "Four composition calls per normal pair",
+      "evidence": "History and collaboration each calculate forward and inverse actions independently. Both source phases are measured; separate cache contents and publication semantics must be preserved.",
+      "status": "Concrete repeated work, not yet attribution for the failure."
+    },
+    {
+      "lead": "Qualified-prefix optimization with structural tail fallback",
+      "evidence": "patch-univer-docs.ts:73-80 rejects C0 and structural fields;111-130 balances only leading qualified inserts;175-200 combines only leading qualified descending deletes and preserves every unsupported/later call in order.",
+      "status": "Concrete algorithm boundary; failed cache shape and exact primitive counts unavailable."
+    },
+    {
+      "lead": "Repeated guard traversal",
+      "evidence": "patch-univer-docs.ts:137-153 recursively validates delete data before later insert-path qualification; fixed key lists are already hoisted at204-225.",
+      "status": "Potential bounded optimization only if a measured operation-count or diagnostic profile demonstrates useful work reduction while preserving admission exactly."
+    }
+  ],
+  "existingRegressionOwners": [
+    "patch-univer-docs.test.ts:549 measuredFlush primitive TextX.compose, iterator, body-slice, clone and allocation counts against actual hash-verified manager regions in ES/CJS.",
+    "patch-univer-docs.test.ts:739 and797 validate synchronous publisher costs, callback errors, exception identity and uncleared-cache ordering.",
+    "patch-univer-docs.test.ts:1012 retained real capacity caches;1049 owned accumulator and every unchanged tail call;1413 all32 paragraph positions;662 and1110 unequal/independent history-collaboration caches and exact raw metadata.",
+    "boundedDocHistory.test.ts owns completed state bounds, finite eviction, idle/visibility, IME/segment/remote input, permission fencing, observation/disposal and lost-ack replay.",
+    "docHistorySync.test.ts owns full2086-input native state, server/peer/checkpoint equality, wire budgets and each actual undo/redo group; mounted responsiveness owner adds real keyboard and strict first-attempt latency."
+  ],
+  "recommendedNextCheckpoint": [
+    "Use already-retained matching-source callback/native observations first. Never attribute an unprofiled failed sample from a different successful profile or callback case.",
+    "If a new diagnostic is authorized, preregister a finite work-path hypothesis, exact windows/controls, bounded observation fields and stop condition. Capture actual native cache shapes losslessly after timing, rather than assuming Enter action structure.",
+    "Replay qualified captured windows at the real manager layer in both supported builds with exact current and candidate negative controls. Compare complete raw forward/inverse publications, paragraph IDs/styles/undefined fields, action ownership, intermediate cache/status order, exceptions and deterministic primitive work counts. Reuse existing owners instead of duplicating current all-position coverage.",
+    "Only after a demonstrable source repair, run the unchanged first-attempt full native workload/budgets and applicable continuation/IME/history/access tests. Diagnostic timing/profile is not acceptance and another unchanged pass is not a causal explanation."
+  ],
+  "repairOptionsNotSelected": [
+    {
+      "option": "Narrowly reduce redundant qualification or composition work inside the pinned public native patch",
+      "conditions": "Prove exact admitted shapes and complete raw output/callback/order equivalence; show a deterministic work reduction with original-current failing control. Preserve32/100/300ms policy and all numerical budgets. Do not reassociate arbitrary structural tails."
+    },
+    {
+      "option": "Reuse equivalent forward/inverse results across the two native cache phases",
+      "conditions": "Potentially removes duplicate work, but equal counts or reference identity is insufficient: independent caches, cache.reverse, subscriber mutation, alias ownership and throw timing matter. Preserve original fallback and output independence. Larger capability checkpoint; no blind memoization recommendation."
+    },
+    {
+      "option": "Runtime/platform or measurement disposition",
+      "conditions": "Requires direct matching evidence distinguishing computation, scheduler/CPU throttling or other pause sources. Current elapsed and successful-profile evidence does not establish GC, noise, a measurement defect or a right to subtract any interval."
+    }
+  ],
+  "scope": "SPN146 is the independent L-sized native performance outcome. Relevant runtime/harness paths are identical between C and main1045; this proves source separation from SPN089, not harmlessness or a waiver. A focused repair should be registered/reviewed under that outcome and then integrated into the blocked modal PR with fresh required gates. Process reviewer owns allocation/dependency/publication route."
+}

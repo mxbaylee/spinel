@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "runId": 41956095276,
+  "jobId": 127011430611,
+  "attempt": 1,
+  "artifact": {
+    "id": 13385112595,
+    "name": "doc-responsiveness-mobile",
+    "size_in_bytes": 2698069,
+    "digest": "sha256:f7f53c8bd5140fe27fff8037fd74ed1285d5fbb23a1c0840b20a6c8cb0ec841f",
+    "created_at": "2026-11-05T03:17:25Z",
+    "expires_at": "2026-11-12T03:17:22Z",
+    "expired": false,
+    "workflow_run": {
+      "id": 41956095276,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-089-dialog-title-icons",
+      "head_sha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e"
+    }
+  },
+  "originalMetrics": {
+    "bytes": 648838,
+    "sha256": "63525f50b66aade0c81592898acacec0441f2b8f0b98e6b4f9d296b2a75f41fa"
+  },
+  "files": [
+    {
+      "name": "README.md",
+      "bytes": 1054,
+      "sha256": "d306052d6294c5a4f443c8c002475079ab955025dfbd770d063957dbac38f98c"
+    },
+    {
+      "name": "error-context.md",
+      "bytes": 11920,
+      "sha256": "181072dbb789ba99af44e6504ab67937ff8840bd8cee34de28c0ee9239eb5b82"
+    },
+    {
+      "name": "failed-plain-3-metrics.json.gz",
+      "bytes": 41448,
+      "sha256": "52cc0dcd448b78ddb59ec8a73844afde133cc52d1ee9843af85d89fcba081f7e"
+    },
+    {
+      "name": "failure-log.raw.txt.gz",
+      "bytes": 665,
+      "sha256": "ae657ab82934db10234fa75e5552a7ab4d1396c40e7371b74d83df88b521d993"
+    },
+    {
+      "name": "failure-log.txt",
+      "bytes": 3055,
+      "sha256": "3bfff0e37996a5d0be04069b8288ba5c590c36b2953bbcc3a007c4ca7f2cc05c"
+    },
+    {
+      "name": "failure-receipt.json",
+      "bytes": 63442,
+      "sha256": "a5dbed2ea6ba85a34381b8f663663f56f55e1bc19a1742019fbb0360568a1c21"
+    },
+    {
+      "name": "test-failed-1.png",
+      "bytes": 79368,
+      "sha256": "17f6f375c215c8923b9c49a77a6b7f75aa6e430e6bfbd8009adb9f6ecfc23b8e"
+    },
+    {
+      "name": "test-failed-2.png",
+      "bytes": 71219,
+      "sha256": "f0e343789866b88d6eb58061d0457aea626371acd3e50769a8ac14b309734a7a"
+    }
+  ]
+}

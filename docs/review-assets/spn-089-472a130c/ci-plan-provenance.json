@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T02:35:41.695307+00:00",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 260,
+  "runId": 41956095276,
+  "attempt": 1,
+  "classificationJob": 127011224462,
+  "source": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "testedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "planBytes": 3922,
+  "planSha256": "1dedbb018fcc84a26ba9a6c70bdf6dff9ab31993647169cbafbce0967b964cb3",
+  "mode": "full",
+  "selectedSuites": 15,
+  "event": "pull_request",
+  "action": "synchronize",
+  "artifact": {
+    "id": 13383670711,
+    "name": "ci-plan",
+    "bytes": 941,
+    "sha256": "373255398e8a96b227f088a547ed17588b455543ba3fbe9a6ad9504c4828a9c8",
+    "expiresAt": "2026-12-05T02:34:57Z",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41956095276/artifacts/13383670711"
+  },
+  "verification": "Original ZIP size/digest and every ZIP entry CRC verified. Parsed artifact plan equals classification log. GitHub-tested merge parents are main+source and its tree equals reviewed source tree."
+}

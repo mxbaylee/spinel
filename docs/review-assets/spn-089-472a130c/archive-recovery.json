@@ -1,0 +1,54 @@
+{
+  "recordedAt": "2026-11-05T02:42:51.110Z",
+  "source": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "tested": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "tree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "run": 41956095281,
+  "artifactId": 13382719809,
+  "originalVerification": {
+    "receipt": "hosted/artifact.json",
+    "bytes": 6633,
+    "sha256": "86eaf50353877bd80cccde11a0034e6219091b8c10e003ac90bd780c7f568f43",
+    "verifiedAt": "2026-11-05T02:36:53.948Z",
+    "expectedArchiveBytes": 6192895,
+    "expectedArchiveSha256": "9415a2c66657882449ff78eba53d065915011946ecc54355e8e6e2d0bc881a5a"
+  },
+  "laterLocalArchiveFailure": {
+    "path": "storybook-review.zip",
+    "bytes": 3051520,
+    "sha256": "212ad7ccc09e02c6ce01c0e91e70bbc15e3eb5bd74335e2abef1f533b8dfe64c",
+    "preservedUnchanged": true,
+    "reviewerObservation": "storybook-archive-observation.json",
+    "cause": "not established; no task writer identified after initial verification"
+  },
+  "recovery": {
+    "operation": "Read-only retrieval of the same immutable hosted artifact to a private temporary path; exact size/digest verified before atomic publication to a distinct path.",
+    "path": "storybook-review-recovered.zip",
+    "bytes": 6192895,
+    "sha256": "9415a2c66657882449ff78eba53d065915011946ecc54355e8e6e2d0bc881a5a",
+    "everyZipEntrySizeCrcAndDecodedHashVerified": true
+  },
+  "existingExtractedInputs": {
+    "path": "hosted/storybook-static",
+    "files": 363,
+    "allByteIdenticalToIndependentlyExtractedRecoveredArchive": true,
+    "manifestSha256": "daf05201b6da7125056c1367bbb2b0833ee442b1ef122a54957acea811db4ccf",
+    "identity": {
+      "sha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "checkedOutSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41956095281",
+      "builtAt": "2026-11-05T02:35:47.889Z"
+    }
+  },
+  "capture": {
+    "manifest": "captures/manifest.json",
+    "bytes": 5291,
+    "sha256": "9e1d0b75326a26ca5a79ae9ea5fbb9df6b8243b140b7028b6e08a41af218b34a",
+    "rerun": false,
+    "reason": "All original extracted capture inputs independently equal the recovered immutable artifact. No source or screenshot changed."
+  },
+  "checkBoundary": "This re-retrieval repairs local artifact availability and resolves a provenance check; it is not a CI rerun, application test retry, capture rerun or product repair.",
+  "independentVisualApproval": "pending recovered-archive verification and actual image inspection"
+}

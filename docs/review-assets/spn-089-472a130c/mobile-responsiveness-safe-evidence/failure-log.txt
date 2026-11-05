@@ -1,0 +1,27 @@
+2026-11-05T03:11:15.0733189Z   1) [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:320:5 › mobile sustained native typing plain-3
+2026-11-05T03:11:15.0734078Z
+2026-11-05T03:11:15.0734454Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-11-05T03:11:15.0734925Z
+2026-11-05T03:11:15.0735100Z     Expected: <= 100
+2026-11-05T03:11:15.0735558Z     Received:    114.39999999990687
+2026-11-05T03:11:15.0735871Z
+2026-11-05T03:11:15.0736381Z       716 |             // Idle samples must never dilute the registered capacity distribution.
+2026-11-05T03:11:15.0737203Z       717 |             expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+2026-11-05T03:11:15.0738088Z     > 718 |             expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+2026-11-05T03:11:15.0739107Z           |                                        ^
+2026-11-05T03:11:15.0739802Z       719 |             expect(idleFlush).not.toBeNull();
+2026-11-05T03:11:15.0740416Z       720 |             {
+2026-11-05T03:11:15.0741252Z       721 |               expect(idleFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+2026-11-05T03:11:15.0742928Z         at /home/runner/work/spinel/spinel/e2e/doc-responsiveness.spec.ts:718:40
+2026-11-05T03:11:15.0743524Z
+2026-11-05T03:11:15.0744415Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T03:11:15.0746292Z     test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/test-failed-1.png
+2026-11-05T03:11:15.0748031Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T03:11:15.0748572Z
+2026-11-05T03:11:15.0749396Z     attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T03:11:15.0751032Z     test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/test-failed-2.png
+2026-11-05T03:11:15.0753046Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T03:11:15.0753573Z
+2026-11-05T03:11:15.0754637Z     Error Context: test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/error-context.md
+2026-11-05T03:11:15.0755787Z
+2026-11-05T03:11:15.0755796Z

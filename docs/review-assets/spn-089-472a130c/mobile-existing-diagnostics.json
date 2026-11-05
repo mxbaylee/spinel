@@ -1,0 +1,373 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T03:32:42.992133+00:00",
+  "kind": "Read-only existing diagnostic availability",
+  "qualification": "These are separate recorded samples. None contains a capacity pair >=80 ms; they cannot retrospectively attribute B129.1 or C114.4 ms. No new execution or rerun was performed. Trace/transport hashes are recorded runner observations; no additional full-trace decompression was performed here.",
+  "samples": [
+    {
+      "branch": "b",
+      "kind": "responsiveness",
+      "source": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 646996,
+      "sha256": "e5a9c06982473da98619175e766082479f061118f57dc9de3390b16769851dbe",
+      "capacityCount": 65,
+      "maximumIndexZeroBased": 4,
+      "maximumPair": {
+        "reason": "capacity",
+        "startedAt": 10916.100000000093,
+        "durationMs": 46.89999999990687,
+        "history": 32,
+        "collaboration": 32
+      },
+      "pairsAtLeast80Ms": [],
+      "nativeWitnessAvailable": true,
+      "maximumWitnesses": [
+        {
+          "sequence": 14,
+          "phase": "history",
+          "origin": "policy-capacity",
+          "startedAt": 10916.100000000093,
+          "endedAt": 10946,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        },
+        {
+          "sequence": 15,
+          "phase": "collaboration",
+          "origin": "policy-capacity",
+          "startedAt": 10946,
+          "endedAt": 10963,
+          "before": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        },
+        {
+          "sequence": 13,
+          "phase": "pair",
+          "origin": "policy-capacity",
+          "startedAt": 10916.100000000093,
+          "endedAt": 10963,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        }
+      ],
+      "capacitySummary": {
+        "count": 65,
+        "p50": 14,
+        "p95": 34.59999999962747,
+        "max": 46.89999999990687,
+        "sum": 1095.0000000018626
+      },
+      "idleSummary": {
+        "count": 1,
+        "p50": 2.2000000001862645,
+        "p95": 2.2000000001862645,
+        "max": 2.2000000001862645,
+        "sum": 2.2000000001862645
+      },
+      "profileEntries": [
+        "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile"
+      ]
+    },
+    {
+      "branch": "b",
+      "kind": "callback",
+      "source": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "entry": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 15797905,
+      "sha256": "3541448d6bd66ddb6fe9963636ea4919546a8d6383e06a7454e0e9475a7232e4",
+      "capacityCount": 65,
+      "maximumIndexZeroBased": 4,
+      "maximumPair": {
+        "reason": "capacity",
+        "startedAt": 8046.200000000012,
+        "durationMs": 25.5,
+        "history": 32,
+        "collaboration": 32
+      },
+      "pairsAtLeast80Ms": [],
+      "nativeWitnessAvailable": false,
+      "maximumWitnesses": [],
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "none"
+        },
+        "bytes": 42678748,
+        "sha256": "f4a00836bcb993d58d39faecc14df49d6a59100004247267ed0d37c7529eae39",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 579334355,
+          "sha256": "764eec363fc6994b237776fc9e75d4cfbf14d2daf7657b56f04ef6e99d9f1ec8"
+        }
+      },
+      "artifact": {
+        "id": 13379803632,
+        "name": "doc-callback-lifetimes-mobile",
+        "bytes": 109934526,
+        "sha256": "79439f35e786bf521168df14a4a703cb3b29391a91f2ca6ff2c1fa26696e8382",
+        "createdAt": "2026-11-05T01:40:19Z",
+        "expiresAt": "2026-11-12T01:40:14Z",
+        "expired": false,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379803632"
+      }
+    },
+    {
+      "branch": "c",
+      "kind": "responsiveness",
+      "source": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 641908,
+      "sha256": "68363769cded0e9be4061dcb36474d145f951a6dedfaf899174763616cc6cd25",
+      "capacityCount": 65,
+      "maximumIndexZeroBased": 4,
+      "maximumPair": {
+        "reason": "capacity",
+        "startedAt": 10702.700000000186,
+        "durationMs": 55.299999999813735,
+        "history": 32,
+        "collaboration": 32
+      },
+      "pairsAtLeast80Ms": [],
+      "nativeWitnessAvailable": true,
+      "maximumWitnesses": [
+        {
+          "sequence": 14,
+          "phase": "history",
+          "origin": "policy-capacity",
+          "startedAt": 10702.700000000186,
+          "endedAt": 10737.399999999907,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        },
+        {
+          "sequence": 15,
+          "phase": "collaboration",
+          "origin": "policy-capacity",
+          "startedAt": 10737.399999999907,
+          "endedAt": 10758,
+          "before": {
+            "history": 0,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        },
+        {
+          "sequence": 13,
+          "phase": "pair",
+          "origin": "policy-capacity",
+          "startedAt": 10702.700000000186,
+          "endedAt": 10758,
+          "before": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "outcome": "returned",
+          "completedStates": 160
+        }
+      ],
+      "capacitySummary": {
+        "count": 65,
+        "p50": 14.700000000186265,
+        "p95": 35.09999999962747,
+        "max": 55.299999999813735,
+        "sum": 1171.7000000029802
+      },
+      "idleSummary": {
+        "count": 1,
+        "p50": 3.5,
+        "p95": 3.5,
+        "max": 3.5,
+        "sum": 3.5
+      },
+      "profileEntries": [
+        "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile"
+      ]
+    },
+    {
+      "branch": "c",
+      "kind": "callback",
+      "source": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "entry": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 15939930,
+      "sha256": "e5f16ae675d00aa25d70f00074c6538ec6cea46beb1737f2ed482f10bfc974b2",
+      "capacityCount": 65,
+      "maximumIndexZeroBased": 4,
+      "maximumPair": {
+        "reason": "capacity",
+        "startedAt": 9957.599999999977,
+        "durationMs": 31.599999999976717,
+        "history": 32,
+        "collaboration": 32
+      },
+      "pairsAtLeast80Ms": [],
+      "nativeWitnessAvailable": false,
+      "maximumWitnesses": [],
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "none"
+        },
+        "bytes": 44830583,
+        "sha256": "df1ae2d65052f5f2babc3d8baffe4c4cf3ce011669633e3ee482665ebca9debf",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 590781635,
+          "sha256": "6fd5cb67fb48e6c0174814b655b0f3b0cb26a6064bb6036135fceac5e404f46b"
+        }
+      },
+      "artifact": {
+        "id": 13383737563,
+        "name": "doc-callback-lifetimes-mobile",
+        "size_in_bytes": 113109474,
+        "digest": "sha256:b42e1b89d0a10089daf658a3030a9e3cd6d6df831aac7a3b685cc7ba2cf97297",
+        "created_at": "2026-11-05T02:46:53Z",
+        "expires_at": "2026-11-12T02:46:47Z",
+        "expired": false
+      }
+    }
+  ],
+  "failedCacheInventory": [
+    {
+      "branch": "b",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "candidateActionCacheKeyMatches": [],
+      "nativeHistory": {
+        "undos": 66,
+        "redos": 0
+      },
+      "nativePublicFlushKeys": [
+        "reason",
+        "startedAt",
+        "durationMs",
+        "history",
+        "collaboration"
+      ],
+      "nativeWitnessKeys": [
+        "sequence",
+        "unitId",
+        "phase",
+        "origin",
+        "startedAt",
+        "endedAt",
+        "before",
+        "after",
+        "outcome",
+        "epoch",
+        "generation",
+        "completedStates"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "finding": "Metrics retain counts, timings, fixture input/text/selection witnesses and public before/after pending observations; no actual native manager action cache or undo/redo stack contents are present."
+    },
+    {
+      "branch": "c",
+      "entry": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "candidateActionCacheKeyMatches": [],
+      "nativeHistory": {
+        "undos": 66,
+        "redos": 0
+      },
+      "nativePublicFlushKeys": [
+        "reason",
+        "startedAt",
+        "durationMs",
+        "history",
+        "collaboration"
+      ],
+      "nativeWitnessKeys": [
+        "sequence",
+        "unitId",
+        "phase",
+        "origin",
+        "startedAt",
+        "endedAt",
+        "before",
+        "after",
+        "outcome",
+        "epoch",
+        "generation",
+        "completedStates"
+      ],
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "finding": "Metrics retain counts, timings, fixture input/text/selection witnesses and public before/after pending observations; no actual native manager action cache or undo/redo stack contents are present."
+    }
+  ]
+}

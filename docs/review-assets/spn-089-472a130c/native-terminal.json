@@ -1,0 +1,876 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T02:46:15.330640+00:00",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 260,
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "testedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "workflow": {
+    "id": 41956095255,
+    "name": "\ud83d\udcbb Desktop offline",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "createdAt": "2026-11-05T02:34:26Z",
+    "updatedAt": "2026-11-05T02:42:49Z",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41956095255"
+  },
+  "scope": "Actual ordinary-profile application restart, retained images/edits, reconnect and storage loss on native Chrome/Firefox/Safari. Each application case is first workflow attempt; no rerun.",
+  "stageNames": [
+    "browser-start",
+    "all-four-downloads-complete",
+    "transport-disabled-before-quit",
+    "exact-records-captured-before-quit",
+    "browser-stop",
+    "transport-disabled-before-relaunch",
+    "offline-catalog-and-original-records-retained",
+    "native-doc-input-caret",
+    "native-offline-edits-committed",
+    "transport-still-disabled-before-pending-relaunch",
+    "native-clipboard-content",
+    "pending-restart-retained",
+    "transport-restored",
+    "normal-reconnect-exact-content-once",
+    "recovered-original-reconnect-outage",
+    "conflict-copy-preserves-original",
+    "storage-deletion",
+    "cleared-storage-is-not-advertised",
+    "post-deletion-outage",
+    "missing-data-cannot-open-offline",
+    "complete",
+    "safari-online-rendering-baseline"
+  ],
+  "stageRowMeaning": [
+    "stageNames index",
+    "recorded UTC time"
+  ],
+  "browsers": [
+    {
+      "name": "chrome",
+      "jobId": 127011223805,
+      "jobStatus": "completed",
+      "jobConclusion": "success",
+      "completedAt": "2026-11-05T02:37:17Z",
+      "artifact": {
+        "id": 13383815882,
+        "bytes": 228244,
+        "sha256": "2761a08f0842b9ece23343886661bb43b04610770936e0047ab254b75b26ba00",
+        "expiresAt": "2026-11-19T02:37:11Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41956095255/artifacts/13383815882"
+      },
+      "report": {
+        "path": "chrome/acceptance.json",
+        "bytes": 48902,
+        "sha256": "c705dec8ee655cb9699b6e170214ead0dec57d5281dcca7aed6cb5fe456363ca"
+      },
+      "status": "passed",
+      "version": "157.0.8103.39",
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+      "architecture": "arm64",
+      "releaseStatus": "passed",
+      "actorRole": "Collaborator with editor grants",
+      "stageCount": 37,
+      "stages": [
+        [
+          0,
+          "2026-11-05T02:36:13.888Z"
+        ],
+        [
+          1,
+          "2026-11-05T02:36:26.042Z"
+        ],
+        [
+          2,
+          "2026-11-05T02:36:26.076Z"
+        ],
+        [
+          3,
+          "2026-11-05T02:36:26.738Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:36:27.487Z"
+        ],
+        [
+          5,
+          "2026-11-05T02:36:27.495Z"
+        ],
+        [
+          0,
+          "2026-11-05T02:36:29.373Z"
+        ],
+        [
+          6,
+          "2026-11-05T02:36:30.048Z"
+        ],
+        [
+          7,
+          "2026-11-05T02:36:35.425Z"
+        ],
+        [
+          7,
+          "2026-11-05T02:36:37.864Z"
+        ],
+        [
+          8,
+          "2026-11-05T02:36:38.361Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:36:38.792Z"
+        ],
+        [
+          9,
+          "2026-11-05T02:36:38.799Z"
+        ],
+        [
+          0,
+          "2026-11-05T02:36:40.183Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:42.517Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:42.517Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:44.196Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:44.196Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:45.891Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:45.891Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:47.680Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:47.680Z"
+        ],
+        [
+          12,
+          "2026-11-05T02:36:47.872Z"
+        ],
+        [
+          13,
+          "2026-11-05T02:36:50.826Z"
+        ],
+        [
+          14,
+          "2026-11-05T02:36:53.863Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:57.366Z"
+        ],
+        [
+          15,
+          "2026-11-05T02:36:57.367Z"
+        ],
+        [
+          13,
+          "2026-11-05T02:37:00.302Z"
+        ],
+        [
+          14,
+          "2026-11-05T02:37:03.798Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:37:06.615Z"
+        ],
+        [
+          15,
+          "2026-11-05T02:37:06.616Z"
+        ],
+        [
+          16,
+          "2026-11-05T02:37:09.304Z"
+        ],
+        [
+          17,
+          "2026-11-05T02:37:10.121Z"
+        ],
+        [
+          18,
+          "2026-11-05T02:37:10.151Z"
+        ],
+        [
+          19,
+          "2026-11-05T02:37:10.199Z"
+        ],
+        [
+          20,
+          "2026-11-05T02:37:10.199Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:37:10.754Z"
+        ]
+      ],
+      "deletion": {
+        "status": "passed",
+        "timeoutMs": 28000,
+        "targetDatabase": "spinel-offline-77e30e70-18e0-49b2-8121-930b8ab480d1",
+        "operationNameOrder": [
+          "serviceWorker.getRegistrations",
+          "serviceWorker.unregister:<origin>",
+          "caches.keys",
+          "caches.delete:<cache>",
+          "localStorage.clear",
+          "indexedDB.deleteDatabase:<target>",
+          "verify-service-workers",
+          "verify-cache-names",
+          "verify-database-names",
+          "verify-storage-empty"
+        ],
+        "operations": [
+          {
+            "index": 0,
+            "startedAt": "2026-11-05T02:37:07.024Z",
+            "elapsedMs": 3,
+            "status": "passed"
+          },
+          {
+            "index": 1,
+            "startedAt": "2026-11-05T02:37:07.027Z",
+            "elapsedMs": 2185,
+            "status": "passed"
+          },
+          {
+            "index": 2,
+            "startedAt": "2026-11-05T02:37:09.212Z",
+            "elapsedMs": 2,
+            "status": "passed"
+          },
+          {
+            "index": 3,
+            "startedAt": "2026-11-05T02:37:09.214Z",
+            "elapsedMs": 76,
+            "status": "passed"
+          },
+          {
+            "index": 4,
+            "startedAt": "2026-11-05T02:37:09.290Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 5,
+            "startedAt": "2026-11-05T02:37:09.290Z",
+            "elapsedMs": 10,
+            "status": "passed"
+          },
+          {
+            "index": 6,
+            "startedAt": "2026-11-05T02:37:09.300Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 7,
+            "startedAt": "2026-11-05T02:37:09.301Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 8,
+            "startedAt": "2026-11-05T02:37:09.301Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 9,
+            "startedAt": "2026-11-05T02:37:09.301Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          }
+        ],
+        "localStorageClearReturned": 0,
+        "finalState": {
+          "cacheNames": [],
+          "databases": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ],
+          "localStorageEntries": 0,
+          "workers": []
+        },
+        "targetDatabaseAbsent": true
+      },
+      "cleanup": {
+        "threeBrowserExits": true,
+        "threeDriverExits": true,
+        "finalBrowserAndDriverExitAt": "2026-11-05T02:37:10.754Z"
+      }
+    },
+    {
+      "name": "firefox",
+      "jobId": 127011224115,
+      "jobStatus": "completed",
+      "jobConclusion": "success",
+      "completedAt": "2026-11-05T02:37:27Z",
+      "artifact": {
+        "id": 13383691123,
+        "bytes": 452276,
+        "sha256": "54131c0cc80923571571ab8079497865f32e293860fd21aa281e28b043bfa6ab",
+        "expiresAt": "2026-11-19T02:37:20Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41956095255/artifacts/13383691123"
+      },
+      "report": {
+        "path": "firefox/acceptance.json",
+        "bytes": 49865,
+        "sha256": "19eca9e6db107a58510570c79c7eb03fe1f74639bd0c57eb36e7bb5e5fb9529c"
+      },
+      "status": "passed",
+      "version": "159.0.1",
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83",
+      "architecture": "arm64",
+      "releaseStatus": "passed",
+      "actorRole": "Collaborator with editor grants",
+      "stageCount": 37,
+      "stages": [
+        [
+          0,
+          "2026-11-05T02:35:54.480Z"
+        ],
+        [
+          1,
+          "2026-11-05T02:36:15.443Z"
+        ],
+        [
+          2,
+          "2026-11-05T02:36:15.478Z"
+        ],
+        [
+          3,
+          "2026-11-05T02:36:16.981Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:36:18.160Z"
+        ],
+        [
+          5,
+          "2026-11-05T02:36:18.178Z"
+        ],
+        [
+          0,
+          "2026-11-05T02:36:23.256Z"
+        ],
+        [
+          6,
+          "2026-11-05T02:36:24.511Z"
+        ],
+        [
+          7,
+          "2026-11-05T02:36:32.997Z"
+        ],
+        [
+          7,
+          "2026-11-05T02:36:36.297Z"
+        ],
+        [
+          8,
+          "2026-11-05T02:36:38.074Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:36:38.739Z"
+        ],
+        [
+          9,
+          "2026-11-05T02:36:38.751Z"
+        ],
+        [
+          0,
+          "2026-11-05T02:36:41.895Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:44.722Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:44.722Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:46.921Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:46.921Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:49.482Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:49.483Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:36:52.223Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:36:52.223Z"
+        ],
+        [
+          12,
+          "2026-11-05T02:36:52.808Z"
+        ],
+        [
+          13,
+          "2026-11-05T02:36:57.687Z"
+        ],
+        [
+          14,
+          "2026-11-05T02:37:02.069Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:37:06.744Z"
+        ],
+        [
+          15,
+          "2026-11-05T02:37:06.746Z"
+        ],
+        [
+          13,
+          "2026-11-05T02:37:10.506Z"
+        ],
+        [
+          14,
+          "2026-11-05T02:37:14.304Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:37:17.875Z"
+        ],
+        [
+          15,
+          "2026-11-05T02:37:17.876Z"
+        ],
+        [
+          16,
+          "2026-11-05T02:37:18.520Z"
+        ],
+        [
+          17,
+          "2026-11-05T02:37:19.207Z"
+        ],
+        [
+          18,
+          "2026-11-05T02:37:19.237Z"
+        ],
+        [
+          19,
+          "2026-11-05T02:37:19.286Z"
+        ],
+        [
+          20,
+          "2026-11-05T02:37:19.286Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:37:19.726Z"
+        ]
+      ],
+      "deletion": {
+        "status": "passed",
+        "timeoutMs": 28000,
+        "targetDatabase": "spinel-offline-6759d564-967f-4adc-a5b6-6eb31b5cad6a",
+        "operationNameOrder": [
+          "serviceWorker.getRegistrations",
+          "serviceWorker.unregister:<origin>",
+          "caches.keys",
+          "caches.delete:<cache>",
+          "localStorage.clear",
+          "indexedDB.deleteDatabase:<target>",
+          "verify-service-workers",
+          "verify-cache-names",
+          "verify-database-names",
+          "verify-storage-empty"
+        ],
+        "operations": [
+          {
+            "index": 0,
+            "startedAt": "2026-11-05T02:37:18.512Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 1,
+            "startedAt": "2026-11-05T02:37:18.512Z",
+            "elapsedMs": 3,
+            "status": "passed"
+          },
+          {
+            "index": 2,
+            "startedAt": "2026-11-05T02:37:18.515Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 3,
+            "startedAt": "2026-11-05T02:37:18.516Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 4,
+            "startedAt": "2026-11-05T02:37:18.517Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 5,
+            "startedAt": "2026-11-05T02:37:18.517Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 6,
+            "startedAt": "2026-11-05T02:37:18.518Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 7,
+            "startedAt": "2026-11-05T02:37:18.518Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 8,
+            "startedAt": "2026-11-05T02:37:18.518Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 9,
+            "startedAt": "2026-11-05T02:37:18.519Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          }
+        ],
+        "localStorageClearReturned": 0,
+        "finalState": {
+          "cacheNames": [],
+          "databases": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ],
+          "localStorageEntries": 0,
+          "workers": []
+        },
+        "targetDatabaseAbsent": true
+      },
+      "cleanup": {
+        "threeBrowserExits": true,
+        "threeDriverExits": true,
+        "finalBrowserAndDriverExitAt": "2026-11-05T02:37:19.726Z"
+      }
+    },
+    {
+      "name": "safari",
+      "jobId": 127011224084,
+      "jobStatus": "completed",
+      "jobConclusion": "success",
+      "completedAt": "2026-11-05T02:42:49Z",
+      "artifact": {
+        "id": 13383053671,
+        "bytes": 1012676,
+        "sha256": "cc222ca92c049529d8cb122a98498c0717ee6ec04e1c8fd88bbbd43a053e2d4c",
+        "expiresAt": "2026-11-19T02:42:43Z",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41956095255/artifacts/13383053671"
+      },
+      "report": {
+        "path": "safari/acceptance.json",
+        "bytes": 47128,
+        "sha256": "73a660bd7172c32b9f43b159951a906c3520d895ee669b2f1bd30387e05661f4"
+      },
+      "status": "passed",
+      "version": "27.2",
+      "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+      "architecture": "x86_64",
+      "releaseStatus": "passed",
+      "actorRole": "Collaborator with editor grants",
+      "stageCount": 39,
+      "stages": [
+        [
+          0,
+          "2026-11-05T02:37:50.844Z"
+        ],
+        [
+          21,
+          "2026-11-05T02:38:04.997Z"
+        ],
+        [
+          21,
+          "2026-11-05T02:38:52.201Z"
+        ],
+        [
+          1,
+          "2026-11-05T02:39:24.797Z"
+        ],
+        [
+          2,
+          "2026-11-05T02:39:24.836Z"
+        ],
+        [
+          3,
+          "2026-11-05T02:39:30.412Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:39:31.150Z"
+        ],
+        [
+          5,
+          "2026-11-05T02:39:31.175Z"
+        ],
+        [
+          0,
+          "2026-11-05T02:39:40.857Z"
+        ],
+        [
+          6,
+          "2026-11-05T02:39:46.832Z"
+        ],
+        [
+          7,
+          "2026-11-05T02:40:20.417Z"
+        ],
+        [
+          7,
+          "2026-11-05T02:40:35.959Z"
+        ],
+        [
+          8,
+          "2026-11-05T02:40:38.341Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:40:38.834Z"
+        ],
+        [
+          9,
+          "2026-11-05T02:40:38.854Z"
+        ],
+        [
+          0,
+          "2026-11-05T02:40:46.167Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:40:57.826Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:40:57.826Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:41:09.044Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:41:09.045Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:41:23.955Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:41:23.955Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:41:35.489Z"
+        ],
+        [
+          11,
+          "2026-11-05T02:41:35.489Z"
+        ],
+        [
+          12,
+          "2026-11-05T02:41:36.868Z"
+        ],
+        [
+          13,
+          "2026-11-05T02:41:46.464Z"
+        ],
+        [
+          14,
+          "2026-11-05T02:41:55.625Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:42:05.348Z"
+        ],
+        [
+          15,
+          "2026-11-05T02:42:05.349Z"
+        ],
+        [
+          13,
+          "2026-11-05T02:42:12.554Z"
+        ],
+        [
+          14,
+          "2026-11-05T02:42:20.731Z"
+        ],
+        [
+          10,
+          "2026-11-05T02:42:33.772Z"
+        ],
+        [
+          15,
+          "2026-11-05T02:42:33.773Z"
+        ],
+        [
+          16,
+          "2026-11-05T02:42:37.075Z"
+        ],
+        [
+          17,
+          "2026-11-05T02:42:41.146Z"
+        ],
+        [
+          18,
+          "2026-11-05T02:42:41.502Z"
+        ],
+        [
+          19,
+          "2026-11-05T02:42:42.691Z"
+        ],
+        [
+          20,
+          "2026-11-05T02:42:42.691Z"
+        ],
+        [
+          4,
+          "2026-11-05T02:42:43.057Z"
+        ]
+      ],
+      "deletion": {
+        "status": "passed",
+        "timeoutMs": 28000,
+        "targetDatabase": "spinel-offline-9c63c5bb-a925-4e4f-a95c-49bf1708681f",
+        "operationNameOrder": [
+          "serviceWorker.getRegistrations",
+          "serviceWorker.unregister:<origin>",
+          "caches.keys",
+          "caches.delete:<cache>",
+          "localStorage.clear",
+          "indexedDB.deleteDatabase:<target>",
+          "verify-service-workers",
+          "verify-cache-names",
+          "verify-database-names",
+          "verify-storage-empty"
+        ],
+        "operations": [
+          {
+            "index": 0,
+            "startedAt": "2026-11-05T02:42:36.870Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 1,
+            "startedAt": "2026-11-05T02:42:36.871Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 2,
+            "startedAt": "2026-11-05T02:42:36.872Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 3,
+            "startedAt": "2026-11-05T02:42:36.872Z",
+            "elapsedMs": 1,
+            "status": "passed"
+          },
+          {
+            "index": 4,
+            "startedAt": "2026-11-05T02:42:36.874Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 5,
+            "startedAt": "2026-11-05T02:42:36.874Z",
+            "elapsedMs": 4,
+            "status": "passed"
+          },
+          {
+            "index": 6,
+            "startedAt": "2026-11-05T02:42:36.878Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 7,
+            "startedAt": "2026-11-05T02:42:36.879Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          },
+          {
+            "index": 8,
+            "startedAt": "2026-11-05T02:42:36.879Z",
+            "elapsedMs": 4,
+            "status": "passed"
+          },
+          {
+            "index": 9,
+            "startedAt": "2026-11-05T02:42:36.883Z",
+            "elapsedMs": 0,
+            "status": "passed"
+          }
+        ],
+        "localStorageClearReturned": 0,
+        "finalState": {
+          "workers": [],
+          "cacheNames": [],
+          "databases": [
+            "UniverLocalStorage",
+            "spinel-offline-runtime"
+          ],
+          "localStorageEntries": 0
+        },
+        "targetDatabaseAbsent": true
+      },
+      "cleanup": {
+        "threeBrowserExits": true,
+        "threeDriverExits": true,
+        "finalBrowserAndDriverExitAt": "2026-11-05T02:42:43.057Z"
+      }
+    }
+  ],
+  "verification": "All three original ZIP sizes/digests and every ZIP-entry CRC verified. Acceptance report source/tested/run/attempt matches, full stage order retained, all ten deletion operations passed, strict final localStorage zero and target database absence verified, and every owned browser/driver exit observed.",
+  "failureDisposition": "No C native failures. Prior ef899b storage-loss failure remains retained; fresh success does not prove its cause or causal repair. Native success cannot replace ordinary CI or other selected gates.",
+  "limitations": "Raw driver/session logs and unrelated synthetic artifact images are excluded from this receipt."
+}

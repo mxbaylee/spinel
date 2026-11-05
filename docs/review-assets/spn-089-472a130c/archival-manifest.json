@@ -1,0 +1,458 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-05T03:40:06.094Z",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceAndTestedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "disposition": "Rejected C: ordinary CI failed 31 successes/2 failures; native, Storybook and visual passes do not waive it.",
+  "purpose": "Archival-only helper without PR or workflow dispatch; not a validation publication and never advances PR260.",
+  "files": [
+    {
+      "path": "ci-terminal.json",
+      "bytes": 345334,
+      "sha256": "be243fd86a4d9c3533607d28dc8be494ede854d25648e31ea8595c6a6071457f",
+      "sourcePath": "ci-terminal.json",
+      "exactCopy": true
+    },
+    {
+      "path": "ci-pr-capsule.json",
+      "bytes": 18743,
+      "sha256": "0fa7bd3578e6d4f0da7650ff9f3d3fdda11b8787bbfdb05dce8e87b33f536ce7",
+      "sourcePath": "ci-pr-capsule.json",
+      "exactCopy": true
+    },
+    {
+      "path": "ci-plan.json",
+      "bytes": 3922,
+      "sha256": "1dedbb018fcc84a26ba9a6c70bdf6dff9ab31993647169cbafbce0967b964cb3",
+      "sourcePath": "ci-plan.json",
+      "exactCopy": true
+    },
+    {
+      "path": "ci-plan-provenance.json",
+      "bytes": 1215,
+      "sha256": "95e21645f12a74b107b63b6a6fe119f4c2896cc4de57f96e8b40ab4936f30047",
+      "sourcePath": "ci-plan-provenance.json",
+      "exactCopy": true
+    },
+    {
+      "path": "ci-coverage.json",
+      "bytes": 1917,
+      "sha256": "5a87fe65041f9da40084a6d6e12325c3bee22f5b905b2e5b297ceed4cca4edee",
+      "sourcePath": "ci-coverage.json",
+      "exactCopy": true
+    },
+    {
+      "path": "native-terminal.json",
+      "bytes": 21611,
+      "sha256": "7ea4c0e9086f7eb200f28bd15862a60756f3cb2582fa5b55f572b34b2d159b71",
+      "sourcePath": "native-terminal.json",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-existing-diagnostics.json",
+      "bytes": 12261,
+      "sha256": "db774fb3ed94cc0d82db49aaaad871af199f8d70eb4fbd10a077b3e191c2f3b2",
+      "sourcePath": "mobile-existing-diagnostics.json",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/README.md",
+      "bytes": 1054,
+      "sha256": "d306052d6294c5a4f443c8c002475079ab955025dfbd770d063957dbac38f98c",
+      "sourcePath": "mobile-responsiveness-safe-evidence/README.md",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/error-context.md",
+      "bytes": 11919,
+      "sha256": "a8a1ad0defdd1c64da773cb809519bbb36156981a1befea913b6f39023ef2ca3",
+      "sourcePath": "mobile-responsiveness-safe-evidence/error-context.md",
+      "exactCopy": false,
+      "original": {
+        "bytes": 11920,
+        "sha256": "181072dbb789ba99af44e6504ab67937ff8840bd8cee34de28c0ee9239eb5b82",
+        "preservedAs": "mobile-responsiveness-safe-evidence/error-context.md.raw.gz"
+      },
+      "transformation": "Readable representation only: remove trailing spaces/tabs from lines; retain line endings and all text. Exact source bytes recoverable from raw gzip."
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failed-plain-3-metrics.json.gz",
+      "bytes": 41448,
+      "sha256": "52cc0dcd448b78ddb59ec8a73844afde133cc52d1ee9843af85d89fcba081f7e",
+      "sourcePath": "mobile-responsiveness-safe-evidence/failed-plain-3-metrics.json.gz",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-log.raw.txt.gz",
+      "bytes": 665,
+      "sha256": "ae657ab82934db10234fa75e5552a7ab4d1396c40e7371b74d83df88b521d993",
+      "sourcePath": "mobile-responsiveness-safe-evidence/failure-log.raw.txt.gz",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-log.txt",
+      "bytes": 3047,
+      "sha256": "41bac378c847a5b2cb93c0c9f6059a9aa9e2c54aa69f966c6ea4c398b9700a88",
+      "sourcePath": "mobile-responsiveness-safe-evidence/failure-log.txt",
+      "exactCopy": false,
+      "original": {
+        "bytes": 3055,
+        "sha256": "3bfff0e37996a5d0be04069b8288ba5c590c36b2953bbcc3a007c4ca7f2cc05c",
+        "preservedAs": "mobile-responsiveness-safe-evidence/failure-log.curated.txt.raw.gz"
+      },
+      "transformation": "Readable representation only: remove trailing spaces/tabs from lines; retain line endings and all text. Exact source bytes recoverable from raw gzip."
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-receipt.json",
+      "bytes": 63442,
+      "sha256": "a5dbed2ea6ba85a34381b8f663663f56f55e1bc19a1742019fbb0360568a1c21",
+      "sourcePath": "mobile-responsiveness-safe-evidence/failure-receipt.json",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/manifest.json",
+      "bytes": 2141,
+      "sha256": "3b33806f88713075894d03065dfce6cc1afca425e999ff4fedb371feea403768",
+      "sourcePath": "mobile-responsiveness-safe-evidence/manifest.json",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/test-failed-1.png",
+      "bytes": 79368,
+      "sha256": "17f6f375c215c8923b9c49a77a6b7f75aa6e430e6bfbd8009adb9f6ecfc23b8e",
+      "sourcePath": "mobile-responsiveness-safe-evidence/test-failed-1.png",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/test-failed-2.png",
+      "bytes": 71219,
+      "sha256": "f0e343789866b88d6eb58061d0457aea626371acd3e50769a8ac14b309734a7a",
+      "sourcePath": "mobile-responsiveness-safe-evidence/test-failed-2.png",
+      "exactCopy": true
+    },
+    {
+      "path": "archive-manifest.json",
+      "bytes": 4443,
+      "sha256": "698656752118af9ab684daccaf668d0343e800928e54c18ca72f3e80637b72bd",
+      "sourcePath": "archive-manifest.json",
+      "exactCopy": true
+    },
+    {
+      "path": "storybook-terminal.json",
+      "bytes": 19691,
+      "sha256": "34a3dba4315be0c555dffce047061432e21cecef85b3890eca9898534d4f63f5",
+      "sourcePath": "storybook-terminal.json",
+      "exactCopy": true
+    },
+    {
+      "path": "storybook-terminal-capsule.json",
+      "bytes": 11062,
+      "sha256": "bf85585c420061475592458dbe4bcb84072f03bd39483129819c60b73055cd92",
+      "sourcePath": "storybook-terminal-capsule.json",
+      "exactCopy": true
+    },
+    {
+      "path": "visual-review.json",
+      "bytes": 36326,
+      "sha256": "bd50ad9028912d7fe6616df4343e70c455b218fdb591e65ba4f6ebc6cb3030ce",
+      "sourcePath": "visual-review.json",
+      "exactCopy": true
+    },
+    {
+      "path": "capture-retention-independent.json",
+      "bytes": 3363,
+      "sha256": "661aee1102eb0682bd74a2661986a129e1c5acc8b26573c6c6a3eb4f05d8dea2",
+      "sourcePath": "capture-retention-independent.json",
+      "exactCopy": true
+    },
+    {
+      "path": "archive-recovery.json",
+      "bytes": 2601,
+      "sha256": "56a97fa9c9b56a5603653833d9f9a8a114a99f92c84baa6ab24a03b594ba8d12",
+      "sourcePath": "archive-recovery.json",
+      "exactCopy": true
+    },
+    {
+      "path": "archive-recovery-files.json",
+      "bytes": 57142,
+      "sha256": "d731412bde31938568d4f3fb16d5e1a55739c933f939c05f798e86737edec21c",
+      "sourcePath": "archive-recovery-files.json",
+      "exactCopy": true
+    },
+    {
+      "path": "native-flush-source-audit.json",
+      "bytes": 29738,
+      "sha256": "bda89e879bb1146895bb13d2ec85382803483de409d8c1a225dc0097317b400c",
+      "sourcePath": "native-flush-source-audit.json",
+      "exactCopy": true
+    },
+    {
+      "path": "native-diagnostic-capability-review.json",
+      "bytes": 9562,
+      "sha256": "8ef846b49867d549027927193cda237ec8f24f411e08eddac8586fc0a311bfd6",
+      "sourcePath": "native-diagnostic-capability-review.json",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/manifest.json",
+      "bytes": 5291,
+      "sha256": "9e1d0b75326a26ca5a79ae9ea5fbb9df6b8243b140b7028b6e08a41af218b34a",
+      "sourcePath": "captures/manifest.json",
+      "exactCopy": true
+    },
+    {
+      "path": "storybook-source-equivalence-472a130c.json",
+      "bytes": 10753,
+      "sha256": "042735cfdec8f29a618ef0f5e4d6860598aa0b3a901dbd49f35c2c56a9100548",
+      "sourcePath": "storybook-source-equivalence-472a130c.json",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--emoji-modal-title-dark.png",
+      "bytes": 39272,
+      "sha256": "4eb725adc03f9e63f526de28e5e004918b83d6d3ac8f5f61fc9a3eb001d3b41a",
+      "sourcePath": "captures/redesign-controls--emoji-modal-title-dark.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--emoji-modal-title-light.png",
+      "bytes": 34402,
+      "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+      "sourcePath": "captures/redesign-controls--emoji-modal-title-light.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--emoji-modal-title-phone-dark.png",
+      "bytes": 31424,
+      "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+      "sourcePath": "captures/redesign-controls--emoji-modal-title-phone-dark.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--emoji-modal-title-phone.png",
+      "bytes": 28196,
+      "sha256": "80d900797eff7fa09202bbe9e3af6c3f7d04ff9352ed76d685775270ae5cbc95",
+      "sourcePath": "captures/redesign-controls--emoji-modal-title-phone.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--emoji-modal-title-tablet.png",
+      "bytes": 32389,
+      "sha256": "306dc2e6890b207295dbb4338be31b3c585a05286496ea4dc899f6c90e59dc9a",
+      "sourcePath": "captures/redesign-controls--emoji-modal-title-tablet.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--long-modal-title-dark.png",
+      "bytes": 45900,
+      "sha256": "426bec22e1fa538438a47b3bc7e6f017e9670fbe508ab6636b03f66989927403",
+      "sourcePath": "captures/redesign-controls--long-modal-title-dark.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--long-modal-title-light.png",
+      "bytes": 40989,
+      "sha256": "65241e8a2dcd6e57819ba38e77ac8930c67b96afe06aaf9c01d3ba0700956cac",
+      "sourcePath": "captures/redesign-controls--long-modal-title-light.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--long-modal-title-phone-dark.png",
+      "bytes": 37809,
+      "sha256": "13d8857e56b991de7cac0af525fe5d4bb259199d89fdfbead39ef0b4172b804c",
+      "sourcePath": "captures/redesign-controls--long-modal-title-phone-dark.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--long-modal-title-phone.png",
+      "bytes": 34570,
+      "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+      "sourcePath": "captures/redesign-controls--long-modal-title-phone.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-controls--long-modal-title-tablet.png",
+      "bytes": 39083,
+      "sha256": "ed084770ae1a29f2bcf32524c351a16a0f3691d85850b76b587c47419cec8a1a",
+      "sourcePath": "captures/redesign-controls--long-modal-title-tablet.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-native-editors--make-copy-dialog-dark.png",
+      "bytes": 75094,
+      "sha256": "37454fe6931f2e05e158d6d968f0957d659c5d5e2bdc7c0d4113fb4a7bad259c",
+      "sourcePath": "captures/redesign-native-editors--make-copy-dialog-dark.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-native-editors--make-copy-dialog-light.png",
+      "bytes": 75127,
+      "sha256": "fd0dd8e8a82d8e2a9dc1d594766afe1263d82abaa779a082c19b67525e03c1a8",
+      "sourcePath": "captures/redesign-native-editors--make-copy-dialog-light.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "bytes": 22705,
+      "sha256": "1613e4847da98f3a9d43fec17b2f33d7952207983892bc545d18a2b696c6ecef",
+      "sourcePath": "captures/redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-native-editors--make-copy-dialog-phone.png",
+      "bytes": 22688,
+      "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+      "sourcePath": "captures/redesign-native-editors--make-copy-dialog-phone.png",
+      "exactCopy": true
+    },
+    {
+      "path": "captures/redesign-native-editors--make-copy-dialog-tablet.png",
+      "bytes": 26043,
+      "sha256": "6ec639ee8602d36f246200d0a9f26f3087c63e0b07ec6ddc799d7525625228db",
+      "sourcePath": "captures/redesign-native-editors--make-copy-dialog-tablet.png",
+      "exactCopy": true
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/error-context.md.raw.gz",
+      "bytes": 3494,
+      "sha256": "e18c3fe1be9551050a4c7645cff914577192845d7c157bfea19e3b7096cf3fb0",
+      "sourcePath": "mobile-responsiveness-safe-evidence/error-context.md",
+      "exactCopy": false,
+      "encoding": "gzip",
+      "losslessSourceBytes": 11920,
+      "losslessSourceSha256": "181072dbb789ba99af44e6504ab67937ff8840bd8cee34de28c0ee9239eb5b82"
+    },
+    {
+      "path": "mobile-responsiveness-safe-evidence/failure-log.curated.txt.raw.gz",
+      "bytes": 665,
+      "sha256": "5d0c0cd2c3f1f27ad2c344710235129974644684a59a46844c10c9195815bafa",
+      "sourcePath": "mobile-responsiveness-safe-evidence/failure-log.txt",
+      "exactCopy": false,
+      "encoding": "gzip",
+      "losslessSourceBytes": 3055,
+      "losslessSourceSha256": "3bfff0e37996a5d0be04069b8288ba5c590c36b2953bbcc3a007c4ca7f2cc05c"
+    },
+    {
+      "path": "registration/dependabot-review.json",
+      "bytes": 22404,
+      "sha256": "eb6f03ad56b6ddbefe73d4a695133fc2c65e61a52a6f07f403a4d63c745c68f2",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "dependabot-review.json",
+      "exactCopy": true
+    },
+    {
+      "path": "registration/ci-terminal.json",
+      "bytes": 16758,
+      "sha256": "0abaa29657ae44e92277f0617e58cd617b821fc2300aa8f502c5c29233903bd2",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "ci-terminal.json",
+      "exactCopy": true
+    },
+    {
+      "path": "registration/hosted-artifacts/ci-plan.json",
+      "bytes": 7922,
+      "sha256": "4b2dd5d8b5ae66c1d62e4b3171f8aaf2f1ac91374b58bffa20202a32e9eff52a",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "hosted-artifacts/ci-plan.json",
+      "exactCopy": true
+    },
+    {
+      "path": "registration/hosted-artifacts/ci-results-unit.json",
+      "bytes": 12381,
+      "sha256": "dc4827ec02a63b3cb75403df52fa29a0c0f6e58e5b167b8acbdb114e4b5a8d95",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "hosted-artifacts/ci-results-unit.json",
+      "exactCopy": true
+    },
+    {
+      "path": "registration/hosted-artifacts/ci-results-lib.json",
+      "bytes": 12490,
+      "sha256": "09ac3cfb34faada95e442f1a8dbfe1f6e012a616ebce0db4bd4c13b3e7463c6e",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "hosted-artifacts/ci-results-lib.json",
+      "exactCopy": true
+    },
+    {
+      "path": "registration/hosted-artifacts/ci-results-browser.json",
+      "bytes": 20238,
+      "sha256": "1a6edf718171034d98ff8c13dd1f2a8184102964c07b9001960fc7e814f4ea22",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "hosted-artifacts/ci-results-browser.json",
+      "exactCopy": true
+    },
+    {
+      "path": "registration/hosted-artifacts/verification.json",
+      "bytes": 1759,
+      "sha256": "2c353150f8a66997014f5958c83f1a3066f686520927327ae986d7c05f5e1bc9",
+      "sourceRoot": "/workspace/scratch/ce40e94380e1/validation/spn146-registration",
+      "sourcePath": "hosted-artifacts/verification.json",
+      "exactCopy": true
+    }
+  ],
+  "sanitizer": {
+    "findings": [],
+    "hosts": [
+      "api.github.com",
+      "github.com",
+      "mxbaylee.github.io"
+    ],
+    "scope": "Selected curated receipts and safe synthetic failure files; compressed text scanned after decompression. Raw archives, session/driver logs, full browser reports and signed download links excluded.",
+    "registrationScope": "Also includes only curated registration CI, plan/results, public official dependency-review source links, attributed reviews, local checks and merge/cleanup metadata; no raw logs or signed downloads."
+  },
+  "images": "Two synthetic failure PNGs and fifteen already captured C focused PNGs; prior independent inspections and exact retained capture manifest/visual review apply. No new capture or acceptance execution.",
+  "authoredArchiveFiles": [
+    {
+      "path": "README.md",
+      "bytes": 11900,
+      "sha256": "bb5900c1b77243d759798f51f40ac766951dc5e900fe5e5556c521992ec0dfae",
+      "exactCopy": false,
+      "purpose": "Navigation, exact identity and failed acceptance disposition"
+    },
+    {
+      "path": "prepublication-reviews.json",
+      "bytes": 3337,
+      "sha256": "4ed6bc080c60f946408a08efcfc0bb7d51d9f48e17ebe3ba57c6680ce32afd94",
+      "exactCopy": false,
+      "purpose": "Root-preserved historical review snapshots, explicitly not C acceptance or archive review"
+    },
+    {
+      "path": "registration/README.md",
+      "bytes": 4850,
+      "sha256": "e812e0a8140ba4855fb0763a3e807b20fc04df3818c4d0f28fd562ef83dbab71",
+      "exactCopy": false,
+      "purpose": "Final registration navigation, complete acceptance/merge/cleanup record or attributed reviews/local evidence"
+    },
+    {
+      "path": "registration/registration-terminal.json",
+      "bytes": 17633,
+      "sha256": "75395a372a57c93a6580cf574db593131d577cecf243ccfa65e33055c5563fc3",
+      "exactCopy": false,
+      "purpose": "Final registration navigation, complete acceptance/merge/cleanup record or attributed reviews/local evidence"
+    },
+    {
+      "path": "registration/reviews-and-local-checks.json",
+      "bytes": 4085,
+      "sha256": "884bd727d4fb69ddb0d9d0fc8003338094a3490dc3e8f41a1a2014e7b8315374",
+      "exactCopy": false,
+      "purpose": "Final registration navigation, complete acceptance/merge/cleanup record or attributed reviews/local evidence"
+    },
+    {
+      "path": "registration/publication-checkpoint.md",
+      "bytes": 9526,
+      "sha256": "060524ac009b274216e5f0840664cc7926a919e684f13afcc202c35cca5b63ea",
+      "exactCopy": false,
+      "purpose": "Original dated PR266 publication body snapshot; superseded by final registration record"
+    }
+  ],
+  "finalizedAt": "2026-11-05T04:02:23.163Z",
+  "representationBoundary": "Frozen source receipts/manifests remain byte-exact. Two readable files lose only trailing horizontal whitespace; their exact source bytes are retained in added raw gzip files and identified separately. Original source manifests continue to describe the original bytes, not the normalized readable views.",
+  "registration": {
+    "pr": 266,
+    "reviewedSha": "067aeb03a493b782fffd97c318c441a4633640f1",
+    "squashSha": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+    "finalRecord": "registration/registration-terminal.json",
+    "boundary": "Accepted documentation registration only. C remains rejected; main Storybook is separately in progress in the last recorded observation."
+  }
+}

@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-11-05T02:54:45.348011+00:00",
+  "reviewer": "/root/dialog_audit",
+  "scope": "Independent read-only current-C Storybook workflow, artifacts, catalogue, preview and visual verification. Ordinary/native CI and final PR/base checks are owned separately.",
+  "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+  "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "testedSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+  "sourceTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "testedTree": "dcee968f677d6d70dc7064c948059bd17f32c940",
+  "run": {
+    "id": 41956095281,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41956095281",
+    "name": "\ud83d\udcda Storybook",
+    "event": "pull_request",
+    "action": "synchronize",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "createdAt": "2026-11-05T02:34:26Z",
+    "updatedAt": "2026-11-05T02:50:53Z",
+    "jobCount": 10,
+    "successfulJobs": 9,
+    "expectedSkippedJobs": 1,
+    "failedOrCancelledJobs": 0
+  },
+  "classification": {
+    "jobId": 127011224588,
+    "mode": "full",
+    "labels": [
+      "storybook-preview",
+      "visual-review"
+    ],
+    "paths": null,
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "reason": "Immutable range or event labels unavailable; classifier conservatively selected full coverage. Every PR Storybook review covers the entire index.",
+    "planSha256": "f06b99acc62200591a314a099acf1de94f75e83c9e2b424f8438efb32b0eab8e",
+    "logSha256": "1ea7a5eec70230c5681ee28bd70c4113aec75e42a73be473616ea679a8eda046",
+    "docsOnly": false,
+    "captureScreenshots": true
+  },
+  "jobs": [
+    {
+      "id": 127011224588,
+      "name": "Classify changes",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:34:30Z",
+      "completedAt": "2026-11-05T02:35:01Z"
+    },
+    {
+      "id": 127011429278,
+      "name": "Build Storybook",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:35:04Z",
+      "completedAt": "2026-11-05T02:35:56Z"
+    },
+    {
+      "id": 127011763648,
+      "name": "Review Storybook tablet",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:36:33Z",
+      "completedAt": "2026-11-05T02:45:39Z"
+    },
+    {
+      "id": 127011763696,
+      "name": "Review Storybook desktop (dark)",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:36:54Z",
+      "completedAt": "2026-11-05T02:46:29Z"
+    },
+    {
+      "id": 127011763720,
+      "name": "Review Storybook mobile (light)",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:36:00Z",
+      "completedAt": "2026-11-05T02:45:04Z"
+    },
+    {
+      "id": 127011763751,
+      "name": "Review Storybook mobile (dark)",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:39:58Z",
+      "completedAt": "2026-11-05T02:48:32Z"
+    },
+    {
+      "id": 127011763759,
+      "name": "Review Storybook desktop (light)",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:39:38Z",
+      "completedAt": "2026-11-05T02:50:13Z"
+    },
+    {
+      "id": 127011764681,
+      "name": "Publish PR preview to GitHub Pages",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:40:17Z",
+      "completedAt": "2026-11-05T02:40:30Z"
+    },
+    {
+      "id": 127016631375,
+      "name": "Review Storybook states and interactions",
+      "attempt": 1,
+      "conclusion": "success",
+      "startedAt": "2026-11-05T02:50:38Z",
+      "completedAt": "2026-11-05T02:50:52Z"
+    },
+    {
+      "id": 127016851531,
+      "name": "Deploy to GitHub Pages",
+      "attempt": 1,
+      "conclusion": "skipped",
+      "startedAt": "2026-11-05T02:50:53Z",
+      "completedAt": "2026-11-05T02:50:52Z"
+    }
+  ],
+  "catalogue": {
+    "buildJobId": 127011429278,
+    "indexStories": 1056,
+    "indexSha256": "0b3279bc24df52ae9557f9053058b93827f00211a1fa33c97cfcbce4dc208be1",
+    "sortedStoryIdsSha256": "1a0b189097f45c53ab6b216eb2882b4d9ee70adf05cdde56512c5bedd293141e",
+    "inventoryOwners": 45,
+    "inventoryIds": 114,
+    "allInventoryIdsAvailable": true,
+    "checkedStates": 5280,
+    "catalogueScreenshots": 5280,
+    "additionalInteractionPasses": 49,
+    "manifestFailures": 0,
+    "variants": [
+      {
+        "variant": "light",
+        "checked": 1056,
+        "captured": 1056,
+        "additionalInteractionPasses": 13,
+        "failures": 0,
+        "durationMs": 544652,
+        "manifestSha256": "94cf2dde9d6ec4416a100af7b6bffe10338c93db35cd8a9d1f6c4f5df07ec41c",
+        "jobLogSha256": "2110e4deafdae4d1dc205fba2d0732e0ddca875c2707e9a8792e90f52d5802eb",
+        "archiveReceiptSha256": "877917ba4da105d713127e11af4a42728d9f4b16b3f5e94b74f12eb4c46a41a3",
+        "exactCatalogueSetMatch": true,
+        "allCaptureEntriesInArchive": true,
+        "jobId": 127011763759,
+        "artifactId": 13383293093,
+        "conclusion": "success",
+        "attempt": 1
+      },
+      {
+        "variant": "dark",
+        "checked": 1056,
+        "captured": 1056,
+        "additionalInteractionPasses": 9,
+        "failures": 0,
+        "durationMs": 515179,
+        "manifestSha256": "ffab5def3b55b8e5863a9596f74109cf4d4111c89995bfe4f118a752ee50d618",
+        "jobLogSha256": "5bf641be855a9f5d29c794ce848ec6bc698ed5826f5989e7e260bfdeda06d74c",
+        "archiveReceiptSha256": "e63af6cdf89dc57aa7a9bdf42fc8e6e32b83185039be94cb127c1bd847af5863",
+        "exactCatalogueSetMatch": true,
+        "allCaptureEntriesInArchive": true,
+        "jobId": 127011763696,
+        "artifactId": 13383333272,
+        "conclusion": "success",
+        "attempt": 1
+      },
+      {
+        "variant": "phone",
+        "checked": 1056,
+        "captured": 1056,
+        "additionalInteractionPasses": 9,
+        "failures": 0,
+        "durationMs": 488545,
+        "manifestSha256": "0e5bb74f51e8080523c984e9e2861e2be78595e6f813f8d3598874d2977a8498",
+        "jobLogSha256": "c3f2236147b8c6503a8cb5f457f17b1a041137750dcd09ad7e907bd4009eb091",
+        "archiveReceiptSha256": "05927184790ca80b9585f449983fa58b6dbaa1e19d6a605e521d9fde03545940",
+        "exactCatalogueSetMatch": true,
+        "allCaptureEntriesInArchive": true,
+        "jobId": 127011763720,
+        "artifactId": 13383547674,
+        "conclusion": "success",
+        "attempt": 1
+      },
+      {
+        "variant": "phone-dark",
+        "checked": 1056,
+        "captured": 1056,
+        "additionalInteractionPasses": 9,
+        "failures": 0,
+        "durationMs": 448912,
+        "manifestSha256": "49e9fa66277689de81652442e9438e27a7a8b6da5a86a869008a3325c1c531f8",
+        "jobLogSha256": "7e89d46e4c9b2cdfea3c16db2f01f66441e61b3b5795bbed2ffabb7686f6e70e",
+        "archiveReceiptSha256": "0c3fcf77f35fb626cdc8c63d2eb678af045f278339cb5854eb88fd37c416a469",
+        "exactCatalogueSetMatch": true,
+        "allCaptureEntriesInArchive": true,
+        "jobId": 127011763751,
+        "artifactId": 13384261719,
+        "conclusion": "success",
+        "attempt": 1
+      },
+      {
+        "variant": "tablet",
+        "checked": 1056,
+        "captured": 1056,
+        "additionalInteractionPasses": 9,
+        "failures": 0,
+        "durationMs": 494136,
+        "manifestSha256": "8a5449565468e7ee427bda69c3a9dae9a958e8ce75004dff21d94e15d4e1f2b3",
+        "jobLogSha256": "e57b7393aa1d1288b69e66631840c4021b846d3497503e713579469521dd1e77",
+        "archiveReceiptSha256": "cf3a2b696f3b9cf1fee9c9365d6cfec2c2c28b793a2fdfbd5cb752cee45b08e9",
+        "exactCatalogueSetMatch": true,
+        "allCaptureEntriesInArchive": true,
+        "jobId": 127011763648,
+        "artifactId": 13383886569,
+        "conclusion": "success",
+        "attempt": 1
+      }
+    ],
+    "exactSetVerification": "All five logs, checked manifest sets and capture sets equal the exact C1056-story index with no missing/duplicate IDs. Each capture filename exists in its verified archive. All failure arrays are empty."
+  },
+  "additionalAssertionOwnership": {
+    "everyVariant": {
+      "nativeFormulaViewers": {
+        "count": 6,
+        "ids": [
+          "docs-native-formulas--inline-and-table",
+          "docs-native-formulas--private",
+          "docs-native-formulas--dark",
+          "docs-native-formulas--phone",
+          "docs-native-formulas--thirty-rows",
+          "docs-native-formulas--styled-scalar"
+        ],
+        "assertions": "Nonbusy settled viewer, no alert, expected formula results and visible canvas before capture."
+      },
+      "nativeToolbarScroll": {
+        "count": 2,
+        "ids": [
+          "redesign-native-editors--sheet",
+          "redesign-native-editors--doc"
+        ],
+        "assertions": "Toolbar stays visible at the same vertical position after content scroll; document page does not scroll; resized canvas returns to its original dimensions."
+      },
+      "sharedControls": {
+        "count": 1,
+        "id": "redesign-controls--default",
+        "assertions": "Menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal."
+      }
+    },
+    "desktopLightOnly": {
+      "nativeKeyboard": {
+        "count": 4,
+        "results": [
+          "sheet: native keyboard edit saved in local snapshot",
+          "sheet: native viewer rejects keyboard edits",
+          "doc: native keyboard edit saved in local snapshot",
+          "doc: native viewer rejects keyboard edits"
+        ]
+      },
+      "iconIntegration": {
+        "jobId": 127011763759,
+        "artifactId": 13383926231,
+        "checkedStates": 42,
+        "uniqueStories": 14,
+        "variants": [
+          "light",
+          "dark",
+          "phone"
+        ],
+        "manifestSha256": "5791384e145434e14cc4ad0425e95aa0f8eb922054db17e95f1935a2ce7e8af5"
+      }
+    },
+    "counts": "Five variants \u00d79 shared extra checks +4 native keyboard checks =49 additional passes. Separate icon suite =42 checked states."
+  },
+  "aggregate": {
+    "jobId": 127016631375,
+    "conclusion": "success",
+    "inputs": {
+      "CLASSIFICATION_RESULT": "success",
+      "BUILD_RESULT": "success",
+      "DOCS_ONLY": "false",
+      "CAPTURE_SCREENSHOTS": "true",
+      "DESKTOP_RESULT": "success",
+      "TABLET_RESULT": "success",
+      "MOBILE_RESULT": "success"
+    },
+    "logSha256": "a4e3b76ae3084a8bb9eb0e6265e497d9ce3c960398a107b0281ba4954d83a3ef"
+  },
+  "skipAndFailureDisposition": {
+    "unexpectedSkippedRequiredJobs": 0,
+    "failedSteps": 0,
+    "cancelledJobs": 0,
+    "catalogueManifestFailures": 0,
+    "skippedJob": {
+      "id": 127016851531,
+      "name": "Deploy to GitHub Pages",
+      "reason": "Main-only deployment intentionally skips pull_request events; separate PR preview succeeded."
+    },
+    "skippedSteps": [
+      {
+        "jobId": 127011429278,
+        "step": "Documentation-only change"
+      },
+      {
+        "jobId": 127011763696,
+        "step": "Check icon and integration stories"
+      },
+      {
+        "jobId": 127011763696,
+        "step": "Upload icon evidence"
+      }
+    ],
+    "stepReasons": [
+      "Documentation-only branch is skipped because this requires a full review.",
+      "Desktop-dark icon check/upload skip because desktop light owns the icon suite once."
+    ],
+    "runAttemptsObserved": [
+      1
+    ],
+    "reviewerInitiatedRerunsOrCancellations": 0
+  },
+  "artifacts": [
+    {
+      "id": 13384261719,
+      "name": "design-review-mobile-dark",
+      "size_in_bytes": 41829133,
+      "digest": "sha256:a465e044c9466b6a1436c05f4b7ae1f46005d42771931b58acfa38d7fbfb4b12",
+      "expires_at": "2026-11-19T02:48:25Z",
+      "expired": false,
+      "verifiedArchive": "reviewer-design-review-mobile-dark.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13383926231,
+      "name": "entity-icon-screenshots",
+      "size_in_bytes": 2441260,
+      "digest": "sha256:1dd3196b623a92d29fb8479fea6f8caaddaf606ef14b3d475f928a4a7101b815",
+      "expires_at": "2027-02-03T02:34:27Z",
+      "expired": false,
+      "verifiedArchive": "entity-icon-screenshots.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13383886569,
+      "name": "design-review-tablet",
+      "size_in_bytes": 45689016,
+      "digest": "sha256:996cca279a4f6db0109f1562c92554821083574aef4d730540c968e727ea9b90",
+      "expires_at": "2026-11-19T02:45:35Z",
+      "expired": false,
+      "verifiedArchive": "reviewer-design-review-tablet.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13383547674,
+      "name": "design-review-mobile-light",
+      "size_in_bytes": 41400267,
+      "digest": "sha256:5c11359704026d771c4d52275d829757d65ec243d0e058d03861dad590998cf3",
+      "expires_at": "2026-11-19T02:45:00Z",
+      "expired": false,
+      "verifiedArchive": "reviewer-design-review-mobile-light.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13383333272,
+      "name": "design-review-desktop-dark",
+      "size_in_bytes": 50065962,
+      "digest": "sha256:48ea33ea2fb798df9e3725065bb7f5a7b4b548af113599b2f9e699c146cefe5d",
+      "expires_at": "2026-11-19T02:46:23Z",
+      "expired": false,
+      "verifiedArchive": "reviewer-design-review-desktop-dark.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13383293093,
+      "name": "design-review-desktop-light",
+      "size_in_bytes": 49440116,
+      "digest": "sha256:be662f27763e207b0cd7c5d8d23db50b709ec3cca32fe55eaf95f688d04e9d9c",
+      "expires_at": "2026-11-19T02:49:56Z",
+      "expired": false,
+      "verifiedArchive": "reviewer-design-review-desktop-light.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13382719809,
+      "name": "storybook-review",
+      "size_in_bytes": 6192895,
+      "digest": "sha256:9415a2c66657882449ff78eba53d065915011946ecc54355e8e6e2d0bc881a5a",
+      "expires_at": "2026-11-12T02:35:48Z",
+      "expired": false,
+      "verifiedArchive": "storybook-review-recovered.zip",
+      "archiveHashAndSizeIndependentlyVerified": true
+    },
+    {
+      "id": 13382679939,
+      "name": "github-pages",
+      "size_in_bytes": 6126509,
+      "digest": "sha256:44a160f328323f243b23a0222053d049b733844992823d421961fa60da667ea2",
+      "expires_at": "2026-11-06T02:35:50Z",
+      "expired": false,
+      "archiveHashAndSizeIndependentlyVerified": false,
+      "verification": "API metadata, successful deployment payload and matching live sha.json; Pages archive itself was not independently downloaded."
+    }
+  ],
+  "archiveRecovery": {
+    "originalArchive": "storybook-review.zip",
+    "expectedBytes": 6192895,
+    "expectedSha256": "9415a2c66657882449ff78eba53d065915011946ecc54355e8e6e2d0bc881a5a",
+    "observedBytes": 3051520,
+    "observedSha256": "212ad7ccc09e02c6ce01c0e91e70bbc15e3eb5bd74335e2abef1f533b8dfe64c",
+    "originalObservationSha256": "3a090f506eede0b9f2cab3f67c033cb66a6121aed14ef01038da360d4aa3cc18",
+    "recoveredArchive": "storybook-review-recovered.zip",
+    "sameImmutableArtifactId": 13382719809,
+    "recoveredBytes": 6192895,
+    "recoveredSha256": "9415a2c66657882449ff78eba53d065915011946ecc54355e8e6e2d0bc881a5a",
+    "all363ExistingBuildFilesIndependentlyCompared": true,
+    "mismatches": [],
+    "rootRecoverySha256": "56a97fa9c9b56a5603653833d9f9a8a114a99f92c84baa6ab24a03b594ba8d12",
+    "rootFileComparisonSha256": "d731412bde31938568d4f3fb16d5e1a55739c933f939c05f798e86737edec21c",
+    "cause": "Unknown. No task writer was established.",
+    "disposition": "Provenance hold resolved by recovering the same immutable artifact privately, verifying size/digest before atomic publication, then independently comparing every existing extracted input. Original mismatched ZIP and observation remain untouched; no capture/test/CI rerun."
+  },
+  "preview": {
+    "jobId": 127011764681,
+    "conclusion": "success",
+    "url": "https://mxbaylee.github.io/spinel/",
+    "shaUrl": "https://mxbaylee.github.io/spinel/sha.json",
+    "observedAt": "2026-11-05T02:47:05.349902+00:00",
+    "status": 200,
+    "identity": {
+      "sha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "checkedOutSha": "97b0dd8e6d225173c1da30e99e7158e17ae07cf2",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41956095281",
+      "builtAt": "2026-11-05T02:35:47.889Z"
+    },
+    "matchesVerifiedBuildIdentity": true,
+    "logSha256": "7f28c75f86234fc3812d97e741c0ca164872e9ca4e2cb55fab13e4fd8527baac",
+    "shaJsonSha256": "885acde8df38af1743498bd4db4d2a6e9772d12bab6b403fa57eb95f9fc42d1e",
+    "boundary": "Shared Pages is mutable; this verifies its identity at the recorded observation time."
+  },
+  "visual": {
+    "sourceSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+    "disposition": "Independent agent approval",
+    "freshImagesInspected": 15,
+    "captureFailures": 0,
+    "captureManifestSha256": "9e1d0b75326a26ca5a79ae9ea5fbb9df6b8243b140b7028b6e08a41af218b34a",
+    "captureWatchdog": {
+      "elapsedMs": 34843,
+      "peakKiB": 1050408,
+      "code": 0,
+      "aborted": null
+    },
+    "receipt": "visual-review.json",
+    "receiptSha256": "bd50ad9028912d7fe6616df4343e70c455b218fdb591e65ba4f6ebc6cb3030ce",
+    "P2Alignment": "closed",
+    "knownP3": "Compact native-preview Name input retains square/default styling; no production-form repair claim.",
+    "fullPngMatches": 4,
+    "retentionReceiptSha256": "661aee1102eb0682bd74a2661986a129e1c5acc8b26573c6c6a3eb4f05d8dea2",
+    "retention": "Four current byte matches plus full15-state proof and source-labeled historical owner views are adequate. Both native desktop PNGs keep historical captions; all dialog pixels match C and differences are confined to the background caret.",
+    "nativeDesktopDifferenceBounds": [
+      226,
+      164,
+      229,
+      209
+    ],
+    "nativeDesktopDifferentPixelCounts": {
+      "light": 92,
+      "dark": 91
+    },
+    "sourceEquivalenceSha256": "042735cfdec8f29a618ef0f5e4d6860598aa0b3a901dbd49f35c2c56a9100548"
+  },
+  "evidenceFiles": {
+    "storybook-run-api.json": "c7bd803c8db1ac946bf37b644acd50dc39ae29249225351afb612ad848d840dd",
+    "storybook-jobs-api.json": "9550819c79671e61710fea921d4edba3c8d0527de8a1e6d74a44d7b6864b8944",
+    "storybook-artifacts-api.json": "9a777133bae2e81d9c2f6768becf3ab7f69c281528165cdfa7ce1a49c83e61db",
+    "storybook-artifact-independent.json": "d185c064474a4c88a4af201113f6034c0c781684843655487eaa4fee7bc3447a",
+    "storybook-verified-variants.json": "4bf4a7219ea9650791ee58e05291e81a2d08999050d6d4bc549404a001089962"
+  },
+  "boundaries": [
+    "C Storybook and visual success does not erase B ordinary-CI identity/responsiveness failures or older A failures.",
+    "Artifact retrieval recovery was not a new source/capture/test/CI attempt, and its original mismatch remains preserved with unknown cause.",
+    "No source, styles, stories, tests, assertions or runners were modified by this reviewer."
+  ],
+  "finalDisposition": "Current C build, five full catalogues, all extra/icon assertions, aggregate, preview and independent visual gate verified successful. Merge readiness still requires separately owned current ordinary/native CI and final PR/base checks."
+}

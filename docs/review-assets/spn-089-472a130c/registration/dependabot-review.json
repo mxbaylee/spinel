@@ -1,0 +1,707 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/verification_plan",
+  "observedAt": "2026-11-05 03:46:56 UTC",
+  "registrationHead": "067aeb03a493b782fffd97c318c441a4633640f1",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "scope": "Bounded read-only grooming review of seven existing open Dependabot PRs, exact heads, CI metadata and selected first useful logs, file diffs and official release/image evidence. No reruns, test/build/browser workloads, dependency/code/metadata edits or merges.",
+  "securityBoundary": "This is release-evidence review, not a complete vulnerability audit. Absence of an advisory in reviewed notes is not absence of vulnerabilities. The concrete newer Caddy security release requires separate existing-PR follow-up.",
+  "prs": [
+    {
+      "pr": 244,
+      "head": "2fa7387ae8020144017416e6f2438d735d87a245",
+      "draft": false,
+      "labels": [
+        "dependencies",
+        "javascript"
+      ],
+      "ci": [
+        {
+          "id": 41490041899,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:19:17Z"
+        },
+        {
+          "id": 41490035051,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:19:15Z"
+        },
+        {
+          "id": 41490034892,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:19:15Z"
+        }
+      ],
+      "native": [
+        {
+          "id": 41490035025,
+          "conclusion": "failure"
+        }
+      ],
+      "storybook": [
+        {
+          "id": 41490041689,
+          "conclusion": "success"
+        },
+        {
+          "id": 41490034444,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41490035108,
+          "conclusion": "cancelled"
+        }
+      ],
+      "title": "⬆️ Bump Bump vite from 8.3.4 to 8.3.5",
+      "url": "https://github.com/mxbaylee/spinel/pull/244",
+      "inspectedOrdinaryRun": 41490041899,
+      "inspectedOrdinaryJobCount": 33,
+      "sevenStableGates": [
+        {
+          "id": 125430359281,
+          "name": "Pull request",
+          "conclusion": "success"
+        },
+        {
+          "id": 125447112819,
+          "name": "Typecheck",
+          "conclusion": "success"
+        },
+        {
+          "id": 125447112974,
+          "name": "Lint",
+          "conclusion": "success"
+        },
+        {
+          "id": 125447113071,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125519172124,
+          "name": "Unit tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125524356072,
+          "name": "Lib tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125546060877,
+          "name": "Playwright smoke",
+          "conclusion": "failure"
+        }
+      ],
+      "compatibility": "Patch release changes chunk-import maps/preload hashing, bundled development and server behavior. Actual app/PWA/build qualification remains necessary.",
+      "observedBlocker": "Latest inspected ordinary run failed 6/33 jobs: four responsiveness/callback historical build owners, sized restore and aggregate. Baseline job125447112868 reports npm-ci EUSAGE: lock vite8.3.5 does not satisfy baseline manifest8.3.4. Native Safari also failed; no cause assigned from metadata alone.",
+      "disposition": "Leave open; preserve every first failure and qualify any necessary current-main/harness integration without dropping historical dependencies."
+    },
+    {
+      "pr": 243,
+      "head": "2090a4c03019c564eb48c51c3b93756019d4d674",
+      "draft": false,
+      "labels": [
+        "dependencies",
+        "javascript"
+      ],
+      "ci": [
+        {
+          "id": 41489984643,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:56Z"
+        },
+        {
+          "id": 41489984287,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:56Z"
+        },
+        {
+          "id": 41489980967,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:55Z"
+        }
+      ],
+      "native": [
+        {
+          "id": 41489981068,
+          "conclusion": "success"
+        }
+      ],
+      "storybook": [
+        {
+          "id": 41489984157,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41489984763,
+          "conclusion": "success"
+        },
+        {
+          "id": 41489980970,
+          "conclusion": "cancelled"
+        }
+      ],
+      "title": "⬆️ Bump Bump @aws-sdk/client-s3 from 3.1152.0 to 3.1156.0",
+      "url": "https://github.com/mxbaylee/spinel/pull/243",
+      "inspectedOrdinaryRun": 41489984643,
+      "inspectedOrdinaryJobCount": 33,
+      "sevenStableGates": [
+        {
+          "id": 125430161507,
+          "name": "Pull request",
+          "conclusion": "success"
+        },
+        {
+          "id": 125449997589,
+          "name": "Lint",
+          "conclusion": "success"
+        },
+        {
+          "id": 125449997692,
+          "name": "Typecheck",
+          "conclusion": "success"
+        },
+        {
+          "id": 125449997868,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125545212124,
+          "name": "Unit tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125547417321,
+          "name": "Lib tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125568036500,
+          "name": "Playwright smoke",
+          "conclusion": "failure"
+        }
+      ],
+      "compatibility": "Official3.1153–3.1156 range includes endpoint/codegen changes and awaiting in-flight SSO refresh. No specific S3 security advisory identified in inspected PR/release notes.",
+      "observedBlocker": "Ordinary run failed four historical responsiveness/callback build owners plus aggregate. Native and Storybook passed their own runs.",
+      "disposition": "Keep a separate AWS SDK update; preserve actual S3/Spaces, credentials/access, persistence and failure evidence."
+    },
+    {
+      "pr": 242,
+      "head": "dd2b2a6b577635e3f6c37398e79e9e389421acb8",
+      "draft": false,
+      "labels": [
+        "dependencies",
+        "javascript"
+      ],
+      "ci": [
+        {
+          "id": 41489903141,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:26Z"
+        },
+        {
+          "id": 41489901405,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:25Z"
+        },
+        {
+          "id": 41489900561,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:25Z"
+        }
+      ],
+      "native": [
+        {
+          "id": 41489901572,
+          "conclusion": "success"
+        }
+      ],
+      "storybook": [
+        {
+          "id": 41489903237,
+          "conclusion": "success"
+        },
+        {
+          "id": 41489900602,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41489901356,
+          "conclusion": "cancelled"
+        }
+      ],
+      "title": "⬆️ Bump Bump storybook from 10.6.2 to 10.6.4",
+      "url": "https://github.com/mxbaylee/spinel/pull/242",
+      "inspectedOrdinaryRun": 41489903141,
+      "inspectedOrdinaryJobCount": 33,
+      "sevenStableGates": [
+        {
+          "id": 125429881653,
+          "name": "Pull request",
+          "conclusion": "success"
+        },
+        {
+          "id": 125448517126,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125448517128,
+          "name": "Lint",
+          "conclusion": "success"
+        },
+        {
+          "id": 125448517233,
+          "name": "Typecheck",
+          "conclusion": "success"
+        },
+        {
+          "id": 125536483493,
+          "name": "Lib tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125538150287,
+          "name": "Unit tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125549521484,
+          "name": "Playwright smoke",
+          "conclusion": "failure"
+        }
+      ],
+      "compatibility": "Official10.6.3 adds Vitest5 support and types;10.6.4 fixes Jest TypeScript-loader-hook registration. No specific security advisory identified in inspected notes.",
+      "observedBlocker": "Ordinary run failed four historical responsiveness/callback build owners plus aggregate; Storybook and native passed separately.",
+      "disposition": "Keep focused tooling update and retain real catalogue/interactions. No claim it repairs native flush latency."
+    },
+    {
+      "pr": 241,
+      "head": "8dfbd4ee013dd014e934bcf378520584fd66e2d4",
+      "draft": false,
+      "labels": [
+        "dependencies",
+        "javascript"
+      ],
+      "ci": [
+        {
+          "id": 41489864928,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:11Z"
+        },
+        {
+          "id": 41489861887,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:10Z"
+        },
+        {
+          "id": 41489860750,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:10Z"
+        }
+      ],
+      "native": [
+        {
+          "id": 41489864851,
+          "conclusion": "success"
+        }
+      ],
+      "storybook": [
+        {
+          "id": 41489864816,
+          "conclusion": "success"
+        },
+        {
+          "id": 41489860949,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41489861832,
+          "conclusion": "cancelled"
+        }
+      ],
+      "title": "⬆️ Bump Bump oxlint from 1.88.0 to 1.89.0",
+      "url": "https://github.com/mxbaylee/spinel/pull/241",
+      "inspectedOrdinaryRun": 41489864928,
+      "inspectedOrdinaryJobCount": 33,
+      "sevenStableGates": [
+        {
+          "id": 125429751077,
+          "name": "Pull request",
+          "conclusion": "success"
+        },
+        {
+          "id": 125444910317,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125444910338,
+          "name": "Typecheck",
+          "conclusion": "success"
+        },
+        {
+          "id": 125444910455,
+          "name": "Lint",
+          "conclusion": "success"
+        },
+        {
+          "id": 125514980219,
+          "name": "Lib tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125519782583,
+          "name": "Unit tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125535645461,
+          "name": "Playwright smoke",
+          "conclusion": "failure"
+        }
+      ],
+      "compatibility": "Release explicitly marks AST lone-surrogate representation changes as breaking and adds recommended rule families; lint behavior needs qualification.",
+      "observedBlocker": "Ordinary run failed four historical responsiveness/callback build owners plus aggregate; native and Storybook passed separately.",
+      "disposition": "Keep separate linter compatibility change; inspect resulting diagnostics rather than weakening rules to pass."
+    },
+    {
+      "pr": 240,
+      "head": "70430e9413d73c708c924daf0e339ba47ef32e6d",
+      "draft": true,
+      "labels": [
+        "dependencies",
+        "javascript"
+      ],
+      "ci": [
+        {
+          "id": 41539213850,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "cancelled",
+          "createdAt": "2026-11-02T22:40:16Z"
+        },
+        {
+          "id": 41489835535,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:18:00Z"
+        },
+        {
+          "id": 41489833953,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:17:59Z"
+        },
+        {
+          "id": 41489833345,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:17:59Z"
+        }
+      ],
+      "native": [
+        {
+          "id": 41489833120,
+          "conclusion": "failure"
+        }
+      ],
+      "storybook": [
+        {
+          "id": 41489835573,
+          "conclusion": "failure"
+        },
+        {
+          "id": 41489833211,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41489834223,
+          "conclusion": "cancelled"
+        }
+      ],
+      "title": "⬆️ Bump the Univer group to 1.2.0",
+      "url": "https://github.com/mxbaylee/spinel/pull/240",
+      "inspectedOrdinaryRun": 41489835535,
+      "inspectedOrdinaryJobCount": 33,
+      "sevenStableGates": [
+        {
+          "id": 125429642967,
+          "name": "Pull request",
+          "conclusion": "success"
+        },
+        {
+          "id": 125443626064,
+          "name": "Lint",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125443626178,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125443626318,
+          "name": "Typecheck",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125505248442,
+          "name": "Lib tests",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125505405133,
+          "name": "Unit tests",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125538858929,
+          "name": "Playwright smoke",
+          "conclusion": "failure"
+        }
+      ],
+      "compatibility": "Incoherent1.1.0/1.2.0 workspace peers are visible in current diff; Typecheck install log125443626318 confirms ERESOLVE at presence-ui. Existing PR decision retains stock-core and aligned-release/patch qualification.",
+      "observedBlocker": "Recorded ordinary run failed30/33 jobs at install or aggregates. Latest metadata event cancelled/incomplete, native and Storybook failed. No current runtime acceptance.",
+      "disposition": "Remain draft. One aligned root/workspace SDK graph; no force/legacy-peer or package/hash-guard bypass. Preserve SPN099/119/122 qualifications."
+    },
+    {
+      "pr": 239,
+      "head": "786b8586991baf624f9690568a8951d889e79336",
+      "draft": true,
+      "labels": [
+        "dependencies",
+        "docker"
+      ],
+      "ci": [
+        {
+          "id": 41542084603,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "cancelled",
+          "createdAt": "2026-11-02T23:01:30Z"
+        },
+        {
+          "id": 41539561371,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "cancelled",
+          "createdAt": "2026-11-02T22:42:50Z"
+        }
+      ],
+      "native": [
+        {
+          "id": 41539561167,
+          "conclusion": "success"
+        }
+      ],
+      "storybook": [
+        {
+          "id": 41539561656,
+          "conclusion": "cancelled"
+        }
+      ],
+      "title": "⬆️ Bump Node to 26.13.0 across production and CI",
+      "url": "https://github.com/mxbaylee/spinel/pull/239",
+      "inspectedOrdinaryRun": 41542084603,
+      "inspectedOrdinaryJobCount": 16,
+      "sevenStableGates": [
+        {
+          "id": 125608508369,
+          "name": "Pull request",
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 125623015224,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125623015226,
+          "name": "Typecheck",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125623015288,
+          "name": "Lint",
+          "conclusion": "success"
+        },
+        {
+          "id": 125623016218,
+          "name": "Unit tests",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125623016236,
+          "name": "Lib tests",
+          "conclusion": "failure"
+        },
+        {
+          "id": 125625156875,
+          "name": "Playwright smoke",
+          "conclusion": "failure"
+        }
+      ],
+      "compatibility": "Official Node26.13 release changes LTS metadata only relative26.12.1. Diff aligns .nvmrc, both image stages and root engine while preserving package resolutions and SPN117 mitigation.",
+      "observedBlocker": "Both current-head ordinary runs and Storybook cancelled; native passed. Queued wording in dated PR checkpoint is historical.",
+      "disposition": "Remain draft; qualify aligned host/container/runtime together with first-attempt checks. Native pass alone does not complete acceptance."
+    },
+    {
+      "pr": 238,
+      "head": "ff0872497ad8a83856e77b4d404333f85a020117",
+      "draft": false,
+      "labels": [
+        "dependencies",
+        "docker_compose"
+      ],
+      "ci": [
+        {
+          "id": 41489209986,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "createdAt": "2026-11-02T17:14:08Z"
+        },
+        {
+          "id": 41489208790,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "failure",
+          "createdAt": "2026-11-02T17:14:08Z"
+        },
+        {
+          "id": 41489210883,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "createdAt": "2026-11-02T17:14:08Z"
+        }
+      ],
+      "native": [],
+      "storybook": [
+        {
+          "id": 41489209916,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41489208728,
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 41489211017,
+          "conclusion": "success"
+        }
+      ],
+      "title": "⬆️ Bump Bump caddy from 2-alpine to 2-alpine in /deploy",
+      "url": "https://github.com/mxbaylee/spinel/pull/238",
+      "inspectedOrdinaryRun": 41489209986,
+      "inspectedOrdinaryJobCount": 33,
+      "sevenStableGates": [
+        {
+          "id": 125427462909,
+          "name": "Pull request",
+          "conclusion": "success"
+        },
+        {
+          "id": 125429215210,
+          "name": "Lint",
+          "conclusion": "success"
+        },
+        {
+          "id": 125429215251,
+          "name": "Typecheck",
+          "conclusion": "success"
+        },
+        {
+          "id": 125429215510,
+          "name": "Backlog",
+          "conclusion": "success"
+        },
+        {
+          "id": 125483771749,
+          "name": "Lib tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125488091565,
+          "name": "Unit tests",
+          "conclusion": "success"
+        },
+        {
+          "id": 125535952464,
+          "name": "Playwright smoke",
+          "conclusion": "success"
+        }
+      ],
+      "compatibility": "Exact old/new immutable image inventories identify Caddy2.11.7/Alpine3.23.7. Current2.11.8 release adds security fixes, including GHSA-8qx7-j2v2-x6q5 (CVE-2026-55458 completion) for reverse-proxy1xx hop-by-hop headers. Spinel uses reverse_proxy; inspected Caddyfile has no PHP/file-server/host-derived path configuration.",
+      "observedBlocker": "Two ordinary runs pass33/33; a distinct same-head run41489208790 failed after supervised-restore first attempt missed My files heading at spec426 and retry1 passed. Preserve this flaky failure.",
+      "disposition": "Keep existing PR as owner for a reviewed current digest/security refresh and config qualification. Its current2.11.7 rebuild does not include2.11.8 security fixes; no deployment or merge performed."
+    }
+  ],
+  "primarySources": [
+    "https://github.com/vitejs/vite/releases/tag/v8.3.5",
+    "https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.1153.0",
+    "https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.1154.0",
+    "https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.1155.0",
+    "https://github.com/aws/aws-sdk-js-v3/releases/tag/v3.1156.0",
+    "https://github.com/storybookjs/storybook/releases/tag/v10.6.3",
+    "https://github.com/storybookjs/storybook/releases/tag/v10.6.4",
+    "https://github.com/oxc-project/oxc/releases/tag/oxlint_v1.89.0",
+    "https://github.com/dream-num/univer/releases/tag/v1.2.0",
+    "https://github.com/nodejs/node/releases/tag/v26.13.0",
+    "https://github.com/docker-library/repo-info/blob/79727d7303ea33888e8ae4d3719531e6a38140d6/repos/caddy/remote/2-alpine.md",
+    "https://github.com/docker-library/repo-info/blob/5ce5d52bfb69032801eb35516089b28e65c9509f/repos/caddy/remote/2-alpine.md",
+    "https://github.com/caddyserver/caddy/releases/tag/v2.11.7",
+    "https://github.com/caddyserver/caddy/releases/tag/v2.11.8"
+  ],
+  "caddyImageIdentity": {
+    "old": {
+      "inventoryCommit": "5ce5d52bfb69032801eb35516089b28e65c9509f",
+      "indexDigest": "sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f",
+      "caddy": "v2.11.7",
+      "alpine": "3.23.7"
+    },
+    "candidate": {
+      "inventoryCommit": "79727d7303ea33888e8ae4d3719531e6a38140d6",
+      "indexDigest": "sha256:e70b164da81ef698b3ad19af799ea6086ce6d9e48ed4079eb9fe26f6fbf14ee5",
+      "caddy": "v2.11.7",
+      "alpine": "3.23.7"
+    },
+    "newerRelease": {
+      "version": "v2.11.8",
+      "publishedAt": "2026-11-04T01:16:09Z",
+      "url": "https://github.com/caddyserver/caddy/releases/tag/v2.11.8"
+    }
+  },
+  "grouping": "Retain existing PR separation. Move Univer's coherent root/workspace SDK set atomically; move Node's host/container/image/engine pins atomically. Do not combine unrelated SDK/runtime/tooling/container changes or use one green run to erase a retained failed run.",
+  "disposition": "All seven remain open/unmerged. Review is not a dependency merge grade or runtime acceptance. Record this disposition in the registration PR acceptance record; executable work remains outside this focused documentation change."
+}

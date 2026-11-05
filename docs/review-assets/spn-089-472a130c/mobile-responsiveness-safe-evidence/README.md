@@ -1,0 +1,5 @@
+# C mobile responsiveness first failure
+
+This bundle preserves source 472a130c4b6fdaf7b342b0ea3d2c180cd408067e, tested merge 97b0dd8e6d225173c1da30e99e7158e17ae07cf2, CI run 41956095276 attempt 1, job 127011430611. The unprofiled plain-3 case failed the unchanged 100 ms capacity-pair maximum at 114.4 ms. All four baseline and seven candidate outcomes remain in the receipt; the selected comparison was skipped after the candidate failure. This is a current merge blocker, not accepted coverage.
+
+The complete failed metrics are preserved as deterministic gzip with original byte count and SHA-256. Both failure PNGs and the error-context file retain original bytes. The readable log removes ANSI formatting and normalizes its final newline; the exact decoded excerpt is also preserved in gzip. No full raw driver/session logs, full reports or unrelated embedded images are copied here. The separate C and B profiled samples contain no >=80 ms pair and cannot attribute the unprofiled failures. No rerun or new browser execution produced this evidence.

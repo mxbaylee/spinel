@@ -1,0 +1,64 @@
+{
+  "artifacts": [
+    {
+      "id": 13387275345,
+      "name": "ci-results-unit",
+      "bytes": 1463,
+      "sha256": "c75ee77450db9d1e660eb03d6cba79fc7e40f52bfedac085b924df05fa945090",
+      "allCrcVerified": true,
+      "files": [
+        {
+          "name": "ci-results-unit.json",
+          "bytes": 12381,
+          "sha256": "dc4827ec02a63b3cb75403df52fa29a0c0f6e58e5b167b8acbdb114e4b5a8d95",
+          "crc32": "e7b2a4f4"
+        }
+      ]
+    },
+    {
+      "id": 13387205324,
+      "name": "ci-results-browser",
+      "bytes": 1708,
+      "sha256": "fca2cf7a8f473b8241ce1020281d6f72598ecbde7f57a95822356b19a2cf9d4c",
+      "allCrcVerified": true,
+      "files": [
+        {
+          "name": "ci-results-browser.json",
+          "bytes": 20238,
+          "sha256": "1a6edf718171034d98ff8c13dd1f2a8184102964c07b9001960fc7e814f4ea22",
+          "crc32": "c745bd2c"
+        }
+      ]
+    },
+    {
+      "id": 13387180636,
+      "name": "ci-plan",
+      "bytes": 1170,
+      "sha256": "e8b9ccff62628b9783395f31699b2263c3076f1194e0c257b5e6325e119fc194",
+      "allCrcVerified": true,
+      "files": [
+        {
+          "name": "ci-plan.json",
+          "bytes": 7922,
+          "sha256": "4b2dd5d8b5ae66c1d62e4b3171f8aaf2f1ac91374b58bffa20202a32e9eff52a",
+          "crc32": "4f4bc755"
+        }
+      ]
+    },
+    {
+      "id": 13387035905,
+      "name": "ci-results-lib",
+      "bytes": 1481,
+      "sha256": "c2d4298e9f9dafb9b609a9297195b984a59f9fbff6dd1c7b3f89c87e5514c70f",
+      "allCrcVerified": true,
+      "files": [
+        {
+          "name": "ci-results-lib.json",
+          "bytes": 12490,
+          "sha256": "09ac3cfb34faada95e442f1a8dbfe1f6e012a616ebce0db4bd4c13b3e7463c6e",
+          "crc32": "fcc41965"
+        }
+      ]
+    }
+  ]
+}
