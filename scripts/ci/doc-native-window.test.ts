@@ -111,25 +111,37 @@ test('actual source collector retains executed bytes and final validation reject
   const root = await mkdtemp(join(tmpdir(), 'spn146-window-sources-'));
   const digest = (value: string) => createHash('sha256').update(value).digest('hex');
   const native = 'node_modules/@univerjs/docs/lib/es/index.js';
-  const identities = { [native]: digest('prior native') };
+  const core = 'node_modules/@univerjs/core/lib/es/index.js';
+  const identities = { [native]: digest('prior native'), [core]: digest('native Core') };
   const code = 'emitted JavaScript';
+  const helper = 'generated preload helper';
   const map = JSON.stringify({
     version: 3,
     mappings: 'AAAA',
-    sources: ['../' + native],
-    sourcesContent: ['prior native'],
+    sources: ['../' + native, '../' + core],
+    sourcesContent: ['prior native', 'native Core'],
   });
   const dist = join(root, 'dist'),
     output = join(root, 'retained');
   class Session extends EventEmitter {
     commands: string[] = [];
-    async send(method: string) {
+    beforeNativeRead?: () => Promise<unknown>;
+    wrongHelper = false;
+    async send(method: string, args?: { scriptId: string }) {
       this.commands.push(method);
-      if (method === 'Debugger.enable')
+      if (method === 'Debugger.enable') {
+        this.emit('Debugger.scriptParsed', {
+          scriptId: '8',
+          url: 'http://localhost:3100/helper.js',
+        });
         this.emit('Debugger.scriptParsed', {
           scriptId: '7',
           url: 'http://localhost:3100/native.js',
         });
+      }
+      if (method === 'Debugger.getScriptSource' && args?.scriptId === '8')
+        return { scriptSource: this.wrongHelper ? 'wrong loaded helper' : helper };
+      if (method === 'Debugger.getScriptSource') await this.beforeNativeRead?.();
       return { scriptSource: code };
     }
   }
@@ -137,6 +149,7 @@ test('actual source collector retains executed bytes and final validation reject
   try {
     await mkdir(dist);
     await writeFile(join(dist, 'native.js'), code);
+    await writeFile(join(dist, 'helper.js'), helper);
     await writeFile(join(dist, 'native.js.map'), map);
     const observer = await observeNativeWindowSources(cdp as any, 'http://localhost:3100');
     const observed = await observer.retain(output, identities, dist);
@@ -144,10 +157,20 @@ test('actual source collector retains executed bytes and final validation reject
     assert.deepEqual(cdp.commands, [
       'Debugger.enable',
       'Debugger.getScriptSource',
+      'Debugger.getScriptSource',
       'Debugger.disable',
     ]);
     assert.equal(cdp.listenerCount('Debugger.scriptParsed'), 0);
+    assert.deepEqual(observed.scripts[0].mapped, {});
+    assert.equal(observed.scripts[0].mapStatus, 'absent-at-collection');
+    assert.equal(observed.scripts[0].mapBytes, null);
     await validateRetainedNativeSources(output, observed, identities);
+    await writeFile(join(output, 'helper.js'), helper.replace('preload', 'changed'));
+    await assert.rejects(
+      validateRetainedNativeSources(output, observed, identities),
+      /digest mismatch/,
+    );
+    await writeFile(join(output, 'helper.js'), helper);
     await writeFile(join(output, 'native.js'), code.replace('emitted', 'changed'));
     await assert.rejects(
       validateRetainedNativeSources(output, observed, identities),
@@ -169,6 +192,33 @@ test('actual source collector retains executed bytes and final validation reject
     await assert.rejects(validateRetainedNativeSources(output, observed, identities), /differs/);
     await rm(join(output, 'binding.json'));
     await assert.rejects(validateRetainedNativeSources(output, observed, identities), /ENOENT/);
+    // Map absence cannot turn missing target identities, observed-present maps,
+    // unrelated read errors or wrong runtime bytes into usable evidence.
+    for (const failure of [
+      'target-map-absent',
+      'malformed-map',
+      'map-disappeared',
+      'map-is-directory',
+      'wrong-helper',
+    ] as const) {
+      await writeFile(join(dist, 'native.js.map'), map);
+      const session = new Session();
+      if (failure === 'target-map-absent') await rm(join(dist, 'native.js.map'));
+      if (failure === 'malformed-map') await writeFile(join(dist, 'native.js.map'), '{');
+      if (failure === 'map-disappeared')
+        session.beforeNativeRead = () => rm(join(dist, 'native.js.map'));
+      if (failure === 'map-is-directory') await mkdir(join(dist, 'helper.js.map'));
+      if (failure === 'wrong-helper') session.wrongHelper = true;
+      const source = await observeNativeWindowSources(session as any, 'http://localhost:3100');
+      try {
+        await assert.rejects(source.retain(join(root, failure), identities, dist));
+      } finally {
+        await source.dispose();
+      }
+      assert.equal(session.listenerCount('Debugger.scriptParsed'), 0);
+      if (failure === 'map-is-directory')
+        await rm(join(dist, 'helper.js.map'), { recursive: true });
+    }
   } finally {
     await rm(root, { recursive: true, force: true });
   }
