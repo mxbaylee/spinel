@@ -102,7 +102,7 @@ for (const format of ['es', 'cjs'] as const) {
   assert.equal(
     hash(prepared.patched),
     {
-      es: 'e47c9319b3c85c737add0e7807edbc27aeafcc81b81dd6ad870058e4fe3da093',
+      es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
       cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
     }[format],
   );

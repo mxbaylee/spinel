@@ -1,0 +1,164 @@
+{
+  "rejectedSource": "418f8b6f85711731fd322ab81040ed00f35cadcb",
+  "disposition": "Repair missing ES ActionIterator import; actual full ES and isolated CJS module controls pass. First setup and registry-interference failures preserved.235 selected tests/full typecheck/lint/build passed. Fresh exact-head reviews and all hosted acceptance remain pending.",
+  "sourceBindings": [
+    {
+      "path": "scripts/dependencies/patch-univer-docs.ts",
+      "sha256": "5da67867e2f684b0a75cd52275621d6d6493b3340cd079ec633c08388907b7ae"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs.test.ts",
+      "sha256": "345eb3d7cb7394d5436e2f381f90cfbf775688acb002aa0f6b1b755fc834dfff"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/build.ts",
+      "sha256": "76eff74c0255a37f7c29225ebfbc996603a0af97a9c08db6594bbe81d9d880d7"
+    },
+    {
+      "path": ".github/workflows/doc-native-runtime.yml",
+      "sha256": "bee3442eb9362dfc1ea83ae954dc289b3c72b325feeb7ce8edd242e39c8494cd"
+    }
+  ],
+  "payloads": [
+    {
+      "name": "binding-build-watchdog.json.gz",
+      "rawBytes": 3596,
+      "storedBytes": 573,
+      "rawSha256": "efa3f79636a8d9208fb145b840b27f0506065e5566a81f3994da375b0da86306",
+      "storedSha256": "7fdcc38f23e3556c961d0c24130fc5ffc1adcf4ca70a91d79b31c603e1e1505e"
+    },
+    {
+      "name": "binding-build.log.gz",
+      "rawBytes": 4330,
+      "storedBytes": 1638,
+      "rawSha256": "79c630011b80950d604b6b5d5464459f78ac65d36096e2c8cb7873581a1abf36",
+      "storedSha256": "84a1f22f39cef3bcd3b953e261f2ca97d0eb37d8c4ab93afe90c914d80c43a73"
+    },
+    {
+      "name": "binding-docs-tests-watchdog.json.gz",
+      "rawBytes": 22660,
+      "storedBytes": 1634,
+      "rawSha256": "daabde72321f697099214a2cff4fd235c83e778c1561d30c64c11dcfeb93eaf2",
+      "storedSha256": "0d2ddef57ca2345ad8ff6df750b60c2a1a24bda56530716bd3fcf2faad9a1c60"
+    },
+    {
+      "name": "binding-docs-tests.log.gz",
+      "rawBytes": 241620,
+      "storedBytes": 8118,
+      "rawSha256": "8b7dc8b6823205ceaf287dd369281eb47e6a860c757d04ad10802f13f46ba8ce",
+      "storedSha256": "aee9dca8e75607a529319ef50cccda46b750707991872f7ad29834f1808e7356"
+    },
+    {
+      "name": "binding-final-format-watchdog.json.gz",
+      "rawBytes": 2144,
+      "storedBytes": 510,
+      "rawSha256": "28a8c5f44ad7e1cc437752d98b76ac6b9faf49b81346e80a302a6a0d3abe3bb1",
+      "storedSha256": "ab44ead31cd738f8b3b73cdce8cebc089b85d529dbd1eb3901745c5b78ebe21a"
+    },
+    {
+      "name": "binding-final-format.log.gz",
+      "rawBytes": 121,
+      "storedBytes": 135,
+      "rawSha256": "d173cf0913e8d3a31e4022bc67ddf36fdddf1e4fb2a1996b345de243e34e7e46",
+      "storedSha256": "cde9d97ef86f20b16408ab35b8f602d447f4e6ee386fd155aa6a88059d891dd8"
+    },
+    {
+      "name": "binding-final-lint-watchdog.json.gz",
+      "rawBytes": 17219,
+      "storedBytes": 1231,
+      "rawSha256": "2ad8413b282c4c5b370fbad3345e24ed7de70dbdb1f13901e06e475a5e3d854d",
+      "storedSha256": "4a91ed754763b06d1403e02c03d8fb554f8dd7fac8f9de5a38c96d1758ad85dc"
+    },
+    {
+      "name": "binding-final-lint.log.gz",
+      "rawBytes": 690,
+      "storedBytes": 396,
+      "rawSha256": "f1249d6ab0308e55acb68868a1fb506d6075796cfa6f2037bdeeaa711d6bde7a",
+      "storedSha256": "0b445cc61bdfec925214eba74499cb13ed43e0c65b20624b446fb5b372401992"
+    },
+    {
+      "name": "binding-format-watchdog.json.gz",
+      "rawBytes": 2375,
+      "storedBytes": 523,
+      "rawSha256": "1356a7f468fd4388ad6ba759c727b299a192f6a231c373fed5cdb31ef3e4cc9f",
+      "storedSha256": "8967e920b494536106fc2f35fdf0094c42a3e175af12134a5774f61fd066769d"
+    },
+    {
+      "name": "binding-format.log.gz",
+      "rawBytes": 236,
+      "storedBytes": 179,
+      "rawSha256": "115c4799430b32a0f4310ad6f93bb9f301ab650b8f815ade7124b973b7d37028",
+      "storedSha256": "5acaad33a10b9672f84ec0b5f7add0d5400a0bb57d91832c79f4c551ae7c9779"
+    },
+    {
+      "name": "binding-isolated-docs-tests-watchdog.json.gz",
+      "rawBytes": 38714,
+      "storedBytes": 2091,
+      "rawSha256": "2f28abe7774b6fd3e0ee0fde8f9417c5e13e10e5828a48a4e04b03679832f718",
+      "storedSha256": "df70f3a319e7d5e0d959e34d142ba18dda024b5707fd1a6ecb570d417d106964"
+    },
+    {
+      "name": "binding-isolated-docs-tests.log.gz",
+      "rawBytes": 348035,
+      "storedBytes": 7433,
+      "rawSha256": "408e252ee16812b0d7f37391af7da8d191225015206ec9d5fe11e9797eb8b840",
+      "storedSha256": "9cffa8a43f22f318959209a23aaeacca536b8411189a3ea8faa4c09c7115407d"
+    },
+    {
+      "name": "binding-module-repaired-test-watchdog.json.gz",
+      "rawBytes": 2760,
+      "storedBytes": 547,
+      "rawSha256": "54d6165e68d2e7c3b0eda52aa14d465f49cc2ef9c11e7a5e6949b02910070204",
+      "storedSha256": "4f26856dd7fbe39a5fb441d187d9810a447566aba04e3fba74231db7a38ec385"
+    },
+    {
+      "name": "binding-module-repaired-test.log.gz",
+      "rawBytes": 1131,
+      "storedBytes": 333,
+      "rawSha256": "6ca850d4c15402717eeac8bae7de5a5cc119e717a337521c3d06dc7a7a26e62b",
+      "storedSha256": "1a06609abb10a2ba0479bacd027b6215248a024a6de6cc4e897e1834d86d1a3a"
+    },
+    {
+      "name": "binding-module-test-watchdog.json.gz",
+      "rawBytes": 3721,
+      "storedBytes": 1068,
+      "rawSha256": "6b5f9667b5655a7856c982cb836398e8e3ec2e3aeac6e0cc48a84c611414a555",
+      "storedSha256": "b70c1b7f4b5cf8a6268046b06e817c1858aa288ca4e2d536938199ca9cb11ced"
+    },
+    {
+      "name": "binding-module-test.log.gz",
+      "rawBytes": 32911,
+      "storedBytes": 1872,
+      "rawSha256": "3bf8b5986b6406733683e81bb536b0565ff21816e62ecdbd1c38ab9aca30125b",
+      "storedSha256": "45293e6f52298687e6f1103f10200c9dfedc9f8ff2dd95368feb9b4f6ff8c70d"
+    },
+    {
+      "name": "binding-typecheck-watchdog.json.gz",
+      "rawBytes": 4489,
+      "storedBytes": 611,
+      "rawSha256": "1fe569f9a7be416154b191d23af0628bbf6ebf21019a53ca4838bec198903d7d",
+      "storedSha256": "05f34bae36f6583a85e8fed768d78b3c3df274013ddc4274130ccaa9f8f37865"
+    },
+    {
+      "name": "binding-typecheck.log.gz",
+      "rawBytes": 95,
+      "storedBytes": 115,
+      "rawSha256": "debb0a294b489aad6fe3aab00b2494725db57fb5114999ccb4ef22a0cf15e8d2",
+      "storedSha256": "2633bce8ba7ec1a4e6aa63540844b723ed648564c25e25b892c7dbd56a71e0d3"
+    },
+    {
+      "name": "linear-production-review-a.md.gz",
+      "rawBytes": 12223,
+      "storedBytes": 5483,
+      "rawSha256": "7e037e6cb2a56fbc6890ffb1a9e3adfb09c0172a63b31b63355005bd80b38ee2",
+      "storedSha256": "e1d0b996102d2927dc2c326634a0f28053765e35232f77a2f87d07426ba10262"
+    },
+    {
+      "name": "linear-production-review-b.md.gz",
+      "rawBytes": 10560,
+      "storedBytes": 4717,
+      "rawSha256": "079b0a728ca58436ea5baec1f7a3f40cb9c14fe0f6848419fec9f25f402c4448",
+      "storedSha256": "4343ac6d99e7c66c36804a01bfdb8e94f9977a10e1809fcb2906d6fd79d6ee06"
+    }
+  ]
+}

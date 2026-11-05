@@ -21,9 +21,12 @@
  */
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { gunzipSync } from 'node:zlib';
@@ -698,6 +701,95 @@ test('sequential style oracle preserves complete attributes and rejects ambiguou
 });
 
 for (const format of ['es', 'cjs'] as const) {
+  test(`${format}: complete module binds native helpers for qualified paragraph flushes`, async () => {
+    if (format === 'cjs' && process.env.SPINEL_DOCS_MODULE_CHILD !== '1') {
+      // CJS Core registers its TextX type in JSONX's shared registry. Keep that
+      // real registration isolated from the ES primitive-work instrumentation.
+      execFileSync(
+        process.execPath,
+        [
+          '--test',
+          '--test-name-pattern=^cjs: complete module binds',
+          'scripts/dependencies/patch-univer-docs.test.ts',
+        ],
+        { env: { ...process.env, SPINEL_DOCS_MODULE_CHILD: '1' }, timeout: 10_000 },
+      );
+      return;
+    }
+    const { patched } = prepareDocsPatch(await readBuild(format), format);
+    const directory = await mkdtemp(resolve('.spinel-docs-module-'));
+    async function load(source: string, name: string) {
+      if (format === 'es') {
+        const path = resolve(directory, `${name}.ts`);
+        await writeFile(path, source);
+        return import(pathToFileURL(path).href);
+      }
+      const module = { exports: {} };
+      Function(
+        'require',
+        'module',
+        'exports',
+        source,
+      )(createRequire(import.meta.url), module, module.exports);
+      return module.exports as Record<string, any>;
+    }
+    function exercise(ManagerClass: any, states: State[]) {
+      const input = new Subject<IDocStateChangeInfo>();
+      const history: Entry[] = [],
+        changes: State[] = [];
+      const manager = new ManagerClass(
+        { pushUndoRedo: (entry: Entry) => history.push(structuredClone(entry)) },
+        { beforeCommandExecuted: () => ({ dispose() {} }) },
+        { getCurrentUnitOfType: () => ({ getUnitId: () => unitId }) },
+        { docStateChangeParams$: input },
+      );
+      const subscription = manager.docStateChange$.subscribe((state: State | null) => {
+        if (state) changes.push(structuredClone(state));
+      });
+      try {
+        manager.setStateCache(
+          unitId,
+          structuredClone({ history: [...states], collaboration: [...states] }),
+        );
+        manager.flushPendingChanges(unitId);
+        assert.deepEqual(manager.getStateCache(unitId), { history: [], collaboration: [] });
+        return { history, changes };
+      } finally {
+        subscription.unsubscribe();
+        manager.dispose();
+        input.complete();
+      }
+    }
+    try {
+      const module = await load(patched, 'complete');
+      for (const position of [3, 4, 23]) {
+        const { states } = paragraphSequence(position);
+        const expected = flush(patched, states);
+        assert.deepEqual(exercise(module.DocStateChangeManagerService, states), {
+          history: expected.history,
+          changes: expected.changes,
+        });
+      }
+      if (format === 'es') {
+        // The isolated manager fixture supplies Core bindings and hid this exact
+        // integration defect in rejected candidate418f8b6f. Execute the full file.
+        const missing = patched.replace(
+          'import { ActionIterator, AlignTypeH,',
+          'import { AlignTypeH,',
+        );
+        assert.notEqual(missing, patched);
+        assert.throws(() => prepareDocsPatch(missing, format), /Partially modified/);
+        const broken = await load(missing, 'missing-iterator');
+        assert.throws(
+          () => exercise(broken.DocStateChangeManagerService, paragraphSequence(4).states),
+          /ActionIterator is not defined/,
+        );
+      }
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   test(`${format}: native publications preserve mixed operations, independent caches and complete metadata`, async () => {
     const { original, patched } = prepareDocsPatch(await readBuild(format), format);
     assert.deepEqual(flush(patched, []), flush(original, []));
@@ -2250,7 +2342,7 @@ for (const format of ['es', 'cjs'] as const) {
     assert.equal(
       createHash('sha256').update(patched).digest('hex'),
       {
-        es: 'e47c9319b3c85c737add0e7807edbc27aeafcc81b81dd6ad870058e4fe3da093',
+        es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
         cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
       }[format],
     );
