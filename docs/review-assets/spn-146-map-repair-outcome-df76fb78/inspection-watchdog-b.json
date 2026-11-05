@@ -1,0 +1,118 @@
+{
+  "root": 97123,
+  "started": 1793889159776,
+  "elapsedMs": 1242,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91120,
+  "peakKiB": 234624,
+  "live": [
+    {
+      "pid": 97123,
+      "parent": 97088,
+      "group": 97123,
+      "rssKiB": 89584,
+      "started": "Thu Nov  5 06:32:39 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-map-repair-outcome/inspection-watchdog-b.json node /tmp/spn146-map-repair-outcome/inspect-b.ts"
+    },
+    {
+      "pid": 97558,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 97123,
+      "parent": 97088,
+      "group": 97123,
+      "rssKiB": 89584,
+      "started": "Thu Nov  5 06:32:39 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-map-repair-outcome/inspection-watchdog-b.json node /tmp/spn146-map-repair-outcome/inspect-b.ts"
+    },
+    {
+      "pid": 97142,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 97168,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 141584,
+      "started": "Thu Nov  5 06:32:39 2026",
+      "command": "node /tmp/spn146-map-repair-outcome/inspect-b.ts"
+    },
+    {
+      "pid": 97173,
+      "parent": 97168,
+      "group": 97123,
+      "rssKiB": 2592,
+      "started": "Thu Nov  5 06:32:39 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 97179,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 97194,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 97386,
+      "parent": 97168,
+      "group": 97123,
+      "rssKiB": 2416,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "unzip -p /tmp/spn146-map-repair-outcome/observation.zip test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/nativeSyncPermissions-B406WXFC.js.map"
+    },
+    {
+      "pid": 97392,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 97504,
+      "parent": 97168,
+      "group": 97123,
+      "rssKiB": 2416,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "unzip -p /tmp/spn146-map-repair-outcome/observation.zip test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/univer-renderer-Cqyj3Y79.js.map"
+    },
+    {
+      "pid": 97510,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 97558,
+      "parent": 97123,
+      "group": 97123,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:32:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
