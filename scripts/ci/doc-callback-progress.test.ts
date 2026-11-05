@@ -2,6 +2,11 @@ import assert from 'node:assert/strict';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { randomUUID } from 'node:crypto';
+import { EventEmitter } from 'node:events';
+import type { Browser, TestInfo } from '@playwright/test';
+import { fixture as docFixture } from '../../e2e/doc-responsiveness-fixture.ts';
+import { openDatabase } from '../../server/database.ts';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +14,7 @@ import test from 'node:test';
 import {
   callbackProgress,
   persistCallbackManifest,
+  settleCallbackObservation,
 } from '../../e2e/doc-responsiveness-callback-progress.ts';
 
 function fixture(t: { after: (fn: () => void) => void }) {
@@ -110,14 +116,36 @@ test('real Playwright timeout runs the terminal hook without waiting for a stall
     join(directory, 'timeout.spec.ts'),
     `
 import { test } from ${JSON.stringify(playwright)};
-import { callbackProgress } from ${JSON.stringify(helper)};
+import { callbackProgress, settleCallbackObservation } from ${JSON.stringify(helper)};
+import { readFileSync } from 'node:fs';
+import assert from 'node:assert/strict';
 let progress: ReturnType<typeof callbackProgress>;
-test.afterEach(({}, info) => progress.terminal(info.status ?? 'unknown'));
+let running: Promise<void>;
+let rejectRunning: (error: Error) => void;
+let cleanupCalls = 0;
+test.afterEach(async ({}, info) => {
+  info.setTimeout(30_000);
+  await settleCallbackObservation({
+    progress, detach: () => {}, done: running,
+    abort() { rejectRunning(new Error('original deadline')); },
+    async interrupt() {
+      const early = JSON.parse(readFileSync(${JSON.stringify(evidence)}, 'utf8'));
+      assert.equal(early.terminal, 'timedOut');
+      assert.equal(early.firstFailure.phase, 'trace-completion');
+      cleanupCalls++;
+      progress.cleanup();
+      await Promise.resolve();
+      progress.phase('fixture-cleanup-complete');
+    },
+  }, info.status ?? 'unknown');
+  assert.equal(cleanupCalls, 1);
+});
 test('stalled collection', async () => {
   progress = callbackProgress(${JSON.stringify(evidence)});
   progress.phase('behavior-complete');
   progress.phase('trace-completion');
-  await new Promise(() => {});
+  running = new Promise<void>((_resolve, reject) => { rejectRunning = reject; });
+  await running;
 });
 `,
   );
@@ -141,7 +169,8 @@ test('stalled collection', async () => {
   assert.equal(report.stats.unexpected, 1);
   assert.equal(report.suites[0].specs[0].tests[0].results[0].status, 'timedOut');
   const retained = JSON.parse(readFileSync(evidence, 'utf8'));
-  assert.equal(retained.phase, 'trace-completion');
+  assert.equal(retained.phase, 'fixture-cleanup-complete');
+  assert.equal(retained.firstFailure.phase, 'trace-completion');
   assert.equal(retained.terminal, 'timedOut');
   assert.equal(retained.firstFailure.kind, 'timedOut');
 });
@@ -197,3 +226,188 @@ for (const primary of [new Error('original operation failure'), undefined])
     assert.equal(await persistCallbackManifest(path, evidence, failure), failure);
     assert.equal(JSON.parse(readFileSync(path, 'utf8')).manifestPersistenceError, true);
   });
+
+test('timeout is persisted before cleanup waits and terminal settlement cannot resurrect success', async (t) => {
+  const { progress, read } = fixture(t);
+  progress.phase('trace-completion');
+  let releaseCleanup!: () => void;
+  let releaseExecution!: () => void;
+  const cleanup = new Promise<void>((resolve) => {
+    releaseCleanup = resolve;
+  });
+  const done = new Promise<void>((resolve) => {
+    releaseExecution = resolve;
+  });
+  let aborted = false;
+  let completed = false;
+  const settlement = settleCallbackObservation(
+    {
+      progress,
+      detach: () => {},
+      abort: () => {
+        aborted = true;
+      },
+      interrupt: () => cleanup,
+      done,
+    },
+    'timedOut',
+  ).then(() => {
+    completed = true;
+  });
+  assert.equal(aborted, true);
+  assert.equal(read().firstFailure.phase, 'trace-completion');
+  assert.equal(read().terminal, 'timedOut');
+  assert.equal(completed, false);
+  progress.phase('cdp-detach');
+  releaseCleanup();
+  await Promise.resolve();
+  assert.equal(completed, false, 'Cleanup alone cannot abandon the running observation');
+  progress.cleanup();
+  progress.phase('fixture-cleanup-complete');
+  releaseExecution();
+  await settlement;
+  assert.equal(read().terminal, 'timedOut');
+  assert.equal(read().firstFailure.kind, 'timedOut');
+});
+
+test('failed teardown preserves the already durable original timeout', async (t) => {
+  const { progress, read } = fixture(t);
+  progress.phase('trace-completion');
+  const error = new Error('owned teardown failed');
+  await assert.rejects(
+    settleCallbackObservation(
+      {
+        progress,
+        detach: () => {},
+        abort: () => {},
+        interrupt: async () => {
+          throw error;
+        },
+      },
+      'timedOut',
+    ),
+    (actual) => actual === error,
+  );
+  assert.equal(read().firstFailure.kind, 'timedOut');
+  assert.equal(read().firstFailure.phase, 'trace-completion');
+  assert.equal(read().terminal, 'timedOut');
+});
+
+for (const scenario of [
+  'complete',
+  'close-fails',
+  'page-setup-fails',
+  'abort-late-context',
+] as const)
+  test(`document fixture ${scenario} owns all contexts and closes its database without masking first failure`, async (t) => {
+    const project = `spn143-cleanup-${randomUUID()}`;
+    const directory = join('test-results', project);
+    t.after(() => rmSync(directory, { recursive: true, force: true }));
+    const primary = new Error('original setup interruption');
+    const secondary = new Error('first context close failed');
+    const controller = new AbortController();
+    const closes = [0, 0];
+    let reached!: () => void;
+    let release!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      reached = resolve;
+    });
+    const contexts = [0, 1].map((index) => ({
+      addCookies: async () => {},
+      newPage: async () => {
+        if (scenario === 'page-setup-fails' && index === 0) throw primary;
+        return new EventEmitter();
+      },
+      close: async () => {
+        closes[index]++;
+        if (index === 0 && (scenario === 'close-fails' || scenario === 'page-setup-fails'))
+          throw secondary;
+      },
+    }));
+    let index = 0;
+    const browser = {
+      async newContext() {
+        const current = index++;
+        if (scenario === 'abort-late-context' && current === 1) {
+          reached();
+          await new Promise<void>((resolve) => {
+            release = resolve;
+          });
+        }
+        return contexts[current];
+      },
+    } as unknown as Browser;
+    const running = docFixture(
+      browser,
+      'https://spinel.test',
+      { project: { name: project } } as TestInfo,
+      false,
+      controller.signal,
+    );
+    if (scenario === 'abort-late-context') {
+      await pending;
+      controller.abort(primary);
+      release();
+      await assert.rejects(running, (error) => error === primary);
+    } else if (scenario === 'page-setup-fails') {
+      await assert.rejects(running, (error) => error === primary);
+    } else {
+      const value = await running;
+      const closing = value.close();
+      assert.equal(value.close(), closing, 'Concurrent cleanup shares actual settlement');
+      if (scenario === 'close-fails') await assert.rejects(closing, (error) => error === secondary);
+      else await closing;
+      assert.equal(value.workspace.auth.database.isOpen, false);
+      await assert.rejects(value.account(), /fixture is closed/);
+    }
+    assert.deepEqual(closes, [1, 1]);
+    const database = openDatabase(join(directory, 'app.sqlite'));
+    try {
+      assert.equal(database.prepare('SELECT count(*) AS count FROM auth_users').get()?.count, 0);
+      assert.equal(
+        database.prepare('SELECT count(*) AS count FROM workspace_items').get()?.count,
+        0,
+      );
+    } finally {
+      database.close();
+    }
+  });
+
+test('timeout during an in-flight final write republishes failure only after that writer settles', async (t) => {
+  const { progress, read } = fixture(t);
+  const directory = mkdtempSync(join(tmpdir(), 'spn143-final-write-'));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const path = join(directory, 'manifest.json');
+  const manifest: Record<string, unknown> = {
+    passed: true,
+    cleanup: { sessionDetached: true, fixtureClosed: true },
+  };
+  let releaseWrite!: () => void;
+  const pendingWrite = new Promise<void>((resolve) => {
+    releaseWrite = resolve;
+  });
+  const done = (async () => {
+    const serialized = JSON.stringify(manifest);
+    await pendingWrite;
+    writeFileSync(path, serialized);
+  })();
+  const settling = settleCallbackObservation(
+    {
+      progress,
+      detach: () => {},
+      abort: () => {},
+      interrupt: async () => {},
+      done,
+      async rejectManifest() {
+        manifest.passed = false;
+        await persistCallbackManifest(path, manifest, new Error('original deadline'));
+      },
+    },
+    'timedOut',
+  );
+  assert.equal(read().terminal, 'timedOut');
+  releaseWrite();
+  await settling;
+  assert.equal(JSON.parse(readFileSync(path, 'utf8')).passed, false);
+  assert.equal(read().firstFailure.kind, 'timedOut');
+});
