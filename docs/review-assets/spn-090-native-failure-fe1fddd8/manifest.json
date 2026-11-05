@@ -1,0 +1,90 @@
+{
+  "source": "fe1fddd818cf66661c4e43c20dd856d87a685383",
+  "disposition": "First Firefox desktop storage-loss deletion timeout. No rerun, causal proof or acceptance waiver.",
+  "payloads": [
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/archive.ts.gz",
+      "rawBytes": 2079,
+      "storedBytes": 1071,
+      "rawSha256": "2a3867aaecd84cd253f9143e5427da8db643db0eb1aef4a588d9adc1696bbd7c",
+      "storedSha256": "9dfd56b84aecccece6e5caf5dc266033030f801fafca04012d2da85133ce2255"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/artifacts.json.gz",
+      "rawBytes": 2067,
+      "storedBytes": 585,
+      "rawSha256": "a01d00dfe38c2e1bc0343b45590da86f3a54cfcfda8a1a45e709d5820c5f45c5",
+      "storedSha256": "8c8a6d1a844d54381cc4c00b41cfc336c6cbe294a92ac35cd308e145c65d9b77"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/audit-a.log.gz",
+      "rawBytes": 397,
+      "storedBytes": 312,
+      "rawSha256": "07405cdfe4236fa3dc70ead4a6559cdde6deb321ee4c548407d85918646806cb",
+      "storedSha256": "a1748b5843baf260a03b9fbf06a8cb210e8dba76b72d19cd720885a037924006"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/audit-a.ts.gz",
+      "rawBytes": 4535,
+      "storedBytes": 1751,
+      "rawSha256": "577b40a6b008bcf5163c460750e09daf7d0eca36da097d2b2194ac18e55e268c",
+      "storedSha256": "b750ce8e86c223a654af819d1033e2648da03984aeb97a9b8c7142b9b0a19a43"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/jobs.json.gz",
+      "rawBytes": 10074,
+      "storedBytes": 1299,
+      "rawSha256": "39722168804105f64c632f0ce7fef26d7d363155d950e85caef518ab1f6eeceb",
+      "storedSha256": "c8ce9fd4f8d4b193c975ace33d770ad5928f9a8726c11344d9c5ce1c66f2e9cc"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/native-failed.log.gz",
+      "rawBytes": 225904,
+      "storedBytes": 16925,
+      "rawSha256": "b372cdddf12d4ceef217c5c6aca975ae897fdfb316cd84f52b1550c1496a656c",
+      "storedSha256": "87acb2133df3ef33aa3678d1198d8793bb87eb3cefe6038246979e686f82d177"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/original.zip",
+      "rawBytes": 702105,
+      "storedBytes": 702105,
+      "rawSha256": "9c5a995ae30d865add44c030bf1ed53e2bdadae2ffba66419e14fdde34028f5d",
+      "storedSha256": "9c5a995ae30d865add44c030bf1ed53e2bdadae2ffba66419e14fdde34028f5d"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/outcome-review-a.md.gz",
+      "rawBytes": 6707,
+      "storedBytes": 3271,
+      "rawSha256": "4717c1cb862090e570a1ecf455a8a4427d074414e5d70de2789e237a29ffd96b",
+      "storedSha256": "5fd1f071afdd86c98e486598d504f0e452a27af971c99ae6baf6e2437a31303f"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/proof-a.json.gz",
+      "rawBytes": 13144,
+      "storedBytes": 3420,
+      "rawSha256": "7abc8336d69329ce92ba46a082d3d4c72fb579b45d49334b3978759aac7b45d3",
+      "storedSha256": "ef24b6ef138c8146fd872fa0041fdebcb0bf3eb78e109449ab12f70050a13c1b"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/run.json.gz",
+      "rawBytes": 12201,
+      "storedBytes": 1677,
+      "rawSha256": "7010fab2b19021f03da2487d8e98bf19d54529d5df56f8c33eeb09ead32f5c0f",
+      "storedSha256": "e4f01db1f07b91bd565546818c40aea4b951c2c5cbd27f831d0b0e03766109d2"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/tested-commit.json.gz",
+      "rawBytes": 2648,
+      "storedBytes": 1253,
+      "rawSha256": "fd65f33afcfbbaccf39c5da0b4b430522c52977bca18811437f5248bb96b4558",
+      "storedSha256": "f5fab44985eac355cc71595d325738d8f37e0b714329f76b59d14dc748b39eff"
+    },
+    {
+      "path": "docs/review-assets/spn-090-native-failure-fe1fddd8/watchdog-a.json.gz",
+      "rawBytes": 2053,
+      "storedBytes": 468,
+      "rawSha256": "9ab455d7277d62c3941294103c652e7a7c76198b6b740c97fd35a1fa908e856c",
+      "storedSha256": "f6b5f520063f717401bca894fa16911085ed3f35a1f5aaeb1ab64ad8652f75ef"
+    }
+  ]
+}
