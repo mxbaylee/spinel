@@ -327,6 +327,43 @@ const insertAt =
   () =>
     edit(new core.TextX().retain(offset).insert(body.dataStream.length, body));
 
+function paragraphSequence(
+  position: number,
+  length = 32,
+  coverType = core.UpdateDocsAttributeType.COVER,
+  offset = 0,
+  decorate?: (body: core.IDocumentBody, isEnter: boolean) => void,
+) {
+  return sequence(
+    Array.from({ length }, (_, index) => {
+      const body = keyboardBody(index);
+      decorate?.(body, index === position);
+      if (index !== position) return insertAt(offset + index, body);
+      return () =>
+        edit(
+          new core.TextX()
+            .retain(offset + index)
+            .insert(1, {
+              ...body,
+              dataStream: '\r',
+              paragraphs: [
+                { startIndex: 0, paragraphId: `para_insert_${position}`, paragraphStyle: {} },
+              ],
+            })
+            .retain(
+              1,
+              {
+                dataStream: '',
+                textRuns: [{ st: 0, ed: 1, ts: { cl: { rgb: '#123456' } } }],
+              },
+              coverType,
+            ),
+        );
+    }),
+    seed('z'.repeat(offset + 1) + '\r\n'),
+  );
+}
+
 const mixed: Request[] = [
   () =>
     edit(
@@ -993,7 +1030,9 @@ for (const format of ['es', 'cjs'] as const) {
     }
     assert.deepEqual(outputs[1], outputs[0]);
     assert.equal(work[0].initialization, 0);
-    assert.equal(work[1].initialization, 9);
+    // Three additional Enter-shape lists are initialized once with the nine
+    // existing lists; the regression contract is still zero per-flush lists.
+    assert.equal(work[1].initialization, 12);
     const noRepeatedLists = (counts: (typeof work)[number]) =>
       assert.deepEqual(counts.flushes, [0, 0]);
     noRepeatedLists(work[1]);
@@ -1411,43 +1450,15 @@ for (const format of ['es', 'cjs'] as const) {
   });
 
   test(`${format}: every paragraph position preserves exact native output and reduces eligible prefix work`, async () => {
-    const { original, patched, markerPatched, completeDeletePatched } = prepareDocsPatch(
-      await readBuild(format),
-      format,
-    );
+    const { original, patched, markerPatched, completeDeletePatched, constantGuardPatched } =
+      prepareDocsPatch(await readBuild(format), format);
     for (let position = 0; position < 32; position++) {
-      const scenario = sequence(
-        Array.from({ length: 32 }, (_, index) => {
-          if (index !== position) return insertAt(index, keyboardBody(index));
-          // Native Enter inserts a paragraph and retains the following character's
-          // style. This unsupported state and all following calls stay sequential.
-          return () =>
-            edit(
-              new core.TextX()
-                .retain(index)
-                .insert(1, {
-                  ...keyboardBody(index),
-                  dataStream: '\r',
-                  paragraphs: [
-                    { startIndex: 0, paragraphId: `para_insert_${position}`, paragraphStyle: {} },
-                  ],
-                })
-                .retain(
-                  1,
-                  {
-                    dataStream: '',
-                    textRuns: [{ st: 0, ed: 1, ts: { cl: { rgb: '#123456' } } }],
-                  },
-                  core.UpdateDocsAttributeType.COVER,
-                ),
-            );
-        }),
-        seed('z\r\n'),
-      );
+      const scenario = paragraphSequence(position);
       const native = measuredFlush(original, scenario.states);
       const previous = measuredFlush(markerPatched, scenario.states);
       const candidate = measuredFlush(patched, scenario.states);
       const beforePrefix = measuredFlush(completeDeletePatched, scenario.states);
+      const beforeTail = measuredFlush(constantGuardPatched, scenario.states);
       assertNativePreservation(
         native.output,
         candidate.output,
@@ -1460,6 +1471,16 @@ for (const format of ['es', 'cjs'] as const) {
         'The previous patch uses the complete original mixed fold.',
       );
       assert.deepEqual(candidate.output, beforePrefix.output);
+      assert.deepEqual(candidate.output, beforeTail.output);
+      if (position <= 23) {
+        const reducedTail = (counts: typeof candidate.counts) =>
+          assert.ok(
+            counts.allocations < beforeTail.counts.allocations,
+            'Enter tail work decreases.',
+          );
+        reducedTail(candidate.counts);
+        assert.throws(() => reducedTail(beforeTail.counts), /Enter tail work/);
+      }
       if (position < 30) {
         const reduced = (counts: typeof candidate.counts) =>
           assert.ok(
@@ -1493,6 +1514,380 @@ for (const format of ['es', 'cjs'] as const) {
         );
       }
     }
+  });
+
+  test(`${format}: REPLACE paragraph tails preserve the non-null accumulator and own their result`, async () => {
+    const { patched, constantGuardPatched, original } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        _univerjs_core: core,
+        Object,
+        Array,
+      }) as (states: State[], key: 'redoState') => JSONXActions;
+    };
+    const current = helper(constantGuardPatched),
+      candidate = helper(patched);
+    for (let position = 0; position < 32; position++) {
+      const scenario = paragraphSequence(position, 32, core.UpdateDocsAttributeType.REPLACE, 7);
+      const before = measuredFlush(constantGuardPatched, scenario.states);
+      const after = measuredFlush(patched, scenario.states);
+      assertNativePreservation(
+        flush(original, scenario.states),
+        after.output,
+        scenario,
+        `REPLACE ${position}`,
+      );
+      assert.deepEqual(after.output, before.output);
+      const expected = current(scenario.states, 'redoState');
+      const actual = candidate(scenario.states, 'redoState');
+      assert.deepEqual(
+        actual,
+        expected,
+        'The result from the non-null structural accumulator is raw-equal.',
+      );
+      const prior = structuredClone(scenario.states);
+      const references = new Set<object>();
+      const collect = (value: unknown) => {
+        if (!value || typeof value !== 'object' || references.has(value)) return;
+        references.add(value);
+        for (const child of Object.values(value)) collect(child);
+      };
+      collect(scenario.states);
+      const checkOwned = (value: unknown) => {
+        if (!value || typeof value !== 'object') return;
+        assert.ok(!references.has(value), 'No result object aliases a source state.');
+        assert.equal(
+          Object.getPrototypeOf(value),
+          Array.isArray(value) ? Array.prototype : Object.prototype,
+        );
+        for (const child of Object.values(value)) checkOwned(child);
+      };
+      checkOwned(actual);
+      (actual as any)[1].e[1].body.dataStream = 'mutated output';
+      assert.deepEqual(scenario.states, prior, 'Output mutation leaves all source states intact.');
+      assert.deepEqual(
+        candidate(scenario.states, 'redoState'),
+        expected,
+        'Independent composition retains its own output.',
+      );
+      if (position < 24) assert.ok(after.counts.allocations < before.counts.allocations);
+      if (position === 5 || position === 19)
+        assertNativePreservation(
+          flush(original, scenario.states.slice(7), scenario.states),
+          flush(patched, scenario.states.slice(7), scenario.states),
+          scenario,
+          'REPLACE unequal caches',
+          7,
+        );
+    }
+  });
+
+  test(`${format}: unsupported paragraph bridges retain exact fallback calls and accessor reads`, async () => {
+    const { patched, constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
+    const calls: { left: unknown; right: JSONXActions }[] = [];
+    const json = {
+      compose(left: JSONXActions, right: JSONXActions) {
+        calls.push({ left: ownDataShape(left), right });
+        return core.JSONX.compose(left, right);
+      },
+    };
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        JSONX: json,
+        _univerjs_core: { ...core, JSONX: json },
+        Object,
+        Array,
+      }) as (states: State[], key: 'redoState') => JSONXActions;
+    };
+    const current = helper(constantGuardPatched),
+      candidate = helper(patched);
+    let getterReads = 0;
+    const cases: [string, (states: State[]) => void][] = [
+      [
+        'paragraph identity absent',
+        (states) => {
+          delete (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].paragraphId;
+        },
+      ],
+      [
+        'paragraph attributes',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].paragraphStyle = {
+            spaceAbove: 2,
+          };
+        },
+      ],
+      ...[0, false, '', 'style'].map((value): [string, (states: State[]) => void] => [
+        `primitive paragraph style ${JSON.stringify(value)}`,
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].paragraphStyle = value;
+        },
+      ]),
+      [
+        'unknown paragraph key',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].future = undefined;
+        },
+      ],
+      [
+        'unknown body key',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.future = undefined;
+        },
+      ],
+      [
+        'unknown symbol',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body[Symbol('unknown')] = 1;
+        },
+      ],
+      [
+        'wrong structural token',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.dataStream = '\n';
+        },
+      ],
+      [
+        'unknown cover mode',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[2].coverType = 3;
+        },
+      ],
+      [
+        'old body absent',
+        (states) => {
+          delete (states[3].redoState.actions as any)[1].e[2].oldBody;
+        },
+      ],
+      [
+        'second Enter',
+        (states) => {
+          states[8].redoState.actions = structuredClone(states[3].redoState.actions);
+        },
+      ],
+      [
+        'unsupported final marker',
+        (states) => {
+          (states.at(-1)!.redoState.actions as any)[1].e[1].body.__textXPreserveParagraphIds =
+            false;
+        },
+      ],
+      [
+        'tail offset gap',
+        (states) => {
+          (states[4].redoState.actions as any)[1].e[0].len++;
+        },
+      ],
+      [
+        'internally contiguous but displaced tail',
+        (states) => {
+          for (const state of states.slice(4)) (state.redoState.actions as any)[1].e[0].len++;
+        },
+      ],
+      [
+        'prepend suffix',
+        (states) => {
+          for (const state of states.slice(4)) (state.redoState.actions as any)[1].e[0].len = 4;
+        },
+      ],
+      [
+        'prefix offset gap',
+        (states) => {
+          (states[1].redoState.actions as any)[1].e[0].len++;
+        },
+      ],
+      [
+        'different unit',
+        (states) => {
+          states[7].unitId = 'different';
+        },
+      ],
+      [
+        'different segment',
+        (states) => {
+          states[7].segmentId = 'different';
+        },
+      ],
+      [
+        'scope accessor',
+        (states) => {
+          Object.defineProperty(states[7], 'segmentId', {
+            configurable: true,
+            enumerable: true,
+            get: () => {
+              getterReads++;
+              return '';
+            },
+          });
+        },
+      ],
+      [
+        'body accessor',
+        (states) => {
+          const action = (states[3].redoState.actions as any)[1].e[1];
+          const body = action.body;
+          Object.defineProperty(action, 'body', {
+            configurable: true,
+            enumerable: true,
+            get: () => {
+              getterReads++;
+              return body;
+            },
+          });
+        },
+      ],
+      [
+        'nonplain prototype',
+        (states) => {
+          Object.setPrototypeOf((states[3].redoState.actions as any)[1].e[1].body, {
+            inherited: 1,
+          });
+        },
+      ],
+      [
+        'generic unsupported boundary',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].t = 'd';
+        },
+      ],
+    ];
+    for (const [name, mutate] of cases) {
+      const states = paragraphSequence(3, 12).states;
+      mutate(states);
+      const shape = ownDataShape(states);
+      const run = (compose: typeof current) => {
+        calls.length = 0;
+        getterReads = 0;
+        let output: unknown, error: unknown;
+        try {
+          output = ownDataShape(compose(states, 'redoState'));
+        } catch (value) {
+          error = String(value);
+        }
+        return { output, error, calls: [...calls], getterReads };
+      };
+      const expected = run(current),
+        actual = run(candidate);
+      assert.deepEqual(
+        actual,
+        expected,
+        `${name}: exact fallback calls, raw result/failure and reads.`,
+      );
+      actual.calls.forEach((call, index) => {
+        if (states.some((state) => state.redoState.actions === expected.calls[index].right))
+          assert.equal(
+            call.right,
+            expected.calls[index].right,
+            `${name}: original right operand identity`,
+          );
+      });
+      assert.deepEqual(ownDataShape(states), shape, `${name}: descriptors and inputs unchanged.`);
+    }
+  });
+
+  test(`${format}: admitted paragraph joins preserve absent, undefined and empty metadata`, async () => {
+    const { original, patched, constantGuardPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const cases: [string, (body: any, isEnter: boolean) => void][] = [
+      [
+        'marker absent',
+        (body) => {
+          delete body.__textXPreserveParagraphIds;
+        },
+      ],
+      [
+        'plain runs absent',
+        (body, enter) => {
+          if (!enter) delete body.textRuns;
+        },
+      ],
+      [
+        'plain runs undefined',
+        (body, enter) => {
+          if (!enter) body.textRuns = undefined;
+        },
+      ],
+      [
+        'plain runs empty',
+        (body, enter) => {
+          if (!enter) body.textRuns = [];
+        },
+      ],
+      [
+        'run style absent',
+        (body) => {
+          delete body.textRuns[0].ts;
+        },
+      ],
+      [
+        'run style undefined',
+        (body) => {
+          body.textRuns[0].ts = undefined;
+        },
+      ],
+      [
+        'run style empty',
+        (body) => {
+          body.textRuns[0].ts = {};
+        },
+      ],
+      [
+        'run identity undefined',
+        (body) => {
+          body.textRuns[0].sId = undefined;
+        },
+      ],
+      ...[
+        'paragraphs',
+        'customRanges',
+        'customDecorations',
+        'customBlocks',
+        'sectionBreaks',
+      ].flatMap((field) =>
+        (['absent', 'undefined', 'empty'] as const).map(
+          (mode): [string, (body: any, enter: boolean) => void] => [
+            `${field} ${mode}`,
+            (body, enter) => {
+              if (field === 'paragraphs' && enter) return;
+              if (mode === 'absent') delete body[field];
+              else body[field] = mode === 'undefined' ? undefined : [];
+            },
+          ],
+        ),
+      ),
+    ];
+    for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
+      for (const [name, decorate] of cases) {
+        const scenario = paragraphSequence(3, 16, cover, 5, decorate);
+        const current = measuredFlush(constantGuardPatched, scenario.states, scenario.states, true);
+        const candidate = measuredFlush(patched, scenario.states, scenario.states, true);
+        assertNativePreservation(
+          flush(original, scenario.states),
+          candidate.output,
+          scenario,
+          `${cover}/${name}`,
+        );
+        assert.deepEqual(
+          candidate.output,
+          current.output,
+          `${cover}/${name}: exact current raw metadata`,
+        );
+        assert.ok(
+          candidate.counts.allocations < current.counts.allocations,
+          `${cover}/${name}: admitted join reduces work`,
+        );
+      }
   });
 
   test(`${format}: unsupported markers after odd and even prefixes retain raw native publication`, async () => {
@@ -1530,6 +1925,7 @@ for (const format of ['es', 'cjs'] as const) {
       prefixPatched,
       completeDeletePatched,
       deletePrefixPatched,
+      constantGuardPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
@@ -1554,6 +1950,15 @@ for (const format of ['es', 'cjs'] as const) {
       }[format],
     );
     assert.equal(prepareDocsPatch(deletePrefixPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(constantGuardPatched).digest('hex'),
+      {
+        es: '57ec2ee153792c73e466a753d2e5c9ed1cd19615bb45a04fbe72c9336a6ad2b8',
+        cjs: '941110089ab9110c90383b5d343c912d38770b416234e25dfa4b7c2a7bfd8ce5',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(constantGuardPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(constantGuardPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(deletePrefixPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(completeDeletePatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(prefixPatched + '\n// unknown edit', format));
