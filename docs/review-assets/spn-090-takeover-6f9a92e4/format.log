@@ -1,0 +1,4 @@
+Checking formatting...
+[warn] scripts/ci/browserstack-capability.test.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":521,"peakKiB":283648}

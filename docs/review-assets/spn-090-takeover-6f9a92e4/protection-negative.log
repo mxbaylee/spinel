@@ -1,0 +1,40 @@
+
+ RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-090-production
+
+ ❯ src/ui/offlineProtection.test.ts (3 tests | 1 failed) 5ms
+   × an older storage answer cannot replace a newer identical-title preparation result 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/offlineProtection.test.ts > an older storage answer cannot replace a newer identical-title preparation result
+AssertionError: expected { …(4) } to be { …(4) } // Object.is equality
+
+- Expected
++ Received
+
+  {
+-   "detail": "Your browser is still deciding on storage protection. Allow it if asked; otherwise your browser may clear offline documents.",
++   "detail": "Your browser granted storage protection. Device copies are not a backup.",
+    "failed": false,
+-   "storageHelp": true,
++   "storageHelp": false,
+    "text": "Trip journal is available offline on this device.",
+  }
+
+ ❯ src/ui/offlineProtection.test.ts:35:51
+     33|   // Distinct files may share a name, or the same file may be prepared…
+     34|   // Visible text cannot identify which request owns the current resul…
+     35|   expect(answeredMessage(newer, text, 'granted')).toBe(newer);
+       |                                                   ^
+     36| });
+     37|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  03:15:14
+   Duration  96ms (transform 53%, tests 19%, import 18%, worker 9%)
+
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":481,"peakKiB":210848}

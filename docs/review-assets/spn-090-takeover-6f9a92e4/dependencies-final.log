@@ -1,0 +1,5 @@
+
+> dependencies:check
+> node scripts/dependencies/no-univer-pro.ts
+
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.

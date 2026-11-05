@@ -1,0 +1,70 @@
+{
+  "root": 64811,
+  "started": 1793877425619,
+  "elapsedMs": 506,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90848,
+  "peakKiB": 318208,
+  "live": [
+    {
+      "pid": 64811,
+      "parent": 64776,
+      "group": 64811,
+      "rssKiB": 89344,
+      "started": "Thu Nov  5 03:17:05 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn090-takeover/format-final-watchdog.json node node_modules/prettier/bin/prettier.cjs --check scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts web/offline/protection.ts web/offline/useOfflineDownloads.ts src/ui/offlineProtection.test.ts"
+    },
+    {
+      "pid": 64875,
+      "parent": 64811,
+      "group": 64811,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:17:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 64811,
+      "parent": 64776,
+      "group": 64811,
+      "rssKiB": 89344,
+      "started": "Thu Nov  5 03:17:05 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn090-takeover/format-final-watchdog.json node node_modules/prettier/bin/prettier.cjs --check scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts web/offline/protection.ts web/offline/useOfflineDownloads.ts src/ui/offlineProtection.test.ts"
+    },
+    {
+      "pid": 64830,
+      "parent": 64811,
+      "group": 64811,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:17:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 64856,
+      "parent": 64811,
+      "group": 64811,
+      "rssKiB": 227664,
+      "started": "Thu Nov  5 03:17:05 2026",
+      "command": "node node_modules/prettier/bin/prettier.cjs --check scripts/ci/browserstack-capability.ts scripts/ci/browserstack-capability.test.ts web/offline/protection.ts web/offline/useOfflineDownloads.ts src/ui/offlineProtection.test.ts"
+    },
+    {
+      "pid": 64862,
+      "parent": 64811,
+      "group": 64811,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:17:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 64875,
+      "parent": 64811,
+      "group": 64811,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:17:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

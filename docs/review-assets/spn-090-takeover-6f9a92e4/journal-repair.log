@@ -1,0 +1,17 @@
+✔ Dashboard preparation waits for the app result and closes its dialog once (0.824041ms)
+✔ an app alert fails as download-failed with its text and no dismissal (0.320084ms)
+✔ a Dashboard timeout reads labels first, reopens a closed menu once and keeps the original failure (0.802458ms)
+✔ a Space page prepares through the Offline copies dialog and reads it in place on timeout (0.683542ms)
+✔ the page scripts read only dialog roles and bounded visible labels (1.580083ms)
+✔ the wait leaves the phase room to record its diagnosis (0.175167ms)
+✔ failed evidence persistence cannot replace the original preparation failure (0.26675ms)
+✔ the runner diagnosis screenshots first and keeps the failed command (0.099542ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 82.238458
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":174,"peakKiB":90176}

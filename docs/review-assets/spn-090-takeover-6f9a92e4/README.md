@@ -1,0 +1,9 @@
+# 🔎 SPN-090 takeover validation record
+
+Exact source 6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b, base2f442317dd2e1c188ae4a810ac094fd1162a4a2a, takeover fromf108c41c121a7e953d93427c90dd3a0f3f516ae0. Foreign branch creation2026-10-29T17:51:18-07:00 satisfied owner's2hourrule; old dirty7ffab533checkoutpreserved, isolatedcodex/spn-090-production-integration.
+
+Originalb116 reviews94/94, P2same-title lateanswer ownership. b3b repairA98/B97,P2closed,P3diagnosticmaskingdisclosed. FinalA99/B97on6f9a92e4, bothfindingsclosed. Complete finalreviewsarehere. No gradeisCI/device/visualacceptance.
+
+67capability+99relatedharness tests passed duringintegration. Same-title regressionFAILEDoldhelper; repaired71protection/inventorypassed. DiagnosticjournalnegativeFAILEDoldhelper; final75capability/preparationpassed. Full oxlint,scopedformat,backlog,dependencyboundarypassed. Two fulltypecheckattempts resource-abortedpressure2,882ms/890384KiB and constrained8369ms/1144496KiB; nofulltypecheckpassclaimed. Read-only mainnode_modulesdonor supportedscopedchecks, notcleanfreshinstallationorbrowseracceptance.
+
+OnlyoneprospectiveSafari-authoredattempt is declared in maintainedrecord, afterreview/publicationandsetup/type/build, originalbounds/cleanup,firstfailurestop. NoChrome/Firefoxallocation. Hostedgates, currentvisuals, actualphoneoutcomesremainpending. TheoldPRbodypreservesearlierdetailsandowner-recordeddecisionswithoutpromotingoldpasses. Thethreecompletef108phonefailureZIPsaremaintainedinthissourceatdocs/implementation/evidence/SPN-090-takeover.

@@ -1,0 +1,54 @@
+{
+  "root": 67880,
+  "started": 1793877829671,
+  "elapsedMs": 208,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90176,
+  "peakKiB": 90176,
+  "live": [
+    {
+      "pid": 67880,
+      "parent": 67854,
+      "group": 67880,
+      "rssKiB": 88656,
+      "started": "Thu Nov  5 03:23:49 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-takeover/final-lint-watchdog.json node node_modules/oxlint/bin/oxlint --deny-warnings ."
+    },
+    {
+      "pid": 67931,
+      "parent": 67880,
+      "group": 67880,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:23:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 67880,
+      "parent": 67854,
+      "group": 67880,
+      "rssKiB": 88656,
+      "started": "Thu Nov  5 03:23:49 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-takeover/final-lint-watchdog.json node node_modules/oxlint/bin/oxlint --deny-warnings ."
+    },
+    {
+      "pid": 67899,
+      "parent": 67880,
+      "group": 67880,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:23:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 67931,
+      "parent": 67880,
+      "group": 67880,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:23:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

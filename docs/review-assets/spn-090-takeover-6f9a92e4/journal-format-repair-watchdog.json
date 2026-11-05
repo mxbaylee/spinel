@@ -1,0 +1,54 @@
+{
+  "root": 67782,
+  "started": 1793877815551,
+  "elapsedMs": 178,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90288,
+  "peakKiB": 90288,
+  "live": [
+    {
+      "pid": 67782,
+      "parent": 67746,
+      "group": 67782,
+      "rssKiB": 88768,
+      "started": "Thu Nov  5 03:23:35 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-takeover/journal-format-repair-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 67833,
+      "parent": 67782,
+      "group": 67782,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:23:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 67782,
+      "parent": 67746,
+      "group": 67782,
+      "rssKiB": 88768,
+      "started": "Thu Nov  5 03:23:35 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-takeover/journal-format-repair-watchdog.json node node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 67801,
+      "parent": 67782,
+      "group": 67782,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:23:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 67833,
+      "parent": 67782,
+      "group": 67782,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 03:23:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

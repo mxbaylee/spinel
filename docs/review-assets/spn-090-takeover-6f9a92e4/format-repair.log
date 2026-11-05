@@ -1,0 +1,2 @@
+scripts/ci/browserstack-capability.test.ts 220ms
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":343,"peakKiB":279184}

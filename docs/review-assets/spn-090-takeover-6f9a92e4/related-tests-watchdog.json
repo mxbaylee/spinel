@@ -1,0 +1,294 @@
+{
+  "root": 62403,
+  "started": 1793876882737,
+  "elapsedMs": 6026,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90048,
+  "peakKiB": 416368,
+  "live": [
+    {
+      "pid": 62403,
+      "parent": 62368,
+      "group": 62403,
+      "rssKiB": 88464,
+      "started": "Thu Nov  5 03:08:02 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn090-takeover/related-tests-watchdog.json node --test --test-concurrency=1 scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-chrome-readiness.test.ts scripts/ci/browserstack-fixture.test.ts scripts/ci/browserstack-offline-preparation.test.ts scripts/ci/browserstack-session-diagnostics.test.ts scripts/ci/browserstack.test.ts scripts/ci/offline-image-pixels.test.ts scripts/ci/desktop-storage.test.ts"
+    },
+    {
+      "pid": 62774,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 03:08:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 62403,
+      "parent": 62368,
+      "group": 62403,
+      "rssKiB": 88464,
+      "started": "Thu Nov  5 03:08:02 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn090-takeover/related-tests-watchdog.json node --test --test-concurrency=1 scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-chrome-readiness.test.ts scripts/ci/browserstack-fixture.test.ts scripts/ci/browserstack-offline-preparation.test.ts scripts/ci/browserstack-session-diagnostics.test.ts scripts/ci/browserstack.test.ts scripts/ci/offline-image-pixels.test.ts scripts/ci/desktop-storage.test.ts"
+    },
+    {
+      "pid": 62422,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62448,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 59264,
+      "started": "Thu Nov  5 03:08:02 2026",
+      "command": "node --test --test-concurrency=1 scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-chrome-readiness.test.ts scripts/ci/browserstack-fixture.test.ts scripts/ci/browserstack-offline-preparation.test.ts scripts/ci/browserstack-session-diagnostics.test.ts scripts/ci/browserstack.test.ts scripts/ci/offline-image-pixels.test.ts scripts/ci/desktop-storage.test.ts"
+    },
+    {
+      "pid": 62449,
+      "parent": 62448,
+      "group": 62403,
+      "rssKiB": 262576,
+      "started": "Thu Nov  5 03:08:02 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=1 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/browserstack-acceptance.test.ts"
+    },
+    {
+      "pid": 62455,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62468,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62481,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62496,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62510,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62523,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62538,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62551,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62564,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62577,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62590,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62603,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 03:08:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62616,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62629,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62642,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62655,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62664,
+      "parent": 62448,
+      "group": 62403,
+      "rssKiB": 96400,
+      "started": "Thu Nov  5 03:08:06 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=1 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/browserstack-fixture.test.ts"
+    },
+    {
+      "pid": 62665,
+      "parent": 62664,
+      "group": 62403,
+      "rssKiB": 32,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "openssl req -x509 -newkey rsa:2048 -sha256 -nodes -days 1 -subj /CN=bs-local.com -addext subjectAltName=DNS:bs-local.com,DNS:localhost,IP:127.0.0.1 -keyout /var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel-browserstack-tls-gmzH3f/browserstack-SmutOc/key.pem -out /var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel-browserstack-tls-gmzH3f/browserstack-SmutOc/cert.pem"
+    },
+    {
+      "pid": 62671,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62684,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62699,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62709,
+      "parent": 62448,
+      "group": 62403,
+      "rssKiB": 0,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 62715,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62716,
+      "parent": 62448,
+      "group": 62403,
+      "rssKiB": 132768,
+      "started": "Thu Nov  5 03:08:07 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=1 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/browserstack.test.ts"
+    },
+    {
+      "pid": 62729,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62742,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 03:08:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62751,
+      "parent": 62716,
+      "group": 62403,
+      "rssKiB": 78608,
+      "started": "Thu Nov  5 03:08:08 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --import /var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel-smoke-guard-t08S0W/network-guard.ts /Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack.ts quota"
+    },
+    {
+      "pid": 62757,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1600,
+      "started": "Thu Nov  5 03:08:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62774,
+      "parent": 62403,
+      "group": 62403,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 03:08:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

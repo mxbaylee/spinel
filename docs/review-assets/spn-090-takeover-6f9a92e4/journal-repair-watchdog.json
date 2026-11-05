@@ -1,0 +1,54 @@
+{
+  "root": 65449,
+  "started": 1793877679253,
+  "elapsedMs": 174,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90176,
+  "peakKiB": 90176,
+  "live": [
+    {
+      "pid": 65449,
+      "parent": 65414,
+      "group": 65449,
+      "rssKiB": 88672,
+      "started": "Thu Nov  5 03:21:19 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-takeover/journal-repair-watchdog.json node --test scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 65501,
+      "parent": 65449,
+      "group": 65449,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:21:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 65449,
+      "parent": 65414,
+      "group": 65449,
+      "rssKiB": 88672,
+      "started": "Thu Nov  5 03:21:19 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-takeover/journal-repair-watchdog.json node --test scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 65468,
+      "parent": 65449,
+      "group": 65449,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:21:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 65501,
+      "parent": 65449,
+      "group": 65449,
+      "rssKiB": 1504,
+      "started": "Thu Nov  5 03:21:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

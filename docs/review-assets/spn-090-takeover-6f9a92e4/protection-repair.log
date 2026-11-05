@@ -1,0 +1,10 @@
+
+ RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-090-production
+
+
+ Test Files  2 passed (2)
+      Tests  71 passed (71)
+   Start at  03:15:44
+   Duration  2.55s (transform 48%, tests 29%, import 23%)
+
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":2841,"peakKiB":892688}

@@ -1,0 +1,2 @@
+scripts/ci/browserstack-offline-preparation.test.ts 56ms
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":178,"peakKiB":90288}
