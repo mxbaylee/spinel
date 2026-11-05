@@ -1,0 +1,26 @@
+{
+  "source": "d4eeeb8b4871695a0efc9b2c09259cc801784894",
+  "reviewedSource": "d4eeeb8b4871695a0efc9b2c09259cc801784894",
+  "eventSha": "d4eeeb8b4871695a0efc9b2c09259cc801784894",
+  "tree": "ee14758d57461c4a79176d6417ed9ce2f00c6058",
+  "runId": "42080221117",
+  "attempt": "1",
+  "node": "v26.12.1",
+  "vite": "8.3.4",
+  "rolldown": "1.2.14",
+  "mode": "production",
+  "flags": {
+    "VITE_SYNC_EVIDENCE": "1"
+  },
+  "sourceHashes": {
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+    "vite.config.ts": "9a481c357571819ff6456a24b3ae09df2b084ad67efa04297881cf6b25754bc3",
+    "web/main.tsx": "19481416781a7fe4a659a2a425f4e7d428cc5db410b69feee2aa397e87fcb721",
+    "src/shared/bootstrapEvidence.ts": "ee645d41cb6bf18afe12e782b6906fa72f9486c68568570b4e6d632d27fc6586",
+    "web/application.tsx": "83e0a275db639d619ce5a26c0b0bad9b6aea396d3a04991e4c97369d23729fa4",
+    "scripts/ci/browserstack-build-inspection.ts": "3bb0a357c2b4618dd1c38358139eba67195350e912b8a68a67e0ea605ac62197",
+    "scripts/ci/browserstack-build-graph.ts": "45084ad73d71f0687ffd922c99a8a1a5c39a79e6cddd54a467f15b924400352d",
+    "src/build/rendererChunks.ts": "cd5f0262fa69fc66883b04bb3424317009cc7f92f6180826dd21a6ec7fb8ffc9",
+    "docs/implementation/evidence/SPN-090/renderer-baseline.json": "f91c7d0ed4ea5d862b2d880dd4f720dfc6dc40732c1157040fa19dc7e75fe858"
+  }
+}

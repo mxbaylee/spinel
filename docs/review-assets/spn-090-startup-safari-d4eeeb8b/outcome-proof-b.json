@@ -1,0 +1,557 @@
+{
+  "source": "d4eeeb8b4871695a0efc9b2c09259cc801784894",
+  "run": 42080221117,
+  "attempt": 1,
+  "artifact": 13440581386,
+  "zip": {
+    "bytes": 7108019,
+    "sha256": "8eeca61e42b0127825edd03419a9aa046fcdbb799a50bf02471aa358be7d4728"
+  },
+  "members": [
+    {
+      "name": "artifacts/browserstack-build-graph.json",
+      "bytes": 426597,
+      "sha256": "7c8e00ddf495479b6ba3f3fe282ec61203635d2ea6934dd1cc823dc43f67ba30"
+    },
+    {
+      "name": "artifacts/browserstack-build-result.json",
+      "bytes": 1425,
+      "sha256": "bad5742afb0e8effc0f2cb225dd8b1dcea15c9217479cd59c744a1dc1bfa1edd"
+    },
+    {
+      "name": "artifacts/browserstack-build-identity.json",
+      "bytes": 1383,
+      "sha256": "261523e01886ffe72e966816e00e4e41efe77170c9e86a2bf52e23ed11100d9c"
+    },
+    {
+      "name": "artifacts/browserstack-capability/safari-doc-conflict-offline-reopened.png",
+      "bytes": 686920,
+      "sha256": "0b0af5173f4fb67757842aa283a76b6e1d58bda89875ca934680190b2b281fad"
+    },
+    {
+      "name": "artifacts/browserstack-capability/safari-doc-normal-offline-reopened.png",
+      "bytes": 684756,
+      "sha256": "ca982f7c300fbb8720e4e018ae849f6aa56380b2dd0f1f3e309849958256b817"
+    },
+    {
+      "name": "artifacts/browserstack-capability/safari-failure.png",
+      "bytes": 851139,
+      "sha256": "8b89eec33b94825b98069c8537d3f666d1235db91845a77083c1258c7f1ebb3e"
+    },
+    {
+      "name": "artifacts/browserstack-capability/safari-sheet-conflict-offline-reopened.png",
+      "bytes": 877578,
+      "sha256": "d1e193b2d18d3709558e7666f76b8eb6158fa05c9e1967c5b0b4c17ed7c1d913"
+    },
+    {
+      "name": "artifacts/browserstack-capability/safari-sheet-normal-offline-reopened.png",
+      "bytes": 870077,
+      "sha256": "e08b5fed9b8299bef80ec274c884dbc024764a43712b6decdb4e34cf70ec5b25"
+    },
+    {
+      "name": "artifacts/browserstack-capability.json",
+      "bytes": 761405,
+      "sha256": "5a6eaf3f401c8582aa19af53eaa6766b4a036c931d09e14a4b53ee29038c8aaf"
+    },
+    {
+      "name": "dist/assets/CopyFile-Bp41xbsr.css",
+      "bytes": 16915,
+      "sha256": "24eae06726d425fb9689334e30999098838bc4aa2dc49678cadd92dcdaf2f203"
+    },
+    {
+      "name": "dist/assets/CopyFile-BxL_ir5b.js",
+      "bytes": 640500,
+      "sha256": "73ed6a10baf8614e2d12b752416f01e061b9dc5dfb8b62cb202e827a80fe77bd"
+    },
+    {
+      "name": "dist/assets/DocEditor-DpOhPsNQ.js",
+      "bytes": 17306,
+      "sha256": "8b23cd041dc7a9505e2276ee1b390fb92b8254cd9c7a3a79d75fd352f09fd936"
+    },
+    {
+      "name": "dist/assets/HistoryBrowser-3AZZyeSW.js",
+      "bytes": 16856,
+      "sha256": "c88895745abd7d38665ac83e23ca072d429a2dc260f0bbd57f19a2fe34b70a19"
+    },
+    {
+      "name": "dist/assets/HistoryBrowser-D9Z9OhM7.css",
+      "bytes": 3361,
+      "sha256": "a7536c0ab0d79dc700d82be8632e86dd9cbd365dd8698f94983cf6a073eb662c"
+    },
+    {
+      "name": "dist/assets/OfflineAccess-DGQyXMgY.js",
+      "bytes": 3187,
+      "sha256": "43c6849587645a9e9b8b6346f67086e85c80ff16b1acf53c6a0e231662337d8c"
+    },
+    {
+      "name": "dist/assets/OfflineViewer-W1vVkfTa.js",
+      "bytes": 2039,
+      "sha256": "2582cbc18b3afa7339dbb0d65888f7188f676e347dd8f8905431928967839165"
+    },
+    {
+      "name": "dist/assets/PreparedImages-Dkfkz5yC.js",
+      "bytes": 6755,
+      "sha256": "21ac0afcc53a55d1b8cdeecec63befaaf4318c15f5a0e555be44d87a77541475"
+    },
+    {
+      "name": "dist/assets/SheetEditor-BVzTbBgH.js",
+      "bytes": 6565,
+      "sha256": "df9694302a69c411afcf25b23e804a76eaf766d6fe1747db0ea72df842fff1bf"
+    },
+    {
+      "name": "dist/assets/application-B9PzMhak.css",
+      "bytes": 58909,
+      "sha256": "f0d0c9463ed080f214e06e4e5be29074ab12eec404fdbc624db44e44f61d069e"
+    },
+    {
+      "name": "dist/assets/application-D6u6D7XE.js",
+      "bytes": 352030,
+      "sha256": "37f286ea10dddbc5be91711b78753eca5b78070f3e1a601814b6e36aed6b36ca"
+    },
+    {
+      "name": "dist/assets/checkpoint-J5L26ZDd.js",
+      "bytes": 5693,
+      "sha256": "69362f163cfc11ea3f44571a54b1e1814299c95eccb48caeeae215441b6284f4"
+    },
+    {
+      "name": "dist/assets/documentAccess-Dl039jLm.js",
+      "bytes": 3682,
+      "sha256": "0a64364f1784415b9f215888ed35f8a58de0025c31f62b241b9e82486eebf78e"
+    },
+    {
+      "name": "dist/assets/documentReady-CZMWh3-A.css",
+      "bytes": 114439,
+      "sha256": "9ec479c60c4e194484e39f2d953a44ae40f94f88467e9fffbef6fa5473a89a7f"
+    },
+    {
+      "name": "dist/assets/documentReady-Cg37wC5-.js",
+      "bytes": 183367,
+      "sha256": "30c2df0e516abb7d3341b0fbef348ebfcbf2cbc33fae6b0daf4fdff87f520425"
+    },
+    {
+      "name": "dist/assets/es-BUmRMpdS.js",
+      "bytes": 1172930,
+      "sha256": "38cd6130e748419a81e4515ca11489b1425cd519f632bdfc1159c53ba78679ef"
+    },
+    {
+      "name": "dist/assets/es-CXAPrHXy.js",
+      "bytes": 498175,
+      "sha256": "4b4ed0d7a296a02fe1562f8841f762ad43bde3d34626bc3fc41e2e0fdad74340"
+    },
+    {
+      "name": "dist/assets/download-FbfcLtqL.js",
+      "bytes": 3591,
+      "sha256": "a5acab4826967f824441147e7cca794da112ad1e02a0dc8cbaa0eb3daf5a7ad6"
+    },
+    {
+      "name": "dist/assets/existingDatabase-JVCR6hyg.js",
+      "bytes": 1347,
+      "sha256": "24191d608ac510ee036a28eb5dfd25aa2e34b23618c2b70522d2500ec9b2301a"
+    },
+    {
+      "name": "dist/assets/floating-ui.dom-DrHkl4MH.js",
+      "bytes": 18850,
+      "sha256": "320ac2f5d0036b614b037fa7ca8b9baafb3183248b166d0ca71904a5738e20e0"
+    },
+    {
+      "name": "dist/assets/floating-ui.react-dom-CFEJfijP.js",
+      "bytes": 214420,
+      "sha256": "f1780867f8d9d9efa0048b900eca70844e6de3a6cb6f0d41e57e311269f08318"
+    },
+    {
+      "name": "dist/assets/install-app-icon-180-892edc23116874ce9a77dff7c705ae8963d5cea9152948101bb23ee4208106c1.png",
+      "bytes": 6921,
+      "sha256": "892edc23116874ce9a77dff7c705ae8963d5cea9152948101bb23ee4208106c1"
+    },
+    {
+      "name": "dist/assets/install-app-icon-192-844c7988559fb9ac8e667b9a554ee810bdd1890d9ab8ed168db5c6c5bd9969a0.png",
+      "bytes": 7534,
+      "sha256": "844c7988559fb9ac8e667b9a554ee810bdd1890d9ab8ed168db5c6c5bd9969a0"
+    },
+    {
+      "name": "dist/assets/install-app-icon-512-ff4fcd00a0d9d9fb9f673859c1a4f88fc8a123080d480e94ab23468080605e84.png",
+      "bytes": 23166,
+      "sha256": "ff4fcd00a0d9d9fb9f673859c1a4f88fc8a123080d480e94ab23468080605e84"
+    },
+    {
+      "name": "dist/assets/install-manifest-35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34.webmanifest",
+      "bytes": 413,
+      "sha256": "35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34"
+    },
+    {
+      "name": "dist/assets/lib-CStNYKCM.js",
+      "bytes": 383295,
+      "sha256": "a13f0aa38ea2c7a55210fecadfabe3f92ee872812fb070983eae957a9388abcd"
+    },
+    {
+      "name": "dist/assets/lib-DGHf0mi1.css",
+      "bytes": 124162,
+      "sha256": "952d84ed3b6f59bb8a1f768400fb5ba4156edc3791ea6378be0fd1e3cea771da"
+    },
+    {
+      "name": "dist/assets/module-preload-DzCYNvzR.js",
+      "bytes": 1629,
+      "sha256": "b06a4fcf65a4a5a7a99632c4339cce1505d6faa1db23d909520a8e065b382866"
+    },
+    {
+      "name": "dist/assets/main-CrwiSL1S.js",
+      "bytes": 4909,
+      "sha256": "29a591437af356605d8681a6484e89c134c33296b6cf324b7bc56fa29788b0e1"
+    },
+    {
+      "name": "dist/assets/native-CZTCfgNt.js",
+      "bytes": 7274,
+      "sha256": "7e552a6f68fc436c5601e604bb3d1950542f7158f1c390f3f177bfdb5bbab149"
+    },
+    {
+      "name": "dist/assets/nativeCopy-DPecrz6N.js",
+      "bytes": 129083,
+      "sha256": "aa347848c46be24bf26ac0864e2bd3083eca1ae55fc5e6af7abdb55d61b5fcc8"
+    },
+    {
+      "name": "dist/assets/nativeCopy-mVcC3r32.css",
+      "bytes": 2533,
+      "sha256": "5635f05c18a0d88e35f62260fb18c1fd81c064d1da2421738ffd260d77bb400b"
+    },
+    {
+      "name": "dist/assets/nativeSyncPermissions-BUtqEVJV.js",
+      "bytes": 3837090,
+      "sha256": "97a1022fd1917866e30f5d3810760e4b7e1f0131c2971b6cbc307558c93038b7"
+    },
+    {
+      "name": "dist/assets/offlineError-D-ykY_4T.js",
+      "bytes": 10784,
+      "sha256": "e96f4e812bda79253e0023ed3829c841fd977dd9bdaa50a75a98260eadad17e0"
+    },
+    {
+      "name": "dist/assets/offlineStore-D5K3u-r0.js",
+      "bytes": 30901,
+      "sha256": "2d4796f35ac907967faeff39195a57028715181f5ec0a50fa4147a97248ca50a"
+    },
+    {
+      "name": "dist/assets/profile-Cu5qAk0l.js",
+      "bytes": 282214,
+      "sha256": "687216e006e69f9a10a3378e57ac79ed74bcd1fc5254d924373aa2152ad3d6a1"
+    },
+    {
+      "name": "dist/assets/react-CdlCbvX4.js",
+      "bytes": 7876,
+      "sha256": "c0b09e2658b16b835135bd3cbc0ca5b291e3128221504fc47c1af7887652db84"
+    },
+    {
+      "name": "dist/assets/rendering-Bu4_5hAX.js",
+      "bytes": 232695,
+      "sha256": "eaa0eb3ec22f15c88448eda8700efa4ff0198fbdc6e55770f97f692491922a19"
+    },
+    {
+      "name": "dist/assets/runtime-ChyODTIa.js",
+      "bytes": 2740,
+      "sha256": "e04f790628f9eedf5065b010ac25e21484ca715528cda24c5f954c1b25378b5a"
+    },
+    {
+      "name": "dist/assets/rolldown-runtime-CNOWq4Kh.js",
+      "bytes": 817,
+      "sha256": "2d8d100f1a8f491dcf0b1adcd5d5f59a48dfd1683b8123c97785039b0e72e99d"
+    },
+    {
+      "name": "dist/assets/snapshotIdentity-DYcF5Qzw.js",
+      "bytes": 1775,
+      "sha256": "4be434eaef6ed86199f9337b281bfc22feaafadf1c23ee0a786739187ac0e79a"
+    },
+    {
+      "name": "dist/assets/spaceNavigation-d6blT4PI.js",
+      "bytes": 4033,
+      "sha256": "11639c8da4e2d25049373e302867ada4d42fba8c9b2b631fdf3a54bc43ea4994"
+    },
+    {
+      "name": "dist/assets/theme-DO1UVKM4.js",
+      "bytes": 703605,
+      "sha256": "26b9b9de1e1354a16908401ca3642d25a0482df4fc1129a0f386bafab352be6f"
+    },
+    {
+      "name": "dist/assets/theme-6GPmlRwP.css",
+      "bytes": 5632,
+      "sha256": "b1ce606d54e4be707ff60cd461509642a1b9d60c75a2fb296ebfd37792207890"
+    },
+    {
+      "name": "dist/assets/univer-renderer-C4SKFRHz.js",
+      "bytes": 5304972,
+      "sha256": "8cd4e74efef0ffca2618714ef0e6222c0b42c3beec2129103a213f5b63f11696"
+    },
+    {
+      "name": "dist/index.html",
+      "bytes": 4532,
+      "sha256": "327b612bd254764ea9e929f16beaf56fb13b6218a3d61d6914e05ab9d1d8d2d9"
+    },
+    {
+      "name": "dist/service-worker.js",
+      "bytes": 18545,
+      "sha256": "9be22056c699126e71aea2f48719322e8a588c0ac3a14c3aff0bbfffe440e145"
+    },
+    {
+      "name": "dist/assets/useDiagnostics-ByMcK0fC.js",
+      "bytes": 13474,
+      "sha256": "b6e11486d8b123cf901dc0677d8dd69f6e8b0b95281a715f346bbb04cdbb0700"
+    }
+  ],
+  "buildIdentical": true,
+  "bootstrap": {
+    "events": [
+      {
+        "phase": "bootstrap-ready",
+        "at": 0
+      },
+      {
+        "phase": "worker-selection-start",
+        "at": 0
+      },
+      {
+        "phase": "worker-selection-settled",
+        "at": 81
+      },
+      {
+        "phase": "application-import-start",
+        "at": 81
+      },
+      {
+        "phase": "application-import-end",
+        "at": 394
+      },
+      {
+        "phase": "styles-start",
+        "at": 394
+      },
+      {
+        "phase": "styles-end",
+        "at": 661
+      },
+      {
+        "phase": "application-start-returned",
+        "at": 663
+      }
+    ],
+    "dropped": 0,
+    "invalidClock": false,
+    "failed": false,
+    "sealed": true
+  },
+  "offlineRelaunch": {
+    "bootstrap": {
+      "events": [
+        {
+          "phase": "bootstrap-ready",
+          "at": 0
+        },
+        {
+          "phase": "worker-selection-start",
+          "at": 0
+        },
+        {
+          "phase": "worker-selection-settled",
+          "at": 40
+        },
+        {
+          "phase": "application-import-start",
+          "at": 41
+        },
+        {
+          "phase": "application-import-end",
+          "at": 126
+        },
+        {
+          "phase": "styles-start",
+          "at": 126
+        },
+        {
+          "phase": "styles-end",
+          "at": 148
+        },
+        {
+          "phase": "application-start-returned",
+          "at": 148
+        }
+      ],
+      "dropped": 0,
+      "invalidClock": false,
+      "failed": false,
+      "sealed": true
+    },
+    "origin": "https://bs-local.com:8176",
+    "path": "/",
+    "title": "Spinel",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1",
+    "secureContext": true,
+    "serviceWorkerAvailable": true,
+    "controller": "https://bs-local.com:8176/service-worker.js",
+    "standalone": true,
+    "navigatorStandalone": true,
+    "online": false,
+    "anonymousReady": false,
+    "invalidCertificate": false,
+    "launchMode": "standalone",
+    "nativeForeground": "com.apple.webapp",
+    "contextBundleId": "com.apple.SafariViewService",
+    "contextAssociation": "webkit-home-screen-ui-process",
+    "contextId": "WEBVIEW_6135.4",
+    "windowHandle": "6135.4",
+    "windowRelation": "new-after-native-launch"
+  },
+  "input": {
+    "keys": 3,
+    "steps": [
+      {
+        "index": 0,
+        "installed": true,
+        "count": 1,
+        "focus": "editor",
+        "editor": true
+      },
+      {
+        "index": 1,
+        "installed": true,
+        "count": 2,
+        "focus": "editor",
+        "editor": true
+      },
+      {
+        "index": 2,
+        "installed": true,
+        "count": 2,
+        "focus": "editor",
+        "editor": true
+      }
+    ]
+  },
+  "failure": "capability-acceptance-native-input-character-dropped",
+  "cleanup": {
+    "network": "restored-4g-lte-good",
+    "session": "deleted",
+    "fixture": "closed"
+  },
+  "timing": {
+    "laneLimitMilliseconds": 780000,
+    "stages": [
+      {
+        "stage": "preflight",
+        "startedElapsedMilliseconds": 0,
+        "durationMilliseconds": 44
+      },
+      {
+        "stage": "session-creation",
+        "startedElapsedMilliseconds": 44,
+        "durationMilliseconds": 19316
+      },
+      {
+        "stage": "anonymous-https",
+        "startedElapsedMilliseconds": 19360,
+        "durationMilliseconds": 14273
+      },
+      {
+        "stage": "native-install",
+        "startedElapsedMilliseconds": 33633,
+        "durationMilliseconds": 40820
+      },
+      {
+        "stage": "home-launch",
+        "startedElapsedMilliseconds": 74453,
+        "durationMilliseconds": 20470
+      },
+      {
+        "stage": "installed-authentication",
+        "startedElapsedMilliseconds": 94923,
+        "durationMilliseconds": 248
+      },
+      {
+        "stage": "production-downloads",
+        "startedElapsedMilliseconds": 95171,
+        "durationMilliseconds": 17655
+      },
+      {
+        "stage": "online-network-baseline",
+        "startedElapsedMilliseconds": 112826,
+        "durationMilliseconds": 1097
+      },
+      {
+        "stage": "device-offline",
+        "startedElapsedMilliseconds": 113923,
+        "durationMilliseconds": 1766
+      },
+      {
+        "stage": "same-session-termination",
+        "startedElapsedMilliseconds": 115689,
+        "durationMilliseconds": 1501
+      },
+      {
+        "stage": "offline-home-relaunch",
+        "startedElapsedMilliseconds": 117190,
+        "durationMilliseconds": 26763
+      },
+      {
+        "stage": "acceptance-native-offline-edits",
+        "startedElapsedMilliseconds": 143953,
+        "durationMilliseconds": 7167
+      }
+    ],
+    "omittedCommands": 0,
+    "omittedStages": 0,
+    "failure": {
+      "elapsedMilliseconds": 150647,
+      "remainingMilliseconds": 629353,
+      "laneAborted": false,
+      "deadlineReached": false
+    },
+    "cleanupElapsedMilliseconds": 768,
+    "totalElapsedMilliseconds": 151888
+  },
+  "screenshots": [
+    {
+      "file": "artifacts/browserstack-capability/safari-sheet-normal-offline-reopened.png",
+      "sha256": "e08b5fed9b8299bef80ec274c884dbc024764a43712b6decdb4e34cf70ec5b25",
+      "width": 1320,
+      "height": 2868,
+      "colorPixelCounts": [
+        62464,
+        64005,
+        2126311
+      ],
+      "captures": 1,
+      "source": "actual-provider-screenshot"
+    },
+    {
+      "file": "artifacts/browserstack-capability/safari-sheet-conflict-offline-reopened.png",
+      "sha256": "d1e193b2d18d3709558e7666f76b8eb6158fa05c9e1967c5b0b4c17ed7c1d913",
+      "width": 1320,
+      "height": 2868,
+      "colorPixelCounts": [
+        62464,
+        64005,
+        2126311
+      ],
+      "captures": 1,
+      "source": "actual-provider-screenshot"
+    },
+    {
+      "file": "artifacts/browserstack-capability/safari-doc-normal-offline-reopened.png",
+      "sha256": "ca982f7c300fbb8720e4e018ae849f6aa56380b2dd0f1f3e309849958256b817",
+      "width": 1320,
+      "height": 2868,
+      "colorPixelCounts": [
+        40880
+      ],
+      "captures": 1,
+      "source": "actual-provider-screenshot"
+    },
+    {
+      "file": "artifacts/browserstack-capability/safari-doc-conflict-offline-reopened.png",
+      "sha256": "0b0af5173f4fb67757842aa283a76b6e1d58bda89875ca934680190b2b281fad",
+      "width": 1320,
+      "height": 2868,
+      "colorPixelCounts": [
+        40880
+      ],
+      "captures": 1,
+      "source": "actual-provider-screenshot"
+    }
+  ],
+  "phoneAcceptance": false
+}

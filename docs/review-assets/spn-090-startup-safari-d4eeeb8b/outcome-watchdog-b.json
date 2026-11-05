@@ -1,0 +1,86 @@
+{
+  "root": 33547,
+  "started": 1793902192346,
+  "elapsedMs": 724,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92352,
+  "peakKiB": 200176,
+  "live": [
+    {
+      "pid": 33547,
+      "parent": 33512,
+      "group": 33547,
+      "rssKiB": 90800,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "node /tmp/spn090-ci-audit-watchdog.ts /tmp/spn090-startup-safari/outcome-watchdog-b.json node /tmp/spn090-startup-safari/audit-outcome-b.ts"
+    },
+    {
+      "pid": 33924,
+      "parent": 33547,
+      "group": 33547,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 10:09:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 33547,
+      "parent": 33512,
+      "group": 33547,
+      "rssKiB": 90800,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "node /tmp/spn090-ci-audit-watchdog.ts /tmp/spn090-startup-safari/outcome-watchdog-b.json node /tmp/spn090-startup-safari/audit-outcome-b.ts"
+    },
+    {
+      "pid": 33566,
+      "parent": 33547,
+      "group": 33547,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 33592,
+      "parent": 33547,
+      "group": 33547,
+      "rssKiB": 107936,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "node /tmp/spn090-startup-safari/audit-outcome-b.ts"
+    },
+    {
+      "pid": 33597,
+      "parent": 33592,
+      "group": 33547,
+      "rssKiB": 2560,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 33603,
+      "parent": 33547,
+      "group": 33547,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 33831,
+      "parent": 33547,
+      "group": 33547,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 10:09:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 33924,
+      "parent": 33547,
+      "group": 33547,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 10:09:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
