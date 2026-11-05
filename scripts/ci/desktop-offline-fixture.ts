@@ -18,6 +18,7 @@ import { AuthStore, COOKIE_NAME } from '../../src/server/auth/store.ts';
 import { WorkspaceStore } from '../../src/server/workspace/store.ts';
 import { docImageSnapshot } from '../../e2e/doc-image-fixture.ts';
 import { offlineSheetImages } from '../../e2e/offline-fixture.ts';
+import { desktopStoragePath } from './desktop-storage.ts';
 
 export type DesktopSnapshot = { unitId: string; revision: number; snapshot: NativeSnapshot };
 export type DesktopItem = {
@@ -269,6 +270,25 @@ export async function createDesktopOfflineFixture(options: {
       if (offline) {
         counts.blockedRequests++;
         request.socket.destroy();
+        return;
+      }
+      if (request.url === desktopStoragePath) {
+        if (request.method !== 'GET' || request.headers.host !== new URL(origin).host) {
+          response.writeHead(404, { 'Cache-Control': 'no-store' }).end();
+          return;
+        }
+        // A real document on the same origin retires application writers while
+        // retaining access to that origin's browser deletion APIs. This route
+        // exists only in the desktop fixture and cannot load application code.
+        response
+          .writeHead(200, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'Content-Security-Policy': "default-src 'none'; base-uri 'none'; form-action 'none'",
+          })
+          .end(
+            '<!doctype html><html data-desktop-storage-reset="true"><head><title>Desktop storage deletion</title></head><body>Desktop storage deletion</body></html>',
+          );
         return;
       }
       if (request.url === loginPath) {

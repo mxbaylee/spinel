@@ -11,6 +11,7 @@ function fixture(fault?: string, rejection = false) {
     entries = 1;
   let expire: (() => void) | undefined;
   let cleared = false;
+  let liveDocument = true;
   const calls: string[] = [];
   function operation<T>(name: string, action: () => T): T | Promise<never> {
     calls.push(name);
@@ -21,6 +22,18 @@ function fixture(fault?: string, rejection = false) {
   const sandbox = {
     performance,
     console,
+    location: { href: 'https://localhost/' },
+    document: {
+      documentElement: {
+        getAttribute: (name: string) =>
+          name === 'data-desktop-storage-reset' && !liveDocument && fault !== 'missing-marker'
+            ? 'true'
+            : null,
+      },
+      get scripts() {
+        return liveDocument || fault === 'scripted-context' ? [{}] : [];
+      },
+    },
     setTimeout(callback: () => void, timeout: number) {
       assert.equal(timeout, 28000);
       expire = callback;
@@ -77,6 +90,9 @@ function fixture(fault?: string, rejection = false) {
           error: new Error('injected database-delete'),
         };
         queueMicrotask(() => {
+          // An application effect can write a preference while asynchronous
+          // deletion yields. Only unloading that document retires its writer.
+          if (liveDocument || fault === 'retained-local-storage') entries = 1;
           if (fault === 'blocked') request.onblocked();
           else if (fault === 'database-delete') {
             if (rejection) request.onerror();
@@ -92,8 +108,17 @@ function fixture(fault?: string, rejection = false) {
     },
   };
   const promise = clearDesktopStorage(
-    { evaluate: async <T>(script: string) => runInNewContext(script, sandbox) as T },
+    {
+      async goto(url: string) {
+        calls.push('navigate');
+        if (fault === 'navigation') throw new Error('injected navigation');
+        if (fault !== 'live-context') liveDocument = false;
+        sandbox.location.href = fault === 'wrong-origin' ? 'https://other.invalid/' : url;
+      },
+      evaluate: async <T>(script: string) => runInNewContext(script, sandbox) as T,
+    },
     'private-test',
+    'https://localhost/_desktop-storage-reset',
   );
   return { promise, calls, sandbox, expire: () => expire!(), cleared: () => cleared };
 }
@@ -110,6 +135,39 @@ test('serialized browser deletion removes every store and proves the resulting s
     localStorageEntries: 0,
   });
   assert.ok(f.cleared());
+});
+
+test('deletion unloads the application before its pending writer can recreate storage', async () => {
+  const f = fixture();
+  const report = await f.promise;
+  assert.equal(report.status, 'passed', JSON.stringify(report));
+  assert.equal(f.calls[0], 'navigate');
+  assert.equal(f.calls.filter((name) => name === 'local-storage').length, 1);
+});
+
+for (const fault of ['live-context', 'wrong-origin', 'missing-marker', 'scripted-context']) {
+  test(`${fault} cannot delete storage or be mistaken for the inert same-origin document`, async () => {
+    const f = fixture(fault);
+    const report = await f.promise;
+    assert.equal(report.status, 'failed');
+    assert.equal(report.operations[0].name, 'verify-deletion-context');
+    assert.match(report.error!, /Storage deletion document is not ready/);
+    assert.deepEqual(f.calls, ['navigate']);
+  });
+}
+
+test('a new storage entry still fails instead of being cleared a second time', async () => {
+  const f = fixture('retained-local-storage');
+  const report = await f.promise;
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /Storage remains after deletion/);
+  assert.equal(f.calls.filter((name) => name === 'local-storage').length, 1);
+});
+
+test('failed navigation preserves the first error and performs no deletion', async () => {
+  const f = fixture('navigation');
+  await assert.rejects(f.promise, /injected navigation/);
+  assert.deepEqual(f.calls, ['navigate']);
 });
 
 for (const [fault, name] of [
@@ -164,12 +222,14 @@ test('crashed or timed-out driver propagates the first error without another dia
   await assert.rejects(
     clearDesktopStorage(
       {
+        goto: async () => {},
         evaluate: async () => {
           calls++;
           throw original;
         },
       },
       'private-test',
+      'https://localhost/_desktop-storage-reset',
     ),
     (error) => error === original,
   );
