@@ -101,3 +101,20 @@ an explicit trace type repaired it before the passing check. Existing
 `scripts/ci/*.test.ts` selection owns the helper controls; this executable path
 is outside the documentation-only allowlist. Current selected hosted validation,
 two exact-commit reviews and physical acceptance remain pending.
+
+### 🔧 Independent cleanup finding repaired before publication
+
+Review B withheld publication of `30fbfef9` at 94/100: the real diagnosis hook
+awaited a screenshot before invoking the removal callback, so a screenshot
+failure could leave the temporary recorder installed. The shared hook now runs
+its work exactly once even after screenshot failure, preserves both failures if
+the work also fails, and restores the original failed command. The typing owner
+records removal inside that callback, separately from diagnostic failure. A
+successful removal therefore remains visible even if screenshot evidence failed;
+the original typing failure still wins. No command retry or deadline is added.
+
+The real-hook integration and existing acceptance/preparation controls passed
+32/32 in 6,396 ms at 420,784 KiB. Expanded scoped typing passed in 918 ms at
+666,976 KiB and warning-denying lint passed. The first review and repaired-check
+receipts are retained alongside the earlier controls. Fresh exact-head grades
+are required; this repair does not grant physical or hosted acceptance.

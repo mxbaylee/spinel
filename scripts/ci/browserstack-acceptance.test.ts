@@ -18,6 +18,7 @@ import type { IDocImage } from '@univerjs/docs-drawing';
 import type { ClientCheckpoint } from '@spinel/sync-client';
 import type { StoredItem } from '../../web/offline/offlineStore.ts';
 import { textPoints } from '../../e2e/doc-touch-raster.ts';
+import { failureDiagnosis } from './browserstack-offline-preparation.ts';
 import {
   phoneAcceptanceLimits,
   phoneEditableScript,
@@ -1245,6 +1246,7 @@ test('native typing preserves each observation boundary and never resends a drop
       lateInsertion?: boolean;
       actionFailure?: boolean;
       staleTrace?: boolean;
+      screenshotFailure?: boolean;
     } = {},
   ) => {
     const calls: string[] = [];
@@ -1252,6 +1254,12 @@ test('native typing preserves each observation boundary and never resends a drop
     let inserted = 0,
       index = -1;
     const driver = {
+      diagnose: options.screenshotFailure
+        ? failureDiagnosis({ command: 'original' }, async () => {
+            calls.push('screenshot');
+            throw new Error('screenshot-failed');
+          })
+        : undefined,
       execute: async (script: string, args: unknown[] = []) => {
         if (script === inputCounterInstallScript) return (calls.push('install'), true);
         if (script === inputCounterReadScript) {
@@ -1308,6 +1316,7 @@ test('native typing preserves each observation boundary and never resends a drop
         steps: [0, 1, 2].map((index) => ({ index, ...observed(index, index + 1) })),
         cleanup: 'stopped',
         cleanupObservation: observed(2, 3),
+        diagnosticFailure: false,
       },
     ],
   ]);
@@ -1344,4 +1353,10 @@ test('native typing preserves each observation boundary and never resends a drop
     assert.equal(failed.calls.filter((call) => call === 'stop').length, 1);
     assert.equal(failed.records.length, 1);
   }
+  const screenshotFailed = await typed(3, { actionFailure: true, screenshotFailure: true });
+  assert.match(String(screenshotFailed.error), /action-failed/);
+  assert.deepEqual(screenshotFailed.calls.slice(-2), ['screenshot', 'stop']);
+  assert.equal(screenshotFailed.records[0][1].cleanup, 'stopped');
+  assert.equal(screenshotFailed.records[0][1].diagnosticFailure, true);
+  assert.equal(screenshotFailed.records[0][1].cleanupObservation.count, 0);
 });

@@ -703,6 +703,7 @@ async function nativeType(driver: PhoneAcceptanceDriver, text: string) {
   let installed = false;
   let cleanupObservation = inputCounterDiagnostic(null);
   let cleanup: 'not-installed' | 'stopped' | 'failed' = 'not-installed';
+  let diagnosticFailure = false;
   try {
     installed = true; // An uncertain install is still owned and needs removal.
     await driver.execute(inputCounterInstallScript);
@@ -751,14 +752,20 @@ async function nativeType(driver: PhoneAcceptanceDriver, text: string) {
     try {
       // One removal read, using the existing failure-evidence budget when needed.
       // No action, navigation or new polling loop follows a failed insertion.
-      const stop = () => driver.execute(inputCounterReadScript, [true]);
-      const value = failed && driver.diagnose ? await driver.diagnose(stop) : await stop();
-      const final = inputCounterDiagnostic(value);
-      cleanupObservation = final; // Never replace the deadline's first-failure snapshot.
-      requireCondition(final.installed && final.trace?.current, 'native-input-removal-unavailable');
-      cleanup = 'stopped';
+      const stop = async () => {
+        cleanup = 'failed';
+        const final = inputCounterDiagnostic(await driver.execute(inputCounterReadScript, [true]));
+        cleanupObservation = final; // Never replace the deadline's first-failure snapshot.
+        requireCondition(
+          final.installed && final.trace?.current,
+          'native-input-removal-unavailable',
+        );
+        cleanup = 'stopped';
+      };
+      if (failed && driver.diagnose) await driver.diagnose(stop);
+      else await stop();
     } catch (error) {
-      cleanup = 'failed';
+      diagnosticFailure = true;
       if (!failed) {
         failed = true;
         failure = error;
@@ -771,6 +778,7 @@ async function nativeType(driver: PhoneAcceptanceDriver, text: string) {
       steps,
       cleanup,
       cleanupObservation,
+      diagnosticFailure,
     });
   } catch (error) {
     if (!failed) {

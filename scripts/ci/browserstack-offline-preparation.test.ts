@@ -317,3 +317,35 @@ test('the runner diagnosis screenshots first and keeps the failed command', asyn
   );
   assert.equal(result.command, 'POST session/{sessionId}/execute/sync (download-incomplete)');
 });
+
+test('failed screenshot evidence cannot skip cleanup work or replace its command owner', async () => {
+  for (const workFails of [false, true]) {
+    const result = { command: 'primary-command' };
+    const calls: string[] = [];
+    const screenshotError = new Error('screenshot-failed');
+    const workError = new Error('removal-failed');
+    const diagnose = failureDiagnosis(result, async () => {
+      calls.push('screenshot');
+      result.command = 'screenshot-command';
+      throw screenshotError;
+    });
+    await assert.rejects(
+      diagnose(async () => {
+        calls.push('removal');
+        result.command = 'removal-command';
+        if (workFails) throw workError;
+        return 'removed';
+      }),
+      (error) => {
+        if (workFails) {
+          assert.ok(error instanceof AggregateError);
+          assert.deepEqual(error.errors, [screenshotError, workError]);
+          assert.equal(error.cause, screenshotError);
+        } else assert.equal(error, screenshotError);
+        return true;
+      },
+    );
+    assert.deepEqual(calls, ['screenshot', 'removal']);
+    assert.equal(result.command, 'primary-command');
+  }
+});

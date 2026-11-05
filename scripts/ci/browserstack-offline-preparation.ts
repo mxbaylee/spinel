@@ -49,13 +49,32 @@ export type OfflinePreparationDriver = {
 /**
  * The runner's diagnose hook: the stalled page's screenshot comes first, and
  * the command that failed stays the lane's command after the evidence reads.
+ * Even failed screenshot evidence cannot skip the work's owned cleanup.
  */
 export function failureDiagnosis(result: { command: string }, screenshot: () => Promise<void>) {
   return async <T>(work: () => Promise<T>): Promise<T> => {
     const failedCommand = result.command;
     try {
-      await screenshot();
-      return await work();
+      let screenshotFailed = false;
+      let screenshotError: unknown;
+      try {
+        await screenshot();
+      } catch (error) {
+        screenshotFailed = true;
+        screenshotError = error;
+      }
+      let value: T;
+      try {
+        value = await work();
+      } catch (error) {
+        if (screenshotFailed)
+          throw new AggregateError([screenshotError, error], 'failure-diagnosis-incomplete', {
+            cause: screenshotError,
+          });
+        throw error;
+      }
+      if (screenshotFailed) throw screenshotError;
+      return value;
     } finally {
       result.command = failedCommand;
     }
