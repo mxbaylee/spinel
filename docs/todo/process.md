@@ -380,8 +380,9 @@ toward the reminder.
 The [SPN-115 coverage policy](../implementation/SPN-115.md) keeps all seven code
 check names and publishes a digest-bound plan from the immutable event range.
 All PR edits run fresh full validation, including title/body changes and base
-retargets. Edit concurrency is isolated from code pushes. The cheap metadata
-optimization remains in [SPN-129](SPN-129.md); renamed metadata-only jobs failed
+retargets. Edit concurrency is isolated from code pushes. 🪶 The cheap metadata
+optimization was [retired as SPN-129](../implementation/SPN-129.md#retire-the-metadata-validation-system)
+on 2026-11-04; no router setup is pending. Renamed metadata-only jobs failed
 actual protected-branch readiness and are not used. Ambiguous events,
 unavailable ranges and unknown paths also select full coverage.
 `ci-performance` and `ci-full` add coverage; removing labels never removes

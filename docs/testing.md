@@ -82,6 +82,23 @@ test invented to mirror the prose.
   traces. Performance acceptance uses its existing unprofiled first attempts;
   profiled diagnostics and successful retries cannot replace those samples.
 
+## 🔬 Callback trace conversion
+
+The callback lifetime project keeps its original420-second observation budget,
+categories,1GiB non-overwriting buffer and full native workload. SPN-144's guarded
+candidate retains original protobuf separately from derived Chrome JSON; both
+have stored/decoded hashes. Complete framing, pinned converter identity, strict
+parser statistics, source attribution and owned cleanup are all required. See
+[the implementation and acceptance checkpoint](implementation/SPN-144.md#-guarded-integration-decision).
+
+CI prepares the official pinned converter before either paired observation. For
+local capability work, explicitly install it into a new task-owned path with
+`node scripts/ci/doc-trace-processor.ts <new-binary-path>` and set
+`SPINEL_TRACE_PROCESSOR` to that absolute path. The harness verifies its platform
+hash before execution and never downloads during an observation. Only the pinned
+Linux x64 CI and macOS arm64 development binaries are supported. Installing the
+tool or passing a small retained-data probe does not establish native acceptance.
+
 ## Give each browser execution a reason
 
 Before adding a project, tag or duplicate execution, record which contract each
@@ -147,8 +164,8 @@ latency checks remain automatic for application changes; historical comparisons
 follow their dependency inputs or additive labels. Weekly/manual full coverage
 is the backstop, not a substitute for applicable PR coverage. Keep the seven
 stable required check names and isolated edit concurrency. PR edits currently
-run full validation; cheap metadata validation requires SPN-129's protected-merge
-proof before it can return. Broad soak, retained
+run full validation. 🪶 [SPN-129's proposed metadata optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system);
+there is no pending router setup or exception to these gates. Broad soak, retained
 transition, container, BrowserStack and live-provider scopes are not permission
 to narrow additional coverage without equivalent evidence.
 

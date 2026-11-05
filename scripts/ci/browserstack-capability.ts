@@ -2650,7 +2650,15 @@ export async function runCapability(
             browserName: target.browser,
             acceptInsecureCerts: true,
             ...(target.browser === 'safari'
-              ? { 'appium:additionalWebviewBundleIds': ['*'], 'appium:fullContextList': true }
+              ? {
+                  // The runner separately proves secure worker/application readiness.
+                  // Do not spend the initial navigation bound waiting for load-event
+                  // completion after the document is interactive (run41969762181).
+                  // https://appium.github.io/appium-xcuitest-driver/latest/reference/capabilities/#web-context
+                  pageLoadStrategy: 'eager',
+                  'appium:additionalWebviewBundleIds': ['*'],
+                  'appium:fullContextList': true,
+                }
               : {}),
             'bstack:options': {
               deviceName: target.device,
@@ -2694,11 +2702,14 @@ export async function runCapability(
           'deviceName',
           'appium:deviceName',
           'appium:platformVersion',
+          'pageLoadStrategy',
         ]
           .filter((key) => Object.hasOwn(capabilities, key))
           .map((key) => [key, clean(capabilities[key])]),
       ),
     );
+    if (target.browser === 'safari')
+      requireCondition(capabilities.pageLoadStrategy === 'eager', 'safari-page-load-strategy');
     stage('anonymous-https');
     await command(session('url'), 'POST', { url: fixture.origin });
     let initial: Row;

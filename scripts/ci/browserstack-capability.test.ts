@@ -1722,7 +1722,8 @@ test('ordinary tab runners reach the observed web context without installation o
       calls.push(`${init?.method} ${path}`);
       assert.doesNotMatch(path, /contexts|\/context$|appium|\/elements?$|\/actions$/);
       let value: unknown = null;
-      if (path === 'session') value = { sessionId, capabilities: { browserName: browser } };
+      if (path === 'session')
+        value = { sessionId, capabilities: { browserName: browser, pageLoadStrategy: 'eager' } };
       else if (path.endsWith('/window/handles')) value = ['actual-tab'];
       else if (path.endsWith('/window')) value = 'actual-tab';
       else if (path.endsWith('/execute/sync') || path.endsWith('/execute/async')) {
@@ -1815,7 +1816,9 @@ test('Safari prerequisite bounds clip actual provider commands and preserve clea
       calls.push(`${init?.method} ${path}`);
       if (path === 'session') {
         if (lateAt === 'session') clock += 1_001;
-        return Response.json({ value: { sessionId, capabilities: { browserName: 'safari' } } });
+        return Response.json({
+          value: { sessionId, capabilities: { browserName: 'safari', pageLoadStrategy: 'eager' } },
+        });
       }
       if (path.endsWith('/url')) clock += 1_001;
       return Response.json({ value: null });
@@ -2558,6 +2561,61 @@ function fixture(onClose: () => void) {
     },
   } as unknown as Parameters<typeof runCapability>[2];
 }
+test('Safari negotiates eager navigation before proceeding and keeps navigation failures fatal with owned cleanup', async () => {
+  for (const scenario of ['eager', 'normal', 'missing', 'malformed', 'chrome'] as const) {
+    const browser = scenario === 'chrome' ? 'chrome' : 'safari';
+    const calls: string[] = [];
+    let closed = 0;
+    let knownBeforeNavigation = false;
+    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
+      const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
+      calls.push(`${init?.method} ${path}`);
+      if (path === 'session') {
+        const requested = JSON.parse(String(init?.body)).capabilities.alwaysMatch;
+        assert.equal(requested.pageLoadStrategy, browser === 'safari' ? 'eager' : undefined);
+        assert.equal(requested.timeouts.pageLoad, 15_000);
+        return Response.json({
+          value: {
+            sessionId,
+            capabilities: {
+              browserName: browser,
+              ...(scenario === 'missing'
+                ? {}
+                : { pageLoadStrategy: scenario === 'malformed' ? { value: 'eager' } : scenario }),
+            },
+          },
+        });
+      }
+      if (path.endsWith('/url')) {
+        assert.equal(knownBeforeNavigation, true);
+        return Response.json({ value: { error: 'unknown error' } }, { status: 500 });
+      }
+      if (path.endsWith('/screenshot')) return Response.json({ value: tinyPng });
+      return Response.json({ value: null });
+    });
+    const result = await runCapability(client, { ...target, browser }, fixture(() => closed++), {
+      localIdentifier: 'local-id',
+      buildName: 'test',
+      journal: async (value) => {
+        if (value.sessionId === sessionId && value.allocation === 'known')
+          knownBeforeNavigation = true;
+      },
+      screenshot: async (name) => name,
+    });
+    const negotiated = scenario === 'eager' || scenario === 'chrome';
+    assert.equal(result.failure, negotiated ? 'http-500' : 'capability-safari-page-load-strategy');
+    assert.equal(result.status, 'failed');
+    assert.equal(calls.filter((call) => call === 'POST session').length, 1);
+    assert.equal(calls.filter((call) => call.endsWith('/url')).length, negotiated ? 1 : 0);
+    assert.ok(!calls.some((call) => call.endsWith('/execute/sync')));
+    assert.equal(result.cleanup.session, 'deleted');
+    assert.equal(result.cleanup.network, 'restored-4g-lte-good');
+    assert.equal(result.cleanup.fixture, 'closed');
+    assert.equal(closed, 1);
+    assert.equal(result.uncertainAllocation, false);
+  }
+});
+
 test('an asynchronous script result carrying value.error fails as an Appium envelope hazard', async () => {
   const origin = 'https://bs-local.com:8176';
   const asyncCalls: string[] = [];
@@ -3729,7 +3787,8 @@ test('Safari and Chrome open setup items in the attached window; only Firefox se
     const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
       const path = String(url).split('/wd/hub/')[1] ?? String(url).split('/automate/')[1];
       let value: unknown = null;
-      if (path === 'session') value = { sessionId, capabilities: { browserName: browser } };
+      if (path === 'session')
+        value = { sessionId, capabilities: { browserName: browser, pageLoadStrategy: 'eager' } };
       else if (path.endsWith('/window/handles')) value = ['actual-tab'];
       else if (path.endsWith('/window')) value = 'actual-tab';
       else if (path.endsWith('/url')) {
