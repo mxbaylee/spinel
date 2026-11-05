@@ -48,6 +48,7 @@ const sources = Object.fromEntries(
     [
       'package-lock.json',
       'scripts/ci/prepare-doc-native-diagnostic.ts',
+      'scripts/ci/prepare-doc-native-sources.ts',
       'scripts/dependencies/patch-univer-docs.ts',
       'src/ui/boundedDocHistory.ts',
       'src/ui/nativeDocFlushDiagnostic.ts',

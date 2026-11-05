@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
-import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, rm, readFile, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { EventEmitter } from 'node:events';
@@ -13,6 +13,7 @@ import {
   validateLoadedNativeScript,
   validateRetainedNativeSources,
   observeNativeWindowSources,
+  prepareNativeWindowSources,
 } from '../../e2e/doc-responsiveness-native-sources.ts';
 import { analyzeNativeWindow, composeCoverage } from './doc-native-runtime/window-analysis.ts';
 
@@ -151,8 +152,9 @@ test('actual source collector retains executed bytes and final validation reject
     await writeFile(join(dist, 'native.js'), code);
     await writeFile(join(dist, 'helper.js'), helper);
     await writeFile(join(dist, 'native.js.map'), map);
+    const prepared = await prepareNativeWindowSources(dist, identities);
     const observer = await observeNativeWindowSources(cdp as any, 'http://localhost:3100');
-    const observed = await observer.retain(output, identities, dist);
+    const observed = await observer.retain(output, identities, prepared, dist);
     await observer.dispose();
     assert.deepEqual(cdp.commands, [
       'Debugger.enable',
@@ -164,6 +166,19 @@ test('actual source collector retains executed bytes and final validation reject
     assert.deepEqual(observed.scripts[0].mapped, {});
     assert.equal(observed.scripts[0].mapStatus, 'absent-at-collection');
     assert.equal(observed.scripts[0].mapBytes, null);
+    const blocked = join(root, 'blocked-output');
+    await writeFile(blocked, 'not a directory');
+    const blockedSession = new Session();
+    const blockedObserver = await observeNativeWindowSources(
+      blockedSession as any,
+      'http://localhost:3100',
+    );
+    try {
+      await assert.rejects(blockedObserver.retain(blocked, identities, prepared, dist), /EEXIST/);
+    } finally {
+      await blockedObserver.dispose();
+    }
+    assert.equal(blockedSession.listenerCount('Debugger.scriptParsed'), 0);
     await validateRetainedNativeSources(output, observed, identities);
     await writeFile(join(output, 'helper.js'), helper.replace('preload', 'changed'));
     await assert.rejects(
@@ -200,6 +215,8 @@ test('actual source collector retains executed bytes and final validation reject
       'map-disappeared',
       'map-is-directory',
       'wrong-helper',
+      'map-appeared',
+      'map-changed',
     ] as const) {
       await writeFile(join(dist, 'native.js.map'), map);
       const session = new Session();
@@ -209,16 +226,25 @@ test('actual source collector retains executed bytes and final validation reject
         session.beforeNativeRead = () => rm(join(dist, 'native.js.map'));
       if (failure === 'map-is-directory') await mkdir(join(dist, 'helper.js.map'));
       if (failure === 'wrong-helper') session.wrongHelper = true;
+      if (failure === 'map-appeared') await writeFile(join(dist, 'helper.js.map'), map);
+      if (failure === 'map-changed')
+        await writeFile(join(dist, 'native.js.map'), map.replace('prior native', 'other native'));
       const source = await observeNativeWindowSources(session as any, 'http://localhost:3100');
       try {
-        await assert.rejects(source.retain(join(root, failure), identities, dist));
+        await assert.rejects(source.retain(join(root, failure), identities, prepared, dist));
       } finally {
         await source.dispose();
       }
       assert.equal(session.listenerCount('Debugger.scriptParsed'), 0);
-      if (failure === 'map-is-directory')
+      if (failure === 'map-is-directory' || failure === 'map-appeared')
         await rm(join(dist, 'helper.js.map'), { recursive: true });
     }
+    await assert.rejects(prepareNativeWindowSources(dist, identities), /Wrong embedded/);
+    await rm(join(dist, 'native.js.map'));
+    await assert.rejects(prepareNativeWindowSources(dist, identities), /binding incomplete/);
+    await writeFile(join(root, 'outside.map'), map);
+    await symlink(join(root, 'outside.map'), join(dist, 'native.js.map'));
+    await assert.rejects(prepareNativeWindowSources(dist, identities), /escaped build/);
   } finally {
     await rm(root, { recursive: true, force: true });
   }
