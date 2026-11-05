@@ -90,7 +90,15 @@ for (const format of ['es', 'cjs'] as const) {
   const prepared = prepareDocsPatch(bytes, format),
     record = build.builds.find((x: any) => x.format === format);
   assert.equal(hash(prepared.constantGuardPatched), record.priorSha256);
-  assert.equal(hash(prepared.patched), record.installedSha256);
+  // Preserve the first experiment's exact candidate as the upgrade/work control.
+  assert.equal(hash(prepared.paragraphTailPatched), record.installedSha256);
+  assert.equal(
+    hash(prepared.patched),
+    {
+      es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
+      cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+    }[format],
+  );
   assert.equal(
     hash(await readFile(`${donor}/node_modules/@univerjs/core/lib/${format}/index.js`)),
     build.sources[`node_modules/@univerjs/core/lib/${format}/index.js`],
@@ -108,7 +116,8 @@ for (const format of ['es', 'cjs'] as const) {
   };
   nativeHashes[format] = {
     prior: record.priorSha256,
-    candidate: record.installedSha256,
+    candidate: hash(prepared.patched),
+    previousCandidate: record.installedSha256,
     regions: { prior: hash(native[format].prior), candidate: hash(native[format].candidate) },
   };
 }

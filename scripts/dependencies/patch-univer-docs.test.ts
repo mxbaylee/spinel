@@ -1518,6 +1518,89 @@ for (const format of ['es', 'cjs'] as const) {
     }
   });
 
+  test(`${format}: reuse qualified ranges without changing any composition operand or tiny-head fold`, async () => {
+    const { patched, paragraphTailPatched } = prepareDocsPatch(await readBuild(format), format);
+    const measured = (source: string, states: State[], key: 'redoState' | 'undoState') => {
+      const counts: Record<string, number> = {};
+      const calls: unknown[] = [];
+      const results: unknown[] = [];
+      const tick = (name: string) => {
+        counts[name] = (counts[name] ?? 0) + 1;
+      };
+      const identity = (value: unknown) => {
+        if (value === null) return 'null';
+        const input = states.findIndex((state) => state[key].actions === value);
+        return input >= 0 ? `input:${input}` : `result:${results.indexOf(value)}`;
+      };
+      const json = {
+        compose(left: JSONXActions, right: JSONXActions) {
+          calls.push({
+            left: ownDataShape(left),
+            right: ownDataShape(right),
+            leftIdentity: identity(left),
+            rightIdentity: identity(right),
+          });
+          const result = core.JSONX.compose(left, right);
+          results.push(result);
+          return result;
+        },
+      };
+      for (const name of [
+        'docInsertPrefixLength',
+        'docDeletePrefixLength',
+        'hasOnlyDocInsertKeys',
+      ]) {
+        const expression = new RegExp(`function ${name}\\([^)]*\\) \\{`);
+        assert.equal(source.match(new RegExp(expression.source, 'g'))?.length, 1);
+        source = source.replace(expression, (match) => `${match} __spn146Guard('${name}');`);
+      }
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      const compose = runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        JSONX: json,
+        _univerjs_core: { ...core, JSONX: json },
+        Object,
+        Array,
+        __spn146Guard: tick,
+      }) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
+      const before = ownDataShape(states);
+      const output = compose(states, key);
+      assert.deepEqual(ownDataShape(states), before);
+      return { output, calls, counts };
+    };
+    for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
+      for (let position = 0; position < 32; position++) {
+        const { states } = paragraphSequence(position, 32, cover, 7);
+        for (const key of ['redoState', 'undoState'] as const) {
+          const before = measured(paragraphTailPatched, states, key);
+          const after = measured(patched, states, key);
+          assert.deepEqual(after.output, before.output);
+          assert.deepEqual(
+            after.calls,
+            before.calls,
+            `${cover}/${position}/${key}: exact operand values, identities and call order`,
+          );
+          if (key === 'redoState' && position < 28) {
+            const reduced = (counts: Record<string, number>) => {
+              for (const name of Object.keys(before.counts))
+                assert.ok(
+                  counts[name] < before.counts[name],
+                  `${name}: duplicate qualification removed`,
+                );
+            };
+            reduced(after.counts);
+            assert.throws(() => reduced(before.counts), /duplicate qualification removed/);
+          } else
+            assert.deepEqual(
+              after.counts,
+              before.counts,
+              'Unadmitted tails and undo retain the original checks.',
+            );
+        }
+      }
+  });
+
   test(`${format}: REPLACE paragraph tails preserve the non-null accumulator and own their result`, async () => {
     const { patched, constantGuardPatched, original } = prepareDocsPatch(
       await readBuild(format),
@@ -2067,6 +2150,7 @@ for (const format of ['es', 'cjs'] as const) {
       completeDeletePatched,
       deletePrefixPatched,
       constantGuardPatched,
+      paragraphTailPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
@@ -2099,6 +2183,15 @@ for (const format of ['es', 'cjs'] as const) {
       }[format],
     );
     assert.equal(prepareDocsPatch(constantGuardPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(paragraphTailPatched).digest('hex'),
+      {
+        es: '535ff692c3fd37ba10bdcc614720b8d848827c988f75fbbf9109ebf90d8d68c7',
+        cjs: 'bad73b55afd6b345dc20f78b5f60e799abf8b1a62585ef488bbb8d0c6b2033b7',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(paragraphTailPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(paragraphTailPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(constantGuardPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(deletePrefixPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(completeDeletePatched + '\n// unknown edit', format));
@@ -2239,7 +2332,11 @@ test('Docs installer validates package identity and both complete builds before 
       await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
       prepareDocsPatch(originals[format], format).patched,
     );
-  for (const previous of ['completeDeletePatched', 'deletePrefixPatched'] as const) {
+  for (const previous of [
+    'completeDeletePatched',
+    'deletePrefixPatched',
+    'paragraphTailPatched',
+  ] as const) {
     // Existing installs upgrade exact complete prior patches, atomically with
     // respect to validation of both formats, just like fresh upstream installs.
     for (const format of ['es', 'cjs'] as const)
