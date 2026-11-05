@@ -1,0 +1,45 @@
+﻿2026-11-05T01:54:24.7772242Z Current runner version: '2.338.2'
+2026-11-05T01:54:24.7794067Z ##[group]Runner Image Provisioner
+2026-11-05T01:54:24.7795039Z Hosted Compute Agent
+2026-11-05T01:54:24.7795615Z Version: 20261021.618
+2026-11-05T01:54:24.7796177Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+2026-11-05T01:54:24.7796795Z Build Date: 2026-10-21T00:45:21Z
+2026-11-05T01:54:24.7797460Z Worker ID: {26bf551a-f80f-405d-b0a7-0644dd2a196d}
+2026-11-05T01:54:24.7798059Z Region: westus3
+2026-11-05T01:54:24.7798521Z Cloud: Azure
+2026-11-05T01:54:24.7799052Z ##[endgroup]
+2026-11-05T01:54:24.7800197Z ##[group]Operating System
+2026-11-05T01:54:24.7800857Z Ubuntu
+2026-11-05T01:54:24.7801318Z 24.04.5
+2026-11-05T01:54:24.7801748Z LTS
+2026-11-05T01:54:24.7802270Z ##[endgroup]
+2026-11-05T01:54:24.7802771Z ##[group]Runner Image
+2026-11-05T01:54:24.7803432Z Image: ubuntu-24.04
+2026-11-05T01:54:24.7803968Z Version: 20261025.353.1
+2026-11-05T01:54:24.7805188Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-05T01:54:24.7806435Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+2026-11-05T01:54:24.7807278Z ##[endgroup]
+2026-11-05T01:54:24.7808249Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T01:54:24.7809819Z Contents: read
+2026-11-05T01:54:24.7810346Z Metadata: read
+2026-11-05T01:54:24.7810836Z ##[endgroup]
+2026-11-05T01:54:24.7812591Z Secret source: Actions
+2026-11-05T01:54:24.7813399Z Cache mode: write
+2026-11-05T01:54:24.7814046Z Prepare workflow directory
+2026-11-05T01:54:24.8128377Z Prepare all required actions
+2026-11-05T01:54:24.8167461Z Getting action download info
+2026-11-05T01:54:25.1353251Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T01:54:25.2790363Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T01:54:25.4072042Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T01:54:25.5327822Z Download action repository 'actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9' (SHA:fc324d3547104276b827a68afc52ff2a11cc49c9)
+2026-11-05T01:54:25.8529659Z Getting action download info
+2026-11-05T01:54:25.9839825Z Download action repository 'actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f' (SHA:bbbca2ddaa5d8feaa63e36b76fdaad77386f024f)
+2026-11-05T01:54:26.2186952Z Complete job name: Build Storybook
+2026-11-05T01:54:26.3121026Z ##[group]Run echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'
+2026-11-05T01:54:26.3123501Z [36;1mecho 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'[0m
+2026-11-05T01:54:26.3147302Z shell: /usr/bin/bash -e {0}
+2026-11-05T01:54:26.3148382Z env:
+2026-11-05T01:54:26.3149148Z   STORYBOOK_DISABLE_TELEMETRY: 1
+2026-11-05T01:54:26.3150094Z ##[endgroup]
+2026-11-05T01:54:26.3258464Z Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.
+2026-11-05T01:54:26.3403504Z Cleaning up orphan processes

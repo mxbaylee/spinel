@@ -1,0 +1,462 @@
+{
+  "root": 62120,
+  "started": 1793843344099,
+  "elapsedMs": 7210,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 85808,
+  "peakKiB": 286496,
+  "live": [
+    {
+      "pid": 62120,
+      "parent": 62084,
+      "group": 62120,
+      "rssKiB": 84240,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-blocked-publication-a-watchdog.json node /tmp/spn141-blocked-publication-check-a.ts"
+    },
+    {
+      "pid": 62876,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 62120,
+      "parent": 62084,
+      "group": 62120,
+      "rssKiB": 84240,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-blocked-publication-a-watchdog.json node /tmp/spn141-blocked-publication-check-a.ts"
+    },
+    {
+      "pid": 62139,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62165,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 158416,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "node /tmp/spn141-blocked-publication-check-a.ts"
+    },
+    {
+      "pid": 62166,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 7360,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "git ls-remote origin refs/tags/archive/spn-141-deadline-blocker-403bd8c1 refs/tags/archive/spn-141-deadline-blocker-403bd8c1^{}"
+    },
+    {
+      "pid": 62167,
+      "parent": 62166,
+      "group": 62120,
+      "rssKiB": 6960,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'mxbaylee/spinel.git'"
+    },
+    {
+      "pid": 62175,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62188,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62201,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:04 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62214,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62227,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62253,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1648,
+      "started": "Wed Nov  4 17:49:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62254,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 464,
+      "started": "Wed Nov  4 17:49:05 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62284,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62305,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 0,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62311,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62333,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 4560,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62339,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62351,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 39504,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "git show eb51a5554244520593c66b7638f9eeff1d32fbb5:docs/review-assets/spn-141-deadline-blocker-403bd8c1/callback-desktop-retained/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 62357,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62373,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1664,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62374,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 240,
+      "started": "Wed Nov  4 17:49:06 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62396,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 11104,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62402,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62423,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 5568,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62429,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62442,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 33456,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "git show eb51a5554244520593c66b7638f9eeff1d32fbb5:docs/review-assets/spn-141-deadline-blocker-403bd8c1/callback-desktop-retained/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 62448,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62458,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 6272,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62464,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62491,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 9152,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62497,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62525,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62546,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 6768,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62552,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62566,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 29584,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "git show eb51a5554244520593c66b7638f9eeff1d32fbb5:docs/review-assets/spn-141-deadline-blocker-403bd8c1/callback-mobile-retained/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 62572,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62586,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62615,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 8160,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62621,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62649,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 4192,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62655,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62681,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 7472,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62687,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62716,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 7584,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62722,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62748,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 256,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62752,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62781,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 7296,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62787,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62815,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 6880,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62821,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62850,
+      "parent": 62165,
+      "group": 62120,
+      "rssKiB": 7552,
+      "started": "Wed Nov  4 17:49:11 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 62856,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 62876,
+      "parent": 62120,
+      "group": 62120,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 17:49:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

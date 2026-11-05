@@ -1,0 +1,17 @@
+{
+  "archive": "eb51a5554244520593c66b7638f9eeff1d32fbb5",
+  "archiveTree": "b7378e09b53759559a840ede43f01e949fd92d83",
+  "remote": "eb51a5554244520593c66b7638f9eeff1d32fbb5\trefs/tags/archive/spn-141-deadline-blocker-403bd8c1",
+  "manifestEntries": 312,
+  "totalBlobs": 313,
+  "streamedBytes": 392411305,
+  "frozenLocalBytesMatched": 392411305,
+  "manifestSha256": "9df61001f14f7c3207cf5c8c797dcea72be6e37fc71ad86f8878a0cfa0f4f301",
+  "retainedCallbacks": 123,
+  "retainedResponsivenessMembers": 36,
+  "retainedNativeMembers": 48,
+  "documentedDisposableDatabaseOmissions": 24,
+  "remainingFailure": "historical mobile callback pair and fail-closed Playwright aggregate",
+  "outcome": "passed",
+  "limits": "Publication integrity and accurately blocked source disposition only. No source acceptance, merge authorization, browser rerun or event/profile reanalysis. Every selected frozen input matches its archived manifest hash."
+}

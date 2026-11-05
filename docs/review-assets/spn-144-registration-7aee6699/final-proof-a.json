@@ -1,0 +1,38 @@
+{
+  "source": "7aee66999f211f702d397d9f737b6478bebca862",
+  "base": "5c565b61e11ce29780581f33410749436ecef42f",
+  "tested": "cf83634c90578d89de249f39ed15e88ede76fc0f",
+  "planSha256": "24f3a124bafbf759718faccba3c1b514447a60fee87a89c6e1c1a5fddd1f548e",
+  "artifacts": [
+    {
+      "name": "ci-plan",
+      "artifact": 13381645376,
+      "bytes": 1125,
+      "sha256": "ac35b1ead09df605661252443e0b765e3bd7e7b0ec08c880ef0da503f8742605",
+      "memberSha256": "4b8ff869985fbf30b9ba75dac0d664ae7bf994d41d469845091bd5898f935093"
+    },
+    {
+      "name": "ci-results-browser",
+      "artifact": 13380309465,
+      "bytes": 1636,
+      "sha256": "bee2459d24b3891e3368fd32f3945b57d0a20393acf5d4eabc2873121f0cb3ff",
+      "memberSha256": "d8de7ce02719dfa22af9729c282611cadf3ea9b5a11eb4317bbc68e8723c2035"
+    },
+    {
+      "name": "ci-results-unit",
+      "artifact": 13380653580,
+      "bytes": 1403,
+      "sha256": "0ef4fbd482af685799d66934ad973409bdbfce906133fc22718c65717323887e",
+      "memberSha256": "64d61cd8097b946e6a06bad3fc147fab6fd7610455db96fc51eeb1bbf0bc2787"
+    },
+    {
+      "name": "ci-results-lib",
+      "artifact": 13380828540,
+      "bytes": 1422,
+      "sha256": "ca930aee0516c2d0a15d72144b76a27d619b6d78b087cb20acc513c473154f6c",
+      "memberSha256": "e9feee289ca0dd2bc6b0356b0c944cf43eb5349d31d792114e81c56394a3e31e"
+    }
+  ],
+  "scope": "Read-only small original ZIP/member/plan/aggregate verification",
+  "passed": true
+}
