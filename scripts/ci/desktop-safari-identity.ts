@@ -14,14 +14,25 @@ export type SafariTarget = {
 // Apple Events timed out, and it does not bypass normal automation consent.
 export const safariRequestScript = String.raw`
 function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }
-// Foundation is available by default. Retain the bundle for this helper's
-// lifetime while using its executable's class, without importing AppKit symbols.
-phase('appkit-bundle-create-begin');
-var appkitBundle = $.NSBundle.bundleWithPath('/System/Library/Frameworks/AppKit.framework');
-if (appkitBundle.isNil()) throw new Error('The system AppKit bundle is unavailable.');
-phase('appkit-bundle-create-end');
+// Foundation is available by default. Load the public system image directly;
+// keep its opaque handle until this short-lived helper exits so its classes
+// remain available. Do not apply Objective-C pointer methods or unload it.
+phase('appkit-loader-bind-begin');
+ObjC.bindFunction('dlopen', ['void*', ['char*', 'int']]);
+ObjC.bindFunction('dlerror', ['string', []]);
+var openImage = $.dlopen;
+var imageError = $.dlerror;
+phase('appkit-loader-bind-end');
 phase('appkit-executable-load-begin');
-if (!appkitBundle.load) throw new Error('The system AppKit executable could not be loaded.');
+// Clear, load once with RTLD_LAZY, then capture the new thread-local error
+// without intervening bridge lookups or logging. A C pointer stays opaque.
+imageError();
+var appkitHandle = openImage('/System/Library/Frameworks/AppKit.framework/AppKit', 1);
+var appkitLoadError = imageError();
+if (appkitLoadError !== null && appkitLoadError !== undefined)
+  throw new Error('The system AppKit executable could not be loaded: ' +
+    (typeof appkitLoadError === 'string' ? appkitLoadError : 'Unexpected loader diagnostic'));
+if (!appkitHandle) throw new Error('The system AppKit loader returned no handle.');
 phase('appkit-executable-load-end');
 phase('running-application-class-begin');
 var runningApplication = $.NSClassFromString($('NSRunningApplication'));

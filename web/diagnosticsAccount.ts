@@ -1,7 +1,13 @@
 import type { DiagnosticSink } from '@spinel/diagnostics';
 import { BrowserDiagnostics } from './diagnostics.ts';
+import type { ConnectionState } from './connectionState.ts';
 
 export type DiagnosticOperation = { runId: string; sink: DiagnosticSink };
+
+/** Editor state is only a retry hint; its offline view is not proof of an HTTP outage. */
+export function diagnosticsConnectionPolicy(browserOnline: boolean, state: ConnectionState) {
+  return { available: browserOnline, onlineHint: state === 'online' };
+}
 
 /** One tab's verified account lifetime; never a global telemetry singleton. */
 export class AccountDiagnostics {
@@ -22,10 +28,15 @@ export class AccountDiagnostics {
     this.stopped = false;
   }
   connection(available: boolean) {
-    if (!this.client || this.stopped || available === this.available) return;
+    if (!this.client || this.stopped) return;
+    if (available) {
+      this.available = true;
+      void this.client.resume();
+      return;
+    }
+    if (!this.available) return;
     this.available = available;
-    if (available) void this.client.start();
-    else this.client.suspend();
+    this.client.suspend();
   }
   /** The run ID and sink share one initiating account/collection lifetime. */
   begin(): DiagnosticOperation | undefined {

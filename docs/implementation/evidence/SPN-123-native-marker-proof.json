@@ -1,0 +1,180 @@
+{
+  "schema": 1,
+  "purpose": "Durable record of the one completed frozen revision 2 native-marker qualification proof. This is mechanism/preservation evidence, not mobile timing acceptance.",
+  "status": "passed",
+  "headCommit": "475f656c701f95d296c3df127e763540b0014d29",
+  "startedAt": "2026-10-30T01:27:45.399Z",
+  "runtime": "v26.12.1",
+  "preparationRevision": 2,
+  "attempts": {
+    "executed": 1,
+    "supersededUnexecutedPreparations": 1,
+    "reruns": 0
+  },
+  "proof": {
+    "fullComparisonCases": 32,
+    "formats": ["es", "cjs"],
+    "markedGuardProbesPerFormat": 39,
+    "allExactPublications": true,
+    "allExactAppliedSnapshots": true,
+    "allSourceInputsUnchanged": true,
+    "nativeCaptureCommands": {
+      "plainStyled": 32,
+      "withSingleEnterAtIndex15": 32
+    },
+    "caseIds": [
+      "es/actual-marked-32-mirrored",
+      "es/actual-marked-32-injected20of32",
+      "es/actual-marked-31-odd",
+      "es/marker-absent-32",
+      "es/mixed-marker-32",
+      "es/mixed-marker-32-injected20of32",
+      "es/mixed-marker-7-odd",
+      "es/known-own-undefined-metadata",
+      "es/own-marker-undefined",
+      "es/own-marker-false",
+      "es/own-marker-zero",
+      "es/own-marker-one",
+      "es/own-marker-null",
+      "es/own-marker-string",
+      "es/unknown-body-key",
+      "es/actual-enter-fallback",
+      "cjs/actual-marked-32-mirrored",
+      "cjs/actual-marked-32-injected20of32",
+      "cjs/actual-marked-31-odd",
+      "cjs/marker-absent-32",
+      "cjs/mixed-marker-32",
+      "cjs/mixed-marker-32-injected20of32",
+      "cjs/mixed-marker-7-odd",
+      "cjs/known-own-undefined-metadata",
+      "cjs/own-marker-undefined",
+      "cjs/own-marker-false",
+      "cjs/own-marker-zero",
+      "cjs/own-marker-one",
+      "cjs/own-marker-null",
+      "cjs/own-marker-string",
+      "cjs/unknown-body-key",
+      "cjs/actual-enter-fallback"
+    ]
+  },
+  "resources": {
+    "status": "completed",
+    "abortReason": null,
+    "code": 0,
+    "elapsedMs": 3473,
+    "peakRssKiB": 786316,
+    "limitRssKiB": 2097152,
+    "deadlineMs": 180000
+  },
+  "representativeCounts": [
+    {
+      "case": "actual-marked-32-mirrored",
+      "appliesToFormats": ["es", "cjs"],
+      "counts": {
+        "original": {
+          "textCompose": 124,
+          "iteratorNext": 2352,
+          "bodySlices": 1054,
+          "cloneVisits": 53240,
+          "allocations": 23244
+        },
+        "current": {
+          "textCompose": 124,
+          "iteratorNext": 2352,
+          "bodySlices": 1054,
+          "cloneVisits": 53240,
+          "allocations": 23244
+        },
+        "proposed": {
+          "textCompose": 124,
+          "iteratorNext": 890,
+          "bodySlices": 320,
+          "cloneVisits": 19650,
+          "allocations": 8622
+        }
+      },
+      "cacheConstruction": "Captured native states injected via public setStateCache."
+    },
+    {
+      "case": "actual-marked-32-injected20of32",
+      "appliesToFormats": ["es", "cjs"],
+      "counts": {
+        "original": {
+          "textCompose": 100,
+          "iteratorNext": 1708,
+          "bodySlices": 736,
+          "cloneVisits": 37868,
+          "allocations": 16524
+        },
+        "current": {
+          "textCompose": 100,
+          "iteratorNext": 1708,
+          "bodySlices": 736,
+          "cloneVisits": 37868,
+          "allocations": 16524
+        },
+        "proposed": {
+          "textCompose": 100,
+          "iteratorNext": 706,
+          "bodySlices": 248,
+          "cloneVisits": 15420,
+          "allocations": 6764
+        }
+      },
+      "cacheConstruction": "History slice [12,32) of captured native states and collaboration [0,32) injected via public setStateCache; no natural clearHistory event is claimed."
+    }
+  ],
+  "interpretation": {
+    "composeCalls": "Unchanged: 124 for 32/32 and 100 for injected 20/32. Balanced association reduces inner primitive work, not the number of binary TextX.compose calls.",
+    "fallbacks": "Every invalid owned marker value and Enter/unknown-key case preserved original fallback and primitive counts; all marked guard probes stayed ineligible.",
+    "outputPreservation": "Full publications and all four applied snapshots compared without normalization. V8 serialization preserves owned undefined properties."
+  },
+  "limitations": [
+    "20/32 caches use an injected suffix of actual captured states; no natural clearHistory divergence is claimed.",
+    "Both manager source regions execute against the same imported core; these are not independent fully booted ES/CJS runtimes.",
+    "No browser latency claim or causal attribution.",
+    "No production source or installed SDK mutation.",
+    "70-input owner/peer receipt/reopen/full-undo integration remains a separate permanent regression.",
+    "Frozen plan status is preserved as written before execution; result/resource/run files establish the successful execution.",
+    "The proof is not an independent implementation review and does not replace required exact-head CI or review gates."
+  ],
+  "sourceHashes": {
+    "plan": "c3339b793374b000a3604703dc7e4afb5e15aed45bfe5ce592c52ac0fbc2817e",
+    "test": "a443e74bbbf20c7fa5e4cfaf1c426f17d2895f2c99911dd3bbd9cc3507e49545",
+    "watchdog": "330ba4fe80f637128840c232ee457d45a454806a2bbd7ef623192f6edb05e0c3",
+    "candidateReplacement": "7244d2700886fb76470a23a5f58dd21692eee871f75e6ba167821df3594c0f84",
+    "copiedHelperSourceAtHead": "109a4cee9fa447903e3ef1ca03d4a29a60647f07fd56d3717493be997c027ac5",
+    "proposedEs": "245ae8769e4759cc6da1d62847d7ae7502d0b54503c276e9adf9683e099a52ec",
+    "proposedCjs": "1e623423336d7888baefe491ad245ed2b1472470786f8871711bdeeac07c4e4f"
+  },
+  "archive": {
+    "file": "SPN-123-native-marker-proof.zip",
+    "bytes": 1443292,
+    "sha256": "248dd4f1f72a99eb3d30b7c2d8c5e9d492c4c6cf26a214f7a0f2c630f701921c",
+    "memberCount": 387,
+    "uncompressedBytes": 23644870,
+    "originalProofFiles": 384,
+    "originalProofBytes": 23558930,
+    "verified": "Every member read back and compared byte-for-byte to the archived source payload."
+  },
+  "fileManifest": {
+    "pathInArchive": "spn123-marker-proof/MANIFEST.json",
+    "bytes": 70980,
+    "sha256": "66f9618bbde7754843d2cc6db19aa75e0255c5c2584ad78d1ffaf2563bc490eb",
+    "entries": 386,
+    "scope": "Every archive payload except MANIFEST.json itself; companion summary records manifest and ZIP hashes."
+  },
+  "license": {
+    "attributionPathInArchive": "spn123-marker-proof/EVIDENCE_README.md",
+    "licensePathInArchive": "spn123-marker-proof/LICENSE-UNIVER-APACHE-2.0.txt",
+    "licenseSha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
+    "upstream": "@univerjs/docs 1.1.0 / dream-num/univer v1.1.0; Apache-2.0; copyright DreamNum Co., Ltd."
+  },
+  "cleanup": {
+    "removedUntrackedRepositoryFile": "lib/sync-client/tests/spn123-marker-proof.test.ts",
+    "removedFileSha256": "a443e74bbbf20c7fa5e4cfaf1c426f17d2895f2c99911dd3bbd9cc3507e49545",
+    "archiveByteIdentityVerifiedBeforeRemoval": true,
+    "frozenScratchCopyRetained": "/tmp/spn123-marker-proof/spn123-marker-proof.test.ts",
+    "productionSdkAndCanonicalImplementationDocumentUntouched": true
+  }
+}

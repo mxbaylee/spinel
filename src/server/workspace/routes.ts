@@ -21,6 +21,7 @@ import { archiveRoutes } from './archive-routes.ts';
 import { pdfRoutes } from '../pdf/routes.ts';
 import { OfflineCreationError, OfflineCreations } from './offline-creation.ts';
 import { SourceSharing } from './source-sharing.ts';
+import { observeOperation } from '@spinel/diagnostics';
 import { CopyFiles } from './copy.ts';
 
 export function workspaceRoutes(
@@ -36,9 +37,11 @@ export function workspaceRoutes(
   const catalog = new WorkspaceFiles(store);
   const sheets = new SheetStore(store);
   const documents = new DocumentStore(store);
-  const files = new PortableFiles(store, collaboration);
+  const files = new PortableFiles(store, collaboration, diagnostics);
+  const creations = collaboration
+    ? new OfflineCreations(store, collaboration, diagnostics)
+    : undefined;
   const copies = new CopyFiles(store, files);
-  const creations = collaboration ? new OfflineCreations(store, collaboration) : undefined;
   const sourceSharing = new SourceSharing(store, collaboration);
   const account = (request: Request) => documentIdentity(store, request.headers);
   const owner = (request: Request) => {
@@ -89,16 +92,30 @@ export function workspaceRoutes(
     );
   };
   router.get('/search', (request, response) => {
-    if (Object.hasOwn(request.query, 'includeHidden')) {
-      if (request.query.includeHidden !== '1' || Object.keys(request.query).length !== 1)
-        throw new AuthError(400, 'Invalid search filters.');
-      // Scoped search needs hidden folders as traversal nodes, while hidden
-      // files are excluded from displayed results. These are current authorized
-      // records, not a cached path supplied by the browser.
-      response.json({ items: catalog.searchCatalog(owner(request)) });
-      return;
+    const user = owner(request);
+    const started = performance.now();
+    const observed = (outcome: 'success' | 'failure') =>
+      observeOperation(
+        diagnostics ? (event, context) => diagnostics(event, context, user) : undefined,
+        { component: 'server', route: '/api/items' },
+        'search',
+        outcome,
+        Math.max(0, performance.now() - started),
+      );
+    let items: ReturnType<WorkspaceFiles['find']>;
+    try {
+      if (Object.hasOwn(request.query, 'includeHidden')) {
+        if (request.query.includeHidden !== '1' || Object.keys(request.query).length !== 1)
+          throw new AuthError(400, 'Invalid search filters.');
+        // Hidden folders are authorized traversal nodes, never client-supplied paths.
+        items = catalog.searchCatalog(user);
+      } else items = catalog.find(user, request.query);
+      observed('success');
+    } catch (error) {
+      observed('failure');
+      throw error;
     }
-    response.json({ items: catalog.find(owner(request), request.query) });
+    response.json({ items });
   });
   router.get('/:id/access', (request, response) => {
     const { spaceId } = request.query;

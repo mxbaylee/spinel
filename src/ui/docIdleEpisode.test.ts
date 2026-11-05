@@ -45,7 +45,7 @@ function fixture() {
   return {
     terminal,
     phases,
-    evaluate: (policy: DocFlushObservation[] = []) =>
+    evaluate: (policy: Parameters<typeof terminalIdleEpisode>[3] = []) =>
       terminalIdleEpisode(terminal, 500, phases, policy),
   };
 }
@@ -94,6 +94,7 @@ test('policy and mixed ownership preserve the complete outer interval without du
       after: { history: 0, collaboration: 0 },
     });
     const policy: DocFlushObservation = {
+      outcome: 'success',
       reason: 'idle',
       startedAt,
       durationMs,
@@ -106,6 +107,11 @@ test('policy and mixed ownership preserve the complete outer interval without du
     expect(episode.origin).toBe(mixed ? 'mixed' : 'policy-idle');
     expect(episode.durationMs).toBeGreaterThan(16);
     expect(episode.nativeSequences).toEqual(mixed ? [1, 4] : [2, 3]);
+    // Retained schema-5 rows have no diagnostic outcome; native phases still
+    // independently establish that every member returned successfully.
+    const historical: Parameters<typeof terminalIdleEpisode>[3][number] = { ...policy };
+    delete historical.outcome;
+    expect(f.evaluate([historical])).toEqual(episode);
   }
 });
 
@@ -193,7 +199,7 @@ test('missing, interrupted, unrecognized and malformed terminal phases cannot pa
 });
 
 test('policy outer counts and unique containing pairs must reconcile with native phases', () => {
-  for (const kind of ['outer-count', 'before-count', 'after-count', 'duplicate']) {
+  for (const kind of ['outer-count', 'before-count', 'after-count', 'duplicate', 'failure']) {
     const f = fixture();
     f.phases.forEach((value) => {
       value.origin = 'policy-idle';
@@ -210,6 +216,7 @@ test('policy outer counts and unique containing pairs must reconcile with native
     f.phases.push(pair);
     const outer: DocFlushObservation[] = [
       {
+        outcome: 'success',
         reason: 'idle',
         startedAt: 399,
         durationMs: 23,
@@ -219,6 +226,7 @@ test('policy outer counts and unique containing pairs must reconcile with native
       },
     ];
     if (kind === 'outer-count') outer[0].history = 1;
+    if (kind === 'failure') outer[0].outcome = 'failure';
     if (kind === 'before-count') pair.before = { history: 1, collaboration: 6 };
     if (kind === 'after-count') pair.after = { history: 1, collaboration: 0 };
     if (kind === 'duplicate') {
@@ -243,6 +251,7 @@ test('a quantized zero-duration timer preceding a policy pair is not its child',
   expect(
     f.evaluate([
       {
+        outcome: 'success',
         reason: 'idle',
         startedAt: 400,
         durationMs: 3,

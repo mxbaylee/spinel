@@ -159,6 +159,7 @@ function frameFixture(onObserve?: () => void) {
 
 test('rendering frames drain a quiet native phrase when SDK timers cannot run, without per-key history', async () => {
   const f = frameFixture();
+  const flush = vi.spyOn(f.manager, 'flushPendingChanges');
   try {
     await f.type('care');
     expect(f.frames.size).toBe(1);
@@ -169,10 +170,17 @@ test('rendering frames drain a quiet native phrase when SDK timers cannot run, w
     f.frameAt(1598);
     expect(f.history.getUndoRedoStatus('doc').undos).toBe(0);
     f.frameAt(1599);
+    expect(flush).toHaveBeenCalledWith('doc', 'idle');
     expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
     expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: 1, redos: 0 });
     expect(f.observations).toEqual([
-      expect.objectContaining({ reason: 'idle', history: 9, collaboration: 9, quietForMs: 300 }),
+      expect.objectContaining({
+        outcome: 'success',
+        reason: 'idle',
+        history: 9,
+        collaboration: 9,
+        quietForMs: 300,
+      }),
     ]);
     expect(f.frames.size).toBe(0);
     // The original SDK timeouts can still run later without duplicating history.
@@ -185,6 +193,37 @@ test('rendering frames drain a quiet native phrase when SDK timers cannot run, w
     expect(f.text()).toBe('carefully\r\n');
     expect(f.selection()).toMatchObject({ startOffset: 9, endOffset: 9 });
   } finally {
+    f.close();
+  }
+});
+
+test('a native flush failure is observed without replacing the original exception or clearing pending work', async () => {
+  const f = frameFixture(() => {
+    throw new Error('Observer unavailable');
+  });
+  let flush: ReturnType<typeof vi.spyOn> | undefined;
+  try {
+    await f.type('retain');
+    const failure = new Error('Native flush failed');
+    const before = f.manager.getStateCache('doc');
+    flush = vi.spyOn(f.manager, 'flushPendingChanges').mockImplementation(() => {
+      throw failure;
+    });
+    expect(() => f.frameAt(1300)).toThrow(failure);
+    expect(flush).toHaveBeenCalledWith('doc', 'idle');
+    expect(f.manager.getStateCache('doc')).toEqual(before);
+    expect(f.text()).toBe('retain\r\n');
+    expect(f.observations).toEqual([
+      expect.objectContaining({
+        outcome: 'failure',
+        reason: 'idle',
+        history: 6,
+        collaboration: 6,
+        durationMs: 0,
+      }),
+    ]);
+  } finally {
+    flush?.mockRestore();
     f.close();
   }
 });
@@ -316,6 +355,7 @@ test('a flush observer may synchronously tear down the editor without rearming a
 
 test('real native edits bound both caches and undo/redo exact ordered groups and selections', async () => {
   const f = fixture();
+  const flush = vi.spyOn(f.manager, 'flushPendingChanges');
   const value = Array.from({ length: 3 * DOC_HISTORY_GROUP_LIMIT + 7 }, (_, i) =>
     String.fromCharCode(97 + (i % 26)),
   ).join('');
@@ -329,8 +369,15 @@ test('real native edits bound both caches and undo/redo exact ordered groups and
     expect(f.manager.getStateCache('doc').history).toHaveLength(7);
     expect(f.manager.getStateCache('doc').collaboration).toHaveLength(7);
     expect(f.observations).toHaveLength(3);
+    expect(flush).toHaveBeenCalledTimes(3);
+    expect(flush).toHaveBeenCalledWith('doc', 'capacity');
     for (const observed of f.observations)
-      expect(observed).toMatchObject({ history: limit, collaboration: limit, reason: 'capacity' });
+      expect(observed).toMatchObject({
+        outcome: 'success',
+        history: limit,
+        collaboration: limit,
+        reason: 'capacity',
+      });
     expect(emitted).toHaveLength(3);
     // Undo before the idle timer fires must first include the seven pending keys.
     for (const length of [3 * limit, 2 * limit, limit, 0]) {
@@ -551,6 +598,19 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     b = f.client('collaborator');
   const cap = boundDocHistory(a.live.univer, 'doc');
   const manager = a.live.univer.__getInjector().get(DocStateChangeManagerService);
+  const selections = a.live.univer.__getInjector().get(DocSelectionManagerService);
+  const range = (at: number) => ({ startOffset: at, endOffset: at, collapsed: true });
+  selections.replaceSelectionInfoWithoutRefresh(
+    {
+      textRanges: [{ ...range(0), isActive: true }],
+      rectRanges: [],
+      segmentId: '',
+      segmentPage: 0,
+      isEditing: true,
+      style: NORMAL_TEXT_SELECTION_PLUGIN_STYLE,
+    },
+    { unitId: 'doc', subUnitId: 'doc' },
+  );
   try {
     await turns();
     for (let i = 0; i < 70; i++)
@@ -560,6 +620,7 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
           segmentId: '',
           range: { startOffset: i, endOffset: i, collapsed: true },
           body: { dataStream: String(i % 10) },
+          textRanges: [range(i + 1)],
           debounce: true,
         }),
       ).toBe(true);
@@ -579,6 +640,33 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     const history = a.live.univer.__getInjector().get(IUndoRedoService);
     // The unchanged 70-character replay now forms 32 + 32 + 6 native changes.
     expect(history.getUndoRedoStatus('doc').undos).toBe(3);
+    const original = '0123456789'.repeat(7);
+    // Sync capture adds the paragraph-preservation marker to these real edits.
+    // Replaying every actual group must retain exact durable and peer state.
+    for (const [command, lengths] of [
+      ['undo', [2 * limit, limit, 0]],
+      ['redo', [limit, 2 * limit, original.length]],
+    ] as const)
+      for (const length of lengths) {
+        expect(
+          await a.commands.executeCommand(`univer.command.${command}`, { unitId: 'doc' }),
+        ).toBe(true);
+        manager.flushPendingChanges('doc');
+        const replay = await f.submit(a, await f.request(a));
+        b.sync.receive({ type: 'edit', ...wire(replay.edit) });
+        await f.acknowledge(a, replay);
+        const expected = original.slice(0, length) + '\r\n';
+        const live = a.live.snapshot() as IDocumentData;
+        expect(live.body!.dataStream).toBe(expected);
+        expect(live).toEqual(b.live.snapshot());
+        expect((f.storage.unit.snapshot as IDocumentData).body).toEqual(live.body);
+        expect((f.reopen() as IDocumentData).body).toEqual(live.body);
+        expect(selections.getTextRanges({ unitId: 'doc', subUnitId: 'doc' })?.[0]).toMatchObject({
+          startOffset: length,
+          endOffset: length,
+        });
+      }
+    expect(history.getUndoRedoStatus('doc')).toEqual({ undos: 3, redos: 0 });
     expect(
       await b.commands.executeCommand('doc.command.insert-text', {
         unitId: 'doc',

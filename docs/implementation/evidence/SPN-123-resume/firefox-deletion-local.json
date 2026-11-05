@@ -1,0 +1,357 @@
+{
+  "scope": "SPN-123 fixture-only Firefox storage-deletion context repair; local evidence does not replace native hosted acceptance",
+  "previousSource": "23999467d73f3b3241922f272ff4aa93e702ecd1",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "node": "v26.12.1",
+  "guards": {
+    "processTreeLimitKiB": 2097152,
+    "deadlineMs": 480000,
+    "serialized": true
+  },
+  "beforeWork": {
+    "memAvailableKiB": 9494404,
+    "cgroupCurrentBytes": 4381814784,
+    "cgroupMaxBytes": 8589934592,
+    "memoryPSI": "Unavailable in this environment; /proc and cgroup sampled, process tree guarded"
+  },
+  "sourceSha256": {
+    "scripts/ci/desktop-storage.ts": "dbbdfb8f4ef50223096253df1e986b04e3a752a155beef449d6e28c48871e942",
+    "scripts/ci/desktop-storage.test.ts": "3fb18ff11c7cb599bf858cfc1e6ad1dc8b19c28ad95fe847b676e5926fc0ce70",
+    "scripts/ci/desktop-offline-fixture.ts": "33857beeb29520fd7fe0595cdf84e74415f19d6d465c12cba90afab910d07326",
+    "scripts/ci/desktop-offline.ts": "4000cbbb13686fa16effa20f3f10a2a022671fbd037fb635bbdd632fdbe1d59e"
+  },
+  "checks": [
+    {
+      "name": "firefox-deletion-red",
+      "evidence": {
+        "startedAt": "2026-11-05T02:28:06.107Z",
+        "finishedAt": "2026-11-05T02:28:06.998Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--test",
+          "--test-name-pattern=deletion unloads the application",
+          "scripts/ci/desktop-storage.test.ts"
+        ],
+        "elapsedMs": 890,
+        "peakKiB": 305728,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "expected failing regression against old helper: clear-zero then verify-one, not passing acceptance"
+    },
+    {
+      "name": "firefox-deletion-tests",
+      "evidence": {
+        "startedAt": "2026-11-05T02:28:45.688Z",
+        "finishedAt": "2026-11-05T02:28:49.351Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--test",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/desktop-pointer.test.ts",
+          "scripts/ci/desktop-safari-identity.test.ts"
+        ],
+        "elapsedMs": 3662,
+        "peakKiB": 473600,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-typecheck",
+      "evidence": {
+        "startedAt": "2026-11-05T02:28:57.545Z",
+        "finishedAt": "2026-11-05T02:29:15.402Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--max-old-space-size=1024",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "elapsedMs": 17857,
+        "peakKiB": 2007808,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-format",
+      "evidence": {
+        "startedAt": "2026-11-05T02:29:20.864Z",
+        "finishedAt": "2026-11-05T02:29:21.877Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "scripts/ci/desktop-storage.ts",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/desktop-offline-fixture.ts",
+          "scripts/ci/desktop-offline.ts"
+        ],
+        "elapsedMs": 1013,
+        "peakKiB": 296888,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-lint",
+      "evidence": {
+        "startedAt": "2026-11-05T02:29:36.831Z",
+        "finishedAt": "2026-11-05T02:30:24.581Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "lint"
+        ],
+        "elapsedMs": 47749,
+        "peakKiB": 887872,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-guard-tests",
+      "evidence": {
+        "startedAt": "2026-11-05T02:31:58.121Z",
+        "finishedAt": "2026-11-05T02:31:59.114Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--test",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/desktop-pointer.test.ts",
+          "scripts/ci/desktop-safari-identity.test.ts"
+        ],
+        "elapsedMs": 993,
+        "peakKiB": 498200,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-guard-typecheck",
+      "evidence": {
+        "startedAt": "2026-11-05T02:32:06.179Z",
+        "finishedAt": "2026-11-05T02:32:22.716Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--max-old-space-size=1024",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "elapsedMs": 16536,
+        "peakKiB": 1933572,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-guard-lint",
+      "evidence": {
+        "startedAt": "2026-11-05T02:32:41.536Z",
+        "finishedAt": "2026-11-05T02:32:41.985Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/oxlint/bin/oxlint",
+          "--deny-warnings",
+          "scripts/ci/desktop-storage.test.ts"
+        ],
+        "elapsedMs": 448,
+        "peakKiB": 262576,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "firefox-deletion-guard-format",
+      "evidence": {
+        "startedAt": "2026-11-05T02:32:53.353Z",
+        "finishedAt": "2026-11-05T02:32:55.287Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--check",
+          "scripts/ci/desktop-storage.test.ts"
+        ],
+        "elapsedMs": 1933,
+        "peakKiB": 255108,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    }
+  ],
+  "outcomes": {
+    "red": {
+      "passed": 0,
+      "failed": 1
+    },
+    "initialFocusedTests": {
+      "passed": 85,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "finalFocusedTests": {
+      "passed": 87,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "typecheck": "passed",
+    "lint": "passed; full lint before two additional negative cases, then focused lint/format for the final test file",
+    "hosted": "pending new exact committed source"
+  },
+  "interpretation": "The deterministic writer demonstrates an unsafe live-document deletion context; it does not identify the original Firefox entry or producer. The repair preserves all deletion predicates and later storage-loss assertions.",
+  "archive": {
+    "name": "firefox-deletion-local.zip",
+    "sha256": "36b5f7ef31ea5c214cc8a5b9df7de606efec9a1c4c0a483d0acda09655bd0667",
+    "members": [
+      {
+        "name": "firefox-deletion-red.json",
+        "bytes": 560,
+        "sha256": "63b9c478c21f3a5594ccfa88b87340449e0511cfff690af5402115226fb223a7"
+      },
+      {
+        "name": "firefox-deletion-red.log",
+        "bytes": 2907,
+        "sha256": "8788868582ce76edeec77aa4d86145cc506913039ebb110266743e39cbb8dcba"
+      },
+      {
+        "name": "firefox-deletion-tests.json",
+        "bytes": 593,
+        "sha256": "8ca7fcc6a7f01dfa5a44347e55e3b5abd401a3e2fc28caf8739c52c85b38f659"
+      },
+      {
+        "name": "firefox-deletion-tests.log",
+        "bytes": 7792,
+        "sha256": "7e244e9f67815312d5a7db09e32f24d5e7e4cf1f904b7bc6018f8c85f5e672d6"
+      },
+      {
+        "name": "firefox-deletion-typecheck.json",
+        "bytes": 538,
+        "sha256": "fa29245318dbfed3a5cd234b0cacefc759da484ec6ced8f7ac55cdfef60b1c1a"
+      },
+      {
+        "name": "firefox-deletion-typecheck.log",
+        "bytes": 460,
+        "sha256": "45f6fd4ae9fa7b537faf7fbc514bb48c9ee17ec2300aa4ab30b13c87cbfe2e97"
+      },
+      {
+        "name": "firefox-deletion-format.json",
+        "bytes": 667,
+        "sha256": "6c5276dd59ba86ef7ca8657c36386649aa42ab7e398c068725f12d5d5f122868"
+      },
+      {
+        "name": "firefox-deletion-format.log",
+        "bytes": 783,
+        "sha256": "54e73b88ce1fead5bdb0f27d35746aff620bf02d4c15a561a3532ff797fcd3ef"
+      },
+      {
+        "name": "firefox-deletion-lint.json",
+        "bytes": 566,
+        "sha256": "bab13664637cd3e2e9393abe3193e8c9b92c673f8b396cc3c931f14b018a7f92"
+      },
+      {
+        "name": "firefox-deletion-lint.log",
+        "bytes": 1563,
+        "sha256": "c34a18c29172a9b204a3c00185de8aa03627a5a197ca559daaf5193bd84d570f"
+      },
+      {
+        "name": "firefox-deletion-guard-tests.json",
+        "bytes": 592,
+        "sha256": "354ff4665d1f59ae29e9b5dcba28ec67fd10f36e99c12c89db13e4f46f46b026"
+      },
+      {
+        "name": "firefox-deletion-guard-tests.log",
+        "bytes": 7980,
+        "sha256": "5f2818780b65b3c6b04d13b2fc3ca12ab9a21dfa20310b4430beea2aeec4df3c"
+      },
+      {
+        "name": "firefox-deletion-guard-typecheck.json",
+        "bytes": 538,
+        "sha256": "2af7c5bc6552a413154023266b12a4f95955bc6602ae9218fe0815aaa970a4a7"
+      },
+      {
+        "name": "firefox-deletion-guard-typecheck.log",
+        "bytes": 460,
+        "sha256": "4d7b61893fd17cfb948ce46ce160adaa466c8350edb205f232129c87a2b57378"
+      },
+      {
+        "name": "firefox-deletion-guard-lint.json",
+        "bytes": 547,
+        "sha256": "a6125c2172068df405d0ed2f7b4fd8f7fbf822f001122905c365cbacbed88c24"
+      },
+      {
+        "name": "firefox-deletion-guard-lint.log",
+        "bytes": 474,
+        "sha256": "659901a7e8f526922d255baef8f0dde91650163ad223d217ebede01e1215ab95"
+      },
+      {
+        "name": "firefox-deletion-guard-format.json",
+        "bytes": 548,
+        "sha256": "b8b4cefc070f04c212248e6af4f68c8f3bf6ec9e95c7564d220648272e56a51a"
+      },
+      {
+        "name": "firefox-deletion-guard-format.log",
+        "bytes": 541,
+        "sha256": "fa8bf4bcbfdbaa12e03532e48c5b49d62d5352834c7da3333706fee53b38342b"
+      }
+    ]
+  }
+}

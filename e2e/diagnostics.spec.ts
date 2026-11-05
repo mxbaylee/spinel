@@ -3,11 +3,15 @@ import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test } from '@playwright/test';
-import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
+import type { Browser, BrowserContext, Page, Response, TestInfo } from '@playwright/test';
+import type { DiagnosticRecord } from '@spinel/diagnostics';
 import { LocaleType } from '@univerjs/core';
 import { DatabaseSync, openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+import { DOC_HISTORY_GROUP_LIMIT } from '../src/ui/boundedDocHistory.ts';
+import { DIAGNOSTIC_SAMPLE_INTERVAL_MS } from '../web/diagnostics.ts';
 import { startApp } from './app-process.ts';
+import { nativeInput } from './offline-fixture.ts';
 
 async function fixture(browser: Browser, context: BrowserContext, info: TestInfo) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-diagnostics-e2e-'));
@@ -104,6 +108,257 @@ async function downloadDatabase(page: Page, destination: string) {
   expect((await readFile(destination)).subarray(0, 16).toString()).toBe('SQLite format 3\0');
   return new DatabaseSync(destination);
 }
+
+test('production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export', async ({
+  page,
+  context,
+  browser,
+}, info) => {
+  test.skip(
+    info.project.name !== 'production',
+    'Prepared offline copies require the production runtime manifest.',
+  );
+  test.setTimeout(180_000);
+  const f = await fixture(browser, context, info);
+  const member = await f.member.newPage();
+  try {
+    const item = await f.create('Private diagnostic diary', 'doc');
+    const initialContent = 'Private native content 123';
+    const capacityInput = '.'.repeat(DOC_HISTORY_GROUP_LIMIT + 8);
+    const laterInput = ' Later private sample';
+    const privateNativeContent = initialContent + capacityInput + laterInput;
+    let collectionRequests = 0;
+    const eventResponses: Response[] = [];
+    member.on('request', (request) => {
+      if (request.url().endsWith('/api/diagnostics/collection')) collectionRequests++;
+    });
+    member.on('response', (response) => {
+      if (response.url().endsWith('/api/diagnostics/events')) eventResponses.push(response);
+    });
+    const acknowledged = () => {
+      const response = member.waitForResponse(
+        (response) => {
+          if (!response.url().endsWith('/api/diagnostics/events') || response.status() !== 200)
+            return false;
+          const batch = response.request().postDataJSON() as { records: DiagnosticRecord[] };
+          return batch.records.some(
+            ({ event, context }) =>
+              context.fileId === item.id &&
+              event.name === 'operation.result' &&
+              event.details.operation === 'document-save-server-ack' &&
+              event.details.outcome === 'success',
+          );
+        },
+        { timeout: 15_000 },
+      );
+      void response.catch(() => {});
+      return response;
+    };
+    const nativeEvents = [
+      'native.flush',
+      'native.checkpoint',
+      'offline.persistence',
+      'sync.client.connection',
+    ];
+    const capacityFlush = (row: Record<string, unknown>) => {
+      const details = JSON.parse(String(row.details));
+      return details.outcome === 'success' && details.reason === 'capacity';
+    };
+    const collection = member.waitForResponse(
+      (response) =>
+        response.url().endsWith('/api/diagnostics/collection') && response.status() === 200,
+    );
+    await member.goto(f.origin);
+    await member.bringToFront();
+    const identity = (await (await collection).json()) as { generation: string; binding: string };
+    const query = member.getByRole('searchbox', { name: 'Search files', exact: true });
+    await query.fill('Private diagnostic diary');
+    await expect(
+      member.getByRole('region', { name: 'Search results', exact: true }).getByRole('status'),
+    ).toHaveText('1 result');
+    await member.getByRole('button', { name: 'Clear search and filters', exact: true }).click();
+    await member
+      .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
+      .click();
+    await member
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    await expect(member.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
+      `${item.name} is available offline on this device.`,
+      { timeout: 120_000 },
+    );
+    await member.getByRole('button', { name: `${item.name} Doc`, exact: true }).click();
+    const saved = member.getByRole('status', { name: 'Save status', exact: true });
+    await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
+      timeout: 30_000,
+    });
+    const uploaded = acknowledged();
+    await member.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+    await nativeInput(member).focus();
+    await member.keyboard.press('Control+Home');
+    // Confirm the first save independently, then exercise ordinary per-key work
+    // under the production sampling and HTTP admission policy.
+    await member.keyboard.insertText(initialContent);
+    await expect(saved).toHaveText('Synced. All changes are saved on the server and this device.', {
+      timeout: 30_000,
+    });
+    expect((await (await uploaded).json()).dropped).toBe(0);
+    expect(collectionRequests).toBe(1);
+    const persisted = new DatabaseSync(join(f.directory, 'diagnostics.sqlite'));
+    try {
+      await expect
+        .poll(
+          () =>
+            persisted
+              .prepare(
+                "SELECT count(*) AS n FROM events WHERE source='frontend' AND actor_id=? AND file_id=? AND name='operation.result' AND json_extract(details,'$.operation')='document-save-local' AND json_extract(details,'$.outcome')='success'",
+              )
+              .get(f.owner.id, item.id)?.n,
+        )
+        .toBeGreaterThan(0);
+      // One insertText insertion may be flushed entirely by the SDK. Individual
+      // native keys cross our owned capacity boundary without relying on idle races.
+      await nativeInput(member).focus();
+      await member.keyboard.press('Control+End');
+      await member.keyboard.type(capacityInput);
+      await expect(saved).toHaveText(
+        'Synced. All changes are saved on the server and this device.',
+        {
+          timeout: 30_000,
+        },
+      );
+      // Hiding the member tab deliberately discards queued diagnostics. Confirm
+      // every required correlated observation is durable before changing tabs.
+      await expect
+        .poll(() => {
+          const rows = persisted
+            .prepare(
+              "SELECT name, details FROM events WHERE source='frontend' AND actor_id=? AND file_id=?",
+            )
+            .all(f.owner.id, item.id);
+          return nativeEvents.filter((name) =>
+            rows.some(
+              (row) => row.name === name && (name !== 'native.flush' || capacityFlush(row)),
+            ),
+          );
+        })
+        .toEqual(nativeEvents);
+      const acknowledgedRows = () =>
+        Number(
+          persisted
+            .prepare(
+              "SELECT count(*) AS n FROM events WHERE source='frontend' AND actor_id=? AND file_id=? AND name='operation.result' AND json_extract(details,'$.operation')='document-save-server-ack' AND json_extract(details,'$.outcome')='success'",
+            )
+            .get(f.owner.id, item.id)?.n ?? 0,
+        );
+      const firstWindowAcknowledgments = acknowledgedRows();
+      expect(firstWindowAcknowledgments).toBeGreaterThan(0);
+      // This is the actual sampling boundary, not a synchronization delay. The
+      // same visible account/editor must collect a fresh later save without any
+      // navigation, visibility toggle or lifecycle-based recovery.
+      await test.step('Cross the production diagnostic sampling interval', async () => {
+        await member.waitForTimeout(DIAGNOSTIC_SAMPLE_INTERVAL_MS);
+      });
+      const laterUploaded = acknowledged();
+      await nativeInput(member).focus();
+      await member.keyboard.press('Control+End');
+      await member.keyboard.insertText(laterInput);
+      await expect(saved).toHaveText(
+        'Synced. All changes are saved on the server and this device.',
+        { timeout: 30_000 },
+      );
+      expect((await (await laterUploaded).json()).dropped).toBe(0);
+      await expect.poll(acknowledgedRows).toBe(firstWindowAcknowledgments + 1);
+      expect(collectionRequests).toBe(1);
+      const batches = await Promise.all(
+        eventResponses.map(async (response) => {
+          expect(response.status(), 'Ordinary native work stays within HTTP admission').toBe(200);
+          const batch = response.request().postDataJSON() as {
+            generation: string;
+            binding: string;
+            records: DiagnosticRecord[];
+          };
+          expect({ generation: batch.generation, binding: batch.binding }).toEqual(identity);
+          expect(batch.records.length).toBeLessThanOrEqual(64);
+          const result = await response.json();
+          expect(result).toEqual({ accepted: batch.records.length, dropped: 0 });
+          return { records: batch.records.length, status: response.status() };
+        }),
+      );
+      await info.attach('diagnostic-admission', {
+        body: Buffer.from(
+          JSON.stringify(
+            {
+              sampleIntervalMs: DIAGNOSTIC_SAMPLE_INTERVAL_MS,
+              nativeCapacityKeys: capacityInput.length,
+              collectionVerifications: collectionRequests,
+              firstWindowAcknowledgments,
+              laterWindowAcknowledgments: acknowledgedRows() - firstWindowAcknowledgments,
+              batches,
+            },
+            null,
+            2,
+          ),
+        ),
+        contentType: 'application/json',
+      });
+    } finally {
+      persisted.close();
+    }
+    const content = await f.member.request.get(`${f.origin}/api/items/${item.id}/doc`);
+    expect(content.status()).toBe(200);
+    expect(JSON.stringify(await content.json())).toContain(privateNativeContent);
+    await page.bringToFront();
+    await page.goto(`${f.origin}/admin#health`);
+    const exported = await downloadDatabase(page, join(f.directory, 'operations.sqlite'));
+    try {
+      const rows = exported.prepare('SELECT * FROM events').all();
+      for (const [source, operation] of [
+        ['frontend', 'document-open'],
+        ['frontend', 'document-save-local'],
+        ['frontend', 'document-save-server-ack'],
+        ['frontend', 'search'],
+        ['backend', 'search'],
+      ])
+        expect(
+          rows.some(
+            (row) =>
+              row.source === source &&
+              row.name === 'operation.result' &&
+              JSON.parse(String(row.details)).operation === operation &&
+              JSON.parse(String(row.details)).outcome === 'success',
+          ),
+          `${source} ${operation}`,
+        ).toBe(true);
+      for (const name of nativeEvents)
+        expect(
+          rows.some(
+            (row) =>
+              row.name === name &&
+              row.source === 'frontend' &&
+              row.actor_id === f.owner.id &&
+              row.file_id === item.id &&
+              (name !== 'native.flush' || capacityFlush(row)),
+          ),
+          name,
+        ).toBe(true);
+      const encoded = JSON.stringify(rows);
+      for (const privateText of [
+        item.name,
+        initialContent,
+        laterInput,
+        privateNativeContent,
+        f.ownerSession.token,
+      ])
+        expect(encoded).not.toContain(privateText);
+      expect(exported.prepare('PRAGMA user_version').get()?.user_version).toBe(1);
+    } finally {
+      exported.close();
+    }
+  } finally {
+    await f.close();
+  }
+});
 
 test('Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation', async ({
   page,

@@ -26,6 +26,8 @@ export interface DocResponsivenessEvidence {
   pending: { history: number; collaboration: number };
   highWater: { history: number; collaboration: number };
   flushes: Array<{
+    /** Older retained schema-5 policy rows predate diagnostic outcomes. */
+    outcome?: 'success' | 'failure';
     reason: string;
     startedAt: number;
     durationMs: number;

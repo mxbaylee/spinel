@@ -1,10 +1,20 @@
 import type { DesktopBrowser } from './desktop-browser.ts';
 
-export function clearDesktopStorage(browser: Pick<DesktopBrowser, 'evaluate'>, database: string) {
-  // One driver request only: an unresponsive/crashed page must not consume a
+export const desktopStoragePath = '/_desktop-storage-reset';
+
+export async function clearDesktopStorage(
+  browser: Pick<DesktopBrowser, 'goto' | 'evaluate'>,
+  database: string,
+  origin: string,
+) {
+  const documentURL = new URL(desktopStoragePath, origin).href;
+  // Unload the application before yielding through storage deletion. Its
+  // pending effects must not recreate preferences between clear and verify.
+  await browser.goto(documentURL);
+  // One script request only: an unresponsive/crashed page must not consume a
   // second script budget trying to recover diagnostic state.
   return browser.evaluate<StorageDeletion>(
-    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)})`,
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(documentURL)})`,
   );
 }
 
@@ -25,7 +35,10 @@ export type StorageDeletion = {
 
 // Serialized into the real browser page. Keep this function self-contained.
 // Leave two seconds within the existing 30-second driver bound to return evidence.
-export async function deleteDesktopStorage(database: string): Promise<StorageDeletion> {
+export async function deleteDesktopStorage(
+  database: string,
+  documentURL: string,
+): Promise<StorageDeletion> {
   const report: StorageDeletion = {
     status: 'running',
     database,
@@ -61,6 +74,16 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     }
   }
   try {
+    await step('verify-deletion-context', () => {
+      const context = {
+        url: location.href,
+        inert: document.documentElement.getAttribute('data-desktop-storage-reset') === 'true',
+        scripts: document.scripts.length,
+      };
+      if (context.url !== documentURL || !context.inert || context.scripts)
+        throw new Error(`Storage deletion document is not ready: ${JSON.stringify(context)}`);
+      return context;
+    });
     const registrations = await step('serviceWorker.getRegistrations', () =>
       navigator.serviceWorker.getRegistrations(),
     );

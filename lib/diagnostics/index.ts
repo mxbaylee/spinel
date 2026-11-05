@@ -1,5 +1,25 @@
 import { isSyncDiagnosticEvent, syncDiagnosticMessage } from './sync.ts';
 import type { SyncDiagnosticEvent } from './sync.ts';
+import { isServerDiagnosticEvent } from './server.ts';
+import type { ServerDiagnosticEvent } from './server.ts';
+export { isServerDiagnosticEvent, isMaintenanceDiagnosticEvent } from './server.ts';
+export type {
+  ServerDiagnosticEvent,
+  MaintenanceDiagnosticEvent,
+  HistoryDiagnosticEvent,
+  OfflineServerDiagnosticEvent,
+} from './server.ts';
+import { isClientDiagnosticEvent } from './client.ts';
+import type { ClientDiagnosticEvent } from './client.ts';
+export { isClientDiagnosticEvent, captureDiagnostic, CLIENT_FAILURE_REASONS } from './client.ts';
+export type {
+  ClientDiagnosticEvent,
+  ClientDiagnosticOutcome,
+  ClientConnectionReason,
+  ClientQueueObservation,
+  DiagnosticScope,
+  DiagnosticSource,
+} from './client.ts';
 export {
   observeSync,
   syncMutationId,
@@ -31,6 +51,8 @@ export const JOBS = [
 export const OPERATIONS = [
   'document-open',
   'document-save',
+  'document-save-local',
+  'document-save-server-ack',
   'doc-compose',
   'formula-parse',
   'formula-evaluate',
@@ -54,7 +76,9 @@ export type Route = (typeof ROUTES)[number];
 export type Level = (typeof LEVELS)[number];
 
 export type DiagnosticEvent =
+  | ServerDiagnosticEvent
   | SyncDiagnosticEvent
+  | ClientDiagnosticEvent
   | {
       name: 'job.result';
       details: { job: Job; outcome: 'success' | 'failure'; durationMs: number; count?: number };
@@ -215,6 +239,8 @@ export function isDiagnosticContext(value: unknown): value is DiagnosticContext 
 }
 
 export function isDiagnosticEvent(value: unknown): value is DiagnosticEvent {
+  if (isServerDiagnosticEvent(value)) return true;
+  if (isClientDiagnosticEvent(value)) return true;
   if (isSyncDiagnosticEvent(value)) return true;
   if (!isObject(value) || !isObject(value.details)) return false;
   const d = value.details;

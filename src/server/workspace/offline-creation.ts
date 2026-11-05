@@ -9,6 +9,8 @@ import type { CollaborationStore } from '../collaboration/service.ts';
 import { SQLiteSyncStorage } from '../sync/store.ts';
 import { restoreFenced } from '../collaboration/restore-fences.ts';
 import type { WorkspaceStore } from './store.ts';
+import { observe } from '@spinel/diagnostics';
+import type { FormulaDiagnostics } from '../formulas/routes.ts';
 
 export class OfflineCreationError extends AuthError {
   readonly code: 'folder-unavailable' | 'creation-conflict';
@@ -29,10 +31,16 @@ export class OfflineCreations {
   private readonly workspace: WorkspaceStore;
   private readonly collaboration: CollaborationStore;
   private readonly storage: SQLiteSyncStorage;
+  private readonly diagnostics?: FormulaDiagnostics;
 
-  constructor(workspace: WorkspaceStore, collaboration: CollaborationStore) {
+  constructor(
+    workspace: WorkspaceStore,
+    collaboration: CollaborationStore,
+    diagnostics?: FormulaDiagnostics,
+  ) {
     this.workspace = workspace;
     this.collaboration = collaboration;
+    this.diagnostics = diagnostics;
     this.storage = new SQLiteSyncStorage(workspace.auth);
     // Do not attach an item foreign key: deleting a document must not let an
     // old lost-acknowledgement retry recreate it or reuse its native generation.
@@ -59,6 +67,38 @@ export class OfflineCreations {
   }
 
   create(user: string, input: unknown, verify: () => void): OfflineCreationResponse {
+    const started = performance.now();
+    const observed = (outcome: 'published' | 'duplicate' | 'failure', fileId?: string) => {
+      if (!this.diagnostics) return;
+      try {
+        verify();
+        this.workspace.owner(user);
+        if (fileId) this.workspace.get(user, fileId, 'edit');
+        observe(
+          this.diagnostics
+            ? (event, context) => this.diagnostics!(event, context, user)
+            : undefined,
+          {
+            name: 'offline.server.publication',
+            details: { outcome, durationMs: Math.max(0, performance.now() - started) },
+          },
+          { component: 'server', route: '/api/items', ...(fileId ? { fileId } : {}) },
+        );
+      } catch {
+        /* Diagnostics neither retain revoked context nor change publication. */
+      }
+    };
+    try {
+      const result = this.createCore(user, input, verify);
+      observed(result.duplicate ? 'duplicate' : 'published', result.response.item.id);
+      return result.response;
+    } catch (error) {
+      observed('failure');
+      throw error;
+    }
+  }
+
+  private createCore(user: string, input: unknown, verify: () => void) {
     verify();
     this.workspace.owner(user);
     if (!isOfflineCreationRequest(input))
@@ -113,7 +153,7 @@ export class OfflineCreations {
           throw conflict();
         try {
           if (this.workspace.fileOwner(input.itemId) !== receipt.owner_id) throw conflict();
-          return result();
+          return { response: result(), duplicate: true };
         } catch {
           throw conflict();
         }
@@ -189,7 +229,7 @@ export class OfflineCreations {
           'INSERT INTO workspace_offline_creations(item_id,unit_id,user_id,request_hash,owner_id) VALUES(?,?,?,?,?)',
         )
         .run(input.itemId, input.unitId, user, requestHash, ownerId);
-      return result();
+      return { response: result(), duplicate: false };
     });
   }
 }

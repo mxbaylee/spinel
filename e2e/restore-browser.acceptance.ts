@@ -1293,8 +1293,9 @@ try {
   setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   setStage('authenticating-after-session-reset');
-  // Anonymous /admin deliberately returns 404; reauthenticate at the public entry.
-  await page.goto(`${origin}/sign-in`);
+  // The shell redirects when its health probe observes the expired session.
+  // Observe that transition without starting a competing navigation.
+  await page.waitForURL(`${origin}/sign-in`);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
   await page.goto(`${origin}/admin#health`);

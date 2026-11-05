@@ -105,8 +105,9 @@ import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
 import { observeDocResponsiveness } from './docResponsivenessEvidence.ts';
 import { boundDocHistory, DOC_HISTORY_RETENTION_LIMIT } from '../src/ui/boundedDocHistory.ts';
-import { observeOperation } from '@spinel/diagnostics';
+import { observe, observeOperation } from '@spinel/diagnostics';
 import { useDiagnostics } from './useDiagnostics.tsx';
+import { beginOperation, diagnosticSource } from './operationDiagnostics.ts';
 import { BehaviorSubject } from 'rxjs';
 import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
 
@@ -172,6 +173,12 @@ export function DocEditor({
     failed: false,
   });
   useEffect(() => {
+    const source = diagnosticSource(diagnostics, {
+      component: 'editor',
+      fileId: id,
+      ...(spaceId ? { spaceId, route: '/spaces/:id' as const } : { route: '/files/:id' as const }),
+    });
+    const opened = beginOperation(source, 'document-open');
     let disposed = false;
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
@@ -573,6 +580,7 @@ export function DocEditor({
         spaceId,
         access: data.access,
         kind: 'doc',
+        diagnostics: source,
         signal: loading.signal,
         isCurrent: () => !disposed,
         offline: data.offline,
@@ -677,7 +685,28 @@ export function DocEditor({
         boundedHistory = boundDocHistory(univer, data.unitId, (flush) => {
           responsivenessEvidence?.flushed(flush);
           const operation = diagnostics.begin();
-          if (operation)
+          if (operation) {
+            // Put the fixed flush reason first so browser sampling admits or
+            // drops this whole observation and its operation metrics together.
+            observe(
+              operation.sink,
+              {
+                name: 'native.flush',
+                details: {
+                  reason: flush.reason,
+                  outcome: flush.outcome,
+                  durationMs: flush.durationMs,
+                  history: flush.history,
+                  collaboration: flush.collaboration,
+                },
+              },
+              {
+                component: 'editor',
+                fileId: id,
+                ...(spaceId ? { spaceId } : {}),
+                runId: operation.runId,
+              },
+            );
             observeOperation(
               operation.sink,
               {
@@ -687,9 +716,10 @@ export function DocEditor({
                 runId: operation.runId,
               },
               'doc-compose',
-              'success',
+              flush.outcome,
               flush.durationMs,
             );
+          }
         });
       }
       startBoundedHistory();
@@ -975,7 +1005,9 @@ export function DocEditor({
       save = watchCollaboration(univer, publish, readonly, publishConnection);
       controller.current = save;
       setPhoneReady(true);
+      opened('success');
     })().catch((error) => {
+      opened(disposed || loading.signal.aborted ? 'cancelled' : 'failure');
       // Failed checkpoint/SDK initialization must not leave a writable canvas
       // without native capture. A bound client may already own pending input.
       if (!captureReady) {
@@ -995,6 +1027,7 @@ export function DocEditor({
         });
     });
     return () => {
+      opened('cancelled');
       disposed = true;
       copyStatus.next('This document is closed.');
       copyStatus.complete();

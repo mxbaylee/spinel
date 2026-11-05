@@ -11,6 +11,7 @@ import { WorkspaceStore } from '../workspace/store.ts';
 import { DiagnosticsStore } from './store.ts';
 import type { DiagnosticsSnapshot } from './store.ts';
 import { DiagnosticRateLimit, diagnosticsRoutes } from './routes.ts';
+import type { DiagnosticEvent } from '@spinel/diagnostics';
 
 async function fixture() {
   const directory = mkdtempSync(join(tmpdir(), 'spinel-diagnostics-http-'));
@@ -170,6 +171,62 @@ test('ingestion derives actor, rejects spoofing/raw content and rechecks file gr
         expect(encoded).not.toContain(secret);
     } finally {
       stored.close();
+    }
+  } finally {
+    await f.close();
+  }
+});
+
+test('browser admission permits only exact client observations and keeps source, actor and access authoritative', async () => {
+  const f = await fixture();
+  const client: DiagnosticEvent = {
+    name: 'sync.client.connection',
+    details: {
+      reason: 'transport',
+      outcome: 'success',
+      durationMs: 40,
+      pendingCount: 2,
+      oldestPendingAgeMs: null,
+    },
+  };
+  const send = (event: unknown, headers: Record<string, string> = {}, extraContext = {}) =>
+    f.post(
+      '/diagnostics/events',
+      {
+        ...f.batch(),
+        records: [{ ...f.data(), event, context: { ...f.data().context, ...extraContext } }],
+      },
+      headers,
+    );
+  try {
+    expect((await send(client)).status).toBe(200);
+    for (const event of [
+      {
+        name: 'runtime.cpu',
+        metric: { kind: 'gauge', unit: 'milliseconds', value: 5 },
+        details: { windowMs: 60000 },
+      },
+      { name: 'maintenance.phase', details: { phase: 'running' } },
+      {
+        name: 'sync.edit.transformed',
+        metric: { kind: 'counter', unit: 'count', value: 1 },
+        details: {},
+      },
+      { name: 'offline.server.publication', details: { outcome: 'published', durationMs: 1 } },
+      { ...client, details: { ...client.details, secret: 'PRIVATE CONTENT' } },
+    ])
+      expect((await send(event)).status).toBe(400);
+    expect((await send(client, {}, { component: 'server' })).status).toBe(400);
+    expect((await send(client, { Cookie: '' })).status).toBe(401);
+    expect((await send(client, { Cookie: f.otherCookie })).status).toBe(403);
+    expect((await send(client, {}, { fileId: randomUUID() })).status).toBe(404);
+    const db = new DatabaseSync(f.diagnostics.path);
+    try {
+      expect(db.prepare('SELECT name,source,actor_id FROM events').all()).toEqual([
+        { name: client.name, source: 'frontend', actor_id: f.owner.id },
+      ]);
+    } finally {
+      db.close();
     }
   } finally {
     await f.close();

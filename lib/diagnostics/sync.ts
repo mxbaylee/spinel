@@ -86,6 +86,10 @@ export const SYNC_RESYNC_REASONS = [
   'invariant',
   'divergence',
   'retention',
+  'refused',
+  'unavailable',
+  'capacity',
+  'retry-conflict',
 ] as const;
 
 interface SyncDetails {

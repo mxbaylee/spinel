@@ -705,7 +705,7 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
-    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
+    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`, f.origin);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
     await browser.goto(f.origin + '/');

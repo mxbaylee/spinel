@@ -13,6 +13,7 @@ import { PortableFiles, PORTABLE_LIMIT } from './portable.ts';
 import { migrateSpaceSchema } from './space-schema.ts';
 import { SpaceStore } from './spaces.ts';
 import { WorkspaceStore } from './store.ts';
+import type { FormulaDiagnostics } from '../formulas/routes.ts';
 
 const databases: DatabaseSync[] = [];
 const directories: string[] = [];
@@ -23,7 +24,7 @@ afterEach(() => {
     rmSync(directory, { recursive: true, force: true });
 });
 
-function fixture(path = ':memory:') {
+function fixture(path = ':memory:', diagnostics?: FormulaDiagnostics) {
   const db = new DatabaseSync(path);
   databases.push(db);
   const auth = new AuthStore(db);
@@ -32,7 +33,7 @@ function fixture(path = ':memory:') {
   const owner = auth.createUser('Owner');
   const collaborator = auth.createUser('Collaborator');
   const operator = auth.createUser('Operator', true);
-  const files = new PortableFiles(workspace);
+  const files = new PortableFiles(workspace, undefined, diagnostics);
   const snapshot = (kind: 'sheet' | 'doc', id = 'original') =>
     kind === 'sheet'
       ? {
@@ -62,6 +63,33 @@ function fixture(path = ':memory:') {
   });
   return { db, auth, workspace, owner, collaborator, operator, files, snapshot, input };
 }
+
+test('recovery observations count one publication across concurrent retries and cannot alter durable content', async () => {
+  const sink = vi.fn<FormulaDiagnostics>();
+  const f = fixture(':memory:', sink);
+  const request = f.input('doc');
+  const [one, two] = await Promise.all([
+    f.files.recover(f.owner.id, request, () => {}),
+    f.files.recover(f.owner.id, request, () => {}),
+  ]);
+  expect(two).toEqual(one);
+  expect(sink.mock.calls.map(([event]) => event.details)).toEqual([
+    { outcome: 'published', durationMs: expect.any(Number) },
+    { outcome: 'duplicate', durationMs: expect.any(Number) },
+  ]);
+  expect(
+    sink.mock.calls.every(
+      ([, context, actor]) => actor === f.owner.id && context.fileId === one.id,
+    ),
+  ).toBe(true);
+  expect(JSON.stringify(sink.mock.calls)).not.toContain('Offline work');
+  sink.mockImplementation(() => {
+    throw new Error('Observer failed');
+  });
+  expect(await f.files.recover(f.owner.id, request, () => {})).toEqual(one);
+  expect(f.files.docs.load(f.owner.id, one.id).snapshot?.body?.dataStream).toBe('Offline work\r\n');
+  expect(f.db.prepare('SELECT count(*) AS n FROM workspace_offline_recoveries').get()?.n).toBe(1);
+});
 
 test.each(['sheet', 'doc'] as const)(
   '%s recovery creates one root-owned copy and preserves the changed original across repeated/concurrent retries',

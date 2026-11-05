@@ -42,4 +42,21 @@ exclusion of guest telemetry. No refusal or divergence payload shapes are collec
 `sync.edit.offset` is a count of writes alongside a clipped shift band. The wider
 original command band is absent from the mutation, so the count is an upper bound
 on actual offset writes. It contains no coordinates, values, ranges or dimensions.
-SPN-058 owns the registered resync/pending-loss observations from browser state.
+Browser adapters emit registered resync/pending-loss observations at the native
+recovery handoff. The strict client registry also defines connection/queue/receipt,
+flush/checkpoint and offline outcomes. Local durable saving and server
+acknowledgment use distinct operation names; a skipped or offline hook cannot
+claim a server success. Server-only maintenance, history, publication and runtime
+events have their own strict validator and are not browser-admissible.
+
+The browser adapter samples complete routine success/skip bundles by fixed
+families every 30 seconds; failures/cancellations bypass routine sampling but
+retain hard collection limits. Counters describe retained observations, not
+unsampled operation totals. A 429 discards the old queue and permits one fresh
+verification after a minute, cancelled by lifecycle suspension. See the canonical
+inventory for grouping, budget, loss and attribution semantics.
+
+Spinel maintains the actual production boundaries and regression owners in
+[`docs/diagnostics.md`](../../docs/diagnostics.md#emitter-maintenance-inventory).
+Update that inventory when changing an observed operation; fixed registry names
+alone do not establish production coverage.

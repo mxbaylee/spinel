@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { materialize, SyncError, SyncServer } from '@spinel/sync-server';
 import type { SubmitRequest, SyncRevision } from '@spinel/sync-server';
 import type { DiagnosticContext, DiagnosticEvent } from '@spinel/diagnostics';
+import { observeOperation } from '@spinel/diagnostics';
 import { SQLiteSyncStorage } from '../sync/store.ts';
 import type { RestoreJob } from './generations.ts';
 import { CollaborationGenerations } from './generations.ts';
@@ -80,6 +81,11 @@ function validateTargets(changeset: Readonly<IChangeset>) {
 
 /** Application boundary. HTTP/WebSocket integration supplies trusted identities. */
 export class CollaborationStore {
+  private readonly diagnostics?: (
+    event: DiagnosticEvent,
+    context: DiagnosticContext,
+    actorId: string,
+  ) => void;
   readonly generations: CollaborationGenerations;
   readonly sync: SyncServer<SyncIdentity>;
   private readonly syncStorage: SQLiteSyncStorage;
@@ -109,6 +115,7 @@ export class CollaborationStore {
     } = {},
   ) {
     this.observePurge = options.observePurge;
+    this.diagnostics = options.diagnostics;
     const main = workspace.auth.database
       .prepare('PRAGMA database_list')
       .all()
@@ -739,6 +746,31 @@ export class CollaborationStore {
     if (job.status === 'complete') return finishWaiter(Promise.resolve(job));
     if (job.status !== 'staging')
       throw new AuthError(409, 'Restore was interrupted. Start a new restore.');
+    // Only the owning run records completion. Coalesced callers and durable
+    // receipt retries above must not count the same generation replacement twice.
+    const started = performance.now();
+    const observed = (outcome: 'success' | 'failure') => {
+      if (!this.diagnostics || user.startsWith('guest:')) return;
+      try {
+        checkSession();
+        this.workspaceAccess(user, id, 'edit', custom);
+        observeOperation(
+          (event, context) => this.diagnostics!(event, context, user),
+          {
+            component: 'server',
+            fileId: id,
+            route: '/api/history/:id',
+            runId: job.id,
+            ...(typeof custom.spaceId === 'string' ? { spaceId: custom.spaceId } : {}),
+          },
+          'snapshot-restore',
+          outcome,
+          Math.max(0, performance.now() - started),
+        );
+      } catch {
+        /* Observation is never restore authority, nor permission to retain revoked context. */
+      }
+    };
     const run = (async () => {
       try {
         await Promise.all(this.admitted.get(job.previousUnit) ?? []);
@@ -765,8 +797,17 @@ export class CollaborationStore {
             this.workspaceAccess(user, id, 'edit', custom);
           },
         );
-        return this.generations.finish(job.id, before.revision, preserve, checkSession, custom);
+        const result = this.generations.finish(
+          job.id,
+          before.revision,
+          preserve,
+          checkSession,
+          custom,
+        );
+        observed('success');
+        return result;
       } catch (error) {
+        observed('failure');
         // All awaited creation work has settled; cancellation cannot race a late create.
         this.generations.cancel(job.id);
         throw error;
