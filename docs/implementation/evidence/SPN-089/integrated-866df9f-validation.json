@@ -1,0 +1,1466 @@
+{
+  "schemaVersion": 1,
+  "checkpoint": {
+    "observedAt": "2026-11-05 00:55:34 UTC",
+    "phase": "Integrated source A rejected by its source CI; retained historical evidence, not merge acceptance",
+    "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "baseSha": "eb32117f5d09c28cd411063256db6d645335ae8a",
+    "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+    "tree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "sourceCi": {
+      "run": 41938091631,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "successfulJobs": 31,
+      "failedJobs": 2,
+      "reason": "History viewer fixture lost its document surface; built-in retry passed but failOnFlakyTests correctly rejected the run.",
+      "receipt": "integrated-866df9f-ci.json",
+      "firstFailure": "../../../review-assets/spn-089-866df9f/history-first-failure/receipt.json"
+    },
+    "editedCi": {
+      "run": 41941715656,
+      "attempt": 1,
+      "status": "in progress at this checkpoint",
+      "acceptanceBoundary": "Any later pass does not repair the source run's first-attempt failure."
+    }
+  },
+  "sourceReviews": {
+    "source": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "phase": "pre-push",
+    "agentReviewOnly": true,
+    "reviews": [
+      {
+        "reviewer": "/root/dialog_audit",
+        "source": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+        "tree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+        "score": 97,
+        "rubric": [
+          35,
+          25,
+          17,
+          10,
+          10
+        ],
+        "blockingFindings": [],
+        "disposition": "Approved for validation publication only. Three points withheld for pending combined-source hosted CI/native/Storybook acceptance and fresh visual confirmation.",
+        "independentChecks": [
+          "Clean exact HEAD and parents",
+          "Application, stories, assertions, E2E, screenshot/serial runners and manifests byte-identical to ee996e95",
+          "Main's Doc patch/tests/notices byte-identical to eb32117",
+          "Both historical evidence subtrees exact",
+          "192 patch tests, typecheck, lint/dependency/format, generated backlog and exact-title PR receipts",
+          "22 open tickets, next145, 19 completions,45-owner114-ID inventory",
+          "SPN-144 retains original activation anomaly and does not waive current acceptance"
+        ],
+        "resolvedFindings": [
+          "Local stale-index checker completed before generator; generated input changed and subsequent validation passed; failed receipt retained"
+        ],
+        "retainedCaveats": [
+          "Compact SDK Storybook Name-input styling differs from production; nonblocking title-review fidelity limit"
+        ],
+        "agentReviewOnly": true
+      },
+      {
+        "reviewer": "/root/verification_plan",
+        "source": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+        "tree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+        "score": 97,
+        "rubric": [
+          35,
+          25,
+          17,
+          10,
+          10
+        ],
+        "blockingFindings": [],
+        "disposition": "Approved for validation publication only. Three points withheld for pending integrated runtime CI, native browser, Storybook and visual acceptance.",
+        "independentChecks": [
+          "Exact clean HEAD, parents and full source diff against main",
+          "Shared XOR title API, decorative accessibility, native lifecycle and public SDK title API",
+          "Actual-content first-line geometry assertion and genuinely wrapped fixture",
+          "Production native copy E2E ownership and Steady fixture lifecycle",
+          "Exact application/source and historical-evidence subtree equivalence",
+          "45 owners and114 unique story IDs",
+          "Both completions and SPN144 registration,22 open tickets,next145",
+          "Local receipts and exact-title PR check10770 lines"
+        ],
+        "findings": [
+          {
+            "severity": "historical reliability finding",
+            "disposition": "SPN144 owns unknown-cause activation anomaly; current failures cannot be waived"
+          },
+          {
+            "severity": "P3 resolved process error",
+            "disposition": "Retained checker-before-generator failure; generated input changed, then validated"
+          }
+        ],
+        "agentReviewOnly": true
+      }
+    ]
+  },
+  "hostedBuild": {
+    "artifactId": 13374328951,
+    "runId": 41938091629,
+    "bytes": 6192898,
+    "sha256": "d31645104411b5154967c3ca862e551725317224b96ee7af6477ccf640211d15",
+    "archiveFiles": 363,
+    "archiveDirectories": 0,
+    "byteVerifiedFiles": 363,
+    "extractedBytes": 22829437,
+    "byteVerification": "Every ZIP file passed its size/CRC-32 checks; decoded byte length and SHA-256 matched an independent disk read.",
+    "identity": {
+      "sha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+      "checkedOutSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41938091629",
+      "builtAt": "2026-11-05T00:06:39.078Z"
+    },
+    "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "treeVerification": {
+      "source": "Verified against the local committed source object.",
+      "tested": "Verified against the local tested commit object.",
+      "note": "sha.json contains commit identities, not Git tree hashes."
+    },
+    "catalogueStories": 1056,
+    "indexSha256": "0b3279bc24df52ae9557f9053058b93827f00211a1fa33c97cfcbce4dc208be1",
+    "inventoryOwners": 45,
+    "inventoryVerification": "Exact story-entry availability only; this helper executes no Storybook plays or visual checks.",
+    "inventorySource": {
+      "commit": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+      "path": "docs/implementation/SPN-089.md",
+      "blobSha": "557742236a3486d4c0cdce02f249820eea11a2c2",
+      "sha256": "e13c360b8af7351c99d98e5afabdeac5cd5091fa673ed89ad6f27708a6fe2e44"
+    },
+    "missing": [],
+    "nonStories": [],
+    "mismatchedIds": [],
+    "verifiedAt": "2026-11-05T00:07:42.061Z",
+    "inventoryStoryIdCount": 114,
+    "expiresAt": "2026-11-12T00:06:39Z",
+    "artifactVerificationWatchdog": {
+      "startedAt": "2026-11-05T00:07:37.110Z",
+      "finishedAt": "2026-11-05T00:07:42.126Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "/workspace/scratch/ce40e94380e1/validation/spn089-merge/verify-artifact.ts",
+        "/workspace/scratch/ce40e94380e1/validation/spn089-merge/storybook-review.zip",
+        "/workspace/scratch/ce40e94380e1/validation/spn089-merge/hosted",
+        "/workspace/scratch/ce40e94380e1/validation/spn089-merge/expected-artifact.json"
+      ],
+      "elapsedMs": 5015,
+      "peakKiB": 296848,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    }
+  },
+  "capture": {
+    "protocol": {
+      "purpose": "One bounded current-source visual verification after integrating main's native Doc patch.",
+      "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+      "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+      "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+      "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+      "storybookRun": 41938091629,
+      "attempt": 1,
+      "artifactRequirement": "Download the completed current run's hosted Storybook build. Verify archive digest/size, every extracted file, sha.json, both Git trees and the committed 45-owner/114-ID inventory before capture.",
+      "runner": "scripts/screenshots.ts, unchanged from the committed source",
+      "stories": [
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "variants": [
+        "light",
+        "dark",
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "expectedStates": 15,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "runtime": {
+        "node": "26.12.1",
+        "playwright": "1.64.1",
+        "chromiumHeadlessShell": "156.0.8078.4",
+        "playwrightChromiumRevision": "1248"
+      },
+      "resourcePolicy": {
+        "serialized": true,
+        "maximumCombinedRSSKiB": 2097152,
+        "maximumRuntimeMs": 480000
+      },
+      "environmentOnlyAdaptation": "The established network-interfaces.ts shim returns an empty interface inventory only for this container's ERR_SYSTEM_ERROR. Server binds to127.0.0.1. It changes no CSS, fixture, application request or assertion.",
+      "acceptance": "All actual Storybook plays and original title/accessibility/bounds/first-line assertions pass, no capture failures, and independent visual review approves actual light/dark/phone views on this source. Full hosted catalogue/native/current-head CI remain separate required acceptance.",
+      "stopCondition": "On any failure, preserve the first failure and diagnose it before considering further execution. Do not repeat unchanged capture or weaken assertions/budgets.",
+      "carryForward": "Other title-owner sources are byte-identical to ee996e95; retain their original screenshot source captions and the explicit source-equivalence record. The native runtime changed, which is why native copy is freshly captured."
+    },
+    "manifest": {
+      "reviewedAt": "2026-11-05T00:08:32.433Z",
+      "durationMs": 33896,
+      "captureScreenshots": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "viewport": "all",
+      "theme": "all",
+      "variants": [
+        "light",
+        "dark",
+        "phone",
+        "phone-dark",
+        "tablet"
+      ],
+      "requested": [
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "checked": [
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "light"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "dark"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "tablet"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "tablet"
+        }
+      ],
+      "captures": [
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "light",
+          "filename": "redesign-native-editors--make-copy-dialog-light.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light",
+          "filename": "redesign-controls--long-modal-title-light.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "light",
+          "filename": "redesign-controls--emoji-modal-title-light.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "dark",
+          "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark",
+          "filename": "redesign-controls--long-modal-title-dark.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "dark",
+          "filename": "redesign-controls--emoji-modal-title-dark.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone",
+          "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone",
+          "filename": "redesign-controls--long-modal-title-phone.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone",
+          "filename": "redesign-controls--emoji-modal-title-phone.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "phone-dark",
+          "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark",
+          "filename": "redesign-controls--long-modal-title-phone-dark.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "phone-dark",
+          "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        },
+        {
+          "id": "redesign-native-editors--make-copy-dialog",
+          "variant": "tablet",
+          "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+          "title": "Native fixtures/Editors / Make Copy Dialog"
+        },
+        {
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet",
+          "filename": "redesign-controls--long-modal-title-tablet.png",
+          "title": "Current production/Controls / Long Modal Title"
+        },
+        {
+          "id": "redesign-controls--emoji-modal-title",
+          "variant": "tablet",
+          "filename": "redesign-controls--emoji-modal-title-tablet.png",
+          "title": "Current production/Controls / Emoji Modal Title"
+        }
+      ],
+      "verifications": [],
+      "failures": []
+    },
+    "watchdog": {
+      "startedAt": "2026-11-05T00:07:57.208Z",
+      "finishedAt": "2026-11-05T00:08:32.488Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/validation/spn089-merge/hosted",
+      "command": "node",
+      "args": [
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+        "node",
+        "--import",
+        "/workspace/scratch/ce40e94380e1/validation/network-interfaces.ts",
+        "/workspace/scratch/ce40e94380e1/spinel/scripts/screenshots.ts",
+        "redesign-native-editors--make-copy-dialog",
+        "redesign-controls--long-modal-title",
+        "redesign-controls--emoji-modal-title"
+      ],
+      "elapsedMs": 35280,
+      "peakKiB": 1067224,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "files": [
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-light.png",
+        "id": "redesign-native-editors--make-copy-dialog",
+        "variant": "light",
+        "sha256": "fd0dd8e8a82d8e2a9dc1d594766afe1263d82abaa779a082c19b67525e03c1a8",
+        "bytes": 75127,
+        "width": 1280,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-light.png",
+        "id": "redesign-controls--long-modal-title",
+        "variant": "light",
+        "sha256": "65241e8a2dcd6e57819ba38e77ac8930c67b96afe06aaf9c01d3ba0700956cac",
+        "bytes": 40989,
+        "width": 1280,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-light.png",
+        "id": "redesign-controls--emoji-modal-title",
+        "variant": "light",
+        "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+        "bytes": 34402,
+        "width": 1280,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-light.png"
+        ]
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+        "id": "redesign-native-editors--make-copy-dialog",
+        "variant": "dark",
+        "sha256": "92ae0a431921ab81f1e194b6ee5f5aad8456f61a73ffe40ebd3c090d2710dbce",
+        "bytes": 74874,
+        "width": 1280,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-dark.png"
+        ]
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-dark.png",
+        "id": "redesign-controls--long-modal-title",
+        "variant": "dark",
+        "sha256": "426bec22e1fa538438a47b3bc7e6f017e9670fbe508ab6636b03f66989927403",
+        "bytes": 45900,
+        "width": 1280,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-dark.png",
+        "id": "redesign-controls--emoji-modal-title",
+        "variant": "dark",
+        "sha256": "4eb725adc03f9e63f526de28e5e004918b83d6d3ac8f5f61fc9a3eb001d3b41a",
+        "bytes": 39272,
+        "width": 1280,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+        "id": "redesign-native-editors--make-copy-dialog",
+        "variant": "phone",
+        "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+        "bytes": 22688,
+        "width": 390,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-native-editors--make-copy-dialog-phone.png"
+        ]
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-phone.png",
+        "id": "redesign-controls--long-modal-title",
+        "variant": "phone",
+        "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+        "bytes": 34570,
+        "width": 390,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-controls--long-modal-title-phone.png"
+        ]
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-phone.png",
+        "id": "redesign-controls--emoji-modal-title",
+        "variant": "phone",
+        "sha256": "80d900797eff7fa09202bbe9e3af6c3f7d04ff9352ed76d685775270ae5cbc95",
+        "bytes": 28196,
+        "width": 390,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+        "id": "redesign-native-editors--make-copy-dialog",
+        "variant": "phone-dark",
+        "sha256": "1613e4847da98f3a9d43fec17b2f33d7952207983892bc545d18a2b696c6ecef",
+        "bytes": 22705,
+        "width": 390,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-phone-dark.png",
+        "id": "redesign-controls--long-modal-title",
+        "variant": "phone-dark",
+        "sha256": "13d8857e56b991de7cac0af525fe5d4bb259199d89fdfbead39ef0b4172b804c",
+        "bytes": 37809,
+        "width": 390,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+        "id": "redesign-controls--emoji-modal-title",
+        "variant": "phone-dark",
+        "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+        "bytes": 31424,
+        "width": 390,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": [
+          "docs/review-assets/spn-089-ee996e95/redesign-controls--emoji-modal-title-phone-dark.png"
+        ]
+      },
+      {
+        "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+        "id": "redesign-native-editors--make-copy-dialog",
+        "variant": "tablet",
+        "sha256": "6ec639ee8602d36f246200d0a9f26f3087c63e0b07ec6ddc799d7525625228db",
+        "bytes": 26043,
+        "width": 768,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--long-modal-title-tablet.png",
+        "id": "redesign-controls--long-modal-title",
+        "variant": "tablet",
+        "sha256": "ed084770ae1a29f2bcf32524c351a16a0f3691d85850b76b587c47419cec8a1a",
+        "bytes": 39083,
+        "width": 768,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      },
+      {
+        "filename": "redesign-controls--emoji-modal-title-tablet.png",
+        "id": "redesign-controls--emoji-modal-title",
+        "variant": "tablet",
+        "sha256": "306dc2e6890b207295dbb4338be31b3c585a05286496ea4dc899f6c90e59dc9a",
+        "bytes": 32389,
+        "width": 768,
+        "height": 900,
+        "visuallyInspected": true,
+        "visualDisposition": "pass",
+        "retainedPaths": []
+      }
+    ]
+  },
+  "independentVisualReview": {
+    "reviewedAt": "2026-11-05T00:23:36.989075+00:00",
+    "reviewer": "/root/dialog_audit",
+    "reviewMode": "independent nonimplementing agent review only",
+    "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+    "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "disposition": "approved",
+    "findings": [
+      {
+        "id": "SPN089-title-first-line-alignment",
+        "severity": "P2 historical",
+        "status": "closed",
+        "disposition": "The correction remains visually effective on the exact integrated source. Wrapped SVG and emoji cues align with the first line and native desktop/compact title owners show no renewed vertical offset. The current unchanged Storybook plays passed their geometry and bounds assertions; visual inspection does not substitute unrecorded numerical pixel measurements."
+      },
+      {
+        "id": "SPN089-compact-native-name-field-fixture-fidelity",
+        "severity": "P3",
+        "status": "known nonblocking caveat retained",
+        "affectedVariants": [
+          "phone",
+          "phone-dark",
+          "tablet"
+        ],
+        "disposition": "The native fixture Name field remains square/default-styled compared with the rounded production form. This pre-existing fixture styling difference is outside the title alignment repair. Do not describe these compact previews as pixel-identical production forms or as evidence that this difference was fixed."
+      }
+    ],
+    "newBlockingFindings": [],
+    "observations": {
+      "wrapping": "Real multiline titles remain legible and contained, including five-line destructive text on phone. Cues follow the first line rather than the whole text block.",
+      "controls": "Close controls on shared modals, and native Cancel/Make a copy controls and form fields, remain visible and contained. Visible focus rings or selected text are preserved.",
+      "contrast": "No new visual contrast or glyph-legibility issue observed in the light and dark captures. This statement is visual review, not a newly performed WCAG contrast measurement.",
+      "nativeOwnership": "Desktop and compact SDK layouts are actual opened owners from the unmodified hosted build, not duplicate mocked dialogs."
+    },
+    "personas": {
+      "Owner": "Long destructive questions, copy title and selected form values remain readable without hiding actions on phone.",
+      "Collaborator": "Cue and title remain distinct while explanatory copy and form controls stay readable; this review claims no change to access authority.",
+      "Operator": "Shared title behavior remains consistent with the previously inspected unchanged administration owners, and the capture completed below the existing 2 GiB limit without introducing product complexity.",
+      "Link guest": "Phone wrapping and readable text remain usable without relying on the decorative cue as the accessible name; no guest access expansion is claimed."
+    },
+    "carryForward": {
+      "priorSourceSha": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+      "sourceEquivalence": [
+        {
+          "path": "src",
+          "candidateGitObject": "d5bec485bdfbdedfa079dab310f276515dd2efb0",
+          "priorApprovedGitObject": "d5bec485bdfbdedfa079dab310f276515dd2efb0",
+          "identical": true
+        },
+        {
+          "path": "web",
+          "candidateGitObject": "23c7a7440142128cec78e9d47ec59765afbf3bb6",
+          "priorApprovedGitObject": "23c7a7440142128cec78e9d47ec59765afbf3bb6",
+          "identical": true
+        },
+        {
+          "path": ".storybook",
+          "candidateGitObject": "ad8d6c1336a81e149a0eeb53977f94daa0abd188",
+          "priorApprovedGitObject": "ad8d6c1336a81e149a0eeb53977f94daa0abd188",
+          "identical": true
+        },
+        {
+          "path": "e2e",
+          "candidateGitObject": "d1a313cb31ff8f7033bb629abfbe36e2ddd3f04a",
+          "priorApprovedGitObject": "d1a313cb31ff8f7033bb629abfbe36e2ddd3f04a",
+          "identical": true
+        },
+        {
+          "path": "scripts/screenshots.ts",
+          "candidateGitObject": "2ef0a367c87da9ece0153fceea98ea0863aaf22e",
+          "priorApprovedGitObject": "2ef0a367c87da9ece0153fceea98ea0863aaf22e",
+          "identical": true
+        },
+        {
+          "path": "scripts/serial.ts",
+          "candidateGitObject": "86b17290e1c8451039d0ed48db3d7d6ded767188",
+          "priorApprovedGitObject": "86b17290e1c8451039d0ed48db3d7d6ded767188",
+          "identical": true
+        },
+        {
+          "path": "package.json",
+          "candidateGitObject": "f5772edccf157465975964205d30d37af2633288",
+          "priorApprovedGitObject": "f5772edccf157465975964205d30d37af2633288",
+          "identical": true
+        },
+        {
+          "path": "package-lock.json",
+          "candidateGitObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+          "priorApprovedGitObject": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+          "identical": true
+        }
+      ],
+      "coverage": "Previously inspected common/loading/error, Formula Insert/Edit, Profile icon picker, nested Appearance and Space drawer title-owner images retain their prior source-specific approval because their application/style/story sources are identical. Older production-native evidence retains its own original source labels.",
+      "nativeRuntimeBoundary": "Current main changes the installed native Docs patch despite unchanged package manifests; the fresh native-copy captures are required and provide current-source visual evidence for this boundary. No broader native runtime correctness claim is inferred from screenshots."
+    },
+    "retention": {
+      "adequateWithoutEvidenceOnlyCommitB": true,
+      "matchingImageCount": 5,
+      "all15ImagesIndividuallyInspected": true,
+      "indispensableNonmatchingCaptures": [],
+      "matchingPathsRecordedWithCaptureFiles": true,
+      "notClaimed": "Ten other fresh PNGs are not byte-identical to retained files. Current captures do not establish exact production input styling, a new numerical contrast measurement, or broader runtime correctness."
+    },
+    "acceptanceBoundaries": {
+      "visualGate": "Approved on exact source 866df9f34f8d1fa3d2782c5a9fe796e4744604c5; agent review only.",
+      "ciAndNativeGates": "Current-head full catalogue/native and required CI dispositions must be established separately by root; this review does not mark them passed or waive any historical failure.",
+      "mergeAuthorization": "This visual disposition does not itself execute or certify a merge. Root must retain the final PR evidence and satisfy all separate merge gates.",
+      "workPerformed": "Read-only source/receipt/archive/image inspection only; no tests, builds or browser workloads were run. This requested audit JSON is the only file written, outside the repository."
+    },
+    "fullReviewReceiptSha256": "83aacff1ded96587a3402c77695004d2d0917b96e6b9e80889aa68e27b1f737c"
+  },
+  "nativeDesktop": {
+    "schemaVersion": 1,
+    "observedAt": "2026-11-05T00:23:40.824Z",
+    "repository": "mxbaylee/spinel",
+    "pr": 260,
+    "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "baseSha": "eb32117f5d09c28cd411063256db6d645335ae8a",
+    "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+    "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+    "workflow": {
+      "id": 41938091720,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091720",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "createdAt": "2026-11-05T00:00:39Z",
+      "updatedAt": "2026-11-05T00:08:46Z"
+    },
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+    "browsers": [
+      {
+        "browser": "chrome",
+        "job": {
+          "id": 126951576310,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091720/job/126951576310",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-05T00:00:44Z",
+          "completedAt": "2026-11-05T00:04:17Z"
+        },
+        "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+        "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+        "attempt": 1,
+        "reportStatus": "passed",
+        "runner": {
+          "label": "macos-26",
+          "arch": "arm64",
+          "imageOS": "macos26",
+          "imageVersion": "20261026.0455.2"
+        },
+        "version": "157.0.8103.39",
+        "recordedStageCount": 37,
+        "storageDeletion": {
+          "status": "passed",
+          "timeoutMs": 28000,
+          "operationCount": 10,
+          "verification": {
+            "cacheNames": [],
+            "databases": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "localStorageEntries": 0,
+            "workers": []
+          },
+          "operationResults": [
+            [
+              "passed",
+              3
+            ],
+            [
+              "passed",
+              2326
+            ],
+            [
+              "passed",
+              2
+            ],
+            [
+              "passed",
+              13
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              27
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              0
+            ]
+          ]
+        },
+        "finalCleanup": true,
+        "firstStageAt": "2026-11-05T00:02:53.189Z",
+        "lastStageAt": "2026-11-05T00:04:07.383Z",
+        "diagnosticOnlyStages": [],
+        "stageProfile": "standard",
+        "additionalStageEventCounts": {}
+      },
+      {
+        "browser": "firefox",
+        "job": {
+          "id": 126951576087,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091720/job/126951576087",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-05T00:03:00Z",
+          "completedAt": "2026-11-05T00:06:00Z"
+        },
+        "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+        "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+        "attempt": 1,
+        "reportStatus": "passed",
+        "runner": {
+          "label": "macos-26",
+          "arch": "arm64",
+          "imageOS": "macos26",
+          "imageVersion": "20261026.0455.2"
+        },
+        "version": "159.0.1",
+        "recordedStageCount": 37,
+        "storageDeletion": {
+          "status": "passed",
+          "timeoutMs": 28000,
+          "operationCount": 10,
+          "verification": {
+            "cacheNames": [],
+            "databases": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "localStorageEntries": 0,
+            "workers": []
+          },
+          "operationResults": [
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              4
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              2
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              0
+            ]
+          ]
+        },
+        "finalCleanup": true,
+        "firstStageAt": "2026-11-05T00:04:33.400Z",
+        "lastStageAt": "2026-11-05T00:05:50.240Z",
+        "diagnosticOnlyStages": [],
+        "stageProfile": "standard",
+        "additionalStageEventCounts": {}
+      },
+      {
+        "browser": "safari",
+        "job": {
+          "id": 126951576305,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091720/job/126951576305",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-05T00:00:56Z",
+          "completedAt": "2026-11-05T00:08:45Z"
+        },
+        "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+        "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+        "attempt": 1,
+        "reportStatus": "passed",
+        "runner": {
+          "label": "macos-15-intel",
+          "arch": "x64",
+          "imageOS": "macos15",
+          "imageVersion": "20260824.0482.1"
+        },
+        "version": "27.2",
+        "recordedStageCount": 39,
+        "storageDeletion": {
+          "status": "passed",
+          "timeoutMs": 28000,
+          "operationCount": 10,
+          "verification": {
+            "workers": [],
+            "cacheNames": [],
+            "databases": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "localStorageEntries": 0
+          },
+          "operationResults": [
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              2
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              5
+            ],
+            [
+              "passed",
+              1
+            ],
+            [
+              "passed",
+              0
+            ],
+            [
+              "passed",
+              6
+            ],
+            [
+              "passed",
+              0
+            ]
+          ]
+        },
+        "finalCleanup": true,
+        "firstStageAt": "2026-11-05T00:03:55.983Z",
+        "lastStageAt": "2026-11-05T00:08:36.317Z",
+        "diagnosticOnlyStages": [
+          "safari-online-rendering-baseline",
+          "safari-online-rendering-baseline"
+        ],
+        "stageProfile": "standard",
+        "additionalStageEventCounts": {
+          "safari-online-rendering-baseline": 2
+        }
+      }
+    ],
+    "artifacts": [
+      {
+        "id": 13375565809,
+        "name": "desktop-offline-firefox-macos-26-41938091720-1",
+        "bytes": 451616,
+        "archiveSha256": "b956368826e18b54693da7c2b9d820cf10ebef78cee8addebe72e008ee404e0f",
+        "createdAt": "2026-11-05T00:05:52Z",
+        "expiresAt": "2026-11-19T00:05:51Z",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13375565809"
+      },
+      {
+        "id": 13374954266,
+        "name": "desktop-offline-safari-macos-15-intel-41938091720-1",
+        "bytes": 1039676,
+        "archiveSha256": "de8692936e4b658a72cce849d92a8228c5632b8181c6d91c8bf6cfb273465b41",
+        "createdAt": "2026-11-05T00:08:38Z",
+        "expiresAt": "2026-11-19T00:08:36Z",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13374954266"
+      },
+      {
+        "id": 13374503948,
+        "name": "desktop-offline-chrome-macos-26-41938091720-1",
+        "bytes": 228503,
+        "archiveSha256": "1c0a9d335eb5ec6317efb7169e2050e05b61b1dd7f05544ba06fb72b2264822a",
+        "createdAt": "2026-11-05T00:04:10Z",
+        "expiresAt": "2026-11-19T00:04:08Z",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13374503948"
+      }
+    ],
+    "failureDisposition": "No failed job or failed step in this required attempt. These current integrated-source results do not prove a causal repair of the historical ef899b Firefox preparation failure; SPN-141 ownership and original failed attempt remain retained. Native reports are harness-stage records, not Playwright test/retry counts.",
+    "limitations": "This receipt preserves sanitized essential results and artifact identities. Raw artifacts are supplementary and expire at their recorded expiry; it is not a full driver log or trace.",
+    "stageSummaryFormat": "Counts use the standard profile plus each browser's additive counts. Storage-deletion operationResults are [status, elapsedMs] in storageDeletionOperationOrder. These are harness events, not Playwright tests/retries.",
+    "stageProfiles": {
+      "standard": {
+        "browser-start": 3,
+        "all-four-downloads-complete": 1,
+        "transport-disabled-before-quit": 1,
+        "exact-records-captured-before-quit": 1,
+        "browser-stop": 3,
+        "transport-disabled-before-relaunch": 1,
+        "offline-catalog-and-original-records-retained": 1,
+        "native-doc-input-caret": 2,
+        "native-offline-edits-committed": 1,
+        "transport-still-disabled-before-pending-relaunch": 1,
+        "native-clipboard-content": 6,
+        "pending-restart-retained": 4,
+        "transport-restored": 1,
+        "normal-reconnect-exact-content-once": 2,
+        "recovered-original-reconnect-outage": 2,
+        "conflict-copy-preserves-original": 2,
+        "storage-deletion": 1,
+        "cleared-storage-is-not-advertised": 1,
+        "post-deletion-outage": 1,
+        "missing-data-cannot-open-offline": 1,
+        "complete": 1
+      }
+    },
+    "storageDeletionOperationOrder": [
+      "serviceWorker.getRegistrations",
+      "serviceWorker.unregister",
+      "caches.keys",
+      "caches.delete",
+      "localStorage.clear",
+      "indexedDB.deleteDatabase",
+      "verify-service-workers",
+      "verify-cache-names",
+      "verify-database-names",
+      "verify-storage-empty"
+    ]
+  },
+  "ciClassification": {
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "eb32117f5d09c28cd411063256db6d645335ae8a",
+      "head": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+      "tested": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+      "mode": "full",
+      "labels": [
+        "storybook-preview",
+        "visual-review"
+      ],
+      "paths": null,
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "restore-timing": {
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        }
+      }
+    },
+    "provenance": {
+      "schemaVersion": 1,
+      "repository": "mxbaylee/spinel",
+      "pr": 260,
+      "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+      "baseSha": "eb32117f5d09c28cd411063256db6d645335ae8a",
+      "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+      "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+      "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+      "runId": 41938091631,
+      "attempt": 1,
+      "classificationJob": 126951575526,
+      "classificationStatus": "success",
+      "source": "Parsed complete JSON printed by scripts/ci/changes.ts in successful hosted classification log; digest verified independently against repository serializer.",
+      "planSha256": "65bb55e30ffc4644c9fdcab78e7c909ed18306cc36268ff1965f78cc83599f48",
+      "planDigestSerialization": "SHA-256 of JSON.stringify(plan), without terminal newline; ci-plan.json has one newline.",
+      "artifact": {
+        "id": 13375435706,
+        "name": "ci-plan",
+        "bytes": 942,
+        "archiveSha256": "5085120ea79f3e4f93f33f28e9fdcd097f09a5e7a5c8a00dfe6d83f24194fb99",
+        "createdAt": "2026-11-05T00:01:55Z",
+        "expiresAt": "2026-12-05T00:01:54Z",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13375435706"
+      },
+      "mode": "full",
+      "action": "synchronize",
+      "selectedSuites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes",
+        "responsiveness-baseline",
+        "callback-baseline",
+        "phone-compatibility"
+      ],
+      "selectedSuiteCount": 15
+    }
+  },
+  "historicalFailures": {
+    "policy": "All failed attempts remain retained. Later green runs do not constitute causal repair.",
+    "offlineUpgrade": {
+      "run": 41927434953,
+      "attempt": 1,
+      "job": 126915583844,
+      "status": "failed",
+      "retry1": "passed",
+      "laterEditedRun": 41929259741,
+      "laterPassIsNotCausalRepair": true,
+      "owner": "SPN-144",
+      "originalArchive": {
+        "id": 13369013743,
+        "bytes": 18715661,
+        "sha256": "17999c68faf55bb4ada8b4aa6f242beeba093e80e053f3d0135c20b55038e67f"
+      },
+      "retainedPath": "docs/review-assets/spn-089-ee996e95/offline-upgrade-first-failure",
+      "missingEvidence": "No first-attempt trace ZIP; retained traces are retry1 only."
+    },
+    "otherRetainedBundles": [
+      "docs/review-assets/spn-089-ef899b",
+      "docs/review-assets/spn-089-ee996e95"
+    ],
+    "localIndex": "Checker won non-FIFO shared lock before generator; generation changed stale index, subsequent check passed. Failed receipt retained."
+  },
+  "storybook": {
+    "run": {
+      "id": 41938091629,
+      "attempt": 1,
+      "name": "📚 Storybook",
+      "event": "pull_request",
+      "headBranch": "codex/spn-089-dialog-title-icons",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091629",
+      "createdAt": "2026-11-05T00:00:39Z",
+      "updatedAt": "2026-11-05T00:29:50Z"
+    },
+    "variants": [
+      {
+        "variant": "desktop-light",
+        "job": 126954198389,
+        "conclusion": "success",
+        "storyStates": 1056,
+        "screenshots": 1056,
+        "additionalInteractionPasses": 13,
+        "testedShaPresentInLog": true,
+        "artifact": {
+          "id": 13376313686,
+          "name": "design-review-desktop-light",
+          "bytes": 49442918,
+          "sha256": "bdbfa37c85b376eff2f798dabe9045683419b9c9aa0575f142ae3121c9c8f784",
+          "createdAt": "2026-11-05T00:29:23Z",
+          "expiresAt": "2026-11-19T00:29:21Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091629/artifacts/13376313686"
+        }
+      },
+      {
+        "variant": "desktop-dark",
+        "job": 126954198282,
+        "conclusion": "success",
+        "storyStates": 1056,
+        "screenshots": 1056,
+        "additionalInteractionPasses": 9,
+        "testedShaPresentInLog": true,
+        "artifact": {
+          "id": 13376016992,
+          "name": "design-review-desktop-dark",
+          "bytes": 50068688,
+          "sha256": "b6fcd7b218b9b027e9eabb417b5342bf661d07fa306111342a081fb776f4ac3c",
+          "createdAt": "2026-11-05T00:20:44Z",
+          "expiresAt": "2026-11-19T00:20:40Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091629/artifacts/13376016992"
+        }
+      },
+      {
+        "variant": "mobile-light",
+        "job": 126954198267,
+        "conclusion": "success",
+        "storyStates": 1056,
+        "screenshots": 1056,
+        "additionalInteractionPasses": 9,
+        "testedShaPresentInLog": true,
+        "artifact": {
+          "id": 13376387534,
+          "name": "design-review-mobile-light",
+          "bytes": 41403502,
+          "sha256": "9b8b9c6a177d3a21a93f46319d2241e26fc3a2af53b29cb9380d5d521be04ccd",
+          "createdAt": "2026-11-05T00:23:23Z",
+          "expiresAt": "2026-11-19T00:23:20Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091629/artifacts/13376387534"
+        }
+      },
+      {
+        "variant": "mobile-dark",
+        "job": 126954198240,
+        "conclusion": "success",
+        "storyStates": 1056,
+        "screenshots": 1056,
+        "additionalInteractionPasses": 9,
+        "testedShaPresentInLog": true,
+        "artifact": {
+          "id": 13375956103,
+          "name": "design-review-mobile-dark",
+          "bytes": 41844410,
+          "sha256": "851197c4409e45353b479c2691f9f66a21bfa3d3d94f8e86f117962fef6c21bf",
+          "createdAt": "2026-11-05T00:16:19Z",
+          "expiresAt": "2026-11-19T00:16:16Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091629/artifacts/13375956103"
+        }
+      },
+      {
+        "variant": "tablet",
+        "job": 126954198377,
+        "conclusion": "success",
+        "storyStates": 1056,
+        "screenshots": 1056,
+        "additionalInteractionPasses": 9,
+        "testedShaPresentInLog": true,
+        "artifact": {
+          "id": 13375887744,
+          "name": "design-review-tablet",
+          "bytes": 45672950,
+          "sha256": "599ffd2e69f4d591936eb15c6e24bd320dbeb2e2245a29d669bf4daf742eb25d",
+          "createdAt": "2026-11-05T00:25:05Z",
+          "expiresAt": "2026-11-19T00:25:02Z",
+          "expired": false,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091629/artifacts/13375887744"
+        }
+      }
+    ],
+    "totals": {
+      "variants": 5,
+      "successfulVariants": 5,
+      "storyStateChecks": 5280,
+      "catalogScreenshots": 5280,
+      "additionalInteractionPasses": 49
+    },
+    "aggregate": {
+      "id": 126963845071,
+      "conclusion": "success",
+      "completedAt": "2026-11-05T00:29:49Z",
+      "groupResults": {
+        "build": "success",
+        "desktop": "success",
+        "tablet": "success",
+        "mobile": "success"
+      },
+      "testedShaPresentInLog": true
+    },
+    "preview": {
+      "id": 126954199101,
+      "conclusion": "success",
+      "completedAt": "2026-11-05T00:24:23Z",
+      "pageUrl": "https://mxbaylee.github.io/spinel/",
+      "deploymentSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+      "liveRead": {
+        "observedAt": "2026-11-05T00:26:35.870134+00:00",
+        "url": "https://mxbaylee.github.io/spinel/sha.json?run=41938091629",
+        "httpStatus": 200,
+        "identity": {
+          "sha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+          "checkedOutSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+          "branch": "codex/spn-089-dialog-title-icons",
+          "pullRequest": 260,
+          "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41938091629",
+          "builtAt": "2026-11-05T00:06:39.078Z"
+        },
+        "method": "Bounded public HTTP GET of sha.json, with no-cache request header; no browser session."
+      },
+      "identityIsPointInTime": true
+    },
+    "inapplicableJobs": [
+      {
+        "id": 126964003302,
+        "name": "Deploy to GitHub Pages",
+        "conclusion": "skipped",
+        "reason": "Main-only deploy is excluded on pull_request events; the PR preview publication job completed successfully."
+      }
+    ],
+    "failureInspection": {
+      "failedJobs": [],
+      "failedSteps": [],
+      "catalogueLogsInspected": 5,
+      "aggregateLogInspected": true,
+      "firstFailure": null
+    },
+    "fullReceiptSha256": "a45dc3bf9f6401ab4a909e7437e2c038a329f5329c0a3dc165f4bade6bcbb63e"
+  }
+}

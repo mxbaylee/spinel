@@ -1,0 +1,836 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T00:49:05.969Z",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 260,
+  "sourceSha": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+  "baseSha": "eb32117f5d09c28cd411063256db6d645335ae8a",
+  "testedSha": "93d0d5fc5b3f850a93d178c36aa75fb18cc4b6a6",
+  "sourceTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+  "testedTree": "9f503c07ed1033e43b1c5f02d6489ca9bc82d34b",
+  "workflow": {
+    "id": 41938091631,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631",
+    "event": "pull_request",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "createdAt": "2026-11-05T00:00:39Z",
+    "completedBy": "2026-11-05T00:45:41Z"
+  },
+  "classification": {
+    "jobId": 126951575526,
+    "status": "success",
+    "action": "synchronize",
+    "mode": "full",
+    "selectedSuites": 15,
+    "planSha256": "65bb55e30ffc4644c9fdcab78e7c909ed18306cc36268ff1965f78cc83599f48",
+    "planFile": "ci-plan.json",
+    "provenanceFile": "ci-plan-provenance.json"
+  },
+  "jobInventory": {
+    "total": 33,
+    "returned": 33,
+    "success": 31,
+    "failure": 2,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "gates": [
+    {
+      "name": "Backlog",
+      "id": 126952141192,
+      "result": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126952141192"
+    },
+    {
+      "name": "Pull request",
+      "id": 126951575892,
+      "result": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126951575892"
+    },
+    {
+      "name": "Lint",
+      "id": 126952141047,
+      "result": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126952141047"
+    },
+    {
+      "name": "Typecheck",
+      "id": 126952141107,
+      "result": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126952141107"
+    },
+    {
+      "name": "Unit tests",
+      "id": 126966593946,
+      "result": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126966593946"
+    },
+    {
+      "name": "Lib tests",
+      "id": 126964517878,
+      "result": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126964517878"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 126970449691,
+      "result": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/job/126970449691"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 126951575526,
+      "name": "Classify changes (41938091631)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:01:18Z",
+      "completedAt": "2026-11-05T00:01:58Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126951575892,
+      "name": "Pull request",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:02:42Z",
+      "completedAt": "2026-11-05T00:03:05Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141047,
+      "name": "Lint",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:10:18Z",
+      "completedAt": "2026-11-05T00:11:07Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141076,
+      "name": "Doc responsiveness (desktop)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:06:27Z",
+      "completedAt": "2026-11-05T00:22:29Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  4 passed (8.0m)",
+        "  7 passed (6.8m)"
+      ]
+    },
+    {
+      "id": 126952141091,
+      "name": "Container smoke",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:11:12Z",
+      "completedAt": "2026-11-05T00:12:22Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141093,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:06:08Z",
+      "completedAt": "2026-11-05T00:06:52Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141107,
+      "name": "Typecheck",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:19:43Z",
+      "completedAt": "2026-11-05T00:20:17Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141124,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:10:28Z",
+      "completedAt": "2026-11-05T00:17:00Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141134,
+      "name": "Doc responsiveness (mobile)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:20:00Z",
+      "completedAt": "2026-11-05T00:45:23Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  4 passed (14.6m)",
+        "  7 passed (9.6m)"
+      ]
+    },
+    {
+      "id": 126952141146,
+      "name": "Unit tests (recovery)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:13:00Z",
+      "completedAt": "2026-11-05T00:18:36Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  47 passed (47)",
+        "      Tests  607 passed (607)"
+      ]
+    },
+    {
+      "id": 126952141175,
+      "name": "Unit tests (remaining)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:12:06Z",
+      "completedAt": "2026-11-05T00:17:50Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  183 passed (183)",
+        "      Tests  2015 passed (2015)"
+      ]
+    },
+    {
+      "id": 126952141181,
+      "name": "Lib tests (cells)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:17:03Z",
+      "completedAt": "2026-11-05T00:21:47Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  1 passed (1)",
+        "      Tests  106 passed (106)"
+      ]
+    },
+    {
+      "id": 126952141183,
+      "name": "Lib tests (dense-cells)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:08:07Z",
+      "completedAt": "2026-11-05T00:14:46Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  1 passed (1)",
+        "      Tests  5 passed (5)"
+      ]
+    },
+    {
+      "id": 126952141192,
+      "name": "Backlog",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:20:15Z",
+      "completedAt": "2026-11-05T00:20:30Z",
+      "failedSteps": []
+    },
+    {
+      "id": 126952141235,
+      "name": "Doc callback lifetimes (desktop)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:29:28Z",
+      "completedAt": "2026-11-05T00:35:34Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  1 passed (2.5m)",
+        "  1 passed (2.3m)"
+      ]
+    },
+    {
+      "id": 126952141237,
+      "name": "Lib tests (mixed-fuzz)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:20:25Z",
+      "completedAt": "2026-11-05T00:27:35Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  1 passed (1)",
+        "      Tests  1 passed (1)"
+      ]
+    },
+    {
+      "id": 126952141238,
+      "name": "Lib tests (remaining)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:21:12Z",
+      "completedAt": "2026-11-05T00:31:01Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  85 passed (85)",
+        "      Tests  953 passed | 3 skipped (956)"
+      ]
+    },
+    {
+      "id": 126952141248,
+      "name": "Doc callback lifetimes (mobile)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:27:59Z",
+      "completedAt": "2026-11-05T00:37:12Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  1 passed (4.6m)",
+        "  1 passed (3.2m)"
+      ]
+    },
+    {
+      "id": 126952141259,
+      "name": "Playwright smoke (production 1/2)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:24:24Z",
+      "completedAt": "2026-11-05T00:34:08Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  3 skipped",
+        "  81 passed (8.5m)"
+      ],
+      "skipDisposition": {
+        "count": 3,
+        "reason": "Existing doc-mobile read-observer cases only run in sync-development/sync-production; ordinary production lacks VITE_SYNC_EVIDENCE.",
+        "sourcePath": "e2e/doc-mobile.spec.ts",
+        "lines": [
+          505,
+          984
+        ],
+        "ordinarySkipped": 3
+      }
+    },
+    {
+      "id": 126952141283,
+      "name": "Playwright smoke (development 1/2)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:18:38Z",
+      "completedAt": "2026-11-05T00:31:53Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  3 skipped",
+        "  74 passed (12.2m)"
+      ],
+      "skipDisposition": {
+        "count": 3,
+        "reason": "Existing doc-mobile read-observer cases only run in sync-development/sync-production; ordinary development and mobile-https lack VITE_SYNC_EVIDENCE.",
+        "sourcePath": "e2e/doc-mobile.spec.ts",
+        "lines": [
+          505,
+          984
+        ],
+        "ordinarySkipped": 3
+      }
+    },
+    {
+      "id": 126952141313,
+      "name": "Playwright smoke (sync-development)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:27:39Z",
+      "completedAt": "2026-11-05T00:31:37Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  21 passed (2.9m)"
+      ]
+    },
+    {
+      "id": 126952141331,
+      "name": "Playwright smoke (sync-production)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:22:32Z",
+      "completedAt": "2026-11-05T00:34:48Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  98 passed (11.1m)"
+      ]
+    },
+    {
+      "id": 126952141346,
+      "name": "Playwright smoke (production 2/2)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:22:17Z",
+      "completedAt": "2026-11-05T00:34:11Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  84 passed (11.0m)"
+      ]
+    },
+    {
+      "id": 126952141349,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:21:19Z",
+      "completedAt": "2026-11-05T00:23:46Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  1 passed (1.4m)"
+      ]
+    },
+    {
+      "id": 126952141350,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:24:26Z",
+      "completedAt": "2026-11-05T00:25:38Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  1 passed (28.7s)"
+      ]
+    },
+    {
+      "id": 126952141353,
+      "name": "Unit tests (supervisor)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:29:51Z",
+      "completedAt": "2026-11-05T00:35:58Z",
+      "failedSteps": [],
+      "logSummary": [
+        " Test Files  1 passed (1)",
+        "      Tests  131 passed (131)"
+      ]
+    },
+    {
+      "id": 126952141357,
+      "name": "Playwright smoke (mobile-https)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:30:27Z",
+      "completedAt": "2026-11-05T00:32:15Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  3 skipped",
+        "  10 passed (57.6s)"
+      ],
+      "skipDisposition": {
+        "count": 3,
+        "reason": "Existing doc-mobile read-observer cases only run in sync-development/sync-production; ordinary development and mobile-https lack VITE_SYNC_EVIDENCE.",
+        "sourcePath": "e2e/doc-mobile.spec.ts",
+        "lines": [
+          505,
+          984
+        ],
+        "ordinarySkipped": 3
+      }
+    },
+    {
+      "id": 126952141414,
+      "name": "Playwright smoke (development 2/2)",
+      "status": "completed",
+      "result": "failure",
+      "startedAt": "2026-11-05T00:27:38Z",
+      "completedAt": "2026-11-05T00:43:59Z",
+      "failedSteps": [
+        {
+          "number": 10,
+          "name": "Playwright smoke",
+          "startedAt": "2026-11-05T00:28:28Z",
+          "completedAt": "2026-11-05T00:43:55Z"
+        }
+      ],
+      "logSummary": [
+        "[13/76] (retries) [development] › e2e/history.spec.ts:8:3 › sheet versions can be named, renamed, unnamed and read by a viewer (retry #1)",
+        "  1 flaky",
+        "  1 skipped",
+        "  74 passed (15.4m)"
+      ]
+    },
+    {
+      "id": 126952141455,
+      "name": "Playwright smoke (offline-upgrade)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:31:39Z",
+      "completedAt": "2026-11-05T00:33:22Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  2 passed (36.8s)"
+      ]
+    },
+    {
+      "id": 126952141494,
+      "name": "Playwright smoke (supervised-restore)",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:30:51Z",
+      "completedAt": "2026-11-05T00:37:50Z",
+      "failedSteps": [],
+      "logSummary": [
+        "  2 passed (6.0m)"
+      ]
+    },
+    {
+      "id": 126964517878,
+      "name": "Lib tests",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:34:52Z",
+      "completedAt": "2026-11-05T00:35:14Z",
+      "failedSteps": [],
+      "logSummary": []
+    },
+    {
+      "id": 126966593946,
+      "name": "Unit tests",
+      "status": "completed",
+      "result": "success",
+      "startedAt": "2026-11-05T00:44:55Z",
+      "completedAt": "2026-11-05T00:45:17Z",
+      "failedSteps": [],
+      "logSummary": []
+    },
+    {
+      "id": 126970449691,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "result": "failure",
+      "startedAt": "2026-11-05T00:45:26Z",
+      "completedAt": "2026-11-05T00:45:40Z",
+      "failedSteps": [
+        {
+          "number": 4,
+          "name": "Verify selected evidence and publish result",
+          "startedAt": "2026-11-05T00:45:37Z",
+          "completedAt": "2026-11-05T00:45:37Z"
+        }
+      ],
+      "logSummary": [
+        "    \"error\": \"Error: Incomplete coverage playwright-run: selected=true, result=failure\",",
+        "##[error]Process completed with exit code 1."
+      ]
+    }
+  ],
+  "testCounts": {
+    "unit": {
+      "passed": 2753,
+      "partitions": {
+        "recovery": 607,
+        "remaining": 2015,
+        "supervisor": 131
+      }
+    },
+    "lib": {
+      "passed": 1065,
+      "skipped": 3,
+      "partitions": {
+        "cells": 106,
+        "denseCells": 5,
+        "mixedFuzz": 1,
+        "remaining": 953
+      },
+      "skipDisposition": {
+        "count": 3,
+        "sourcePaths": [
+          "lib/sync-transform/tests/schema.test.ts",
+          "lib/sync-transform/tests/rule-based.test.ts"
+        ],
+        "description": "Existing opt-in diagnostic test.runIf cases; unchanged from base eb32117. Schema seed shrink/sweep and rule-based diagnostic cases require specific environment variables; no routine selected regression removed by SPN-089."
+      }
+    }
+  },
+  "focusedAcceptance": {
+    "copyOwners": [
+      {
+        "jobId": 126952141283,
+        "project": "development",
+        "passed": 74,
+        "skipped": 3,
+        "copyCases": [
+          "e2e/copy.spec.ts:147",
+          "e2e/copy.spec.ts:341"
+        ],
+        "retryMarkers": 0,
+        "flaky": 0
+      },
+      {
+        "jobId": 126952141259,
+        "project": "production",
+        "passed": 81,
+        "skipped": 3,
+        "copyCases": [
+          "e2e/copy.spec.ts:147",
+          "e2e/copy.spec.ts:341"
+        ],
+        "retryMarkers": 0,
+        "flaky": 0
+      }
+    ],
+    "offlineUpgrade": {
+      "jobId": 126952141455,
+      "project": "offline-upgrade",
+      "passed": 2,
+      "skipped": 0,
+      "flaky": 0,
+      "retryMarkers": 0,
+      "duration": "36.8s",
+      "cases": [
+        "e2e/offline-upgrade.spec.ts:202",
+        "e2e/offline-upgrade.spec.ts:576"
+      ],
+      "historicalDisposition": "Fresh integrated-source pass; does not identify or repair the retained ee996e95 waiting-activation anomaly owned by SPN-144."
+    }
+  },
+  "firstFailure": {
+    "jobId": 126952141414,
+    "project": "development",
+    "shard": "2/2",
+    "case": "e2e/history.spec.ts:8 sheet versions can be named, renamed, unnamed and read by a viewer",
+    "assertion": "e2e/history.spec.ts:93 expected View only in Save status inside Sheet document; no element within 30000ms",
+    "retry0": {
+      "status": "failed",
+      "startTime": "2026-11-05T00:31:17.989Z",
+      "durationMs": 37358
+    },
+    "retry1": {
+      "status": "passed",
+      "startTime": "2026-11-05T00:31:55.802Z",
+      "durationMs": 14676
+    },
+    "result": "flaky; failOnFlakyTests caused exit1; job and required Playwright aggregate failed",
+    "observedPage": "Authenticated Version viewer on My files dashboard, Online, empty folder; no Sheet document region.",
+    "cause": "Not established. Bounded account-switch/route investigation remains separate from the observed assertion and may not treat the retry as a repair.",
+    "evidenceFolder": "history-first-failure-41938091631",
+    "firstAttemptTrace": false,
+    "retry1Trace": true
+  },
+  "aggregateEvidence": {
+    "lib": [
+      {
+        "passed": true,
+        "planSha256": "65bb55e30ffc4644c9fdcab78e7c909ed18306cc36268ff1965f78cc83599f48",
+        "gateResults": {},
+        "results": [
+          {
+            "suite": "lib-test-run",
+            "selected": true,
+            "result": "success"
+          }
+        ]
+      }
+    ],
+    "unit": [
+      {
+        "passed": true,
+        "planSha256": "65bb55e30ffc4644c9fdcab78e7c909ed18306cc36268ff1965f78cc83599f48",
+        "gateResults": {},
+        "results": [
+          {
+            "suite": "unit-tests",
+            "selected": true,
+            "result": "success"
+          }
+        ]
+      }
+    ],
+    "browser": [
+      {
+        "passed": false,
+        "evidence": {
+          "planSha256": "65bb55e30ffc4644c9fdcab78e7c909ed18306cc36268ff1965f78cc83599f48",
+          "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure",
+          "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"failure\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\"}"
+        }
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "id": 13378485049,
+      "name": "doc-responsiveness-mobile",
+      "bytes": 2018514,
+      "sha256": "618e2b57c5b38f0610a58a00336c6009ec3a29bd96434f78b6410e29a8c3fe40",
+      "expiresAt": "2026-11-12T00:45:20Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13378485049"
+    },
+    {
+      "id": 13377636611,
+      "name": "ci-results-unit",
+      "bytes": 1168,
+      "sha256": "f2afe4575cea6c0c490e369793f1ab20853f1dfeb15efff37c3fb647e1840df6",
+      "expiresAt": "2026-12-05T00:45:12Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377636611"
+    },
+    {
+      "id": 13377635274,
+      "name": "theme-screenshots-supervised-restore",
+      "bytes": 257400,
+      "sha256": "1c8b4be1a1f12d6a0bf9e3fa25fde03d06611c2f79748c93e2de6d94a897dd77",
+      "expiresAt": "2026-11-12T00:37:47Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377635274"
+    },
+    {
+      "id": 13377591240,
+      "name": "ci-results-browser",
+      "bytes": 470,
+      "sha256": "2903b61c96e7acd0ba14a8c3519226d12f5e7de8e44ce6929b0a8ffe56d25473",
+      "expiresAt": "2026-12-05T00:45:38Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377591240"
+    },
+    {
+      "id": 13377270670,
+      "name": "doc-callback-lifetimes-desktop",
+      "bytes": 86712183,
+      "sha256": "fc687049f70aff6e060aee37376a6d273b307747a94195bad18cf8faacdd1318",
+      "expiresAt": "2026-11-12T00:35:26Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377270670"
+    },
+    {
+      "id": 13377247190,
+      "name": "theme-screenshots-development-2",
+      "bytes": 19390863,
+      "sha256": "eed5bf59612ca5185474c4898252f0e8254ac75dd084cda10ee40bbae0274d6f",
+      "expiresAt": "2026-11-12T00:43:55Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377247190"
+    },
+    {
+      "id": 13377121350,
+      "name": "ci-results-lib",
+      "bytes": 1188,
+      "sha256": "f96cc712c9740415f8141dbffc14fa3f4013398b44c620cd1c8b5c32d2fedb02",
+      "expiresAt": "2026-12-05T00:35:10Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377121350"
+    },
+    {
+      "id": 13377035184,
+      "name": "theme-screenshots-sync-soak-sheet",
+      "bytes": 353893,
+      "sha256": "1c6e231e126cf449d98eaee08989d9185d4923453bea01278469401a797f0a1a",
+      "expiresAt": "2026-11-12T00:23:42Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13377035184"
+    },
+    {
+      "id": 13376921045,
+      "name": "doc-responsiveness-desktop",
+      "bytes": 1533254,
+      "sha256": "f041f61b8c8c25c4ef2385d58bd75ec8e8ab3459973430e17993b459e59598a9",
+      "expiresAt": "2026-11-12T00:22:24Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376921045"
+    },
+    {
+      "id": 13376880209,
+      "name": "sized-restore-acceptance",
+      "bytes": 68797,
+      "sha256": "58becab6d82ae466f04ee1ae67858f5ca5124d8b79473a8774f6a78edf767bbe",
+      "expiresAt": "2026-11-19T00:16:55Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376880209"
+    },
+    {
+      "id": 13376803725,
+      "name": "theme-screenshots-production-1",
+      "bytes": 36070568,
+      "sha256": "7588577c19db8b0af98da91f633c6965f730f8a0986c473502cea335167a6086",
+      "expiresAt": "2026-11-12T00:34:04Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376803725"
+    },
+    {
+      "id": 13376743232,
+      "name": "sheet-pdf-evidence",
+      "bytes": 736823,
+      "sha256": "6f54527e9fac826b00a020ad1d29a0e85a336604a7ed2bafdfbfeb874c26197b",
+      "expiresAt": "2026-11-12T00:30:55Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376743232"
+    },
+    {
+      "id": 13376424709,
+      "name": "theme-screenshots-production-2",
+      "bytes": 18536240,
+      "sha256": "4d77b5b941b7cd0a29721a5bea05de65de2701973d3cb29d4e4adfc4f78bdd7c",
+      "expiresAt": "2026-11-12T00:34:06Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376424709"
+    },
+    {
+      "id": 13376424207,
+      "name": "theme-screenshots-sync-development",
+      "bytes": 2227870,
+      "sha256": "b7fa22f02d6f09e687fff8773023f1057deb1f902f88c09bda410bd1eb516d72",
+      "expiresAt": "2026-11-12T00:31:31Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376424207"
+    },
+    {
+      "id": 13376393094,
+      "name": "theme-screenshots-offline-upgrade",
+      "bytes": 263437,
+      "sha256": "64a3eaf6b26eef3efc7ae545394bd079eea011710766e95c3ef0833775bf6e7f",
+      "expiresAt": "2026-11-12T00:33:17Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376393094"
+    },
+    {
+      "id": 13376314740,
+      "name": "theme-screenshots-sync-production",
+      "bytes": 5011007,
+      "sha256": "e1ad6b398d72367d3c36bd6d0e4930bb1990429947b15c8468a9e75e5aa4cc25",
+      "expiresAt": "2026-11-12T00:34:42Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376314740"
+    },
+    {
+      "id": 13376298174,
+      "name": "theme-screenshots-sync-soak-doc",
+      "bytes": 364105,
+      "sha256": "99f80853133244b829aa39a7328e49c2774a15acc7ea9226b92422a2a4b9b573",
+      "expiresAt": "2026-11-12T00:25:34Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376298174"
+    },
+    {
+      "id": 13376263128,
+      "name": "theme-screenshots-development-1",
+      "bytes": 33858403,
+      "sha256": "12d25cc722de9f44a03d33a03e45bfbf78ce521319742db3e84fd9d7d339076a",
+      "expiresAt": "2026-11-12T00:31:47Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376263128"
+    },
+    {
+      "id": 13376219185,
+      "name": "doc-pdf-evidence",
+      "bytes": 8594210,
+      "sha256": "c1dc6a9a7edc63422eead695b536666f6e1579184b82b714923c45f7c8df56eb",
+      "expiresAt": "2026-11-12T00:30:56Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13376219185"
+    },
+    {
+      "id": 13375956309,
+      "name": "pdf-collaboration-overlap",
+      "bytes": 164526,
+      "sha256": "bfe32e47c7a9b19129671ea0fce38e242c50ca0f5138de8faf2ff0afb9077e5c",
+      "expiresAt": "2026-11-12T00:17:47Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13375956309"
+    },
+    {
+      "id": 13375889522,
+      "name": "doc-callback-lifetimes-mobile",
+      "bytes": 79313275,
+      "sha256": "60c2d65059f13e06a611c5c0aad42a8ebb995b05c0af1d2b5e8e4058bf6c8e46",
+      "expiresAt": "2026-11-12T00:37:04Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13375889522"
+    },
+    {
+      "id": 13375559937,
+      "name": "theme-screenshots-mobile-https",
+      "bytes": 1619369,
+      "sha256": "938c502664a5efd9fdf1a0f4b723c8cd9a911d914184da60e8b8d5f3fbe1d037",
+      "expiresAt": "2026-11-12T00:32:11Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13375559937"
+    },
+    {
+      "id": 13375435706,
+      "name": "ci-plan",
+      "bytes": 942,
+      "sha256": "5085120ea79f3e4f93f33f28e9fdcd097f09a5e7a5c8a00dfe6d83f24194fb99",
+      "expiresAt": "2026-12-05T00:01:54Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41938091631/artifacts/13375435706"
+    }
+  ],
+  "acceptance": "FAILED. This current-source run independently blocks merge. A later edited-event pass or successful test retry cannot replace it. No workflow was retried/cancelled or application source changed by this monitor.",
+  "rawArtifacts": "Supplementary expiring artifacts only; this receipt preserves selected identities/results and the separate first-failure folder preserves sanitized essential evidence. Raw report/trace/whole ZIP remain scratch-only diagnostic inputs."
+}
