@@ -11,3 +11,10 @@ Its final-description CI receipt is terminally cancelled, deliberately uncredite
 as acceptance. Earlier SPN-141 native and capacity failures remain at the immutable
 links in the maintained implementation record. No test retry, weaker assertion or
 expanded deadline is part of this integration.
+
+🔎 `previous-integration-*` receipts close the historical388262cc checkpoint:
+CI41900102989 attempt1 ended cancelled, Storybook41900102783 succeeded. The unit
+aggregate log explicitly rejects the cancelled selected unit worker. The source
+remains unaccepted; no terminal state is relabelled as a current check or an
+unobserved application assertion failure. This provenance gap was found in the
+first integration review and repaired before publication.
