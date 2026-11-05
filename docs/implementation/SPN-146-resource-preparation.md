@@ -33,3 +33,48 @@ sample rather than a replacement inventory. The implementation retains those
 boundaries. No workflow trigger is re-anchored and no new application execution
 is admitted at this checkpoint; eventual hosted preparation wiring remains
 pending any substantive lower-layer result and fresh review.
+
+## 📊 One-shot collector result and explicit next decision
+
+The declared probe ran once on `fcd9fcb6`, macOS/Node26.12.1. Exact30-script,
+50,574,640-byte binding receipts and58retained source/map digests matched the
+original, baseline and revised outputs; CDP request order matched. Baseline
+child maxRSS254,432KiB; revised185,952KiB: **68,480KiB (66.875MiB),26.91485%
+lower**, meeting both preregistered thresholds. The separate exited preparation
+child used213,824KiB. Parent watchdog passed in2,279ms with466,032KiB sampled
+peak and normal pressure. No browser/native workload or explicit GC ran.
+
+Independent outcome review A reconciled source/probe hashes, complete receipts,
+all reported output bindings and arithmetic without repeating the probe. This
+supports relocating collector allocation; it does not identify the original
+Linux memory contributor or guarantee browser-tree headroom. The current source
+also checks prepared script size before buffering; that small read guard was
+added after the measured source and is not represented as another measured peak.
+
+**Prospective superseding decision:** admit exactly one changed-collector
+validation from published `df76fb78` to the next twice-reviewed source, same
+repository/branch and attempt1. The df76 attempt began typing, failed resource
+acceptance and remains consumed/closed. This is a new explicit allowance based
+on measured lower-layer reduction, not a zero-input exemption or unchanged
+retry. No later outcome renews it.
+
+After the same clean prior-native build, a separate60-second/2GiB/1GiB-host
+watchdog runs static map preparation and exits before Playwright begins. Full
+build coverage remains bounded512scripts/64MiB; the retained-subset probe does
+not precredit this full-build capability. Preparation receipt and guard are
+always archived and independently required by final conversion. The live test
+requires matching source/tree/event-before and actual loaded native closure;
+converter still independently parses every retained map after browser ownership.
+
+The application retains450-second whole-tree and300/30-second test/teardown,
+2GiB ownedRSS,1GiB availablehost, same384→448trace/profile window,2,086inputs,
+two editors, prior native bytes,4×throttle,32-stateflushes,100-history retention,
+300msidle,64MiBtrace/transport,128MiBdecodedtrace,80mscomparabledefinition and
+100msproductmaximum. No forcedpreworkloadGC, reducedinput, movedwindow,
+componenttrial or pause subtraction. Fullcontinuation/content/selection/history
+and normalcleanup stay required. Invalid/resource/semantic evidence fails;
+validwithoutcomparableevent is inconclusive. Both outcomes close this attempt.
+
+Two independent exact-head reviews and final feasible checks remain mandatory
+before publication. The original guard-inclusive production criterion and all
+seven current-head gates plus selectednativeacceptance remain unresolved.

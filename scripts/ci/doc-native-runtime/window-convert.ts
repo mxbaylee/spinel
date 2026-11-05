@@ -42,12 +42,18 @@ try {
     execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim(),
   );
   assert.equal(preparation.nativeReference, '2f442317dd2e1c188ae4a810ac094fd1162a4a2a');
-  assert.equal(preparation.eventBefore, 'ab8966044fdc9c7645d5768956d84852ff308df3');
+  assert.equal(preparation.eventBefore, 'df76fb78fa0258f8c28c068767970e8e869a5838');
   assert.deepEqual(metrics.nativeDiagnosticBuild, preparation);
   assert.deepEqual(metrics.nativeSourcePreparation, sourcePreparation);
   assert.equal(sourcePreparation.source, source);
   assert.equal(sourcePreparation.tree, preparation.tree);
   assert.equal(sourcePreparation.eventBefore, preparation.eventBefore);
+  const preparationGuard = await load('spn146-source-preparation-watchdog.json');
+  assert.equal(preparationGuard.outcome, 'passed');
+  assert.equal(preparationGuard.mode, 'component');
+  assert.equal(preparationGuard.failure, null);
+  assert.equal(preparationGuard.firstViolation, null);
+  assert.equal(resourceFailure(preparationGuard), null);
   for (const [path, expected] of Object.entries(preparation.sources))
     assert.equal(hash(await readFile(path)), expected, `Prepared source changed: ${path}`);
   const docs = preparation.builds.find((entry: any) => entry.format === 'es');

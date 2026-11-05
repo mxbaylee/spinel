@@ -14,9 +14,9 @@ concurrency:
 
 jobs:
   observation:
-    # Explicit changed-source collection repair; the first window failed before input.
-    # The superseding finite decision is in SPN-146-fixed-window.md.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == 'ab8966044fdc9c7645d5768956d84852ff308df3'
+    # One changed-collector validation after the qualified retained-data memory probe.
+    # The superseding finite decision is in SPN-146-resource-preparation.md.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == 'df76fb78fa0258f8c28c068767970e8e869a5838'
     name: One prior-native fixed-window observation
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -54,6 +54,8 @@ jobs:
         run: node scripts/ci/prepare-doc-native-diagnostic.ts --prior-native
       - name: Build diagnostic application
         run: npm run build -- --sourcemap hidden
+      - name: Prepare immutable source maps before browser ownership
+        run: node scripts/ci/doc-native-runtime/watchdog.ts spn146-source-preparation-watchdog.json node scripts/ci/prepare-doc-native-sources.ts
       - name: One diagnostic first attempt
         run: |
           mkdir -p test-results
@@ -67,6 +69,8 @@ jobs:
           name: spn146-prior-native-fixed-window
           path: |
             spn146-diagnostic-build.json
+            spn146-source-preparation.json
+            spn146-source-preparation-watchdog.json
             test-results/spn146-window*.json
             test-results/doc-responsiveness/
             playwright-report/doc-responsiveness.json
