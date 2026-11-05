@@ -15,7 +15,8 @@
  *
  * Modified for Spinel: compose contiguous, single-character root-body inserts
  * in an order-preserving balanced tree up to the first unsupported state. The
- * remaining actions keep their original fold. SPN-135 aggregates only fully
+ * remaining actions keep their original fold, except SPN-146's strictly qualified
+ * single-Enter boundary followed by a contiguous plain append run. SPN-135 aggregates only fully
  * qualified descending single-character deletes; SPN-142 also aggregates their
  * qualified leading prefixes before the unchanged sequential tail. It observes native flushes
  * through an opt-in scalar API. Native grouping, metadata,
@@ -219,11 +220,91 @@ function isPlainDocDeleteData(value, depth = 0) {
     ['docRunArrayKeys', '["0", "length"]'],
     ['docRunKeys', '["st", "ed", "ts", "sId"]'],
   ];
-  const helper = guardLists
+  const constantGuardHelper = guardLists
     .reduce((text, [name, literal]) => text.replaceAll(literal, name), deletePrefixHelper)
     .replace(
       anchor,
       anchor + '\n' + guardLists.map(([name, literal]) => `const ${name} = ${literal};`).join('\n'),
+    );
+  // Keep SPN-142's exact bytes as an upgrade source and a work negative.
+  // Only one native Enter between append-contiguous plain inserts is admitted.
+  // Its style retain stays in the head; compose the qualified final run once.
+  const paragraphTailGuard = `
+const docParagraphKeys = ["startIndex", "paragraphId", "paragraphStyle"];
+const docParagraphRetainKeys = ["t", "len", "body", "coverType", "oldBody"];
+const docParagraphEditsKeys = ["0", "1", "2", "length"];
+function isDocParagraphBody(body, kind) {
+\tif (!hasOnlyDocInsertKeys(body, docBodyKeys) || body.dataStream !== (kind === "insert" ? "\\r" : "")) return false;
+\tif (Object.hasOwn(body, "__textXPreserveParagraphIds") && body.__textXPreserveParagraphIds !== true) return false;
+\tfor (const field of docEmptyBodyFields) {
+\t\tif (field === "paragraphs" && kind === "insert") continue;
+\t\tconst value = body[field];
+\t\tif (value !== void 0 && (!Array.isArray(value) || value.length !== 0 || !hasOnlyDocInsertKeys(value, docEmptyArrayKeys))) return false;
+\t}
+\tconst runs = body.textRuns;
+\tif (!Array.isArray(runs) || runs.length > 1 || !hasOnlyDocInsertKeys(runs, docRunArrayKeys) || (kind !== "old" && runs.length !== 1)) return false;
+\tif (runs.length) {
+\t\tconst run = runs[0];
+\t\tif (!hasOnlyDocInsertKeys(run, docRunKeys) || run.st !== 0 || run.ed !== 1 || run.sId !== void 0 || (run.ts !== void 0 && (run.ts === null || typeof run.ts !== "object" || Array.isArray(run.ts)))) return false;
+\t}
+\tif (kind !== "insert") return true;
+\tconst paragraphs = body.paragraphs;
+\tif (!Array.isArray(paragraphs) || paragraphs.length !== 1 || !hasOnlyDocInsertKeys(paragraphs, docRunArrayKeys)) return false;
+\tconst paragraph = paragraphs[0];
+\treturn hasOnlyDocInsertKeys(paragraph, docParagraphKeys) && paragraph.startIndex === 0 && typeof paragraph.paragraphId === "string" && paragraph.paragraphId.startsWith("para_") && paragraph.paragraphStyle != null && typeof paragraph.paragraphStyle === "object" && !Array.isArray(paragraph.paragraphStyle) && Reflect.ownKeys(paragraph.paragraphStyle).length === 0;
+}
+function canComposeDocParagraphTail(states, key, prefix) {
+\t// Descriptor inspection rejects accessors before reading a new field. The old
+\t// helper remains the fallback, including its original operand/read order.
+\tif (!isPlainDocDeleteData(states)) return false;
+\tconst actions = states[prefix][key].actions;
+\tif (!Array.isArray(actions) || actions.length !== 2 || !hasOnlyDocInsertKeys(actions, docActionKeys) || actions[0] !== "body") return false;
+\tconst component = actions[1];
+\tif (!hasOnlyDocInsertKeys(component, docComponentKeys) || component.et !== "text-x") return false;
+\tconst edits = component.e;
+\tif (!Array.isArray(edits) || (edits.length !== 2 && edits.length !== 3) || !hasOnlyDocInsertKeys(edits, docParagraphEditsKeys)) return false;
+\tlet offset = 0;
+\tif (edits.length === 3) {
+\t\tconst retain = edits[0];
+\t\tif (!hasOnlyDocInsertKeys(retain, docRetainKeys) || retain.t !== "r" || !Number.isSafeInteger(retain.len) || retain.len <= 0) return false;
+\t\toffset = retain.len;
+\t}
+\tconst insert = edits[edits.length - 2];
+\tconst following = edits[edits.length - 1];
+\tif (!hasOnlyDocInsertKeys(insert, docEditKeys) || insert.t !== "i" || insert.len !== 1 || insert.valueRangeId !== void 0 || !isDocParagraphBody(insert.body, "insert")) return false;
+\tif (!hasOnlyDocInsertKeys(following, docParagraphRetainKeys) || following.t !== "r" || following.len !== 1 || (following.coverType !== 0 && following.coverType !== 1) || !isDocParagraphBody(following.body, "retain") || !isDocParagraphBody(following.oldBody, "old")) return false;
+\tconst tail = states.slice(prefix + 1);
+\tif (docInsertPrefixLength(tail, key) !== tail.length) return false;
+\tconst firstOffset = offset - prefix;
+\tif (firstOffset < 0) return false;
+\tfor (let index = 0; index < states.length; index++) {
+\t\tconst state = states[index];
+\t\tif (state.unitId !== states[0].unitId || state.segmentId !== states[0].segmentId) return false;
+\t\tif (index === prefix) continue;
+\t\tconst current = state[key].actions[1].e;
+\t\tconst currentOffset = current.length === 2 ? current[0].len : 0;
+\t\tif (currentOffset !== firstOffset + index) return false;
+\t}
+\treturn true;
+}
+`;
+  const helper = constantGuardHelper
+    .replace(
+      '// Never balance later islands or reassociate an unsupported native action.',
+      '// Only the separately qualified single-Enter append tail below may join\n// its non-null head once. All other unsupported tails retain their native fold.',
+    )
+    .replace(
+      'function composeDocStateActions(states, key) {',
+      paragraphTailGuard + 'function composeDocStateActions(states, key) {',
+    )
+    .replace(
+      'const prefix = docInsertPrefixLength(states, key);',
+      `const prefix = docInsertPrefixLength(states, key);
+\tif (key === "redoState" && states.length - prefix > 4 && canComposeDocParagraphTail(states, key, prefix)) {
+\t\tconst head = composeDocStateActions(states.slice(0, prefix + 1), key);
+\t\tconst tail = composeDocStateActions(states.slice(prefix + 1), key);
+\t\treturn ${json}.compose(head, tail);
+\t}`,
     );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
@@ -246,6 +327,7 @@ function isPlainDocDeleteData(value, depth = 0) {
     (text, { before, after }) => text.replaceAll(after, before),
     docFlushObservationReplacements
       .reduce((text, { before, after }) => text.replaceAll(after, before), source)
+      .replaceAll(constantGuardHelper, anchor)
       .replaceAll(deletePrefixHelper, anchor)
       .replaceAll(completeDeleteHelper, anchor)
       .replaceAll(previousHelper, anchor)
@@ -269,11 +351,13 @@ function isPlainDocDeleteData(value, depth = 0) {
   }, composed);
   const completeDeletePatched = patched.replace(helper, completeDeleteHelper);
   const deletePrefixPatched = patched.replace(helper, deletePrefixHelper);
+  const constantGuardPatched = patched.replace(helper, constantGuardHelper);
   if (
     source !== original &&
     source !== patched &&
     source !== completeDeletePatched &&
     source !== deletePrefixPatched &&
+    source !== constantGuardPatched &&
     source !== previousPatched &&
     source !== markerPatched &&
     source !== prefixPatched
@@ -289,6 +373,7 @@ function isPlainDocDeleteData(value, depth = 0) {
     prefixPatched,
     completeDeletePatched,
     deletePrefixPatched,
+    constantGuardPatched,
   };
 }
 
