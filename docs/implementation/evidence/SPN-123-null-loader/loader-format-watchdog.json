@@ -1,0 +1,70 @@
+{
+  "root": 80668,
+  "started": 1793882304399,
+  "elapsedMs": 385,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93024,
+  "peakKiB": 195936,
+  "live": [
+    {
+      "pid": 80668,
+      "parent": 80642,
+      "group": 80668,
+      "rssKiB": 91472,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-safari-identity.ts scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80732,
+      "parent": 80668,
+      "group": 80668,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 80668,
+      "parent": 80642,
+      "group": 80668,
+      "rssKiB": 91472,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-safari-identity.ts scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80687,
+      "parent": 80668,
+      "group": 80668,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80713,
+      "parent": 80668,
+      "group": 80668,
+      "rssKiB": 103104,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/desktop-safari-identity.ts scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80719,
+      "parent": 80668,
+      "group": 80668,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80732,
+      "parent": 80668,
+      "group": 80668,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

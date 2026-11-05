@@ -19,20 +19,22 @@ function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ a
 // remain available. Do not apply Objective-C pointer methods or unload it.
 phase('appkit-loader-bind-begin');
 ObjC.bindFunction('dlopen', ['void*', ['char*', 'int']]);
-ObjC.bindFunction('dlerror', ['string', []]);
+ObjC.bindFunction('dlerror', ['void*', []]);
 var openImage = $.dlopen;
 var imageError = $.dlerror;
+var samePointer = Ref.equals;
 phase('appkit-loader-bind-end');
 phase('appkit-executable-load-begin');
-// Clear, load once with RTLD_LAZY, then capture the new thread-local error
-// without intervening bridge lookups or logging. A C pointer stays opaque.
+// dlerror's second consecutive read is contractually NULL. JXA wraps even NULL
+// C pointers in truthy Ref objects; string conversion would throw. Compare only
+// opaque pointer identity, without dereferencing or casting an address.
 imageError();
+var noError = imageError();
 var appkitHandle = openImage('/System/Library/Frameworks/AppKit.framework/AppKit', 1);
 var appkitLoadError = imageError();
-if (appkitLoadError !== null && appkitLoadError !== undefined)
-  throw new Error('The system AppKit executable could not be loaded: ' +
-    (typeof appkitLoadError === 'string' ? appkitLoadError : 'Unexpected loader diagnostic'));
-if (!appkitHandle) throw new Error('The system AppKit loader returned no handle.');
+if (!samePointer(appkitLoadError, noError))
+  throw new Error('The system AppKit executable could not be loaded.');
+if (samePointer(appkitHandle, noError)) throw new Error('The system AppKit loader returned no handle.');
 phase('appkit-executable-load-end');
 phase('running-application-class-begin');
 var runningApplication = $.NSClassFromString($('NSRunningApplication'));

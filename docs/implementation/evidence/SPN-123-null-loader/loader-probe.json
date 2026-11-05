@@ -1,0 +1,48 @@
+{
+  "source": "5d775fba29a076126ebe3d81ed9232f355b5c6dc",
+  "observations": [
+    {
+      "name": "published-string-return",
+      "durationMs": 97,
+      "outcome": "error",
+      "status": 1,
+      "signal": null,
+      "stderr": "execution error: Error: Error: exception raised by object: *** +[NSString stringWithUTF8String:]: NULL cString (-2700)\n"
+    },
+    {
+      "name": "opaque-null-and-error",
+      "durationMs": 35,
+      "outcome": "returned",
+      "value": {
+        "clear": {
+          "type": "function",
+          "isNull": false,
+          "isUndefined": false,
+          "truthy": true,
+          "display": "[object Ref]"
+        },
+        "missing": {
+          "type": "function",
+          "isNull": false,
+          "isUndefined": false,
+          "truthy": true,
+          "display": "[object Ref]"
+        },
+        "problem": {
+          "type": "function",
+          "isNull": false,
+          "isUndefined": false,
+          "truthy": true,
+          "display": "[object Ref]"
+        },
+        "reset": {
+          "type": "function",
+          "isNull": false,
+          "isUndefined": false,
+          "truthy": true,
+          "display": "[object Ref]"
+        }
+      }
+    }
+  ]
+}

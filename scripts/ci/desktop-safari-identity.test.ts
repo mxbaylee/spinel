@@ -7,11 +7,11 @@ type LoaderFailure =
   | 'dlopen binding throws'
   | 'dlerror binding throws'
   | 'error reset throws'
+  | 'null reference read throws'
   | 'null handle'
   | 'load throws'
   | 'load error'
-  | 'empty load error'
-  | 'unexpected load error'
+  | 'pointer comparison throws'
   | 'error read throws'
   | 'nil class'
   | 'class lookup throws';
@@ -22,14 +22,18 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
   const failure = new Error(loaderFailure);
   const bound = new Set<string>();
   let errorReads = 0;
-  const handle = new Proxy(
-    {},
-    {
+  const pointers = new WeakMap<object, number>();
+  function pointer(address: number) {
+    // Distinct truthy wrappers for equal NULL pointers mirror the native bridge.
+    const value = new Proxy(() => {}, {
       get() {
-        throw new Error('An opaque loader handle must not be inspected.');
+        throw new Error('An opaque loader pointer must not be inspected.');
       },
-    },
-  );
+    });
+    pointers.set(value, address);
+    return value;
+  }
+  const handle = pointer(1);
   let quit = false;
   const running = {
     isNil: () => false,
@@ -70,21 +74,22 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
       assert.ok(bound.has('dlopen'));
       calls.push(['load', path, mode]);
       if (loaderFailure === 'load throws') throw failure;
-      return loaderFailure === 'null handle' ? null : handle;
+      return loaderFailure === 'null handle' ? pointer(0) : handle;
     },
     dlerror() {
       assert.ok(bound.has('dlerror'));
       calls.push(['error', ++errorReads]);
       if (errorReads === 1) {
         if (loaderFailure === 'error reset throws') throw failure;
-        return 'An unrelated earlier loader error';
+        return pointer(2);
       }
-      assert.equal(errorReads, 2, 'Read the new error once, immediately after the single load.');
+      if (errorReads === 2) {
+        if (loaderFailure === 'null reference read throws') throw failure;
+        return pointer(0);
+      }
+      assert.equal(errorReads, 3, 'Read the new error once, immediately after the single load.');
       if (loaderFailure === 'error read throws') throw failure;
-      if (loaderFailure === 'load error') return 'injected loader diagnostic';
-      if (loaderFailure === 'empty load error') return '';
-      if (loaderFailure === 'unexpected load error') return { unexpected: true };
-      return null;
+      return pointer(loaderFailure === 'load error' ? 3 : 0);
     },
     NSClassFromString(name: { stringValue: string }) {
       // C function arguments require an explicit NSString wrapper in JXA.
@@ -128,9 +133,8 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
           args,
           console: {
             log: (line: string) => {
-              assert.notEqual(
-                errorReads,
-                1,
+              assert.ok(
+                errorReads === 0 || errorReads === 3,
                 'Do not log between clearing and capturing the error.',
               );
               trace.push(line);
@@ -145,7 +149,7 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
               assert.ok(name === 'dlopen' || name === 'dlerror');
               assert.deepEqual(
                 JSON.parse(JSON.stringify(types)),
-                name === 'dlopen' ? ['void*', ['char*', 'int']] : ['string', []],
+                name === 'dlopen' ? ['void*', ['char*', 'int']] : ['void*', []],
               );
               if (loaderFailure === `${name} binding throws`) throw failure;
               bound.add(name);
@@ -153,6 +157,15 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
             unwrap: (value: unknown) => value,
           },
           $: foundation,
+          Ref: {
+            equals(left: object, right: object) {
+              assert.equal(errorReads, 3);
+              calls.push(['compare']);
+              if (loaderFailure === 'pointer comparison throws') throw failure;
+              assert.ok(pointers.has(left) && pointers.has(right));
+              return pointers.get(left) === pointers.get(right);
+            },
+          },
           Application: (pid: number) => {
             calls.push(['application', pid]);
             return {
@@ -190,10 +203,13 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
 
 const loadingCalls = [
   ['bind', 'dlopen', ['void*', ['char*', 'int']]],
-  ['bind', 'dlerror', ['string', []]],
+  ['bind', 'dlerror', ['void*', []]],
   ['error', 1],
-  ['load', '/System/Library/Frameworks/AppKit.framework/AppKit', 1],
   ['error', 2],
+  ['load', '/System/Library/Frameworks/AppKit.framework/AppKit', 1],
+  ['error', 3],
+  ['compare'],
+  ['compare'],
   ['class', 'NSRunningApplication'],
   ['lookup', 42],
 ];
@@ -229,14 +245,14 @@ for (const [name, expected, phase, callCount] of [
   ['dlopen binding throws', /dlopen binding throws/, 'appkit-loader-bind-begin', 1],
   ['dlerror binding throws', /dlerror binding throws/, 'appkit-loader-bind-begin', 2],
   ['error reset throws', /error reset throws/, 'appkit-executable-load-begin', 3],
-  ['null handle', /AppKit loader returned no handle/, 'appkit-executable-load-begin', 5],
-  ['load throws', /load throws/, 'appkit-executable-load-begin', 4],
-  ['load error', /injected loader diagnostic/, 'appkit-executable-load-begin', 5],
-  ['empty load error', /AppKit executable could not be loaded/, 'appkit-executable-load-begin', 5],
-  ['unexpected load error', /Unexpected loader diagnostic/, 'appkit-executable-load-begin', 5],
-  ['error read throws', /error read throws/, 'appkit-executable-load-begin', 5],
-  ['nil class', /NSRunningApplication class is unavailable/, 'running-application-class-begin', 6],
-  ['class lookup throws', /class lookup throws/, 'running-application-class-begin', 6],
+  ['null reference read throws', /null reference read throws/, 'appkit-executable-load-begin', 4],
+  ['null handle', /AppKit loader returned no handle/, 'appkit-executable-load-begin', 8],
+  ['load throws', /load throws/, 'appkit-executable-load-begin', 5],
+  ['load error', /AppKit executable could not be loaded/, 'appkit-executable-load-begin', 7],
+  ['pointer comparison throws', /pointer comparison throws/, 'appkit-executable-load-begin', 7],
+  ['error read throws', /error read throws/, 'appkit-executable-load-begin', 6],
+  ['nil class', /NSRunningApplication class is unavailable/, 'running-application-class-begin', 9],
+  ['class lookup throws', /class lookup throws/, 'running-application-class-begin', 9],
 ] as const)
   test(`${name} preserves the first loading failure before lookup or teardown authority`, () => {
     const f = fixture({}, name);
