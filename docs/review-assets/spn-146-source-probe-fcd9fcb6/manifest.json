@@ -1,0 +1,229 @@
+{
+  "candidate": "a4eb19e4c5b95ba589042fe181cbcec2aa848990",
+  "measuredSource": "fcd9fcb6c3b1a6478e9212f26344b83469bb492c",
+  "baselineSource": "df76fb78fa0258f8c28c068767970e8e869a5838",
+  "originalInputArchive": "7a16c4764218dda8edfdc872b0f5fa67c255b72b",
+  "outcome": "one retained-input collector capability passed; no browser or production acceptance",
+  "payloads": [
+    {
+      "path": "final-oxlint-watchdog.json",
+      "bytes": 1749,
+      "sha256": "72b0e288753c28a8e9c789ae45259f5d170d067c93096dbda59ba024329bd8a7"
+    },
+    {
+      "path": "final-backlog-watchdog.json",
+      "bytes": 2073,
+      "sha256": "fa7fd9302cf1ad1e2fef528da1e37f1309dd5e4dcb951b9a5c831645dc5ca610"
+    },
+    {
+      "path": "wiring-types-watchdog.json",
+      "bytes": 2130,
+      "sha256": "cb405e57e2dc5e7739a0974ffc280d86b754f28737b32c2e1151c3bf5d411142"
+    },
+    {
+      "path": "watchdog.json",
+      "bytes": 4885,
+      "sha256": "d639e055bc6a961da532204ee5a7f348959df92ac4f49504335413d47570a701"
+    },
+    {
+      "path": "wiring-lifecycle-repair-watchdog.json",
+      "bytes": 4696,
+      "sha256": "dbd87caaa257c0fc8a7edd2456319290a0e7cf0c61bf80a4109c5f4fa350814d"
+    },
+    {
+      "path": "wiring-actionlint-watchdog.json",
+      "bytes": 1601,
+      "sha256": "b373acd08f2ec499bb3d0e91e8bab216e9f337de5ef8b2989b0a771f316bdc62"
+    },
+    {
+      "path": "child.ts",
+      "bytes": 3176,
+      "sha256": "4995cc866d25debf03ca2c78e96164b47bb1dd476f1dd6083ff7819d644f32ba"
+    },
+    {
+      "path": "wiring-format-watchdog.json",
+      "bytes": 1837,
+      "sha256": "af35c00e6a7cc90f3a7477d3741092344fe93833a252c5787648c9374f6989f9"
+    },
+    {
+      "path": "wiring-types.log",
+      "bytes": 68,
+      "sha256": "56834028e7741d089d3ca967a1f8b19ac4d9d4349dbaa80355c7ce073c3c0410"
+    },
+    {
+      "path": "probe.log",
+      "bytes": 165,
+      "sha256": "6476e5bdabc2a0a346313b2e929572a55e22df8c4f2fe60b770a884f0b9ab721"
+    },
+    {
+      "path": "pre-execution-repair-review-b.md",
+      "bytes": 2513,
+      "sha256": "62bdee9c0b30b9d0d333162efaa126584316c90517f320594c6e9761a7764e64"
+    },
+    {
+      "path": "pre-execution-review-a.md",
+      "bytes": 9797,
+      "sha256": "303ec4416ca671c604af328f7bbfad5329a646b44dd5c07bc0faf30a1b2e73ef"
+    },
+    {
+      "path": "wiring-format.log",
+      "bytes": 251,
+      "sha256": "41dab767d565008482a5739aa6659bf32c0037ad16b8b93c451d36d3f2ae31c2"
+    },
+    {
+      "path": "wiring-actionlint.log",
+      "bytes": 67,
+      "sha256": "180fddbcd53fa10a708546dde8a10c56ac98a735ccf63a14bc8a0c0a22067aa9"
+    },
+    {
+      "path": "final-oxlint.log",
+      "bytes": 67,
+      "sha256": "678737cf0ebbba006d6fdebcd731c52b0582a2c14cb850120e8571c2b9fc5f4b"
+    },
+    {
+      "path": "final-format-watchdog.json",
+      "bytes": 2352,
+      "sha256": "323726e396cd238d873bc4914fe84fa411a5ea6cb194a3fe922b1640e6848bd7"
+    },
+    {
+      "path": "final-lint-watchdog.json",
+      "bytes": 1931,
+      "sha256": "aa228531f28fa33ea55f33c35dcc7f6ed8865a23db09c870683914ac1a0e3d60"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 3095,
+      "sha256": "9f529c19d90abbd96714332f02a265382ce25dfe5c5dcead28e13bb85bc548f2"
+    },
+    {
+      "path": "pre-execution-review-b.md",
+      "bytes": 6374,
+      "sha256": "107c68d37cd04d3955d09699380a537149450dd0d5afc7eba4ca6891ae74f35e"
+    },
+    {
+      "path": "final-format.log",
+      "bytes": 134,
+      "sha256": "d8a9c3c5e7bffe9a2adf4917f087ef6185fc6e9aaf8bfef290e0ef77d866ce8c"
+    },
+    {
+      "path": "final-pr-watchdog.json",
+      "bytes": 3191,
+      "sha256": "2163abe9fa39d00c2948a05594f83bf61b411829060771a638e8efc7e98b521d"
+    },
+    {
+      "path": "wiring-lifecycle-repair.log",
+      "bytes": 821,
+      "sha256": "75791edb28ec397ea00c9ee478ea19badffb070b56add9fb805f26d2d8631a87"
+    },
+    {
+      "path": "wiring-controls.log",
+      "bytes": 5698,
+      "sha256": "26e1a263660ebd74315147b1f6825859486f16eeaa1175f068ec0116ebd7ec4b"
+    },
+    {
+      "path": "final-pr.log",
+      "bytes": 296,
+      "sha256": "6617fb75d6e6530586d133a91ec86193b50c720bdd18b072152fd25c39f6d39b"
+    },
+    {
+      "path": "final-lint.log",
+      "bytes": 655,
+      "sha256": "46252c00495186e01bbcf6d9ee79ee329b504709dbeb2ecdefe05d814baf998d"
+    },
+    {
+      "path": "outcome-and-runtime-plan-review-a.md",
+      "bytes": 9229,
+      "sha256": "f52f2e0580315c59d50c3871998660b58ff81089c858f4b2d51dd3ed6ab94f2d"
+    },
+    {
+      "path": "run.ts",
+      "bytes": 4552,
+      "sha256": "77a6fb64f5b97c8e2ba149a0c6029ee93e18502c268e10d60db564bf472db387"
+    },
+    {
+      "path": "wiring-controls-watchdog.json",
+      "bytes": 2073,
+      "sha256": "b385d199bcb04b4d1bf1750e51e39f2e9f207727fab1db32c1f6ff487421ddae"
+    },
+    {
+      "path": "final-backlog.log",
+      "bytes": 1732,
+      "sha256": "1e61f42aa6123a238782b1c3543b273806eea6a438e4a2e480e0ff24561fb155"
+    },
+    {
+      "path": "run/result.json",
+      "bytes": 12800,
+      "sha256": "3eb1836186aebf8b9f0cf9ba96a827c405dd810e78b39e539d099bdb6b7e0e69"
+    },
+    {
+      "path": "run/prepared.json",
+      "bytes": 8268,
+      "sha256": "085729a8ee99c5695c160fa15324509bc4676f51cce9de35c2f590e8bf0e46d8"
+    },
+    {
+      "path": "run/baseline-resource.json",
+      "bytes": 1395,
+      "sha256": "78b6184fbaee58045e64470ff87a918cc08f71357e3746cfd046d6d8a725b8bf"
+    },
+    {
+      "path": "run/prepare-resource.json",
+      "bytes": 375,
+      "sha256": "056b6cf5bb9fd489ffb1b207e60161d20105072e0f795e03ae2c705e997b9cd3"
+    },
+    {
+      "path": "run/revised-resource.json",
+      "bytes": 1402,
+      "sha256": "171710dccaf548bcfd6205c3788971d1c37c6e1babb45b8813f7a98f93340f2b"
+    },
+    {
+      "path": "run/baseline.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run/prepare.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run/revised.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "run/baseline.ts",
+      "bytes": 8430,
+      "sha256": "a06a1aed5b1e1c932405b24e162e9318de089b2ae68e2ff81415b72f66150293"
+    },
+    {
+      "path": "run/input/binding.json",
+      "bytes": 13138,
+      "sha256": "ae18c04729c05c7ee3f034cf98bc680a335fbb3edf847f72f78f1d52e73b59b0"
+    },
+    {
+      "path": "run/input/inventory.json",
+      "bytes": 5915,
+      "sha256": "158d489f2dba647f2c9069ab2a6ba0ecd8d79d89572d4e3eb5844535139f228a"
+    },
+    {
+      "path": "run/baseline/binding.json",
+      "bytes": 13138,
+      "sha256": "ae18c04729c05c7ee3f034cf98bc680a335fbb3edf847f72f78f1d52e73b59b0"
+    },
+    {
+      "path": "run/baseline/inventory.json",
+      "bytes": 5915,
+      "sha256": "158d489f2dba647f2c9069ab2a6ba0ecd8d79d89572d4e3eb5844535139f228a"
+    },
+    {
+      "path": "run/revised/binding.json",
+      "bytes": 13138,
+      "sha256": "ae18c04729c05c7ee3f034cf98bc680a335fbb3edf847f72f78f1d52e73b59b0"
+    },
+    {
+      "path": "run/revised/inventory.json",
+      "bytes": 5915,
+      "sha256": "158d489f2dba647f2c9069ab2a6ba0ecd8d79d89572d4e3eb5844535139f228a"
+    }
+  ]
+}

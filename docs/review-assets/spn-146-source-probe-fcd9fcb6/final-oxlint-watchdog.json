@@ -1,0 +1,54 @@
+{
+  "root": 9680,
+  "started": 1793897682497,
+  "elapsedMs": 182,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90080,
+  "peakKiB": 90080,
+  "live": [
+    {
+      "pid": 9680,
+      "parent": 9645,
+      "group": 9680,
+      "rssKiB": 88544,
+      "started": "Thu Nov  5 08:54:42 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/final-oxlint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-runtime/window-convert.ts"
+    },
+    {
+      "pid": 9731,
+      "parent": 9680,
+      "group": 9680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 9680,
+      "parent": 9645,
+      "group": 9680,
+      "rssKiB": 88544,
+      "started": "Thu Nov  5 08:54:42 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/final-oxlint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-runtime/window-convert.ts"
+    },
+    {
+      "pid": 9699,
+      "parent": 9680,
+      "group": 9680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 9731,
+      "parent": 9680,
+      "group": 9680,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,78 @@
+{
+  "root": 9883,
+  "started": 1793897697558,
+  "elapsedMs": 429,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90752,
+  "peakKiB": 243712,
+  "live": [
+    {
+      "pid": 9883,
+      "parent": 9848,
+      "group": 9883,
+      "rssKiB": 89216,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/final-backlog-watchdog.json npm run backlog:check"
+    },
+    {
+      "pid": 9959,
+      "parent": 9883,
+      "group": 9883,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 9883,
+      "parent": 9848,
+      "group": 9883,
+      "rssKiB": 89216,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/final-backlog-watchdog.json npm run backlog:check"
+    },
+    {
+      "pid": 9902,
+      "parent": 9883,
+      "group": 9883,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 9928,
+      "parent": 9883,
+      "group": 9883,
+      "rssKiB": 78688,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "npm run backlog:check   "
+    },
+    {
+      "pid": 9940,
+      "parent": 9928,
+      "group": 9883,
+      "rssKiB": 74640,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "node scripts/backlog/cli.ts check"
+    },
+    {
+      "pid": 9946,
+      "parent": 9883,
+      "group": 9883,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 9959,
+      "parent": 9883,
+      "group": 9883,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:54:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

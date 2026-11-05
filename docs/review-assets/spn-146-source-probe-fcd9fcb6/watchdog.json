@@ -1,0 +1,166 @@
+{
+  "root": 7591,
+  "started": 1793896247032,
+  "elapsedMs": 2279,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92480,
+  "peakKiB": 466032,
+  "live": [
+    {
+      "pid": 7591,
+      "parent": 7565,
+      "group": 7591,
+      "rssKiB": 90944,
+      "started": "Thu Nov  5 08:30:46 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/watchdog.json node /tmp/spn146-source-probe/run.ts fcd9fcb6c3b1a6478e9212f26344b83469bb492c"
+    },
+    {
+      "pid": 8052,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:30:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 7591,
+      "parent": 7565,
+      "group": 7591,
+      "rssKiB": 90944,
+      "started": "Thu Nov  5 08:30:46 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/watchdog.json node /tmp/spn146-source-probe/run.ts fcd9fcb6c3b1a6478e9212f26344b83469bb492c"
+    },
+    {
+      "pid": 7610,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 7636,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 162336,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "node /tmp/spn146-source-probe/run.ts fcd9fcb6c3b1a6478e9212f26344b83469bb492c"
+    },
+    {
+      "pid": 7644,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 7821,
+      "parent": 7636,
+      "group": 7591,
+      "rssKiB": 2528,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 7827,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 7939,
+      "parent": 7636,
+      "group": 7591,
+      "rssKiB": 2528,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "unzip -p /tmp/spn146-map-repair-outcome/observation.zip test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/univer-renderer-Cqyj3Y79.js"
+    },
+    {
+      "pid": 7945,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 7979,
+      "parent": 7636,
+      "group": 7591,
+      "rssKiB": 212368,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /tmp/spn146-source-probe/child.ts baseline /tmp/spn146-source-probe/run"
+    },
+    {
+      "pid": 7985,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 7998,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8006,
+      "parent": 7636,
+      "group": 7591,
+      "rssKiB": 74736,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /tmp/spn146-source-probe/child.ts prepare /tmp/spn146-source-probe/run"
+    },
+    {
+      "pid": 8012,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8020,
+      "parent": 7636,
+      "group": 7591,
+      "rssKiB": 180048,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /tmp/spn146-source-probe/child.ts revised /tmp/spn146-source-probe/run"
+    },
+    {
+      "pid": 8026,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8039,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:30:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8052,
+      "parent": 7591,
+      "group": 7591,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:30:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

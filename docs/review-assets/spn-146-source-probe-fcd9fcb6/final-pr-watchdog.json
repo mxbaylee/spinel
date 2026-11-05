@@ -1,0 +1,110 @@
+{
+  "root": 10017,
+  "started": 1793897709101,
+  "elapsedMs": 887,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91264,
+  "peakKiB": 303968,
+  "live": [
+    {
+      "pid": 10017,
+      "parent": 9981,
+      "group": 10017,
+      "rssKiB": 89728,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/final-pr-watchdog.json npm run backlog:pr -- --base origin/main --title ⚡ SPN-146 Keep mobile native flushes within their budget"
+    },
+    {
+      "pid": 10343,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 10017,
+      "parent": 9981,
+      "group": 10017,
+      "rssKiB": 89728,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/final-pr-watchdog.json npm run backlog:pr -- --base origin/main --title ⚡ SPN-146 Keep mobile native flushes within their budget"
+    },
+    {
+      "pid": 10036,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10062,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 78896,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "npm run backlog:pr --base origin/main --title ⚡ SPN-146 Keep mobile native flushes within their budget        "
+    },
+    {
+      "pid": 10074,
+      "parent": 10062,
+      "group": 10017,
+      "rssKiB": 98544,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "node scripts/backlog/cli.ts pr --base origin/main --title ⚡ SPN-146 Keep mobile native flushes within their budget"
+    },
+    {
+      "pid": 10080,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10246,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10247,
+      "parent": 10074,
+      "group": 10017,
+      "rssKiB": 240,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 10324,
+      "parent": 10074,
+      "group": 10017,
+      "rssKiB": 35424,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 10330,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 10343,
+      "parent": 10017,
+      "group": 10017,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:55:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

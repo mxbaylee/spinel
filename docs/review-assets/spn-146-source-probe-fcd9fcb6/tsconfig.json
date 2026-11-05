@@ -1,0 +1,61 @@
+{
+  "extends": "/Users/mxbaylee/projects/spinel-spn-146/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": [
+      "/Users/mxbaylee/projects/spinel/node_modules/@types"
+    ],
+    "paths": {
+      "*": [
+        "/Users/mxbaylee/projects/spinel/node_modules/*"
+      ],
+      "@univerjs/core": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/core/./lib/types/index.d.ts"
+      ],
+      "@univerjs/docs": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/docs/./lib/types/index.d.ts"
+      ],
+      "rxjs": [
+        "/Users/mxbaylee/projects/spinel/node_modules/rxjs/dist/types/index.d.ts"
+      ],
+      "@playwright/test": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/index.d.ts"
+      ],
+      "@univerjs/docs-ui": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/docs-ui/lib/types/index.d.ts"
+      ],
+      "@univerjs/engine-render": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/engine-render/lib/types/index.d.ts"
+      ],
+      "@simplewebauthn/server": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@simplewebauthn/server/esm/index.d.ts"
+      ],
+      "@modelcontextprotocol/sdk/*.js": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@modelcontextprotocol/sdk/dist/esm/*.d.ts"
+      ],
+      "sharp": [
+        "/Users/mxbaylee/projects/spinel/node_modules/sharp/dist/index.d.mts"
+      ]
+    }
+  },
+  "include": [
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/dependencies/patch-univer-docs.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/dependencies/patch-univer-docs.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/src/ui/nativeDocFlushDiagnostic.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/e2e/doc-responsiveness-native-trace.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-flush-diagnostic.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-trace.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/prepare-doc-native-diagnostic.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-responsiveness.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-callback-comparison.ts",
+    "/Users/mxbaylee/projects/spinel/node_modules/vite/client.d.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/e2e/doc-responsiveness.spec.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-lifecycle.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-window.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-runtime/analysis.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-runtime/watchdog.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-runtime/window-analysis.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-runtime/window-convert.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-runtime.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-146/scripts/ci/prepare-doc-native-sources.ts"
+  ]
+}

@@ -1,0 +1,14 @@
+Error: spawn /Users/mxbaylee/projects/spinel/node_modules/.bin/eslint ENOENT
+    at ChildProcess._handle.onexit (node:internal/child_process:315:19)
+    at onErrorNT (node:internal/child_process:553:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'spawn /Users/mxbaylee/projects/spinel/node_modules/.bin/eslint',
+  path: '/Users/mxbaylee/projects/spinel/node_modules/.bin/eslint',
+  spawnargs: [
+    'e2e/doc-responsiveness-native-sources.ts',
+    'scripts/ci/doc-native-runtime/window-convert.ts'
+  ]
+}
+WATCHDOG: {"code":-2,"signal":null,"elapsedMs":118,"peakKiB":90624}

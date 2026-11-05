@@ -1,0 +1,12 @@
+{
+  "mode": "prepare",
+  "node": "v26.12.1",
+  "platform": "darwin",
+  "scope": "One collector child, Node resourceUsage maxRSS in KiB; not the live browser tree",
+  "complete": true,
+  "phase": "settled",
+  "secondaryErrors": [],
+  "sourceSha256": "97b2a402ad9781d94ddd9c8565b6e198ba848d9ebc39f67f3c106cd6ba25ee7a",
+  "elapsedMs": 192.13420799999997,
+  "maxRSSKiB": 213824
+}

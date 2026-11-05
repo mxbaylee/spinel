@@ -1,0 +1,54 @@
+{
+  "root": 9091,
+  "started": 1793896833340,
+  "elapsedMs": 108,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90448,
+  "peakKiB": 90448,
+  "live": [
+    {
+      "pid": 9091,
+      "parent": 9065,
+      "group": 9091,
+      "rssKiB": 88912,
+      "started": "Thu Nov  5 08:40:33 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/wiring-actionlint-watchdog.json /tmp/spn146-actionlint/actionlint .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 9124,
+      "parent": 9091,
+      "group": 9091,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:40:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 9091,
+      "parent": 9065,
+      "group": 9091,
+      "rssKiB": 88912,
+      "started": "Thu Nov  5 08:40:33 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/wiring-actionlint-watchdog.json /tmp/spn146-actionlint/actionlint .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 9110,
+      "parent": 9091,
+      "group": 9091,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:40:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 9124,
+      "parent": 9091,
+      "group": 9091,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:40:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,92 @@
+✔ recording a source-retention failure before cleanup preserves its actual phase (8.391625ms)
+✔ native diagnostic owns both resources through partial-setup failure (4.320334ms)
+✔ native diagnostic owns both resources through profile-retention failure (2.1505ms)
+✔ native diagnostic owns both resources through observer-disposal failure (2.463459ms)
+✔ native diagnostic owns both resources through detach failure (1.731625ms)
+✔ native diagnostic owns both resources through fixture-close failure (1.893542ms)
+✖ actual Playwright deadline interrupts and joins diagnostic work before the terminal hook returns (61.20975ms)
+✔ all fixed matched cases pass with complete same-thread clock and post-GC evidence (6.568ms)
+✔ selected evidence cannot pass: missing case (1.190042ms)
+✔ selected evidence cannot pass: wrong case identity (0.932208ms)
+✔ selected evidence cannot pass: partial collection (0.885334ms)
+✔ selected evidence cannot pass: failed cleanup (0.258417ms)
+✔ selected evidence cannot pass: failed pair parity (0.234375ms)
+✔ selected evidence cannot pass: different publication (0.384916ms)
+✔ selected evidence cannot pass: wrong phase order (0.303584ms)
+✔ selected evidence cannot pass: missing mark (0.70625ms)
+✔ selected evidence cannot pass: duplicate mark (0.787667ms)
+✔ selected evidence cannot pass: different renderer (1.457083ms)
+✔ selected evidence cannot pass: clock drift (1.814042ms)
+✔ selected evidence cannot pass: missing GC control (1.8085ms)
+✔ selected evidence cannot pass: missing containing tasks (1.377792ms)
+✔ selected evidence cannot pass: unsupported GC representation (1.378875ms)
+✔ one below-threshold pair remains inconclusive; other improvements cannot hide it (2.604167ms)
+✔ overlapping GC is reported without subtracting its time from the threshold (2.597459ms)
+✔ process ownership retains reparented identity and excludes PID reuse and unrelated apps (0.240083ms)
+✔ duration-unknown GC cannot support positive temporal evidence (1.852ms)
+✔ instant, flow and async GC context stays separate without changing any measured time (8.171417ms)
+✔ GC overlapping control from before its start does not prove forced-control visibility (1.599333ms)
+✔ synchronous GC pairs require matching closed endpoints on the measured thread (5.658041ms)
+✔ same resource policy rejects final-only memory/deadline/missing observations (0.197458ms)
+✔ first violating process sample survives later reaping and mutable inventory updates (0.160958ms)
+✔ terminal-only persistence failure and missing cleanup cannot pass analysis (0.649209ms)
+✔ actual terminal write failure remains visible and cannot leave a passed journal (3.346625ms)
+✔ analysis persistence failure preserves earlier primary error (8.09975ms)
+✔ window slicing preserves every original character and Enter without per-key fragmentation (3.729667ms)
+✔ source identity requires actual executed bytes and exact embedded prior-native content (2.403292ms)
+✔ actual source collector retains executed bytes and final validation rejects missing/substituted members (49.736542ms)
+✔ failed debugger setup releases its listener without acquiring a source observer (0.293042ms)
+✔ fixed-window analysis retains whole duration, nested compose union and unexplained remainder (2.336583ms)
+✔ partial continuation, wrong source, clocks, grouping and unobservable GC fail closed (8.297334ms)
+✔ a complete window without a comparable event remains inconclusive and retains outside maxima (0.608666ms)
+✔ boundary384 needs actual coherent state, empty caches and complete owned native groups (1.859875ms)
+✔ boundary448 needs actual coherent state, empty caches and complete owned native groups (1.216625ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 42
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 204.477125
+
+✖ failing tests:
+
+test at scripts/ci/doc-native-lifecycle.test.ts:90:1
+✖ actual Playwright deadline interrupts and joins diagnostic work before the terminal hook returns (61.20975ms)
+  AssertionError [ERR_ASSERTION]: node:internal/modules/cjs/loader:1607
+    throw err;
+    ^
+  
+  Error: Cannot find module 'playwright/lib/program'
+  Require stack:
+  - /Users/mxbaylee/projects/spinel-spn-146/node_modules/@playwright/test/cli.js
+      at Module._resolveFilename (node:internal/modules/cjs/loader:1603:15)
+      at wrapResolveFilename (node:internal/modules/cjs/loader:1145:27)
+      at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1169:10)
+      at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1196:12)
+      at Module._load (node:internal/modules/cjs/loader:1370:5)
+      at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+      at Module.require (node:internal/modules/cjs/loader:1713:12)
+      at require (node:internal/modules/helpers:318:16)
+      at Object.<anonymous> (/Users/mxbaylee/projects/spinel-spn-146/node_modules/@playwright/test/cli.js:18:21)
+      at Module._compile (node:internal/modules/cjs/loader:1968:14) {
+    code: 'MODULE_NOT_FOUND',
+    requireStack: [
+      '/Users/mxbaylee/projects/spinel-spn-146/node_modules/@playwright/test/cli.js'
+    ]
+  }
+  
+  Node.js v26.12.1
+  
+      at TestContext.<anonymous> (file:///Users/mxbaylee/projects/spinel-spn-146/scripts/ci/doc-native-lifecycle.test.ts:143:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":382,"peakKiB":143232}

@@ -1,0 +1,126 @@
+{
+  "root": 8854,
+  "started": 1793896831047,
+  "elapsedMs": 1399,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91392,
+  "peakKiB": 604912,
+  "live": [
+    {
+      "pid": 8854,
+      "parent": 8828,
+      "group": 8854,
+      "rssKiB": 89856,
+      "started": "Thu Nov  5 08:40:30 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/wiring-lifecycle-repair-watchdog.json node --test scripts/ci/doc-native-lifecycle.test.ts"
+    },
+    {
+      "pid": 8973,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:40:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 8854,
+      "parent": 8828,
+      "group": 8854,
+      "rssKiB": 89856,
+      "started": "Thu Nov  5 08:40:30 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-source-probe/wiring-lifecycle-repair-watchdog.json node --test scripts/ci/doc-native-lifecycle.test.ts"
+    },
+    {
+      "pid": 8873,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8899,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 58208,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "node --test scripts/ci/doc-native-lifecycle.test.ts"
+    },
+    {
+      "pid": 8900,
+      "parent": 8899,
+      "group": 8854,
+      "rssKiB": 90640,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/doc-native-lifecycle.test.ts"
+    },
+    {
+      "pid": 8901,
+      "parent": 8900,
+      "group": 8854,
+      "rssKiB": 200224,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-146/node_modules/@playwright/test/cli.js test --config /var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spn146-timeout-yHGgP2/playwright.config.ts"
+    },
+    {
+      "pid": 8907,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8920,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8928,
+      "parent": 8901,
+      "group": 8854,
+      "rssKiB": 164464,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 8934,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:40:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8947,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:40:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8960,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 08:40:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 8973,
+      "parent": 8854,
+      "group": 8854,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:40:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
