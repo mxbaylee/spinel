@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { glob, readFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { gunzipSync } from 'node:zlib';
@@ -7,6 +8,7 @@ import { convertDocCallbackTrace } from '../../../e2e/doc-responsiveness-callbac
 import { persistCallbackManifest } from '../../../e2e/doc-responsiveness-callback-progress.ts';
 import { resourceFailure } from './watchdog.ts';
 import { analyzeNativeWindow } from './window-analysis.ts';
+import { validateRetainedNativeSources } from '../../../e2e/doc-responsiveness-native-sources.ts';
 
 const hash = (bytes: Buffer | string) => createHash('sha256').update(bytes).digest('hex');
 const controller = new AbortController();
@@ -28,6 +30,37 @@ try {
     return JSON.parse(bytes.toString());
   };
   const metrics = await load(paths[0]!);
+  const preparation = await load('spn146-diagnostic-build.json');
+  const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  assert.equal(source, process.env.SPN146_REVIEWED_HEAD);
+  assert.equal(metrics.source, source);
+  assert.equal(preparation.source, source);
+  assert.equal(preparation.reviewedHead, source);
+  assert.equal(
+    preparation.tree,
+    execFileSync('git', ['rev-parse', 'HEAD^{tree}'], { encoding: 'utf8' }).trim(),
+  );
+  assert.equal(preparation.nativeReference, '2f442317dd2e1c188ae4a810ac094fd1162a4a2a');
+  assert.equal(preparation.eventBefore, '02ef01a40fe8369b79477909673c76de6d2a4edf');
+  assert.deepEqual(metrics.nativeDiagnosticBuild, preparation);
+  for (const [path, expected] of Object.entries(preparation.sources))
+    assert.equal(hash(await readFile(path)), expected, `Prepared source changed: ${path}`);
+  const docs = preparation.builds.find((entry: any) => entry.format === 'es');
+  assert.equal(
+    docs.priorSha256,
+    '57ec2ee153792c73e466a753d2e5c9ed1cd19615bb45a04fbe72c9336a6ad2b8',
+  );
+  assert.equal(hash(await readFile(docs.path)), docs.priorSha256);
+  const identities = {
+    'node_modules/@univerjs/docs/lib/es/index.js': docs.priorSha256,
+    'node_modules/@univerjs/core/lib/es/index.js':
+      preparation.sources['node_modules/@univerjs/core/lib/es/index.js'],
+  };
+  record.loadedSources = await validateRetainedNativeSources(
+    directory + '/spn146-loaded-sources',
+    metrics.nativeLoadedSources,
+    identities,
+  );
   const journal = await load(directory + '/spn146-progress.json');
   assert.equal(journal.terminal, 'passed');
   assert.equal(journal.firstFailure, null);
