@@ -93,10 +93,17 @@ for (const format of ['es', 'cjs'] as const) {
   // Preserve the first experiment's exact candidate as the upgrade/work control.
   assert.equal(hash(prepared.paragraphTailPatched), record.installedSha256);
   assert.equal(
-    hash(prepared.patched),
+    hash(prepared.qualifiedRangesPatched),
     {
       es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
       cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+    }[format],
+  );
+  assert.equal(
+    hash(prepared.patched),
+    {
+      es: 'e47c9319b3c85c737add0e7807edbc27aeafcc81b81dd6ad870058e4fe3da093',
+      cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
     }[format],
   );
   assert.equal(
@@ -118,6 +125,7 @@ for (const format of ['es', 'cjs'] as const) {
     prior: record.priorSha256,
     candidate: hash(prepared.patched),
     previousCandidate: record.installedSha256,
+    previousQualifiedCandidate: hash(prepared.qualifiedRangesPatched),
     regions: { prior: hash(native[format].prior), candidate: hash(native[format].candidate) },
   };
 }
