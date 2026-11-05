@@ -1,0 +1,70 @@
+{
+  "root": 4772,
+  "started": 1793895348625,
+  "elapsedMs": 369,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91456,
+  "peakKiB": 213776,
+  "live": [
+    {
+      "pid": 4772,
+      "parent": 4744,
+      "group": 4772,
+      "rssKiB": 89920,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-build-outcome/renderer-format-final-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --check src/build/rendererChunks.ts vite.config.ts scripts/ci/renderer-chunks.test.ts scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts .github/workflows/phone-build-inspection.yml"
+    },
+    {
+      "pid": 4818,
+      "parent": 4772,
+      "group": 4772,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 4772,
+      "parent": 4744,
+      "group": 4772,
+      "rssKiB": 89920,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-build-outcome/renderer-format-final-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --check src/build/rendererChunks.ts vite.config.ts scripts/ci/renderer-chunks.test.ts scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts .github/workflows/phone-build-inspection.yml"
+    },
+    {
+      "pid": 4791,
+      "parent": 4772,
+      "group": 4772,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 4799,
+      "parent": 4772,
+      "group": 4772,
+      "rssKiB": 122640,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --check src/build/rendererChunks.ts vite.config.ts scripts/ci/renderer-chunks.test.ts scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts .github/workflows/phone-build-inspection.yml"
+    },
+    {
+      "pid": 4805,
+      "parent": 4772,
+      "group": 4772,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 4818,
+      "parent": 4772,
+      "group": 4772,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

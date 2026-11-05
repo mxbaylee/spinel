@@ -1,0 +1,54 @@
+{
+  "root": 4702,
+  "started": 1793895348203,
+  "elapsedMs": 238,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90256,
+  "peakKiB": 90256,
+  "live": [
+    {
+      "pid": 4702,
+      "parent": 4676,
+      "group": 4702,
+      "rssKiB": 88720,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-build-outcome/renderer-types-repair-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/tsc -p /tmp/spn090-build-outcome/tsconfig-renderer.json"
+    },
+    {
+      "pid": 4735,
+      "parent": 4702,
+      "group": 4702,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 4702,
+      "parent": 4676,
+      "group": 4702,
+      "rssKiB": 88720,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-build-outcome/renderer-types-repair-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/tsc -p /tmp/spn090-build-outcome/tsconfig-renderer.json"
+    },
+    {
+      "pid": 4721,
+      "parent": 4702,
+      "group": 4702,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 4735,
+      "parent": 4702,
+      "group": 4702,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

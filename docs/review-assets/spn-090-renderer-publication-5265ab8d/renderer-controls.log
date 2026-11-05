@@ -1,0 +1,15 @@
+✔ actual emitted bytes bind a deduplicated static closure, excluding dynamic-only chunks (8.9485ms)
+✔ final settled files bind descriptor CSS, copied assets, and unchanged declared bytes (18.199208ms)
+✔ missing entry, unresolved static or dynamic dependencies and unsafe paths fail closed (1.085875ms)
+✔ one build-only branch transition cannot route provider or browser work (3.138541ms)
+✔ renderer boundary rejects eager imports and missing dictionary, shell or editor reachability (1.716417ms)
+✔ actual renderer grouping leaves shared startup code outside the lazy renderer and preserves initialization (59.072208ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 170.230417
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":318,"peakKiB":90624}

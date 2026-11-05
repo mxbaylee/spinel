@@ -1,0 +1,3 @@
+scripts/ci/browserstack-build-graph.test.ts(250,18): error TS2339: Property 'initialApplicationDependency' does not exist on type '{ file: string; type: string; initialApplicationDependency: boolean; modules: { id: string; }[]; imports: never[]; dynamicImports: never[]; } | { file: string; type: string; modules: { id: string; }[]; imports: string[]; dynamicImports: never[]; }'.
+  Property 'initialApplicationDependency' does not exist on type '{ file: string; type: string; modules: { id: string; }[]; imports: string[]; dynamicImports: never[]; }'.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":247,"peakKiB":90528}

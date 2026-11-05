@@ -1,0 +1,27 @@
+{
+  "extends": "/Users/mxbaylee/projects/spinel-spn-090-production/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": [
+      "/Users/mxbaylee/projects/spinel/node_modules/@types"
+    ],
+    "paths": {
+      "*": [
+        "/Users/mxbaylee/projects/spinel/node_modules/*"
+      ],
+      "vite": [
+        "/Users/mxbaylee/projects/spinel/node_modules/vite/dist/node/index.d.ts"
+      ],
+      "sharp": [
+        "/Users/mxbaylee/projects/spinel/node_modules/sharp/dist/index.d.mts"
+      ]
+    }
+  },
+  "include": [
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-build-graph.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-build-graph.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-build-inspection.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/vite.config.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/src/build/rendererChunks.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/renderer-chunks.test.ts"
+  ]
+}

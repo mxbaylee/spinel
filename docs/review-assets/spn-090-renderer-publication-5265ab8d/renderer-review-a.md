@@ -1,0 +1,53 @@
+# 🔎 SPN-090 renderer boundary — independent review A
+
+Exact source: **5265ab8d26c7c607bef189a1fd720f8bd28d6584**, clean/unpushed at review, `/Users/mxbaylee/projects/spinel-spn-090-production`. Complete outcome base remains `2f442317dd2e1c188ae4a810ac094fd1162a4a2a`; incremental comparison is from `3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b`.
+
+**Independent score: 98/100 (35/25/18/10/10). No unresolved source blocker found for the declared single changed-source build-only observation after both qualifying exact-head reviews.** This is not current-head hosted acceptance, phone execution permission or merge approval.
+
+## 📌 Scope and finding disposition
+
+Read the complete380-addition/19-deletion increment, maintained renderer-boundary plan, new source/test/evidence/workflow files, actual Vite integration and relevant current CI selection. Reconciled it with the original main ticket, complete existing PR scope, process/testing/personas and prior source-specific reviews. Read B's original emitted-build outcome at `/tmp/spn090-build-outcome/outcome-review-b.md`. Original Safari failure and all outstanding physical acceptance remain distinct from that successful build inspection.
+
+The new hypothesis is supported by concrete retained output: the original initial application closure contained the renderer through shared UI/runtime chunks. Preventing recursive capture of dependencies into the explicit renderer group directly targets that demonstrated edge. It does not depend on guessing the contents of CopyFile or theme from their names. The preload-helper group remains intact; all renderer implementation/dictionary module identities must remain available. There is no API, CSS list, timeout, application route or account/guest authority change.
+
+The source extraction into a16-line `src/build/rendererChunks.ts` constant allows the actual production configuration to be imported by the pinned-bundler fixture. The same output configuration is used by production and dependency optimization. This is a small useful test seam, not a second build pipeline or generalized chunk-rule framework.
+
+### Corrected routing concern — no blocker
+
+During review I initially questioned the absence of `src/build/**` from named performance/full/restore classifiers. Following the entire `coveragePlan` implementation shows that this path is unknown and therefore selects **full coverage**, including restore timing and both performance baselines. Native desktop explicitly matches `src/**`; Storybook does not consider the source path documentation-only. The existing unknown-path controls protect this fail-closed mechanism. Thus there is **no present skipped-owner defect**, and no routing deduction or unnecessary classifier change is requested. Parent was promptly given this correction; the source remained5265. A future change to unknown-path policy must preserve this build dependency, but speculative policy work is outside this repair.
+
+## 🔐 Independent evidence inspection
+
+A small read-only comparison of the retained415,777-byte graph against the committed baseline record confirmed graph SHA-256 **dd4c998f1a194861692bbb109fd60301a9151850b7895bffeac902eed3a6a43c**, original source3ac03e9e and an exact sorted inventory of **78** engine-render module IDs. No original ZIP, full build or browser workload was repeated. B's broader original archive/member audit retains its independent provenance; this review does not pretend to have repeated it.
+
+Inspected the six-control log: **6/6 pass**,170.230 ms test duration; enclosing watchdog **318 ms /90,624 KiB**, normal pressure. The actual Rolldown fixture case passed at59.072 ms. It builds the same small shared-UI/lazy-editor/renderer/dictionary input with the prior and repaired group options, proves the prior initial static edge, proves the repaired closure excludes the renderer, retains dictionary membership, and executes repaired output to observe `shared` before editor opening and `shared → renderer → dictionary` afterward. Both bundler instances close and the owned temporary fixture is removed. This is a meaningful low-layer counterexample and initialization control; it is not the full Spinel application, a browser or an actual offline editor.
+
+Read the initial fixture-only type failure and the repaired types receipt (**238 ms /90,256 KiB**), plus targeted lint/actionlint and committed PR check logs. The latter passes at **831 ms /274,384 KiB** with a **28,699 changed-line** soft-limit warning. The actual donor bundler is used as a pinned tool on synthetic inputs, not as proof of a clean application install. No test/build/native/provider/converter execution was performed by this reviewer.
+
+The existing final emitted-byte/descriptor/public-URL validation remains intact. The new validator requires the complete78-module identity set, excludes every renderer-containing chunk from the application static closure, verifies those chunks are retained in the offline shell and checks reachability from both actual editor-module roots over static and dynamic edges. Its negative controls cover eager imports, missing dictionary/module inventory, missing shell membership and lost editor reachability. The full graph is written before this criterion is evaluated, so a failed candidate retains the observed graph and a failed terminal result rather than erasing the useful evidence.
+
+## 📐 Rubric
+
+- **Scope/acceptance35/35:** narrow repair to an observed startup dependency coupling, explicit one-build question and complete original XL remainder preserved. No fabricated startup-cause claim, phone pass or reduced physical scope.
+- **Correctness/integrity/access25/25:** renderer-only recursion override, retained preload group, execution-order safeguard, same output configuration in both relevant paths, exact module/graph/source binding and strict negative criterion. No unresolved source defect identified. Full application behavior remains an acceptance obligation, not an assumption.
+- **Verification18/20:** meaningful real-bundler negative/positive fixture and graph/file controls; historical graph baseline independently reconciled. Two points reflect still-unexecuted full production graph and actual multi-entry/runtime behavior after a build configuration change. The appropriate next evidence owner is the declared hosted build, followed by existing application/native acceptance if its criterion passes; another local full build is not required or credited here.
+- **CI/operations10/10:** exactly one owned3ac→reviewed-head transition, attempt-one guard and existing15-minute job/10-minute build limits. No provider/browser path or automatic rerun. Failure retains complete available graph and original error. Current selectors cover the new helper through unknown-path full coverage, native src/** and non-doc Storybook handling.
+- **Maintainability/process/over-complexity10/10:** a small shared configuration and one focused fixture preserve existing conventions without adding guessed chunk lists, packages, environment branches or new product infrastructure. Historical failures and source distinctions are retained. No avoidable abstraction or unrelated cleanup identified in the increment.
+
+## ⚙️ Supported mechanism and important limits
+
+The official [Rolldown manual code-splitting guide](https://rolldown.rs/in-depth/manual-code-splitting) documents recursive dependency capture by default and the non-recursive option, with entry-signature and execution-order caveats. The candidate's explicit strict execution order is a defensible safeguard, not proof that all application initialization remains correct. Read the installed Vite code confirming normal client builds already select `preserveEntrySignatures: false`; the proposal does not introduce an additional export-signature policy.
+
+Strict execution order affects the shared output configuration, including bootstrap, application and worker entry roles and dependency optimization; it is broader than merely renaming a chunk. Their actual exports/initialization, worker installation, runtime selection, retained-version compatibility and lazy native editors still require production/runtime acceptance. The one-entry synthetic fixture demonstrates the selected mechanism and one ordering contract, not every cycle or export pattern in Spinel.
+
+The graph criterion proves module membership/reachability and emitted-byte inventory. It does not establish that every dictionary executes correctly, actual offline fetching, startup latency, memory use or anonymous readiness. Static JS size excludes the separately retained all-descriptor CSS dependency. A reduced graph cannot retrospectively identify why the old Safari page remained blank, and no comparison is licensed to omit required CSS or shared Core/UI functionality merely to improve a total.
+
+## 🧭 Whole outcome, personas and landing boundary
+
+The full **28,699-line** PR is above the soft limit and remains an unresolved XL platform outcome, not a small build-only landing. The new repair is directly tied to the failed startup prerequisite and does not present an independently accepted feature that can safely be split away from its necessary native/offline verification. Preserve every original requirement. Reassess accumulated diagnostic-route ownership before final landing, but do not add a generic tool ticket or close SPN-090 simply because a new graph passes.
+
+Operator gains a bounded, supported build change instead of arbitrary chunk rules or paid retries. Owner/Collaborator retain complete authored data, images, local/history/reconnect/conflict and installed-context requirements. Link guest preserves isolated authority and runtime selection; a shared dependency change does not authorize broadening access. No new visible state is designed here, so no new UI story is required for the config itself. Existing rendering/interaction/current-source acceptance remains necessary; prior fixture visual approval is agent review only and not a phone pass.
+
+After two qualifying exact reviews, the plan supports **one changed-source build-only observation** from3ac03e9e with unchanged limits and all78-module criterion. An unmet criterion stops this candidate, retains its graph and permits no automatic rerun. A graph-qualified result can support a separately reviewed actual application/native and finite instrumented-phone plan; it is not that plan's approval. Current-head required gates, multi-entry/native/offline behavior and complete physical phone acceptance are pending. Conditional backlog completion must not land before the full outcome is verified.
+
+User scope remains complete SPN-146 and SPN-090, then stop.

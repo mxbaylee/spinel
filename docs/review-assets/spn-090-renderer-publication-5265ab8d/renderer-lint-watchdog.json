@@ -1,0 +1,54 @@
+{
+  "root": 4555,
+  "started": 1793895321221,
+  "elapsedMs": 149,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90480,
+  "peakKiB": 90480,
+  "live": [
+    {
+      "pid": 4555,
+      "parent": 4527,
+      "group": 4555,
+      "rssKiB": 88944,
+      "started": "Thu Nov  5 08:15:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-build-outcome/renderer-lint-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/oxlint --deny-warnings src/build/rendererChunks.ts vite.config.ts scripts/ci/renderer-chunks.test.ts scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts"
+    },
+    {
+      "pid": 4588,
+      "parent": 4555,
+      "group": 4555,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 4555,
+      "parent": 4527,
+      "group": 4555,
+      "rssKiB": 88944,
+      "started": "Thu Nov  5 08:15:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-build-outcome/renderer-lint-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/oxlint --deny-warnings src/build/rendererChunks.ts vite.config.ts scripts/ci/renderer-chunks.test.ts scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts"
+    },
+    {
+      "pid": 4574,
+      "parent": 4555,
+      "group": 4555,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 4588,
+      "parent": 4555,
+      "group": 4555,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 08:15:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
