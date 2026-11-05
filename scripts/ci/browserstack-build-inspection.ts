@@ -11,11 +11,14 @@ if (git('status', '--porcelain', '--untracked-files=no'))
   throw new Error('Tracked source is dirty');
 if (process.env.VITE_SYNC_EVIDENCE !== '1') throw new Error('Expected authored phone build flags');
 const source = git('rev-parse', 'HEAD');
-if (source !== process.env.GITHUB_SHA || process.env.GITHUB_RUN_ATTEMPT !== '1')
+const reviewedSource = process.env.SOURCE_SHA || process.env.GITHUB_SHA;
+if (source !== reviewedSource || process.env.GITHUB_RUN_ATTEMPT !== '1')
   throw new Error('Build inspection source or attempt mismatch');
 await mkdir('artifacts', { recursive: true });
 const identity = {
   source,
+  reviewedSource,
+  eventSha: process.env.GITHUB_SHA,
   tree: git('rev-parse', 'HEAD^{tree}'),
   eventBefore: process.env.SPN090_EVENT_BEFORE,
   runId: process.env.GITHUB_RUN_ID,
@@ -31,6 +34,7 @@ const identity = {
         'package-lock.json',
         'vite.config.ts',
         'web/main.tsx',
+        'src/shared/bootstrapEvidence.ts',
         'web/application.tsx',
         'scripts/ci/browserstack-build-inspection.ts',
         'scripts/ci/browserstack-build-graph.ts',

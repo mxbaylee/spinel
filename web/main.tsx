@@ -3,11 +3,19 @@ import { parseShellManifest, sameCompatibility } from '../src/shared/offlineShel
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import { installRuntimeHost, runtimeRequest } from './offline/runtime.ts';
 import type { RuntimeHost } from './offline/runtime.ts';
+import { createBootstrapJournal } from '../src/shared/bootstrapEvidence.ts';
 
 type Application = {
   compatibility: RuntimeHost['compatibility'];
   startApplication(element: HTMLElement, host: RuntimeHost): () => void;
 };
+const bootstrap =
+  import.meta.env.VITE_SYNC_EVIDENCE === '1'
+    ? createBootstrapJournal(() => performance.now())
+    : null;
+if (bootstrap)
+  Object.defineProperty(window, '__spinelBootstrapEvidence', { value: () => bootstrap.read() });
+bootstrap?.mark('bootstrap-ready');
 const root = document.getElementById('root')!;
 const descriptor = document.getElementById('spinel-runtime')?.textContent;
 const current = descriptor ? parseShellManifest(descriptor) : null;
@@ -62,22 +70,30 @@ const host: RuntimeHost = {
 installRuntimeHost(host);
 registerAppWorker();
 
-async function start(manifest: ShellManifest | null, verifyCurrent: () => void) {
+async function start(
+  manifest: ShellManifest | null,
+  verifyCurrent: () => void,
+  initialBoot = false,
+) {
   const operation = ++sequence;
   const verify = () => {
     verifyCurrent();
     if (operation !== sequence) throw new DOMException('App startup changed.', 'AbortError');
   };
   verify();
+  if (initialBoot) bootstrap?.mark('application-import-start');
   // The production entry is a public descriptor URL; the bootstrap has no static
   // dependency on React, the application, native editor code, or any private data.
   const application = (
     manifest ? await import(/* @vite-ignore */ manifest.entry) : await import('./application.tsx')
   ) as Application;
+  if (initialBoot) bootstrap?.mark('application-import-end');
   verify();
   if (manifest && !sameCompatibility(manifest.compatibility, application.compatibility))
     throw new Error('This saved editor does not match its app version.');
+  if (initialBoot) bootstrap?.mark('styles-start');
   const prepared = manifest ? await loadStyles(manifest, verify) : [];
+  if (initialBoot) bootstrap?.mark('styles-end');
   try {
     verify();
   } catch (error) {
@@ -99,6 +115,7 @@ async function start(manifest: ShellManifest | null, verifyCurrent: () => void) 
     styles.set(new URL(link.href).pathname, link);
   }
   retire = application.startApplication(root, host);
+  if (initialBoot) bootstrap?.mark('application-start-returned');
   if (manifest) void runtimeRequest('claim', manifest.version).catch(() => {});
 }
 
@@ -113,15 +130,21 @@ async function boot() {
       /* Safe online bootstrap can still render account entry. */
     }
     try {
+      bootstrap?.mark('worker-selection-start');
       const result = await runtimeRequest('bootstrap', current.version, accountId);
       if (result.manifest) selected = result.manifest;
+      bootstrap?.mark('worker-selection-settled');
     } catch {
+      bootstrap?.mark('worker-selection-fallback');
       /* App admission independently checks retained data before exposure. */
     }
-  }
-  await start(selected, () => {});
+  } else bootstrap?.mark('worker-selection-skipped');
+  await start(selected, () => {}, true);
+  bootstrap?.seal();
 }
 void boot().catch(() => {
+  bootstrap?.mark('boot-rejected');
+  bootstrap?.seal();
   root.textContent =
     'Spinel could not start. Connect and reload to try again. Your saved device data has not been changed.';
 });

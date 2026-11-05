@@ -134,6 +134,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
@@ -148,7 +149,22 @@ jobs:
         env:
           # Native model reads are observation-only and absent from ordinary builds.
           VITE_SYNC_EVIDENCE: ${{ contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE) && '1' || '0' }}
-        run: npm run build
+        run: |
+          if [ "$VITE_SYNC_EVIDENCE" = 1 ]; then
+            node scripts/ci/browserstack-build-inspection.ts
+          else
+            npm run build
+          fi
+      - name: Retain inspected authored build before provider allocation
+        if: contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browserstack-authored-build-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/browserstack-build-*.json
+            dist/
+          if-no-files-found: error
+          retention-days: 14
       - name: Configure BrowserStack
         uses: browserstack/github-actions/setup-env@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
         with:
@@ -185,5 +201,7 @@ jobs:
           path: |
             artifacts/browserstack-capability.json
             artifacts/browserstack-capability/
+            artifacts/browserstack-build-*.json
+            dist/
           if-no-files-found: error
           retention-days: 14

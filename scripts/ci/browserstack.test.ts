@@ -445,7 +445,8 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
     'browserstack-capability.ts prepare',
     'run: npm ci',
     'run: npm run typecheck',
-    'run: npm run build',
+    'node scripts/ci/browserstack-build-inspection.ts',
+    'name: Retain inspected authored build before provider allocation',
     'browserstack/github-actions/setup-env@',
     'browserstack/github-actions/setup-local@',
     'browserstack-capability.ts run',
@@ -459,6 +460,17 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
     'a one-use journal, dependencies, typecheck and build precede Local/device execution',
   );
   assert.doesNotMatch(capability, /continue-on-error:/);
+  const retention = capability.match(
+    /^      - name: Retain inspected authored build before provider allocation\n([\s\S]*?)(?=^      - )/m,
+  )?.[1];
+  assert.ok(retention);
+  assert.match(
+    retention,
+    /if: contains\(fromJSON\(env.BS_AUTHORED_SCOPES\), env.BS_CAPABILITY_SCOPE\)/,
+  );
+  assert.doesNotMatch(retention, /always\(\)|failure\(\)/);
+  assert.match(retention, /if-no-files-found: error/);
+  assert.match(retention, /artifacts\/browserstack-build-\*\.json\n\s+dist\//);
   assert.equal([...source.matchAll(/BS_CAPABILITY_SCOPE:/g)].length, 1);
   const scope = capability.match(/^      BS_CAPABILITY_SCOPE: \$\{\{ (.+) \}\}$/m)?.[1];
   assert.ok(scope, 'one job-level scope applies to both prepare and run');
@@ -477,6 +489,12 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
     /^      - name: Build the production application\n([\s\S]*?)(?=^      - )/m,
   )?.[1];
   assert.ok(build, 'the observation flag belongs only to the application build');
+  assert.match(
+    build,
+    /if \[ "\$VITE_SYNC_EVIDENCE" = 1 \]; then\s+node scripts\/ci\/browserstack-build-inspection\.ts\s+else\s+npm run build\s+fi/,
+  );
+  assert.match(capability, /ref: \$\{\{ github.event.pull_request.head.sha \|\| github.sha \}\}/);
+  assert.match(capability, /artifacts\/browserstack-build-\*\.json\n\s+dist\//);
   const evidence = build.match(/^          VITE_SYNC_EVIDENCE: \$\{\{ (.+) \}\}$/m)?.[1];
   assert.ok(evidence, 'the evidence build flag is conditional on the admitted scope');
   const observation = capability.match(

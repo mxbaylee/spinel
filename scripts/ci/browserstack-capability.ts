@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, open, readFile, rename, rm, writeFile } from 'node:fs/p
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { sanitizeBootstrapSnapshot } from '../../src/shared/bootstrapEvidence.ts';
 import {
   browserstackOrigin,
   createBrowserstackFixture,
@@ -640,8 +641,13 @@ export function verifyLaunchedBrowser(
         : 'same-native-app',
   };
 }
+function environmentObservation(value: unknown): Row {
+  const environment = row(value);
+  return { ...environment, bootstrap: sanitizeBootstrapSnapshot(environment.bootstrap) };
+}
 export function launchEnvironmentDiagnostic(environment: Row) {
   return Object.fromEntries([
+    ['bootstrap', sanitizeBootstrapSnapshot(environment.bootstrap)],
     ...['origin', 'path', 'title', 'userAgent', 'controller'].map((key) => [
       key,
       typeof environment[key] === 'string' ? clean(environment[key]) : null,
@@ -836,6 +842,7 @@ export async function waitForDeviceOffline(
   }
 }
 export const environmentScript = `return {
+  bootstrap: (() => { try { return window.__spinelBootstrapEvidence?.() ?? null; } catch { return null; } })(),
   origin: location.origin, path: location.pathname, title: document.title,
   userAgent: navigator.userAgent, secureContext: isSecureContext,
   serviceWorkerAvailable: 'serviceWorker' in navigator,
@@ -1943,7 +1950,8 @@ export async function runCapability(
           (suffix, method, body, timeout) => command(session(suffix), method, body, timeout),
           { origin: fixture.origin, windowHandle, deadline: activeDeadline() },
         ),
-      environment: async () => launchEnvironmentDiagnostic(row(await execute(environmentScript))),
+      environment: async () =>
+        launchEnvironmentDiagnostic(environmentObservation(await execute(environmentScript))),
       blankPage: readBlankPage,
       expired: () => signal.aborted || Date.now() >= activeDeadline(),
     });
@@ -1971,7 +1979,7 @@ export async function runCapability(
           previousWindowHandles,
         );
         await command(session('window'), 'POST', { handle: selected.handle });
-        const environment = row(await execute(environmentScript));
+        const environment = environmentObservation(await execute(environmentScript));
         await record(`${result.stage}:context-candidate`, {
           contextId: clean(entry.id),
           contextBundleId: clean(entry.bundleId),
@@ -2079,7 +2087,7 @@ export async function runCapability(
     try {
       environment = await poll(
         async () => {
-          last = row(await execute(environmentScript));
+          last = environmentObservation(await execute(environmentScript));
           if (
             !checked &&
             last.controller == null &&
@@ -2714,7 +2722,7 @@ export async function runCapability(
     await command(session('url'), 'POST', { url: fixture.origin });
     let initial: Row;
     try {
-      initial = row(await execute(environmentScript));
+      initial = environmentObservation(await execute(environmentScript));
     } catch (error) {
       if (target.browser !== 'safari') throw error;
       const source = await command(session('source'));

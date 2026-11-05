@@ -2339,6 +2339,14 @@ test('launch and screenshot diagnostics retain bounded observations without copy
     standalone: false,
     navigatorStandalone: false,
     arbitrary: 'private-field',
+    bootstrap: {
+      events: [{ phase: 'application-import-start', at: 5, secret: 'private-entry' }],
+      dropped: 0,
+      invalidClock: false,
+      failed: false,
+      sealed: false,
+      token: 'private-token',
+    },
   });
   assert.equal(environment.origin, 'https://bs-local.com:8176');
   assert.equal(environment.path, '/_desktop-login/[redacted]');
@@ -2347,6 +2355,13 @@ test('launch and screenshot diagnostics retain bounded observations without copy
   assert.equal(environment.standalone, false);
   assert.equal(environment.controller, null);
   assert.equal(environment.online, null);
+  assert.deepEqual(environment.bootstrap, {
+    events: [{ phase: 'application-import-start', at: 5 }],
+    dropped: 0,
+    invalidClock: false,
+    failed: false,
+    sealed: false,
+  });
   assert.doesNotMatch(JSON.stringify(environment), /private-|arbitrary/);
   assert.deepEqual(screenshotResponseShape({ value: 'private-screenshot', token: 'private-key' }), {
     type: 'object',
@@ -3324,6 +3339,16 @@ test('a launched window that is blank at first is attached once Spinel appears, 
           }
           const blank = reading && (mode === 'always-blank' || environmentReads <= 2);
           value = {
+            bootstrap: {
+              events: [
+                { phase: 'application-import-start', at: 5, account: 'witness-private-account' },
+              ],
+              dropped: 0,
+              invalidClock: false,
+              failed: false,
+              sealed: false,
+              token: 'witness-private-token',
+            },
             origin: blank ? 'null' : origin,
             secureContext: !blank,
             serviceWorkerAvailable: true,
@@ -3394,6 +3419,8 @@ test('a launched window that is blank at first is attached once Spinel appears, 
     const candidates = result.observations
       .filter((entry) => entry.stage === 'home-launch:context-candidate')
       .map((entry) => (entry.value as { environment: { origin: unknown } }).environment.origin);
+    assert.doesNotMatch(JSON.stringify(result.observations), /witness-private/);
+    assert.ok(JSON.stringify(result.observations).includes('application-import-start'));
     if (mode === 'blank-then-ready') {
       // Attached on the third read and carried on to the next real guard.
       assert.equal(result.stage, 'production-downloads');
