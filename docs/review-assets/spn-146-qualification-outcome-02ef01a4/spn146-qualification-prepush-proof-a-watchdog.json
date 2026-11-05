@@ -1,0 +1,54 @@
+{
+  "root": 55289,
+  "started": 1793875161289,
+  "elapsedMs": 289,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92720,
+  "peakKiB": 92720,
+  "live": [
+    {
+      "pid": 55289,
+      "parent": 55242,
+      "group": 55289,
+      "rssKiB": 91168,
+      "started": "Thu Nov  5 02:39:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-qualification-prepush-proof-a-watchdog.json node /tmp/spn146-qualification-prepush-proof-a.ts"
+    },
+    {
+      "pid": 55348,
+      "parent": 55289,
+      "group": 55289,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:39:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 55289,
+      "parent": 55242,
+      "group": 55289,
+      "rssKiB": 91168,
+      "started": "Thu Nov  5 02:39:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-qualification-prepush-proof-a-watchdog.json node /tmp/spn146-qualification-prepush-proof-a.ts"
+    },
+    {
+      "pid": 55308,
+      "parent": 55289,
+      "group": 55289,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:39:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 55348,
+      "parent": 55289,
+      "group": 55289,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:39:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

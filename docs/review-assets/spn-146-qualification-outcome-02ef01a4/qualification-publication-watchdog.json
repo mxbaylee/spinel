@@ -1,0 +1,174 @@
+{
+  "root": 57128,
+  "started": 1793875605102,
+  "elapsedMs": 3303,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 95536,
+  "peakKiB": 140368,
+  "live": [
+    {
+      "pid": 57128,
+      "parent": 57093,
+      "group": 57128,
+      "rssKiB": 93984,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn146-linux-hosted/qualification-publication-watchdog.json git push origin HEAD:refs/heads/codex/spn-146-mobile-flush"
+    },
+    {
+      "pid": 57319,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 57128,
+      "parent": 57093,
+      "group": 57128,
+      "rssKiB": 93984,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn146-linux-hosted/qualification-publication-watchdog.json git push origin HEAD:refs/heads/codex/spn-146-mobile-flush"
+    },
+    {
+      "pid": 57147,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57155,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 9936,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "git push origin HEAD:refs/heads/codex/spn-146-mobile-flush"
+    },
+    {
+      "pid": 57156,
+      "parent": 57155,
+      "group": 57128,
+      "rssKiB": 14688,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "/usr/bin/ssh git@github.com git-receive-pack 'mxbaylee/spinel.git'"
+    },
+    {
+      "pid": 57162,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57175,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57188,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57201,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57209,
+      "parent": 57155,
+      "group": 57128,
+      "rssKiB": 21264,
+      "started": "Thu Nov  5 02:46:46 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 57215,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57228,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57241,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57254,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57267,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57280,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57293,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57306,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 57319,
+      "parent": 57128,
+      "group": 57128,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 02:46:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

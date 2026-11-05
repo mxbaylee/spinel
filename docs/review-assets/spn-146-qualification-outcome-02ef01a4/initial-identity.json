@@ -1,0 +1,13 @@
+{
+  "source": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "ci": 42013542535,
+  "storybook": 42013542559,
+  "native": 42013542571,
+  "component": 42013542610,
+  "attempt": 1,
+  "reviewA": 98,
+  "reviewB": 97,
+  "bodySha256": "a1b949ba9a3938b47e6347ae4b6295f3d9d9bfc55b1efc389d400f9492d08974",
+  "supersededMetadata": 42013515997
+}

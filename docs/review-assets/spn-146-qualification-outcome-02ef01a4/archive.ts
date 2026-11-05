@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const from='/tmp/spn146-qualification-hosted';
+const root='/tmp/spn146-qualification-outcome';
+const prefix='docs/review-assets/spn-146-qualification-outcome-02ef01a4';
+const source='02ef01a40fe8369b79477909673c76de6d2a4edf';
+const sha=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+const read=(name:string)=>JSON.parse(readFileSync(from+'/'+name,'utf8'));
+assert.equal(read('component-run.json').head_sha,source);
+assert.equal(read('component-run.json').conclusion,'failure');
+assert.equal(read('component-run.json').run_attempt,1);
+assert.equal(read('component/analysis.json').complete,true);
+assert.equal(read('component/analysis.json').passed,false);
+assert.equal(read('native-run.json').head_sha,source);
+assert.equal(read('native-run.json').conclusion,'failure');
+assert.equal(read('native-run.json').run_attempt,1);
+assert.equal(read('cancelled-metadata-run.json').conclusion,'cancelled');
+assert.ok(read('cancelled-metadata-jobs.json').jobs.every((j:any)=>j.status==='completed'));
+const component=readFileSync(from+'/component-13408561149.zip');
+assert.equal(component.length,2533296);
+assert.equal(sha(component),'449023b40ada3a145e1f8f399fc389b840e194d9ee4ee5574517a7302e820d8d');
+for(const a of read('native-artifacts.json').artifacts){
+  const bytes=readFileSync(from+'/native-'+a.id+'.zip');
+  assert.equal(bytes.length,a.size_in_bytes);assert.equal('sha256:'+sha(bytes),a.digest);
+}
+mkdirSync(root);
+const files=['initial-identity.json','component-run.json','component-jobs.json','component-artifacts.json','component-job.log','component-13408561149.zip','native-run.json','native-jobs.json','native-artifacts.json','native-safari-job.log','native-13408433114.zip','native-13408471650.zip','native-13408117988.zip','cancelled-metadata-run.json','cancelled-metadata-jobs.json','spn146-qualification-prepush-review-a.md','spn146-qualification-prepush-review-b.md','spn146-qualification-prepush-proof-a.json','spn146-qualification-prepush-proof-a.ts','spn146-qualification-prepush-proof-a-watchdog.json','qualification-publication.log','qualification-publication-watchdog.json','qualification-published-pr.json'];
+for(const n of files)copyFileSync(from+'/'+n,root+'/'+n);
+for(const side of ['a','b']){const n='independent-outcome-'+side+'.md';copyFileSync('/tmp/spn146-qualification-outcome-'+side+'.md',root+'/'+n);files.push(n);}
+copyFileSync(import.meta.filename,root+'/archive.ts');files.push('archive.ts');
+writeFileSync(root+'/README.md',`# ⚠️ SPN-146 qualification reuse: unresolved runtime benefit\n\nSource ${source}, base2f442317dd2e1c188ae4a810ac094fd1162a4a2a. Component42013542610/job127198260525/attempt1 completed all32 observations and valid analysis but failed its fixed criterion:8 pass,5 improve insufficiently,3 slower. Both independent outcome reviews retain the full16-pair result and close the allowance. No automatic third experiment, unchanged rerun, threshold adjustment or merge approval follows. The original artifact ZIP is complete, including observation, CPU profile, raw proto, converted trace, source/bundle, receipts and analysis. Its digest/size was verified before this archive.\n\nNative42013542571 attempt1: Chrome and Firefox jobs passed; Safari127198261182 failed with System Events invalid connection(-609) in browser.type during the first pending-restart sheet nativeText readback. This is a dispatched keystroke failure, not SPN140's pre-dispatch constructor(-2700). The log does not establish whether the D1 keystroke took effect; replay is unsafe without additional evidence. No retry performed or declared here. Complete3native artifacts retained, hash-verified against GitHub metadata; source acceptance remains incomplete.\n\nCI42013542535 and Storybook42013542559 were still running when this archive was prepared. Their current-head application results are separate pending obligations; green checks cannot waive the component result. Superseded metadataCI42013515997(source483bf8ae) was deliberately cancelled and every job is terminal. Cancelled work is not a pass.\n\nNext step: a source/retained-data checkpoint must identify a distinct proof-preserving avoidable operation or a supported measurement disposition before any new runtime plan. The whole-graph descriptor guard runs once per admitted join; removing it on suspicion is not justified. Exact dynamic-source CPU attribution remains unavailable. Historical maximum failures and both mixed experiments remain unresolved.\n`);files.push('README.md');
+const payloads=files.map(path=>{const bytes=readFileSync(root+'/'+path);assert.ok(bytes.length<100*1024**2);return{path,bytes:bytes.length,sha256:sha(bytes)};});
+writeFileSync(root+'/manifest.json',JSON.stringify({source,prefix,payloads},null,2)+'\n');
+const env={...process.env,GIT_INDEX_FILE:'/tmp/spn146-qualification-outcome.index'};
+const git=(...args:string[])=>execFileSync('git',args,{env,encoding:'utf8'}).trim();
+git('read-tree','--empty');
+for(const path of [...files,'manifest.json'])git('update-index','--add','--cacheinfo','100644',git('hash-object','-w',root+'/'+path),prefix+'/'+path);
+const commit=git('commit-tree',git('write-tree'),'-m','Preserve SPN-146 qualification experiment and native first failures');
+writeFileSync('/tmp/spn146-qualification-outcome-commit.txt',commit+'\n');
+console.log(JSON.stringify({commit,payloads:payloads.length,bytes:payloads.reduce((n,p)=>n+p.bytes,0)}));

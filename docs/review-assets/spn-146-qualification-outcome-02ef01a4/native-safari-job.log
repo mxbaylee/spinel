@@ -1,0 +1,1950 @@
+﻿2026-11-05T10:47:02.1695520Z Current runner version: '2.338.2'
+2026-11-05T10:47:02.1781830Z ##[group]Runner Image Provisioner
+2026-11-05T10:47:02.1786960Z Hosted Compute Agent
+2026-11-05T10:47:02.1792020Z Version: 20260819.586
+2026-11-05T10:47:02.1795420Z Commit: 3cc4a88dfa507ef76119ad1bb3eccc6378bb2b76
+2026-11-05T10:47:02.1799930Z Build Date: 2026-08-18T23:20:18Z
+2026-11-05T10:47:02.1803900Z Worker ID: {db9afd23-97bb-44b3-a163-0a64b9fa69f4}
+2026-11-05T10:47:02.1808430Z Azure Region: westus
+2026-11-05T10:47:02.1811580Z ##[endgroup]
+2026-11-05T10:47:02.1831130Z ##[group]Operating System
+2026-11-05T10:47:02.1834540Z macOS
+2026-11-05T10:47:02.1837260Z 15.7.9
+2026-11-05T10:47:02.1841670Z 24G830
+2026-11-05T10:47:02.1845080Z ##[endgroup]
+2026-11-05T10:47:02.1847970Z ##[group]Runner Image
+2026-11-05T10:47:02.1851120Z Image: macos-15
+2026-11-05T10:47:02.1852990Z Version: 20260824.0482.1
+2026-11-05T10:47:02.1859250Z Included Software: https://github.com/actions/runner-images/blob/macos-15/20260824.0482/images/macos/macos-15-Readme.md
+2026-11-05T10:47:02.1870640Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15%2F20260824.0482
+2026-11-05T10:47:02.1877840Z ##[endgroup]
+2026-11-05T10:47:02.1884210Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T10:47:02.1893560Z Contents: read
+2026-11-05T10:47:02.1896480Z Metadata: read
+2026-11-05T10:47:02.1899160Z ##[endgroup]
+2026-11-05T10:47:02.1906030Z Secret source: Actions
+2026-11-05T10:47:02.1910920Z Cache mode: write
+2026-11-05T10:47:02.1915590Z Prepare workflow directory
+2026-11-05T10:47:02.4267780Z Prepare all required actions
+2026-11-05T10:47:02.4416500Z Getting action download info
+2026-11-05T10:47:02.8029910Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T10:47:03.1810900Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T10:47:04.4015580Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T10:47:05.7823010Z Complete job name: Native desktop offline (safari, macos-15-intel)
+2026-11-05T10:47:06.0877080Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T10:47:06.0883700Z with:
+2026-11-05T10:47:06.0886610Z   persist-credentials: false
+2026-11-05T10:47:06.0890400Z   repository: mxbaylee/spinel
+2026-11-05T10:47:06.0924910Z   token: ***
+2026-11-05T10:47:06.0928150Z   ssh-strict: true
+2026-11-05T10:47:06.0931180Z   ssh-user: git
+2026-11-05T10:47:06.0934010Z   clean: true
+2026-11-05T10:47:06.0937270Z   sparse-checkout-cone-mode: true
+2026-11-05T10:47:06.0941080Z   fetch-depth: 1
+2026-11-05T10:47:06.0944160Z   fetch-tags: false
+2026-11-05T10:47:06.0947310Z   show-progress: true
+2026-11-05T10:47:06.0950610Z   lfs: false
+2026-11-05T10:47:06.0954390Z   submodules: false
+2026-11-05T10:47:06.0957780Z   set-safe-directory: true
+2026-11-05T10:47:06.0961550Z   allow-unsafe-pr-checkout: false
+2026-11-05T10:47:06.0968620Z env:
+2026-11-05T10:47:06.0972060Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:47:06.0976510Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:47:06.0981540Z ##[endgroup]
+2026-11-05T10:47:07.0883560Z Syncing repository: mxbaylee/spinel
+2026-11-05T10:47:07.0890410Z ##[group]Getting Git version info
+2026-11-05T10:47:07.0893850Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-05T10:47:07.0946990Z [command]/usr/local/bin/git version
+2026-11-05T10:47:07.1643100Z git version 2.55.0
+2026-11-05T10:47:07.1830750Z ##[endgroup]
+2026-11-05T10:47:07.1882840Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/32785a20-c0d6-47fe-b5eb-420e92897181/.gitconfig'
+2026-11-05T10:47:07.1958030Z Temporarily overriding HOME='/Users/runner/work/_temp/32785a20-c0d6-47fe-b5eb-420e92897181' before making global git config changes
+2026-11-05T10:47:07.1988970Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T10:47:07.2000190Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T10:47:07.2309760Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-05T10:47:07.2318660Z ##[group]Determining repository object format
+2026-11-05T10:47:07.2343290Z ##[endgroup]
+2026-11-05T10:47:07.2368440Z ##[group]Initializing the repository
+2026-11-05T10:47:07.2403120Z [command]/usr/local/bin/git init /Users/runner/work/spinel/spinel
+2026-11-05T10:47:07.2930850Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T10:47:07.2967100Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T10:47:07.3008810Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T10:47:07.3046700Z hint: call:
+2026-11-05T10:47:07.3087040Z hint:
+2026-11-05T10:47:07.3186400Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T10:47:07.3246610Z hint:
+2026-11-05T10:47:07.3287900Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T10:47:07.3321960Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T10:47:07.3333730Z hint:
+2026-11-05T10:47:07.3364950Z hint: 	git branch -m <name>
+2026-11-05T10:47:07.3401590Z hint:
+2026-11-05T10:47:07.3435760Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T10:47:07.3467990Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-05T10:47:07.3620700Z [command]/usr/local/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T10:47:07.3712700Z ##[endgroup]
+2026-11-05T10:47:07.3781170Z ##[group]Disabling automatic garbage collection
+2026-11-05T10:47:07.3834790Z [command]/usr/local/bin/git config --local gc.auto 0
+2026-11-05T10:47:07.3962380Z ##[endgroup]
+2026-11-05T10:47:07.3997840Z ##[group]Setting up auth
+2026-11-05T10:47:07.4063190Z Removing SSH command configuration
+2026-11-05T10:47:07.4069440Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T10:47:07.4234130Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T10:47:07.6790520Z Removing HTTP extra header
+2026-11-05T10:47:07.6849250Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T10:47:07.6950790Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T10:47:08.0226910Z Removing includeIf entries pointing to credentials config files
+2026-11-05T10:47:08.0340900Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T10:47:08.1326430Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T10:47:08.3625890Z [command]/usr/local/bin/git config --file /Users/runner/work/_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T10:47:08.4116780Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:08.5150800Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:08.5393610Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:08.5728300Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:08.5979720Z ##[endgroup]
+2026-11-05T10:47:08.6022160Z ##[group]Fetching the repository
+2026-11-05T10:47:08.6090600Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6fdb243eb5728b91f935a4bea258fa3882458ccb:refs/remotes/pull/267/merge
+2026-11-05T10:47:13.8695470Z From https://github.com/mxbaylee/spinel
+2026-11-05T10:47:13.8727550Z  * [new ref]         6fdb243eb5728b91f935a4bea258fa3882458ccb -> pull/267/merge
+2026-11-05T10:47:13.8899210Z ##[endgroup]
+2026-11-05T10:47:13.8961590Z ##[group]Determining the checkout info
+2026-11-05T10:47:13.9014970Z ##[endgroup]
+2026-11-05T10:47:13.9051310Z [command]/usr/local/bin/git sparse-checkout disable
+2026-11-05T10:47:13.9230710Z [command]/usr/local/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T10:47:13.9417430Z ##[group]Checking out the ref
+2026-11-05T10:47:13.9420220Z [command]/usr/local/bin/git checkout --progress --force refs/remotes/pull/267/merge
+2026-11-05T10:47:15.3086510Z Updating files:  22% (698/3101)
+2026-11-05T10:47:15.3386350Z Updating files:  23% (714/3101)
+2026-11-05T10:47:15.3794290Z Updating files:  24% (745/3101)
+2026-11-05T10:47:15.4301300Z Updating files:  25% (776/3101)
+2026-11-05T10:47:15.4537120Z Updating files:  26% (807/3101)
+2026-11-05T10:47:15.4719780Z Updating files:  27% (838/3101)
+2026-11-05T10:47:15.4797420Z Updating files:  28% (869/3101)
+2026-11-05T10:47:15.5155470Z Updating files:  29% (900/3101)
+2026-11-05T10:47:15.5393120Z Updating files:  30% (931/3101)
+2026-11-05T10:47:15.5574940Z Updating files:  31% (962/3101)
+2026-11-05T10:47:15.5984770Z Updating files:  32% (993/3101)
+2026-11-05T10:47:15.6049360Z Updating files:  33% (1024/3101)
+2026-11-05T10:47:15.6107260Z Updating files:  34% (1055/3101)
+2026-11-05T10:47:15.6592990Z Updating files:  35% (1086/3101)
+2026-11-05T10:47:15.6600500Z Updating files:  36% (1117/3101)
+2026-11-05T10:47:15.6660710Z Updating files:  37% (1148/3101)
+2026-11-05T10:47:15.6734730Z Updating files:  38% (1179/3101)
+2026-11-05T10:47:15.6900360Z Updating files:  39% (1210/3101)
+2026-11-05T10:47:15.7635630Z Updating files:  40% (1241/3101)
+2026-11-05T10:47:15.8312550Z Updating files:  41% (1272/3101)
+2026-11-05T10:47:15.8804490Z Updating files:  42% (1303/3101)
+2026-11-05T10:47:15.9147720Z Updating files:  43% (1334/3101)
+2026-11-05T10:47:15.9419860Z Updating files:  44% (1365/3101)
+2026-11-05T10:47:15.9657760Z Updating files:  45% (1396/3101)
+2026-11-05T10:47:15.9854010Z Updating files:  45% (1419/3101)
+2026-11-05T10:47:16.3631640Z Updating files:  46% (1427/3101)
+2026-11-05T10:47:16.3789260Z Updating files:  47% (1458/3101)
+2026-11-05T10:47:16.3923100Z Updating files:  48% (1489/3101)
+2026-11-05T10:47:16.4083630Z Updating files:  49% (1520/3101)
+2026-11-05T10:47:16.4243630Z Updating files:  50% (1551/3101)
+2026-11-05T10:47:16.4385770Z Updating files:  51% (1582/3101)
+2026-11-05T10:47:16.4533800Z Updating files:  52% (1613/3101)
+2026-11-05T10:47:16.5661290Z Updating files:  53% (1644/3101)
+2026-11-05T10:47:16.5832630Z Updating files:  54% (1675/3101)
+2026-11-05T10:47:16.6068830Z Updating files:  55% (1706/3101)
+2026-11-05T10:47:16.6282560Z Updating files:  56% (1737/3101)
+2026-11-05T10:47:16.6622480Z Updating files:  57% (1768/3101)
+2026-11-05T10:47:16.6785180Z Updating files:  58% (1799/3101)
+2026-11-05T10:47:16.6924690Z Updating files:  59% (1830/3101)
+2026-11-05T10:47:16.7089370Z Updating files:  60% (1861/3101)
+2026-11-05T10:47:16.7294910Z Updating files:  61% (1892/3101)
+2026-11-05T10:47:16.7383240Z Updating files:  62% (1923/3101)
+2026-11-05T10:47:16.7542760Z Updating files:  63% (1954/3101)
+2026-11-05T10:47:16.7704700Z Updating files:  64% (1985/3101)
+2026-11-05T10:47:16.7874390Z Updating files:  65% (2016/3101)
+2026-11-05T10:47:16.8046250Z Updating files:  66% (2047/3101)
+2026-11-05T10:47:16.8171650Z Updating files:  67% (2078/3101)
+2026-11-05T10:47:16.8320410Z Updating files:  68% (2109/3101)
+2026-11-05T10:47:16.8426100Z Updating files:  69% (2140/3101)
+2026-11-05T10:47:16.8619930Z Updating files:  70% (2171/3101)
+2026-11-05T10:47:16.8731690Z Updating files:  71% (2202/3101)
+2026-11-05T10:47:16.8864940Z Updating files:  72% (2233/3101)
+2026-11-05T10:47:16.9019010Z Updating files:  73% (2264/3101)
+2026-11-05T10:47:16.9168140Z Updating files:  74% (2295/3101)
+2026-11-05T10:47:16.9334210Z Updating files:  75% (2326/3101)
+2026-11-05T10:47:16.9473250Z Updating files:  76% (2357/3101)
+2026-11-05T10:47:16.9604510Z Updating files:  77% (2388/3101)
+2026-11-05T10:47:16.9659610Z Updating files:  77% (2417/3101)
+2026-11-05T10:47:16.9770730Z Updating files:  78% (2419/3101)
+2026-11-05T10:47:16.9957200Z Updating files:  79% (2450/3101)
+2026-11-05T10:47:17.0132270Z Updating files:  80% (2481/3101)
+2026-11-05T10:47:17.0642450Z Updating files:  81% (2512/3101)
+2026-11-05T10:47:17.0923680Z Updating files:  82% (2543/3101)
+2026-11-05T10:47:17.1187480Z Updating files:  83% (2574/3101)
+2026-11-05T10:47:17.1453180Z Updating files:  84% (2605/3101)
+2026-11-05T10:47:17.1690240Z Updating files:  85% (2636/3101)
+2026-11-05T10:47:17.2007780Z Updating files:  86% (2667/3101)
+2026-11-05T10:47:17.2118050Z Updating files:  87% (2698/3101)
+2026-11-05T10:47:17.3226200Z Updating files:  88% (2729/3101)
+2026-11-05T10:47:17.3939220Z Updating files:  89% (2760/3101)
+2026-11-05T10:47:17.5430730Z Updating files:  90% (2791/3101)
+2026-11-05T10:47:17.5480700Z Updating files:  91% (2822/3101)
+2026-11-05T10:47:17.5523050Z Updating files:  92% (2853/3101)
+2026-11-05T10:47:17.5526380Z Updating files:  93% (2884/3101)
+2026-11-05T10:47:17.5596510Z Updating files:  94% (2915/3101)
+2026-11-05T10:47:17.5643120Z Updating files:  95% (2946/3101)
+2026-11-05T10:47:17.6646290Z Updating files:  96% (2977/3101)
+2026-11-05T10:47:17.7651620Z Updating files:  97% (3008/3101)
+2026-11-05T10:47:17.7740020Z Updating files:  98% (3039/3101)
+2026-11-05T10:47:17.7795300Z Updating files:  99% (3070/3101)
+2026-11-05T10:47:17.7861420Z Updating files: 100% (3101/3101)
+2026-11-05T10:47:17.7934530Z Updating files: 100% (3101/3101), done.
+2026-11-05T10:47:17.8027800Z HEAD is now at 6fdb243 Merge 02ef01a40fe8369b79477909673c76de6d2a4edf into 2f442317dd2e1c188ae4a810ac094fd1162a4a2a
+2026-11-05T10:47:17.8354130Z ##[endgroup]
+2026-11-05T10:47:17.8446060Z [command]/usr/local/bin/git log -1 --format=%H
+2026-11-05T10:47:17.8478340Z 6fdb243eb5728b91f935a4bea258fa3882458ccb
+2026-11-05T10:47:17.8542620Z ##[group]Removing auth
+2026-11-05T10:47:17.8575140Z Removing SSH command configuration
+2026-11-05T10:47:17.8593960Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T10:47:17.8707890Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T10:47:18.1002570Z Removing HTTP extra header
+2026-11-05T10:47:18.1032100Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T10:47:18.1211980Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T10:47:18.3794310Z Removing includeIf entries pointing to credentials config files
+2026-11-05T10:47:18.3824490Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T10:47:18.3903080Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T10:47:18.3940480Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T10:47:18.3978650Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T10:47:18.4024040Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T10:47:18.4120880Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-05T10:47:18.4159120Z /Users/runner/work/_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:18.4294720Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-29be4e82\-2ab7\-4bb1\-a7ae\-8a237b4cd74b\.config
+2026-11-05T10:47:18.4427270Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T10:47:18.4456020Z /Users/runner/work/_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:18.4609820Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-29be4e82\-2ab7\-4bb1\-a7ae\-8a237b4cd74b\.config
+2026-11-05T10:47:18.4763980Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T10:47:18.4862130Z /github/runner_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:18.4942660Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-29be4e82\-2ab7\-4bb1\-a7ae\-8a237b4cd74b\.config
+2026-11-05T10:47:18.5198630Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T10:47:18.5288910Z /github/runner_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config
+2026-11-05T10:47:18.5437570Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-29be4e82\-2ab7\-4bb1\-a7ae\-8a237b4cd74b\.config
+2026-11-05T10:47:18.5562840Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T10:47:18.9048200Z Removing credentials config '/Users/runner/work/_temp/git-credentials-29be4e82-2ab7-4bb1-a7ae-8a237b4cd74b.config'
+2026-11-05T10:47:18.9748970Z ##[endgroup]
+2026-11-05T10:47:19.0361750Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T10:47:19.0363080Z with:
+2026-11-05T10:47:19.0363910Z   node-version-file: .nvmrc
+2026-11-05T10:47:19.0364760Z   package-manager-cache: false
+2026-11-05T10:47:19.0365580Z   check-latest: false
+2026-11-05T10:47:19.0374350Z   token: ***
+2026-11-05T10:47:19.0375110Z env:
+2026-11-05T10:47:19.0375880Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:47:19.0377020Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:47:19.0377950Z ##[endgroup]
+2026-11-05T10:47:19.4109090Z Node version file is not JSON file
+2026-11-05T10:47:19.4156820Z Node version file is not TOML file
+2026-11-05T10:47:19.4210210Z Resolved .nvmrc as 26.12.1
+2026-11-05T10:47:19.4308190Z Attempting to download 26.12.1...
+2026-11-05T10:47:20.8752360Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-darwin-x64.tar.gz
+2026-11-05T10:47:22.6494560Z Extracting ...
+2026-11-05T10:47:22.6814070Z [command]/usr/bin/tar xz --strip 1 -C /Users/runner/work/_temp/afde2bd9-0d02-49a7-abeb-33a965165a2c -f /Users/runner/work/_temp/5d2604a6-224b-4a3e-9df1-7a0efdeb517e
+2026-11-05T10:47:34.1766300Z Adding to the cache ...
+2026-11-05T10:47:49.0661660Z ##[group]Environment details
+2026-11-05T10:47:50.5878100Z node: v26.12.1
+2026-11-05T10:47:50.5889160Z npm: 11.20.0
+2026-11-05T10:47:50.5915250Z yarn: 1.22.22
+2026-11-05T10:47:50.5941930Z ##[endgroup]
+2026-11-05T10:47:50.6461100Z ##[group]Run node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+2026-11-05T10:47:50.6463650Z [36;1mnode scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T10:47:50.6611280Z shell: /bin/bash -e {0}
+2026-11-05T10:47:50.6612740Z env:
+2026-11-05T10:47:50.6614250Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:47:50.6615700Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:47:50.6618460Z   DESKTOP_BROWSER: safari
+2026-11-05T10:47:50.6619290Z ##[endgroup]
+2026-11-05T10:49:05.3152050Z {
+2026-11-05T10:49:05.4146500Z   "sourceSha": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+2026-11-05T10:49:05.5152070Z   "checkedAt": "2026-11-05T10:47:51.022Z",
+2026-11-05T10:49:05.6158350Z   "kind": "safari",
+2026-11-05T10:49:05.7187410Z   "status": "passed",
+2026-11-05T10:49:05.8193440Z   "before": "26.6",
+2026-11-05T10:49:05.9199460Z   "releaseSource": "https://support.apple.com/en-us/149527",
+2026-11-05T10:49:06.0209610Z   "requiredStable": "27.2",
+2026-11-05T10:49:06.1233040Z   "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+2026-11-05T10:49:06.1839390Z   "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+2026-11-05T10:49:06.2035670Z   "installed": "27.2"
+2026-11-05T10:49:06.3039670Z }
+2026-11-05T10:49:06.4991570Z ##[group]Run node scripts/ci/desktop-profile-probe.ts
+2026-11-05T10:49:06.4992930Z [36;1mnode scripts/ci/desktop-profile-probe.ts[0m
+2026-11-05T10:49:06.5119780Z shell: /bin/bash -e {0}
+2026-11-05T10:49:06.5121380Z env:
+2026-11-05T10:49:06.5122720Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:49:06.5125260Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:49:06.5127440Z ##[endgroup]
+2026-11-05T10:49:41.3439980Z {
+2026-11-05T10:49:41.4074580Z   "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+2026-11-05T10:49:41.4156900Z   "sourceSha": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+2026-11-05T10:49:41.4299050Z   "testedSha": "6fdb243eb5728b91f935a4bea258fa3882458ccb",
+2026-11-05T10:49:41.4338640Z   "runner": {
+2026-11-05T10:49:41.4358300Z     "label": "macos-15-intel",
+2026-11-05T10:49:41.4437120Z     "arch": "x64",
+2026-11-05T10:49:41.4476700Z     "imageOS": "macos15",
+2026-11-05T10:49:41.4514170Z     "imageVersion": "20260824.0482.1"
+2026-11-05T10:49:41.4537930Z   },
+2026-11-05T10:49:41.4560050Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/42013542571",
+2026-11-05T10:49:41.4587150Z   "status": "passed",
+2026-11-05T10:49:41.4607070Z   "safariTargets": [
+2026-11-05T10:49:41.4627630Z     {
+2026-11-05T10:49:41.4657750Z       "stage": "online",
+2026-11-05T10:49:41.4659550Z       "pid": 4321,
+2026-11-05T10:49:41.4705150Z       "time": "2026-11-05T10:49:07.842Z",
+2026-11-05T10:49:41.4741520Z       "phase": "identity-established",
+2026-11-05T10:49:41.4767430Z       "timeoutMs": 8000,
+2026-11-05T10:49:41.4807030Z       "trace": "Safari request phase: {\"at\":\"2026-11-05T10:49:07.928Z\",\"phase\":\"appkit-bundle-create-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.116Z\",\"phase\":\"appkit-bundle-create-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.118Z\",\"phase\":\"appkit-executable-load-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.123Z\",\"phase\":\"appkit-executable-load-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.124Z\",\"phase\":\"running-application-class-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.126Z\",\"phase\":\"running-application-class-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.128Z\",\"phase\":\"process-lookup-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.129Z\",\"phase\":\"process-lookup-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.129Z\",\"phase\":\"process-liveness-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.131Z\",\"phase\":\"process-liveness-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.132Z\",\"phase\":\"pid-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.133Z\",\"phase\":\"pid-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.135Z\",\"phase\":\"bundle-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.136Z\",\"phase\":\"bundle-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.137Z\",\"phase\":\"executable-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.141Z\",\"phase\":\"executable-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.141Z\",\"phase\":\"launch-date-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.143Z\",\"phase\":\"launch-date-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.143Z\",\"phase\":\"identity-validation-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:08.144Z\",\"phase\":\"identity-validation-end\"}\n",
+2026-11-05T10:49:41.4836280Z       "stdout": "{\"pid\":4321,\"bundleIdentifier\":\"com.apple.Safari\",\"executablePath\":\"/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari\",\"launchedAt\":1793875747.409124}\n",
+2026-11-05T10:49:41.4842600Z       "identity": {
+2026-11-05T10:49:41.4846180Z         "pid": 4321,
+2026-11-05T10:49:41.4848740Z         "bundleIdentifier": "com.apple.Safari",
+2026-11-05T10:49:41.4852250Z         "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+2026-11-05T10:49:41.4854140Z         "launchedAt": 1793875747.409124
+2026-11-05T10:49:41.4855070Z       },
+2026-11-05T10:49:41.4855970Z       "elapsedMs": 308
+2026-11-05T10:49:41.4856830Z     },
+2026-11-05T10:49:41.4857820Z     {
+2026-11-05T10:49:41.4858460Z       "stage": "offline-restart",
+2026-11-05T10:49:41.4859160Z       "pid": 4623,
+2026-11-05T10:49:41.4860140Z       "time": "2026-11-05T10:49:28.865Z",
+2026-11-05T10:49:41.4861430Z       "phase": "identity-established",
+2026-11-05T10:49:41.4862750Z       "timeoutMs": 8000,
+2026-11-05T10:49:41.4888540Z       "trace": "Safari request phase: {\"at\":\"2026-11-05T10:49:28.935Z\",\"phase\":\"appkit-bundle-create-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.095Z\",\"phase\":\"appkit-bundle-create-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.096Z\",\"phase\":\"appkit-executable-load-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.100Z\",\"phase\":\"appkit-executable-load-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.100Z\",\"phase\":\"running-application-class-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.102Z\",\"phase\":\"running-application-class-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.104Z\",\"phase\":\"process-lookup-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.105Z\",\"phase\":\"process-lookup-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.105Z\",\"phase\":\"process-liveness-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.107Z\",\"phase\":\"process-liveness-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.108Z\",\"phase\":\"pid-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.110Z\",\"phase\":\"pid-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.111Z\",\"phase\":\"bundle-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.113Z\",\"phase\":\"bundle-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.113Z\",\"phase\":\"executable-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.115Z\",\"phase\":\"executable-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.116Z\",\"phase\":\"launch-date-read-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.118Z\",\"phase\":\"launch-date-read-end\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.118Z\",\"phase\":\"identity-validation-begin\"}\nSafari request phase: {\"at\":\"2026-11-05T10:49:29.119Z\",\"phase\":\"identity-validation-end\"}\n",
+2026-11-05T10:49:41.4910260Z       "stdout": "{\"pid\":4623,\"bundleIdentifier\":\"com.apple.Safari\",\"executablePath\":\"/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari\",\"launchedAt\":1793875768.719568}\n",
+2026-11-05T10:49:41.4913180Z       "identity": {
+2026-11-05T10:49:41.4914070Z         "pid": 4623,
+2026-11-05T10:49:41.4914860Z         "bundleIdentifier": "com.apple.Safari",
+2026-11-05T10:49:41.4916940Z         "executablePath": "/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+2026-11-05T10:49:41.4918710Z         "launchedAt": 1793875768.719568
+2026-11-05T10:49:41.4919430Z       },
+2026-11-05T10:49:41.4919940Z       "elapsedMs": 261
+2026-11-05T10:49:41.4921020Z     }
+2026-11-05T10:49:41.4922260Z   ],
+2026-11-05T10:49:41.4923830Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+2026-11-05T10:49:41.4925280Z   "machine": "x86_64",
+2026-11-05T10:49:41.4926480Z   "version": "27.2",
+2026-11-05T10:49:41.4927630Z   "beforePid": "4321",
+2026-11-05T10:49:41.4928520Z   "automationTitleRequests": [
+2026-11-05T10:49:41.4929460Z     {
+2026-11-05T10:49:41.4929970Z       "attempt": 1,
+2026-11-05T10:49:41.4930990Z       "targetPid": 4321,
+2026-11-05T10:49:41.4932240Z       "timeoutMs": 60000,
+2026-11-05T10:49:41.4933400Z       "startedAt": "2026-11-05T10:49:08.154Z",
+2026-11-05T10:49:41.4934370Z       "phases": [
+2026-11-05T10:49:41.4936490Z         "{\"at\":\"2026-11-05T10:49:08.219Z\",\"phase\":\"appkit-bundle-create-begin\"}",
+2026-11-05T10:49:41.4938520Z         "{\"at\":\"2026-11-05T10:49:08.346Z\",\"phase\":\"appkit-bundle-create-end\"}",
+2026-11-05T10:49:41.4940110Z         "{\"at\":\"2026-11-05T10:49:08.347Z\",\"phase\":\"appkit-executable-load-begin\"}",
+2026-11-05T10:49:41.4941780Z         "{\"at\":\"2026-11-05T10:49:08.351Z\",\"phase\":\"appkit-executable-load-end\"}",
+2026-11-05T10:49:41.4943690Z         "{\"at\":\"2026-11-05T10:49:08.352Z\",\"phase\":\"running-application-class-begin\"}",
+2026-11-05T10:49:41.4945410Z         "{\"at\":\"2026-11-05T10:49:08.354Z\",\"phase\":\"running-application-class-end\"}",
+2026-11-05T10:49:41.4948940Z         "{\"at\":\"2026-11-05T10:49:08.356Z\",\"phase\":\"process-lookup-begin\"}",
+2026-11-05T10:49:41.4951840Z         "{\"at\":\"2026-11-05T10:49:08.358Z\",\"phase\":\"process-lookup-end\"}",
+2026-11-05T10:49:41.4954960Z         "{\"at\":\"2026-11-05T10:49:08.359Z\",\"phase\":\"process-liveness-begin\"}",
+2026-11-05T10:49:41.4958750Z         "{\"at\":\"2026-11-05T10:49:08.376Z\",\"phase\":\"process-liveness-end\"}",
+2026-11-05T10:49:41.4961230Z         "{\"at\":\"2026-11-05T10:49:08.377Z\",\"phase\":\"pid-read-begin\"}",
+2026-11-05T10:49:41.4963680Z         "{\"at\":\"2026-11-05T10:49:08.384Z\",\"phase\":\"pid-read-end\"}",
+2026-11-05T10:49:41.4965870Z         "{\"at\":\"2026-11-05T10:49:08.386Z\",\"phase\":\"bundle-read-begin\"}",
+2026-11-05T10:49:41.4967890Z         "{\"at\":\"2026-11-05T10:49:08.387Z\",\"phase\":\"bundle-read-end\"}",
+2026-11-05T10:49:41.4969730Z         "{\"at\":\"2026-11-05T10:49:08.389Z\",\"phase\":\"executable-read-begin\"}",
+2026-11-05T10:49:41.4971200Z         "{\"at\":\"2026-11-05T10:49:08.401Z\",\"phase\":\"executable-read-end\"}",
+2026-11-05T10:49:41.4972640Z         "{\"at\":\"2026-11-05T10:49:08.403Z\",\"phase\":\"launch-date-read-begin\"}",
+2026-11-05T10:49:41.4974080Z         "{\"at\":\"2026-11-05T10:49:08.408Z\",\"phase\":\"launch-date-read-end\"}",
+2026-11-05T10:49:41.4975600Z         "{\"at\":\"2026-11-05T10:49:08.411Z\",\"phase\":\"identity-validation-begin\"}",
+2026-11-05T10:49:41.4977100Z         "{\"at\":\"2026-11-05T10:49:08.413Z\",\"phase\":\"identity-validation-end\"}",
+2026-11-05T10:49:41.4978670Z         "{\"at\":\"2026-11-05T10:49:08.416Z\",\"phase\":\"application-constructor-begin\"}",
+2026-11-05T10:49:41.4980250Z         "{\"at\":\"2026-11-05T10:49:08.439Z\",\"phase\":\"application-constructor-end\"}",
+2026-11-05T10:49:41.4982710Z         "{\"at\":\"2026-11-05T10:49:08.676Z\",\"phase\":\"title-specifier-ready\"}",
+2026-11-05T10:49:41.4984150Z         "{\"at\":\"2026-11-05T10:49:08.678Z\",\"phase\":\"title-get-begin\"}",
+2026-11-05T10:49:41.4986050Z         "{\"at\":\"2026-11-05T10:49:25.017Z\",\"phase\":\"title-get-end\"}"
+2026-11-05T10:49:41.4987480Z       ],
+2026-11-05T10:49:41.4989770Z       "value": "Spinel desktop profile probe",
+2026-11-05T10:49:41.4991010Z       "finishedAt": "2026-11-05T10:49:25.034Z"
+2026-11-05T10:49:41.4991810Z     }
+2026-11-05T10:49:41.4992300Z   ],
+2026-11-05T10:49:41.4992960Z   "automationPromptChecks": [
+2026-11-05T10:49:41.4993790Z     {
+2026-11-05T10:49:41.4994330Z       "mode": "inspect",
+2026-11-05T10:49:41.4995250Z       "startedAt": "2026-11-05T10:49:08.157Z",
+2026-11-05T10:49:41.4996130Z       "error": {
+2026-11-05T10:49:41.4997100Z         "message": "Command failed: /usr/bin/osascript -e on run argv",
+2026-11-05T10:49:41.4998390Z         "code": 1,
+2026-11-05T10:49:41.4998990Z         "signal": null,
+2026-11-05T10:49:41.4999850Z         "killed": false,
+2026-11-05T10:49:41.5000760Z         "stdout": "",
+2026-11-05T10:49:41.5002740Z         "stderr": "87:126: execution error: System Events got an error: AppleEvent timed out. (-1712)\n"
+2026-11-05T10:49:41.5004440Z       },
+2026-11-05T10:49:41.5005430Z       "finishedAt": "2026-11-05T10:49:17.829Z"
+2026-11-05T10:49:41.5006530Z     },
+2026-11-05T10:49:41.5007620Z     {
+2026-11-05T10:49:41.5008410Z       "mode": "inspect",
+2026-11-05T10:49:41.5010370Z       "startedAt": "2026-11-05T10:49:18.133Z",
+2026-11-05T10:49:41.5016530Z       "value": "Recognized hosted-compute-agent control of Safari:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+2026-11-05T10:49:41.5020530Z       "finishedAt": "2026-11-05T10:49:22.820Z"
+2026-11-05T10:49:41.5021580Z     },
+2026-11-05T10:49:41.5022300Z     {
+2026-11-05T10:49:41.5023070Z       "mode": "capture",
+2026-11-05T10:49:41.5025240Z       "path": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+2026-11-05T10:49:41.5027410Z       "startedAt": "2026-11-05T10:49:22.820Z",
+2026-11-05T10:49:41.5028580Z       "value": "captured",
+2026-11-05T10:49:41.5029710Z       "finishedAt": "2026-11-05T10:49:24.254Z"
+2026-11-05T10:49:41.5030810Z     },
+2026-11-05T10:49:41.5031550Z     {
+2026-11-05T10:49:41.5032330Z       "mode": "approve",
+2026-11-05T10:49:41.5033490Z       "startedAt": "2026-11-05T10:49:24.254Z",
+2026-11-05T10:49:41.5039390Z       "value": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+2026-11-05T10:49:41.5044060Z       "finishedAt": "2026-11-05T10:49:25.041Z"
+2026-11-05T10:49:41.5045160Z     }
+2026-11-05T10:49:41.5045890Z   ],
+2026-11-05T10:49:41.5046680Z   "automationStartedAt": "2026-11-05T10:49:08.153Z",
+2026-11-05T10:49:41.5051370Z   "automationPrompt": "Approved hosted-compute-agent control of Safari in the normal ephemeral-runner consent dialog:  “hosted-compute-agent” wants access to control “Safari”. Allowing control will provide access to documents and data in “Safari”, and to perform actions within that app.",
+2026-11-05T10:49:41.5055770Z   "automationPromptScreenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-automation-prompt-1.png",
+2026-11-05T10:49:41.5057670Z   "automationReadyTitleRequest": 1,
+2026-11-05T10:49:41.5058670Z   "automationFinishedAt": "2026-11-05T10:49:25.294Z",
+2026-11-05T10:49:41.5059570Z   "firstTitleRequest": {
+2026-11-05T10:49:41.5060680Z     "attempt": 1,
+2026-11-05T10:49:41.5061310Z     "targetPid": 4321,
+2026-11-05T10:49:41.5061970Z     "timeoutMs": 60000,
+2026-11-05T10:49:41.5062850Z     "startedAt": "2026-11-05T10:49:08.154Z",
+2026-11-05T10:49:41.5063660Z     "phases": [
+2026-11-05T10:49:41.5065480Z       "{\"at\":\"2026-11-05T10:49:08.219Z\",\"phase\":\"appkit-bundle-create-begin\"}",
+2026-11-05T10:49:41.5067000Z       "{\"at\":\"2026-11-05T10:49:08.346Z\",\"phase\":\"appkit-bundle-create-end\"}",
+2026-11-05T10:49:41.5068510Z       "{\"at\":\"2026-11-05T10:49:08.347Z\",\"phase\":\"appkit-executable-load-begin\"}",
+2026-11-05T10:49:41.5070140Z       "{\"at\":\"2026-11-05T10:49:08.351Z\",\"phase\":\"appkit-executable-load-end\"}",
+2026-11-05T10:49:41.5072040Z       "{\"at\":\"2026-11-05T10:49:08.352Z\",\"phase\":\"running-application-class-begin\"}",
+2026-11-05T10:49:41.5073840Z       "{\"at\":\"2026-11-05T10:49:08.354Z\",\"phase\":\"running-application-class-end\"}",
+2026-11-05T10:49:41.5075720Z       "{\"at\":\"2026-11-05T10:49:08.356Z\",\"phase\":\"process-lookup-begin\"}",
+2026-11-05T10:49:41.5077540Z       "{\"at\":\"2026-11-05T10:49:08.358Z\",\"phase\":\"process-lookup-end\"}",
+2026-11-05T10:49:41.5079430Z       "{\"at\":\"2026-11-05T10:49:08.359Z\",\"phase\":\"process-liveness-begin\"}",
+2026-11-05T10:49:41.5081160Z       "{\"at\":\"2026-11-05T10:49:08.376Z\",\"phase\":\"process-liveness-end\"}",
+2026-11-05T10:49:41.5082600Z       "{\"at\":\"2026-11-05T10:49:08.377Z\",\"phase\":\"pid-read-begin\"}",
+2026-11-05T10:49:41.5084330Z       "{\"at\":\"2026-11-05T10:49:08.384Z\",\"phase\":\"pid-read-end\"}",
+2026-11-05T10:49:41.5085960Z       "{\"at\":\"2026-11-05T10:49:08.386Z\",\"phase\":\"bundle-read-begin\"}",
+2026-11-05T10:49:41.5088540Z       "{\"at\":\"2026-11-05T10:49:08.387Z\",\"phase\":\"bundle-read-end\"}",
+2026-11-05T10:49:41.5090310Z       "{\"at\":\"2026-11-05T10:49:08.389Z\",\"phase\":\"executable-read-begin\"}",
+2026-11-05T10:49:41.5092150Z       "{\"at\":\"2026-11-05T10:49:08.401Z\",\"phase\":\"executable-read-end\"}",
+2026-11-05T10:49:41.5094090Z       "{\"at\":\"2026-11-05T10:49:08.403Z\",\"phase\":\"launch-date-read-begin\"}",
+2026-11-05T10:49:41.5095940Z       "{\"at\":\"2026-11-05T10:49:08.408Z\",\"phase\":\"launch-date-read-end\"}",
+2026-11-05T10:49:41.5097850Z       "{\"at\":\"2026-11-05T10:49:08.411Z\",\"phase\":\"identity-validation-begin\"}",
+2026-11-05T10:49:41.5099630Z       "{\"at\":\"2026-11-05T10:49:08.413Z\",\"phase\":\"identity-validation-end\"}",
+2026-11-05T10:49:41.5101610Z       "{\"at\":\"2026-11-05T10:49:08.416Z\",\"phase\":\"application-constructor-begin\"}",
+2026-11-05T10:49:41.5103570Z       "{\"at\":\"2026-11-05T10:49:08.439Z\",\"phase\":\"application-constructor-end\"}",
+2026-11-05T10:49:41.5105440Z       "{\"at\":\"2026-11-05T10:49:08.676Z\",\"phase\":\"title-specifier-ready\"}",
+2026-11-05T10:49:41.5107140Z       "{\"at\":\"2026-11-05T10:49:08.678Z\",\"phase\":\"title-get-begin\"}",
+2026-11-05T10:49:41.5108730Z       "{\"at\":\"2026-11-05T10:49:25.017Z\",\"phase\":\"title-get-end\"}"
+2026-11-05T10:49:41.5109730Z     ],
+2026-11-05T10:49:41.5110650Z     "value": "Spinel desktop profile probe",
+2026-11-05T10:49:41.5111660Z     "finishedAt": "2026-11-05T10:49:25.034Z"
+2026-11-05T10:49:41.5112780Z   },
+2026-11-05T10:49:41.5114690Z   "appleEvents": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:49:41.5116410Z   "prepared": {
+2026-11-05T10:49:41.5116950Z     "prepared": true,
+2026-11-05T10:49:41.5117690Z     "persisted": false,
+2026-11-05T10:49:41.5118640Z     "persistenceRequested": false
+2026-11-05T10:49:41.5119710Z   },
+2026-11-05T10:49:41.5120460Z   "paintBaselines": {
+2026-11-05T10:49:41.5121340Z     "online": {
+2026-11-05T10:49:41.5122060Z       "time": "2026-11-05T10:49:26.660Z",
+2026-11-05T10:49:41.5122930Z       "pid": "4321",
+2026-11-05T10:49:41.5123620Z       "state": {
+2026-11-05T10:49:41.5124300Z         "windowId": 35,
+2026-11-05T10:49:41.5124910Z         "bounds": {
+2026-11-05T10:49:41.5125520Z           "x": 298,
+2026-11-05T10:49:41.5126220Z           "y": 40,
+2026-11-05T10:49:41.5126820Z           "width": 1324,
+2026-11-05T10:49:41.5127460Z           "height": 940
+2026-11-05T10:49:41.5128180Z         },
+2026-11-05T10:49:41.5128730Z         "tabIndex": 1,
+2026-11-05T10:49:41.5130750Z         "title": "Spinel desktop profile probe",
+2026-11-05T10:49:41.5131960Z         "url": "http://localhost:8175/",
+2026-11-05T10:49:41.5132880Z         "page": {
+2026-11-05T10:49:41.5133590Z           "url": "http://localhost:8175/",
+2026-11-05T10:49:41.5134740Z           "title": "Spinel desktop profile probe",
+2026-11-05T10:49:41.5135720Z           "readyState": "complete",
+2026-11-05T10:49:41.5136500Z           "visibility": "visible",
+2026-11-05T10:49:41.5137370Z           "hasFocus": true,
+2026-11-05T10:49:41.5139200Z           "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+2026-11-05T10:49:41.5140940Z         }
+2026-11-05T10:49:41.5141630Z       },
+2026-11-05T10:49:41.5143150Z       "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-online.png",
+2026-11-05T10:49:41.5144890Z       "canvas2d": {
+2026-11-05T10:49:41.5145660Z         "context": "2d",
+2026-11-05T10:49:41.5146550Z         "options": "default",
+2026-11-05T10:49:41.5147440Z         "width": 320,
+2026-11-05T10:49:41.5148370Z         "height": 120,
+2026-11-05T10:49:41.5149480Z         "contextAvailable": true,
+2026-11-05T10:49:41.5150430Z         "drawCompleted": true,
+2026-11-05T10:49:41.5151750Z         "readbackAfterPhysicalCapture": true,
+2026-11-05T10:49:41.5152830Z         "pixels": [
+2026-11-05T10:49:41.5153470Z           {
+2026-11-05T10:49:41.5154040Z             "x": 80,
+2026-11-05T10:49:41.5155480Z             "y": 80,
+2026-11-05T10:49:41.5156940Z             "rgba": [
+2026-11-05T10:49:41.5250220Z               118,
+2026-11-05T10:49:41.5251400Z               51,
+2026-11-05T10:49:41.5253180Z               213,
+2026-11-05T10:49:41.5256210Z               255
+2026-11-05T10:49:41.5258040Z             ]
+2026-11-05T10:49:41.5258960Z           },
+2026-11-05T10:49:41.5259640Z           {
+2026-11-05T10:49:41.5260310Z             "x": 240,
+2026-11-05T10:49:41.5261060Z             "y": 80,
+2026-11-05T10:49:41.5261830Z             "rgba": [
+2026-11-05T10:49:41.5262570Z               37,
+2026-11-05T10:49:41.5263270Z               99,
+2026-11-05T10:49:41.5263970Z               235,
+2026-11-05T10:49:41.5264680Z               255
+2026-11-05T10:49:41.5265370Z             ]
+2026-11-05T10:49:41.5266040Z           }
+2026-11-05T10:49:41.5266670Z         ]
+2026-11-05T10:49:41.5267310Z       }
+2026-11-05T10:49:41.5267930Z     },
+2026-11-05T10:49:41.5268580Z     "offline": {
+2026-11-05T10:49:41.5269550Z       "time": "2026-11-05T10:49:34.718Z",
+2026-11-05T10:49:41.5270520Z       "pid": "4623",
+2026-11-05T10:49:41.5271260Z       "state": {
+2026-11-05T10:49:41.5272000Z         "windowId": 45,
+2026-11-05T10:49:41.5272790Z         "bounds": {
+2026-11-05T10:49:41.5273510Z           "x": 298,
+2026-11-05T10:49:41.5274230Z           "y": 40,
+2026-11-05T10:49:41.5274960Z           "width": 1324,
+2026-11-05T10:49:41.5275770Z           "height": 940
+2026-11-05T10:49:41.5276540Z         },
+2026-11-05T10:49:41.5277230Z         "tabIndex": 1,
+2026-11-05T10:49:41.5278280Z         "title": "Spinel desktop profile probe",
+2026-11-05T10:49:41.5279690Z         "url": "http://localhost:8175/?offline-restart",
+2026-11-05T10:49:41.5280800Z         "page": {
+2026-11-05T10:49:41.5281880Z           "url": "http://localhost:8175/?offline-restart",
+2026-11-05T10:49:41.5283070Z           "title": "Spinel desktop profile probe",
+2026-11-05T10:49:41.5284030Z           "readyState": "complete",
+2026-11-05T10:49:41.5284980Z           "visibility": "visible",
+2026-11-05T10:49:41.5285820Z           "hasFocus": true,
+2026-11-05T10:49:41.5287810Z           "text": "Spinel synthetic profile probe\n\nNative Safari paint baseline\n\nSVG\nCanvas 2D with default settings"
+2026-11-05T10:49:41.5289410Z         }
+2026-11-05T10:49:41.5289890Z       },
+2026-11-05T10:49:41.5291820Z       "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/safari-profile-probe-offline.png",
+2026-11-05T10:49:41.5293740Z       "canvas2d": {
+2026-11-05T10:49:41.5295530Z         "context": "2d",
+2026-11-05T10:49:41.5296410Z         "options": "default",
+2026-11-05T10:49:41.5297220Z         "width": 320,
+2026-11-05T10:49:41.5297900Z         "height": 120,
+2026-11-05T10:49:41.5298820Z         "contextAvailable": true,
+2026-11-05T10:49:41.5299760Z         "drawCompleted": true,
+2026-11-05T10:49:41.5300880Z         "readbackAfterPhysicalCapture": true,
+2026-11-05T10:49:41.5301810Z         "pixels": [
+2026-11-05T10:49:41.5302330Z           {
+2026-11-05T10:49:41.5302910Z             "x": 80,
+2026-11-05T10:49:41.5303530Z             "y": 80,
+2026-11-05T10:49:41.5304190Z             "rgba": [
+2026-11-05T10:49:41.5304810Z               118,
+2026-11-05T10:49:41.5305390Z               51,
+2026-11-05T10:49:41.5306000Z               213,
+2026-11-05T10:49:41.5306620Z               255
+2026-11-05T10:49:41.5307190Z             ]
+2026-11-05T10:49:41.5307720Z           },
+2026-11-05T10:49:41.5308260Z           {
+2026-11-05T10:49:41.5308840Z             "x": 240,
+2026-11-05T10:49:41.5309500Z             "y": 80,
+2026-11-05T10:49:41.5310100Z             "rgba": [
+2026-11-05T10:49:41.5310710Z               37,
+2026-11-05T10:49:41.5311350Z               99,
+2026-11-05T10:49:41.5311920Z               235,
+2026-11-05T10:49:41.5312470Z               255
+2026-11-05T10:49:41.5313050Z             ]
+2026-11-05T10:49:41.5313650Z           }
+2026-11-05T10:49:41.5314190Z         ]
+2026-11-05T10:49:41.5314610Z       }
+2026-11-05T10:49:41.5315170Z     }
+2026-11-05T10:49:41.5315610Z   },
+2026-11-05T10:49:41.5316990Z   "requestsBeforeOffline": 4,
+2026-11-05T10:49:41.5317850Z   "afterPid": "4623",
+2026-11-05T10:49:41.5318540Z   "retained": {
+2026-11-05T10:49:41.5319450Z     "localStorage": "9f2580b4-d30a-4e03-b88d-37d5bb1cfc09",
+2026-11-05T10:49:41.5320800Z     "indexedDB": "9f2580b4-d30a-4e03-b88d-37d5bb1cfc09",
+2026-11-05T10:49:41.5321970Z     "cache": "9f2580b4-d30a-4e03-b88d-37d5bb1cfc09",
+2026-11-05T10:49:41.5322870Z     "worker": true
+2026-11-05T10:49:41.5323540Z   },
+2026-11-05T10:49:41.5324010Z   "automationLog": {
+2026-11-05T10:49:41.5324790Z     "startedAt": "2026-11-05T10:49:08.153Z",
+2026-11-05T10:49:41.5325850Z     "finishedAt": "2026-11-05T10:49:25.294Z",
+2026-11-05T10:49:41.5326750Z     "queryEnd": "2026-11-05T10:49:26.000Z",
+2026-11-05T10:49:41.5327580Z     "requestIds": [
+2026-11-05T10:49:41.5328150Z       "301.29",
+2026-11-05T10:49:41.5328800Z       "301.30",
+2026-11-05T10:49:41.5329300Z       "301.31",
+2026-11-05T10:49:41.5329890Z       "301.32",
+2026-11-05T10:49:41.5330420Z       "301.33",
+2026-11-05T10:49:41.5330880Z       "4321.3",
+2026-11-05T10:49:41.5331520Z       "301.34",
+2026-11-05T10:49:41.5332210Z       "301.35",
+2026-11-05T10:49:41.5332860Z       "301.36",
+2026-11-05T10:49:41.5333450Z       "301.37",
+2026-11-05T10:49:41.5334090Z       "301.38",
+2026-11-05T10:49:41.5334780Z       "301.39",
+2026-11-05T10:49:41.5335350Z       "4340.5",
+2026-11-05T10:49:41.5335960Z       "301.40",
+2026-11-05T10:49:41.5336520Z       "4340.6",
+2026-11-05T10:49:41.5337060Z       "301.41",
+2026-11-05T10:49:41.5337630Z       "4321.5",
+2026-11-05T10:49:41.5338230Z       "301.42",
+2026-11-05T10:49:41.5338830Z       "4321.6",
+2026-11-05T10:49:41.5339280Z       "301.43",
+2026-11-05T10:49:41.5339890Z       "4321.7"
+2026-11-05T10:49:41.5340500Z     ],
+2026-11-05T10:49:41.5341150Z     "sourceComplete": true,
+2026-11-05T10:49:41.5341860Z     "matchedLineCount": 406,
+2026-11-05T10:49:41.5342600Z     "retainedLineCount": 338,
+2026-11-05T10:49:41.5343460Z     "retainedBytes": 65007,
+2026-11-05T10:49:41.5344160Z     "headLineCount": 164,
+2026-11-05T10:49:41.5344940Z     "omittedLineCount": 68,
+2026-11-05T10:49:41.5345620Z     "truncated": true,
+2026-11-05T10:49:41.5346230Z     "lines": [
+2026-11-05T10:49:41.5347530Z       "2026-11-05 10:49:08.088 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.5350640Z       "2026-11-05 10:49:08.088 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4330 peer-session=186a1",
+2026-11-05T10:49:41.5355100Z       "2026-11-05 10:49:08.088 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff78810df30 - 4330 to sAllConnectionSetP",
+2026-11-05T10:49:41.5362060Z       "2026-11-05 10:49:08.088 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78810df30] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4330].0x7ff78810df30",
+2026-11-05T10:49:41.5366130Z       "2026-11-05 10:49:08.088 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.5372920Z       "2026-11-05 10:49:08.088 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4330 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7ff788105580> { name = 10799, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.5382340Z       "2026-11-05 10:49:08.089 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=4330 token=[sess=100001 pid=4330 uid:501,501,501 g:20,20 pV:9131] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:10799/0x2a2f send:2 limit:0)",
+2026-11-05T10:49:41.5389210Z       "2026-11-05 10:49:08.089 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4330 uid:501,501,501 g:20,20 pV:9131]",
+2026-11-05T10:49:41.5395780Z       "2026-11-05 10:49:08.089 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788012a70] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.5400520Z       "2026-11-05 10:49:08.089 A  appleeventsd[301:18a6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.5407510Z       "2026-11-05 10:49:08.089 I  appleeventsd[301:18a6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.29, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4330, auid:501, euid:501},",
+2026-11-05T10:49:41.5415620Z       "2026-11-05 10:49:08.090 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.29",
+2026-11-05T10:49:41.5420380Z       "2026-11-05 10:49:08.090 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.29, msg={",
+2026-11-05T10:49:41.5422240Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.5431530Z       "2026-11-05 10:49:08.090 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4330, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5446750Z       "2026-11-05 10:49:08.091 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4330, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5457360Z       "2026-11-05 10:49:08.095 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.29",
+2026-11-05T10:49:41.5461810Z       "2026-11-05 10:49:08.095 I  appleeventsd[301:18a6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff788010560> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.5467560Z       "2026-11-05 10:49:08.096 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788012a70] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.5470060Z       "2026-11-05 10:49:08.564 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.5473050Z       "2026-11-05 10:49:08.564 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4330 got event {command=kAELookupClientPort, asn=0x0-0x48048, }",
+2026-11-05T10:49:41.5477430Z       "2026-11-05 10:49:08.564 I  appleeventsd[301:18a6] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x48048 name=(null) bundleID=(null) signature=0x00000000 session=186a1",
+2026-11-05T10:49:41.5483630Z       "2026-11-05 10:49:08.830 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=345 got event {options={noHintedPort=true, }, appName=\"System Events\", command=kAEHintApp, noHintedPort=true, bundleID=\"com.apple.systemevents\", pid=4340, asn=0x0-0x4b04b, signature=1936029299, }",
+2026-11-05T10:49:41.5491120Z       "2026-11-05 10:49:08.831 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplicationHint: asn=0x0-0x4b04b pid=4340 sessionID=100001 'System Events' com.apple.systemevents sig=sevs",
+2026-11-05T10:49:41.5494460Z       "2026-11-05 10:49:08.983 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.5498690Z       "2026-11-05 10:49:08.983 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4331 peer-session=186a1",
+2026-11-05T10:49:41.5502590Z       "2026-11-05 10:49:08.983 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff78810d7d0 - 4331 to sAllConnectionSetP",
+2026-11-05T10:49:41.5508040Z       "2026-11-05 10:49:08.983 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78810d7d0] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4331].0x7ff78810d7d0",
+2026-11-05T10:49:41.5511800Z       "2026-11-05 10:49:08.984 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.5517530Z       "2026-11-05 10:49:08.984 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4331 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7ff788105580> { name = 32271, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.5526660Z       "2026-11-05 10:49:08.984 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=4331 token=[sess=100001 pid=4331 uid:501,501,501 g:20,20 pV:9133] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:32271/0x7e0f send:2 limit:0)",
+2026-11-05T10:49:41.5533270Z       "2026-11-05 10:49:08.984 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4331 uid:501,501,501 g:20,20 pV:9133]",
+2026-11-05T10:49:41.5538500Z       "2026-11-05 10:49:08.984 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78810c600] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.5543150Z       "2026-11-05 10:49:08.989 A  appleeventsd[301:18a6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.5550150Z       "2026-11-05 10:49:08.989 I  appleeventsd[301:18a6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.30, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4331, auid:501, euid:501},",
+2026-11-05T10:49:41.5558990Z       "2026-11-05 10:49:08.990 Df tccd[150:2e83] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.30",
+2026-11-05T10:49:41.5565460Z       "2026-11-05 10:49:08.990 I  tccd[150:2e83] [com.apple.TCC:access] REQUEST_MSG: msgID=301.30, msg={",
+2026-11-05T10:49:41.5567220Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.5575370Z       "2026-11-05 10:49:08.991 I  tccd[150:2e83] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4331, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5588450Z       "2026-11-05 10:49:08.992 I  tccd[150:2e83] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4331, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5596820Z       "2026-11-05 10:49:08.997 Df tccd[150:2e83] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.30",
+2026-11-05T10:49:41.5602310Z       "2026-11-05 10:49:08.997 I  appleeventsd[301:18a6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff7877111f0> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.5606490Z       "2026-11-05 10:49:08.998 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78810c600] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.5609330Z       "2026-11-05 10:49:09.388 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.5612650Z       "2026-11-05 10:49:09.388 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4331 got event {command=kAELookupClientPort, asn=0x0-0x4b04b, }",
+2026-11-05T10:49:41.5617290Z       "2026-11-05 10:49:09.388 I  appleeventsd[301:18a6] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x4b04b name=(null) bundleID=(null) signature=0x00000000 session=186a1",
+2026-11-05T10:49:41.5620230Z       "2026-11-05 10:49:10.174 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.5622760Z       "2026-11-05 10:49:10.175 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4340 peer-session=186a1",
+2026-11-05T10:49:41.5626240Z       "2026-11-05 10:49:10.175 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff788008900 - 4340 to sAllConnectionSetP",
+2026-11-05T10:49:41.5630810Z       "2026-11-05 10:49:10.175 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788008900] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4340].0x7ff788008900",
+2026-11-05T10:49:41.5634200Z       "2026-11-05 10:49:10.175 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.5640680Z       "2026-11-05 10:49:10.175 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4340 got event {appName=\"System Events\", command=kAECheckinApp, execName=\"system events\", needsProcessAssertions=false, bundleID=\"com.apple.systemevents\", asn=0x0-0x4b04b, signature=1936029299, port=xpc object:<mach send right: 0x7ff78770f330> { name = 17679, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.5649000Z       "2026-11-05 10:49:10.175 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Updating information for app {pid=4340,asn=0x0-0x4b04b} to appName='System Events' bundleID=com.apple.systemevents token=[sess=100001 pid=4340 uid:501,501,501 g:20,20 pV:9154] 'sevs'",
+2026-11-05T10:49:41.5654830Z       "2026-11-05 10:49:10.176 I  appleeventsd[301:3ef6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4340 uid:501,501,501 g:20,20 pV:9154]",
+2026-11-05T10:49:41.5660270Z       "2026-11-05 10:49:10.176 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff78810c600] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.5664290Z       "2026-11-05 10:49:10.176 A  appleeventsd[301:3ef6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.5670240Z       "2026-11-05 10:49:10.176 I  appleeventsd[301:3ef6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.31, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4340, auid:501, euid:501},",
+2026-11-05T10:49:41.5676590Z       "2026-11-05 10:49:10.178 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.31",
+2026-11-05T10:49:41.5680130Z       "2026-11-05 10:49:10.178 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.31, msg={",
+2026-11-05T10:49:41.5681800Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.5688550Z       "2026-11-05 10:49:10.179 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.systemevents, pid=4340, auid=501, euid=501, binary_path=/System/Library/CoreServices/System Events.app/Contents/MacOS/System Events}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5699080Z       "2026-11-05 10:49:10.183 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.systemevents, pid=4340, auid=501, euid=501, binary_path=/System/Library/CoreServices/System Events.app/Contents/MacOS/System Events}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5705980Z       "2026-11-05 10:49:10.236 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.31",
+2026-11-05T10:49:41.5710520Z       "2026-11-05 10:49:10.236 I  appleeventsd[301:3ef6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff78810e740> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.5714850Z       "2026-11-05 10:49:10.236 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff78810c600] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.5717740Z       "2026-11-05 10:49:10.553 A  appleeventsd[301:3ef6] New XPC Connection",
+2026-11-05T10:49:41.5720530Z       "2026-11-05 10:49:10.553 I  appleeventsd[301:3ef6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4347 peer-session=186a1",
+2026-11-05T10:49:41.5724180Z       "2026-11-05 10:49:10.553 I  appleeventsd[301:3ef6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff787713870 - 4347 to sAllConnectionSetP",
+2026-11-05T10:49:41.5729070Z       "2026-11-05 10:49:10.553 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff787713870] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4347].0x7ff787713870",
+2026-11-05T10:49:41.5732720Z       "2026-11-05 10:49:10.554 A  appleeventsd[301:3ef6] Handle XPC Event",
+2026-11-05T10:49:41.5739150Z       "2026-11-05 10:49:10.554 I  appleeventsd[301:3ef6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4347 got event {appName=\"FolderActionsDispatcher\", command=kAECheckinApp, execName=\"folderactionsdispatcher\", needsProcessAssertions=false, bundleID=\"com.apple.FolderActionsDispatcher\", asn=0x0-0x4d04d, signature=1717658729, port=xpc object:<mach send right: 0x7ff78770f330> { name = 23059, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.5750560Z       "2026-11-05 10:49:10.554 I  appleeventsd[301:3ef6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x4d04d pid=4347 token=[sess=100001 pid=4347 uid:501,501,501 g:20,20 pV:9169] 'FolderActionsDispatcher' execName=folderactionsdispatcher bundleID=com.apple.FolderActionsDispatcher 'fadi' port=(port:23059/0x5a13 send:2 limit:0)",
+2026-11-05T10:49:41.5757430Z       "2026-11-05 10:49:10.555 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4347 uid:501,501,501 g:20,20 pV:9169]",
+2026-11-05T10:49:41.5761770Z       "2026-11-05 10:49:10.555 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788010620] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.5765360Z       "2026-11-05 10:49:10.557 A  appleeventsd[301:18a6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.5771320Z       "2026-11-05 10:49:10.557 I  appleeventsd[301:18a6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.32, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4347, auid:501, euid:501},",
+2026-11-05T10:49:41.5779400Z       "2026-11-05 10:49:10.557 Df tccd[150:2e83] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.32",
+2026-11-05T10:49:41.5783730Z       "2026-11-05 10:49:10.557 I  tccd[150:2e83] [com.apple.TCC:access] REQUEST_MSG: msgID=301.32, msg={",
+2026-11-05T10:49:41.5785440Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.5793210Z       "2026-11-05 10:49:10.559 I  tccd[150:2e83] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.FolderActionsDispatcher, pid=4347, auid=501, euid=501, binary_path=/System/Library/CoreServices/FolderActionsDispatcher.app/Contents/MacOS/FolderActionsDispatcher}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5804950Z       "2026-11-05 10:49:10.561 I  tccd[150:2e83] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.FolderActionsDispatcher, pid=4347, auid=501, euid=501, binary_path=/System/Library/CoreServices/FolderActionsDispatcher.app/Contents/MacOS/FolderActionsDispatcher}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.5812610Z       "2026-11-05 10:49:10.632 Df tccd[150:2e83] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.32",
+2026-11-05T10:49:41.5816940Z       "2026-11-05 10:49:10.632 I  appleeventsd[301:18a6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff788209b20> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.5820870Z       "2026-11-05 10:49:10.632 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788010620] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.5823410Z       "2026-11-05 10:49:13.548 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.5826140Z       "2026-11-05 10:49:13.548 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4356 peer-session=186a1",
+2026-11-05T10:49:41.5829920Z       "2026-11-05 10:49:13.548 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff78820a420 - 4356 to sAllConnectionSetP",
+2026-11-05T10:49:41.5834520Z       "2026-11-05 10:49:13.548 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78820a420] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4356].0x7ff78820a420",
+2026-11-05T10:49:41.5839890Z       "2026-11-05 10:49:13.548 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.5848200Z       "2026-11-05 10:49:13.548 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4356 got event {appName=\"com.apple.Safari.SandboxBroker (Safari)\", command=kAECheckinApp, execName=\"com.apple.safari.sandboxbroker\", needsProcessAssertions=false, bundleID=\"com.apple.Safari.SandboxBroker\", asn=0x0-0x4e04e, signature=0, port=xpc object:<mach send right: 0x7ff788208830> { name = 16159, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.5855870Z       "2026-11-05 10:49:13.549 A  appleeventsd[301:18a6] (Security) SecKeyVerifySignature",
+2026-11-05T10:49:41.5858250Z       "2026-11-05 10:49:13.549 A  appleeventsd[301:18a6] (Security) SecTrustEvaluateIfNecessary",
+2026-11-05T10:49:41.5862790Z       "2026-11-05 10:49:13.552 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787711220] activating connection: mach=false listener=false peer=false name=com.apple.CodeSigningHelper",
+2026-11-05T10:49:41.5866440Z       "2026-11-05 10:49:13.552 A  appleeventsd[301:3ef5] New XPC Connection",
+2026-11-05T10:49:41.5869540Z       "2026-11-05 10:49:13.552 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4321 peer-session=186a1",
+2026-11-05T10:49:41.5873580Z       "2026-11-05 10:49:13.552 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff788010570 - 4321 to sAllConnectionSetP",
+2026-11-05T10:49:41.5879950Z       "2026-11-05 10:49:13.552 Df appleeventsd[301:3ef5] [com.apple.xpc:connection] [0x7ff788010570] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4321].0x7ff788010570",
+2026-11-05T10:49:41.5884120Z       "2026-11-05 10:49:13.552 A  appleeventsd[301:3ef5] Handle XPC Event",
+2026-11-05T10:49:41.5891350Z       "2026-11-05 10:49:13.552 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4321 got event {appName=\"Safari\", command=kAECheckinApp, execName=\"safari\", needsProcessAssertions=false, bundleID=\"com.apple.Safari\", asn=0x0-0x48048, signature=1936093801, port=xpc object:<mach send right: 0x7ff788008b70> { name = 33795, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.5897890Z       "2026-11-05 10:49:13.553 A  appleeventsd[301:3ef5] (Security) SecKeyVerifySignature",
+2026-11-05T10:49:41.5900460Z       "2026-11-05 10:49:13.553 A  appleeventsd[301:3ef5] (Security) SecTrustEvaluateIfNecessary",
+2026-11-05T10:49:41.5903970Z       "2026-11-05 10:49:13.555 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787711220] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.5911860Z       "2026-11-05 10:49:13.555 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x4e04e pid=4356 token=[sess=100001 pid=4356 uid:501,501,501 g:20,20 pV:9189] 'com.apple.Safari.SandboxBroker' execName=com.apple.Safari.SandboxBroker bundleID=com.apple.Safari.SandboxBroker '0x00000000' port=(port:16159/0x3f1f send:2 limit:0)",
+2026-11-05T10:49:41.5920270Z       "2026-11-05 10:49:13.556 I  appleeventsd[301:3ef6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4356 uid:501,501,501 g:20,20 pV:9189]",
+2026-11-05T10:49:41.5925700Z       "2026-11-05 10:49:13.556 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff788011850] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.5930370Z       "2026-11-05 10:49:13.556 A  appleeventsd[301:3ef6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.5937290Z       "2026-11-05 10:49:13.556 I  appleeventsd[301:3ef6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.33, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4356, auid:501, euid:501},",
+2026-11-05T10:49:41.5945810Z       "2026-11-05 10:49:13.557 Df appleeventsd[301:3ef5] [com.apple.xpc:connection] [0x7ff78820b520] activating connection: mach=false listener=false peer=false name=com.apple.CodeSigningHelper",
+2026-11-05T10:49:41.5950760Z       "2026-11-05 10:49:13.560 Df appleeventsd[301:3ef5] [com.apple.xpc:connection] [0x7ff78820b520] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.5956900Z       "2026-11-05 10:49:13.563 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.33",
+2026-11-05T10:49:41.5962550Z       "2026-11-05 10:49:13.563 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.33, msg={",
+2026-11-05T10:49:41.5968290Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.5972360Z       "2026-11-05 10:49:13.564 I  appleeventsd[301:3ef5] [com.apple.appleevents:main] Updating information for app {pid=4321,asn=0x0-0x48048} to appName='Safari' bundleID=com.apple.Safari token=[sess=100001 pid=4321 uid:501,501,501 g:20,20 pV:9113] 'sfri'",
+2026-11-05T10:49:41.5978130Z       "2026-11-05 10:49:13.567 I  appleeventsd[301:3fef] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4321 uid:501,501,501 g:20,20 pV:9113]",
+2026-11-05T10:49:41.5996120Z       "2026-11-05 10:49:13.574 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=com.apple.Safari, pid=4321, auid=501, euid=501, responsible_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari}, accessing={TCCDProcess: identifier=com.apple.Safari.SandboxBroker, pid=4356, auid=501, euid=501, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/XPCServices/com.apple.Safari.SandboxBroker.xpc/Contents/MacOS/com.apple.Safari.SandboxBroker}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6007700Z       "2026-11-05 10:49:13.575 I  Safari[4321:3fdd] [com.apple.TCC:access] SEND: 0/4 asynchronous to com.apple.tccd: request: msgID=4321.3, function=TCCAccessRequestIndirect, service=kTCCServiceAppleEvents, target_token={pid:4330, auid:501, euid:501}, indirect_object_token={pid:4321, auid:501, euid:501},",
+2026-11-05T10:49:41.6024880Z       "2026-11-05 10:49:13.575 Df tccd[359:3d08] [com.apple.TCC:access] REQUEST: tccd_uid=501, sender_pid=4321, sender_uid=501, sender_auid=501, function=TCCAccessRequestIndirect, msgID=4321.3",
+2026-11-05T10:49:41.6028250Z       "2026-11-05 10:49:13.575 I  tccd[359:3d08] [com.apple.TCC:access] REQUEST_MSG: msgID=4321.3, msg={",
+2026-11-05T10:49:41.6029890Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6033830Z       "2026-11-05 10:49:13.630 I  tccd[359:3d08] [com.apple.TCC:access] <TCCDProcess: identifier=com.apple.Safari, pid=4321> has the com.apple.private.tcc.allow entitlement for service kTCCServiceAppleEvents (composed to parent: (null))",
+2026-11-05T10:49:41.6038290Z       "2026-11-05 10:49:13.634 I  tccd[359:3d08] [com.apple.TCC:access] allowed_by_policy for kTCCServiceAppleEvents is False because: Default not allowed.",
+2026-11-05T10:49:41.6041730Z       "2026-11-05 10:49:13.634 I  tccd[359:3d08] [com.apple.TCC:access] Handling access request: kTCCServiceAppleEvents:<private>:com.apple.Safari, default_allow: 0, authValue: 1,",
+2026-11-05T10:49:41.6054320Z       "2026-11-05 10:49:13.681 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=com.apple.Safari, pid=4321, auid=501, euid=501, responsible_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari}, accessing={TCCDProcess: identifier=com.apple.Safari.SandboxBroker, pid=4356, auid=501, euid=501, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/XPCServices/com.apple.Safari.SandboxBroker.xpc/Contents/MacOS/com.apple.Safari.SandboxBroker}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6067090Z       "2026-11-05 10:49:15.472 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.33",
+2026-11-05T10:49:41.6070750Z       "2026-11-05 10:49:15.472 I  appleeventsd[301:3ef6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff787711220> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6074200Z       "2026-11-05 10:49:15.472 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff788011850] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6077620Z       "2026-11-05 10:49:15.472 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff787718630] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.6081290Z       "2026-11-05 10:49:15.472 A  appleeventsd[301:3ef6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.6087330Z       "2026-11-05 10:49:15.472 I  appleeventsd[301:3ef6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.34, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4321, auid:501, euid:501},",
+2026-11-05T10:49:41.6094500Z       "2026-11-05 10:49:15.473 Df tccd[150:3f67] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.34",
+2026-11-05T10:49:41.6098490Z       "2026-11-05 10:49:15.473 I  tccd[150:3f67] [com.apple.TCC:access] REQUEST_MSG: msgID=301.34, msg={",
+2026-11-05T10:49:41.6099910Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6105390Z       "2026-11-05 10:49:15.475 I  tccd[150:3f67] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.Safari, pid=4321, auid=501, euid=501, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6116440Z       "2026-11-05 10:49:15.477 I  tccd[150:3f67] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.Safari, pid=4321, auid=501, euid=501, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6121950Z       "2026-11-05 10:49:15.579 A  appleeventsd[301:3ef5] New XPC Connection",
+2026-11-05T10:49:41.6124110Z       "2026-11-05 10:49:15.579 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4379 peer-session=186a1",
+2026-11-05T10:49:41.6127540Z       "2026-11-05 10:49:15.579 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff787713c40 - 4379 to sAllConnectionSetP",
+2026-11-05T10:49:41.6132890Z       "2026-11-05 10:49:15.579 Df appleeventsd[301:3ef5] [com.apple.xpc:connection] [0x7ff787713c40] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4379].0x7ff787713c40",
+2026-11-05T10:49:41.6136880Z       "2026-11-05 10:49:15.579 A  appleeventsd[301:3ef5] Handle XPC Event",
+2026-11-05T10:49:41.6144830Z       "2026-11-05 10:49:15.579 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4379 got event {appName=\"UserNotificationCenter\", command=kAECheckinApp, execName=\"usernotificationcenter\", needsProcessAssertions=false, bundleID=\"com.apple.UserNotificationCenter\", asn=0x0-0x51051, signature=1970168696, port=xpc object:<mach send right: 0x7ff78770b020> { name = 34055, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.6156590Z       "2026-11-05 10:49:15.579 I  appleeventsd[301:3ef5] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x51051 pid=4379 token=[sess=100001 pid=4379 uid:501,501,501 g:20,20 pV:9248] 'UserNotificationCenter' execName=usernotificationcenter bundleID=com.apple.UserNotificationCenter 'uncx' port=(port:34055/0x8507 send:2 limit:0)",
+2026-11-05T10:49:41.6163560Z       "2026-11-05 10:49:15.598 I  appleeventsd[301:3fef] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4379 uid:501,501,501 g:20,20 pV:9248]",
+2026-11-05T10:49:41.6169530Z       "2026-11-05 10:49:15.637 I  tccd[150:3f67] [com.apple.TCC:access] <TCCDProcess: identifier=com.apple.Safari, pid=4321> has the com.apple.private.tcc.allow entitlement for service kTCCServiceAppleEvents (composed to parent: (null))",
+2026-11-05T10:49:41.6175130Z       "2026-11-05 10:49:15.638 Df tccd[150:3f67] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.34",
+2026-11-05T10:49:41.6180040Z       "2026-11-05 10:49:15.638 I  appleeventsd[301:3ef6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff787714880> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6185890Z       "2026-11-05 10:49:15.638 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff787718630] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6190760Z       "2026-11-05 10:49:15.638 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff787714cf0] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.6195200Z       "2026-11-05 10:49:15.638 A  appleeventsd[301:3ef6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.6201790Z       "2026-11-05 10:49:15.638 I  appleeventsd[301:3ef6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.35, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4379, auid:501, euid:501},",
+2026-11-05T10:49:41.6209460Z       "2026-11-05 10:49:15.639 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.35",
+2026-11-05T10:49:41.6213790Z       "2026-11-05 10:49:15.639 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.35, msg={",
+2026-11-05T10:49:41.6215690Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6223160Z       "2026-11-05 10:49:15.639 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.UserNotificationCenter, pid=4379, auid=501, euid=501, binary_path=/System/Library/CoreServices/UserNotificationCenter.app/Contents/MacOS/UserNotificationCenter}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6236010Z       "2026-11-05 10:49:15.639 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: accessing={TCCDProcess: identifier=com.apple.UserNotificationCenter, pid=4379, auid=501, euid=501, binary_path=/System/Library/CoreServices/UserNotificationCenter.app/Contents/MacOS/UserNotificationCenter}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6243440Z       "2026-11-05 10:49:15.661 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.35",
+2026-11-05T10:49:41.6249420Z       "2026-11-05 10:49:15.661 I  appleeventsd[301:3ef6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff78820b510> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6253750Z       "2026-11-05 10:49:15.661 Df appleeventsd[301:3ef6] [com.apple.xpc:connection] [0x7ff787714cf0] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6256590Z       "2026-11-05 10:49:19.626 A  appleeventsd[301:3ef5] New XPC Connection",
+2026-11-05T10:49:41.6259560Z       "2026-11-05 10:49:19.626 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4469 peer-session=186a1",
+2026-11-05T10:49:41.6263420Z       "2026-11-05 10:49:19.626 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff787714880 - 4469 to sAllConnectionSetP",
+2026-11-05T10:49:41.6268530Z       "2026-11-05 10:49:19.626 Df appleeventsd[301:3ef5] [com.apple.xpc:connection] [0x7ff787714880] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4469].0x7ff787714880",
+2026-11-05T10:49:41.6272590Z       "2026-11-05 10:49:19.626 A  appleeventsd[301:3ef5] Handle XPC Event",
+2026-11-05T10:49:41.6275780Z       "2026-11-05 10:49:19.626 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff78810d7d0] invalidated because the client process (pid 4331) either cancelled the connection or exited",
+2026-11-05T10:49:41.6278460Z       "2026-11-05 10:49:19.626 A  appleeventsd[301:3fef] Handle XPC Event",
+2026-11-05T10:49:41.6299230Z       "2026-11-05 10:49:22.231 I  tccd[150:3f7a] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=com.apple.Safari, pid=4321, auid=501, euid=501, responsible_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari, binary_path=/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari}, accessing={TCCDProcess: identifier=com.apple.quicklook.QuickLookUIService, pid=4473, auid=501, euid=501, binary_path=/System/Library/Frameworks/QuickLookUI.framework/Versions/A/XPCServices/QuickLookUIService.xpc/Contents/MacOS/QuickLookUIService}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6310360Z       "2026-11-05 10:49:22.408 Df tccd[150:3f7a] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.38",
+2026-11-05T10:49:41.6316500Z       "2026-11-05 10:49:22.408 I  appleeventsd[301:3fef] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff78810e070> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6320070Z       "2026-11-05 10:49:22.408 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff7877166d0] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6323740Z       "2026-11-05 10:49:22.408 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff78810d7d0] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.6327050Z       "2026-11-05 10:49:22.409 A  appleeventsd[301:3fef] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.6332020Z       "2026-11-05 10:49:22.409 I  appleeventsd[301:3fef] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.39, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4446, auid:501, euid:501},",
+2026-11-05T10:49:41.6337690Z       "2026-11-05 10:49:22.409 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.39",
+2026-11-05T10:49:41.6340830Z       "2026-11-05 10:49:22.409 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.39, msg={",
+2026-11-05T10:49:41.6342720Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6349380Z       "2026-11-05 10:49:22.409 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4446, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6360770Z       "2026-11-05 10:49:22.410 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4446, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6367870Z       "2026-11-05 10:49:22.413 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.39",
+2026-11-05T10:49:41.6372370Z       "2026-11-05 10:49:22.413 I  appleeventsd[301:3fef] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff788111050> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6375940Z       "2026-11-05 10:49:22.414 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff78810d7d0] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6393030Z       "2026-11-05 10:49:22.421 I  System Events[4340:3f44] [com.apple.TCC:access] SEND: 0/4 asynchronous to com.apple.tccd: request: msgID=4340.5, function=TCCAccessRequestIndirect, service=kTCCServiceAppleEvents, target_token={pid:4446, auid:501, euid:501}, indirect_object_token={pid:4340, auid:501, euid:501},",
+2026-11-05T10:49:41.6398810Z       "2026-11-05 10:49:22.421 Df tccd[359:404c] [com.apple.TCC:access] REQUEST: tccd_uid=501, sender_pid=4340, sender_uid=501, sender_auid=501, function=TCCAccessRequestIndirect, msgID=4340.5",
+2026-11-05T10:49:41.6402010Z       "2026-11-05 10:49:22.421 I  tccd[359:404c] [com.apple.TCC:access] REQUEST_MSG: msgID=4340.5, msg={",
+2026-11-05T10:49:41.6403370Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6407910Z       "2026-11-05 10:49:22.445 I  tccd[359:404c] [com.apple.TCC:access] Handling access request: kTCCServiceAppleEvents:<private>:<private>, default_allow: 0, authValue: 2,",
+2026-11-05T10:49:41.6411760Z       "2026-11-05 10:49:22.445 Df tccd[359:404c] [com.apple.TCC:access] REPLY: (501) function=TCCAccessRequestIndirect, msgID=4340.5",
+2026-11-05T10:49:41.6416550Z       "2026-11-05 10:49:22.996 Df appleeventsd[301:3ef5] [com.apple.xpc:connection] [0x7ff787713fe0] invalidated because the client process (pid 4446) either cancelled the connection or exited",
+2026-11-05T10:49:41.6421410Z       "2026-11-05 10:49:22.996 A  appleeventsd[301:3ef5] Handle XPC Event",
+2026-11-05T10:49:41.6424280Z       "2026-11-05 10:49:22.996 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=4446, so unregistering any application with that pid.",
+2026-11-05T10:49:41.6428740Z       "2026-11-05 10:49:22.996 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 4446/0x0:0x0 0x00000000 sess=100001 because we received error on its connection.",
+2026-11-05T10:49:41.6432560Z       "2026-11-05 10:49:22.996 I  appleeventsd[301:3ef5] [com.apple.appleevents:connection] REMOVING: conn:0x0x7ff787713fe0 - 4446 from sAllConnectionSetP",
+2026-11-05T10:49:41.6435030Z       "2026-11-05 10:49:22.996 Db appleeventsd[301:3ef5] [com.apple.appleevents:connection] Connection count: 32",
+2026-11-05T10:49:41.6437280Z       "2026-11-05 10:49:24.274 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.6460770Z       "2026-11-05 10:49:24.274 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4581 peer-session=186a1",
+2026-11-05T10:49:41.6463640Z       "2026-11-05 10:49:24.274 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff788012220 - 4581 to sAllConnectionSetP",
+2026-11-05T10:49:41.6467380Z       "2026-11-05 10:49:24.274 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788012220] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4581].0x7ff788012220",
+2026-11-05T10:49:41.6470420Z       "2026-11-05 10:49:24.274 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.6475140Z       "2026-11-05 10:49:24.274 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4581 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7ff78770e670> { name = 34335, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.6481470Z       "2026-11-05 10:49:24.274 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=4581 token=[sess=100001 pid=4581 uid:501,501,501 g:20,20 pV:9667] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:34335/0x861f send:2 limit:0)",
+2026-11-05T10:49:41.6486370Z       "2026-11-05 10:49:24.274 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4581 uid:501,501,501 g:20,20 pV:9667]",
+2026-11-05T10:49:41.6492240Z       "2026-11-05 10:49:24.275 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78770e4a0] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.6496130Z       "2026-11-05 10:49:24.275 A  appleeventsd[301:18a6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.6502410Z       "2026-11-05 10:49:24.275 I  appleeventsd[301:18a6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.40, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4581, auid:501, euid:501},",
+2026-11-05T10:49:41.6508920Z       "2026-11-05 10:49:24.275 Df tccd[150:3f7a] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.40",
+2026-11-05T10:49:41.6512590Z       "2026-11-05 10:49:24.275 I  tccd[150:3f7a] [com.apple.TCC:access] REQUEST_MSG: msgID=301.40, msg={",
+2026-11-05T10:49:41.6514300Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6521890Z       "2026-11-05 10:49:24.276 I  tccd[150:3f7a] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4581, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6536640Z       "2026-11-05 10:49:24.276 I  tccd[150:3f7a] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4581, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6545180Z       "2026-11-05 10:49:24.283 Df tccd[150:3f7a] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.40",
+2026-11-05T10:49:41.6549200Z       "2026-11-05 10:49:24.283 I  appleeventsd[301:18a6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff788012750> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6553360Z       "2026-11-05 10:49:24.283 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78770e4a0] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6556140Z       "2026-11-05 10:49:24.368 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.6559140Z       "2026-11-05 10:49:24.368 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4581 got event {command=kAELookupClientPort, asn=0x0-0x4b04b, }",
+2026-11-05T10:49:41.6564260Z       "2026-11-05 10:49:24.368 I  appleeventsd[301:18a6] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x4b04b name=(null) bundleID=(null) signature=0x00000000 session=186a1",
+2026-11-05T10:49:41.6571610Z       "2026-11-05 10:49:24.372 I  System Events[4340:3f44] [com.apple.TCC:access] SEND: 0/4 asynchronous to com.apple.tccd: request: msgID=4340.6, function=TCCAccessRequestIndirect, service=kTCCServiceAppleEvents, target_token={pid:4581, auid:501, euid:501}, indirect_object_token={pid:4340, auid:501, euid:501},",
+2026-11-05T10:49:41.6579050Z       "2026-11-05 10:49:24.372 Df tccd[359:4147] [com.apple.TCC:access] REQUEST: tccd_uid=501, sender_pid=4340, sender_uid=501, sender_auid=501, function=TCCAccessRequestIndirect, msgID=4340.6",
+2026-11-05T10:49:41.6582760Z       "2026-11-05 10:49:24.372 I  tccd[359:4147] [com.apple.TCC:access] REQUEST_MSG: msgID=4340.6, msg={",
+2026-11-05T10:49:41.6584630Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6587760Z       "2026-11-05 10:49:24.396 I  tccd[359:4147] [com.apple.TCC:access] Handling access request: kTCCServiceAppleEvents:<private>:<private>, default_allow: 0, authValue: 2,",
+2026-11-05T10:49:41.6591740Z       "2026-11-05 10:49:24.396 Df tccd[359:4147] [com.apple.TCC:access] REPLY: (501) function=TCCAccessRequestIndirect, msgID=4340.6",
+2026-11-05T10:49:41.6595110Z       "2026-11-05 10:49:24.771 Df tccd[359:3d08] [com.apple.TCC:access] REPLY: (501) function=TCCAccessRequestIndirect, msgID=4321.3",
+2026-11-05T10:49:41.6600070Z       "2026-11-05 10:49:24.773 Df tccd[359:4147] [com.apple.TCC:events] Publishing <TCCDEvent: type=Create, service=kTCCServiceAppleEvents, identifier_type=Path, identifier=/opt/hca/hosted-compute-agent> to 3 subscribers: {",
+2026-11-05T10:49:41.6605800Z       "2026-11-05 10:49:24.932 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff78810df30] invalidated because the client process (pid 4330) either cancelled the connection or exited",
+2026-11-05T10:49:41.6609160Z       "2026-11-05 10:49:24.932 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.6613060Z       "2026-11-05 10:49:24.932 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=4330, so unregistering any application with that pid.",
+2026-11-05T10:49:41.6619610Z       "2026-11-05 10:49:24.932 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 4330/0x0:0x0 0x00000000still-hintable  sess=100001 because we received error on its connection.",
+2026-11-05T10:49:41.6625260Z       "2026-11-05 10:49:24.932 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] REMOVING: conn:0x0x7ff78810df30 - 4330 from sAllConnectionSetP",
+2026-11-05T10:49:41.6628770Z       "2026-11-05 10:49:24.932 Db appleeventsd[301:18a6] [com.apple.appleevents:connection] Connection count: 32",
+2026-11-05T10:49:41.6632950Z       "2026-11-05 10:49:24.932 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788012220] invalidated because the client process (pid 4581) either cancelled the connection or exited",
+2026-11-05T10:49:41.6637080Z       "2026-11-05 10:49:24.932 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.6641210Z       "2026-11-05 10:49:24.932 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=4581, so unregistering any application with that pid.",
+2026-11-05T10:49:41.6647650Z       "2026-11-05 10:49:24.932 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 4581/0x0:0x0 0x00000000 sess=100001 because we received error on its connection.",
+2026-11-05T10:49:41.6653150Z       "2026-11-05 10:49:24.932 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] REMOVING: conn:0x0x7ff788012220 - 4581 from sAllConnectionSetP",
+2026-11-05T10:49:41.6656720Z       "2026-11-05 10:49:24.932 Db appleeventsd[301:18a6] [com.apple.appleevents:connection] Connection count: 31",
+2026-11-05T10:49:41.6659130Z       "2026-11-05 10:49:25.210 A  appleeventsd[301:3fef] New XPC Connection",
+2026-11-05T10:49:41.6662160Z       "2026-11-05 10:49:25.210 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4590 peer-session=186a1",
+2026-11-05T10:49:41.6666210Z       "2026-11-05 10:49:25.210 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff788012150 - 4590 to sAllConnectionSetP",
+2026-11-05T10:49:41.6672290Z       "2026-11-05 10:49:25.210 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff788012150] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4590].0x7ff788012150",
+2026-11-05T10:49:41.6676320Z       "2026-11-05 10:49:25.210 A  appleeventsd[301:3fef] Handle XPC Event",
+2026-11-05T10:49:41.6682660Z       "2026-11-05 10:49:25.210 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4590 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7ff78800fb40> { name = 9507, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.6691660Z       "2026-11-05 10:49:25.211 I  appleeventsd[301:3fef] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=4590 token=[sess=100001 pid=4590 uid:501,501,501 g:20,20 pV:9688] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:9507/0x2523 send:2 limit:0)",
+2026-11-05T10:49:41.6697990Z       "2026-11-05 10:49:25.211 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4590 uid:501,501,501 g:20,20 pV:9688]",
+2026-11-05T10:49:41.6703050Z       "2026-11-05 10:49:25.211 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787718630] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.6707520Z       "2026-11-05 10:49:25.212 A  appleeventsd[301:18a6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.6714220Z       "2026-11-05 10:49:25.212 I  appleeventsd[301:18a6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.41, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4590, auid:501, euid:501},",
+2026-11-05T10:49:41.6721240Z       "2026-11-05 10:49:25.212 Df tccd[150:3f7a] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.41",
+2026-11-05T10:49:41.6724910Z       "2026-11-05 10:49:25.212 I  tccd[150:3f7a] [com.apple.TCC:access] REQUEST_MSG: msgID=301.41, msg={",
+2026-11-05T10:49:41.6726450Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6733950Z       "2026-11-05 10:49:25.212 I  tccd[150:3f7a] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4590, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6748010Z       "2026-11-05 10:49:25.213 I  tccd[150:3f7a] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4590, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6756690Z       "2026-11-05 10:49:25.218 Df tccd[150:3f7a] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.41",
+2026-11-05T10:49:41.6761340Z       "2026-11-05 10:49:25.218 I  appleeventsd[301:18a6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff788010b30> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6765630Z       "2026-11-05 10:49:25.218 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787718630] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6769080Z       "2026-11-05 10:49:25.343 A  appleeventsd[301:3fef] Handle XPC Event",
+2026-11-05T10:49:41.6772470Z       "2026-11-05 10:49:25.343 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4590 got event {command=kAELookupClientPort, asn=0x0-0x48048, }",
+2026-11-05T10:49:41.6777020Z       "2026-11-05 10:49:25.343 I  appleeventsd[301:3fef] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x48048 name=(null) bundleID=(null) signature=0x00000000 session=186a1",
+2026-11-05T10:49:41.6783200Z       "2026-11-05 10:49:25.345 I  Safari[4321:3f9d] [com.apple.TCC:access] SEND: 0/4 asynchronous to com.apple.tccd: request: msgID=4321.5, function=TCCAccessRequestIndirect, service=kTCCServiceAppleEvents, target_token={pid:4590, auid:501, euid:501}, indirect_object_token={pid:4321, auid:501, euid:501},",
+2026-11-05T10:49:41.6789210Z       "2026-11-05 10:49:25.345 Df tccd[359:3d08] [com.apple.TCC:access] REQUEST: tccd_uid=501, sender_pid=4321, sender_uid=501, sender_auid=501, function=TCCAccessRequestIndirect, msgID=4321.5",
+2026-11-05T10:49:41.6792720Z       "2026-11-05 10:49:25.345 I  tccd[359:3d08] [com.apple.TCC:access] REQUEST_MSG: msgID=4321.5, msg={",
+2026-11-05T10:49:41.6794470Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6798200Z       "2026-11-05 10:49:25.372 I  tccd[359:3d08] [com.apple.TCC:access] <TCCDProcess: identifier=com.apple.Safari, pid=4321> has the com.apple.private.tcc.allow entitlement for service kTCCServiceAppleEvents (composed to parent: (null))",
+2026-11-05T10:49:41.6803240Z       "2026-11-05 10:49:25.383 I  tccd[359:3d08] [com.apple.TCC:access] Handling access request: kTCCServiceAppleEvents:<private>:com.apple.Safari, default_allow: 0, authValue: 2,",
+2026-11-05T10:49:41.6806870Z       "2026-11-05 10:49:25.383 Df tccd[359:3d08] [com.apple.TCC:access] REPLY: (501) function=TCCAccessRequestIndirect, msgID=4321.5",
+2026-11-05T10:49:41.6811050Z       "2026-11-05 10:49:25.390 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff788012150] invalidated because the client process (pid 4590) either cancelled the connection or exited",
+2026-11-05T10:49:41.6814060Z       "2026-11-05 10:49:25.390 A  appleeventsd[301:3fef] Handle XPC Event",
+2026-11-05T10:49:41.6817650Z       "2026-11-05 10:49:25.390 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=4590, so unregistering any application with that pid.",
+2026-11-05T10:49:41.6824680Z       "2026-11-05 10:49:25.390 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 4590/0x0:0x0 0x00000000 sess=100001 because we received error on its connection.",
+2026-11-05T10:49:41.6830200Z       "2026-11-05 10:49:25.390 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] REMOVING: conn:0x0x7ff788012150 - 4590 from sAllConnectionSetP",
+2026-11-05T10:49:41.6833800Z       "2026-11-05 10:49:25.390 Db appleeventsd[301:3fef] [com.apple.appleevents:connection] Connection count: 31",
+2026-11-05T10:49:41.6836190Z       "2026-11-05 10:49:25.483 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.6839190Z       "2026-11-05 10:49:25.483 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4592 peer-session=186a1",
+2026-11-05T10:49:41.6843410Z       "2026-11-05 10:49:25.483 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff787713fe0 - 4592 to sAllConnectionSetP",
+2026-11-05T10:49:41.6848800Z       "2026-11-05 10:49:25.483 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787713fe0] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4592].0x7ff787713fe0",
+2026-11-05T10:49:41.6852740Z       "2026-11-05 10:49:25.483 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.6858670Z       "2026-11-05 10:49:25.483 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4592 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7ff787707550> { name = 22583, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.6865550Z       "2026-11-05 10:49:25.483 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=4592 token=[sess=100001 pid=4592 uid:501,501,501 g:20,20 pV:9692] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:22583/0x5837 send:2 limit:0)",
+2026-11-05T10:49:41.6870440Z       "2026-11-05 10:49:25.484 I  appleeventsd[301:3fef] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4592 uid:501,501,501 g:20,20 pV:9692]",
+2026-11-05T10:49:41.6874080Z       "2026-11-05 10:49:25.484 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff788010990] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.6877270Z       "2026-11-05 10:49:25.484 A  appleeventsd[301:3fef] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.6881990Z       "2026-11-05 10:49:25.484 I  appleeventsd[301:3fef] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.42, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4592, auid:501, euid:501},",
+2026-11-05T10:49:41.6887870Z       "2026-11-05 10:49:25.484 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.42",
+2026-11-05T10:49:41.6890990Z       "2026-11-05 10:49:25.484 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.42, msg={",
+2026-11-05T10:49:41.6892290Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6898620Z       "2026-11-05 10:49:25.485 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4592, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6910140Z       "2026-11-05 10:49:25.485 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4592, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.6917070Z       "2026-11-05 10:49:25.490 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.42",
+2026-11-05T10:49:41.6920670Z       "2026-11-05 10:49:25.490 I  appleeventsd[301:3fef] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff78820eb20> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.6924850Z       "2026-11-05 10:49:25.490 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff788010990] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.6927810Z       "2026-11-05 10:49:25.592 A  appleeventsd[301:3fef] Handle XPC Event",
+2026-11-05T10:49:41.6931350Z       "2026-11-05 10:49:25.592 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4592 got event {command=kAELookupClientPort, asn=0x0-0x48048, }",
+2026-11-05T10:49:41.6937110Z       "2026-11-05 10:49:25.592 I  appleeventsd[301:3fef] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x48048 name=(null) bundleID=(null) signature=0x00000000 session=186a1",
+2026-11-05T10:49:41.6944390Z       "2026-11-05 10:49:25.593 I  Safari[4321:3f9d] [com.apple.TCC:access] SEND: 0/4 asynchronous to com.apple.tccd: request: msgID=4321.6, function=TCCAccessRequestIndirect, service=kTCCServiceAppleEvents, target_token={pid:4592, auid:501, euid:501}, indirect_object_token={pid:4321, auid:501, euid:501},",
+2026-11-05T10:49:41.6951040Z       "2026-11-05 10:49:25.593 Df tccd[359:3d08] [com.apple.TCC:access] REQUEST: tccd_uid=501, sender_pid=4321, sender_uid=501, sender_auid=501, function=TCCAccessRequestIndirect, msgID=4321.6",
+2026-11-05T10:49:41.6954710Z       "2026-11-05 10:49:25.593 I  tccd[359:3d08] [com.apple.TCC:access] REQUEST_MSG: msgID=4321.6, msg={",
+2026-11-05T10:49:41.6956570Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.6960720Z       "2026-11-05 10:49:25.613 I  tccd[359:3d08] [com.apple.TCC:access] <TCCDProcess: identifier=com.apple.Safari, pid=4321> has the com.apple.private.tcc.allow entitlement for service kTCCServiceAppleEvents (composed to parent: (null))",
+2026-11-05T10:49:41.6966380Z       "2026-11-05 10:49:25.622 I  tccd[359:3d08] [com.apple.TCC:access] Handling access request: kTCCServiceAppleEvents:<private>:com.apple.Safari, default_allow: 0, authValue: 2,",
+2026-11-05T10:49:41.6970470Z       "2026-11-05 10:49:25.622 Df tccd[359:3d08] [com.apple.TCC:access] REPLY: (501) function=TCCAccessRequestIndirect, msgID=4321.6",
+2026-11-05T10:49:41.6974970Z       "2026-11-05 10:49:25.629 Df appleeventsd[301:3fef] [com.apple.xpc:connection] [0x7ff787713fe0] invalidated because the client process (pid 4592) either cancelled the connection or exited",
+2026-11-05T10:49:41.6978420Z       "2026-11-05 10:49:25.629 A  appleeventsd[301:3fef] Handle XPC Event",
+2026-11-05T10:49:41.6982370Z       "2026-11-05 10:49:25.629 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=4592, so unregistering any application with that pid.",
+2026-11-05T10:49:41.6988780Z       "2026-11-05 10:49:25.629 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 4592/0x0:0x0 0x00000000 sess=100001 because we received error on its connection.",
+2026-11-05T10:49:41.6994260Z       "2026-11-05 10:49:25.629 I  appleeventsd[301:3fef] [com.apple.appleevents:connection] REMOVING: conn:0x0x7ff787713fe0 - 4592 from sAllConnectionSetP",
+2026-11-05T10:49:41.6998560Z       "2026-11-05 10:49:25.629 Db appleeventsd[301:3fef] [com.apple.appleevents:connection] Connection count: 31",
+2026-11-05T10:49:41.7000950Z       "2026-11-05 10:49:25.711 A  appleeventsd[301:18a6] New XPC Connection",
+2026-11-05T10:49:41.7003940Z       "2026-11-05 10:49:25.711 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4593 peer-session=186a1",
+2026-11-05T10:49:41.7007980Z       "2026-11-05 10:49:25.711 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] ADDING: conn:0x0x7ff787713fe0 - 4593 to sAllConnectionSetP",
+2026-11-05T10:49:41.7013340Z       "2026-11-05 10:49:25.711 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787713fe0] activating connection: mach=false listener=false peer=true name=com.apple.coreservices.appleevents.peer[4593].0x7ff787713fe0",
+2026-11-05T10:49:41.7017450Z       "2026-11-05 10:49:25.712 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.7023570Z       "2026-11-05 10:49:25.712 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4593 got event {appName=\"osascript\", command=kAECheckinApp, needsProcessAssertions=false, bundleID=\"com.apple.osascript\", signature=0, port=xpc object:<mach send right: 0x7ff787718300> { name = 40227, right = send, urefs = 1 } , }",
+2026-11-05T10:49:41.7031760Z       "2026-11-05 10:49:25.712 I  appleeventsd[301:18a6] [com.apple.appleevents:main] CreateApplication: asn=0x0-0x0 pid=4593 token=[sess=100001 pid=4593 uid:501,501,501 g:20,20 pV:9694] 'osascript' execName=(null) bundleID=com.apple.osascript '0x00000000' port=(port:40227/0x9d23 send:2 limit:0)",
+2026-11-05T10:49:41.7037420Z       "2026-11-05 10:49:25.712 I  appleeventsd[301:18a6] [com.apple.appleevents:main] Requesting designatedRequirements for [sess=100001 pid=4593 uid:501,501,501 g:20,20 pV:9694]",
+2026-11-05T10:49:41.7042010Z       "2026-11-05 10:49:25.712 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788012f30] activating connection: mach=true listener=false peer=false name=com.apple.tccd.system",
+2026-11-05T10:49:41.7045870Z       "2026-11-05 10:49:25.712 A  appleeventsd[301:18a6] (TCC) TCCCreateDesignatedRequirementIdentityFromAuditTokenForService() IPC",
+2026-11-05T10:49:41.7051820Z       "2026-11-05 10:49:25.712 I  appleeventsd[301:18a6] [com.apple.TCC:access] SEND: 0/4 synchronous to com.apple.tccd.system: request: msgID=301.43, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, service=kTCCServiceAppleEvents, target_token={pid:4593, auid:501, euid:501},",
+2026-11-05T10:49:41.7057920Z       "2026-11-05 10:49:25.713 Df tccd[150:3f07] [com.apple.TCC:access] REQUEST: tccd_uid=0, sender_pid=301, sender_uid=55, sender_auid=-1, function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.43",
+2026-11-05T10:49:41.7061650Z       "2026-11-05 10:49:25.713 I  tccd[150:3f07] [com.apple.TCC:access] REQUEST_MSG: msgID=301.43, msg={",
+2026-11-05T10:49:41.7063110Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.7070160Z       "2026-11-05 10:49:25.713 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4593, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.7082410Z       "2026-11-05 10:49:25.713 I  tccd[150:3f07] [com.apple.TCC:access] AttributionChain: responsible={TCCDProcess: identifier=<ID of InvalidCode>, pid=1031, auid=501, euid=501, responsible_path=/opt/hca/hosted-compute-agent, binary_path=/opt/hca/hosted-compute-agent}, accessing={TCCDProcess: identifier=com.apple.osascript, pid=4593, auid=501, euid=501, binary_path=/usr/bin/osascript}, requesting={TCCDProcess: identifier=com.apple.appleeventsd, pid=301, auid=55, euid=55, binary_path=/System/Library/CoreServices/appleeventsd},",
+2026-11-05T10:49:41.7090890Z       "2026-11-05 10:49:25.718 Df tccd[150:3f07] [com.apple.TCC:access] REPLY: (0) function=TCCCreateDesignatedRequirementIdentityFromAuditTokenForService, msgID=301.43",
+2026-11-05T10:49:41.7095150Z       "2026-11-05 10:49:25.718 I  appleeventsd[301:18a6] [com.apple.TCC:access] RECV: synchronous reply <dictionary: 0x7ff7880135f0> { count = 2, transaction: 0, voucher = 0x0, contents =",
+2026-11-05T10:49:41.7099390Z       "2026-11-05 10:49:25.718 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff788012f30] invalidated after the last release of the connection object",
+2026-11-05T10:49:41.7102280Z       "2026-11-05 10:49:25.849 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.7105450Z       "2026-11-05 10:49:25.849 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: peer=? peer-pid=4593 got event {command=kAELookupClientPort, asn=0x0-0x48048, }",
+2026-11-05T10:49:41.7110020Z       "2026-11-05 10:49:25.849 I  appleeventsd[301:18a6] [com.apple.appleevents:main] kAELookupClientPort: LOOKUP pid=0 asn=0x0-0x48048 name=(null) bundleID=(null) signature=0x00000000 session=186a1",
+2026-11-05T10:49:41.7116890Z       "2026-11-05 10:49:25.850 I  Safari[4321:4042] [com.apple.TCC:access] SEND: 0/4 asynchronous to com.apple.tccd: request: msgID=4321.7, function=TCCAccessRequestIndirect, service=kTCCServiceAppleEvents, target_token={pid:4593, auid:501, euid:501}, indirect_object_token={pid:4321, auid:501, euid:501},",
+2026-11-05T10:49:41.7122840Z       "2026-11-05 10:49:25.850 Df tccd[359:404c] [com.apple.TCC:access] REQUEST: tccd_uid=501, sender_pid=4321, sender_uid=501, sender_auid=501, function=TCCAccessRequestIndirect, msgID=4321.7",
+2026-11-05T10:49:41.7126110Z       "2026-11-05 10:49:25.850 I  tccd[359:404c] [com.apple.TCC:access] REQUEST_MSG: msgID=4321.7, msg={",
+2026-11-05T10:49:41.7127710Z       "\tservice=\"kTCCServiceAppleEvents\"",
+2026-11-05T10:49:41.7131450Z       "2026-11-05 10:49:25.874 I  tccd[359:404c] [com.apple.TCC:access] <TCCDProcess: identifier=com.apple.Safari, pid=4321> has the com.apple.private.tcc.allow entitlement for service kTCCServiceAppleEvents (composed to parent: (null))",
+2026-11-05T10:49:41.7136460Z       "2026-11-05 10:49:25.883 I  tccd[359:404c] [com.apple.TCC:access] Handling access request: kTCCServiceAppleEvents:<private>:com.apple.Safari, default_allow: 0, authValue: 2,",
+2026-11-05T10:49:41.7139770Z       "2026-11-05 10:49:25.883 Df tccd[359:404c] [com.apple.TCC:access] REPLY: (501) function=TCCAccessRequestIndirect, msgID=4321.7",
+2026-11-05T10:49:41.7144160Z       "2026-11-05 10:49:25.914 Df appleeventsd[301:18a6] [com.apple.xpc:connection] [0x7ff787713fe0] invalidated because the client process (pid 4593) either cancelled the connection or exited",
+2026-11-05T10:49:41.7147290Z       "2026-11-05 10:49:25.914 A  appleeventsd[301:18a6] Handle XPC Event",
+2026-11-05T10:49:41.7150820Z       "2026-11-05 10:49:25.914 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] Recevied XPC_ERROR_CONNECTION_INVALID for peer=? peer-pid=4593, so unregistering any application with that pid.",
+2026-11-05T10:49:41.7155970Z       "2026-11-05 10:49:25.914 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] CONNECTION: releasing app App:\"osascript\"/[ NULL ] /\"com.apple.osascript\" 4593/0x0:0x0 0x00000000 sess=100001 because we received error on its connection.",
+2026-11-05T10:49:41.7160970Z       "2026-11-05 10:49:25.914 I  appleeventsd[301:18a6] [com.apple.appleevents:connection] REMOVING: conn:0x0x7ff787713fe0 - 4593 from sAllConnectionSetP",
+2026-11-05T10:49:41.7176550Z       "2026-11-05 10:49:25.914 Db appleeventsd[301:18a6] [com.apple.appleevents:connection] Connection count: 31"
+2026-11-05T10:49:41.7178050Z     ]
+2026-11-05T10:49:41.7178690Z   }
+2026-11-05T10:49:41.7179440Z }
+2026-11-05T10:49:41.7294360Z ##[group]Run npm ci
+2026-11-05T10:49:41.7295210Z [36;1mnpm ci[0m
+2026-11-05T10:49:41.7462070Z shell: /bin/bash -e {0}
+2026-11-05T10:49:41.7462880Z env:
+2026-11-05T10:49:41.7463690Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:49:41.7464790Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:49:41.7465630Z ##[endgroup]
+2026-11-05T10:50:31.5924440Z 
+2026-11-05T10:50:31.5947300Z > postinstall
+2026-11-05T10:50:31.5986000Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-05T10:50:31.6039840Z 
+2026-11-05T10:50:33.1482890Z 
+2026-11-05T10:50:33.1514170Z added 493 packages, and audited 501 packages in 51s
+2026-11-05T10:50:33.1555650Z 
+2026-11-05T10:50:33.1629070Z 132 packages are looking for funding
+2026-11-05T10:50:33.1700760Z   run `npm fund` for details
+2026-11-05T10:50:33.1878510Z 
+2026-11-05T10:50:33.1945460Z npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-11-05T10:50:33.1947250Z 4 moderate severity vulnerabilities
+2026-11-05T10:50:33.1993410Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-05T10:50:33.1994300Z 
+2026-11-05T10:50:33.2045920Z npm warn install-scripts   fsevents@2.3.3 (install: (install scripts present))
+2026-11-05T10:50:33.2048080Z To address all issues (including breaking changes), run:
+2026-11-05T10:50:33.2097720Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-05T10:50:33.2099610Z   npm audit fix --force
+2026-11-05T10:50:33.2165920Z npm warn install-scripts
+2026-11-05T10:50:33.2166680Z 
+2026-11-05T10:50:33.2221910Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-05T10:50:33.2224340Z Run `npm audit` for details.
+2026-11-05T10:50:33.5611780Z ##[group]Run npm run build
+2026-11-05T10:50:33.5613050Z [36;1mnpm run build[0m
+2026-11-05T10:50:33.5730490Z shell: /bin/bash -e {0}
+2026-11-05T10:50:33.5731160Z env:
+2026-11-05T10:50:33.5731790Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:50:33.5732660Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:50:33.5733380Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-05T10:50:33.5734050Z ##[endgroup]
+2026-11-05T10:50:34.0094140Z 
+2026-11-05T10:50:34.0098870Z > build
+2026-11-05T10:50:34.0103350Z > vite build
+2026-11-05T10:50:34.0107360Z 
+2026-11-05T10:50:34.5820390Z [36mvite v8.3.4 [32mbuilding client environment for production...[36m[39m
+2026-11-05T10:50:34.6964020Z transforming...
+2026-11-05T10:50:36.7897080Z ✓ 4369 modules transformed.
+2026-11-05T10:50:37.8049250Z rendering chunks...
+2026-11-05T10:50:39.4475750Z computing gzip size...
+2026-11-05T10:50:39.7498440Z dist/index.html                                    3.50 kB │ gzip:     1.29 kB
+2026-11-05T10:50:39.7548220Z dist/assets/nativeCopy-mVcC3r32.css                2.53 kB │ gzip:     0.88 kB
+2026-11-05T10:50:39.7583460Z dist/assets/HistoryBrowser-D9Z9OhM7.css            3.36 kB │ gzip:     0.96 kB
+2026-11-05T10:50:39.7615400Z dist/assets/theme-6GPmlRwP.css                     5.63 kB │ gzip:     1.61 kB
+2026-11-05T10:50:39.7661400Z dist/assets/CopyFile-Bp41xbsr.css                 16.91 kB │ gzip:     3.69 kB
+2026-11-05T10:50:39.7697580Z dist/assets/application-B9PzMhak.css              58.90 kB │ gzip:    10.58 kB
+2026-11-05T10:50:39.7745330Z dist/assets/documentReady-CZMWh3-A.css           114.43 kB │ gzip:    17.18 kB
+2026-11-05T10:50:39.7832240Z dist/assets/lib-DGHf0mi1.css                     124.16 kB │ gzip:    18.08 kB
+2026-11-05T10:50:39.7882920Z dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB
+2026-11-05T10:50:39.7944740Z dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB
+2026-11-05T10:50:39.8004380Z dist/assets/module-preload-BLdHbfdN.js             1.51 kB │ gzip:     0.79 kB
+2026-11-05T10:50:39.8055640Z dist/assets/snapshotIdentity-DauYycDk.js           1.70 kB │ gzip:     0.74 kB
+2026-11-05T10:50:39.8101280Z dist/assets/OfflineViewer-DNI4wGEC.js              1.96 kB │ gzip:     1.00 kB
+2026-11-05T10:50:39.8150950Z dist/assets/rendering-BODcrmwg.js                  2.48 kB │ gzip:     1.14 kB
+2026-11-05T10:50:39.8191240Z dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB
+2026-11-05T10:50:39.8210610Z [33m[plugin builtin:vite-reporter] 
+2026-11-05T10:50:39.8220050Z dist/assets/OfflineAccess-mOp5M4Iz.js              2.98 kB │ gzip:     1.46 kB
+2026-11-05T10:50:39.8423770Z (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-05T10:50:39.8429850Z dist/assets/download-BPGf4w79.js                   3.48 kB │ gzip:     1.69 kB
+2026-11-05T10:50:39.8490920Z - Using dynamic import() to code-split the application
+2026-11-05T10:50:39.8496650Z dist/assets/documentAccess-BpTD8alm.js             3.54 kB │ gzip:     1.62 kB
+2026-11-05T10:50:39.8537750Z - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+2026-11-05T10:50:39.8543900Z dist/assets/main-BxIQc7sV.js                       3.75 kB │ gzip:     1.84 kB
+2026-11-05T10:50:39.8753110Z - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+2026-11-05T10:50:39.8758150Z dist/assets/spaceNavigation-BsLiTX-r.js            3.95 kB │ gzip:     1.64 kB
+2026-11-05T10:50:39.8876600Z [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+2026-11-05T10:50:39.8881980Z dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB
+2026-11-05T10:50:39.8923800Z [39m
+2026-11-05T10:50:39.8925700Z dist/assets/SheetEditor-Dx_3Xrv9.js                6.14 kB │ gzip:     2.85 kB
+2026-11-05T10:50:39.8961350Z dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB
+2026-11-05T10:50:39.9004830Z dist/assets/native-BNzA2On6.js                     7.10 kB │ gzip:     3.11 kB
+2026-11-05T10:50:39.9072520Z dist/assets/react-DlmbjZJV.js                      7.87 kB │ gzip:     3.00 kB
+2026-11-05T10:50:39.9145660Z dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB
+2026-11-05T10:50:39.9229120Z dist/assets/useDiagnostics-DuPOOcXt.js            13.20 kB │ gzip:     4.32 kB
+2026-11-05T10:50:39.9377270Z dist/service-worker.js                            15.37 kB │ gzip:     5.88 kB
+2026-11-05T10:50:39.9428190Z dist/assets/DocEditor-DWwHfV7w.js                 16.71 kB │ gzip:     6.95 kB
+2026-11-05T10:50:39.9464390Z dist/assets/HistoryBrowser-IHeXqTKZ.js            20.97 kB │ gzip:     7.45 kB
+2026-11-05T10:50:39.9716590Z dist/assets/offlineStore-CNblyHxf.js              31.15 kB │ gzip:     9.16 kB
+2026-11-05T10:50:39.9843000Z dist/assets/model-BWCdQWD2.js                    121.46 kB │ gzip:    34.85 kB
+2026-11-05T10:50:39.9940710Z dist/assets/nativeCopy-DFww_-Jm.js               124.52 kB │ gzip:    40.05 kB
+2026-11-05T10:50:39.9988860Z dist/assets/documentReady-B555BnXD.js            178.33 kB │ gzip:    48.46 kB
+2026-11-05T10:50:40.0051490Z dist/assets/floating-ui.react-dom-BtIrzXdr.js    214.31 kB │ gzip:    67.17 kB
+2026-11-05T10:50:40.0086190Z dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB
+2026-11-05T10:50:40.0118540Z dist/assets/application-CYJUCqlC.js              341.50 kB │ gzip:    96.86 kB
+2026-11-05T10:50:40.0155840Z dist/assets/lib-Ccnh9fpx.js                      378.77 kB │ gzip:   104.54 kB
+2026-11-05T10:50:40.0192150Z dist/assets/theme-CqYTemgo.js                    590.29 kB │ gzip:   151.12 kB
+2026-11-05T10:50:40.0227910Z dist/assets/CopyFile-qR382OFY.js                 637.50 kB │ gzip:   110.32 kB
+2026-11-05T10:50:40.0268460Z dist/assets/es-QsSEw2iP.js                     1,166.05 kB │ gzip:   203.44 kB
+2026-11-05T10:50:40.0459450Z dist/assets/nativeSyncPermissions-B6VAKlcU.js  3,806.09 kB │ gzip: 1,017.73 kB
+2026-11-05T10:50:40.0524570Z dist/assets/univer-renderer-Cqyj3Y79.js        5,916.00 kB │ gzip: 1,466.42 kB
+2026-11-05T10:50:40.0565460Z 
+2026-11-05T10:50:40.0608870Z [32m✓ built in 5.29s[39m
+2026-11-05T10:50:40.1117310Z ##[group]Run test "$RUNNER_ENVIRONMENT" = github-hosted
+2026-11-05T10:50:40.1119070Z [36;1mtest "$RUNNER_ENVIRONMENT" = github-hosted[0m
+2026-11-05T10:50:40.1120500Z [36;1mmkdir -p test-results/desktop-tls[0m
+2026-11-05T10:50:40.1121900Z [36;1mopenssl req -x509 -newkey rsa:2048 -nodes \[0m
+2026-11-05T10:50:40.1123390Z [36;1m  -keyout test-results/desktop-tls/key.pem \[0m
+2026-11-05T10:50:40.1124940Z [36;1m  -out test-results/desktop-tls/cert.pem -days 1 \[0m
+2026-11-05T10:50:40.1127990Z [36;1m  -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'[0m
+2026-11-05T10:50:40.1129940Z [36;1msudo security add-trusted-cert -d -r trustRoot \[0m
+2026-11-05T10:50:40.1132410Z [36;1m  -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem[0m
+2026-11-05T10:50:40.1238410Z shell: /bin/bash -e {0}
+2026-11-05T10:50:40.1239130Z env:
+2026-11-05T10:50:40.1239770Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:50:40.1240800Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:50:40.1241500Z ##[endgroup]
+2026-11-05T10:50:40.2252960Z Generating a RSA private key
+2026-11-05T10:50:40.2507160Z ..........+++++
+2026-11-05T10:50:40.4017960Z ..........................................................................................................................+++++
+2026-11-05T10:50:40.4058230Z writing new private key to 'test-results/desktop-tls/key.pem'
+2026-11-05T10:50:40.4088810Z -----
+2026-11-05T10:50:40.5994070Z ##[group]Run node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+2026-11-05T10:50:40.5996600Z [36;1mnode --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"[0m
+2026-11-05T10:50:40.6134650Z shell: /bin/bash -e {0}
+2026-11-05T10:50:40.6135630Z env:
+2026-11-05T10:50:40.6136580Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:50:40.6137770Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:50:40.6138500Z   DESKTOP_BROWSER: safari
+2026-11-05T10:50:40.6139230Z ##[endgroup]
+2026-11-05T10:50:53.9240610Z Desktop safari: browser-start
+2026-11-05T10:51:05.9853970Z Desktop safari: safari-online-rendering-baseline
+2026-11-05T10:52:00.7985980Z Desktop safari: safari-online-rendering-baseline
+2026-11-05T10:52:43.3297430Z Desktop safari: all-four-downloads-complete
+2026-11-05T10:52:43.3769300Z Desktop safari: transport-disabled-before-quit
+2026-11-05T10:52:51.0688280Z Desktop safari: exact-records-captured-before-quit
+2026-11-05T10:52:51.7312460Z Desktop safari: browser-stop
+2026-11-05T10:52:51.8332250Z Desktop safari: transport-disabled-before-relaunch
+2026-11-05T10:52:58.8828150Z Desktop safari: browser-start
+2026-11-05T10:53:05.1521970Z Desktop safari: offline-catalog-and-original-records-retained
+2026-11-05T10:53:47.4475770Z Desktop safari: native-doc-input-caret
+2026-11-05T10:54:04.2716490Z Desktop safari: native-doc-input-caret
+2026-11-05T10:54:07.4031930Z Desktop safari: native-offline-edits-committed
+2026-11-05T10:54:08.0941310Z Desktop safari: browser-stop
+2026-11-05T10:54:08.1153390Z Desktop safari: transport-still-disabled-before-pending-relaunch
+2026-11-05T10:54:15.3986610Z Desktop safari: browser-start
+2026-11-05T10:54:27.8237840Z Desktop safari: browser-stop
+2026-11-05T10:54:27.9029400Z {
+2026-11-05T10:54:27.9280800Z   "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+2026-11-05T10:54:27.9578950Z   "sourceSha": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+2026-11-05T10:54:27.9661920Z   "testedSha": "6fdb243eb5728b91f935a4bea258fa3882458ccb",
+2026-11-05T10:54:27.9663870Z   "run": "https://github.com/mxbaylee/spinel/actions/runs/42013542571",
+2026-11-05T10:54:27.9666790Z   "attempt": "1",
+2026-11-05T10:54:27.9667720Z   "runner": {
+2026-11-05T10:54:27.9668440Z     "label": "macos-15-intel",
+2026-11-05T10:54:27.9669120Z     "arch": "x64",
+2026-11-05T10:54:27.9670360Z     "imageOS": "macos15",
+2026-11-05T10:54:27.9671520Z     "imageVersion": "20260824.0482.1"
+2026-11-05T10:54:27.9672240Z   },
+2026-11-05T10:54:27.9672750Z   "browser": "safari",
+2026-11-05T10:54:27.9673360Z   "status": "failed",
+2026-11-05T10:54:27.9673930Z   "stages": [
+2026-11-05T10:54:27.9674430Z     {
+2026-11-05T10:54:27.9675070Z       "name": "browser-start",
+2026-11-05T10:54:27.9676080Z       "time": "2026-11-05T10:50:53.916Z",
+2026-11-05T10:54:27.9676860Z       "kind": "safari",
+2026-11-05T10:54:27.9677490Z       "version": "27.2",
+2026-11-05T10:54:27.9679300Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:54:27.9681340Z       "profile": {
+2026-11-05T10:54:27.9682450Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T10:54:27.9684350Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T10:54:27.9686140Z         "actualPath": "/Users/runner",
+2026-11-05T10:54:27.9687240Z         "directoryDevice": "16777223",
+2026-11-05T10:54:27.9688260Z         "directoryInode": "12884922560"
+2026-11-05T10:54:27.9689160Z       },
+2026-11-05T10:54:27.9689930Z       "browserPid": 6024,
+2026-11-05T10:54:27.9690910Z       "previousBrowserPid": null,
+2026-11-05T10:54:27.9693300Z       "driverPid": null,
+2026-11-05T10:54:27.9694170Z       "driverVersion": null,
+2026-11-05T10:54:27.9695160Z       "startedAt": "2026-11-05T10:50:52.641Z",
+2026-11-05T10:54:27.9696730Z       "browserTab": true,
+2026-11-05T10:54:27.9698980Z       "secureContext": true,
+2026-11-05T10:54:27.9701390Z       "storagePersisted": false
+2026-11-05T10:54:27.9702610Z     },
+2026-11-05T10:54:27.9703320Z     {
+2026-11-05T10:54:27.9704830Z       "name": "safari-online-rendering-baseline",
+2026-11-05T10:54:27.9706480Z       "time": "2026-11-05T10:51:05.982Z",
+2026-11-05T10:54:27.9707890Z       "diagnosticOnly": true,
+2026-11-05T10:54:27.9709140Z       "itemId": "24252a6e-4499-4fc5-b259-32e75a1f7f01",
+2026-11-05T10:54:27.9710330Z       "kind": "sheet",
+2026-11-05T10:54:27.9711920Z       "file": "sheet-online-before-download.png"
+2026-11-05T10:54:27.9713060Z     },
+2026-11-05T10:54:27.9713830Z     {
+2026-11-05T10:54:27.9715290Z       "name": "safari-online-rendering-baseline",
+2026-11-05T10:54:27.9717260Z       "time": "2026-11-05T10:52:00.721Z",
+2026-11-05T10:54:27.9718110Z       "diagnosticOnly": true,
+2026-11-05T10:54:27.9718970Z       "itemId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:27.9719780Z       "kind": "doc",
+2026-11-05T10:54:27.9720610Z       "file": "doc-online-before-download.png"
+2026-11-05T10:54:27.9721380Z     },
+2026-11-05T10:54:27.9722290Z     {
+2026-11-05T10:54:27.9723500Z       "name": "all-four-downloads-complete",
+2026-11-05T10:54:27.9724400Z       "time": "2026-11-05T10:52:43.313Z"
+2026-11-05T10:54:27.9725060Z     },
+2026-11-05T10:54:27.9725570Z     {
+2026-11-05T10:54:27.9727130Z       "name": "transport-disabled-before-quit",
+2026-11-05T10:54:27.9728260Z       "time": "2026-11-05T10:52:43.375Z",
+2026-11-05T10:54:27.9729080Z       "forwardedRequests": 410,
+2026-11-05T10:54:27.9729770Z       "blockedRequests": 2,
+2026-11-05T10:54:27.9730430Z       "forwardedUpgrades": 4,
+2026-11-05T10:54:27.9731300Z       "blockedUpgrades": 1,
+2026-11-05T10:54:27.9731940Z       "logins": 1,
+2026-11-05T10:54:27.9732510Z       "offline": true,
+2026-11-05T10:54:27.9733200Z       "activeBrowserSockets": 0
+2026-11-05T10:54:27.9734010Z     },
+2026-11-05T10:54:27.9734960Z     {
+2026-11-05T10:54:27.9736170Z       "name": "exact-records-captured-before-quit",
+2026-11-05T10:54:27.9737290Z       "time": "2026-11-05T10:52:51.062Z"
+2026-11-05T10:54:27.9737980Z     },
+2026-11-05T10:54:27.9739690Z     {
+2026-11-05T10:54:27.9741560Z       "name": "browser-stop",
+2026-11-05T10:54:27.9743110Z       "time": "2026-11-05T10:52:51.662Z",
+2026-11-05T10:54:27.9744310Z       "kind": "safari",
+2026-11-05T10:54:27.9745010Z       "browserPid": 6024,
+2026-11-05T10:54:27.9745810Z       "driverPid": null,
+2026-11-05T10:54:27.9750180Z       "browserExited": true,
+2026-11-05T10:54:27.9751010Z       "driverExited": true,
+2026-11-05T10:54:27.9752490Z       "stoppedAt": "2026-11-05T10:52:51.662Z"
+2026-11-05T10:54:27.9753330Z     },
+2026-11-05T10:54:27.9754080Z     {
+2026-11-05T10:54:27.9754850Z       "name": "transport-disabled-before-relaunch",
+2026-11-05T10:54:27.9755870Z       "time": "2026-11-05T10:52:51.683Z",
+2026-11-05T10:54:27.9756810Z       "forwardedRequests": 410,
+2026-11-05T10:54:27.9757750Z       "blockedRequests": 41,
+2026-11-05T10:54:27.9759070Z       "forwardedUpgrades": 4,
+2026-11-05T10:54:27.9759970Z       "blockedUpgrades": 2,
+2026-11-05T10:54:27.9760690Z       "logins": 1,
+2026-11-05T10:54:27.9761370Z       "offline": true,
+2026-11-05T10:54:27.9762380Z       "activeBrowserSockets": 0
+2026-11-05T10:54:27.9763770Z     },
+2026-11-05T10:54:27.9764310Z     {
+2026-11-05T10:54:27.9764980Z       "name": "browser-start",
+2026-11-05T10:54:27.9765900Z       "time": "2026-11-05T10:52:58.881Z",
+2026-11-05T10:54:27.9767120Z       "kind": "safari",
+2026-11-05T10:54:27.9767770Z       "version": "27.2",
+2026-11-05T10:54:27.9769450Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:54:27.9771250Z       "profile": {
+2026-11-05T10:54:27.9772230Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T10:54:27.9774210Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T10:54:27.9776770Z         "actualPath": "/Users/runner",
+2026-11-05T10:54:27.9778320Z         "directoryDevice": "16777223",
+2026-11-05T10:54:27.9779310Z         "directoryInode": "12884922560"
+2026-11-05T10:54:27.9780100Z       },
+2026-11-05T10:54:27.9780870Z       "browserPid": 9465,
+2026-11-05T10:54:27.9781700Z       "previousBrowserPid": 6024,
+2026-11-05T10:54:27.9782730Z       "driverPid": null,
+2026-11-05T10:54:27.9783870Z       "driverVersion": null,
+2026-11-05T10:54:27.9785720Z       "startedAt": "2026-11-05T10:52:58.040Z",
+2026-11-05T10:54:27.9787040Z       "browserTab": true,
+2026-11-05T10:54:27.9788040Z       "secureContext": true,
+2026-11-05T10:54:27.9789040Z       "storagePersisted": false
+2026-11-05T10:54:27.9789870Z     },
+2026-11-05T10:54:27.9790490Z     {
+2026-11-05T10:54:27.9791600Z       "name": "offline-catalog-and-original-records-retained",
+2026-11-05T10:54:27.9792990Z       "time": "2026-11-05T10:53:05.151Z"
+2026-11-05T10:54:27.9794260Z     },
+2026-11-05T10:54:27.9795050Z     {
+2026-11-05T10:54:27.9795940Z       "name": "native-doc-input-caret",
+2026-11-05T10:54:27.9797100Z       "time": "2026-11-05T10:53:47.447Z",
+2026-11-05T10:54:27.9798350Z       "itemId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:27.9799530Z       "before": {
+2026-11-05T10:54:27.9800740Z         "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:27.9802000Z         "mobile": false,
+2026-11-05T10:54:27.9802970Z         "observedAt": 11968,
+2026-11-05T10:54:27.9804380Z         "currentUnitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:27.9830730Z         "currentLogicalRange": {
+2026-11-05T10:54:27.9831620Z           "start": 20,
+2026-11-05T10:54:27.9832120Z           "end": 20,
+2026-11-05T10:54:27.9832710Z           "collapsed": true,
+2026-11-05T10:54:27.9833300Z           "segmentId": "",
+2026-11-05T10:54:27.9833940Z           "segmentPage": -1
+2026-11-05T10:54:27.9834510Z         },
+2026-11-05T10:54:27.9835330Z         "unitLogicalRanges": [
+2026-11-05T10:54:27.9836710Z           {
+2026-11-05T10:54:27.9837350Z             "start": 20,
+2026-11-05T10:54:27.9837960Z             "end": 20,
+2026-11-05T10:54:27.9838620Z             "collapsed": true,
+2026-11-05T10:54:27.9839190Z             "segmentId": "",
+2026-11-05T10:54:27.9839830Z             "segmentPage": -1
+2026-11-05T10:54:27.9840370Z           }
+2026-11-05T10:54:27.9840790Z         ],
+2026-11-05T10:54:27.9841410Z         "unitSelectionOptions": {
+2026-11-05T10:54:27.9842170Z           "preserveInputStyle": true
+2026-11-05T10:54:27.9843450Z         },
+2026-11-05T10:54:27.9843990Z         "unitSelectionStyles": [
+2026-11-05T10:54:27.9844620Z           {
+2026-11-05T10:54:27.9845160Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T10:54:27.9846010Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T10:54:27.9846700Z           }
+2026-11-05T10:54:27.9847100Z         ],
+2026-11-05T10:54:27.9848180Z         "nativeRange": {
+2026-11-05T10:54:27.9848900Z           "start": 20,
+2026-11-05T10:54:27.9850120Z           "end": 20,
+2026-11-05T10:54:27.9850760Z           "collapsed": true,
+2026-11-05T10:54:27.9851560Z           "segmentId": "",
+2026-11-05T10:54:27.9852180Z           "segmentPage": -1
+2026-11-05T10:54:27.9852860Z         },
+2026-11-05T10:54:27.9853410Z         "start": 20,
+2026-11-05T10:54:27.9854330Z         "end": 20,
+2026-11-05T10:54:27.9855090Z         "hasAnchor": true,
+2026-11-05T10:54:27.9855630Z         "anchor": {
+2026-11-05T10:54:27.9856110Z           "visible": true,
+2026-11-05T10:54:27.9857020Z           "left": 466.44596831003827,
+2026-11-05T10:54:27.9857700Z           "top": 133.66666666666669,
+2026-11-05T10:54:27.9858280Z           "width": 0,
+2026-11-05T10:54:27.9859230Z           "height": 16.000000000000014
+2026-11-05T10:54:27.9859970Z         },
+2026-11-05T10:54:27.9860490Z         "inputConnected": true,
+2026-11-05T10:54:27.9861110Z         "inputFocused": true,
+2026-11-05T10:54:27.9861800Z         "pointerSelection": false,
+2026-11-05T10:54:27.9862490Z         "pendingSelection": false,
+2026-11-05T10:54:27.9863110Z         "shortcutContext": {
+2026-11-05T10:54:27.9864950Z           "doc": true,
+2026-11-05T10:54:27.9865690Z           "editor": true,
+2026-11-05T10:54:27.9866230Z           "drawing": false,
+2026-11-05T10:54:27.9866780Z           "activated": false,
+2026-11-05T10:54:27.9867350Z           "formulaBar": false
+2026-11-05T10:54:27.9867970Z         },
+2026-11-05T10:54:27.9868460Z         "viewport": {
+2026-11-05T10:54:27.9868950Z           "key": "viewMain",
+2026-11-05T10:54:27.9869670Z           "active": true,
+2026-11-05T10:54:27.9870230Z           "width": 1324,
+2026-11-05T10:54:27.9870910Z           "height": 686,
+2026-11-05T10:54:27.9871440Z           "scrollX": 0,
+2026-11-05T10:54:27.9871960Z           "scrollY": 0,
+2026-11-05T10:54:27.9872460Z           "bounds": {
+2026-11-05T10:54:27.9873210Z             "left": 0,
+2026-11-05T10:54:27.9874030Z             "right": 1324,
+2026-11-05T10:54:27.9874900Z             "top": 0,
+2026-11-05T10:54:27.9876150Z             "bottom": 686
+2026-11-05T10:54:27.9877100Z           }
+2026-11-05T10:54:27.9877700Z         },
+2026-11-05T10:54:27.9878430Z         "scale": {
+2026-11-05T10:54:27.9879080Z           "x": 1,
+2026-11-05T10:54:27.9879750Z           "y": 1
+2026-11-05T10:54:27.9880190Z         },
+2026-11-05T10:54:27.9880610Z         "layout": {
+2026-11-05T10:54:27.9881190Z           "viewportReady": true,
+2026-11-05T10:54:27.9881770Z           "firstNode": {
+2026-11-05T10:54:27.9882280Z             "glyph": 0,
+2026-11-05T10:54:27.9882790Z             "divide": 0,
+2026-11-05T10:54:27.9883290Z             "line": 0,
+2026-11-05T10:54:27.9883780Z             "column": 0,
+2026-11-05T10:54:27.9884290Z             "section": 0,
+2026-11-05T10:54:27.9884820Z             "page": 0,
+2026-11-05T10:54:27.9885320Z             "pageType": 0,
+2026-11-05T10:54:27.9885940Z             "segmentPage": -1,
+2026-11-05T10:54:27.9886510Z             "isBack": true,
+2026-11-05T10:54:27.9887030Z             "path": [
+2026-11-05T10:54:27.9887520Z               "pages",
+2026-11-05T10:54:27.9888000Z               0
+2026-11-05T10:54:27.9888440Z             ]
+2026-11-05T10:54:27.9888860Z           },
+2026-11-05T10:54:27.9889310Z           "progress": null
+2026-11-05T10:54:27.9889810Z         },
+2026-11-05T10:54:27.9890240Z         "commands": [
+2026-11-05T10:54:27.9890710Z           {
+2026-11-05T10:54:27.9891130Z             "at": 2717,
+2026-11-05T10:54:27.9891810Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9892730Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9893960Z           },
+2026-11-05T10:54:27.9894370Z           {
+2026-11-05T10:54:27.9894800Z             "at": 9273,
+2026-11-05T10:54:27.9895470Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9896370Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9897060Z           },
+2026-11-05T10:54:27.9897470Z           {
+2026-11-05T10:54:27.9897890Z             "at": 9311,
+2026-11-05T10:54:27.9898560Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9899470Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9900160Z           }
+2026-11-05T10:54:27.9900560Z         ],
+2026-11-05T10:54:27.9901130Z         "editing": false,
+2026-11-05T10:54:27.9901940Z         "bounds": {
+2026-11-05T10:54:27.9902790Z           "left": 466.44596831003827,
+2026-11-05T10:54:27.9903750Z           "right": 466.44596831003827,
+2026-11-05T10:54:27.9904550Z           "top": 247.66666666666669,
+2026-11-05T10:54:27.9905260Z           "bottom": 310.6666666666667
+2026-11-05T10:54:27.9905830Z         },
+2026-11-05T10:54:27.9906250Z         "scroll": 0,
+2026-11-05T10:54:27.9906880Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T10:54:27.9907490Z       },
+2026-11-05T10:54:27.9907910Z       "caret": {
+2026-11-05T10:54:27.9908590Z         "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:27.9909310Z         "mobile": false,
+2026-11-05T10:54:27.9909840Z         "observedAt": 15964,
+2026-11-05T10:54:27.9911310Z         "currentUnitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:27.9912230Z         "currentLogicalRange": {
+2026-11-05T10:54:27.9912810Z           "start": 0,
+2026-11-05T10:54:27.9913290Z           "end": 0,
+2026-11-05T10:54:27.9913770Z           "collapsed": true,
+2026-11-05T10:54:27.9914350Z           "segmentId": "",
+2026-11-05T10:54:27.9915170Z           "segmentPage": -1
+2026-11-05T10:54:27.9915910Z         },
+2026-11-05T10:54:27.9916460Z         "unitLogicalRanges": [
+2026-11-05T10:54:27.9917000Z           {
+2026-11-05T10:54:27.9917480Z             "start": 0,
+2026-11-05T10:54:27.9917970Z             "end": 0,
+2026-11-05T10:54:27.9918540Z             "collapsed": true,
+2026-11-05T10:54:27.9919100Z             "segmentId": "",
+2026-11-05T10:54:27.9919660Z             "segmentPage": -1
+2026-11-05T10:54:27.9920190Z           }
+2026-11-05T10:54:27.9920590Z         ],
+2026-11-05T10:54:27.9921130Z         "unitSelectionOptions": {
+2026-11-05T10:54:27.9921850Z           "preserveInputStyle": true
+2026-11-05T10:54:27.9922470Z         },
+2026-11-05T10:54:27.9923010Z         "unitSelectionStyles": [
+2026-11-05T10:54:27.9923570Z           {
+2026-11-05T10:54:27.9924100Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T10:54:27.9924840Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T10:54:27.9925450Z           }
+2026-11-05T10:54:27.9925860Z         ],
+2026-11-05T10:54:27.9926290Z         "nativeRange": {
+2026-11-05T10:54:27.9926820Z           "start": 0,
+2026-11-05T10:54:27.9927300Z           "end": 0,
+2026-11-05T10:54:27.9927780Z           "collapsed": true,
+2026-11-05T10:54:27.9928350Z           "segmentId": "",
+2026-11-05T10:54:27.9928910Z           "segmentPage": -1
+2026-11-05T10:54:27.9929430Z         },
+2026-11-05T10:54:27.9929860Z         "start": 0,
+2026-11-05T10:54:27.9930320Z         "end": 0,
+2026-11-05T10:54:27.9930800Z         "hasAnchor": true,
+2026-11-05T10:54:27.9931340Z         "anchor": {
+2026-11-05T10:54:27.9931830Z           "visible": true,
+2026-11-05T10:54:27.9932460Z           "left": 248.66666666666669,
+2026-11-05T10:54:27.9933150Z           "top": 86.66666666666667,
+2026-11-05T10:54:27.9933730Z           "width": 0,
+2026-11-05T10:54:27.9934230Z           "height": 60
+2026-11-05T10:54:27.9934710Z         },
+2026-11-05T10:54:27.9935240Z         "inputConnected": true,
+2026-11-05T10:54:27.9935840Z         "inputFocused": true,
+2026-11-05T10:54:27.9936530Z         "pointerSelection": false,
+2026-11-05T10:54:27.9937900Z         "pendingSelection": false,
+2026-11-05T10:54:27.9938550Z         "shortcutContext": {
+2026-11-05T10:54:27.9939100Z           "doc": true,
+2026-11-05T10:54:27.9939600Z           "editor": true,
+2026-11-05T10:54:27.9940130Z           "drawing": false,
+2026-11-05T10:54:27.9940670Z           "activated": false,
+2026-11-05T10:54:27.9941240Z           "formulaBar": false
+2026-11-05T10:54:27.9941770Z         },
+2026-11-05T10:54:27.9942200Z         "viewport": {
+2026-11-05T10:54:27.9942690Z           "key": "viewMain",
+2026-11-05T10:54:27.9943260Z           "active": true,
+2026-11-05T10:54:27.9943910Z           "width": 1324,
+2026-11-05T10:54:27.9944430Z           "height": 686,
+2026-11-05T10:54:27.9944940Z           "scrollX": 0,
+2026-11-05T10:54:27.9945450Z           "scrollY": 0,
+2026-11-05T10:54:27.9945950Z           "bounds": {
+2026-11-05T10:54:27.9946440Z             "left": 0,
+2026-11-05T10:54:27.9946930Z             "right": 1324,
+2026-11-05T10:54:27.9947440Z             "top": 0,
+2026-11-05T10:54:27.9947940Z             "bottom": 686
+2026-11-05T10:54:27.9948430Z           }
+2026-11-05T10:54:27.9948830Z         },
+2026-11-05T10:54:27.9949310Z         "scale": {
+2026-11-05T10:54:27.9949780Z           "x": 1,
+2026-11-05T10:54:27.9950220Z           "y": 1
+2026-11-05T10:54:27.9950650Z         },
+2026-11-05T10:54:27.9951070Z         "layout": {
+2026-11-05T10:54:27.9951640Z           "viewportReady": true,
+2026-11-05T10:54:27.9952220Z           "firstNode": {
+2026-11-05T10:54:27.9952740Z             "glyph": 0,
+2026-11-05T10:54:27.9953270Z             "divide": 0,
+2026-11-05T10:54:27.9954370Z             "line": 0,
+2026-11-05T10:54:27.9954900Z             "column": 0,
+2026-11-05T10:54:27.9955430Z             "section": 0,
+2026-11-05T10:54:27.9955950Z             "page": 0,
+2026-11-05T10:54:27.9956470Z             "pageType": 0,
+2026-11-05T10:54:27.9957080Z             "segmentPage": -1,
+2026-11-05T10:54:27.9957640Z             "isBack": true,
+2026-11-05T10:54:27.9958170Z             "path": [
+2026-11-05T10:54:27.9958670Z               "pages",
+2026-11-05T10:54:27.9959160Z               0
+2026-11-05T10:54:27.9959600Z             ]
+2026-11-05T10:54:27.9960020Z           },
+2026-11-05T10:54:27.9960470Z           "progress": null
+2026-11-05T10:54:27.9960980Z         },
+2026-11-05T10:54:27.9961410Z         "commands": [
+2026-11-05T10:54:27.9961930Z           {
+2026-11-05T10:54:27.9962400Z             "at": 2717,
+2026-11-05T10:54:27.9963080Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9964010Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9964870Z           },
+2026-11-05T10:54:27.9965310Z           {
+2026-11-05T10:54:27.9965730Z             "at": 9273,
+2026-11-05T10:54:27.9966410Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9967320Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9968020Z           },
+2026-11-05T10:54:27.9968430Z           {
+2026-11-05T10:54:27.9968840Z             "at": 9311,
+2026-11-05T10:54:27.9969530Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9970430Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9971130Z           },
+2026-11-05T10:54:27.9971540Z           {
+2026-11-05T10:54:27.9971970Z             "at": 15948,
+2026-11-05T10:54:27.9972630Z             "id": "doc.operation.move-cursor",
+2026-11-05T10:54:27.9973300Z             "direction": 0,
+2026-11-05T10:54:27.9973940Z             "granularity": "document"
+2026-11-05T10:54:27.9974530Z           },
+2026-11-05T10:54:27.9974940Z           {
+2026-11-05T10:54:27.9975370Z             "at": 15959,
+2026-11-05T10:54:27.9976040Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:27.9976940Z             "unitId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c"
+2026-11-05T10:54:27.9977630Z           }
+2026-11-05T10:54:27.9978050Z         ],
+2026-11-05T10:54:27.9978480Z         "editing": false,
+2026-11-05T10:54:27.9990680Z         "bounds": {
+2026-11-05T10:54:27.9993230Z           "left": 248.66666666666669,
+2026-11-05T10:54:27.9994080Z           "right": 248.66666666666669,
+2026-11-05T10:54:27.9994790Z           "top": 247.66666666666669,
+2026-11-05T10:54:27.9995720Z           "bottom": 310.6666666666667
+2026-11-05T10:54:27.9996330Z         },
+2026-11-05T10:54:27.9996760Z         "scroll": 0,
+2026-11-05T10:54:27.9997370Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T10:54:27.9997990Z       },
+2026-11-05T10:54:27.9998400Z       "visual": {
+2026-11-05T10:54:27.9999300Z         "file": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c-before-doc-input.png",
+2026-11-05T10:54:28.0000250Z         "colorPixelCounts": [
+2026-11-05T10:54:28.0000950Z           4661
+2026-11-05T10:54:28.0001370Z         ],
+2026-11-05T10:54:28.0001800Z         "captures": 1
+2026-11-05T10:54:28.0002270Z       }
+2026-11-05T10:54:28.0002660Z     },
+2026-11-05T10:54:28.0003060Z     {
+2026-11-05T10:54:28.0003610Z       "name": "native-doc-input-caret",
+2026-11-05T10:54:28.0004340Z       "time": "2026-11-05T10:54:04.271Z",
+2026-11-05T10:54:28.0005200Z       "itemId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77",
+2026-11-05T10:54:28.0005910Z       "before": {
+2026-11-05T10:54:28.0006600Z         "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77",
+2026-11-05T10:54:28.0007350Z         "mobile": false,
+2026-11-05T10:54:28.0007880Z         "observedAt": 11766,
+2026-11-05T10:54:28.0008710Z         "currentUnitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77",
+2026-11-05T10:54:28.0009600Z         "currentLogicalRange": {
+2026-11-05T10:54:28.0010190Z           "start": 20,
+2026-11-05T10:54:28.0010680Z           "end": 20,
+2026-11-05T10:54:28.0012170Z           "collapsed": true,
+2026-11-05T10:54:28.0012870Z           "segmentId": "",
+2026-11-05T10:54:28.0013430Z           "segmentPage": -1
+2026-11-05T10:54:28.0014030Z         },
+2026-11-05T10:54:28.0014560Z         "unitLogicalRanges": [
+2026-11-05T10:54:28.0015800Z           {
+2026-11-05T10:54:28.0016320Z             "start": 20,
+2026-11-05T10:54:28.0016940Z             "end": 20,
+2026-11-05T10:54:28.0017550Z             "collapsed": true,
+2026-11-05T10:54:28.0018110Z             "segmentId": "",
+2026-11-05T10:54:28.0018670Z             "segmentPage": -1
+2026-11-05T10:54:28.0019210Z           }
+2026-11-05T10:54:28.0019620Z         ],
+2026-11-05T10:54:28.0020150Z         "unitSelectionOptions": {
+2026-11-05T10:54:28.0020860Z           "preserveInputStyle": true
+2026-11-05T10:54:28.0021460Z         },
+2026-11-05T10:54:28.0022000Z         "unitSelectionStyles": [
+2026-11-05T10:54:28.0022550Z           {
+2026-11-05T10:54:28.0023090Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T10:54:28.0023840Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T10:54:28.0024460Z           }
+2026-11-05T10:54:28.0024870Z         ],
+2026-11-05T10:54:28.0025300Z         "nativeRange": {
+2026-11-05T10:54:28.0025820Z           "start": 20,
+2026-11-05T10:54:28.0026310Z           "end": 20,
+2026-11-05T10:54:28.0026810Z           "collapsed": true,
+2026-11-05T10:54:28.0027360Z           "segmentId": "",
+2026-11-05T10:54:28.0027920Z           "segmentPage": -1
+2026-11-05T10:54:28.0028510Z         },
+2026-11-05T10:54:28.0028930Z         "start": 20,
+2026-11-05T10:54:28.0029400Z         "end": 20,
+2026-11-05T10:54:28.0029890Z         "hasAnchor": true,
+2026-11-05T10:54:28.0030410Z         "anchor": {
+2026-11-05T10:54:28.0030880Z           "visible": true,
+2026-11-05T10:54:28.0031510Z           "left": 466.44596831003827,
+2026-11-05T10:54:28.0032180Z           "top": 133.66666666666669,
+2026-11-05T10:54:28.0032750Z           "width": 0,
+2026-11-05T10:54:28.0033340Z           "height": 16.000000000000014
+2026-11-05T10:54:28.0033920Z         },
+2026-11-05T10:54:28.0034440Z         "inputConnected": true,
+2026-11-05T10:54:28.0035030Z         "inputFocused": true,
+2026-11-05T10:54:28.0035690Z         "pointerSelection": false,
+2026-11-05T10:54:28.0036390Z         "pendingSelection": false,
+2026-11-05T10:54:28.0037010Z         "shortcutContext": {
+2026-11-05T10:54:28.0037560Z           "doc": true,
+2026-11-05T10:54:28.0038620Z           "editor": true,
+2026-11-05T10:54:28.0039150Z           "drawing": false,
+2026-11-05T10:54:28.0039690Z           "activated": false,
+2026-11-05T10:54:28.0040250Z           "formulaBar": false
+2026-11-05T10:54:28.0040790Z         },
+2026-11-05T10:54:28.0041220Z         "viewport": {
+2026-11-05T10:54:28.0041710Z           "key": "viewMain",
+2026-11-05T10:54:28.0042260Z           "active": true,
+2026-11-05T10:54:28.0042770Z           "width": 1324,
+2026-11-05T10:54:28.0043280Z           "height": 686,
+2026-11-05T10:54:28.0043800Z           "scrollX": 0,
+2026-11-05T10:54:28.0044300Z           "scrollY": 0,
+2026-11-05T10:54:28.0044800Z           "bounds": {
+2026-11-05T10:54:28.0045270Z             "left": 0,
+2026-11-05T10:54:28.0045760Z             "right": 1324,
+2026-11-05T10:54:28.0046280Z             "top": 0,
+2026-11-05T10:54:28.0046760Z             "bottom": 686
+2026-11-05T10:54:28.0047260Z           }
+2026-11-05T10:54:28.0047670Z         },
+2026-11-05T10:54:28.0048090Z         "scale": {
+2026-11-05T10:54:28.0048550Z           "x": 1,
+2026-11-05T10:54:28.0048990Z           "y": 1
+2026-11-05T10:54:28.0049420Z         },
+2026-11-05T10:54:28.0049850Z         "layout": {
+2026-11-05T10:54:28.0050420Z           "viewportReady": true,
+2026-11-05T10:54:28.0051000Z           "firstNode": {
+2026-11-05T10:54:28.0051520Z             "glyph": 0,
+2026-11-05T10:54:28.0052010Z             "divide": 0,
+2026-11-05T10:54:28.0052520Z             "line": 0,
+2026-11-05T10:54:28.0053010Z             "column": 0,
+2026-11-05T10:54:28.0053520Z             "section": 0,
+2026-11-05T10:54:28.0054040Z             "page": 0,
+2026-11-05T10:54:28.0055050Z             "pageType": 0,
+2026-11-05T10:54:28.0055710Z             "segmentPage": -1,
+2026-11-05T10:54:28.0056270Z             "isBack": true,
+2026-11-05T10:54:28.0056800Z             "path": [
+2026-11-05T10:54:28.0057300Z               "pages",
+2026-11-05T10:54:28.0057780Z               0
+2026-11-05T10:54:28.0058220Z             ]
+2026-11-05T10:54:28.0059230Z           },
+2026-11-05T10:54:28.0059760Z           "progress": null
+2026-11-05T10:54:28.0060280Z         },
+2026-11-05T10:54:28.0060710Z         "commands": [
+2026-11-05T10:54:28.0061190Z           {
+2026-11-05T10:54:28.0061610Z             "at": 2895,
+2026-11-05T10:54:28.0062500Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0063440Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0064140Z           },
+2026-11-05T10:54:28.0064560Z           {
+2026-11-05T10:54:28.0064980Z             "at": 8463,
+2026-11-05T10:54:28.0065650Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0066570Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0067270Z           },
+2026-11-05T10:54:28.0067680Z           {
+2026-11-05T10:54:28.0068110Z             "at": 8488,
+2026-11-05T10:54:28.0068770Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0069680Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0070390Z           }
+2026-11-05T10:54:28.0070790Z         ],
+2026-11-05T10:54:28.0071230Z         "editing": false,
+2026-11-05T10:54:28.0071750Z         "bounds": {
+2026-11-05T10:54:28.0072310Z           "left": 466.44596831003827,
+2026-11-05T10:54:28.0072990Z           "right": 466.44596831003827,
+2026-11-05T10:54:28.0073660Z           "top": 247.66666666666669,
+2026-11-05T10:54:28.0074330Z           "bottom": 310.6666666666667
+2026-11-05T10:54:28.0074900Z         },
+2026-11-05T10:54:28.0075380Z         "scroll": 0,
+2026-11-05T10:54:28.0077110Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T10:54:28.0078590Z       },
+2026-11-05T10:54:28.0079970Z       "caret": {
+2026-11-05T10:54:28.0081270Z         "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77",
+2026-11-05T10:54:28.0082110Z         "mobile": false,
+2026-11-05T10:54:28.0082730Z         "observedAt": 12748,
+2026-11-05T10:54:28.0083590Z         "currentUnitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77",
+2026-11-05T10:54:28.0084560Z         "currentLogicalRange": {
+2026-11-05T10:54:28.0085900Z           "start": 0,
+2026-11-05T10:54:28.0086570Z           "end": 0,
+2026-11-05T10:54:28.0087070Z           "collapsed": true,
+2026-11-05T10:54:28.0087780Z           "segmentId": "",
+2026-11-05T10:54:28.0088410Z           "segmentPage": -1
+2026-11-05T10:54:28.0088940Z         },
+2026-11-05T10:54:28.0089460Z         "unitLogicalRanges": [
+2026-11-05T10:54:28.0090020Z           {
+2026-11-05T10:54:28.0090470Z             "start": 0,
+2026-11-05T10:54:28.0091050Z             "end": 0,
+2026-11-05T10:54:28.0092130Z             "collapsed": true,
+2026-11-05T10:54:28.0092940Z             "segmentId": "",
+2026-11-05T10:54:28.0093610Z             "segmentPage": -1
+2026-11-05T10:54:28.0094170Z           }
+2026-11-05T10:54:28.0094580Z         ],
+2026-11-05T10:54:28.0095300Z         "unitSelectionOptions": {
+2026-11-05T10:54:28.0097010Z           "preserveInputStyle": true
+2026-11-05T10:54:28.0097620Z         },
+2026-11-05T10:54:28.0100600Z         "unitSelectionStyles": [
+2026-11-05T10:54:28.0101210Z           {
+2026-11-05T10:54:28.0101760Z             "stroke": "rgba(0, 0, 0, 1)",
+2026-11-05T10:54:28.0102550Z             "fill": "rgba(128, 188, 254, 0.6)"
+2026-11-05T10:54:28.0103240Z           }
+2026-11-05T10:54:28.0103680Z         ],
+2026-11-05T10:54:28.0104170Z         "nativeRange": {
+2026-11-05T10:54:28.0104730Z           "start": 0,
+2026-11-05T10:54:28.0105230Z           "end": 0,
+2026-11-05T10:54:28.0105750Z           "collapsed": true,
+2026-11-05T10:54:28.0106360Z           "segmentId": "",
+2026-11-05T10:54:28.0106970Z           "segmentPage": -1
+2026-11-05T10:54:28.0108740Z         },
+2026-11-05T10:54:28.0109300Z         "start": 0,
+2026-11-05T10:54:28.0109790Z         "end": 0,
+2026-11-05T10:54:28.0110270Z         "hasAnchor": true,
+2026-11-05T10:54:28.0110800Z         "anchor": {
+2026-11-05T10:54:28.0111310Z           "visible": true,
+2026-11-05T10:54:28.0111960Z           "left": 248.66666666666669,
+2026-11-05T10:54:28.0112660Z           "top": 86.66666666666667,
+2026-11-05T10:54:28.0113290Z           "width": 0,
+2026-11-05T10:54:28.0113790Z           "height": 60
+2026-11-05T10:54:28.0114290Z         },
+2026-11-05T10:54:28.0114870Z         "inputConnected": true,
+2026-11-05T10:54:28.0115540Z         "inputFocused": true,
+2026-11-05T10:54:28.0116320Z         "pointerSelection": false,
+2026-11-05T10:54:28.0117060Z         "pendingSelection": false,
+2026-11-05T10:54:28.0117710Z         "shortcutContext": {
+2026-11-05T10:54:28.0118300Z           "doc": true,
+2026-11-05T10:54:28.0118850Z           "editor": true,
+2026-11-05T10:54:28.0119400Z           "drawing": false,
+2026-11-05T10:54:28.0120000Z           "activated": false,
+2026-11-05T10:54:28.0120590Z           "formulaBar": false
+2026-11-05T10:54:28.0121120Z         },
+2026-11-05T10:54:28.0121570Z         "viewport": {
+2026-11-05T10:54:28.0122090Z           "key": "viewMain",
+2026-11-05T10:54:28.0122640Z           "active": true,
+2026-11-05T10:54:28.0123160Z           "width": 1324,
+2026-11-05T10:54:28.0123690Z           "height": 686,
+2026-11-05T10:54:28.0124200Z           "scrollX": 0,
+2026-11-05T10:54:28.0124710Z           "scrollY": 0,
+2026-11-05T10:54:28.0125210Z           "bounds": {
+2026-11-05T10:54:28.0125700Z             "left": 0,
+2026-11-05T10:54:28.0126200Z             "right": 1324,
+2026-11-05T10:54:28.0126720Z             "top": 0,
+2026-11-05T10:54:28.0127200Z             "bottom": 686
+2026-11-05T10:54:28.0127710Z           }
+2026-11-05T10:54:28.0128120Z         },
+2026-11-05T10:54:28.0128550Z         "scale": {
+2026-11-05T10:54:28.0129020Z           "x": 1,
+2026-11-05T10:54:28.0129470Z           "y": 1
+2026-11-05T10:54:28.0129930Z         },
+2026-11-05T10:54:28.0130350Z         "layout": {
+2026-11-05T10:54:28.0130920Z           "viewportReady": true,
+2026-11-05T10:54:28.0131520Z           "firstNode": {
+2026-11-05T10:54:28.0132030Z             "glyph": 0,
+2026-11-05T10:54:28.0132540Z             "divide": 0,
+2026-11-05T10:54:28.0133040Z             "line": 0,
+2026-11-05T10:54:28.0133530Z             "column": 0,
+2026-11-05T10:54:28.0134690Z             "section": 0,
+2026-11-05T10:54:28.0135210Z             "page": 0,
+2026-11-05T10:54:28.0135710Z             "pageType": 0,
+2026-11-05T10:54:28.0136330Z             "segmentPage": -1,
+2026-11-05T10:54:28.0136900Z             "isBack": true,
+2026-11-05T10:54:28.0137420Z             "path": [
+2026-11-05T10:54:28.0137890Z               "pages",
+2026-11-05T10:54:28.0138370Z               0
+2026-11-05T10:54:28.0138810Z             ]
+2026-11-05T10:54:28.0139230Z           },
+2026-11-05T10:54:28.0139680Z           "progress": null
+2026-11-05T10:54:28.0140180Z         },
+2026-11-05T10:54:28.0140610Z         "commands": [
+2026-11-05T10:54:28.0141080Z           {
+2026-11-05T10:54:28.0141520Z             "at": 2895,
+2026-11-05T10:54:28.0142200Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0152010Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0152760Z           },
+2026-11-05T10:54:28.0153170Z           {
+2026-11-05T10:54:28.0153620Z             "at": 8463,
+2026-11-05T10:54:28.0154300Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0155230Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0155940Z           },
+2026-11-05T10:54:28.0156360Z           {
+2026-11-05T10:54:28.0156780Z             "at": 8488,
+2026-11-05T10:54:28.0157450Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0158370Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0159080Z           },
+2026-11-05T10:54:28.0159490Z           {
+2026-11-05T10:54:28.0160740Z             "at": 12596,
+2026-11-05T10:54:28.0161440Z             "id": "doc.operation.move-cursor",
+2026-11-05T10:54:28.0162110Z             "direction": 0,
+2026-11-05T10:54:28.0162750Z             "granularity": "document"
+2026-11-05T10:54:28.0163330Z           },
+2026-11-05T10:54:28.0163740Z           {
+2026-11-05T10:54:28.0164160Z             "at": 12603,
+2026-11-05T10:54:28.0164860Z             "id": "doc.operation.set-selections",
+2026-11-05T10:54:28.0165780Z             "unitId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77"
+2026-11-05T10:54:28.0166500Z           }
+2026-11-05T10:54:28.0166910Z         ],
+2026-11-05T10:54:28.0167340Z         "editing": false,
+2026-11-05T10:54:28.0167860Z         "bounds": {
+2026-11-05T10:54:28.0168420Z           "left": 248.66666666666669,
+2026-11-05T10:54:28.0169150Z           "right": 248.66666666666669,
+2026-11-05T10:54:28.0169970Z           "top": 247.66666666666669,
+2026-11-05T10:54:28.0170650Z           "bottom": 310.6666666666667
+2026-11-05T10:54:28.0171230Z         },
+2026-11-05T10:54:28.0171650Z         "scroll": 0,
+2026-11-05T10:54:28.0172310Z         "text": "\bRecovery base notes\r\n"
+2026-11-05T10:54:28.0172930Z       },
+2026-11-05T10:54:28.0173360Z       "visual": {
+2026-11-05T10:54:28.0174260Z         "file": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77-before-doc-input.png",
+2026-11-05T10:54:28.0175220Z         "colorPixelCounts": [
+2026-11-05T10:54:28.0175780Z           4661
+2026-11-05T10:54:28.0176200Z         ],
+2026-11-05T10:54:28.0176630Z         "captures": 1
+2026-11-05T10:54:28.0177100Z       }
+2026-11-05T10:54:28.0177500Z     },
+2026-11-05T10:54:28.0177890Z     {
+2026-11-05T10:54:28.0178490Z       "name": "native-offline-edits-committed",
+2026-11-05T10:54:28.0179290Z       "time": "2026-11-05T10:54:07.402Z"
+2026-11-05T10:54:28.0179870Z     },
+2026-11-05T10:54:28.0180260Z     {
+2026-11-05T10:54:28.0180710Z       "name": "browser-stop",
+2026-11-05T10:54:28.0181370Z       "time": "2026-11-05T10:54:07.910Z",
+2026-11-05T10:54:28.0181990Z       "kind": "safari",
+2026-11-05T10:54:28.0182510Z       "browserPid": 9465,
+2026-11-05T10:54:28.0183040Z       "driverPid": null,
+2026-11-05T10:54:28.0183590Z       "browserExited": true,
+2026-11-05T10:54:28.0184170Z       "driverExited": true,
+2026-11-05T10:54:28.0184840Z       "stoppedAt": "2026-11-05T10:54:07.910Z"
+2026-11-05T10:54:28.0185460Z     },
+2026-11-05T10:54:28.0185850Z     {
+2026-11-05T10:54:28.0187200Z       "name": "transport-still-disabled-before-pending-relaunch",
+2026-11-05T10:54:28.0188370Z       "time": "2026-11-05T10:54:07.931Z",
+2026-11-05T10:54:28.0189100Z       "forwardedRequests": 410,
+2026-11-05T10:54:28.0189690Z       "blockedRequests": 383,
+2026-11-05T10:54:28.0190280Z       "forwardedUpgrades": 4,
+2026-11-05T10:54:28.0190860Z       "blockedUpgrades": 3,
+2026-11-05T10:54:28.0191400Z       "logins": 1,
+2026-11-05T10:54:28.0191880Z       "offline": true,
+2026-11-05T10:54:28.0192480Z       "activeBrowserSockets": 0
+2026-11-05T10:54:28.0193030Z     },
+2026-11-05T10:54:28.0193420Z     {
+2026-11-05T10:54:28.0193930Z       "name": "browser-start",
+2026-11-05T10:54:28.0194610Z       "time": "2026-11-05T10:54:15.398Z",
+2026-11-05T10:54:28.0195220Z       "kind": "safari",
+2026-11-05T10:54:28.0195740Z       "version": "27.2",
+2026-11-05T10:54:28.0197310Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:54:28.0198730Z       "profile": {
+2026-11-05T10:54:28.0199370Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T10:54:28.0200830Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T10:54:28.0202150Z         "actualPath": "/Users/runner",
+2026-11-05T10:54:28.0202870Z         "directoryDevice": "16777223",
+2026-11-05T10:54:28.0203590Z         "directoryInode": "12884922560"
+2026-11-05T10:54:28.0204190Z       },
+2026-11-05T10:54:28.0204620Z       "browserPid": 11235,
+2026-11-05T10:54:28.0205270Z       "previousBrowserPid": 9465,
+2026-11-05T10:54:28.0206470Z       "driverPid": null,
+2026-11-05T10:54:28.0207050Z       "driverVersion": null,
+2026-11-05T10:54:28.0207740Z       "startedAt": "2026-11-05T10:54:14.625Z",
+2026-11-05T10:54:28.0208390Z       "browserTab": true,
+2026-11-05T10:54:28.0208940Z       "secureContext": true,
+2026-11-05T10:54:28.0209580Z       "storagePersisted": false
+2026-11-05T10:54:28.0210130Z     },
+2026-11-05T10:54:28.0210530Z     {
+2026-11-05T10:54:28.0210970Z       "name": "browser-stop",
+2026-11-05T10:54:28.0211630Z       "time": "2026-11-05T10:54:27.823Z",
+2026-11-05T10:54:28.0212240Z       "kind": "safari",
+2026-11-05T10:54:28.0212750Z       "browserPid": 11235,
+2026-11-05T10:54:28.0213300Z       "driverPid": null,
+2026-11-05T10:54:28.0213830Z       "browserExited": true,
+2026-11-05T10:54:28.0214400Z       "driverExited": true,
+2026-11-05T10:54:28.0215070Z       "stoppedAt": "2026-11-05T10:54:27.823Z"
+2026-11-05T10:54:28.0215690Z     }
+2026-11-05T10:54:28.0216070Z   ],
+2026-11-05T10:54:28.0217010Z   "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+2026-11-05T10:54:28.0218010Z   "machine": "x86_64",
+2026-11-05T10:54:28.0218500Z   "release": {
+2026-11-05T10:54:28.0219210Z     "sourceSha": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+2026-11-05T10:54:28.0220090Z     "checkedAt": "2026-11-05T10:47:51.022Z",
+2026-11-05T10:54:28.0220710Z     "kind": "safari",
+2026-11-05T10:54:28.0221220Z     "status": "passed",
+2026-11-05T10:54:28.0221730Z     "before": "26.6",
+2026-11-05T10:54:28.0222540Z     "releaseSource": "https://support.apple.com/en-us/149527",
+2026-11-05T10:54:28.0223370Z     "requiredStable": "27.2",
+2026-11-05T10:54:28.0229160Z     "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+2026-11-05T10:54:28.0237280Z     "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+2026-11-05T10:54:28.0241360Z     "installed": "27.2"
+2026-11-05T10:54:28.0241850Z   },
+2026-11-05T10:54:28.0242250Z   "actor": {
+2026-11-05T10:54:28.0242870Z     "id": "a6095c84-409b-4f63-8930-2b779afc5b47",
+2026-11-05T10:54:28.0243710Z     "role": "Collaborator with editor grants",
+2026-11-05T10:54:28.0244590Z     "ownerId": "3df3ad93-cd40-409b-8c6a-fe6e270a1b02"
+2026-11-05T10:54:28.0245280Z   },
+2026-11-05T10:54:28.0245700Z   "persistence": [
+2026-11-05T10:54:28.0246150Z     {
+2026-11-05T10:54:28.0246780Z       "itemId": "24252a6e-4499-4fc5-b259-32e75a1f7f01",
+2026-11-05T10:54:28.0247480Z       "before": false,
+2026-11-05T10:54:28.0247970Z       "after": false,
+2026-11-05T10:54:28.0248500Z       "permission": null,
+2026-11-05T10:54:28.0251990Z       "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T10:54:28.0254200Z     },
+2026-11-05T10:54:28.0254600Z     {
+2026-11-05T10:54:28.0255220Z       "itemId": "9586129f-2e74-44fd-9d0b-5e0694d11cc0",
+2026-11-05T10:54:28.0255930Z       "before": false,
+2026-11-05T10:54:28.0256420Z       "after": false,
+2026-11-05T10:54:28.0256920Z       "permission": null,
+2026-11-05T10:54:28.0260880Z       "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T10:54:28.0263760Z     },
+2026-11-05T10:54:28.0264540Z     {
+2026-11-05T10:54:28.0265500Z       "itemId": "90cf95d5-2a23-41c2-a6f8-8d014ac61d5c",
+2026-11-05T10:54:28.0266250Z       "before": false,
+2026-11-05T10:54:28.0266750Z       "after": false,
+2026-11-05T10:54:28.0267250Z       "permission": null,
+2026-11-05T10:54:28.0270030Z       "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T10:54:28.0272220Z     },
+2026-11-05T10:54:28.0272600Z     {
+2026-11-05T10:54:28.0273240Z       "itemId": "f1b37f2e-0fdc-4165-bea9-17bb43b4ec77",
+2026-11-05T10:54:28.0273960Z       "before": false,
+2026-11-05T10:54:28.0274450Z       "after": false,
+2026-11-05T10:54:28.0274950Z       "permission": null,
+2026-11-05T10:54:28.0278320Z       "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+2026-11-05T10:54:28.0280560Z     }
+2026-11-05T10:54:28.0280960Z   ],
+2026-11-05T10:54:28.0283620Z   "error": "Error: Native command failed: {\"program\":\"/usr/bin/osascript\",\"code\":1,\"signal\":null,\"killed\":false,\"timeoutMs\":30000,\"stdout\":\"\",\"stderr\":\"49:75: execution error: System Events got an error: Connection is invalid. (-609)\\n\"}",
+2026-11-05T10:54:28.0293600Z   "stack": "Error: Native command failed: {\"program\":\"/usr/bin/osascript\",\"code\":1,\"signal\":null,\"killed\":false,\"timeoutMs\":30000,\"stdout\":\"\",\"stderr\":\"49:75: execution error: System Events got an error: Connection is invalid. (-609)\\n\"}\n    at command (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-browser.ts:118:7)\n    at async Object.type (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-browser.ts:1139:9)\n    at async nativeText (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:220:5)\n    at async main (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:561:11)\n    at async file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:781:1",
+2026-11-05T10:54:28.0300180Z   "page": {
+2026-11-05T10:54:28.0301080Z     "url": "https://localhost:8176/?item=24252a6e-4499-4fc5-b259-32e75a1f7f01",
+2026-11-05T10:54:28.0304300Z     "text": "🍂\nDesktop normal sheet\nSaved locally\nOffline\nOn this device\nSaved on this device — waiting to sync.\nStart\nFormulas\nView\nPaste\nGeneral\n\nImages\nDelete\nCopy\nRename\nChange color\nHide\nUnhide",
+2026-11-05T10:54:28.0307440Z     "status": "Saved on this device — waiting to sync."
+2026-11-05T10:54:28.0308130Z   },
+2026-11-05T10:54:28.0308540Z   "launches": [
+2026-11-05T10:54:28.0308980Z     {
+2026-11-05T10:54:28.0309400Z       "kind": "safari",
+2026-11-05T10:54:28.0309900Z       "version": "27.2",
+2026-11-05T10:54:28.0311460Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:54:28.0312840Z       "profile": {
+2026-11-05T10:54:28.0313490Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T10:54:28.0314930Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T10:54:28.0316250Z         "actualPath": "/Users/runner",
+2026-11-05T10:54:28.0316990Z         "directoryDevice": "16777223",
+2026-11-05T10:54:28.0317710Z         "directoryInode": "12884922560"
+2026-11-05T10:54:28.0318320Z       },
+2026-11-05T10:54:28.0318750Z       "browserPid": 6024,
+2026-11-05T10:54:28.0319390Z       "previousBrowserPid": null,
+2026-11-05T10:54:28.0320010Z       "driverPid": null,
+2026-11-05T10:54:28.0320550Z       "driverVersion": null,
+2026-11-05T10:54:28.0321230Z       "startedAt": "2026-11-05T10:50:52.641Z"
+2026-11-05T10:54:28.0321850Z     },
+2026-11-05T10:54:28.0322240Z     {
+2026-11-05T10:54:28.0322660Z       "kind": "safari",
+2026-11-05T10:54:28.0323870Z       "version": "27.2",
+2026-11-05T10:54:28.0325510Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:54:28.0326920Z       "profile": {
+2026-11-05T10:54:28.0327570Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T10:54:28.0329010Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T10:54:28.0330340Z         "actualPath": "/Users/runner",
+2026-11-05T10:54:28.0331070Z         "directoryDevice": "16777223",
+2026-11-05T10:54:28.0331780Z         "directoryInode": "12884922560"
+2026-11-05T10:54:28.0332370Z       },
+2026-11-05T10:54:28.0332800Z       "browserPid": 9465,
+2026-11-05T10:54:28.0333430Z       "previousBrowserPid": 6024,
+2026-11-05T10:54:28.0334040Z       "driverPid": null,
+2026-11-05T10:54:28.0334570Z       "driverVersion": null,
+2026-11-05T10:54:28.0335250Z       "startedAt": "2026-11-05T10:52:58.040Z"
+2026-11-05T10:54:28.0335880Z     },
+2026-11-05T10:54:28.0336270Z     {
+2026-11-05T10:54:28.0336690Z       "kind": "safari",
+2026-11-05T10:54:28.0337190Z       "version": "27.2",
+2026-11-05T10:54:28.0338730Z       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+2026-11-05T10:54:28.0340140Z       "profile": {
+2026-11-05T10:54:28.0340800Z         "mode": "ordinary-hosted-safari-user",
+2026-11-05T10:54:28.0342460Z         "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+2026-11-05T10:54:28.0343980Z         "actualPath": "/Users/runner",
+2026-11-05T10:54:28.0344710Z         "directoryDevice": "16777223",
+2026-11-05T10:54:28.0345430Z         "directoryInode": "12884922560"
+2026-11-05T10:54:28.0346030Z       },
+2026-11-05T10:54:28.0346460Z       "browserPid": 11235,
+2026-11-05T10:54:28.0347110Z       "previousBrowserPid": 9465,
+2026-11-05T10:54:28.0347720Z       "driverPid": null,
+2026-11-05T10:54:28.0348290Z       "driverVersion": null,
+2026-11-05T10:54:28.0348970Z       "startedAt": "2026-11-05T10:54:14.625Z"
+2026-11-05T10:54:28.0349590Z     }
+2026-11-05T10:54:28.0349980Z   ]
+2026-11-05T10:54:28.0350370Z }
+2026-11-05T10:54:28.0382500Z ##[error]Process completed with exit code 1.
+2026-11-05T10:54:28.0650560Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T10:54:28.0651910Z with:
+2026-11-05T10:54:28.0652520Z   name: desktop-offline-safari-macos-15-intel-42013542571-1
+2026-11-05T10:54:28.0653350Z   path: artifacts/desktop-offline/
+2026-11-05T10:54:28.0653960Z   if-no-files-found: error
+2026-11-05T10:54:28.0654480Z   retention-days: 14
+2026-11-05T10:54:28.0654970Z   compression-level: 6
+2026-11-05T10:54:28.0655460Z   overwrite: false
+2026-11-05T10:54:28.0655950Z   include-hidden-files: false
+2026-11-05T10:54:28.0656490Z   archive: true
+2026-11-05T10:54:28.0656930Z env:
+2026-11-05T10:54:28.0657420Z   SOURCE_SHA: 02ef01a40fe8369b79477909673c76de6d2a4edf
+2026-11-05T10:54:28.0658140Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-05T10:54:28.0658700Z ##[endgroup]
+2026-11-05T10:54:28.5084100Z With the provided path, there will be 15 files uploaded
+2026-11-05T10:54:28.5089100Z Artifact name is valid!
+2026-11-05T10:54:28.5091030Z Root directory input is valid!
+2026-11-05T10:54:29.4575780Z Uploading artifact: desktop-offline-safari-macos-15-intel-42013542571-1.zip
+2026-11-05T10:54:29.5115550Z Beginning upload of artifact content to blob storage
+2026-11-05T10:54:29.5365810Z Uploaded bytes 970517
+2026-11-05T10:54:29.5425160Z Finished uploading artifact content to blob storage!
+2026-11-05T10:54:29.5467850Z SHA256 digest of uploaded artifact is fc56f708953cb5aaf32545578331a378202197738883b0f56dd75fe45c4658ab
+2026-11-05T10:54:29.5549810Z Finalizing artifact upload
+2026-11-05T10:54:29.8791350Z Artifact desktop-offline-safari-macos-15-intel-42013542571-1 successfully finalized. Artifact ID 13408433114
+2026-11-05T10:54:29.8798240Z Artifact desktop-offline-safari-macos-15-intel-42013542571-1 has been successfully uploaded! Final size is 970517 bytes. Artifact ID is 13408433114
+2026-11-05T10:54:29.8803910Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/42013542571/artifacts/13408433114
+2026-11-05T10:54:29.9149760Z Post job cleanup.
+2026-11-05T10:54:30.1764190Z [command]/usr/local/bin/git version
+2026-11-05T10:54:30.2068080Z git version 2.55.0
+2026-11-05T10:54:30.2112240Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/0c8ab1c5-fd9e-40ef-a597-dd3028ad1804/.gitconfig'
+2026-11-05T10:54:30.2123060Z Temporarily overriding HOME='/Users/runner/work/_temp/0c8ab1c5-fd9e-40ef-a597-dd3028ad1804' before making global git config changes
+2026-11-05T10:54:30.2616790Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T10:54:30.3519570Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-05T10:54:30.3990680Z Removing SSH command configuration
+2026-11-05T10:54:30.4132160Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T10:54:30.5628490Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T10:54:30.7884130Z Removing HTTP extra header
+2026-11-05T10:54:30.8073690Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T10:54:30.8262760Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T10:54:30.9358110Z Removing includeIf entries pointing to credentials config files
+2026-11-05T10:54:30.9432800Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T10:54:30.9963110Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T10:54:31.1722910Z Cleaning up orphan processes
