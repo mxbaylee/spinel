@@ -13,6 +13,7 @@ import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
 import { assertDocSoakContent, docSoakInsertion } from './sync-soak-intent.ts';
 import type { DocSoakInsertion } from './sync-soak-intent.ts';
+import { sanitizeBootstrapSnapshot } from '../src/shared/bootstrapEvidence.ts';
 import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import {
   recordNativeSnapshots,
@@ -356,6 +357,27 @@ test('native Docs preserve concurrent text and undo across reconnect, render pro
   try {
     await f.page.goto(`/?item=${f.item.id}`);
     await saved(f.page);
+    const bootstrap = sanitizeBootstrapSnapshot(
+      await f.page.evaluate(() => {
+        const read = (window as unknown as { __spinelBootstrapEvidence?: () => unknown })
+          .__spinelBootstrapEvidence;
+        return read?.() ?? null;
+      }),
+    );
+    expect(bootstrap).not.toBeNull();
+    expect(bootstrap).toMatchObject({
+      sealed: true,
+      failed: false,
+      dropped: 0,
+      invalidClock: false,
+    });
+    expect(bootstrap!.events.map((event) => event.phase)).toEqual(
+      expect.arrayContaining([
+        'application-import-end',
+        'styles-end',
+        'application-start-returned',
+      ]),
+    );
     await focusDoc(f.page);
     await f.page.keyboard.type('Shared anchor');
     await saved(f.page);

@@ -1,0 +1,2670 @@
+{
+  "schemaVersion": 1,
+  "runId": "41949596977",
+  "attempt": "1",
+  "sourceSha": "bad94033a7c479587b836008b42480aeedcda777",
+  "testedSha": "bad94033a7c479587b836008b42480aeedcda777",
+  "scope": "firefox-only authored ordinary-tab acceptance with a 780-second operational bound. Selected-scope execution is separate from the three-lane capability aggregate. Other browsers are not allocated. Reopen is a verified cold page reload, not OS termination or a native process restart; native desktop coverage owns that alternative observation. Installed-context acceptance is not run by this scope. A selected pass does not complete every contract in the approved coverage map.",
+  "capabilityScope": "firefox-tab-acceptance",
+  "allocationPlan": "firefox-tab-acceptance",
+  "status": "failed",
+  "fullMatrixStatus": "incomplete",
+  "stage": "finished",
+  "preparedAt": "2026-11-05T01:37:23.285Z",
+  "lanes": [
+    {
+      "target": {
+        "browser": "chrome",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      "status": "not-run",
+      "startedAt": null,
+      "stage": "firefox-tab-acceptance-only",
+      "command": "not-run",
+      "allocation": "not-started",
+      "uncertainAllocation": false,
+      "observations": [
+        {
+          "stage": "firefox-tab-acceptance-only",
+          "value": {
+            "reason": "This chrome lane is not selected by firefox-tab-acceptance. Historical results are not current-source acceptance.",
+            "currentRunAcceptance": "not-assessed"
+          }
+        }
+      ],
+      "nativeActions": [],
+      "screenshots": [],
+      "cleanup": {
+        "network": "not-allocated",
+        "session": "not-allocated",
+        "fixture": "not-created"
+      }
+    },
+    {
+      "target": {
+        "browser": "firefox",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      "status": "failed",
+      "startedAt": "2026-11-05T01:37:42.867Z",
+      "stage": "device-offline",
+      "command": "POST session/{sessionId}/moz/context",
+      "allocation": "known",
+      "uncertainAllocation": false,
+      "observations": [
+        {
+          "stage": "acceptance-contract",
+          "value": {
+            "scope": "firefox-tab-acceptance",
+            "bounds": {
+              "operational": 780000,
+              "prerequisites": 240000,
+              "edits": 100000,
+              "creation": 80000,
+              "restart": 90000,
+              "reconnect": 140000,
+              "links": 80000,
+              "repeat": 30000
+            },
+            "boundsMeasured": false,
+            "build": "production with read-only VITE_SYNC_EVIDENCE observations",
+            "browser": "firefox",
+            "launchContext": "ordinary-tab",
+            "reopenOperation": "cold-page-reload",
+            "nativeAppRestart": "not-observed-by-this-scope",
+            "ordinaryBrowserTabAcceptance": "selected-not-yet-observed",
+            "nativeRestartAlternative": "scripts/ci/desktop-offline.ts",
+            "otherPhysicalLanes": "not-run-by-this-scope"
+          }
+        },
+        {
+          "stage": "certificate",
+          "value": {
+            "hostname": "bs-local.com",
+            "selfSigned": true,
+            "fingerprint256": "A8:A1:C3:E9:F5:54:1D:77:1E:37:33:60:22:08:52:88:CF:62:67:E6:63:D3:A0:53:52:39:13:26:12:7C:59:BF",
+            "validFrom": "2026-11-05T01:37:41.000Z",
+            "validTo": "2026-11-06T01:37:41.000Z"
+          }
+        },
+        {
+          "stage": "returned-capabilities",
+          "value": {
+            "browserName": "MozillaFirefox",
+            "platformName": "linux"
+          }
+        },
+        {
+          "stage": "initial-environment",
+          "value": {
+            "anonymousReady": false,
+            "controller": null,
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0"
+          }
+        },
+        {
+          "stage": "anonymous-https:secure-context",
+          "value": {
+            "anonymousReady": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "registration": {
+              "active": "https://bs-local.com:8176/service-worker.js",
+              "scope": "https://bs-local.com:8176/",
+              "state": "activated"
+            }
+          }
+        },
+        {
+          "stage": "initial-window-handles",
+          "value": [
+            "fd6a6d12-0174-48c1-b030-a88490bbe652"
+          ]
+        },
+        {
+          "stage": "ordinary-tab-context",
+          "value": {
+            "anonymousReady": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "windowHandle": "fd6a6d12-0174-48c1-b030-a88490bbe652",
+            "storageContext": "actual-current-tab-within-this-device-session",
+            "storageTransfer": "none",
+            "nativeContextCommand": "not-requested",
+            "nativeAppRestart": "not-observed-by-this-scope",
+            "nativeRestartAlternative": "scripts/ci/desktop-offline.ts",
+            "firefoxNativeLimit": {
+              "runId": "41361564434",
+              "evidencePath": "docs/implementation/evidence/SPN-090-capability-41361564434.json",
+              "command": "GET session/{sessionId}/contexts",
+              "failure": "http-400",
+              "disposition": "accepted-observation-limit-for-the-attempted-route"
+            }
+          }
+        },
+        {
+          "stage": "launched-context",
+          "value": {
+            "anonymousReady": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "windowHandle": "fd6a6d12-0174-48c1-b030-a88490bbe652",
+            "launchMode": "ordinary-browser-tab"
+          }
+        },
+        {
+          "stage": "ordinary-tab-context:secure-context",
+          "value": {
+            "anonymousReady": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "registration": {
+              "active": "https://bs-local.com:8176/service-worker.js",
+              "scope": "https://bs-local.com:8176/",
+              "state": "activated"
+            }
+          }
+        },
+        {
+          "stage": "ordinary-tab-authentication",
+          "value": {
+            "actor": "1ff31159-a8f9-4df5-ac1f-710f5f0d3443",
+            "method": "one-use-production-session-bootstrap-in-actual-tab"
+          }
+        },
+        {
+          "stage": "sheet:ready",
+          "value": {
+            "account": null,
+            "bodyPresent": true,
+            "canvasHeight": 655,
+            "documentReady": true,
+            "originMatch": true,
+            "phase": "editor",
+            "phoneReadOnly": false,
+            "readyState": "complete",
+            "saveStatus": "All changes saved."
+          }
+        },
+        {
+          "stage": "sheet:ready",
+          "value": {
+            "account": "1ff31159-a8f9-4df5-ac1f-710f5f0d3443",
+            "bodyPresent": true,
+            "canvasHeight": 655,
+            "documentReady": true,
+            "originMatch": true,
+            "phase": "editor",
+            "phoneReadOnly": false,
+            "readyState": "complete",
+            "saveStatus": "All changes saved."
+          }
+        },
+        {
+          "stage": "doc:ready",
+          "value": {
+            "account": "1ff31159-a8f9-4df5-ac1f-710f5f0d3443",
+            "bodyPresent": true,
+            "canvasHeight": 671.25,
+            "documentReady": true,
+            "originMatch": true,
+            "phase": "editor",
+            "phoneReadOnly": false,
+            "readyState": "complete",
+            "saveStatus": "All changes saved."
+          }
+        },
+        {
+          "stage": "doc:ready",
+          "value": {
+            "account": "1ff31159-a8f9-4df5-ac1f-710f5f0d3443",
+            "bodyPresent": true,
+            "canvasHeight": 671.25,
+            "documentReady": true,
+            "originMatch": true,
+            "phase": "editor",
+            "phoneReadOnly": false,
+            "readyState": "complete",
+            "saveStatus": "All changes saved."
+          }
+        },
+        {
+          "stage": "acceptance-prepared-cases",
+          "value": {
+            "ordinary": [
+              {
+                "id": "09984fa1-f70a-4dea-83a3-cd2b2e20bf02",
+                "kind": "sheet",
+                "outcome": "normal"
+              },
+              {
+                "id": "483aebe4-5930-42de-b394-144f4749a400",
+                "kind": "sheet",
+                "outcome": "conflict"
+              },
+              {
+                "id": "b1b93dfc-0eef-4eae-ae4a-2f592cbbcc77",
+                "kind": "doc",
+                "outcome": "normal"
+              },
+              {
+                "id": "ec466b36-df13-44ed-844f-2670104495b7",
+                "kind": "doc",
+                "outcome": "conflict"
+              }
+            ],
+            "space": {
+              "spaceId": "b6fa5a66-0eee-453d-9bc8-7685bf45e975",
+              "itemId": "4ef65945-d9da-4e5f-88d5-fd577f4b8c12",
+              "href": "/spaces/b6fa5a66-0eee-453d-9bc8-7685bf45e975?item=4ef65945-d9da-4e5f-88d5-fd577f4b8c12"
+            },
+            "cachedCreationFolders": [
+              "627a8e6c-a584-4e0c-b9b0-c511c83ba255",
+              "9b6110a0-d710-48fe-93c7-6bdc1049dd4c"
+            ],
+            "uncachedItemId": "ed07e61f-0620-41ed-b06f-fb0d37b5e9bf",
+            "bounds": {
+              "operational": 780000,
+              "prerequisites": 240000,
+              "edits": 100000,
+              "creation": 80000,
+              "restart": 90000,
+              "reconnect": 140000,
+              "links": 80000,
+              "repeat": 30000
+            },
+            "boundsMeasured": false
+          }
+        },
+        {
+          "stage": "production-downloads:secure-context",
+          "value": {
+            "anonymousReady": false,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "registration": {
+              "active": "https://bs-local.com:8176/service-worker.js",
+              "scope": "https://bs-local.com:8176/",
+              "state": "activated"
+            }
+          }
+        },
+        {
+          "stage": "prepared-context",
+          "value": {
+            "anonymousReady": false,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "launchMode": "ordinary-browser-tab"
+          }
+        },
+        {
+          "stage": "online-network-baseline:network",
+          "value": {
+            "checks": [
+              {
+                "path": "/api/auth/session",
+                "reachable": true,
+                "status": 200
+              },
+              {
+                "path": "/capability-network-probe",
+                "reachable": true,
+                "status": 404
+              }
+            ],
+            "online": true
+          }
+        },
+        {
+          "stage": "online-network-baseline:authenticated-socket",
+          "value": {
+            "opened": true,
+            "ticketValidThroughoutProbe": true,
+            "credentialsRecorded": false
+          }
+        },
+        {
+          "stage": "device-offline:firefox-offline",
+          "value": {
+            "offline": true,
+            "contextSwitched": false,
+            "failure": "http-404"
+          }
+        }
+      ],
+      "nativeActions": [],
+      "screenshots": [
+        "artifacts/browserstack-capability/firefox-failure.png"
+      ],
+      "timing": {
+        "laneLimitMilliseconds": 780000,
+        "stages": [
+          {
+            "stage": "preflight",
+            "startedElapsedMilliseconds": 0,
+            "durationMilliseconds": 30
+          },
+          {
+            "stage": "session-creation",
+            "startedElapsedMilliseconds": 30,
+            "durationMilliseconds": 10950
+          },
+          {
+            "stage": "anonymous-https",
+            "startedElapsedMilliseconds": 10980,
+            "durationMilliseconds": 3155
+          },
+          {
+            "stage": "ordinary-tab-context",
+            "startedElapsedMilliseconds": 14135,
+            "durationMilliseconds": 142
+          },
+          {
+            "stage": "ordinary-tab-authentication",
+            "startedElapsedMilliseconds": 14277,
+            "durationMilliseconds": 237
+          },
+          {
+            "stage": "production-downloads",
+            "startedElapsedMilliseconds": 14514,
+            "durationMilliseconds": 35422
+          },
+          {
+            "stage": "online-network-baseline",
+            "startedElapsedMilliseconds": 49936,
+            "durationMilliseconds": 635
+          },
+          {
+            "stage": "device-offline",
+            "startedElapsedMilliseconds": 50571,
+            "durationMilliseconds": 321
+          }
+        ],
+        "commands": [
+          {
+            "stage": "session-creation",
+            "command": "POST session",
+            "startedElapsedMilliseconds": 31,
+            "durationMilliseconds": 10937,
+            "timeoutMilliseconds": 45000,
+            "remainingAtStartMilliseconds": 779969,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 769032
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 10980,
+            "durationMilliseconds": 571,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 769020,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 768449
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 11551,
+            "durationMilliseconds": 133,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 768449,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 768316
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 11685,
+            "durationMilliseconds": 62,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 768315,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 768253
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 11948,
+            "durationMilliseconds": 57,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 768052,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 767995
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 12205,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 767795,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 767734
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 12466,
+            "durationMilliseconds": 53,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 767534,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 767481
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 12719,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 767281,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 767220
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 12981,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 767019,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 766969
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 13232,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 766768,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 766721
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 13479,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 766521,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 766477
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 13723,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 766277,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 766216
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 13984,
+            "durationMilliseconds": 57,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 766016,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765959
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 14041,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765959,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765908
+          },
+          {
+            "stage": "anonymous-https",
+            "command": "GET session/{sessionId}/window/handles",
+            "startedElapsedMilliseconds": 14093,
+            "durationMilliseconds": 41,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765907,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765866
+          },
+          {
+            "stage": "ordinary-tab-context",
+            "command": "GET session/{sessionId}/window",
+            "startedElapsedMilliseconds": 14135,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765865,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765814
+          },
+          {
+            "stage": "ordinary-tab-context",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 14187,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765813,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765766
+          },
+          {
+            "stage": "ordinary-tab-context",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 14234,
+            "durationMilliseconds": 43,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765766,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765723
+          },
+          {
+            "stage": "ordinary-tab-authentication",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 14277,
+            "durationMilliseconds": 236,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765723,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765487
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 14514,
+            "durationMilliseconds": 275,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765486,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765211
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 14789,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 765211,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 765165
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 15036,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 764964,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 764913
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 15288,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 764712,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 764667
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 15534,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 764466,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 764415
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 15785,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 764215,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 764160
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 16040,
+            "durationMilliseconds": 48,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 763960,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 763912
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 16288,
+            "durationMilliseconds": 43,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 763712,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 763669
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 16532,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 763468,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 763410
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 16790,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 763210,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 763160
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 17040,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 762960,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 762911
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 17290,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 762710,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 762666
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 17534,
+            "durationMilliseconds": 202,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 762466,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 762264
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 17937,
+            "durationMilliseconds": 54,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 762063,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 762009
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 18192,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761808,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761761
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 18240,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761760,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761702
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 18299,
+            "durationMilliseconds": 152,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761701,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761549
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 18451,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761549,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761498
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 18502,
+            "durationMilliseconds": 139,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761498,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761359
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 18641,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761359,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761304
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 18897,
+            "durationMilliseconds": 42,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 761103,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 761061
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 19139,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 760861,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 760806
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 19394,
+            "durationMilliseconds": 48,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 760606,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 760558
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 19641,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 760359,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 760315
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 19885,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 760115,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 760064
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 20136,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 759864,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 759818
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 20382,
+            "durationMilliseconds": 60,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 759618,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 759558
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 20641,
+            "durationMilliseconds": 53,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 759359,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 759306
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 20894,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 759106,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 759056
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 21145,
+            "durationMilliseconds": 57,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 758855,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 758798
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 21402,
+            "durationMilliseconds": 63,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 758598,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 758535
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 21665,
+            "durationMilliseconds": 70,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 758335,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 758265
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 21936,
+            "durationMilliseconds": 69,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 758064,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 757995
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 22205,
+            "durationMilliseconds": 56,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 757795,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 757739
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 22460,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 757540,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 757489
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 22712,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 757288,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 757237
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 22963,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 757037,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 756986
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 23214,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 756786,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 756731
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 23470,
+            "durationMilliseconds": 54,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 756530,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 756476
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 23725,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 756275,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 756230
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 23970,
+            "durationMilliseconds": 59,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 756030,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 755971
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 24029,
+            "durationMilliseconds": 163,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 755971,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 755808
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 24192,
+            "durationMilliseconds": 138,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 755808,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 755670
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 24330,
+            "durationMilliseconds": 170,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 755670,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 755500
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 24500,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 755500,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 755453
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 24748,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 755252,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 755194
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 25005,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 754995,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 754944
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 25257,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 754743,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 754694
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 25506,
+            "durationMilliseconds": 84,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 754494,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 754410
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 25790,
+            "durationMilliseconds": 84,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 754210,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 754126
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 26074,
+            "durationMilliseconds": 117,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 753926,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 753809
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 26392,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 753608,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 753563
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 26638,
+            "durationMilliseconds": 52,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 753362,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 753310
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 26889,
+            "durationMilliseconds": 54,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 753111,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 753057
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 27144,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752856,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 752795
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 27205,
+            "durationMilliseconds": 82,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752795,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 752713
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 27287,
+            "durationMilliseconds": 173,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752713,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 752540
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 27460,
+            "durationMilliseconds": 89,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752540,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 752451
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 27550,
+            "durationMilliseconds": 142,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752450,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 752308
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 27692,
+            "durationMilliseconds": 69,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752308,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 752239
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 27962,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 752038,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751989
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 28211,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 751789,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751745
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 28455,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 751545,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751494
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 28506,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 751494,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751439
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 28561,
+            "durationMilliseconds": 121,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 751439,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751318
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 28683,
+            "durationMilliseconds": 212,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 751317,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751105
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 28895,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 751105,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 751050
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 29150,
+            "durationMilliseconds": 68,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 750850,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 750782
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 29417,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 750583,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 750539
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 29661,
+            "durationMilliseconds": 77,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 750339,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 750262
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 29939,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 750061,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 750016
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 30183,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 749817,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 749771
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 30428,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 749572,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 749526
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 30674,
+            "durationMilliseconds": 68,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 749326,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 749258
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 30942,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 749058,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 749008
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 31191,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748809,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748759
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 31442,
+            "durationMilliseconds": 54,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748558,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748504
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 31497,
+            "durationMilliseconds": 60,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748503,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748443
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 31557,
+            "durationMilliseconds": 122,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748443,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748321
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 31679,
+            "durationMilliseconds": 54,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748321,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748267
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 31733,
+            "durationMilliseconds": 138,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748267,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748129
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 31871,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 748129,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 748083
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 32117,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 747883,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 747833
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 32367,
+            "durationMilliseconds": 41,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 747633,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 747592
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 32608,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 747392,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 747337
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 32663,
+            "durationMilliseconds": 64,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 747337,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 747273
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 32728,
+            "durationMilliseconds": 117,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 747272,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 747155
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 32845,
+            "durationMilliseconds": 182,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 747155,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 746973
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 33027,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 746973,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 746929
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 33271,
+            "durationMilliseconds": 53,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 746729,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 746676
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 33524,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 746476,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 746427
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 33773,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 746227,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 746178
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 34022,
+            "durationMilliseconds": 53,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 745978,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 745925
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 34275,
+            "durationMilliseconds": 43,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 745725,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 745682
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 34518,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 745482,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 745433
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 34768,
+            "durationMilliseconds": 125,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 745232,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 745107
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 35093,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744907,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744863
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 35338,
+            "durationMilliseconds": 48,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744662,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744614
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 35387,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744613,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744558
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 35442,
+            "durationMilliseconds": 114,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744558,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744444
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 35556,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744444,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744398
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 35602,
+            "durationMilliseconds": 141,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744398,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744257
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 35743,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744257,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 744211
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 35988,
+            "durationMilliseconds": 64,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 744012,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743948
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 36252,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 743748,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743704
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 36495,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 743505,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743460
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 36540,
+            "durationMilliseconds": 68,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 743460,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743392
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 36608,
+            "durationMilliseconds": 126,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 743392,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743266
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 36734,
+            "durationMilliseconds": 188,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 743266,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743078
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 36922,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 743078,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 743020
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 37179,
+            "durationMilliseconds": 54,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 742821,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 742767
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 37433,
+            "durationMilliseconds": 76,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 742567,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 742491
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 37710,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 742290,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 742229
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 37972,
+            "durationMilliseconds": 42,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 742028,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 741986
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 38213,
+            "durationMilliseconds": 107,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 741787,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 741680
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 38521,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 741479,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 741433
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 38767,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 741233,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 741189
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 39012,
+            "durationMilliseconds": 43,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740988,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740945
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 39255,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740745,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740694
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 39306,
+            "durationMilliseconds": 56,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740694,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740638
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 39362,
+            "durationMilliseconds": 106,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740638,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740532
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 39468,
+            "durationMilliseconds": 68,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740532,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740464
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 39536,
+            "durationMilliseconds": 169,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740464,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740295
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 39705,
+            "durationMilliseconds": 57,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740295,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740238
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 39762,
+            "durationMilliseconds": 136,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740238,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740102
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 39898,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 740102,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 740058
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40041,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739959,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739915
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40184,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739816,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739769
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40331,
+            "durationMilliseconds": 41,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739669,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739628
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40472,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739528,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739483
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40618,
+            "durationMilliseconds": 42,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739382,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739340
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40761,
+            "durationMilliseconds": 55,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739239,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739184
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 40917,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 739083,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 739033
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41067,
+            "durationMilliseconds": 52,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738933,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 738881
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41219,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738781,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 738723
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41377,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738623,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 738578
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41523,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738477,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 738431
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41669,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738331,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 738284
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41817,
+            "durationMilliseconds": 48,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738183,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 738135
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 41965,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 738035,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737990
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 42010,
+            "durationMilliseconds": 48,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 737990,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737942
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 42058,
+            "durationMilliseconds": 135,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 737942,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737807
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 42193,
+            "durationMilliseconds": 170,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 737807,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737637
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 42363,
+            "durationMilliseconds": 45,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 737637,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737592
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 42607,
+            "durationMilliseconds": 63,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 737393,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737330
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 42870,
+            "durationMilliseconds": 63,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 737130,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 737067
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 43132,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 736868,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 736822
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 43379,
+            "durationMilliseconds": 42,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 736621,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 736579
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 43620,
+            "durationMilliseconds": 59,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 736380,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 736321
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 43679,
+            "durationMilliseconds": 124,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 736321,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 736197
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 43803,
+            "durationMilliseconds": 72,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 736197,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 736125
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 43876,
+            "durationMilliseconds": 97,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 736124,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 736027
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 44073,
+            "durationMilliseconds": 138,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 735927,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 735789
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 44314,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 735686,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 735628
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 44473,
+            "durationMilliseconds": 74,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 735527,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 735453
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 44647,
+            "durationMilliseconds": 58,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 735353,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 735295
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 44805,
+            "durationMilliseconds": 59,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 735195,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 735136
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 44964,
+            "durationMilliseconds": 72,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 735036,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734964
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 45137,
+            "durationMilliseconds": 63,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 734863,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734800
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 45299,
+            "durationMilliseconds": 64,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 734701,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734637
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 45462,
+            "durationMilliseconds": 52,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 734538,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734486
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 45614,
+            "durationMilliseconds": 63,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 734386,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734323
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 45778,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 734222,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734161
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 45940,
+            "durationMilliseconds": 52,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 734060,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 734008
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 46091,
+            "durationMilliseconds": 50,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 733909,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 733859
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/url",
+            "startedElapsedMilliseconds": 46141,
+            "durationMilliseconds": 163,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 733859,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 733696
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 46304,
+            "durationMilliseconds": 51,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 733696,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 733645
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 46556,
+            "durationMilliseconds": 66,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 733444,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 733378
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 46822,
+            "durationMilliseconds": 46,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 733178,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 733132
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 47068,
+            "durationMilliseconds": 47,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732932,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732885
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 47315,
+            "durationMilliseconds": 49,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732685,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732636
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 47364,
+            "durationMilliseconds": 129,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732636,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732507
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 47493,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732507,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732463
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 47537,
+            "durationMilliseconds": 161,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732463,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732302
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 47698,
+            "durationMilliseconds": 53,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732302,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732249
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/element/{elementId}/click",
+            "startedElapsedMilliseconds": 47751,
+            "durationMilliseconds": 121,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732249,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732128
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 47872,
+            "durationMilliseconds": 41,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 732128,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 732087
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 48012,
+            "durationMilliseconds": 65,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 731988,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 731923
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 48077,
+            "durationMilliseconds": 158,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 731923,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 731765
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 48335,
+            "durationMilliseconds": 125,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 731665,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 731540
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 48561,
+            "durationMilliseconds": 44,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 731439,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 731395
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 48706,
+            "durationMilliseconds": 61,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 731294,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 731233
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 48868,
+            "durationMilliseconds": 60,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 731132,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 731072
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49029,
+            "durationMilliseconds": 67,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730971,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730904
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49196,
+            "durationMilliseconds": 62,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730804,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730742
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49358,
+            "durationMilliseconds": 67,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730642,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730575
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49526,
+            "durationMilliseconds": 78,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730474,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730396
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49705,
+            "durationMilliseconds": 48,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730295,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730247
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49754,
+            "durationMilliseconds": 56,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730246,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730190
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/sync",
+            "startedElapsedMilliseconds": 49811,
+            "durationMilliseconds": 64,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730189,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730125
+          },
+          {
+            "stage": "production-downloads",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49875,
+            "durationMilliseconds": 59,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730125,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 730066
+          },
+          {
+            "stage": "online-network-baseline",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 49936,
+            "durationMilliseconds": 129,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 730064,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 729935
+          },
+          {
+            "stage": "online-network-baseline",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 50066,
+            "durationMilliseconds": 134,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 729934,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 729800
+          },
+          {
+            "stage": "online-network-baseline",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 50200,
+            "durationMilliseconds": 207,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 729800,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 729593
+          },
+          {
+            "stage": "online-network-baseline",
+            "command": "POST session/{sessionId}/execute/async",
+            "startedElapsedMilliseconds": 50408,
+            "durationMilliseconds": 163,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 729592,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 729429
+          },
+          {
+            "stage": "device-offline",
+            "command": "POST session/{sessionId}/moz/context",
+            "startedElapsedMilliseconds": 50571,
+            "durationMilliseconds": 41,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 729429,
+            "outcome": "failed",
+            "failure": "http-404",
+            "webdriverErrorCode": "unknown command",
+            "laneAborted": false,
+            "commandAborted": false,
+            "deadlineReached": false,
+            "remainingAtEndMilliseconds": 729388
+          },
+          {
+            "stage": "device-offline",
+            "command": "GET session/{sessionId}/screenshot",
+            "startedElapsedMilliseconds": 50613,
+            "durationMilliseconds": 277,
+            "timeoutMilliseconds": 15000,
+            "remainingAtStartMilliseconds": 729387,
+            "outcome": "completed",
+            "remainingAtEndMilliseconds": 729110
+          }
+        ],
+        "omittedCommands": 0,
+        "omittedStages": 0,
+        "failure": {
+          "elapsedMilliseconds": 50613,
+          "remainingMilliseconds": 729387,
+          "laneAborted": false,
+          "deadlineReached": false
+        },
+        "cleanupElapsedMilliseconds": 1543,
+        "totalElapsedMilliseconds": 52435
+      },
+      "cleanup": {
+        "network": "restored-4g-lte-good",
+        "session": "deleted",
+        "fixture": "closed"
+      },
+      "sessionId": "1ec2e77fa130da7d77f2d86826d67011b78fb2dc",
+      "failure": "capability-firefox-offline-unavailable",
+      "finishedAt": "2026-11-05T01:38:35.302Z"
+    },
+    {
+      "target": {
+        "browser": "safari",
+        "device": "iPhone 18 Pro Max",
+        "osVersion": "27"
+      },
+      "status": "not-run",
+      "startedAt": null,
+      "stage": "firefox-tab-acceptance-only",
+      "command": "not-run",
+      "allocation": "not-started",
+      "uncertainAllocation": false,
+      "observations": [
+        {
+          "stage": "firefox-tab-acceptance-only",
+          "value": {
+            "reason": "This safari lane is not selected by firefox-tab-acceptance. Historical results are not current-source acceptance.",
+            "currentRunAcceptance": "not-assessed"
+          }
+        }
+      ],
+      "nativeActions": [],
+      "screenshots": [],
+      "cleanup": {
+        "network": "not-allocated",
+        "session": "not-allocated",
+        "fixture": "not-created"
+      }
+    }
+  ],
+  "accountSessions": {
+    "runningSessions": 0,
+    "queuedSessions": 0
+  }
+}

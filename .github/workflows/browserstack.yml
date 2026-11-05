@@ -1,7 +1,52 @@
-name: 🧪 BrowserStack infrastructure
+name: 🧪 BrowserStack phone capability
+
+# Names the mode or label, so a pending account run can be told from diagnostics
+# before dispatching (docs/offline.md#dispatching-browserstack-runs).
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && format('BrowserStack {0}', inputs.mode) ||
+  github.event_name == 'schedule' && format('BrowserStack monthly {0}',
+  github.event.schedule == '17 9 2 * *' && 'chrome-acceptance' ||
+  github.event.schedule == '17 9 3 * *' && 'firefox-tab-acceptance' ||
+  'safari-acceptance') ||
+  format('BrowserStack {0}: {1}', github.event.label.name, github.event.pull_request.title) }}
 
 on:
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Run one phone capability or authored acceptance scope, or read completed-session logs
+        type: choice
+        # The default reads a completed session and allocates no device.
+        default: diagnostics
+        options:
+          [
+            capability,
+            chrome-diagnostic,
+            safari-acceptance,
+            chrome-acceptance,
+            chrome-tab-acceptance,
+            firefox-tab-acceptance,
+            safari-tab-acceptance,
+            diagnostics,
+          ]
+      session_id:
+        description: Completed session for diagnostics; defaults to the retained Chrome attempt 8
+        type: string
+        required: false
+      diagnostic_kind:
+        description: Read driver logs or sanitized network metadata from a completed session; diagnostics mode only
+        type: choice
+        default: driver
+        options: [driver, network]
+  schedule:
+    # Monthly main verifies one phone scope a day on BrowserStack (owner,
+    # 2026-11-03): Safari installed acceptance on the 1st, Android Chrome
+    # installed acceptance on the 2nd and Android Firefox tab acceptance on the
+    # 3rd. A day apart, none displaces another pending run. BrowserStack's own
+    # account limit is the only spend stop (owner, 2026-11-04).
+    - cron: '17 9 1 * *'
+    - cron: '17 9 2 * *'
+    - cron: '17 9 3 * *'
   pull_request:
     branches: [main]
     types: [labeled]
@@ -10,22 +55,43 @@ permissions:
   contents: read
 
 concurrency:
-  group: browserstack-${{ github.event.pull_request.number || github.ref }}
+  # Every device run shares one account-wide lock.
+  # A fork PR, or a label no job routes on, runs nothing, so it gets its own group.
+  # Diagnostics only read a completed session, so they queue among themselves.
+  # Neither can displace a pending account run. Every other event takes the lock.
+  # Folded to one line: no-op group, then diagnostics, then the account lock.
+  group: >-
+    ${{ github.event_name == 'pull_request' &&
+    (github.event.pull_request.head.repo.full_name != github.repository ||
+    !contains(fromJSON('["ci-browserstack-logs","ci-real-devices","ci-real-devices-chrome","ci-real-devices-safari","ci-real-devices-chrome-acceptance","ci-real-devices-chrome-tab","ci-real-devices-firefox-tab","ci-real-devices-safari-tab"]'), github.event.label.name)) &&
+    format('browserstack-noop-{0}', github.run_id) ||
+    (inputs.mode == 'diagnostics' || github.event.label.name == 'ci-browserstack-logs') &&
+    'browserstack-diagnostics' ||
+    'browserstack-lifetime-account' }}
   cancel-in-progress: false
 
+env:
+  # Authored scopes build with sync evidence and get the longer wrapper.
+  BS_AUTHORED_SCOPES: '["safari-acceptance","chrome-acceptance","chrome-tab-acceptance","firefox-tab-acceptance","safari-tab-acceptance"]'
+
 jobs:
-  smoke:
-    name: BrowserStack credentials and mobile tunnel
+  diagnostics:
+    name: Read-only completed-session diagnostics
     if: >-
-      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'diagnostics') ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'ci-real-devices' &&
+      github.event.label.name == 'ci-browserstack-logs' &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
+    permissions:
+      contents: read
     env:
       SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      # Completed Chrome session from capability run 41395124342, attempt 1.
+      BS_DIAGNOSTIC_SESSION: ${{ inputs.session_id || 'dc1a30f87ce096c3e7ae42bae0fd3349bc24d9ad' }}
+      BS_DIAGNOSTIC_KIND: ${{ inputs.diagnostic_kind || 'driver' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -34,18 +100,77 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
-      - name: Verify credentials and select real phones
-        timeout-minutes: 2
+      - name: Read and sanitize completed-session diagnostics
+        timeout-minutes: 3
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
-        run: node scripts/ci/browserstack.ts credentials
+        run: node scripts/ci/browserstack-session-diagnostics.ts
+      - name: Retain sanitized completed-session diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browserstack-session-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/browserstack-session-diagnostics.json
+          if-no-files-found: error
+          retention-days: 14
+
+  capability:
+    name: Selected phone capability or acceptance with disposable CI HTTPS
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics') ||
+      (github.event_name == 'pull_request' &&
+      github.event.action == 'labeled' &&
+      contains(fromJSON('["ci-real-devices","ci-real-devices-chrome","ci-real-devices-safari","ci-real-devices-chrome-acceptance","ci-real-devices-chrome-tab","ci-real-devices-firefox-tab","ci-real-devices-safari-tab"]'), github.event.label.name) &&
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      # Every scope keeps the same replay guard, idle-account pre-flight and cleanup.
+      BS_CAPABILITY_SCOPE: ${{ github.event_name == 'schedule' && (github.event.schedule == '17 9 2 * *' && 'chrome-acceptance' || github.event.schedule == '17 9 3 * *' && 'firefox-tab-acceptance' || 'safari-acceptance') || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-diagnostic') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome')) && 'chrome-navigation-diagnostic' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari')) && 'safari-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-acceptance')) && 'chrome-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'chrome-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-chrome-tab')) && 'chrome-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'firefox-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-firefox-tab')) && 'firefox-tab-acceptance' || ((github.event_name == 'workflow_dispatch' && inputs.mode == 'safari-tab-acceptance') || (github.event_name == 'pull_request' && github.event.label.name == 'ci-real-devices-safari-tab')) && 'safari-tab-acceptance' || 'all' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Write the one-use run journal before build/setup
+        run: node scripts/ci/browserstack-capability.ts prepare
+      - name: Install the production fixture dependencies
+        run: npm ci
+      - name: Check application and fixture types before paid execution
+        run: npm run typecheck
+      - name: Build the production application
+        env:
+          # Native model reads are observation-only and absent from ordinary builds.
+          VITE_SYNC_EVIDENCE: ${{ contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE) && '1' || '0' }}
+        run: |
+          if [ "$VITE_SYNC_EVIDENCE" = 1 ]; then
+            node scripts/ci/browserstack-build-inspection.ts
+          else
+            npm run build
+          fi
+      - name: Retain inspected authored build before provider allocation
+        if: contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browserstack-authored-build-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/browserstack-build-*.json
+            dist/
+          if-no-files-found: error
+          retention-days: 14
       - name: Configure BrowserStack
         uses: browserstack/github-actions/setup-env@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
         with:
           username: ${{ secrets.BS_USERNAME }}
           access-key: ${{ secrets.BS_ACCESS_KEY }}
-      - name: Start Local tunnel
+      - name: Start private Local tunnel
         id: tunnel
         timeout-minutes: 3
         uses: browserstack/github-actions/setup-local@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
@@ -54,23 +179,29 @@ jobs:
           local-identifier: random
           local-logging-level: 'false'
           local-args: --force-local --timeout 5
-      - name: Real Android Chrome, Firefox and iPhone Safari smoke
-        timeout-minutes: 12
+      - name: Observe the selected bounded physical-phone scope
+        # Every authored scope adds the journey and unpaid fixture startup/teardown.
+        # Each selected device still has the same 780s operational bound + cleanup.
+        timeout-minutes: ${{ contains(fromJSON(env.BS_AUTHORED_SCOPES), env.BS_CAPABILITY_SCOPE) && 18 || 14 }}
         env:
           BS_USERNAME: ${{ secrets.BS_USERNAME }}
           BS_ACCESS_KEY: ${{ secrets.BS_ACCESS_KEY }}
-        run: node scripts/ci/browserstack.ts smoke
+        run: node scripts/ci/browserstack-capability.ts run
       - name: Stop Local tunnel
         if: always() && (steps.tunnel.outcome == 'success' || steps.tunnel.outcome == 'failure' || steps.tunnel.outcome == 'cancelled')
         timeout-minutes: 2
         uses: browserstack/github-actions/setup-local@1fad39ae4755588f7fc6854da6c3efba2bf5d08f
         with:
           local-testing: stop
-      - name: Retain redacted probe results
+      - name: Retain device observations and session IDs
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: browserstack-infrastructure-${{ github.run_id }}-${{ github.run_attempt }}
-          path: artifacts/browserstack-*.json
-          if-no-files-found: warn
+          name: browserstack-capability-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            artifacts/browserstack-capability.json
+            artifacts/browserstack-capability/
+            artifacts/browserstack-build-*.json
+            dist/
+          if-no-files-found: error
           retention-days: 14

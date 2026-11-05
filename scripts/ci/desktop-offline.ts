@@ -16,6 +16,7 @@ import { comparable, pending } from '../../e2e/offline-fixture.ts';
 import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
+import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
 const kind = process.argv[2] as DesktopBrowserKind;
 assert.ok(['chrome', 'firefox', 'safari'].includes(kind));
@@ -300,14 +301,6 @@ function imageSources(snapshot: NativeSnapshot, itemId: string, hashes: string[]
 
 async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
   const path = resolve(output, `${name}.png`);
-  const colors =
-    documentKind === 'sheet'
-      ? [
-          [255, 153, 0],
-          [34, 85, 238],
-          [34, 187, 102],
-        ]
-      : [[119, 0, 204]];
   let captures = 0;
   let counts: number[];
   try {
@@ -319,15 +312,9 @@ async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
           .removeAlpha()
           .raw()
           .toBuffer({ resolveWithObject: true });
-        const counts = colors.map(() => 0);
-        for (let offset = 0; offset < data.length; offset += info.channels)
-          colors.forEach((color, index) => {
-            if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
-              counts[index]++;
-          });
-        return counts;
+        return countOfflineImagePixels({ data, ...info }, documentKind);
       },
-      (counts) => counts.every((count) => count > 100),
+      (counts) => offlineImagesPainted(counts, documentKind),
       'Existing image pixels must actually paint after native canvas creation',
       15_000,
     );
@@ -427,7 +414,10 @@ async function main() {
           browser.evaluate<string>(
             'document.querySelector(\'[role="dialog"][aria-labelledby]\')?.textContent || Array.from(document.querySelectorAll(\'[role="dialog"]\')).map(node => node.textContent).join(" ")',
           ),
-        (value) => value.includes(`${item.name} is available offline on this device.`),
+        // The download no longer waits for the storage answer, so wait for both.
+        (value) =>
+          value.includes(`${item.name} is available offline on this device.`) &&
+          !value.includes('still deciding on storage protection'),
         'Complete image-backed download',
         120_000,
       );
@@ -705,6 +695,9 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
+    // The app is unloaded first: its service worker answers the favicon itself, so
+    // the deletion runs in a script-free document of the same origin.
+    await browser.goto(f.origin + '/favicon.svg');
     const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));

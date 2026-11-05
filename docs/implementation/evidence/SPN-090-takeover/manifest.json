@@ -1,0 +1,33 @@
+{
+  "source": "f108c41c121a7e953d93427c90dd3a0f3f516ae0",
+  "tested": "f108c41c121a7e953d93427c90dd3a0f3f516ae0",
+  "attempt": 1,
+  "acceptance": "incomplete",
+  "payloads": [
+    {
+      "path": "13389033045.zip",
+      "run": "41969762181",
+      "scope": "safari-acceptance",
+      "bytes": 414460,
+      "sha256": "f13934e28505b3f116a2601a00e31b27d473fd085f18cbe1b10205a36befe581",
+      "failure": "request-failed: initial POST /url exceeded its 15000 ms command bound"
+    },
+    {
+      "path": "13389640183.zip",
+      "run": "41969903466",
+      "scope": "chrome-acceptance",
+      "bytes": 26111,
+      "sha256": "823812bd443ddf4a2000981ce2d6e4c23cfc9d20582c2b9980486ec362d6f834",
+      "failure": "capability-browser-observation-failed after relaunch; cookie, marker, databases and caches absent"
+    },
+    {
+      "path": "13389596352.zip",
+      "run": "41970147127",
+      "scope": "firefox-tab-acceptance",
+      "bytes": 135391,
+      "sha256": "c83702dbc5a8183140b6820b624de29653475d448584009520495bc1ec8b89ae",
+      "failure": "capability-firefox-offline-blocked: selected scope incomplete"
+    }
+  ],
+  "retention": "Complete original artifact ZIPs, including diagnostic screenshots; historical observations only. GitHub size and digest verified before extraction."
+}

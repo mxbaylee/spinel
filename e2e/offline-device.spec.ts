@@ -327,6 +327,59 @@ test('a denied download offers offline storage guidance without leaving the edit
   }
 });
 
+test('an unanswered storage prompt never holds up the download, and its answer updates the result', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(180_000);
+  const f = await fixture(browser, baseURL!, info, 'sheet');
+  try {
+    // Firefox asks through its own prompt; until the person answers, persist() stays pending.
+    await f.context.addInitScript(() => {
+      let answer: (granted: boolean) => void = () => {};
+      const asked = new Promise<boolean>((resolve) => (answer = resolve));
+      Object.defineProperty(window, 'answerStoragePrompt', {
+        value: (granted: boolean) => answer(granted),
+      });
+      Object.defineProperty(navigator.storage, 'persist', {
+        configurable: true,
+        value: () => asked,
+      });
+    });
+    await f.page.goto(`/?item=${f.item.id}`);
+    await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
+    await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
+    await f.page
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    await downloaded(f.page, f.item.name);
+    const result = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
+    const deciding = result.getByText(/still deciding on storage protection/);
+    await expect(deciding).toBeVisible();
+    await expect(deciding).toHaveAttribute('aria-live', 'polite');
+    expect((await deviceCopy(f.page, f.actor.id, f.item.id))?.item?.bundle.itemId).toBe(f.item.id);
+    // The guide stays open, and focus returns to its button, when the answer arrives.
+    const trigger = result.getByRole('button', { name: 'How to keep them' });
+    await trigger.click();
+    const guide = f.page.getByRole('dialog', { name: 'About device storage', exact: true });
+    await expect(guide).toBeVisible();
+    await f.page.evaluate(() =>
+      (
+        window as unknown as { answerStoragePrompt: (granted: boolean) => void }
+      ).answerStoragePrompt(true),
+    );
+    await expect(result.getByText(/Your browser granted storage protection/)).toBeAttached();
+    await expect(result.getByText(/still deciding/)).toHaveCount(0);
+    await expect(guide).toBeVisible();
+    await f.page.keyboard.press('Escape');
+    await expect(trigger).toBeFocused();
+    await expect(result.getByText(/Your browser granted storage protection/)).toBeVisible();
+    expect(f.errors).toEqual([]);
+  } finally {
+    await f.close();
+  }
+});
+
 test('device storage reports actual image bytes, pending Space work, persistence and exact links', async ({
   browser,
   baseURL,

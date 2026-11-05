@@ -347,6 +347,19 @@ function bind(
         }),
       );
   };
+  // Native WebDriver contexts cannot install an initialization script before a
+  // Home Screen navigation. Evidence builds therefore also accept a scoped,
+  // read-only request for the same public snapshot already emitted above.
+  const readNativeEvidence = (event: Event) => {
+    if (
+      !evidence ||
+      !active() ||
+      (event as CustomEvent<{ unitId?: unknown }>).detail?.unitId !== unitId
+    )
+      return;
+    const snapshot = nativeSnapshot(univer, unitId);
+    observe(options.offline?.toCanonical(snapshot) ?? snapshot);
+  };
   const client = createNativeSyncClient({
     univer,
     unitId,
@@ -1177,6 +1190,7 @@ function bind(
     window.removeEventListener('offline', offline);
     window.removeEventListener('spinel-offline-changed', downloaded);
     window.removeEventListener('spinel-offline-prepared', prepared);
+    window.removeEventListener('spinel-sync-native-snapshot-read', readNativeEvidence);
     window.removeEventListener(maintenanceEvent, maintenanceNotice);
     document.removeEventListener('visibilitychange', foreground);
     signal.removeEventListener('abort', dispose);
@@ -1192,6 +1206,8 @@ function bind(
         );
       if (!started) {
         started = true;
+        if (evidence)
+          window.addEventListener('spinel-sync-native-snapshot-read', readNativeEvidence);
         window.addEventListener('online', online);
         window.addEventListener('offline', offline);
         window.addEventListener('spinel-offline-changed', downloaded);

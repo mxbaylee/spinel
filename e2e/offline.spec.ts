@@ -204,6 +204,82 @@ async function assertLiveOfflineCover(page: Page, menuAppearance = false) {
   }, original);
 }
 
+async function installationResources(page: Page) {
+  const observed = await page.evaluate(async () => {
+    const paths = [
+      '/manifest.webmanifest',
+      '/app-icon-180.png',
+      '/app-icon-192.png',
+      '/app-icon-512.png',
+    ];
+    return Promise.all(
+      paths.map(async (path) => {
+        // Force the real worker path, rather than accepting an incidental HTTP-cache hit.
+        const response = await fetch(path, {
+          cache: 'reload',
+          credentials: 'omit',
+          redirect: 'error',
+          signal: AbortSignal.timeout(5000),
+        });
+        if (!response.ok || response.redirected || response.url !== location.origin + path)
+          throw new Error(`Installation resource unavailable: ${path}`);
+        const bytes = await response.arrayBuffer();
+        if (!bytes.byteLength || bytes.byteLength > 100_000)
+          throw new Error(`Installation resource size is invalid: ${path}`);
+        const sha256 = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))]
+          .map((byte) => byte.toString(16).padStart(2, '0'))
+          .join('');
+        const mime = response.headers.get('Content-Type')?.split(';')[0].trim();
+        if (path === '/manifest.webmanifest')
+          return {
+            path,
+            mime,
+            sha256,
+            bytes: bytes.byteLength,
+            manifest: JSON.parse(new TextDecoder().decode(bytes)),
+          };
+        const image = new Image();
+        const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+        try {
+          image.src = url;
+          await image.decode();
+          return {
+            path,
+            mime,
+            sha256,
+            bytes: bytes.byteLength,
+            width: image.naturalWidth,
+            height: image.naturalHeight,
+          };
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      }),
+    );
+  });
+  expect(observed[0]).toMatchObject({
+    path: '/manifest.webmanifest',
+    mime: 'application/manifest+json',
+    manifest: { id: '/', name: 'Spinel', start_url: '/', scope: '/', display: 'standalone' },
+  });
+  expect(observed[0].manifest.icons).toEqual(
+    [192, 512].map((size) => ({
+      src: `/app-icon-${size}.png`,
+      sizes: `${size}x${size}`,
+      type: 'image/png',
+      purpose: 'any maskable',
+    })),
+  );
+  for (const [index, size] of [180, 192, 512].entries())
+    expect(observed[index + 1]).toMatchObject({
+      path: `/app-icon-${size}.png`,
+      mime: 'image/png',
+      width: size,
+      height: size,
+    });
+  return observed;
+}
+
 // Offline downloads need the production build's shell manifest (docs/offline.md).
 test('downloaded Sheets and Docs open offline with local images; nothing else does', async ({
   browser,
@@ -396,6 +472,7 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     expect(
       await page.evaluate(async () => (await indexedDB.databases()).map((entry) => entry.name)),
     ).toContain(`spinel-offline-${user.id}`);
+    const installation = await installationResources(page);
 
     // A failed background refresh keeps the last complete copy.
     const stored = () =>
@@ -484,6 +561,9 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
       exact: true,
     });
     await expect(connection).toBeVisible({ timeout: 30_000 });
+    // A prepared cold launch retains its public manifest and every installation
+    // PNG, including the iOS touch icon. This does not claim an OS installation.
+    expect(await installationResources(page)).toEqual(installation);
     await connection.hover();
     await expect(
       page.getByRole('dialog', { name: 'Connection details', exact: true }),

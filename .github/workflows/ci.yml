@@ -486,6 +486,7 @@ jobs:
         run: npm run build
       - name: Playwright smoke
         env:
+          VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
           # Server-only provider credential; never passed to the Vite build.
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY || vars.UNSPLASH_ACCESS_KEY }}
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
