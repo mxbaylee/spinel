@@ -1,0 +1,1055 @@
+{
+  "complete": true,
+  "source": "d4eeeb8b4871695a0efc9b2c09259cc801784894",
+  "tested": "1ac497cddf189165a95d2de5e5875e114fe452e3",
+  "run": 42072843841,
+  "attempt": 1,
+  "archives": [
+    {
+      "browser": "chrome",
+      "artifact": 13436103315,
+      "job": 127405086693,
+      "sha256": "34619625ade699a7b9de3aa0e71a726394e13f1c401fcf4b80b2470b71d069ee",
+      "bytes": 226718,
+      "members": [
+        {
+          "name": "chrome/acceptance.json",
+          "bytes": 49156,
+          "sha256": "c50a8ac0e7368f2f598204f26313d87feeca52e93556796766368ac10e8a91f2"
+        },
+        {
+          "name": "chrome/chrome-driver-2.log",
+          "bytes": 352,
+          "sha256": "0b584c0fa80c624287a5d5a6356def16eb7a324617c4a32b4442a1488ba35de4"
+        },
+        {
+          "name": "chrome/chrome-driver-1.log",
+          "bytes": 352,
+          "sha256": "8916b948a7f6ab61f8cdd92b14c17cda69a1962917f26569a6d7fd1a987a432b"
+        },
+        {
+          "name": "chrome/chrome-driver-3.log",
+          "bytes": 352,
+          "sha256": "fb7ec6754d109b5cd480b24c9612330a086f55c3c508103c9fec0690f6ad9b0a"
+        },
+        {
+          "name": "chrome/dfe741ee-7f06-4ae0-aadf-f040d8eed1d8-before-doc-input.png",
+          "bytes": 27804,
+          "sha256": "7691ce1f628ab1bd32722e3efeb4b9f0067014cdadcbd2da713cd8bb8af85a7a"
+        },
+        {
+          "name": "chrome/doc-conflict-offline.png",
+          "bytes": 29186,
+          "sha256": "9b37124e73a30a9c90a7322d19f0faade7853715623eca421b8578621f8379fe"
+        },
+        {
+          "name": "chrome/doc-normal-offline.png",
+          "bytes": 29642,
+          "sha256": "f3e5e71bdef0396021a63236f775e31a7210bfc136590382257bdc4f6731b746"
+        },
+        {
+          "name": "chrome/doc-recovered-copy.png",
+          "bytes": 32515,
+          "sha256": "84ad03238d03e108a68bcbd37bd5da2f9a2f5043078c01d28dbf83e90e3b7c2a"
+        },
+        {
+          "name": "chrome/f06c65fe-2b6c-475c-a6f8-cebfab54520e-before-doc-input.png",
+          "bytes": 27482,
+          "sha256": "eaa2718c77bd6175c39c982913b20d868f636653761628eb1ff856bb64c2b320"
+        },
+        {
+          "name": "chrome/sheet-conflict-offline.png",
+          "bytes": 29189,
+          "sha256": "3810754b2dceb54cb02a0c3d56a7ae2cab750985592a3ec42ab75773502bdba8"
+        },
+        {
+          "name": "chrome/sheet-normal-offline.png",
+          "bytes": 29263,
+          "sha256": "62e2e35e330e56bad4a92301fae8478d82f159f838c9eff53a9e6c713886b979"
+        },
+        {
+          "name": "chrome/sheet-recovered-copy.png",
+          "bytes": 32218,
+          "sha256": "dbea2db655b28a57ffaf8cc1d0dee5a35ec3953c6aa42480c7927618f4a2426b"
+        },
+        {
+          "name": "chrome/versions.json",
+          "bytes": 824,
+          "sha256": "d9e88ffaa046ef929b3893d5fe4b28cac9a90e9852d66505d100729a37a652e4"
+        }
+      ],
+      "stageCount": 37,
+      "stageNames": [
+        "browser-start",
+        "all-four-downloads-complete",
+        "transport-disabled-before-quit",
+        "exact-records-captured-before-quit",
+        "browser-stop",
+        "transport-disabled-before-relaunch",
+        "browser-start",
+        "offline-catalog-and-original-records-retained",
+        "native-doc-input-caret",
+        "native-doc-input-caret",
+        "native-offline-edits-committed",
+        "browser-stop",
+        "transport-still-disabled-before-pending-relaunch",
+        "browser-start",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "transport-restored",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "storage-deletion",
+        "cleared-storage-is-not-advertised",
+        "post-deletion-outage",
+        "missing-data-cannot-open-offline",
+        "complete",
+        "browser-stop"
+      ],
+      "version": "157.0.8103.39",
+      "runner": {
+        "label": "macos-26",
+        "arch": "arm64",
+        "imageOS": "macos26",
+        "imageVersion": "20261026.0455.2"
+      },
+      "launches": [
+        {
+          "kind": "chrome",
+          "version": "157.0.8103.39",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+          "profile": {
+            "mode": "explicit-directory",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+            "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+            "directoryDevice": "16777231",
+            "directoryInode": "3039510"
+          },
+          "browserPid": 2736,
+          "previousBrowserPid": null,
+          "driverPid": 2735,
+          "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+          "startedAt": "2026-11-05T17:17:47.469Z"
+        },
+        {
+          "kind": "chrome",
+          "version": "157.0.8103.39",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+          "profile": {
+            "mode": "explicit-directory",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+            "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+            "directoryDevice": "16777231",
+            "directoryInode": "3039510"
+          },
+          "browserPid": 3174,
+          "previousBrowserPid": 2736,
+          "driverPid": 3171,
+          "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+          "startedAt": "2026-11-05T17:18:08.797Z"
+        },
+        {
+          "kind": "chrome",
+          "version": "157.0.8103.39",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+          "profile": {
+            "mode": "explicit-directory",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+            "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+            "directoryDevice": "16777231",
+            "directoryInode": "3039510"
+          },
+          "browserPid": 3433,
+          "previousBrowserPid": 3174,
+          "driverPid": 3432,
+          "driverVersion": "ChromeDriver 157.0.8103.38 (a733b5afbb3ba618844ff8876b89ad1a774b2f18-refs/branch-heads/8103@{#1034})",
+          "startedAt": "2026-11-05T17:18:20.072Z"
+        }
+      ],
+      "persistence": [
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        },
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        },
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        },
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        }
+      ],
+      "deletion": {
+        "database": "spinel-offline-4917fe44-1d96-477c-8a96-5e4948273391",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-no-page-scripts",
+            "startedAt": "2026-11-05T17:18:48.130Z",
+            "status": "passed",
+            "value": "/favicon.svg"
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-05T17:18:48.130Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ]
+          },
+          {
+            "elapsedMs": 2174,
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-05T17:18:48.131Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 2,
+            "name": "caches.keys",
+            "startedAt": "2026-11-05T17:18:50.306Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-c1e289db89f9a7e1"
+            ]
+          },
+          {
+            "elapsedMs": 100,
+            "name": "caches.delete:spinel-shell-c1e289db89f9a7e1",
+            "startedAt": "2026-11-05T17:18:50.308Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 0,
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-05T17:18:50.407Z",
+            "status": "passed",
+            "value": 0
+          },
+          {
+            "elapsedMs": 8,
+            "name": "indexedDB.deleteDatabase:spinel-offline-4917fe44-1d96-477c-8a96-5e4948273391",
+            "startedAt": "2026-11-05T17:18:50.408Z",
+            "status": "passed",
+            "value": null
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-05T17:18:50.416Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-05T17:18:50.416Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-database-names",
+            "startedAt": "2026-11-05T17:18:50.416Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ]
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-05T17:18:50.417Z",
+            "status": "passed",
+            "value": {
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0,
+              "localStorageKeys": [],
+              "workers": []
+            }
+          }
+        ],
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "transport": {
+        "forwardedRequests": 601,
+        "blockedRequests": 116,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    },
+    {
+      "browser": "firefox",
+      "artifact": 13437353307,
+      "job": 127405087559,
+      "sha256": "ed3087a29191823bb6ccfd729ccbd8b5c3ca2e2257b0053d18435e2786fe5233",
+      "bytes": 495242,
+      "members": [
+        {
+          "name": "firefox/639f8e6e-c355-4538-8e4b-8d3321bf7830-before-doc-input.png",
+          "bytes": 38946,
+          "sha256": "ba78e895feeb22aab04469b7d62a7cd4fdc92f6135abe2c2c21c4a74b1ab5768"
+        },
+        {
+          "name": "firefox/acceptance.json",
+          "bytes": 50141,
+          "sha256": "83b724b65a49b299edb09d7aa3a75d14e3340899e3ab3e55f537e55a4b8b68ef"
+        },
+        {
+          "name": "firefox/c8d54829-df3c-4876-a6ba-948ef66c7512-before-doc-input.png",
+          "bytes": 38629,
+          "sha256": "d1b4b34cb45d975bb533e56cb0f10d48bd1c8789cf18e6bc33c4abdd83d19953"
+        },
+        {
+          "name": "firefox/doc-conflict-offline.png",
+          "bytes": 40167,
+          "sha256": "dd53c678d64def8f92324eca076821ca645eac40d6fefa6635cc71712a020dbf"
+        },
+        {
+          "name": "firefox/doc-normal-offline.png",
+          "bytes": 39491,
+          "sha256": "434fc3bf423017f6a1eabcbdd85c367ead127d0eaea727ca148393a6b8881796"
+        },
+        {
+          "name": "firefox/doc-recovered-copy.png",
+          "bytes": 43960,
+          "sha256": "e85688206b512ff2f34dad24c3a95363f3be6f9083b9e4134ee6bacb2b80af8a"
+        },
+        {
+          "name": "firefox/firefox-driver-1.log",
+          "bytes": 1957,
+          "sha256": "2606fe74b638c710dd215d9872ea65cc6f7f4c7945926a91145653f1240210cf"
+        },
+        {
+          "name": "firefox/firefox-driver-2.log",
+          "bytes": 1948,
+          "sha256": "f4c81d79cc8e079168cf7238753cfb8bada35a54f2db106453c5d946b0503d6a"
+        },
+        {
+          "name": "firefox/firefox-driver-3.log",
+          "bytes": 1760,
+          "sha256": "f3914eb5a79b07c009ba37cddd9e5c0e551cc00018552a024a44852315f4a983"
+        },
+        {
+          "name": "firefox/firefox-storage-prompt-1.json",
+          "bytes": 21974,
+          "sha256": "6fe8dbd5467bcbedf263174f8ba9ad9b08c4cec031368b7f263153c97961686c"
+        },
+        {
+          "name": "firefox/firefox-storage-prompt-1.png",
+          "bytes": 185612,
+          "sha256": "6468b3710c2cefd9680b35a8d6b37d8aa2868da5b8879f4c5318cf0d4a5ead04"
+        },
+        {
+          "name": "firefox/sheet-conflict-offline.png",
+          "bytes": 51811,
+          "sha256": "dcc7a1757ada5cd71c5a55d4fe56d6ce435ea8326f7581b1520476fe6017cba7"
+        },
+        {
+          "name": "firefox/sheet-normal-offline.png",
+          "bytes": 51435,
+          "sha256": "f48511c8c8322a6a3bfc79799a8750223e7eb619454ccad35884301af9c20cd6"
+        },
+        {
+          "name": "firefox/sheet-recovered-copy.png",
+          "bytes": 55028,
+          "sha256": "b38d7590a6e3e1b42d5f83bcea0e4ce61d351f23a15e0213df871c0fb6490a5b"
+        },
+        {
+          "name": "firefox/versions.json",
+          "bytes": 650,
+          "sha256": "8bf7de7c7c10ebab071d8a474d68498f909e57f3a2c47f4e92c30e367455230c"
+        }
+      ],
+      "stageCount": 37,
+      "stageNames": [
+        "browser-start",
+        "all-four-downloads-complete",
+        "transport-disabled-before-quit",
+        "exact-records-captured-before-quit",
+        "browser-stop",
+        "transport-disabled-before-relaunch",
+        "browser-start",
+        "offline-catalog-and-original-records-retained",
+        "native-doc-input-caret",
+        "native-doc-input-caret",
+        "native-offline-edits-committed",
+        "browser-stop",
+        "transport-still-disabled-before-pending-relaunch",
+        "browser-start",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "transport-restored",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "storage-deletion",
+        "cleared-storage-is-not-advertised",
+        "post-deletion-outage",
+        "missing-data-cannot-open-offline",
+        "complete",
+        "browser-stop"
+      ],
+      "version": "159.0.1",
+      "runner": {
+        "label": "macos-26",
+        "arch": "arm64",
+        "imageOS": "macos26",
+        "imageVersion": "20261026.0455.2"
+      },
+      "launches": [
+        {
+          "kind": "firefox",
+          "version": "159.0.1",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+          "profile": {
+            "mode": "explicit-directory",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+            "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+            "directoryDevice": "16777229",
+            "directoryInode": "3037181"
+          },
+          "browserPid": 2531,
+          "previousBrowserPid": null,
+          "driverPid": 2529,
+          "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+          "startedAt": "2026-11-05T17:22:41.839Z"
+        },
+        {
+          "kind": "firefox",
+          "version": "159.0.1",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+          "profile": {
+            "mode": "explicit-directory",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+            "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+            "directoryDevice": "16777229",
+            "directoryInode": "3037181"
+          },
+          "browserPid": 3202,
+          "previousBrowserPid": 2531,
+          "driverPid": 3197,
+          "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+          "startedAt": "2026-11-05T17:23:11.745Z"
+        },
+        {
+          "kind": "firefox",
+          "version": "159.0.1",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:159.0) Gecko/20100101 Firefox/159.0",
+          "profile": {
+            "mode": "explicit-directory",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+            "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+            "directoryDevice": "16777229",
+            "directoryInode": "3037181"
+          },
+          "browserPid": 3839,
+          "previousBrowserPid": 3202,
+          "driverPid": 3837,
+          "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+          "startedAt": "2026-11-05T17:23:40.112Z"
+        }
+      ],
+      "persistence": [
+        {
+          "before": false,
+          "after": true,
+          "permission": "allow"
+        },
+        {
+          "before": true,
+          "after": true,
+          "permission": null
+        },
+        {
+          "before": true,
+          "after": true,
+          "permission": null
+        },
+        {
+          "before": true,
+          "after": true,
+          "permission": null
+        }
+      ],
+      "deletion": {
+        "database": "spinel-offline-be7f3367-043c-412e-95d9-1a33dcc59226",
+        "operations": [
+          {
+            "elapsedMs": 1,
+            "name": "verify-no-page-scripts",
+            "startedAt": "2026-11-05T17:24:22.568Z",
+            "status": "passed",
+            "value": "/favicon.svg"
+          },
+          {
+            "elapsedMs": 4,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-05T17:24:22.568Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ]
+          },
+          {
+            "elapsedMs": 17,
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-05T17:24:22.572Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 4,
+            "name": "caches.keys",
+            "startedAt": "2026-11-05T17:24:22.590Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-c1e289db89f9a7e1"
+            ]
+          },
+          {
+            "elapsedMs": 2,
+            "name": "caches.delete:spinel-shell-c1e289db89f9a7e1",
+            "startedAt": "2026-11-05T17:24:22.593Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 0,
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-05T17:24:22.594Z",
+            "status": "passed",
+            "value": 0
+          },
+          {
+            "elapsedMs": 2,
+            "name": "indexedDB.deleteDatabase:spinel-offline-be7f3367-043c-412e-95d9-1a33dcc59226",
+            "startedAt": "2026-11-05T17:24:22.594Z",
+            "status": "passed",
+            "value": null
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-05T17:24:22.596Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-05T17:24:22.597Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 4,
+            "name": "verify-database-names",
+            "startedAt": "2026-11-05T17:24:22.597Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ]
+          },
+          {
+            "elapsedMs": 1,
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-05T17:24:22.601Z",
+            "status": "passed",
+            "value": {
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0,
+              "localStorageKeys": [],
+              "workers": []
+            }
+          }
+        ],
+        "status": "passed",
+        "timeoutMs": 28000
+      },
+      "transport": {
+        "forwardedRequests": 621,
+        "blockedRequests": 1393,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    },
+    {
+      "browser": "safari",
+      "artifact": 13435814891,
+      "job": 127405087338,
+      "sha256": "0c5ab2bb7dc84ea6f7455b3b07440fe02f4e29eb9cd2969def82c9183d2e9926",
+      "bytes": 1014962,
+      "members": [
+        {
+          "name": "safari/237238bd-8943-47b9-8d37-da142c7c79cb-before-doc-input.png",
+          "bytes": 81748,
+          "sha256": "231f4709bce1640cd034d3862e118fc45acbbb2dcb7074c2462d7feafb281eef"
+        },
+        {
+          "name": "safari/81cf2fe0-3bbc-43d2-b67b-058aaecee9bf-before-doc-input.png",
+          "bytes": 82080,
+          "sha256": "ccfdba05018b3785a30b00609303edc1e5bdae2ec78efa112e9ac88117135ce4"
+        },
+        {
+          "name": "safari/acceptance.json",
+          "bytes": 47387,
+          "sha256": "58fc4a236b44f36d347ceda4de18ec7a5a937850a7fd7447f2393bc6698d80d5"
+        },
+        {
+          "name": "safari/doc-conflict-offline.png",
+          "bytes": 82762,
+          "sha256": "5aec1b4940884561d1fdcdeec72db2062f460e187c1928f0afc36bf3e1baaaa0"
+        },
+        {
+          "name": "safari/doc-normal-offline.png",
+          "bytes": 82577,
+          "sha256": "0cc058533c48bf9123309653f4efa7200da9d53cb966dfa140675cb4507363bf"
+        },
+        {
+          "name": "safari/doc-online-before-download.png",
+          "bytes": 81686,
+          "sha256": "a0c778745608f5937364d1e4319cb8786983330ee6b68265f145bd46934ee46b"
+        },
+        {
+          "name": "safari/doc-recovered-copy.png",
+          "bytes": 86299,
+          "sha256": "0b9d21edcfb831814d8bffa7911a99e11990118e0a62a7c6201a741c49bb47a8"
+        },
+        {
+          "name": "safari/safari-pointer.jsonl",
+          "bytes": 21403,
+          "sha256": "0d8ab0f05f49e30314079b37ed0e7e38533121eb0f4c9da7d6befb2d62dee2a6"
+        },
+        {
+          "name": "safari/safari-render-state.jsonl",
+          "bytes": 38346,
+          "sha256": "552db676d77f85e495917b72e283f32a9f9fde8f7605c9187738440054b75116"
+        },
+        {
+          "name": "safari/sheet-conflict-offline.png",
+          "bytes": 92915,
+          "sha256": "a4e7dc32692723e0bb661c98344539cd67b50980b9e340338fedacba7214bb26"
+        },
+        {
+          "name": "safari/sheet-normal-offline.png",
+          "bytes": 92023,
+          "sha256": "1023df3a781d388c6e6b840c951f46b1f52a524c08ff8652c2252c711fceb6ae"
+        },
+        {
+          "name": "safari/sheet-online-before-download.png",
+          "bytes": 92084,
+          "sha256": "a70eb1ad01c9cb9bbc1504baeec60293bdb9cbd27b6562e76400468cbeb386ca"
+        },
+        {
+          "name": "safari/sheet-recovered-copy.png",
+          "bytes": 97257,
+          "sha256": "fb41b7f95b0c993cbc1f5ff75d5335bffcbbb00c93b4cdc86960cf3dfa6fbeed"
+        },
+        {
+          "name": "safari/versions.json",
+          "bytes": 1136,
+          "sha256": "21dabb0eb6aebaa1e70c2948e7fc28b5e07994f5eddc897bbaf33ea7e4986219"
+        },
+        {
+          "name": "safari-automation-prompt-1.png",
+          "bytes": 268277,
+          "sha256": "42db1312530c2c8e15e5c798210fcfdabafddf540379e83726091efba6835c8a"
+        },
+        {
+          "name": "safari-profile-probe-offline.png",
+          "bytes": 65136,
+          "sha256": "5cee5c32366f2672ef47970299b2fd897ba93ff12190ea8bf2133034f84dccd4"
+        },
+        {
+          "name": "safari-profile-probe-online.png",
+          "bytes": 66037,
+          "sha256": "139d65f7328bd2dbb49f39ecdedd6a0d2ad71be474f4544801c452d55e58dfdb"
+        },
+        {
+          "name": "safari-profile-probe.json",
+          "bytes": 57468,
+          "sha256": "c7eecfe10459efa56ceddc3f356dbe5b7fbfdc690b33c83ce34672e7081af678"
+        }
+      ],
+      "stageCount": 39,
+      "stageNames": [
+        "browser-start",
+        "safari-online-rendering-baseline",
+        "safari-online-rendering-baseline",
+        "all-four-downloads-complete",
+        "transport-disabled-before-quit",
+        "exact-records-captured-before-quit",
+        "browser-stop",
+        "transport-disabled-before-relaunch",
+        "browser-start",
+        "offline-catalog-and-original-records-retained",
+        "native-doc-input-caret",
+        "native-doc-input-caret",
+        "native-offline-edits-committed",
+        "browser-stop",
+        "transport-still-disabled-before-pending-relaunch",
+        "browser-start",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "transport-restored",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "storage-deletion",
+        "cleared-storage-is-not-advertised",
+        "post-deletion-outage",
+        "missing-data-cannot-open-offline",
+        "complete",
+        "browser-stop"
+      ],
+      "version": "27.2",
+      "runner": {
+        "label": "macos-15-intel",
+        "arch": "x64",
+        "imageOS": "macos15",
+        "imageVersion": "20260824.0482.1"
+      },
+      "launches": [
+        {
+          "kind": "safari",
+          "version": "27.2",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+          "profile": {
+            "mode": "ordinary-hosted-safari-user",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+            "actualPath": "/Users/runner",
+            "directoryDevice": "16777220",
+            "directoryInode": "12884922560"
+          },
+          "browserPid": 3845,
+          "previousBrowserPid": null,
+          "driverPid": null,
+          "driverVersion": null,
+          "startedAt": "2026-11-05T17:18:57.480Z"
+        },
+        {
+          "kind": "safari",
+          "version": "27.2",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+          "profile": {
+            "mode": "ordinary-hosted-safari-user",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+            "actualPath": "/Users/runner",
+            "directoryDevice": "16777220",
+            "directoryInode": "12884922560"
+          },
+          "browserPid": 6295,
+          "previousBrowserPid": 3845,
+          "driverPid": null,
+          "driverVersion": null,
+          "startedAt": "2026-11-05T17:20:41.969Z"
+        },
+        {
+          "kind": "safari",
+          "version": "27.2",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+          "profile": {
+            "mode": "ordinary-hosted-safari-user",
+            "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+            "actualPath": "/Users/runner",
+            "directoryDevice": "16777220",
+            "directoryInode": "12884922560"
+          },
+          "browserPid": 7780,
+          "previousBrowserPid": 6295,
+          "driverPid": null,
+          "driverVersion": null,
+          "startedAt": "2026-11-05T17:21:48.654Z"
+        }
+      ],
+      "persistence": [
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        },
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        },
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        },
+        {
+          "before": false,
+          "after": false,
+          "permission": null
+        }
+      ],
+      "deletion": {
+        "status": "passed",
+        "database": "spinel-offline-ca192e02-d0c8-4c70-ba33-48b1f3ae40fa",
+        "timeoutMs": 28000,
+        "operations": [
+          {
+            "name": "verify-no-page-scripts",
+            "startedAt": "2026-11-05T17:24:16.645Z",
+            "status": "passed",
+            "value": "/favicon.svg",
+            "elapsedMs": 2
+          },
+          {
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-05T17:24:16.647Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ],
+            "elapsedMs": 1
+          },
+          {
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-05T17:24:16.648Z",
+            "status": "passed",
+            "value": true,
+            "elapsedMs": 2
+          },
+          {
+            "name": "caches.keys",
+            "startedAt": "2026-11-05T17:24:16.649Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-c1e289db89f9a7e1"
+            ],
+            "elapsedMs": 1
+          },
+          {
+            "name": "caches.delete:spinel-shell-c1e289db89f9a7e1",
+            "startedAt": "2026-11-05T17:24:16.650Z",
+            "status": "passed",
+            "value": true,
+            "elapsedMs": 2
+          },
+          {
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-05T17:24:16.653Z",
+            "status": "passed",
+            "value": 0,
+            "elapsedMs": 0
+          },
+          {
+            "name": "indexedDB.deleteDatabase:spinel-offline-ca192e02-d0c8-4c70-ba33-48b1f3ae40fa",
+            "startedAt": "2026-11-05T17:24:16.653Z",
+            "status": "passed",
+            "elapsedMs": 7
+          },
+          {
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-05T17:24:16.660Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 1
+          },
+          {
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-05T17:24:16.660Z",
+            "status": "passed",
+            "value": [],
+            "elapsedMs": 1
+          },
+          {
+            "name": "verify-database-names",
+            "startedAt": "2026-11-05T17:24:16.661Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ],
+            "elapsedMs": 7
+          },
+          {
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-05T17:24:16.669Z",
+            "status": "passed",
+            "value": {
+              "workers": [],
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0,
+              "localStorageKeys": []
+            },
+            "elapsedMs": 1
+          }
+        ]
+      },
+      "transport": {
+        "forwardedRequests": 809,
+        "blockedRequests": 648,
+        "forwardedUpgrades": 18,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      },
+      "capability": {
+        "status": "passed",
+        "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+        "beforePid": "2157",
+        "afterPid": "2498",
+        "retained": {
+          "localStorage": "b598c637-4e41-4499-b34c-f10dd178a483",
+          "indexedDB": "b598c637-4e41-4499-b34c-f10dd178a483",
+          "cache": "b598c637-4e41-4499-b34c-f10dd178a483",
+          "worker": true
+        },
+        "prepared": {
+          "prepared": true,
+          "persisted": false,
+          "persistenceRequested": false
+        }
+      }
+    }
+  ],
+  "inputs": {
+    "native-run.json": "36395a5207ad8f01eb2ac6e7acf64fd1fe33087ee33defde3b8ac2f86a149e52",
+    "native-jobs.json": "c678d1234682440ea9ee191ad69debe8e0acf213353652970fa0586ee789bdac",
+    "native-artifacts.json": "f82ef3e84ed01fac3f2208b5b8ad11b0c202add984862cc32e82245e35f2098e",
+    "story-run.json": "6ddddbf82a99a9b3a8c9009a5669fb106dac1cf04337125409a8fa02ab19c146",
+    "story-jobs.json": "2a549f0d595f539b83bd1d97b90815e25221cb1381d7f5e217026ff49157c852",
+    "story-artifacts-final.json": "80b558e61d6c7bdcda84a56f0d0af655f4f5d359948ad04074a0a8bcc8cd0278"
+  },
+  "sourceFiles": {
+    "scripts/ci/desktop-offline.ts": "0d64c34bfc9545d5b3ae97de3282044848fd422d6c57ad163b62d818253b8a2e",
+    "scripts/ci/desktop-storage.ts": "0e34023042d416d1fe142ad1d325f2aa9fde5cb997c6f2492e9895300399264b",
+    "scripts/ci/desktop-browser.ts": "25b31d60ee13ce2692cab505304d25b5f77a55ba6007f5938b060a4301ef3847",
+    ".github/workflows/desktop-offline.yml": "d895d3d3a992401b12258eee21393d17fc75439bab1db99197e9cd44854ea287"
+  },
+  "sourceTree": "ee14758d57461c4a79176d6417ed9ce2f00c6058",
+  "testedTree": "ee14758d57461c4a79176d6417ed9ce2f00c6058",
+  "testedParents": [
+    "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+    "d4eeeb8b4871695a0efc9b2c09259cc801784894"
+  ],
+  "story": {
+    "id": 42072843530,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "id": 127405086302,
+        "name": "Classify changes",
+        "conclusion": "success"
+      },
+      {
+        "id": 127405612938,
+        "name": "Build Storybook",
+        "conclusion": "success"
+      },
+      {
+        "id": 127406119677,
+        "name": "Review Storybook mobile (light)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127406119796,
+        "name": "Review Storybook tablet",
+        "conclusion": "success"
+      },
+      {
+        "id": 127406119843,
+        "name": "Review Storybook mobile (dark)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127406119860,
+        "name": "Review Storybook desktop (light)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127406120001,
+        "name": "Review Storybook desktop (dark)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127406122768,
+        "name": "Publish PR preview to GitHub Pages",
+        "conclusion": "skipped"
+      },
+      {
+        "id": 127415522439,
+        "name": "Review Storybook states and interactions",
+        "conclusion": "success"
+      },
+      {
+        "id": 127415677221,
+        "name": "Deploy to GitHub Pages",
+        "conclusion": "skipped"
+      }
+    ]
+  }
+}

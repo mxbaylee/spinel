@@ -1,0 +1,5 @@
+# ✅ SPN-090 ordinary acceptance and prospective Safari plan
+
+Exact d4eeeb8b source and same-tree tested1ac497cd. CI42072843465 all33jobs/all7gates passed; native42072843841 Chrome/Firefox/Safari37/37/39stages passed; Story42072843530 passed8jobs/2inapplicablePages skips. Independent current visual review agent review only archived separately atd4eb6a943536337ec1b5d170a0316e25e74ac812. Raw mobile/desktop, native ZIPs, plan/aggregate CI receipts, current source/selection audit and logs retained here. Other successful bulky callback/theme artifacts remain supplementary expiring Actions artifacts rather than represented as all archived.
+
+Mobile three unprofiled capacity p95/max29.3/47.7,31.5/54.9,34.9/86.9ms; idle1.6/3.4/3.4ms; full66history plain1 passed. These current SPN090 results do not resolve SPN146 historical cause. Independent final prerequisites audit and prospective Safari plan included. Exactly one changed-build Safari installed authored attempt may follow fresh ref/base/idle checks. No Chrome/Firefox allowance, old-failure waiver or phone acceptance claim.

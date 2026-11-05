@@ -1,0 +1,128 @@
+{
+  "members": 18,
+  "metrics": 8,
+  "testCount": 11,
+  "budgets": [
+    {
+      "sample": "plain-1",
+      "capacity": {
+        "count": 65,
+        "p50": 12.300000000046566,
+        "p95": 29.300000000046566,
+        "max": 47.699999999953434,
+        "sum": 1018.6999999999534
+      },
+      "idle": {
+        "count": 1,
+        "p50": 1.5999999998603016,
+        "p95": 1.5999999998603016,
+        "max": 1.5999999998603016,
+        "sum": 1.5999999998603016
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 68,
+        "p95": 107,
+        "max": 209.80000000004657,
+        "sum": 140346.89999999595
+      },
+      "tasks": {
+        "count": 1245,
+        "p50": 76,
+        "p95": 111,
+        "max": 189,
+        "sum": 98338
+      },
+      "drain": 517,
+      "groups": 66
+    },
+    {
+      "sample": "plain-2",
+      "capacity": {
+        "count": 65,
+        "p50": 12.099999999860302,
+        "p95": 31.5,
+        "max": 54.89999999990687,
+        "sum": 1020.2000000001863
+      },
+      "idle": {
+        "count": 1,
+        "p50": 3.3999999999068677,
+        "p95": 3.3999999999068677,
+        "max": 3.3999999999068677,
+        "sum": 3.3999999999068677
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 67.5,
+        "p95": 107.5,
+        "max": 206,
+        "sum": 139258.79999999586
+      },
+      "tasks": {
+        "count": 1220,
+        "p50": 75,
+        "p95": 110,
+        "max": 233,
+        "sum": 94353
+      },
+      "drain": 556.1999999999534,
+      "groups": 1
+    },
+    {
+      "sample": "plain-3",
+      "capacity": {
+        "count": 65,
+        "p50": 11.800000000046566,
+        "p95": 34.89999999990687,
+        "max": 86.89999999990687,
+        "sum": 1114.1000000005588
+      },
+      "idle": {
+        "count": 1,
+        "p50": 3.3999999999068677,
+        "p95": 3.3999999999068677,
+        "max": 3.3999999999068677,
+        "sum": 3.3999999999068677
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 67.0999999998603,
+        "p95": 99.9000000001397,
+        "max": 204.80000000004657,
+        "sum": 135545.29999999749
+      },
+      "tasks": {
+        "count": 1281,
+        "p50": 70,
+        "p95": 104,
+        "max": 183,
+        "sum": 94912
+      },
+      "drain": 425.10000000009313,
+      "groups": 1
+    }
+  ],
+  "clocks": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "uncertaintyMs": 1804.3000000000466
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "uncertaintyMs": 3141.1999999999534
+    }
+  ],
+  "postSummary": {
+    "finalOriginalKeyAt": 154249.40000000037,
+    "continuationKeyAt": 154745.90000000037,
+    "continuationFrameAt": 154872.1000000001,
+    "browserQuietGapMs": 496.5,
+    "continuationKeyToFrameMs": 126.1999999997206,
+    "continuationKeyToNativeReadMs": 127.59999999962747,
+    "continuationRequestReturnMs": 188.33913700003177,
+    "finalOriginalKeyToContinuationFrameMs": 622.6999999997206,
+    "finalOriginalKeyToContinuationNativeReadMs": 624.0999999996275
+  }
+}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":1630,"peakKiB":235888}

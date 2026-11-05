@@ -1,0 +1,55 @@
+{
+  "source": "d4eeeb8b4871695a0efc9b2c09259cc801784894",
+  "tested": "1ac497cddf189165a95d2de5e5875e114fe452e3",
+  "tree": "ee14758d57461c4a79176d6417ed9ce2f00c6058",
+  "ci": 42072843465,
+  "jobs": 33,
+  "allJobsSuccess": true,
+  "gates": [
+    {
+      "name": "Pull request",
+      "id": 127405086148
+    },
+    {
+      "name": "Backlog",
+      "id": 127405675822
+    },
+    {
+      "name": "Typecheck",
+      "id": 127405675882
+    },
+    {
+      "name": "Lint",
+      "id": 127405675969
+    },
+    {
+      "name": "Lib tests",
+      "id": 127412546189
+    },
+    {
+      "name": "Unit tests",
+      "id": 127412909830
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 127427919333
+    }
+  ],
+  "files": {
+    "ci-run.json": "10eee6ce8c6368b288045719fe6143927a5c0a2bb7c7a4b6110e988e4dd63c63",
+    "ci-jobs.json": "a53c6291aad72d7fbe68bd4c10637db5ea12d7c6a5d223f3e011337cff7eae57",
+    "ci-artifacts.json": "38133b329c7e774643c468ce891aacd637da329acee61f1e3383e00eba093923",
+    "mobile.log": "9e28e554b0c75ccd08092251edc9c54a924436e4cc8b04f01a65914b69ae25cc",
+    "mobile-https.log": "a032648c9ea436d18bfa671b3c9cb2ceb2c7bd32b37ab1c4e3daec8e3556a741",
+    "sync-production.log": "aaf1c2e3d1ae054a69bc40fbef84eda5e207c4a638cb8bf1d06ab675b81c0740",
+    "tested-tree.txt": "b6e44aec195322fca3d4350ea2a5cd5a2cda2b9756894e119b5ceaaa3b9a237c",
+    "native-outcome-review-a.md": "92c620cf3bec635f4f05b79d5c2412f675494e75db5537760f1e2618fdee1d61",
+    "visual-review-a.md": "6d16fe92a967f7fda8641b4bde7a62b2bff939af4283e0e56e479d9e64b9ef1c",
+    "native-proof-a.json": "395af23e73b45f784e1e001f3858d7983aaa797b29fa39aa9e3ba3a46c640580",
+    "story-run.json": "6ddddbf82a99a9b3a8c9009a5669fb106dac1cf04337125409a8fa02ab19c146",
+    "story-jobs.json": "2a549f0d595f539b83bd1d97b90815e25221cb1381d7f5e217026ff49157c852",
+    "safari-plan.md": "4f29fe83e69d3e4da2d9cd0a66444192cdf2c53d6efff23fdb9f563117e1f407",
+    "responsiveness-mobile-proof-b.json": "daaa9ca96dc6d5d9eb6a3390e5497ad2f05d4c3c8e32952efaa389e371fa6766",
+    "ci-audit-watchdog-b.json": "8895c2b5bb8a32c25dc1893bb9f39f298818230d298155f2a0ab10b7588a0609"
+  }
+}
