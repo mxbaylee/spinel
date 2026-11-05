@@ -24,7 +24,7 @@ export const DOC_CALLBACK_TRACE_SETTINGS = {
     ],
   },
   transferMode: 'ReturnAsStream' as const,
-  streamFormat: 'json' as const,
+  streamFormat: 'proto' as const,
   streamCompression: 'none' as const,
   bufferUsageReportingInterval: 1000,
 };
@@ -315,11 +315,11 @@ export async function retainDocCallbackTrace(
     signal.throwIfAborted();
     if (!event.stream) throw new Error('Tracing completed without its raw stream.');
     if (
-      event.traceFormat !== 'json' ||
+      event.traceFormat !== 'proto' ||
       event.streamCompression !== 'none' ||
       event.dataLossOccurred !== false
     )
-      throw new Error('Tracing did not confirm complete uncompressed JSON transport.');
+      throw new Error('Tracing did not confirm complete uncompressed protobuf transport.');
     progress.phase('trace-stream-open');
     outputHandle = await open(path, 'wx');
     ownsOutput = true;
@@ -334,6 +334,8 @@ export async function retainDocCallbackTrace(
         const value = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
         rawHash.update(value);
         rawBytes += value.length;
+        if (rawBytes > 2 * 1024 ** 3)
+          throw new Error('Captured protobuf exceeds the 2 GiB transport bound.');
         yield value;
         // Logarithmic milestones keep the early phases in the 128-entry journal.
         // Final exact bytes are always retained by stream-close and the manifest.
