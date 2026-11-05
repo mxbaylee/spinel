@@ -7,6 +7,7 @@ type Event = {
   dur?: number;
   pid?: number;
   tid?: number;
+  args?: unknown;
   [key: string]: unknown;
 };
 const finite = (n: unknown): n is number => typeof n === 'number' && Number.isFinite(n);
@@ -108,14 +109,20 @@ export function analyzeRuntime(observation: any, events: Event[]) {
     .map((event, index) => ({ ...event, index }))
     .filter((e) => e.pid === renderer!.pid && e.tid === renderer!.tid);
   const gcName = (e: Event) =>
+    e.cat?.split(',').includes('disabled-by-default-v8.gc') ||
     /(?:^|[._])GC(?:[._]|$)|(?:Major|Minor)GC|GarbageCollection/i.test(e.name ?? '');
-  // Perfetto JSON normally materializes synchronous intervals as X. Unknown GC
-  // representations cannot silently support an absence-of-pause claim.
+  // Chromium's instant, flow and nestable-async records are context, not measured
+  // pause intervals. Keep every record; never infer duration from link distances.
+  // Phase authority and the original rejection are recorded in SPN-146.md.
   const gc = thread.filter(gcName);
   assert.ok(
-    gc.every((e) => ['X', 'B', 'E'].includes(e.ph ?? '')),
+    gc.every((e) => ['X', 'B', 'E', 'I', 's', 't', 'f', 'b', 'e', 'n'].includes(e.ph ?? '')),
     'Unsupported GC representation',
   );
+  const gcDurationUnknown = gc.filter((e) => !['X', 'B', 'E'].includes(e.ph!));
+  for (const e of gcDurationUnknown) {
+    assert.ok(finite(e.ts) && e.dur === undefined, 'Malformed GC context record');
+  }
   const spans: any[] = [],
     stack: any[] = [];
   for (const e of thread) {
@@ -124,6 +131,7 @@ export function analyzeRuntime(observation: any, events: Event[]) {
       const first = stack.pop();
       assert.ok(first && finite(first.ts) && finite(e.ts));
       assert.ok(e.ts >= first.ts);
+      if (e.name) assert.equal(e.name, first.name, 'Mismatched synchronous interval end');
       if (gcName(first)) spans.push({ ...first, dur: e.ts - first.ts, endIndex: e.index });
     }
     if (e.ph === 'X' && gcName(e)) {
@@ -161,6 +169,9 @@ export function analyzeRuntime(observation: any, events: Event[]) {
       traceWindowMs: { earliest: began, latest: ended },
       containing,
       gcOverlaps: spans.filter((e) => overlaps(e, began, ended)),
+      gcContextPoints: gcDurationUnknown.filter(
+        (e) => e.ts! / 1000 >= began && e.ts! / 1000 <= ended,
+      ),
     };
   });
   const comparisons = [];
@@ -194,9 +205,10 @@ export function analyzeRuntime(observation: any, events: Event[]) {
     intervals: rows,
     gcControl: control,
     gcEvents: gc,
+    gcDurationUnknown,
     gcIntervals: spans,
     limits:
-      'Linux component only; common instrumentation, controlled sinks/timers and shared ES Core. No pause subtraction, cross-environment pooling or historical-maximum explanation.',
+      'Linux component only; common instrumentation, controlled sinks/timers and shared ES Core. GC-associated duration spans may nest and are not a total pause accounting. Instant/flow/async records retain unknown duration, including endpoints outside a measured window; no absence-of-GC claim. No pause subtraction, cross-environment pooling or historical-maximum explanation.',
   };
 }
 

@@ -288,7 +288,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
 \treturn true;
 }
 `;
-  const helper = constantGuardHelper
+  const paragraphTailHelper = constantGuardHelper
     .replace(
       '// Never balance later islands or reassociate an unsupported native action.',
       '// Only the separately qualified single-Enter append tail below may join\n// its non-null head once. All other unsupported tails retain their native fold.',
@@ -306,6 +306,20 @@ function canComposeDocParagraphTail(states, key, prefix) {
 \t\treturn ${json}.compose(head, tail);
 \t}`,
     );
+  // The full predicate already qualified these exact ranges. Re-entering the
+  // generic composer repeats delete/prefix scans without changing its tree.
+  // Keep the original null fold for a tiny head and every fallback unchanged.
+  const helper = paragraphTailHelper.replace(
+    `\t\tconst head = composeDocStateActions(states.slice(0, prefix + 1), key);
+\t\tconst tail = composeDocStateActions(states.slice(prefix + 1), key);
+\t\treturn ${json}.compose(head, tail);`,
+    `\t\tlet head;
+\t\tif (prefix < 4) {
+\t\t\thead = null;
+\t\t\tfor (let index = 0; index <= prefix; index++) head = ${json}.compose(head, states[index][key].actions);
+\t\t} else head = ${json}.compose(composeRange(0, prefix), states[prefix][key].actions);
+\t\treturn ${json}.compose(head, composeRange(prefix + 1, states.length));`,
+  );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
     {
@@ -327,6 +341,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
     (text, { before, after }) => text.replaceAll(after, before),
     docFlushObservationReplacements
       .reduce((text, { before, after }) => text.replaceAll(after, before), source)
+      .replaceAll(paragraphTailHelper, anchor)
       .replaceAll(constantGuardHelper, anchor)
       .replaceAll(deletePrefixHelper, anchor)
       .replaceAll(completeDeleteHelper, anchor)
@@ -352,12 +367,14 @@ function canComposeDocParagraphTail(states, key, prefix) {
   const completeDeletePatched = patched.replace(helper, completeDeleteHelper);
   const deletePrefixPatched = patched.replace(helper, deletePrefixHelper);
   const constantGuardPatched = patched.replace(helper, constantGuardHelper);
+  const paragraphTailPatched = patched.replace(helper, paragraphTailHelper);
   if (
     source !== original &&
     source !== patched &&
     source !== completeDeletePatched &&
     source !== deletePrefixPatched &&
     source !== constantGuardPatched &&
+    source !== paragraphTailPatched &&
     source !== previousPatched &&
     source !== markerPatched &&
     source !== prefixPatched
@@ -374,6 +391,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
     completeDeletePatched,
     deletePrefixPatched,
     constantGuardPatched,
+    paragraphTailPatched,
   };
 }
 

@@ -177,6 +177,7 @@ test('process ownership retains reparented identity and excludes PID reuse and u
 
 test('duration-unknown GC cannot support positive temporal evidence', () => {
   const f = fixture();
+  f.events.pop(); // Context alone must never replace the duration-bearing control.
   f.events.push({
     name: 'MinorGC',
     cat: 'devtools.timeline',
@@ -185,7 +186,34 @@ test('duration-unknown GC cannot support positive temporal evidence', () => {
     tid: 8,
     ts: 10102000,
   });
-  assert.throws(() => analyzeRuntime(f.observation, f.events), /Unsupported GC/);
+  assert.throws(() => analyzeRuntime(f.observation, f.events), /No visible/);
+});
+test('instant, flow and async GC context stays separate without changing any measured time', () => {
+  const f = fixture();
+  const original = analyzeRuntime(f.observation, f.events);
+  for (const ph of ['I', 's', 't', 'f', 'b', 'e', 'n'])
+    f.events.push({
+      name: ph === 'I' ? 'V8.GC_Heap_Stats' : 'ObservablePause',
+      cat: 'disabled-by-default-v8.gc',
+      ph,
+      pid: 7,
+      tid: 8,
+      ts: 10102000,
+      args: { context: 'retained' },
+      id: 1,
+    });
+  const result = analyzeRuntime(f.observation, f.events);
+  assert.deepEqual(result.comparisons, original.comparisons);
+  assert.deepEqual(result.gcIntervals, original.gcIntervals);
+  assert.equal(result.gcDurationUnknown.length, 7);
+  assert.equal(result.intervals[0].gcContextPoints.length, 7);
+  assert.equal(result.intervals[0].gcOverlaps.length, 0);
+  assert.deepEqual(result.gcDurationUnknown[0].args, { context: 'retained' });
+  f.events.at(-1).dur = 1000;
+  assert.throws(() => analyzeRuntime(f.observation, f.events), /Malformed GC context/);
+  delete f.events.at(-1).dur;
+  f.events.at(-1).ts = NaN;
+  assert.throws(() => analyzeRuntime(f.observation, f.events), /Malformed GC context/);
 });
 test('GC overlapping control from before its start does not prove forced-control visibility', () => {
   const f = fixture(),
@@ -193,6 +221,17 @@ test('GC overlapping control from before its start does not prove forced-control
   e.ts -= 2000;
   e.dur += 2000;
   assert.throws(() => analyzeRuntime(f.observation, f.events), /No visible/);
+});
+test('synchronous GC pairs require matching closed endpoints on the measured thread', () => {
+  const f = fixture(),
+    span = f.events.pop();
+  f.events.push({ ...span, ph: 'B', dur: undefined });
+  f.events.push({ ...span, ph: 'E', ts: span.ts + span.dur, dur: undefined });
+  assert.equal(analyzeRuntime(f.observation, f.events).gcControl.length, 1);
+  f.events.at(-1).name = 'different interval';
+  assert.throws(() => analyzeRuntime(f.observation, f.events), /Mismatched synchronous/);
+  f.events.pop();
+  assert.throws(() => analyzeRuntime(f.observation, f.events), /Unclosed synchronous/);
 });
 test('same resource policy rejects final-only memory/deadline/missing observations', () => {
   const good = { elapsedMs: 1, rssKiB: 1000, availableKiB: 2 * 1024 ** 2 };
