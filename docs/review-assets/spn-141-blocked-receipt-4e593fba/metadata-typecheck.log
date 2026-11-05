@@ -1,0 +1,48 @@
+﻿2026-11-05T05:40:36.9336230Z Current runner version: '2.338.2'
+2026-11-05T05:40:36.9355324Z ##[group]Runner Image Provisioner
+2026-11-05T05:40:36.9355989Z Hosted Compute Agent
+2026-11-05T05:40:36.9356429Z Version: 20261028.624
+2026-11-05T05:40:36.9356894Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-05T05:40:36.9357405Z Build Date: 2026-10-28T21:51:42Z
+2026-11-05T05:40:36.9357879Z Worker ID: {4a5bd2b2-2483-4de1-a436-bc05b8113237}
+2026-11-05T05:40:36.9358415Z Region: us-west-2
+2026-11-05T05:40:36.9358850Z Cloud: AWS
+2026-11-05T05:40:36.9359235Z ##[endgroup]
+2026-11-05T05:40:36.9360374Z ##[group]Operating System
+2026-11-05T05:40:36.9360825Z Ubuntu
+2026-11-05T05:40:36.9361224Z 24.04.5
+2026-11-05T05:40:36.9361601Z LTS
+2026-11-05T05:40:36.9361958Z ##[endgroup]
+2026-11-05T05:40:36.9362350Z ##[group]Runner Image
+2026-11-05T05:40:36.9362776Z Image: ubuntu-24.04
+2026-11-05T05:40:36.9363181Z Version: 20261101.114.1
+2026-11-05T05:40:36.9364120Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261101.114/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-05T05:40:36.9365231Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261101.114
+2026-11-05T05:40:36.9365968Z ##[endgroup]
+2026-11-05T05:40:36.9366778Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T05:40:36.9368333Z Contents: read
+2026-11-05T05:40:36.9368777Z Metadata: read
+2026-11-05T05:40:36.9369165Z ##[endgroup]
+2026-11-05T05:40:36.9370905Z Secret source: Actions
+2026-11-05T05:40:36.9371571Z Cache mode: write
+2026-11-05T05:40:36.9372094Z Prepare workflow directory
+2026-11-05T05:40:36.9603255Z Prepare all required actions
+2026-11-05T05:40:36.9639351Z Getting action download info
+2026-11-05T05:40:37.3217550Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T05:40:39.4069515Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T05:40:39.7243181Z Complete job name: Typecheck
+2026-11-05T05:40:39.7879659Z ##[group]Run case "$CLASSIFICATION:$SELECTED" in
+2026-11-05T05:40:39.7881277Z [36;1mcase "$CLASSIFICATION:$SELECTED" in[0m
+2026-11-05T05:40:39.7882404Z [36;1m  success:true|success:false) ;;[0m
+2026-11-05T05:40:39.7883798Z [36;1m  *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;[0m
+2026-11-05T05:40:39.7885145Z [36;1mesac[0m
+2026-11-05T05:40:39.7911068Z shell: /usr/bin/bash -e {0}
+2026-11-05T05:40:39.7912355Z env:
+2026-11-05T05:40:39.7913168Z   CLASSIFICATION: cancelled
+2026-11-05T05:40:39.7914054Z   SELECTED: true
+2026-11-05T05:40:39.7914856Z ##[endgroup]
+2026-11-05T05:40:39.8020823Z Missing successful applicability decision.
+2026-11-05T05:40:39.8031669Z ##[error]Process completed with exit code 1.
+2026-11-05T05:40:39.8239244Z Evaluate and set job outputs
+2026-11-05T05:40:39.8245385Z Set output 'evidence'
+2026-11-05T05:40:39.8247958Z Cleaning up orphan processes

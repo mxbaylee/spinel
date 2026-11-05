@@ -1,0 +1,462 @@
+{
+  "root": 19009,
+  "started": 1793857135006,
+  "elapsedMs": 7312,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 73504,
+  "peakKiB": 301584,
+  "live": [
+    {
+      "pid": 19009,
+      "parent": 18974,
+      "group": 19009,
+      "rssKiB": 71904,
+      "started": "Wed Nov  4 21:38:54 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-publication-a-watchdog.json node /tmp/spn141-after144-publication-a.ts b55833f51111f772497d0c24ed81859dba4e8b22 b4d8061aa5749800ebe360bf1904a42431f045707c0786f74353884efa48c0b8 449 645669060"
+    },
+    {
+      "pid": 19907,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 19009,
+      "parent": 18974,
+      "group": 19009,
+      "rssKiB": 71904,
+      "started": "Wed Nov  4 21:38:54 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-after144-publication-a-watchdog.json node /tmp/spn141-after144-publication-a.ts b55833f51111f772497d0c24ed81859dba4e8b22 b4d8061aa5749800ebe360bf1904a42431f045707c0786f74353884efa48c0b8 449 645669060"
+    },
+    {
+      "pid": 19028,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19054,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 152896,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "node /tmp/spn141-after144-publication-a.ts b55833f51111f772497d0c24ed81859dba4e8b22 b4d8061aa5749800ebe360bf1904a42431f045707c0786f74353884efa48c0b8 449 645669060"
+    },
+    {
+      "pid": 19055,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 7376,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "git ls-remote origin refs/tags/archive/spn-141-mobile-blocker-4e593fba refs/tags/archive/spn-141-mobile-blocker-4e593fba^{}"
+    },
+    {
+      "pid": 19056,
+      "parent": 19055,
+      "group": 19009,
+      "rssKiB": 6624,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "/usr/bin/ssh -o SendEnv=GIT_PROTOCOL git@github.com git-upload-pack 'mxbaylee/spinel.git'"
+    },
+    {
+      "pid": 19062,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19075,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19088,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1616,
+      "started": "Wed Nov  4 21:38:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19101,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19114,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19122,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 400,
+      "started": "Wed Nov  4 21:38:56 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19128,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19166,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:56 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19205,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 10816,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19211,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19239,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 6880,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19245,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19256,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 55392,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19262,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19276,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19302,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 13632,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19308,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19336,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 19216,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "git cat-file blob 0b161e0e785d0387b172939018362289fa3cf195"
+    },
+    {
+      "pid": 19342,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19350,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 5504,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "git cat-file blob a089d2aa31a7729c99f4af098fba6f44c05dcc6c"
+    },
+    {
+      "pid": 19356,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19373,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19374,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 240,
+      "started": "Wed Nov  4 21:38:58 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19404,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19432,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 26224,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "git cat-file blob a4874bff3c0f1c1d63893a93b9fa3250ca39cca8"
+    },
+    {
+      "pid": 19438,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19446,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 18944,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "git cat-file blob 24af8637c08014ddee1e46766c931e7d06e73a1e"
+    },
+    {
+      "pid": 19452,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19472,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 8112,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19478,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:38:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19506,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 3168,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19512,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19525,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 45952,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19531,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19557,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19558,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 624,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19606,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 7616,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19612,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19657,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 6400,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19663,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19703,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 7248,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19709,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19749,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 288,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19755,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19801,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 6960,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19807,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19859,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1632,
+      "started": "Wed Nov  4 21:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 19860,
+      "parent": 19054,
+      "group": 19009,
+      "rssKiB": 256,
+      "started": "Wed Nov  4 21:39:02 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 19907,
+      "parent": 19009,
+      "group": 19009,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 21:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

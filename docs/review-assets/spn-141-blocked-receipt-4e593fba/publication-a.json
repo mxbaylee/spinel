@@ -1,0 +1,110 @@
+{
+  "outcome": "passed",
+  "publicationKind": "blocked failure checkpoint",
+  "acceptanceComplete": false,
+  "mergeReady": false,
+  "commit": "b55833f51111f772497d0c24ed81859dba4e8b22",
+  "archiveTree": "4aae6cfa32014dec860d8fab8b062f0efc5acaf4",
+  "remote": "b55833f51111f772497d0c24ed81859dba4e8b22\trefs/tags/archive/spn-141-mobile-blocker-4e593fba",
+  "prefix": "docs/review-assets/spn-141-mobile-blocker-4e593fba/",
+  "manifestSha256": "b4d8061aa5749800ebe360bf1904a42431f045707c0786f74353884efa48c0b8",
+  "payloads": 449,
+  "totalGitBlobs": 450,
+  "payloadBytes": 645669060,
+  "allGitBlobSha1Verified": true,
+  "allManifestSha256Verified": true,
+  "allFrozenInputsMatched": true,
+  "exactSelectedFileSet": true,
+  "members": [
+    {
+      "kind": "callback",
+      "preset": "desktop",
+      "retained": 81,
+      "omitted": 12,
+      "originalZip": {
+        "bytes": 196894731,
+        "sha256": "e8558dceee084a117eec1a35d54912b4b228610c2cf8b46f1b7be6d8e040cc7c"
+      }
+    },
+    {
+      "kind": "callback",
+      "preset": "mobile",
+      "retained": 81,
+      "omitted": 12,
+      "originalZip": {
+        "bytes": 174312312,
+        "sha256": "0760921faa5ae5eaa04b6faf0f8fa41806df4cc12f05617a48e3b7461662ef7c"
+      }
+    },
+    {
+      "kind": "responsiveness",
+      "preset": "desktop",
+      "retained": 18,
+      "omitted": 0,
+      "originalZip": {
+        "bytes": 1553501,
+        "sha256": "531ac034b5e8b347ca258fd9e7b10e02c8858798503a47e42de8baaa3e21a74f"
+      }
+    },
+    {
+      "kind": "responsiveness",
+      "preset": "mobile",
+      "retained": 23,
+      "omitted": 0,
+      "originalZip": {
+        "bytes": 2580780,
+        "sha256": "bac3a23814e2a1d3fb406b748bb7f85f554e0121049eed497ba0eb5ad9f3f7f7"
+      }
+    },
+    {
+      "kind": "native",
+      "preset": "chrome",
+      "retained": 14,
+      "omitted": 0,
+      "originalZip": {
+        "bytes": 229104,
+        "sha256": "c86ad2984f304f7132e01600649c716bccf50a35ffc4362068cb3bbaf62b39b5"
+      }
+    },
+    {
+      "kind": "native",
+      "preset": "firefox",
+      "retained": 16,
+      "omitted": 0,
+      "originalZip": {
+        "bytes": 453796,
+        "sha256": "6c7798700d51177bf574849b8725ba0776d5b51532a9ac350d66697f536ed5ed"
+      }
+    },
+    {
+      "kind": "native",
+      "preset": "safari",
+      "retained": 17,
+      "omitted": 0,
+      "originalZip": {
+        "bytes": 768449,
+        "sha256": "327503bba223f47926ef1ff9f6f697b33f85415c1d9d1c06680ce676344bdb4b"
+      }
+    }
+  ],
+  "source": "4e593fbaf9ea89585920053b9415f9a8eac0944f",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "tested": "f0e74d52629923737985ce03e4f32ff218dcf76d",
+  "sourceAndTestedTree": "a2b37aa82336224ac40e92f7364e52ccebfb6d74",
+  "ci": 41970163093,
+  "successfulJobs": 31,
+  "failedJobs": 2,
+  "successfulGates": 6,
+  "totalGates": 7,
+  "mobileFailureRecordsPreserved": true,
+  "storybookFirstFailureAndFiniteRetryPreserved": true,
+  "receipt": {
+    "path": "/tmp/spn141-after144-final-body.md",
+    "sha256": "edd7535eda4f281057793b70bf296db9c503fdd42be6dc2c0e7808361577ead6",
+    "bytes": 14712,
+    "archiveUrl": "https://github.com/mxbaylee/spinel/tree/b55833f51111f772497d0c24ed81859dba4e8b22/docs/review-assets/spn-141-mobile-blocker-4e593fba",
+    "rawPrefix": "https://raw.githubusercontent.com/mxbaylee/spinel/b55833f51111f772497d0c24ed81859dba4e8b22/docs/review-assets/spn-141-mobile-blocker-4e593fba",
+    "concretePlaceholdersResolved": true
+  },
+  "limits": "Publication verification only; source remains blocked under existing SPN-146. No browser/converter/profile rerun, source merge or branch cleanup. Single posted receipt readback and terminal redundant metadata cancellation remain separate."
+}
