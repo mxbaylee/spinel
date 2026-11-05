@@ -1,11 +1,19 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { createHash } from 'node:crypto';
+import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { EventEmitter } from 'node:events';
 import {
   nativeWindowInput,
   validateNativeWindowBoundary,
 } from '../../e2e/doc-responsiveness-native-window.ts';
-import { validateLoadedNativeScript } from '../../e2e/doc-responsiveness-native-sources.ts';
+import {
+  validateLoadedNativeScript,
+  validateRetainedNativeSources,
+  observeNativeWindowSources,
+} from '../../e2e/doc-responsiveness-native-sources.ts';
 import { analyzeNativeWindow, composeCoverage } from './doc-native-runtime/window-analysis.ts';
 
 const paragraphs = Array.from(
@@ -97,6 +105,86 @@ test('source identity requires actual executed bytes and exact embedded prior-na
       sourcesContent: [source, source],
     }),
   );
+});
+
+test('actual source collector retains executed bytes and final validation rejects missing/substituted members', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'spn146-window-sources-'));
+  const digest = (value: string) => createHash('sha256').update(value).digest('hex');
+  const native = 'node_modules/@univerjs/docs/lib/es/index.js';
+  const identities = { [native]: digest('prior native') };
+  const code = 'emitted JavaScript';
+  const map = JSON.stringify({
+    version: 3,
+    mappings: 'AAAA',
+    sources: ['../' + native],
+    sourcesContent: ['prior native'],
+  });
+  const dist = join(root, 'dist'),
+    output = join(root, 'retained');
+  class Session extends EventEmitter {
+    commands: string[] = [];
+    async send(method: string) {
+      this.commands.push(method);
+      if (method === 'Debugger.enable')
+        this.emit('Debugger.scriptParsed', {
+          scriptId: '7',
+          url: 'http://localhost:3100/native.js',
+        });
+      return { scriptSource: code };
+    }
+  }
+  const cdp = new Session();
+  try {
+    await mkdir(dist);
+    await writeFile(join(dist, 'native.js'), code);
+    await writeFile(join(dist, 'native.js.map'), map);
+    const observer = await observeNativeWindowSources(cdp as any, 'http://localhost:3100');
+    const observed = await observer.retain(output, identities, dist);
+    await observer.dispose();
+    assert.deepEqual(cdp.commands, [
+      'Debugger.enable',
+      'Debugger.getScriptSource',
+      'Debugger.disable',
+    ]);
+    assert.equal(cdp.listenerCount('Debugger.scriptParsed'), 0);
+    await validateRetainedNativeSources(output, observed, identities);
+    await writeFile(join(output, 'native.js'), code.replace('emitted', 'changed'));
+    await assert.rejects(
+      validateRetainedNativeSources(output, observed, identities),
+      /digest mismatch/,
+    );
+    await writeFile(join(output, 'native.js'), code);
+    await rm(join(output, 'native.js.map'));
+    await assert.rejects(validateRetainedNativeSources(output, observed, identities), /ENOENT/);
+    await writeFile(join(output, 'native.js.map'), map.replace('prior native', 'wrong native'));
+    await assert.rejects(validateRetainedNativeSources(output, observed, identities));
+    await writeFile(join(output, 'native.js.map'), map);
+    await assert.rejects(
+      validateRetainedNativeSources(output, observed, { [native]: digest('candidate native') }),
+      /Wrong embedded/,
+    );
+    const receipt = JSON.parse(await readFile(join(output, 'binding.json'), 'utf8'));
+    receipt.scripts.pop();
+    await writeFile(join(output, 'binding.json'), JSON.stringify(receipt));
+    await assert.rejects(validateRetainedNativeSources(output, observed, identities), /differs/);
+    await rm(join(output, 'binding.json'));
+    await assert.rejects(validateRetainedNativeSources(output, observed, identities), /ENOENT/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test('failed debugger setup releases its listener without acquiring a source observer', async () => {
+  const cdp = new EventEmitter() as EventEmitter & { send: () => Promise<never> };
+  const primary = new Error('debugger setup failed');
+  cdp.send = async () => {
+    throw primary;
+  };
+  await assert.rejects(
+    observeNativeWindowSources(cdp as any, 'http://localhost:3100'),
+    (error) => error === primary,
+  );
+  assert.equal(cdp.listenerCount('Debugger.scriptParsed'), 0);
 });
 
 function windowObservation() {
