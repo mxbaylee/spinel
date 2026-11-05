@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
+import { copyFile, glob, mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
 import { dirname, relative, resolve, sep } from 'node:path';
 import type { CDPSession } from '@playwright/test';
 
@@ -41,6 +42,92 @@ const optionalMapStat = async (path: string) =>
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
     throw error;
   });
+
+export type PreparedNativeSources = {
+  complete: true;
+  identities: Record<string, string>;
+  files: Array<{
+    path: string;
+    bytes: number;
+    sha256: string;
+    mapStatus: 'present' | 'absent-at-collection';
+    mapBytes: number | null;
+    mapSha256: string | null;
+    mapped: Record<string, string>;
+  }>;
+};
+
+/** Static map parsing owns a separate process before either live editor exists. */
+export async function prepareNativeWindowSources(
+  directory: string,
+  identities: Record<string, string>,
+): Promise<PreparedNativeSources> {
+  const root = await realpath(directory),
+    files: PreparedNativeSources['files'] = [];
+  const bindings: Record<string, string> = {};
+  let total = 0;
+  for await (const local of glob('**/*.js', { cwd: root })) {
+    assert.ok(files.length < 512, 'Prepared script count exceeds512');
+    const path = await realpath(resolve(root, local));
+    assert.ok(!relative(root, path).startsWith('..'));
+    const codeStat = await stat(path),
+      mapStat = await optionalMapStat(path + '.map');
+    if (mapStat)
+      assert.ok(
+        !relative(root, await realpath(path + '.map')).startsWith('..'),
+        'Prepared map escaped build',
+      );
+    total += codeStat.size + (mapStat?.size ?? 0);
+    assert.ok(total <= 64 * 1024 ** 2, 'Prepared code/maps exceed64MiB');
+    const code = await readFile(path),
+      map = mapStat ? await readFile(path + '.map') : null;
+    assert.equal(code.length, codeStat.size);
+    if (map) assert.equal(map.length, mapStat!.size);
+    const mapped = map ? validateNativeMap(JSON.parse(map.toString()), identities) : {};
+    for (const [key, value] of Object.entries(mapped)) {
+      assert.equal(bindings[key], undefined, 'Duplicate prepared native binding');
+      bindings[key] = value;
+    }
+    files.push({
+      path: local,
+      bytes: code.length,
+      sha256: hash(code),
+      mapStatus: map ? 'present' : 'absent-at-collection',
+      mapBytes: map?.length ?? null,
+      mapSha256: map ? hash(map) : null,
+      mapped,
+    });
+  }
+  assert.deepEqual(bindings, identities, 'Prepared native/Core binding incomplete');
+  return { complete: true, identities, files };
+}
+
+/** Stream the immutable map during live ownership; never parse or stringify it. */
+async function verifyPreparedMap(
+  path: string,
+  row: PreparedNativeSources['files'][number],
+  root: string,
+) {
+  const current = await optionalMapStat(path);
+  if (row.mapStatus === 'absent-at-collection') {
+    assert.equal(current, null, 'Map appeared after preparation');
+    assert.equal(row.mapBytes, null);
+    assert.equal(row.mapSha256, null);
+    return;
+  }
+  assert.ok(current, 'Prepared map disappeared');
+  assert.ok(!relative(root, await realpath(path)).startsWith('..'), 'Prepared map escaped root');
+  assert.equal(current.size, row.mapBytes, 'Prepared map size changed');
+  const digest = createHash('sha256');
+  let bytes = 0;
+  for await (const chunk of createReadStream(path)) {
+    bytes += chunk.length;
+    assert.ok(bytes <= row.mapBytes!, 'Prepared map grew during read');
+    digest.update(chunk);
+  }
+  assert.equal(bytes, row.mapBytes);
+  assert.equal(digest.digest('hex'), row.mapSha256, 'Prepared map digest changed');
+}
 
 /** Final analysis independently verifies every retained emitted-code/map member. */
 export async function validateRetainedNativeSources(
@@ -118,12 +205,23 @@ export async function observeNativeWindowSources(cdp: CDPSession, origin: string
     throw error;
   }
   return {
-    async retain(destination: string, identities: Record<string, string>, distDirectory = 'dist') {
+    async retain(
+      destination: string,
+      identities: Record<string, string>,
+      prepared: PreparedNativeSources,
+      distDirectory = 'dist',
+    ) {
       const root = await realpath(distDirectory);
+      assert.equal(prepared.complete, true);
+      assert.deepEqual(prepared.identities, identities);
+      assert.ok(prepared.files.length > 0 && prepared.files.length <= 512);
+      const preparedFiles = new Map(prepared.files.map((row) => [row.path, row]));
+      assert.equal(preparedFiles.size, prepared.files.length, 'Duplicate prepared script');
       const rows: any[] = [],
         bindings: Record<string, string> = {};
       let bytes = 0;
       await mkdir(destination, { recursive: true });
+      const destinationRoot = await realpath(destination);
       // Snapshot once. Eval and non-build URLs stay inventoried but cannot bind frames.
       const inventory = [...scripts];
       assert.equal(overflow, false, 'Script inventory overflow');
@@ -139,32 +237,36 @@ export async function observeNativeWindowSources(cdp: CDPSession, origin: string
         const local = relative(root, path);
         assert.ok(!local.startsWith('..') && !local.startsWith(sep));
         const emitted = await readFile(path);
-        // Generated build helpers may have no original map. Record that absence;
-        // a map observed present must still be read successfully, never downgraded.
-        const mapStat = await optionalMapStat(path + '.map');
-        bytes += emitted.length + (mapStat?.size ?? 0);
+        const expected = preparedFiles.get(local);
+        assert.ok(expected, 'Loaded script absent from source preparation');
+        assert.equal(emitted.length, expected.bytes);
+        assert.equal(hash(emitted), expected.sha256, 'Emitted script changed after preparation');
+        bytes += emitted.length + (expected.mapBytes ?? 0);
         assert.ok(bytes <= 64 * 1024 ** 2, 'Loaded code/maps exceed64MiB');
         const { scriptSource } = await cdp.send('Debugger.getScriptSource', {
           scriptId: script.scriptId,
         });
-        const mapBytes = mapStat ? await readFile(path + '.map') : null;
-        if (mapBytes) assert.equal(mapBytes.length, mapStat!.size, 'Map changed during collection');
-        const mapped = validateLoadedNativeScript(scriptSource, emitted, mapBytes, identities);
+        assert.equal(hash(scriptSource), expected.sha256, 'Loaded code differs from prepared code');
+        await verifyPreparedMap(path + '.map', expected, root);
+        const mapped = expected.mapped;
         for (const [key, value] of Object.entries(mapped)) {
           assert.equal(bindings[key], undefined, `Duplicate loaded native module ${key}`);
           bindings[key] = value;
         }
         await mkdir(dirname(destination + '/' + local), { recursive: true });
         await writeFile(destination + '/' + local, emitted);
-        if (mapBytes) await writeFile(destination + '/' + local + '.map', mapBytes);
+        if (expected.mapStatus === 'present') {
+          await copyFile(path + '.map', destination + '/' + local + '.map');
+          await verifyPreparedMap(destination + '/' + local + '.map', expected, destinationRoot);
+        }
         rows.push({
           ...script,
           path: local,
           bytes: emitted.length,
           sha256: hash(emitted),
-          mapStatus: mapBytes ? 'present' : 'absent-at-collection',
-          mapBytes: mapBytes?.length ?? null,
-          mapSha256: mapBytes ? hash(mapBytes) : null,
+          mapStatus: expected.mapStatus,
+          mapBytes: expected.mapBytes,
+          mapSha256: expected.mapSha256,
           mapped,
         });
       }

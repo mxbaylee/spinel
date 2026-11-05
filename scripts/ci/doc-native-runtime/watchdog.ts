@@ -7,6 +7,7 @@ export interface ProcessIdentity {
   parent: number;
   start: string;
   rssKiB: number;
+  role?: 'node' | 'browser' | 'shell' | 'other';
 }
 export function owned(rows: ProcessIdentity[], root: number, known: Map<number, ProcessIdentity>) {
   const selected = new Set(
@@ -35,6 +36,31 @@ export function resourceFailure(
   if (state.availableKiB < 1024 ** 2) return 'Host MemAvailable below1GiB';
   return null;
 }
+type ResourceSample = {
+  elapsedMs: number;
+  rssKiB: number;
+  availableKiB: number;
+  live: ProcessIdentity[];
+};
+export function firstResourceViolation(
+  previous: (ResourceSample & { reason: string }) | null,
+  state: ResourceSample,
+  mode: 'component' | 'application-window',
+) {
+  if (previous) return previous;
+  const reason = resourceFailure(state, mode);
+  return reason
+    ? {
+        ...structuredClone({
+          elapsedMs: state.elapsedMs,
+          rssKiB: state.rssKiB,
+          availableKiB: state.availableKiB,
+          live: state.live,
+        }),
+        reason,
+      }
+    : null;
+}
 function inventory() {
   const rows: ProcessIdentity[] = [];
   for (const directory of readdirSync('/proc'))
@@ -43,11 +69,19 @@ function inventory() {
         const raw = readFileSync(`/proc/${directory}/stat`, 'utf8'),
           fields = raw.slice(raw.lastIndexOf(')') + 2).split(' ');
         const status = readFileSync(`/proc/${directory}/status`, 'utf8');
+        const executable = raw.slice(raw.indexOf('(') + 1, raw.lastIndexOf(')'));
         rows.push({
           pid: Number(directory),
           parent: Number(fields[1]),
           start: fields[19]!,
           rssKiB: Number(status.match(/^VmRSS:\s+(\d+) kB$/m)?.[1] ?? 0),
+          role: /^(node|MainThread)$/.test(executable)
+            ? 'node'
+            : /chrom|chrome/i.test(executable)
+              ? 'browser'
+              : /^(sh|bash|dash)$/.test(executable)
+                ? 'shell'
+                : 'other',
         });
       } catch (error) {
         if (!['ENOENT', 'ESRCH'].includes((error as NodeJS.ErrnoException).code ?? '')) throw error;
@@ -67,6 +101,7 @@ async function run() {
     known = new Map<number, ProcessIdentity>();
   let peakKiB = 0,
     failure: string | null = null;
+  let firstViolation: ReturnType<typeof firstResourceViolation> = null;
   const snapshot = (outcome: string) => {
     const live = owned(inventory(), process.pid, known),
       rssKiB = live.reduce((sum, row) => sum + row.rssKiB, 0);
@@ -84,6 +119,7 @@ async function run() {
       known: [...known.values()],
       live,
       failure,
+      firstViolation,
     };
     writeFileSync(destination + '.tmp', JSON.stringify(receipt, null, 2) + '\n');
     renameSync(destination + '.tmp', destination);
@@ -91,6 +127,7 @@ async function run() {
   };
   const initial = snapshot('ready');
   failure = resourceFailure(initial, mode);
+  firstViolation = firstResourceViolation(firstViolation, initial, mode);
   if (failure) {
     snapshot('preflight-failed');
     throw new Error(failure);
@@ -113,6 +150,7 @@ async function run() {
       const violation = resourceFailure(state, mode);
       if (violation) {
         failure ??= violation;
+        firstViolation = firstResourceViolation(firstViolation, state, mode);
         snapshot('resource-aborted');
         signalOwned();
       }
@@ -135,6 +173,7 @@ async function run() {
   }
   const final = snapshot('checking-final');
   failure ??= resourceFailure(final, mode);
+  firstViolation = firstResourceViolation(firstViolation, final, mode);
   // Final disposition uses exactly the resource observation just checked.
   writeFileSync(
     destination + '.tmp',
@@ -143,6 +182,7 @@ async function run() {
         ...final,
         outcome: failure || result.code !== 0 || result.signal ? 'failed' : 'passed',
         failure,
+        firstViolation,
       },
       null,
       2,
