@@ -1,0 +1,89 @@
+{
+  "zip": {
+    "bytes": 516974,
+    "sha256": "53c103fee6f5a6ab5363e66d7f79e70bddd98514eda3ee18a6c55a3b69ef33c3"
+  },
+  "crcPassed": true,
+  "members": [
+    {
+      "name": "spn146-diagnostic-build.json",
+      "bytes": 2667,
+      "sha256": "7e3c2846358b4f006a68c0b32918ccf1f4099fec021acfd79c0d20b8d57ac660"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/error-context.md",
+      "bytes": 458,
+      "sha256": "4fb36aba26b24acab81e2bd61d85072ef0f54bd3c6cd8916f9a60cea27d237e7"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 8214,
+      "sha256": "872571a5bf91340a75e2352f23d4ba4b9b3a55c38ff35f9948f54896fd9d2297"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/main-kqLtHWBm.js",
+      "bytes": 3752,
+      "sha256": "9891d60027a131fee17cedc0fead35fa7a24a324ba29a29e9be6f71878d31818"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/main-kqLtHWBm.js.map",
+      "bytes": 7918,
+      "sha256": "d73f469203f9d9c6370eb7002e0f047f110fd39e42d1cab65d197b43333c84c2"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/offlineError-BUk56pzC.js",
+      "bytes": 1488,
+      "sha256": "e7d3f01a2c14cd9c15e90fa9eb28296e571ceec82f95cd3ea23f17c5acce388b"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/offlineError-BUk56pzC.js.map",
+      "bytes": 6330,
+      "sha256": "b58fc882c719f8a658560d774fdba8bde79ee784670989365d820764e6ddb3a1"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/runtime-BUQS9nEo.js",
+      "bytes": 2630,
+      "sha256": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/assets/runtime-BUQS9nEo.js.map",
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-loaded-sources/inventory.json",
+      "bytes": 6080,
+      "sha256": "a1018c7a7ee8f0416703783a636674e8f7234570bd977398f210a6d1832fb23c"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-native-caches.json",
+      "bytes": 44,
+      "sha256": "091d8b660f9c546074ac48087103f1094694847563d4ad9c8f3c157958492a94"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-progress.json",
+      "bytes": 1045,
+      "sha256": "a23b9e1d80bc73d0a7325f67c13c82a321f3f749240a1f0ddeb6104a018e0615"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/test-failed-1.png",
+      "bytes": 20776,
+      "sha256": "ddeb1507b794b6255f000e159a72f7f34ae786c74f95fcac603b56b16ebedf27"
+    },
+    {
+      "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/test-failed-2.png",
+      "bytes": 20662,
+      "sha256": "e3123e2c2ae2e0ef3812a172875a4496d12cc9370bb9b1301184d7a6184d8f15"
+    },
+    {
+      "name": "test-results/spn146-window-watchdog.json",
+      "bytes": 2111,
+      "sha256": "baac691acb10e1996f46293df0c7c70c5790bb7908341a2c82aca1e896831a35"
+    },
+    {
+      "name": "playwright-report/doc-responsiveness.json",
+      "bytes": 1354626,
+      "sha256": "fc2260f78b85022a2bc4fa827b26566426144c5438f0136f4b9ef1bd3706f14f"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "root": 92873,
+  "started": 1793886860597,
+  "elapsedMs": 196,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93216,
+  "peakKiB": 93216,
+  "live": [
+    {
+      "pid": 92873,
+      "parent": 92837,
+      "group": 92873,
+      "rssKiB": 91664,
+      "started": "Thu Nov  5 05:54:20 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/outcome-inspection-watchdog-b.json node /tmp/spn146-window-hosted/inspect-outcome-b.ts"
+    },
+    {
+      "pid": 93014,
+      "parent": 92873,
+      "group": 92873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:54:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 92873,
+      "parent": 92837,
+      "group": 92873,
+      "rssKiB": 91664,
+      "started": "Thu Nov  5 05:54:20 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/outcome-inspection-watchdog-b.json node /tmp/spn146-window-hosted/inspect-outcome-b.ts"
+    },
+    {
+      "pid": 92892,
+      "parent": 92873,
+      "group": 92873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:54:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93014,
+      "parent": 92873,
+      "group": 92873,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:54:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

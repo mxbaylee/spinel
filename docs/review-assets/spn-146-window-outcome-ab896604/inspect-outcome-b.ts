@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+const root='/tmp/spn146-window-hosted';
+const zip=root+'/observation.zip';
+const sha=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+const bytes=readFileSync(zip);
+assert.equal(bytes.length,516974);
+assert.equal(sha(bytes),'53c103fee6f5a6ab5363e66d7f79e70bddd98514eda3ee18a6c55a3b69ef33c3');
+const crc=execFileSync('unzip',['-t',zip],{encoding:'utf8',maxBuffer:1024*1024});
+const names=execFileSync('unzip',['-Z1',zip],{encoding:'utf8'}).trim().split('\n');
+assert.equal(names.length,16);
+const out=root+'/inspection-b'; mkdirSync(out,{recursive:true});
+const members=names.map(name=>{
+ assert.ok(!name.startsWith('/')&&!name.split('/').includes('..'));
+ const b=execFileSync('unzip',['-p',zip,name],{maxBuffer:3*1024*1024});
+ const short=name.split('/').at(-1)!;
+ if(short.endsWith('.json')||short.endsWith('.png')||short==='error-context.md')writeFileSync(out+'/'+short,b);
+ return {name,bytes:b.length,sha256:sha(b)};
+});
+writeFileSync(root+'/outcome-integrity-b.json',JSON.stringify({zip:{bytes:bytes.length,sha256:sha(bytes)},crcPassed:crc.includes('No errors detected'),members},null,2)+'\n');
+console.log(JSON.stringify({members:members.length,crcPassed:true,zipSha256:sha(bytes)}));
