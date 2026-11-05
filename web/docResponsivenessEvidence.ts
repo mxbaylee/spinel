@@ -84,7 +84,9 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
           unitId,
         );
         result = { started: true, unitId, timeOrigin: performance.timeOrigin };
-      } else if (action === 'finish')
+      } else if (action === 'snapshot')
+        result = diagnostic?.snapshot() ?? { error: 'Native diagnostic never started.' };
+      else if (action === 'finish')
         result = diagnostic?.finish() ?? { error: 'Native diagnostic never started.' };
       else throw new Error('Unknown native diagnostic action.');
     } catch (error) {

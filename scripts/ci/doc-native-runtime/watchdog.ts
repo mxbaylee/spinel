@@ -22,14 +22,15 @@ export function owned(rows: ProcessIdentity[], root: number, known: Map<number, 
   for (const row of result) known.set(row.pid, row);
   return result;
 }
-export function resourceFailure(state: {
-  elapsedMs: number;
-  rssKiB: number;
-  availableKiB: number;
-}) {
+export function resourceFailure(
+  state: { elapsedMs: number; rssKiB: number; availableKiB: number },
+  mode: 'component' | 'application-window' = 'component',
+) {
+  if (mode !== 'component' && mode !== 'application-window') return 'Unknown resource mode';
   if (![state.elapsedMs, state.rssKiB, state.availableKiB].every(Number.isFinite))
     return 'Missing resource observation';
-  if (state.elapsedMs >= 60_000) return 'Total phase exceeded60seconds';
+  const deadline = mode === 'component' ? 60_000 : 450_000;
+  if (state.elapsedMs >= deadline) return `Total phase exceeded${deadline / 1000}seconds`;
   if (state.rssKiB > 2 * 1024 ** 2) return 'Owned RSS exceeded2GiB';
   if (state.availableKiB < 1024 ** 2) return 'Host MemAvailable below1GiB';
   return null;
@@ -57,7 +58,10 @@ function inventory() {
 async function run() {
   if (process.platform !== 'linux')
     throw new Error('This watchdog is for the declared Linux lane only.');
-  const [destination, command, ...args] = process.argv.slice(2);
+  const argv = process.argv.slice(2);
+  const mode = argv[0] === '--application-window' ? 'application-window' : 'component';
+  if (mode === 'application-window') argv.shift();
+  const [destination, command, ...args] = argv;
   if (!destination || !command) throw new Error('Receipt and command required');
   const start = performance.now(),
     known = new Map<number, ProcessIdentity>();
@@ -71,6 +75,7 @@ async function run() {
       readFileSync('/proc/meminfo', 'utf8').match(/^MemAvailable:\s+(\d+) kB$/m)?.[1],
     );
     const receipt = {
+      mode,
       outcome,
       elapsedMs: performance.now() - start,
       rssKiB,
@@ -85,7 +90,7 @@ async function run() {
     return receipt;
   };
   const initial = snapshot('ready');
-  failure = resourceFailure(initial);
+  failure = resourceFailure(initial, mode);
   if (failure) {
     snapshot('preflight-failed');
     throw new Error(failure);
@@ -105,7 +110,7 @@ async function run() {
   const monitor = setInterval(() => {
     try {
       const state = snapshot('running');
-      const violation = resourceFailure(state);
+      const violation = resourceFailure(state, mode);
       if (violation) {
         failure ??= violation;
         snapshot('resource-aborted');
@@ -129,7 +134,7 @@ async function run() {
     signalOwned();
   }
   const final = snapshot('checking-final');
-  failure ??= resourceFailure(final);
+  failure ??= resourceFailure(final, mode);
   // Final disposition uses exactly the resource observation just checked.
   writeFileSync(
     destination + '.tmp',

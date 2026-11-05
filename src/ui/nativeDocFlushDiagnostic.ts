@@ -156,6 +156,23 @@ export function observeNativeDocComposition(
     throw error;
   }
   return {
+    /** Scalar boundary witness; does not stop observation or copy encoded caches. */
+    snapshot() {
+      return {
+        unitId,
+        observedAt: now(),
+        states,
+        phases: captures.length,
+        dropped,
+        errors: [...errors],
+        activePair,
+        stopped,
+        ownsMethods:
+          composer.compose === compose &&
+          originals.every(({ method }, index) => manager[method] === wrappers[index]),
+        phasesReturned: captures.every((capture) => capture.outcome === 'returned'),
+      };
+    },
     finish() {
       if (!stopped) {
         stopped = true;
