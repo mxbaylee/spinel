@@ -231,3 +231,46 @@ Production validation additionally passed38 runtime/window controls, targeted
 lint, full lint/format/dependency checks and the application build (3,932ms,
 961,424KiB peak). The build emitted existing chunk-size/dynamic-import warnings.
 These checks do not replace the resource-aborted typecheck or hosted acceptance.
+
+## 🛠️ Independent review caught a complete-module binding defect
+
+Candidate `418f8b6f85711731fd322ab81040ed00f35cadcb` was rejected before push:
+independent A92/100 and B90/100. Its ES module called `ActionIterator` without
+importing it. Region fixtures and the component harness supply all Core exports,
+so their semantic checks could not detect this production lexical error. The
+application build also did not execute the qualified branch. No hosted validation
+or phone was allocated for that rejected candidate.
+
+The repair adds the exact public ES import under the complete upstream hash and
+target-count guard. Prior controls retain their exact original imports/hashes;
+an otherwise complete candidate missing the binding is rejected by the installer.
+New complete-module tests load the actual ES file and execute the full CJS module
+with its own native require bindings, then flush eligible prefix3/4/23 caches.
+The ES negative removes the import and must fail with the observed ReferenceError.
+The repaired ES hash is
+`4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5`;
+CJS remains `4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f`.
+
+First test setup failed because Node forbids stripping `.ts` inside node_modules
+and the test supplied the same cache array twice, unlike native ownership. The
+corrected fixture writes a temporary `.ts` beside the repo's dependency directory
+and supplies distinct cache arrays. Its focused two-module check then passed.
+The first combined run exposed CJS Core's global JSONX type registration replacing
+ES TextX's instrumentation target; comparisons became unmeasured, not product
+semantic failures. CJS module validation now runs in a bounded child process,
+preserving both real CJS bindings and isolated ES primitive counters. No native
+threshold/oracle was relaxed. All235 selected Docs/runtime tests then passed in
+42,316ms, peak661,472KiB, normal pressure. Temporary modules and managers are
+disposed, including the failing missing-import control.
+
+The repaired candidate's full TypeScript check passed in3,248ms, peak1,728,080KiB,
+normal pressure. This supersedes the earlier resource-blocked local check while
+preserving its receipt. New exact-head reviews are required; the single hosted
+transition remains unconsumed and all application/component acceptance pending.
+
+The [binding-repair manifest](evidence/SPN-146/linear-binding-repair/manifest.json)
+preserves both rejected-source reviews, the original test setup and registry
+failures, successful module/regression/typecheck/lint/build checks and exact
+repaired source bindings. The earlier manifest remains the original record of
+the rejected candidate; its passing region tests are not retroactive production
+module validation. Fresh complete-build checks passed after the import repair.
