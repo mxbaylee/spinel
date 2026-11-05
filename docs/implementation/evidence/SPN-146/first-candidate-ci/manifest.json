@@ -1,0 +1,608 @@
+{
+  "source": "1eeb90f1d50291791d39913350c28c672c7154ee",
+  "tested": "50f22d7a6a2c66f7bbd94edf031112d697962d95",
+  "tree": "63aff27fd8ce112942db85b9b32eadcfcfaa3762",
+  "scope": "First published candidate application acceptance, not later local source validation. Callback raw trace/source-map archives remain supplementary 30-day Actions artifacts, retained separately locally; these payloads preserve exact results, transport/conversion/source identities and failure dispositions. No fresh trace conversion was executed.",
+  "payloads": [
+    {
+      "name": "000-ci-artifacts-final.json.gz",
+      "original": "ci-artifacts-final.json",
+      "rawBytes": 15253,
+      "storedBytes": 2278,
+      "rawSha256": "9fd4a03b175a92245f4181e989fb69be092c995c139c6855d79144c2f30b01cd",
+      "storedSha256": "602295f4e188b536d7f3ca6cd7f8ea349eba328377339e06945e986b65859bc6"
+    },
+    {
+      "name": "001-ci-jobs-final.json.gz",
+      "original": "ci-jobs-final.json",
+      "rawBytes": 101503,
+      "storedBytes": 6453,
+      "rawSha256": "4f6983a9d9f1090b0269c5619c3ef5a6d642dc7ad091be83d7d575cc701fb694",
+      "storedSha256": "353bd3b495f18679480450d3f9a5cd0a22286956d83b3b73e814a3a5cd584cf0"
+    },
+    {
+      "name": "002-ci-plan-13397783528.zip.gz",
+      "original": "ci-plan-13397783528.zip",
+      "rawBytes": 917,
+      "storedBytes": 930,
+      "rawSha256": "9b36358130d5a0cac9870cf408d0b8e1a6fd46cd3825938f6adeee5601de0bc2",
+      "storedSha256": "d316af54d6af2c5dc4579ae1338a9db8ef6e0846dc8bc95d47750192dfafcce8"
+    },
+    {
+      "name": "003-ci-run-final.json.gz",
+      "original": "ci-run-final.json",
+      "rawBytes": 12172,
+      "storedBytes": 1668,
+      "rawSha256": "3d5b603311d55a33e037e6cb4e1c093d96df602796632517950bfea13c0759bc",
+      "storedSha256": "ccd7028c1135a505ba05337ec92409eba6dd8268ad91f01d6e55e4fc05ba8dbd"
+    },
+    {
+      "name": "004-ci-tested-commit.json.gz",
+      "original": "ci-tested-commit.json",
+      "rawBytes": 731,
+      "storedBytes": 266,
+      "rawSha256": "e2268738a39ba4e080a1200213d139939c35228bddfc9047efda3f4b49776b0e",
+      "storedSha256": "02e672ac4c54d42c95574f63c0fd4c9bf9e2fbca940fc3de588f7e27a050101d"
+    },
+    {
+      "name": "005-doc-callback-lifetimes.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "rawBytes": 1354069,
+      "storedBytes": 364812,
+      "rawSha256": "eea774bd54d0e99dea41f3ee6908f1cd2726584de5378af65b73ebb89fdb86e2",
+      "storedSha256": "248030c6b1f1129a84ad1e7c8d8de4dfd8fcbbd0f8bcb0063d58be64be12abca"
+    },
+    {
+      "name": "006-spn113-evidence.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "rawBytes": 23671693,
+      "storedBytes": 1019029,
+      "rawSha256": "acbe1dd25c1671a7bc1ae4a8b029bd1f2de02c589341ae4e717812d8dee0927a",
+      "storedSha256": "f8023cbf0a58d6c489e478ccc25067158448edef2e1d708d154e90ae0df8d05d"
+    },
+    {
+      "name": "007-spn134-progress.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "rawBytes": 6549,
+      "storedBytes": 1361,
+      "rawSha256": "a8fe28acbe176a523b878b20c4a251ac4c497d4562cc079c06632b6f3a98dd52",
+      "storedSha256": "708d0e50afa9d79f11c3e0ced4b218cf8aa407612c19a0f2e7afa27d63b2f5e6"
+    },
+    {
+      "name": "008-spn144-conversion.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "rawBytes": 3109,
+      "storedBytes": 1290,
+      "rawSha256": "2b311fded682eb09bd1cff03ede504929eebee555d722c9b221f5611da836cf1",
+      "storedSha256": "ca8df812474a75fc474ef1213fd876f4b4be6206589777b993beb52c30351424"
+    },
+    {
+      "name": "009-doc-callback-lifetimes.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/playwright-report/doc-callback-lifetimes.json",
+      "rawBytes": 1377895,
+      "storedBytes": 361205,
+      "rawSha256": "30efbb3a0fd1877d1049795366dd619ca220c9fdee592d2a5154a89bda007d66",
+      "storedSha256": "a163101e9c9f500dfe7b5121a9df75683df3d02999c40a6137b681c6030367e9"
+    },
+    {
+      "name": "010-spn113-evidence.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "rawBytes": 17826195,
+      "storedBytes": 716061,
+      "rawSha256": "4665a24f757e9d7c1cd2a5346fc268a82c23eb9630a49e9126cb314296209543",
+      "storedSha256": "fe28525e8819e5849b034f88ab98a4e1e33255f861e33d5748ae2e178380c579"
+    },
+    {
+      "name": "011-spn134-progress.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "rawBytes": 6632,
+      "storedBytes": 1400,
+      "rawSha256": "57a78319feeef866c4ca66cc8ce19fad421982a843c891af421bff66f28908a2",
+      "storedSha256": "c94ebecd54d084f037acf9356c1539d45d01f3c7fbb75447e5db3fedbd8caf4a"
+    },
+    {
+      "name": "012-spn144-conversion.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "rawBytes": 3028,
+      "storedBytes": 1272,
+      "rawSha256": "df13b0aab519d55f5f9773d3e80d6cd92352ad4a066d20f7fddcb95a8144cf43",
+      "storedSha256": "18e8190abd06d2f4bc2f3af9c6ac9222075a14a509360de580fa8bdf1542735c"
+    },
+    {
+      "name": "013-spn113-comparison-desktop.json.gz",
+      "original": "doc-callback-lifetimes-desktop-13399087165/test-results/spn113-comparison-desktop.json",
+      "rawBytes": 963887,
+      "storedBytes": 56185,
+      "rawSha256": "4be0a68ae72e13aac38a290500d377c3345f8ee1bfe6fccee203eccb7b213181",
+      "storedSha256": "35c76a4038401d0d032b6d4de43ed36aed15143d7a20325333dce1c5e96e1662"
+    },
+    {
+      "name": "014-doc-callback-lifetimes.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "rawBytes": 1354067,
+      "storedBytes": 364807,
+      "rawSha256": "41c18fa4a85f9054b7428b5c38111a06770c9680443b9a92aa2ca4a97e2c1d95",
+      "storedSha256": "1798ba11a34e284a7f70bfea95a174e98ebe33d9ee2fb6ccf49497797cee2fcd"
+    },
+    {
+      "name": "015-spn113-evidence.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "rawBytes": 21605769,
+      "storedBytes": 1005277,
+      "rawSha256": "82ec1a33b6fbb6e59ae1f2422ae22a13dd56ed6380a50a9426b02d046ccb1512",
+      "storedSha256": "b161ec2b7c29f502619a0b99a5188dada0490a3e4e82048c767891e03caed541"
+    },
+    {
+      "name": "016-spn134-progress.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "rawBytes": 6574,
+      "storedBytes": 1383,
+      "rawSha256": "432a54526d066b13c29c9e6fca6510ce2376336426786829abc5e9540b394cb5",
+      "storedSha256": "237f54362e0c1e67751bdc4b2f7fba18966330e09147a20774efaebc03cc8b0a"
+    },
+    {
+      "name": "017-spn144-conversion.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "rawBytes": 3110,
+      "storedBytes": 1284,
+      "rawSha256": "106e6677f8613d090462ce796af6b48bcaf65c503bfbb65acc75917a9f372bcd",
+      "storedSha256": "33c22003a24b9377630462aca565436bd67ec2905aaf99a9f911686d681567d0"
+    },
+    {
+      "name": "018-doc-callback-lifetimes.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/playwright-report/doc-callback-lifetimes.json",
+      "rawBytes": 1377885,
+      "storedBytes": 361200,
+      "rawSha256": "ec1a9f07ef77e8963e30e9558943b9fa6954d4a095850eb6a6003c86569971c1",
+      "storedSha256": "b749997873a36b363d1b4c31e777d68a8a90829259a11681c3f929c0c03239fa"
+    },
+    {
+      "name": "019-spn113-evidence.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "rawBytes": 16039543,
+      "storedBytes": 681562,
+      "rawSha256": "b554428dc417420040ffb4b670c4291f0c0fb203d84b0aaf2837a1ee89bdda22",
+      "storedSha256": "c6a20bd4aa095ed59233661114188b58c272df77388e45a1d1b0f34f69dd296b"
+    },
+    {
+      "name": "020-spn134-progress.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "rawBytes": 6588,
+      "storedBytes": 1393,
+      "rawSha256": "771758a8ef2e5764eb95205cb4f67a15a967186c2f797f5e3b30a9a904f76e9f",
+      "storedSha256": "378eb5579fec102f06960046f30155b8edb9b56c7782133821401625eee67c31"
+    },
+    {
+      "name": "021-spn144-conversion.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "rawBytes": 3035,
+      "storedBytes": 1276,
+      "rawSha256": "843dee09a68d61f627a5a574d5a6eb8f8ae30d6650592177dca78b980ed65c4b",
+      "storedSha256": "f32bd64623524fac0f9b8a9d8d0dacbefac7edc14beb06c5a30a118a006fa4b6"
+    },
+    {
+      "name": "022-spn113-comparison-mobile.json.gz",
+      "original": "doc-callback-lifetimes-mobile-13400110089/test-results/spn113-comparison-mobile.json",
+      "rawBytes": 971634,
+      "storedBytes": 63964,
+      "rawSha256": "0af6a79daca7950647200d4034d0adb8981b0efd6cd8a0c22e0a5bfa5f4ea5ea",
+      "storedSha256": "e0577ced46c154207170349e91f51cf6313a3f0c88f5a1dac872048af471ea01"
+    },
+    {
+      "name": "023-doc-responsiveness-desktop-13399551964.zip.gz",
+      "original": "doc-responsiveness-desktop-13399551964.zip",
+      "rawBytes": 1186319,
+      "storedBytes": 1181087,
+      "rawSha256": "09fa795bd93d9d92787eb2e497dc3489f33787e8f822c37e81e73e3d0af3aabb",
+      "storedSha256": "ab458a52ce19ecf49786db1dc11683978df4474cbb03314746b6c571c311a8a6"
+    },
+    {
+      "name": "024-doc-responsiveness.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "rawBytes": 29919,
+      "storedBytes": 2434,
+      "rawSha256": "a9ea231b138dc65cf44accc23ba86ba387064c7ba09d57b90e942b5e22f6930b",
+      "storedSha256": "023d7d71c48d60cfc17b832c8271dcb68d41b6deb5b1e539667d3e000c68a3fa"
+    },
+    {
+      "name": "025-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 120677,
+      "storedBytes": 18676,
+      "rawSha256": "418d5f84c5b98d8683b6af5587901c9c5d82b9e01022236b098b0d248d529e8e",
+      "storedSha256": "11fa6fc926e9468e3b88a74a67732025bf3dc646a674a01af7e64f9d5cd569cf"
+    },
+    {
+      "name": "026-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 122511,
+      "storedBytes": 18727,
+      "rawSha256": "7d2386c958e2b08418d4b89b1e422d6b28e88d6b6a9c116dc72d4f106c80c0ff",
+      "storedSha256": "742705adbaee898446acb7ae35903df42f5eeaa1cfe1a8798b140fdd1b76ed26"
+    },
+    {
+      "name": "027-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 123555,
+      "storedBytes": 18818,
+      "rawSha256": "fee590eb5867d04f7ee701f140c367c79b62feb7a19e2b57beaf47171cf76052",
+      "storedSha256": "9c6962932b181e46d6c9c6144e61122f8c6aba32d98c6926cb4bfeb3a36fd098"
+    },
+    {
+      "name": "028-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 124830,
+      "storedBytes": 19192,
+      "rawSha256": "cd58d1158d7a348e5fd502796d268f67c31e3fa3420cc7527c7ae9cdb64d5952",
+      "storedSha256": "bb80e7c66e46941a84000583f137829358a94c6d3c826d7cbf9d6f78c4751722"
+    },
+    {
+      "name": "029-spn108-profile-clock.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "rawBytes": 240,
+      "storedBytes": 179,
+      "rawSha256": "e90fe843059d7d0f2d91b8259b8e324afff758c43126a115adf35ae82d0da5a7",
+      "storedSha256": "54c40265146e04d9cfac0aa7e1d2c15b0d92a9eeaad5cced04dc7a0a810e41bb"
+    },
+    {
+      "name": "030-doc-responsiveness.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/playwright-report/doc-responsiveness.json",
+      "rawBytes": 1384807,
+      "storedBytes": 361684,
+      "rawSha256": "3e5071d2a16290748dcdc501d2c2115a8a0f72afa5162327946c5a39c8c8f833",
+      "storedSha256": "cd0594f5337f2cb32000643ee4c5527f15c51ba5ca2d2a0713b245ba420417d4"
+    },
+    {
+      "name": "031-spn108-post-burst.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "rawBytes": 131642,
+      "storedBytes": 16936,
+      "rawSha256": "5200fd0e5993929b70079cb77be59e250f2b3241d1c7548556580c8dbb0647df",
+      "storedSha256": "6da8ff8da11a45b9e1da03d9400c11b918c6d458ec2e82ccebf14aafc54d812d"
+    },
+    {
+      "name": "032-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 525137,
+      "storedBytes": 31160,
+      "rawSha256": "11782cbcfb81b9a6fbf487ce5faa356edae500853c57d7b011c140b50b8b58d9",
+      "storedSha256": "02d35619a385c01bd4ad828699b79f802ed45755b9414f527a28fa5dac4d3daa"
+    },
+    {
+      "name": "033-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 537979,
+      "storedBytes": 31199,
+      "rawSha256": "4754cfde04593336472e941840f6ade8b89808257570b9091507d727f2ddbea4",
+      "storedSha256": "154953bb4e22263b2b6d5442e32bd371ff4d7c5ccb55b03ff3b37d5eadb91070"
+    },
+    {
+      "name": "034-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 531037,
+      "storedBytes": 31413,
+      "rawSha256": "c7981b98aa80974e2feb2503087cad9c04012de18e0a8d710839a38f64591606",
+      "storedSha256": "941ced6949322889dd8cc5b0e32b137ab50d261e4836fbaa6cc5cce47b27f5bd"
+    },
+    {
+      "name": "035-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 538642,
+      "storedBytes": 31681,
+      "rawSha256": "bef4b9032ffe8a95f7a8a565d1d6c85ddc2a440b83a98947ec7161cd5d81fac8",
+      "storedSha256": "b35e090bc5c7c144a399df194bdd9e0af02445c9220faabd22c2a5fa7ef2de7d"
+    },
+    {
+      "name": "036-spn108-profile-clock.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "rawBytes": 239,
+      "storedBytes": 183,
+      "rawSha256": "e87ee1074cbaa8308519c2c13475df20341c1b8ed366e0722fe47a8f95637e43",
+      "storedSha256": "bf335e2e89f1fd6c3ea01953ae2a23bc0204ed0b783e34a05e62481ba7a94c31"
+    },
+    {
+      "name": "037-spn108-boundaries.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "rawBytes": 2358,
+      "storedBytes": 832,
+      "rawSha256": "81cf39c482a0ac58df2a315d7fbc77faa13f26a9042f53345ab99f9feb078156",
+      "storedSha256": "29e60be0a0e43d788f49869d69fd4246c4bdce57718fee9bf3ad97c09ee14f53"
+    },
+    {
+      "name": "038-spn108-boundaries.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "rawBytes": 67363,
+      "storedBytes": 3769,
+      "rawSha256": "19ad6eeafefcc147f5c3616cb804ee5f248daada2e5f932fc30b2210ab48b02a",
+      "storedSha256": "f5a3df99d66848ca7d51f8a79e202377c33a170f7c85540374a61a2cd510f405"
+    },
+    {
+      "name": "039-spn108-comparison-desktop.json.gz",
+      "original": "doc-responsiveness-desktop-13399551964/test-results/spn108-comparison-desktop.json",
+      "rawBytes": 12731,
+      "storedBytes": 2393,
+      "rawSha256": "da04b6e1b9eb5d1634743b17fd883726a4d0cc8155c4b71981e5a14d3e3d43a7",
+      "storedSha256": "da67a8f456791d4c01867e9a5819ece01ca459029bdcd0293b3161c6dc4a519b"
+    },
+    {
+      "name": "040-doc-responsiveness-mobile-13401365892.zip.gz",
+      "original": "doc-responsiveness-mobile-13401365892.zip",
+      "rawBytes": 2630424,
+      "storedBytes": 2606688,
+      "rawSha256": "8137666d70eae492ce2b50dc6c5cbf8c2834893abe3e42fd6da1cbcb4901c5c3",
+      "storedSha256": "2f33ea211de7b806db277aa611f68e9f85eb233330d7e7c33a19c027c9e08e2f"
+    },
+    {
+      "name": "041-doc-responsiveness.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "rawBytes": 1380893,
+      "storedBytes": 308893,
+      "rawSha256": "a1bddda4616fb5bfe3872c23540490e41f54084f2be043ee46f9d84f33b267be",
+      "storedSha256": "38dce003a20b272bc513dca07028c6fea50f2b3294e11001faef00bf5e85e01c"
+    },
+    {
+      "name": "042-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 240482,
+      "storedBytes": 31174,
+      "rawSha256": "08e1d432650c5a265bc017a2f7a13d1511b21ac74414b18316153b7c16b5398a",
+      "storedSha256": "b432b448857c0ad0ba2ce167af8c40d0498edbb52b3f4a891a820ecfadebbb8b"
+    },
+    {
+      "name": "043-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 250218,
+      "storedBytes": 31337,
+      "rawSha256": "de922c930f429502f1fef2fdc35276b88fc1df2cff66fbcedc58badb0deb939b",
+      "storedSha256": "92fa5673cbd928afbac49a1075a1b6eca2491cfe853b87576972eb2fc4f112b9"
+    },
+    {
+      "name": "044-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 252844,
+      "storedBytes": 31403,
+      "rawSha256": "88b69d97fb9b0ab0fddd0c7a1bb28b5995afcd35d2ec4e9ce189ac0bf48f70cf",
+      "storedSha256": "a9e32e2c6c9b15101978131a5440815f1a2e9a32a610e687ee452cc47f2f8e9e"
+    },
+    {
+      "name": "045-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 253861,
+      "storedBytes": 32056,
+      "rawSha256": "303c690d146e0ee7caf314ff0c2d1d68ae6a55c7681633d15682238506a0ced1",
+      "storedSha256": "68e9739e36f65e457e22a6314bf19eeae5f79848fa42a3a2ba4e5f1a19ca2115"
+    },
+    {
+      "name": "046-spn108-profile-clock.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "rawBytes": 240,
+      "storedBytes": 183,
+      "rawSha256": "422a728fc6f4e39691f63b95e98dd911b82ec7d5a64b97e2d3fd707c349b51e6",
+      "storedSha256": "d5855091a2004ee961bcedd35f877fb4ae7ba79179f23a3c2fe61accf7a5f300"
+    },
+    {
+      "name": "047-doc-responsiveness.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/playwright-report/doc-responsiveness.json",
+      "rawBytes": 1384811,
+      "storedBytes": 361693,
+      "rawSha256": "a721a3fdc53cdee4fd5b3c9b2d2b44fe1f65061fa13ac255506c26047903dcb8",
+      "storedSha256": "679f30773c283a64c051a96941e1b81894824fa5da0d21658bbcf922441e33d8"
+    },
+    {
+      "name": "048-spn108-post-burst.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "rawBytes": 224026,
+      "storedBytes": 26297,
+      "rawSha256": "52f19a9a70d3da1eff4a09e3a165bd64a9d5bf8ce9e23ebd0fead6c2bb567b1e",
+      "storedSha256": "9a8ab8cf76781e19ce29d339d571c5c0dfd6893825c5aacd79d91a73d7079c73"
+    },
+    {
+      "name": "049-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 621601,
+      "storedBytes": 40688,
+      "rawSha256": "19f3483ee6c7e4d28f248436c9ec3d3d2c607364190aa5f7e542c87a9dd0cb54",
+      "storedSha256": "18cf8ba0c2c9a27ff9053cec2babd59f444246f54ffef6c494fb34629d0b99c3"
+    },
+    {
+      "name": "050-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 623886,
+      "storedBytes": 40719,
+      "rawSha256": "7caefa47ed5cca4a546dffb7967137ebd2a0b9a5e3808c69abead9cb9a68de8b",
+      "storedSha256": "d302e5c2d30d5960fd26c654ea78186a27379b3f1b5b0f63724af35afc27ed5a"
+    },
+    {
+      "name": "051-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 628726,
+      "storedBytes": 41053,
+      "rawSha256": "e225306de0c8488a8072cc4f953a0dcde9126d0c834a3fb7b864aae09468c440",
+      "storedSha256": "64187b2bd4fe2e463a1b15aaf91a5c6d8e917e61e3f383dc6efcca96db02138c"
+    },
+    {
+      "name": "052-spn108-metrics.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "rawBytes": 632846,
+      "storedBytes": 41815,
+      "rawSha256": "ed6d25ce0e3a04d408372b5f0f5b8a6250f479e7c564ab13ba434d724ddb1301",
+      "storedSha256": "56b5aded5172d677ab74058a711ad08298026769b0fe499e9d22eda78bfa9d65"
+    },
+    {
+      "name": "053-spn108-profile-clock.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "rawBytes": 241,
+      "storedBytes": 185,
+      "rawSha256": "4b54171ffbee9d1d4c31f3ecc256fa95c48d324f6ad61303befc1cc5de42b642",
+      "storedSha256": "8c735e5d3c5dd5dc0f9cfcaec9a491bf7147ae86089dda7150955045fdb534d9"
+    },
+    {
+      "name": "054-spn108-boundaries.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "rawBytes": 2344,
+      "storedBytes": 830,
+      "rawSha256": "9579b69418ba6ab772a3f88a11a1c36da206f90b322fd36e88ceb77642db5f75",
+      "storedSha256": "37b1142dfe00c0527fc6608fab8987817ed794a48f0912779c379290b775e126"
+    },
+    {
+      "name": "055-spn108-boundaries.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "rawBytes": 67537,
+      "storedBytes": 3765,
+      "rawSha256": "977c079a64922897f7104df13c75a505e3fe01d249c0c83ef23fa91c0c33f2f3",
+      "storedSha256": "d8df0e6372b1657705e949bd4b9d758854559d15b96cd91ceb5e392678d1daed"
+    },
+    {
+      "name": "056-spn108-comparison-mobile.json.gz",
+      "original": "doc-responsiveness-mobile-13401365892/test-results/spn108-comparison-mobile.json",
+      "rawBytes": 12870,
+      "storedBytes": 2443,
+      "rawSha256": "558717b8e3613360b815cdd253c42de5228f6a6ee0c6615bf012e8ab475614b4",
+      "storedSha256": "30f8c1035f28428198537ba5b07fcfd21f48d429a56396f7fdb87a80475541a3"
+    },
+    {
+      "name": "057-native-13398239150.zip.gz",
+      "original": "native-13398239150.zip",
+      "rawBytes": 451793,
+      "storedBytes": 451138,
+      "rawSha256": "ae9c8d3f8fd0fdb3657ea9ed7bed16e67de280b3bd5e5769acfa9d1350388de8",
+      "storedSha256": "c047c71f716723ded539b54afecbff07521c5d1f8e1e98ae00e89521e8b88336"
+    },
+    {
+      "name": "058-acceptance.json.gz",
+      "original": "native-13398239150/firefox/acceptance.json",
+      "rawBytes": 49864,
+      "storedBytes": 6779,
+      "rawSha256": "887a59c35639fa9d510eaf41df17635b123d8288caa5717a7f2c4cc0159888ae",
+      "storedSha256": "599c6501fbdcc48663e310cad494988f002c2213d133abcf72c7fd09dbafef21"
+    },
+    {
+      "name": "059-firefox-storage-prompt-1.json.gz",
+      "original": "native-13398239150/firefox/firefox-storage-prompt-1.json",
+      "rawBytes": 21974,
+      "storedBytes": 1794,
+      "rawSha256": "7866360fbcb0d9317aed5421796dd59e612116b572c8b447f92c9b78124142e7",
+      "storedSha256": "44b9f65ba4339c3d531bdfd12155d101231726e41d0e45710f06efb757b04dc0"
+    },
+    {
+      "name": "060-versions.json.gz",
+      "original": "native-13398239150/firefox/versions.json",
+      "rawBytes": 648,
+      "storedBytes": 419,
+      "rawSha256": "acb8799e5d46256fbb5e6236fef7802919eac546eb379079038a98437aeaf663",
+      "storedSha256": "6f4b5ceb3a6af4c20bb106473c737219225d1d7eba1a502245425af77040bf65"
+    },
+    {
+      "name": "061-native-13398618470.zip.gz",
+      "original": "native-13398618470.zip",
+      "rawBytes": 226892,
+      "storedBytes": 226096,
+      "rawSha256": "723efc141a3825106ef79cf3d3159a8d1ae79030c51f3469be183faf7eed133c",
+      "storedSha256": "28ce5bd2a741dc7d9276947eb0307bb7b9826e869e905abbb7af6378b57feddd"
+    },
+    {
+      "name": "062-acceptance.json.gz",
+      "original": "native-13398618470/chrome/acceptance.json",
+      "rawBytes": 48949,
+      "storedBytes": 6665,
+      "rawSha256": "dc3de82fbd901ed2d816fbd98b10207d6e37927e3e3ef28eae5ebc0a6e8c4c76",
+      "storedSha256": "857c8de4ea8c173ef460e82eaed1ec4c1636991bec94e03d792790a872eae313"
+    },
+    {
+      "name": "063-versions.json.gz",
+      "original": "native-13398618470/chrome/versions.json",
+      "rawBytes": 824,
+      "storedBytes": 526,
+      "rawSha256": "ed0d83ec303a37563443e017229124418afac478da0969950ad9cae019c1efc6",
+      "storedSha256": "864193bd140b90401ba988587990caae3ebccd5f916641ad1250f5a8488d5aec"
+    },
+    {
+      "name": "064-native-13398877204.zip.gz",
+      "original": "native-13398877204.zip",
+      "rawBytes": 1013823,
+      "storedBytes": 1013188,
+      "rawSha256": "0fcbac62b0c0f26de95935fbc0b1b3431943ca26f1c165bc23a0d048c89372cd",
+      "storedSha256": "af5437791da879b5ac38a59496463e3e3e5de6b975d84ae69a6b886f7262c455"
+    },
+    {
+      "name": "065-safari-profile-probe.json.gz",
+      "original": "native-13398877204/safari-profile-probe.json",
+      "rawBytes": 85213,
+      "storedBytes": 9020,
+      "rawSha256": "b68fb6e2cfee1fdb002a5c255d75be6c92871d8f1bce94ec959781463c26d3c0",
+      "storedSha256": "e25662dc355f9c286e162a9f51a61e29d02f406ae340f0f3374ec12c482a0dae"
+    },
+    {
+      "name": "066-acceptance.json.gz",
+      "original": "native-13398877204/safari/acceptance.json",
+      "rawBytes": 47124,
+      "storedBytes": 6686,
+      "rawSha256": "6797124ffb5a9e989e11050c31fd31353770daef7816f8a19349431d58b85f50",
+      "storedSha256": "c3bd0754ba3c9f8d7b581ede31a0e6e372ecb0e0d1b937dae29b05cb7e743b16"
+    },
+    {
+      "name": "067-safari-pointer.jsonl.gz",
+      "original": "native-13398877204/safari/safari-pointer.jsonl",
+      "rawBytes": 21403,
+      "storedBytes": 1273,
+      "rawSha256": "2cbcf6788c6212546bbb4368d325defca933fa577cac64d2715dc38ec6aaa5fd",
+      "storedSha256": "f28af176078fb7532b283700c5ab0298c2840a7fc69e9c0a7a5339f2d3785352"
+    },
+    {
+      "name": "068-safari-render-state.jsonl.gz",
+      "original": "native-13398877204/safari/safari-render-state.jsonl",
+      "rawBytes": 38346,
+      "storedBytes": 2070,
+      "rawSha256": "32cbed0d987b29a21d4c077288e4a8fc416e51bf63be78f8a3342e7928e81fc5",
+      "storedSha256": "7e280479e58c7475baab029c0128da66a8cf8b8541df32a94004abe98d8596fd"
+    },
+    {
+      "name": "069-versions.json.gz",
+      "original": "native-13398877204/safari/versions.json",
+      "rawBytes": 1136,
+      "storedBytes": 559,
+      "rawSha256": "54fa87ef347a1d602b7880b43cec069551b5dd9e52c1a99e4dc535197aa15d7f",
+      "storedSha256": "3a4563d3247fe2fdaba96465a5de9b7dd59999ce4afa3dbcbd10311ffb848135"
+    },
+    {
+      "name": "070-native-artifacts.json.gz",
+      "original": "native-artifacts.json",
+      "rawBytes": 2053,
+      "storedBytes": 581,
+      "rawSha256": "a5a319edccfd94d77978e049900ab8fdf9f350c5dc4ee755da3580bd77156896",
+      "storedSha256": "ab7cb044d7f85bcfe106467e1acb188769f15d144c3c653002179c4d545d8df3"
+    },
+    {
+      "name": "071-native-jobs-final.json.gz",
+      "original": "native-jobs-final.json",
+      "rawBytes": 10074,
+      "storedBytes": 1270,
+      "rawSha256": "aedd9fcef98d6a2e0e27a13ca295a881c75166d2f6893ae2aeffd6661e160a1a",
+      "storedSha256": "66e1d623965deb2b3e901291adaf984b439dc3d123061f5c19072cd1b9c2d24e"
+    },
+    {
+      "name": "072-native-run-final.json.gz",
+      "original": "native-run-final.json",
+      "rawBytes": 12197,
+      "storedBytes": 1679,
+      "rawSha256": "f288156f3afb49165530039d4da8c006488becaa4b8412de71c19bfd2181c550",
+      "storedSha256": "6fba3f77863f02a9722c93fd6c196b7a877842c5dcc8703cb9d1d23ade720663"
+    },
+    {
+      "name": "073-storybook-jobs-final.json.gz",
+      "original": "storybook-jobs-final.json",
+      "rawBytes": 24485,
+      "storedBytes": 2206,
+      "rawSha256": "1f6cbec389e66ff77e3e691a33da9904a2d6451fca7a19e98a9b22c2fb1324ac",
+      "storedSha256": "1e391b240f470b4730e1eef6addcb5afda0665943996800c069adae4f8b255da"
+    },
+    {
+      "name": "074-storybook-run-final.json.gz",
+      "original": "storybook-run-final.json",
+      "rawBytes": 12186,
+      "storedBytes": 1673,
+      "rawSha256": "ba8012737ad4c96f916ce48c7be7d8ade052186a8e4f8e8dd6e232c390a8d9ed",
+      "storedSha256": "da67ccf1470cb65131077ed5618bdbf15c98e381798a1a816574022dff0694fd"
+    }
+  ]
+}

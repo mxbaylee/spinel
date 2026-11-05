@@ -1,0 +1,54 @@
+name: 🔬 Native Doc component counterfactual
+on:
+  pull_request:
+    branches: [main]
+    types: [synchronize]
+permissions:
+  contents: read
+concurrency:
+  group: spn146-native-component
+  cancel-in-progress: false
+jobs:
+  component:
+    # One reachable pre-merge update only. Edits and later repair pushes cannot
+    # renew the registered allowance; GitHub reruns fail before installation.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '1eeb90f1d50291791d39913350c28c672c7154ee'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SPN146_REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
+      SPN146_RUNTIME_OUTPUT: test-results/spn146-native-runtime
+      DOC_TRACE_PROCESSOR_PATH: ${{ runner.temp }}/spn146-trace-processor
+    steps:
+      - name: Admit only the first workflow attempt
+        run: test "$GITHUB_RUN_ATTEMPT" = 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Clean dependencies and pinned browser/converter
+        timeout-minutes: 8
+        run: |
+          npm ci
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+          node scripts/ci/doc-trace-processor.ts "$DOC_TRACE_PROCESSOR_PATH"
+          mkdir -p "$SPN146_RUNTIME_OUTPUT"
+      - name: Prepare the fixed component bundle
+        run: node scripts/ci/doc-native-runtime/watchdog.ts "$SPN146_RUNTIME_OUTPUT/preparation-watchdog.json" node scripts/ci/doc-native-runtime/build.ts
+      - name: One fixed 32-observation experiment
+        run: node scripts/ci/doc-native-runtime/watchdog.ts "$SPN146_RUNTIME_OUTPUT/observation-watchdog.json" node scripts/ci/doc-native-runtime/run.ts
+      - name: Convert complete trace and assess every comparison
+        run: node scripts/ci/doc-native-runtime/watchdog.ts "$SPN146_RUNTIME_OUTPUT/analysis-watchdog.json" node scripts/ci/doc-native-runtime/convert.ts
+      - name: Preserve complete or partial evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: spn146-linux-native-component
+          path: test-results/spn146-native-runtime/
+          if-no-files-found: error
+          retention-days: 30
