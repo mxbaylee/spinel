@@ -236,13 +236,14 @@ export async function observeNativeWindowSources(cdp: CDPSession, origin: string
         const path = await realpath(resolve(root, '.' + pathname));
         const local = relative(root, path);
         assert.ok(!local.startsWith('..') && !local.startsWith(sep));
-        const emitted = await readFile(path);
         const expected = preparedFiles.get(local);
         assert.ok(expected, 'Loaded script absent from source preparation');
+        assert.equal((await stat(path)).size, expected.bytes, 'Prepared script size changed');
+        bytes += expected.bytes + (expected.mapBytes ?? 0);
+        assert.ok(bytes <= 64 * 1024 ** 2, 'Loaded code/maps exceed64MiB');
+        const emitted = await readFile(path);
         assert.equal(emitted.length, expected.bytes);
         assert.equal(hash(emitted), expected.sha256, 'Emitted script changed after preparation');
-        bytes += emitted.length + (expected.mapBytes ?? 0);
-        assert.ok(bytes <= 64 * 1024 ** 2, 'Loaded code/maps exceed64MiB');
         const { scriptSource } = await cdp.send('Debugger.getScriptSource', {
           scriptId: script.scriptId,
         });
