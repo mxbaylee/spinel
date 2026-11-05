@@ -1,0 +1,102 @@
+{
+  "root": 99176,
+  "started": 1793893760743,
+  "elapsedMs": 875,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91184,
+  "peakKiB": 276320,
+  "live": [
+    {
+      "pid": 99176,
+      "parent": 99150,
+      "group": 99176,
+      "rssKiB": 89648,
+      "started": "Thu Nov  5 07:49:20 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-pr-check-watchdog.json npm run backlog:pr -- --base origin/main --title 🧪 SPN-090 Verify offline launches on real phones"
+    },
+    {
+      "pid": 99502,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 99176,
+      "parent": 99150,
+      "group": 99176,
+      "rssKiB": 89648,
+      "started": "Thu Nov  5 07:49:20 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-pr-check-watchdog.json npm run backlog:pr -- --base origin/main --title 🧪 SPN-090 Verify offline launches on real phones"
+    },
+    {
+      "pid": 99195,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99221,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 78720,
+      "started": "Thu Nov  5 07:49:20 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 99233,
+      "parent": 99221,
+      "group": 99176,
+      "rssKiB": 100784,
+      "started": "Thu Nov  5 07:49:20 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 99239,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99351,
+      "parent": 99233,
+      "group": 99176,
+      "rssKiB": 7696,
+      "started": "Thu Nov  5 07:49:21 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 99357,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99489,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99502,
+      "parent": 99176,
+      "group": 99176,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

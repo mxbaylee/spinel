@@ -1,0 +1,13 @@
+✔ actual emitted bytes bind a deduplicated static closure, excluding dynamic-only chunks (11.691792ms)
+✔ final settled files bind descriptor CSS, copied assets, and unchanged declared bytes (8.637ms)
+✔ missing entry, unresolved static or dynamic dependencies and unsafe paths fail closed (0.555959ms)
+✔ one build-only branch transition cannot route provider or browser work (3.015917ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.673875
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":288,"peakKiB":90336}

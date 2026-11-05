@@ -1,0 +1,46 @@
+{
+  "root": 1965,
+  "started": 1793894267815,
+  "elapsedMs": 62,
+  "outcome": "ready",
+  "pressure": "1",
+  "rssKiB": 89824,
+  "peakKiB": 89824,
+  "live": [
+    {
+      "pid": 1965,
+      "parent": 1939,
+      "group": 1965,
+      "rssKiB": 88288,
+      "started": "Thu Nov  5 07:57:47 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-archive-watchdog.json node /tmp/spn090-current-hosted/archive-build-publication.ts"
+    },
+    {
+      "pid": 1984,
+      "parent": 1965,
+      "group": 1965,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:57:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 1965,
+      "parent": 1939,
+      "group": 1965,
+      "rssKiB": 88288,
+      "started": "Thu Nov  5 07:57:47 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-archive-watchdog.json node /tmp/spn090-current-hosted/archive-build-publication.ts"
+    },
+    {
+      "pid": 1984,
+      "parent": 1965,
+      "group": 1965,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:57:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

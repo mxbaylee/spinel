@@ -1,0 +1,3 @@
+# 🔎 SPN-090 build-only publication
+
+Exact source 3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b. Independent A99/B97 permit the single owned5bb→reviewed-source build inspection. Initial aaeeA94/B94 caught valid server HTML references being misclassified as emitted files; fixed with actual production HTML and missing-script/tampered-installation negatives. Four controls pass; scoped types/lint/format/actionlint/backlog/PR checks pass. The first nullable-type error is retained with its repair. Full PR28,312 changed-line soft warning remains. Local full install/build resource limitation remains; donor tools/types only. No browser or provider request is part of this build. Actual emitted graph and complete phone acceptance remain pending.

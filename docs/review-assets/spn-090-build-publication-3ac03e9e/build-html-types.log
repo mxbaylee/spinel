@@ -1,0 +1,11 @@
+scripts/ci/browserstack-build-graph.test.ts(112,44): error TS18046: 'row' is of type 'unknown'.
+scripts/ci/browserstack-build-graph.test.ts(121,44): error TS18046: 'row' is of type 'unknown'.
+scripts/ci/browserstack-build-graph.test.ts(121,83): error TS2339: Property 'emitted' does not exist on type '{}'.
+scripts/ci/browserstack-build-graph.ts(147,83): error TS2345: Argument of type '(this: undefined, match: RegExpExecArray) => { href: string; pathname: string; owner: string; emitted: string; }[] | { href: string; pathname: string; owner: string; emitted: null; }[]' is not assignable to parameter of type '(this: undefined, value: RegExpExecArray, index: number, array: RegExpExecArray[]) => readonly { href: string; pathname: string; owner: string; emitted: string; }[] | { ...; }'.
+  Type '{ href: string; pathname: string; owner: string; emitted: string; }[] | { href: string; pathname: string; owner: string; emitted: null; }[]' is not assignable to type 'readonly { href: string; pathname: string; owner: string; emitted: string; }[] | { href: string; pathname: string; owner: string; emitted: string; }'.
+    Type '{ href: string; pathname: string; owner: string; emitted: null; }[]' is not assignable to type 'readonly { href: string; pathname: string; owner: string; emitted: string; }[] | { href: string; pathname: string; owner: string; emitted: string; }'.
+      Type '{ href: string; pathname: string; owner: string; emitted: null; }[]' is not assignable to type 'readonly { href: string; pathname: string; owner: string; emitted: string; }[]'.
+        Type '{ href: string; pathname: string; owner: string; emitted: null; }' is not assignable to type '{ href: string; pathname: string; owner: string; emitted: string; }'.
+          Types of property 'emitted' are incompatible.
+            Type 'null' is not assignable to type 'string'.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":293,"peakKiB":90544}

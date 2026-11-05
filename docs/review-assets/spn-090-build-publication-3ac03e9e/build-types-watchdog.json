@@ -1,0 +1,54 @@
+{
+  "root": 98731,
+  "started": 1793893679253,
+  "elapsedMs": 310,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90032,
+  "peakKiB": 90032,
+  "live": [
+    {
+      "pid": 98731,
+      "parent": 98705,
+      "group": 98731,
+      "rssKiB": 88496,
+      "started": "Thu Nov  5 07:47:59 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-types-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/tsc -p /tmp/spn090-current-hosted/tsconfig-build.json"
+    },
+    {
+      "pid": 98764,
+      "parent": 98731,
+      "group": 98731,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:47:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 98731,
+      "parent": 98705,
+      "group": 98731,
+      "rssKiB": 88496,
+      "started": "Thu Nov  5 07:47:59 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-types-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/tsc -p /tmp/spn090-current-hosted/tsconfig-build.json"
+    },
+    {
+      "pid": 98750,
+      "parent": 98731,
+      "group": 98731,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:47:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 98764,
+      "parent": 98731,
+      "group": 98731,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:47:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

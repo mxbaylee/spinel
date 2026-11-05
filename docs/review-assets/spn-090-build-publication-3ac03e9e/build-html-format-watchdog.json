@@ -1,0 +1,54 @@
+{
+  "root": 511,
+  "started": 1793893937668,
+  "elapsedMs": 321,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90336,
+  "peakKiB": 90336,
+  "live": [
+    {
+      "pid": 511,
+      "parent": 485,
+      "group": 511,
+      "rssKiB": 88800,
+      "started": "Thu Nov  5 07:52:17 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-html-format-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --write scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts"
+    },
+    {
+      "pid": 544,
+      "parent": 511,
+      "group": 511,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:52:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 511,
+      "parent": 485,
+      "group": 511,
+      "rssKiB": 88800,
+      "started": "Thu Nov  5 07:52:17 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-html-format-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --write scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts"
+    },
+    {
+      "pid": 530,
+      "parent": 511,
+      "group": 511,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:52:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 544,
+      "parent": 511,
+      "group": 511,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:52:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

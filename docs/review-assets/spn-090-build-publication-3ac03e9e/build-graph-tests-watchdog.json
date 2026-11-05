@@ -1,0 +1,54 @@
+{
+  "root": 96833,
+  "started": 1793888933204,
+  "elapsedMs": 315,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93488,
+  "peakKiB": 93488,
+  "live": [
+    {
+      "pid": 96833,
+      "parent": 96807,
+      "group": 96833,
+      "rssKiB": 91952,
+      "started": "Thu Nov  5 06:28:53 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-graph-tests-watchdog.json node --test scripts/ci/browserstack-build-graph.test.ts"
+    },
+    {
+      "pid": 96886,
+      "parent": 96833,
+      "group": 96833,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:28:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 96833,
+      "parent": 96807,
+      "group": 96833,
+      "rssKiB": 91952,
+      "started": "Thu Nov  5 06:28:53 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-graph-tests-watchdog.json node --test scripts/ci/browserstack-build-graph.test.ts"
+    },
+    {
+      "pid": 96852,
+      "parent": 96833,
+      "group": 96833,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:28:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 96886,
+      "parent": 96833,
+      "group": 96833,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 06:28:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

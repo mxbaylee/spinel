@@ -1,0 +1,47 @@
+# 🔎 SPN-090 exact-source build checkpoint review A
+
+Reviewed commit: **aaee734b987f69d176aa8d0a1a639bb218ca2184**. Base outcome: `2f442317dd2e1c188ae4a810ac094fd1162a4a2a`; focused delta from `5bb97d17484ca7df151114ad2f6e28a03b4630c2`. Worktree was clean at initial review. Independent nonimplementing review; no source edits, build, browser, provider, converter or validation workload executed.
+
+**Score: 94/100. Not qualified for the proposed validation publication.** One P2 correctness/verification blocker must be repaired and the new exact head independently re-reviewed. This is a pre-push source assessment, not a failed hosted experiment and not a grade certifying complete SPN-090 acceptance.
+
+## 📌 Blocking finding A1 — valid production HTML is rejected as missing emitted files
+
+Location: `scripts/ci/browserstack-build-graph.ts:146–151`; weak fixture at `scripts/ci/browserstack-build-graph.test.ts:68`.
+
+`htmlEntrypoints` collects every script `src` and link `href`, then requires each entire URL to be a literal dist file key. The checked-in `web/index.html` includes `/manifest.webmanifest`, `/app-icon-180.png`, `/favicon.ico?v=2`, `/favicon-32.png?v=2` and `/favicon.svg?v=2`. These are fixed public server routes in `src/server/pwa.ts`, not all emitted files. The installation manifest and icon aliases have separately emitted hashed targets through `descriptor.installation`; that does not create physical files at their public alias URLs. Query-bearing favicon URLs also cannot equal physical file keys.
+
+Consequently, an otherwise correct normal production build will encounter `Missing HTML entry asset` rather than produce the graph. This is established from the committed HTML, validator, server route and Vite emission source; no hosted or local full build is needed to discover it. The test's miniature HTML contains only the application module script and runtime descriptor, so all four controls can pass while the real source is incompatible.
+
+**Required repair:** distinguish executable module/classic script, stylesheet and module/preload references from public metadata/installation/icon references. Validate actual emitted entry assets strictly, preserve public references with their true authority, bind installation aliases to their validated descriptor targets, and handle URL path/query components explicitly. Do not solve this by silently ignoring all unresolved HTML references or treating icons as startup JS. Add an actual production-shaped HTML fixture containing the existing manifest, touch icon, favicon query strings and emitted bootstrap/preloads, plus missing emitted entry and missing installation-target negatives. Keep this inside SPN-090: it is necessary for the newly introduced finite investigation, not a separable follow-up. Status: open on this SHA; parent and independent reviewer B informed.
+
+## 📐 Rubric
+
+- **Scope and acceptance: 35/35.** The original main ticket, complete diff inventory, existing reviewed outcome and latest decision preserve the full XL installed-context scope. The new checkpoint asks a relevant structural question without claiming historical Safari byte identity, causal proof or device completion. It carries no newly admitted phone request.
+- **Correctness, integrity and access: 21/25.** Deduct four for A1, which deterministically rejects legitimate production input before the intended observation. Otherwise the final-file reconciliation, symlink rejection, descriptor validation, static/dynamic distinction and exact-source/attempt checks are coherent. No new account access or provider authority is introduced.
+- **Meaningful regression protection and evidence: 18/20.** Deduct two for the production-HTML fixture gap tied to A1. Actual temporary files, hash/mutation/missing-member checks, cycle/dynamic-edge controls and evaluated event conditions are meaningful low-layer tests. Four passing controls do not establish the incompatible real-input boundary or pinned hosted bundler execution.
+- **CI and operational usability: 10/10.** Exact owned push branch and event-before guard, attempt one, pinned actions, read-only permissions, no persisted checkout credentials, one clean install/build, finite job/build deadlines and always-upload are appropriate. The broader ordinary CI routing remains intact and this diagnostic does not replace required gates.
+- **Maintainability, documentation, process and over-complexity: 10/10.** The incremental helper, wrapper, finite workflow and focused tests avoid an additional framework or alternate application build configuration. Retained first failures and source-specific limitations remain explicit. No further actionable simplification beyond repairing the inaccurate HTML classification is identified.
+
+These deductions address the concrete introduced defect and its missed regression, not the explicitly pending hosted/device evidence. No prior score was reused to qualify this SHA.
+
+## 🧪 Evidence actually inspected
+
+Read the complete six-file `5bb→aaee` diff (543 insertions), the main-to-candidate changed-file/line inventory, original main ticket, relevant process/runbook/testing/personas, current maintained plan and implementation tail, actual Vite config, bootstrap/application entry, shell descriptor/parser, public asset routes and new source/tests/workflow. Unchanged broader application and provider source retains its earlier source-specific review evidence; it has not been represented as a new execution here.
+
+Inspected `/tmp/spn090-current-hosted/build-graph-final-tests.log` and its watchdog: **4/4 passed**, test duration 141.674 ms; enclosing command **288 ms, peak 90,336 KiB, normal pressure**. Also inspected local type/lint/actionlint/backlog/committed-PR-check logs. Type/lint/actionlint commands completed successfully; backlog passed at **460 ms / 211,200 KiB**; committed PR shape passed at **875 ms / 276,320 KiB**, retaining the **28,216 changed-line** soft-limit warning. These checks do not exercise real Vite output or erase A1. The local tool/type donor limitation remains disclosed; no full local installation/build or new phone execution is credited.
+
+The prior prospective concerns are mostly addressed: graph metadata is collected in the hook, final bytes are read only after `build()` settles, final dist is enumerated with symlink/count/size checks, declared hashes are compared, copied files are explicit, the actual descriptor is parsed, all descriptor CSS is separately identified, compression is labeled an estimate, and terminal reporting preserves the original caught failure. A complete build report is written only after final verification. The remaining HTML classification defect is narrower than reworking this architecture.
+
+## 🧭 Scope, personas and split boundary
+
+The full PR is substantially above the 10,000-line soft limit; it must not be treated as a small graph-only landing. Much of the current outcome consists of the existing phone capability/acceptance harness, regression controls and retained evidence, with production offline/runtime protection and installation behavior. The latest 543-line increment is directly needed to investigate the unresolved startup prerequisite. Extracting the graph into an unrelated product/tool PR would not create an accepted phone outcome or remove the unresolved original requirements. Do not close this ticket or split away its device acceptance merely to obtain a passing grade.
+
+A narrow repair to A1 fits the current checkpoint. Before eventual landing, reassess the whole 28,216-line outcome and remove or deliberately retain consumed diagnostic routes with a documented ownership rationale; avoid accumulating speculative future options. There is no identified independently complete product slice in this increment that requires a new ticket now. Conditional ticket deletion/index bookkeeping cannot be merged while the full acceptance remains unresolved.
+
+The Operator benefits from bounded, reproducible evidence with no paid session. Owner and Collaborator still require downloaded content, images, edits, restart/reconnect/conflict and isolation proofs in their actual launch contexts. Link guest authority remains excluded from account/offline preparation; a dependency observation must not motivate bypassing that boundary. This increment changes no product UI. Prior visual approval is agent review only, for the unchanged production pending state rendered with synthetic Storybook data, not actual account persistence or phone acceptance.
+
+## ⏳ Publication and acceptance disposition
+
+Do not push this commit for the proposed one-build validation. Preserve this finding, repair it with a meaningful negative/positive control and obtain two independent qualifying exact-head reviews first. The new build remains unexecuted and its allowance unconsumed by this source review. Existing Safari and completed-session diagnostic allowances remain closed with their recorded failures/limits; no new phone, Chrome or Firefox execution is admitted by this checkpoint.
+
+Even after a successful graph run, the complete current-head required gates and physical Android Chrome/Firefox/iPhone installed-context outcome remain outstanding. Older 6f9 application/Storybook/native passes are evidence on their recorded identities, not passes for aaee or evidence of real-phone success. A future module-boundary or loading-state repair needs its own supported hypothesis, tests and any required current visual review. User scope is still finish SPN-146 and SPN-090, then stop.

@@ -1,0 +1,54 @@
+{
+  "root": 99090,
+  "started": 1793893748735,
+  "elapsedMs": 328,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90480,
+  "peakKiB": 90480,
+  "live": [
+    {
+      "pid": 99090,
+      "parent": 99064,
+      "group": 99090,
+      "rssKiB": 88944,
+      "started": "Thu Nov  5 07:49:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-format-final-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --check scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts .github/workflows/phone-build-inspection.yml"
+    },
+    {
+      "pid": 99123,
+      "parent": 99090,
+      "group": 99090,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 99090,
+      "parent": 99064,
+      "group": 99090,
+      "rssKiB": 88944,
+      "started": "Thu Nov  5 07:49:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-current-hosted/build-format-final-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/prettier --check scripts/ci/browserstack-build-graph.ts scripts/ci/browserstack-build-graph.test.ts scripts/ci/browserstack-build-inspection.ts .github/workflows/phone-build-inspection.yml"
+    },
+    {
+      "pid": 99109,
+      "parent": 99090,
+      "group": 99090,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 99123,
+      "parent": 99090,
+      "group": 99090,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 07:49:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

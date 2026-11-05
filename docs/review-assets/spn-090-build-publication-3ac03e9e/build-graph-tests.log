@@ -1,0 +1,12 @@
+✔ actual emitted bytes bind a deduplicated static closure, excluding dynamic-only chunks (15.124084ms)
+✔ missing entry, unresolved static or dynamic dependencies and unsafe paths fail closed (0.64525ms)
+✔ one build-only branch transition cannot route provider or browser work (3.549708ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 144.960667
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":315,"peakKiB":93488}
