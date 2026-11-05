@@ -65,6 +65,10 @@ export async function startNativeDiagnosticTrace(
           maxBytes,
           timeoutMs,
           transport: transport ?? null,
+          completionFailure:
+            typeof failure === 'object' && failure !== null && 'traceCompletion' in failure
+              ? failure.traceCompletion
+              : null,
           elapsedMs: performance.now() - began,
           complete: !failure,
           failure: failure ? String(failure) : null,
