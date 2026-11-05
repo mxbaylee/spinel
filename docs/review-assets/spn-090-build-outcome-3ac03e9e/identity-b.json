@@ -1,0 +1,22 @@
+{
+  "source": "3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b",
+  "tree": "9c4810ecdf88434917c278b94a0efc2587081c05",
+  "eventBefore": "5bb97d17484ca7df151114ad2f6e28a03b4630c2",
+  "runId": "42060405449",
+  "attempt": "1",
+  "node": "v26.12.1",
+  "vite": "8.3.4",
+  "rolldown": "1.2.14",
+  "mode": "production",
+  "flags": {
+    "VITE_SYNC_EVIDENCE": "1"
+  },
+  "sourceHashes": {
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+    "vite.config.ts": "1ff5d04ca6a9662a80f2fbcfe991287bb5fb348d3b694dd64559c4a0a47af541",
+    "web/main.tsx": "834f9233ffc07ab62b997572050e18c930a6ecc114ef5ceab915db5e6ab0da77",
+    "web/application.tsx": "83e0a275db639d619ce5a26c0b0bad9b6aea396d3a04991e4c97369d23729fa4",
+    "scripts/ci/browserstack-build-inspection.ts": "26ac24f85fafe68df2a76507165339b1036377229e1dc2b1201154002d721999",
+    "scripts/ci/browserstack-build-graph.ts": "5ddb81594f7e8d74ccdc9652b358297eee6aff0ec9d6a34d9130abec7f154438"
+  }
+}

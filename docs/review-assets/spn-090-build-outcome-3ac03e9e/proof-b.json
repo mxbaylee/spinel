@@ -1,0 +1,1037 @@
+{
+  "source": "3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b",
+  "tree": "9c4810ecdf88434917c278b94a0efc2587081c05",
+  "runId": "42060405449",
+  "attempt": 1,
+  "zip": {
+    "bytes": 3579896,
+    "sha256": "01ebb0d88d6f4c664fd8218bb46c7da29a4aac250863db5d105559890b4fa5d0"
+  },
+  "crc": true,
+  "members": [
+    {
+      "name": "artifacts/browserstack-build-graph.json",
+      "bytes": 415777,
+      "sha256": "dd4c998f1a194861692bbb109fd60301a9151850b7895bffeac902eed3a6a43c"
+    },
+    {
+      "name": "artifacts/browserstack-build-identity.json",
+      "bytes": 977,
+      "sha256": "fb1dfbda135fa973feba5827e6a8ee85fded7317f2b9cd4441a6545fa9b73f6a"
+    },
+    {
+      "name": "artifacts/browserstack-build-result.json",
+      "bytes": 1019,
+      "sha256": "4d9801c43675683e8759ce153c50dcbaa603970dab86965af7399eb3f6acca1d"
+    },
+    {
+      "name": "dist/assets/CopyFile-Bp41xbsr.css",
+      "bytes": 16915,
+      "sha256": "24eae06726d425fb9689334e30999098838bc4aa2dc49678cadd92dcdaf2f203"
+    },
+    {
+      "name": "dist/assets/CopyFile-C6i42XXv.js",
+      "bytes": 637550,
+      "sha256": "90c66d8807e74c16eca2321acd534a268cef17f746a79524ac0fe3152350ca81"
+    },
+    {
+      "name": "dist/assets/DocEditor-BqBuz7OD.js",
+      "bytes": 16730,
+      "sha256": "5084573e0118a9f1111415207cc345397a769b02f95cd47ac3da7d06372c2894"
+    },
+    {
+      "name": "dist/assets/HistoryBrowser-B4Uhrazr.js",
+      "bytes": 20974,
+      "sha256": "34b7b0e46d7ba05fe88582fe5f97b613098b0d294c9078ed26ecef5692fd4711"
+    },
+    {
+      "name": "dist/assets/HistoryBrowser-D9Z9OhM7.css",
+      "bytes": 3361,
+      "sha256": "a7536c0ab0d79dc700d82be8632e86dd9cbd365dd8698f94983cf6a073eb662c"
+    },
+    {
+      "name": "dist/assets/OfflineAccess-CbiGXkd5.js",
+      "bytes": 2985,
+      "sha256": "2bcde8a7f8b3fe137f35392cf439d78d5e531aa5d2f9a8a13c279a13e0351a08"
+    },
+    {
+      "name": "dist/assets/OfflineViewer-CnAqT_nW.js",
+      "bytes": 1968,
+      "sha256": "fcfc501fca776e81af2477ef7a12f4bf997832dd5d95918631823ccbf5930bc9"
+    },
+    {
+      "name": "dist/assets/PreparedImages-DxTqDsTH.js",
+      "bytes": 6595,
+      "sha256": "eea5ecbeecc54600d16b3645b26009ab88048c7ae89d1ad963b2188b5843fd36"
+    },
+    {
+      "name": "dist/assets/SheetEditor-DE0kGSyV.js",
+      "bytes": 6164,
+      "sha256": "34bf4fc7a6b2b3016100e22dc5bbc73f4b44916b48dfd6a739def23bbaaf0a84"
+    },
+    {
+      "name": "dist/assets/application-8TWMM7LW.js",
+      "bytes": 341972,
+      "sha256": "83ab862f900f58985aed1a23af09bccae7042bef73ede5725e240985693a7b2c"
+    },
+    {
+      "name": "dist/assets/application-B9PzMhak.css",
+      "bytes": 58909,
+      "sha256": "f0d0c9463ed080f214e06e4e5be29074ab12eec404fdbc624db44e44f61d069e"
+    },
+    {
+      "name": "dist/assets/checkpoint-CNBwfwki.js",
+      "bytes": 5365,
+      "sha256": "bde26f209468e7dc2bb1bb48881fac6ebf968f664c5b649189cf2259d2cb1570"
+    },
+    {
+      "name": "dist/assets/documentAccess-BpTD8alm.js",
+      "bytes": 3543,
+      "sha256": "e82196b4dadcbcec0a88ffe775e55898c57862e1ee3585df7067c9705b3b2035"
+    },
+    {
+      "name": "dist/assets/documentReady-CZMWh3-A.css",
+      "bytes": 114439,
+      "sha256": "9ec479c60c4e194484e39f2d953a44ae40f94f88467e9fffbef6fa5473a89a7f"
+    },
+    {
+      "name": "dist/assets/documentReady-Sg7XsImQ.js",
+      "bytes": 178332,
+      "sha256": "41794cb1b0edaafce15e2ad3d2352b4c9c036a985e0f01bcffdb8cb0db522a01"
+    },
+    {
+      "name": "dist/assets/download-BN1tfXY-.js",
+      "bytes": 3481,
+      "sha256": "5a411126a61a39614f3aa9335f7befd35239826c7e4c908ddc8f7dacee5f5f18"
+    },
+    {
+      "name": "dist/assets/es-BRjhezBD.js",
+      "bytes": 1166098,
+      "sha256": "3ab50944ee2d70d5a1e711ba3aae96ee674175aaa7bdcf2d25e7e9c32604411b"
+    },
+    {
+      "name": "dist/assets/existingDatabase-CDJOByQx.js",
+      "bytes": 1203,
+      "sha256": "f22abeda2943af9268034f360c259344c54153b8944ac9b73d3afd35bda9530c"
+    },
+    {
+      "name": "dist/assets/floating-ui.react-dom-C7Svilm4.js",
+      "bytes": 214315,
+      "sha256": "c7b250325e9efb9f4762a02fb76dbb9d564339ed9bd58b6095a626d08831df59"
+    },
+    {
+      "name": "dist/assets/install-app-icon-180-892edc23116874ce9a77dff7c705ae8963d5cea9152948101bb23ee4208106c1.png",
+      "bytes": 6921,
+      "sha256": "892edc23116874ce9a77dff7c705ae8963d5cea9152948101bb23ee4208106c1"
+    },
+    {
+      "name": "dist/assets/install-app-icon-192-844c7988559fb9ac8e667b9a554ee810bdd1890d9ab8ed168db5c6c5bd9969a0.png",
+      "bytes": 7534,
+      "sha256": "844c7988559fb9ac8e667b9a554ee810bdd1890d9ab8ed168db5c6c5bd9969a0"
+    },
+    {
+      "name": "dist/assets/install-app-icon-512-ff4fcd00a0d9d9fb9f673859c1a4f88fc8a123080d480e94ab23468080605e84.png",
+      "bytes": 23166,
+      "sha256": "ff4fcd00a0d9d9fb9f673859c1a4f88fc8a123080d480e94ab23468080605e84"
+    },
+    {
+      "name": "dist/assets/install-manifest-35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34.webmanifest",
+      "bytes": 413,
+      "sha256": "35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34"
+    },
+    {
+      "name": "dist/assets/lib-CXaYNDXC.js",
+      "bytes": 378802,
+      "sha256": "62b226c4b2802150e679bcea006ca1d5d048eb934478c5a520786fd1a7451184"
+    },
+    {
+      "name": "dist/assets/lib-DGHf0mi1.css",
+      "bytes": 124162,
+      "sha256": "952d84ed3b6f59bb8a1f768400fb5ba4156edc3791ea6378be0fd1e3cea771da"
+    },
+    {
+      "name": "dist/assets/main-C8IwslP4.js",
+      "bytes": 3752,
+      "sha256": "b58ed6fb3f57c086ea01aebbf1a2078c517ef4def801e74c72c5ad2de7a3f4cc"
+    },
+    {
+      "name": "dist/assets/model-eQ0Z7CfK.js",
+      "bytes": 119369,
+      "sha256": "ddadd2e202f2ef9ed61ec2ab414d5598d173d1acfb4013e797275e51bde8832d"
+    },
+    {
+      "name": "dist/assets/module-preload-BLdHbfdN.js",
+      "bytes": 1519,
+      "sha256": "8aec9ff75ffa86a03d51268b63126abadb3754aa5a6b6c5bb16e4e2446a63dee"
+    },
+    {
+      "name": "dist/assets/native-SDg643Gn.js",
+      "bytes": 7101,
+      "sha256": "30fb349044b90a42cfd03061eff9c161dd9f7977f2b107e6c2e5817261a1edb8"
+    },
+    {
+      "name": "dist/assets/nativeCopy-BXgmWl_d.js",
+      "bytes": 125332,
+      "sha256": "d928c1a6200ba38a78d0f2dd7163c76f8083d3e21cf076c60f8f5bda392226b4"
+    },
+    {
+      "name": "dist/assets/nativeCopy-mVcC3r32.css",
+      "bytes": 2533,
+      "sha256": "5635f05c18a0d88e35f62260fb18c1fd81c064d1da2421738ffd260d77bb400b"
+    },
+    {
+      "name": "dist/assets/nativeSyncPermissions-1ztolsBe.js",
+      "bytes": 3806106,
+      "sha256": "01b0342d259a16fa635c0572f6cb54011eabcd1379f9275c35ff1bd493e2cc00"
+    },
+    {
+      "name": "dist/assets/offlineError-BYtDddN3.js",
+      "bytes": 10515,
+      "sha256": "2a8679f0b6b5d648dfb04f664e90500efbecf3c330d1750f309c870748a009ac"
+    },
+    {
+      "name": "dist/assets/offlineStore-nw4zmlFM.js",
+      "bytes": 31159,
+      "sha256": "fc50baa3cadcbc4a9252db07a5526f488f6cd886b9f9ad00df8368b13d1fb179"
+    },
+    {
+      "name": "dist/assets/profile-BzxfUm23.js",
+      "bytes": 282021,
+      "sha256": "d70f056a63f0dac1d9228b1f5f9d8124595672f358842835c2334dad2485ed9e"
+    },
+    {
+      "name": "dist/assets/react-DlmbjZJV.js",
+      "bytes": 7876,
+      "sha256": "a9097bd797421b2be0684bbdb498b8a85e784627e8f9ef8efe53a72d6a3c1273"
+    },
+    {
+      "name": "dist/assets/rendering-BS7ANbIK.js",
+      "bytes": 2484,
+      "sha256": "f270b12fa0f1e190ff4c9af520b6c32dffd8113fd89e0ade2b06d99dd7e39b73"
+    },
+    {
+      "name": "dist/assets/rolldown-runtime-XKyaHtl9.js",
+      "bytes": 726,
+      "sha256": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7"
+    },
+    {
+      "name": "dist/assets/runtime-CtNWayoN.js",
+      "bytes": 2630,
+      "sha256": "66025bf5dd7b2b757ec2e06d2879e10e8e65421ba26d252bcf238c95740b11f4"
+    },
+    {
+      "name": "dist/assets/snapshotIdentity-DuVE7NNT.js",
+      "bytes": 1702,
+      "sha256": "14e807c0ef3ed25d301e7f1f96683565fdb5f88f59c46c9df839f29c0ab2a727"
+    },
+    {
+      "name": "dist/assets/spaceNavigation-BsLiTX-r.js",
+      "bytes": 3956,
+      "sha256": "b2ea2778519b79446a0fb15f0850592c83394f0af670229708d1f54b7cec68bf"
+    },
+    {
+      "name": "dist/assets/theme-6GPmlRwP.css",
+      "bytes": 5632,
+      "sha256": "b1ce606d54e4be707ff60cd461509642a1b9d60c75a2fb296ebfd37792207890"
+    },
+    {
+      "name": "dist/assets/theme-BUKfwjsk.js",
+      "bytes": 590277,
+      "sha256": "82a5345084d51a5d32a87c05dc804c37bd085ec43bf6e40d7f6d689a46d62339"
+    },
+    {
+      "name": "dist/assets/univer-renderer-DCzWCcTA.js",
+      "bytes": 5916016,
+      "sha256": "506303b940333203f02204cfd58a0164f6c046ddd580850eda81eb53d2095e67"
+    },
+    {
+      "name": "dist/assets/useDiagnostics-CYddNRk_.js",
+      "bytes": 13208,
+      "sha256": "e0ef6b15ef2a94115f5d1b190c85c09c466807fd46474bae15b8b730dac34213"
+    },
+    {
+      "name": "dist/index.html",
+      "bytes": 4410,
+      "sha256": "e591a24c2100baf8fbcd6c23c0c2b00397f032a42650bb4b1c2ebde123d86385"
+    },
+    {
+      "name": "dist/service-worker.js",
+      "bytes": 18212,
+      "sha256": "5b085e76ac68b2cbdbb8e7a95d5abd63496d11a7a1427fe5435640db3418b8ff"
+    }
+  ],
+  "finalFiles": 47,
+  "staticBytes": 8076912,
+  "staticGzipBytes": 1971222,
+  "staticChunks": [
+    {
+      "file": "assets/univer-renderer-DCzWCcTA.js",
+      "bytes": 5916016,
+      "gzipBytes": 1456192,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/module-preload-BLdHbfdN.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/index.js",
+          "renderedLength": 1512836
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/hu-DVk7Y_ka.js",
+          "renderedLength": 953898
+        },
+        {
+          "id": "node_modules/@univerjs/core/lib/es/index.js",
+          "renderedLength": 740462
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/nb-DI8u59ch.js",
+          "renderedLength": 426717
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/nn-ntZvarUK.js",
+          "renderedLength": 426717
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/no-B8ItS0F3.js",
+          "renderedLength": 426690
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/de-1901-CWoAOigE.js",
+          "renderedLength": 339172
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/de-1996-BL6awyxG.js",
+          "renderedLength": 335314
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/de-ch-1901-hVThVHVb.js",
+          "renderedLength": 332314
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/af-DK_CjRn6.js",
+          "renderedLength": 225878
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/cu-CBUlrW6Y.js",
+          "renderedLength": 188329
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/nl-BHQJ6Gvn.js",
+          "renderedLength": 175121
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/lv-Q2BBHnzp.js",
+          "renderedLength": 141870
+        },
+        {
+          "id": "node_modules/@univerjs/engine-render/lib/es/en-gb-B7Al27b_.js",
+          "renderedLength": 133297
+        }
+      ]
+    },
+    {
+      "file": "assets/CopyFile-C6i42XXv.js",
+      "bytes": 637550,
+      "gzipBytes": 110896,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/offlineError-BYtDddN3.js",
+        "assets/runtime-CtNWayoN.js",
+        "assets/module-preload-BLdHbfdN.js",
+        "assets/react-DlmbjZJV.js",
+        "assets/floating-ui.react-dom-C7Svilm4.js",
+        "assets/documentAccess-BpTD8alm.js",
+        "assets/profile-BzxfUm23.js",
+        "assets/OfflineAccess-CbiGXkd5.js",
+        "assets/theme-BUKfwjsk.js",
+        "assets/offlineStore-nw4zmlFM.js",
+        "assets/univer-renderer-DCzWCcTA.js",
+        "assets/existingDatabase-CDJOByQx.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/emojibase-data/en/compact.json",
+          "renderedLength": 634975
+        },
+        {
+          "id": "web/Appearance.tsx",
+          "renderedLength": 26382
+        },
+        {
+          "id": "src/ui/redesign/gemCovers.ts",
+          "renderedLength": 11656
+        },
+        {
+          "id": "web/ProfileSettings.tsx",
+          "renderedLength": 10465
+        },
+        {
+          "id": "web/EditorFrame.tsx",
+          "renderedLength": 10196
+        },
+        {
+          "id": "web/CopyFile.tsx",
+          "renderedLength": 8293
+        },
+        {
+          "id": "src/profile/person-icon-search.ts",
+          "renderedLength": 4585
+        },
+        {
+          "id": "web/offline/creation.ts",
+          "renderedLength": 4575
+        },
+        {
+          "id": "web/dashboardNavigation.ts",
+          "renderedLength": 4504
+        },
+        {
+          "id": "node_modules/@base-ui/react/popover/store/PopoverStore.mjs",
+          "renderedLength": 3929
+        },
+        {
+          "id": "web/ConnectionStatus.tsx",
+          "renderedLength": 3684
+        },
+        {
+          "id": "node_modules/@base-ui/react/popover/trigger/PopoverTrigger.mjs",
+          "renderedLength": 3604
+        },
+        {
+          "id": "node_modules/@base-ui/react/popover/popup/PopoverPopup.mjs",
+          "renderedLength": 3380
+        },
+        {
+          "id": "node_modules/@base-ui/react/popover/root/PopoverRoot.mjs",
+          "renderedLength": 2993
+        }
+      ]
+    },
+    {
+      "file": "assets/theme-BUKfwjsk.js",
+      "bytes": 590277,
+      "gzipBytes": 149728,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/offlineError-BYtDddN3.js",
+        "assets/react-DlmbjZJV.js",
+        "assets/floating-ui.react-dom-C7Svilm4.js",
+        "assets/profile-BzxfUm23.js",
+        "assets/univer-renderer-DCzWCcTA.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/lucide/dist/esm/iconsAndAliases.mjs",
+          "renderedLength": 69452
+        },
+        {
+          "id": "node_modules/@base-ui/react/floating-ui-react/components/FloatingFocusManager.mjs",
+          "renderedLength": 21172
+        },
+        {
+          "id": "node_modules/@base-ui/react/menu/root/MenuRoot.mjs",
+          "renderedLength": 15883
+        },
+        {
+          "id": "node_modules/@base-ui/react/floating-ui-react/hooks/useDismiss.mjs",
+          "renderedLength": 15715
+        },
+        {
+          "id": "node_modules/@base-ui/react/floating-ui-react/hooks/useListNavigation.mjs",
+          "renderedLength": 15705
+        },
+        {
+          "id": "node_modules/@base-ui/react/select/popup/SelectPopup.mjs",
+          "renderedLength": 13947
+        },
+        {
+          "id": "node_modules/@base-ui/react/internals/useAnchorPositioning.mjs",
+          "renderedLength": 13017
+        },
+        {
+          "id": "node_modules/@base-ui/react/select/root/SelectRoot.mjs",
+          "renderedLength": 11922
+        },
+        {
+          "id": "node_modules/@base-ui/react/floating-ui-react/hooks/useHoverReferenceInteraction.mjs",
+          "renderedLength": 10392
+        },
+        {
+          "id": "node_modules/@base-ui/react/utils/popups/popupStoreUtils.mjs",
+          "renderedLength": 8848
+        },
+        {
+          "id": "node_modules/@base-ui/react/floating-ui-react/safePolygon.mjs",
+          "renderedLength": 8795
+        },
+        {
+          "id": "node_modules/@base-ui/react/menu/positioner/MenuPositioner.mjs",
+          "renderedLength": 7558
+        },
+        {
+          "id": "node_modules/@base-ui/react/menu/trigger/MenuTrigger.mjs",
+          "renderedLength": 7558
+        },
+        {
+          "id": "node_modules/@base-ui/react/internals/composite/root/useCompositeRoot.mjs",
+          "renderedLength": 7359
+        }
+      ]
+    },
+    {
+      "file": "assets/application-8TWMM7LW.js",
+      "bytes": 341972,
+      "gzipBytes": 96348,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/offlineError-BYtDddN3.js",
+        "assets/runtime-CtNWayoN.js",
+        "assets/module-preload-BLdHbfdN.js",
+        "assets/react-DlmbjZJV.js",
+        "assets/floating-ui.react-dom-C7Svilm4.js",
+        "assets/documentAccess-BpTD8alm.js",
+        "assets/OfflineAccess-CbiGXkd5.js",
+        "assets/theme-BUKfwjsk.js",
+        "assets/offlineStore-nw4zmlFM.js",
+        "assets/CopyFile-C6i42XXv.js",
+        "assets/spaceNavigation-BsLiTX-r.js",
+        "assets/PreparedImages-DxTqDsTH.js",
+        "assets/download-BN1tfXY-.js",
+        "assets/useDiagnostics-CYddNRk_.js"
+      ],
+      "modules": [
+        {
+          "id": "web/Dashboard.tsx",
+          "renderedLength": 52279
+        },
+        {
+          "id": "web/BackupRestore.tsx",
+          "renderedLength": 36940
+        },
+        {
+          "id": "web/Space.tsx",
+          "renderedLength": 32639
+        },
+        {
+          "id": "web/Maintenance.tsx",
+          "renderedLength": 29653
+        },
+        {
+          "id": "web/App.tsx",
+          "renderedLength": 23701
+        },
+        {
+          "id": "web/BackupDownloads.tsx",
+          "renderedLength": 19901
+        },
+        {
+          "id": "web/Sharing.tsx",
+          "renderedLength": 16356
+        },
+        {
+          "id": "web/PasskeySettings.tsx",
+          "renderedLength": 15675
+        },
+        {
+          "id": "web/ServerHealth.tsx",
+          "renderedLength": 13850
+        },
+        {
+          "id": "web/AdminDiagnostics.tsx",
+          "renderedLength": 13414
+        },
+        {
+          "id": "web/AdminUsers.tsx",
+          "renderedLength": 12805
+        },
+        {
+          "id": "web/ShareLink.tsx",
+          "renderedLength": 12546
+        },
+        {
+          "id": "web/offline/useOfflineDownloads.ts",
+          "renderedLength": 12031
+        },
+        {
+          "id": "web/GuestLinks.tsx",
+          "renderedLength": 11832
+        }
+      ]
+    },
+    {
+      "file": "assets/profile-BzxfUm23.js",
+      "bytes": 282021,
+      "gzipBytes": 57352,
+      "imports": [
+        "assets/offlineError-BYtDddN3.js"
+      ],
+      "modules": [
+        {
+          "id": "src/profile/person-icon-catalog.json",
+          "renderedLength": 408381
+        },
+        {
+          "id": "src/profile/profile.ts",
+          "renderedLength": 586
+        }
+      ]
+    },
+    {
+      "file": "assets/floating-ui.react-dom-C7Svilm4.js",
+      "bytes": 214315,
+      "gzipBytes": 66412,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/react-DlmbjZJV.js",
+        "assets/univer-renderer-DCzWCcTA.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/react-dom/cjs/react-dom-client.production.js",
+          "renderedLength": 529556
+        },
+        {
+          "id": "node_modules/scheduler/cjs/scheduler.production.js",
+          "renderedLength": 9064
+        },
+        {
+          "id": "node_modules/@floating-ui/react-dom/dist/floating-ui.react-dom.mjs",
+          "renderedLength": 7062
+        },
+        {
+          "id": "node_modules/react-dom/cjs/react-dom.production.js",
+          "renderedLength": 6270
+        },
+        {
+          "id": "node_modules/react/cjs/react-jsx-runtime.production.js",
+          "renderedLength": 871
+        },
+        {
+          "id": "node_modules/react-dom/client.js",
+          "renderedLength": 473
+        },
+        {
+          "id": "node_modules/react-dom/index.js",
+          "renderedLength": 468
+        },
+        {
+          "id": "node_modules/react/jsx-runtime.js",
+          "renderedLength": 200
+        },
+        {
+          "id": "node_modules/scheduler/index.js",
+          "renderedLength": 188
+        }
+      ]
+    },
+    {
+      "file": "assets/offlineStore-nw4zmlFM.js",
+      "bytes": 31159,
+      "gzipBytes": 9132,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/runtime-CtNWayoN.js",
+        "assets/module-preload-BLdHbfdN.js",
+        "assets/profile-BzxfUm23.js",
+        "assets/OfflineAccess-CbiGXkd5.js",
+        "assets/univer-renderer-DCzWCcTA.js",
+        "assets/existingDatabase-CDJOByQx.js",
+        "assets/checkpoint-CNBwfwki.js"
+      ],
+      "modules": [
+        {
+          "id": "web/offline/offlineStore.ts",
+          "renderedLength": 49277
+        },
+        {
+          "id": "src/shared/offlineCreation.ts",
+          "renderedLength": 1818
+        },
+        {
+          "id": "src/shared/workspace.ts",
+          "renderedLength": 484
+        },
+        {
+          "id": "src/shared/accessUpgrade.ts",
+          "renderedLength": 267
+        },
+        {
+          "id": "lib/sync-client/validation.ts",
+          "renderedLength": 0
+        }
+      ]
+    },
+    {
+      "file": "assets/useDiagnostics-CYddNRk_.js",
+      "bytes": 13208,
+      "gzipBytes": 4317,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/react-DlmbjZJV.js",
+        "assets/floating-ui.react-dom-C7Svilm4.js",
+        "assets/documentAccess-BpTD8alm.js"
+      ],
+      "modules": [
+        {
+          "id": "lib/diagnostics/sync.ts",
+          "renderedLength": 5805
+        },
+        {
+          "id": "web/diagnostics.ts",
+          "renderedLength": 5720
+        },
+        {
+          "id": "lib/diagnostics/index.ts",
+          "renderedLength": 5371
+        },
+        {
+          "id": "web/useDiagnostics.tsx",
+          "renderedLength": 1736
+        },
+        {
+          "id": "web/diagnosticsAccount.ts",
+          "renderedLength": 950
+        }
+      ]
+    },
+    {
+      "file": "assets/offlineError-BYtDddN3.js",
+      "bytes": 10515,
+      "gzipBytes": 3851,
+      "imports": [],
+      "modules": [
+        {
+          "id": "src/ui/palette.ts",
+          "renderedLength": 9042
+        },
+        {
+          "id": "src/shared/pwa.ts",
+          "renderedLength": 2611
+        },
+        {
+          "id": "src/shared/offlineShell.ts",
+          "renderedLength": 2263
+        },
+        {
+          "id": "src/shared/offlineError.ts",
+          "renderedLength": 423
+        }
+      ]
+    },
+    {
+      "file": "assets/react-DlmbjZJV.js",
+      "bytes": 7876,
+      "gzipBytes": 3008,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js"
+      ],
+      "modules": [
+        {
+          "id": "node_modules/react/cjs/react.production.js",
+          "renderedLength": 15999
+        },
+        {
+          "id": "node_modules/react/index.js",
+          "renderedLength": 176
+        }
+      ]
+    },
+    {
+      "file": "assets/PreparedImages-DxTqDsTH.js",
+      "bytes": 6595,
+      "gzipBytes": 2584,
+      "imports": [],
+      "modules": [
+        {
+          "id": "src/shared/nativeImageSources.ts",
+          "renderedLength": 5817
+        },
+        {
+          "id": "web/offline/PreparedImages.ts",
+          "renderedLength": 5072
+        }
+      ]
+    },
+    {
+      "file": "assets/checkpoint-CNBwfwki.js",
+      "bytes": 5365,
+      "gzipBytes": 1943,
+      "imports": [],
+      "modules": [
+        {
+          "id": "lib/sync-client/src/admission.ts",
+          "renderedLength": 5002
+        },
+        {
+          "id": "lib/sync-client/src/checkpoint.ts",
+          "renderedLength": 2280
+        },
+        {
+          "id": "lib/sync-client/src/recovery.ts",
+          "renderedLength": 1346
+        },
+        {
+          "id": "lib/sync-client/src/budget.ts",
+          "renderedLength": 594
+        },
+        {
+          "id": "lib/sync-client/src/types.ts",
+          "renderedLength": 361
+        }
+      ]
+    },
+    {
+      "file": "assets/spaceNavigation-BsLiTX-r.js",
+      "bytes": 3956,
+      "gzipBytes": 1642,
+      "imports": [
+        "assets/documentAccess-BpTD8alm.js"
+      ],
+      "modules": [
+        {
+          "id": "web/spaceNavigation.ts",
+          "renderedLength": 6941
+        }
+      ]
+    },
+    {
+      "file": "assets/documentAccess-BpTD8alm.js",
+      "bytes": 3543,
+      "gzipBytes": 1619,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/react-DlmbjZJV.js"
+      ],
+      "modules": [
+        {
+          "id": "web/maintenanceState.ts",
+          "renderedLength": 3942
+        },
+        {
+          "id": "web/maintenanceFetch.ts",
+          "renderedLength": 1223
+        },
+        {
+          "id": "web/documentAccess.ts",
+          "renderedLength": 702
+        }
+      ]
+    },
+    {
+      "file": "assets/download-BN1tfXY-.js",
+      "bytes": 3481,
+      "gzipBytes": 1693,
+      "imports": [
+        "assets/rolldown-runtime-XKyaHtl9.js",
+        "assets/offlineError-BYtDddN3.js",
+        "assets/runtime-CtNWayoN.js",
+        "assets/documentAccess-BpTD8alm.js",
+        "assets/OfflineAccess-CbiGXkd5.js",
+        "assets/PreparedImages-DxTqDsTH.js"
+      ],
+      "modules": [
+        {
+          "id": "web/offline/download.ts",
+          "renderedLength": 4393
+        },
+        {
+          "id": "web/offline/shell.ts",
+          "renderedLength": 941
+        }
+      ]
+    },
+    {
+      "file": "assets/OfflineAccess-CbiGXkd5.js",
+      "bytes": 2985,
+      "gzipBytes": 1457,
+      "imports": [
+        "assets/offlineError-BYtDddN3.js",
+        "assets/profile-BzxfUm23.js"
+      ],
+      "modules": [
+        {
+          "id": "web/offline/OfflineAccess.ts",
+          "renderedLength": 2592
+        },
+        {
+          "id": "src/shared/appearance.ts",
+          "renderedLength": 1287
+        },
+        {
+          "id": "src/shared/emoji.ts",
+          "renderedLength": 487
+        }
+      ]
+    },
+    {
+      "file": "assets/runtime-CtNWayoN.js",
+      "bytes": 2630,
+      "gzipBytes": 1077,
+      "imports": [
+        "assets/offlineError-BYtDddN3.js"
+      ],
+      "modules": [
+        {
+          "id": "web/offline/runtime.ts",
+          "renderedLength": 4280
+        }
+      ]
+    },
+    {
+      "file": "assets/module-preload-BLdHbfdN.js",
+      "bytes": 1519,
+      "gzipBytes": 797,
+      "imports": [],
+      "modules": [
+        {
+          "id": "\u0000vite/preload-helper.js",
+          "renderedLength": 2990
+        }
+      ]
+    },
+    {
+      "file": "assets/existingDatabase-CDJOByQx.js",
+      "bytes": 1203,
+      "gzipBytes": 745,
+      "imports": [],
+      "modules": [
+        {
+          "id": "src/ui/gemGeometry.ts",
+          "renderedLength": 1051
+        },
+        {
+          "id": "web/offline/existingDatabase.ts",
+          "renderedLength": 930
+        }
+      ]
+    },
+    {
+      "file": "assets/rolldown-runtime-XKyaHtl9.js",
+      "bytes": 726,
+      "gzipBytes": 429,
+      "imports": [],
+      "modules": [
+        {
+          "id": "\u0000rolldown/runtime.js",
+          "renderedLength": 1439
+        }
+      ]
+    }
+  ],
+  "css": [
+    {
+      "file": "assets/CopyFile-Bp41xbsr.css",
+      "type": "asset",
+      "bytes": 16915,
+      "sha256": "24eae06726d425fb9689334e30999098838bc4aa2dc49678cadd92dcdaf2f203",
+      "gzipBytes": 3695,
+      "initialApplicationDependency": false
+    },
+    {
+      "file": "assets/HistoryBrowser-D9Z9OhM7.css",
+      "type": "asset",
+      "bytes": 3361,
+      "sha256": "a7536c0ab0d79dc700d82be8632e86dd9cbd365dd8698f94983cf6a073eb662c",
+      "gzipBytes": 971,
+      "initialApplicationDependency": false
+    },
+    {
+      "file": "assets/application-B9PzMhak.css",
+      "type": "asset",
+      "bytes": 58909,
+      "sha256": "f0d0c9463ed080f214e06e4e5be29074ab12eec404fdbc624db44e44f61d069e",
+      "gzipBytes": 10528,
+      "initialApplicationDependency": false
+    },
+    {
+      "file": "assets/documentReady-CZMWh3-A.css",
+      "type": "asset",
+      "bytes": 114439,
+      "sha256": "9ec479c60c4e194484e39f2d953a44ae40f94f88467e9fffbef6fa5473a89a7f",
+      "gzipBytes": 17175,
+      "initialApplicationDependency": false
+    },
+    {
+      "file": "assets/lib-DGHf0mi1.css",
+      "type": "asset",
+      "bytes": 124162,
+      "sha256": "952d84ed3b6f59bb8a1f768400fb5ba4156edc3791ea6378be0fd1e3cea771da",
+      "gzipBytes": 18009,
+      "initialApplicationDependency": false
+    },
+    {
+      "file": "assets/nativeCopy-mVcC3r32.css",
+      "type": "asset",
+      "bytes": 2533,
+      "sha256": "5635f05c18a0d88e35f62260fb18c1fd81c064d1da2421738ffd260d77bb400b",
+      "gzipBytes": 878,
+      "initialApplicationDependency": false
+    },
+    {
+      "file": "assets/theme-6GPmlRwP.css",
+      "type": "asset",
+      "bytes": 5632,
+      "sha256": "b1ce606d54e4be707ff60cd461509642a1b9d60c75a2fb296ebfd37792207890",
+      "gzipBytes": 1621,
+      "initialApplicationDependency": false
+    }
+  ],
+  "htmlEntrypoints": [
+    {
+      "href": "/manifest.webmanifest",
+      "pathname": "/manifest.webmanifest",
+      "owner": "server-route-and-retained-installation-alias",
+      "emitted": "/assets/install-manifest-35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34.webmanifest"
+    },
+    {
+      "href": "/app-icon-180.png",
+      "pathname": "/app-icon-180.png",
+      "owner": "server-route-and-retained-installation-alias",
+      "emitted": "/assets/install-app-icon-180-892edc23116874ce9a77dff7c705ae8963d5cea9152948101bb23ee4208106c1.png"
+    },
+    {
+      "href": "/favicon.ico?v=2",
+      "pathname": "/favicon.ico",
+      "owner": "server-pwa-route",
+      "emitted": null
+    },
+    {
+      "href": "/favicon-32.png?v=2",
+      "pathname": "/favicon-32.png",
+      "owner": "server-pwa-route",
+      "emitted": null
+    },
+    {
+      "href": "/favicon.svg?v=2",
+      "pathname": "/favicon.svg",
+      "owner": "server-pwa-route",
+      "emitted": null
+    },
+    {
+      "href": "/assets/main-C8IwslP4.js",
+      "pathname": "/assets/main-C8IwslP4.js",
+      "owner": "emitted-runtime",
+      "emitted": "/assets/main-C8IwslP4.js"
+    },
+    {
+      "href": "/assets/offlineError-BYtDddN3.js",
+      "pathname": "/assets/offlineError-BYtDddN3.js",
+      "owner": "emitted-runtime",
+      "emitted": "/assets/offlineError-BYtDddN3.js"
+    },
+    {
+      "href": "/assets/runtime-CtNWayoN.js",
+      "pathname": "/assets/runtime-CtNWayoN.js",
+      "owner": "emitted-runtime",
+      "emitted": "/assets/runtime-CtNWayoN.js"
+    },
+    {
+      "href": "/assets/module-preload-BLdHbfdN.js",
+      "pathname": "/assets/module-preload-BLdHbfdN.js",
+      "owner": "emitted-runtime",
+      "emitted": "/assets/module-preload-BLdHbfdN.js"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# 🔎 SPN-090 startup build outcome
+
+One new source3ac03e9e build, run42060405449/job127360149344 attempt1 passed. Full original50-member ZIP,47distmemberhashes, independent source/graph audit and metadataCI42060403587 cancellation retained. Initial staticJSclosure20chunks8,076,912B includes5,916,016B renderer through sharedUI dependencies. All7descriptorCSS325,951B remain separately awaited. This is a concrete bundling-coupling finding, not proof of historical Safari cause or phone acceptance. Independent review recommends narrowly removing renderer recursive dependency capture with the pinned bundler execution-order safeguard and retaining all lazy/offline assets. No new device allocation or timeout change is admitted by this archive.
