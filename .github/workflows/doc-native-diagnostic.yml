@@ -1,0 +1,57 @@
+name: 🔬 Native Doc flush diagnosis
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-doc-diagnostic-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  observation:
+    name: One prior-native mobile observation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '0'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      VITE_DOC_FLUSH_DIAGNOSTIC: '1'
+      SPN146_DIAGNOSTIC: '1'
+      SPN108_BASELINE: '0'
+      SPINEL_E2E_PROJECT: doc-responsiveness
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Clean candidate dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Bind exact prior native implementation
+        run: node scripts/ci/prepare-doc-native-diagnostic.ts --prior-native
+      - name: Build diagnostic application
+        run: npm run build
+      - name: One diagnostic first attempt
+        run: npx playwright test --project=doc-responsiveness --grep 'mobile sustained native typing profile$' --retries=0
+      - name: Preserve complete or partial observation
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: spn146-prior-native-diagnostic
+          path: |
+            spn146-diagnostic-build.json
+            test-results/doc-responsiveness/
+            playwright-report/doc-responsiveness.json
+            !test-results/**/*.sqlite*
+          if-no-files-found: error
+          retention-days: 30

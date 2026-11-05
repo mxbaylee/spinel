@@ -33,6 +33,7 @@ import type {
 } from './doc-responsiveness.ts';
 import { registerDocResponsivenessBoundaries } from './doc-responsiveness-boundaries.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
+import { startNativeDiagnosticTrace } from './doc-responsiveness-native-trace.ts';
 
 // Recorded before the production fix. These are responsiveness budgets for this
 // fixed workload/runtime, not physical-device, INP, or arbitrary-document claims.
@@ -46,6 +47,7 @@ const paragraphs = Array.from(
 const expectedText = paragraphs.join('\r') + '\r\n';
 const expectedInputCount = paragraphs.reduce((sum, paragraph) => sum + paragraph.length, 0) + 15;
 const baseline = process.env.SPN108_BASELINE === '1';
+const nativeDiagnostic = process.env.SPN146_DIAGNOSTIC === '1';
 // Every scheduled sample is retained. CPU profiling has its own samples so its
 // overhead never contaminates the primary frame-latency measurements.
 test.use({ trace: 'off', screenshot: 'only-on-failure' });
@@ -324,11 +326,32 @@ for (const preset of ['desktop', 'mobile'] as const)
       test.setTimeout(baseline ? 600_000 : 300_000);
       const mobile = preset === 'mobile',
         profiled = sample === 'profile';
+      if (nativeDiagnostic && (!mobile || !profiled || baseline))
+        throw new Error('Native diagnostic requires exactly the mobile profile case.');
       const f = await fixture(browser, baseURL!, info, mobile);
       const cdp = await f.page.context().newCDPSession(f.page);
       let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
       let profiling = false;
       let profilerClock: ProfilerClockBracket | undefined;
+      let diagnosticTrace: Awaited<ReturnType<typeof startNativeDiagnosticTrace>> | undefined;
+      let diagnosticFinished = false;
+      let diagnosticCleanupFailure: unknown;
+      const nativeCapture = (action: 'start' | 'finish') =>
+        f.page.evaluate((action) => {
+          let value: any = null;
+          const listener = (event: Event) => {
+            value = (event as CustomEvent).detail;
+          };
+          window.addEventListener('spinel-doc-native-diagnostic-evidence', listener);
+          try {
+            window.dispatchEvent(
+              new CustomEvent('spinel-doc-native-diagnostic', { detail: { action } }),
+            );
+          } finally {
+            window.removeEventListener('spinel-doc-native-diagnostic-evidence', listener);
+          }
+          return value;
+        }, action);
       let reloadObservers: ReloadObservers | undefined;
       let clockOrigins: ClockOrigins | undefined;
       const drainDiagnostics: DocDrainDiagnostics = {
@@ -338,7 +361,11 @@ for (const preset of ['desktop', 'mobile'] as const)
       };
       const evidence: Record<string, unknown> = {
         schema: DOC_RESPONSIVENESS_SCHEMA,
-        role: baseline ? 'baseline-observation' : 'candidate',
+        role: nativeDiagnostic
+          ? 'diagnostic-prior-native'
+          : baseline
+            ? 'baseline-observation'
+            : 'candidate',
         budgetEnforced: !baseline && !profiled,
         preset,
         sample,
@@ -355,9 +382,11 @@ for (const preset of ['desktop', 'mobile'] as const)
               'e2e/doc-responsiveness.spec.ts',
               'e2e/doc-responsiveness-fixture.ts',
               'e2e/doc-responsiveness-boundaries.ts',
+              'e2e/doc-responsiveness-native-trace.ts',
               'web/docResponsivenessEvidence.ts',
               'src/ui/docIdleEpisode.ts',
               'src/ui/nativeDocFlush.ts',
+              'src/ui/nativeDocFlushDiagnostic.ts',
               'playwright.config.ts',
               'package-lock.json',
             ].map(async (path) => [
@@ -455,6 +484,18 @@ for (const preset of ['desktop', 'mobile'] as const)
         };
         await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
         evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
+        if (nativeDiagnostic) {
+          evidence.nativeDiagnosticBuild = JSON.parse(
+            await readFile('spn146-diagnostic-build.json', 'utf8'),
+          );
+          diagnosticTrace = await startNativeDiagnosticTrace(
+            cdp,
+            info.outputPath('spn146-runtime-trace.json'),
+          );
+          evidence.nativeDiagnosticStart = await nativeCapture('start');
+          expect((evidence.nativeDiagnosticStart as any)?.started).toBe(true);
+          await f.page.evaluate(() => performance.mark('spn146-native-diagnostic-start'));
+        }
         if (profiled) {
           await cdp.send('Profiler.enable');
           await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
@@ -605,6 +646,23 @@ for (const preset of ['desktop', 'mobile'] as const)
         }
         evidence.timingCompleteAt = await now(f.page);
         evidence.timingComplete = true;
+        if (nativeDiagnostic) {
+          await f.page.evaluate(() => performance.mark('spn146-native-diagnostic-end'));
+          const capture = await nativeCapture('finish');
+          diagnosticFinished = true;
+          evidence.nativeDiagnosticObserver = {
+            restored: capture?.restored,
+            dropped: capture?.dropped,
+            errors: capture?.errors,
+          };
+          await writeFile(info.outputPath('spn146-native-caches.json'), JSON.stringify(capture));
+          expect(capture?.restored).toBe(true);
+          expect(capture?.dropped).toBe(0);
+          expect(capture?.errors).toEqual([]);
+          expect(capture?.states).toBe(expectedInputCount * 2);
+          expect(capture?.captures.length).toBe(132);
+          evidence.nativeDiagnosticTrace = await diagnosticTrace!.finish();
+        }
         const savedStarted = performance.now();
         await saved(f.page);
         evidence.postFinalKeySavedUpperBoundMs =
@@ -731,7 +789,33 @@ for (const preset of ['desktop', 'mobile'] as const)
         expect(finalReloads.reloads).toEqual(undoRedo.reloads);
         evidence.reloadObservers = finalReloads.status;
         evidence.completed = true;
+      } catch (error) {
+        evidence.primaryFailure = String(error);
+        throw error;
       } finally {
+        if (nativeDiagnostic) {
+          if (!diagnosticFinished) {
+            const partial = await nativeCapture('finish').catch((error) => ({
+              error: String(error),
+            }));
+            evidence.nativeDiagnosticObserver = partial && {
+              restored: partial.restored,
+              dropped: partial.dropped,
+              errors: partial.errors,
+              error: partial.error,
+            };
+            await writeFile(
+              info.outputPath('spn146-native-caches.json'),
+              JSON.stringify(partial),
+            ).catch((error) => {
+              evidence.nativeDiagnosticCaptureFailure = String(error);
+            });
+          }
+          if (diagnosticTrace)
+            await diagnosticTrace.finish().catch((error) => {
+              evidence.nativeDiagnosticTraceFailure = String(error);
+            });
+        }
         if (finishInput)
           evidence.partialInput = await finishInput().catch((error) => ({ error: String(error) }));
         if (profiling) {
@@ -749,10 +833,50 @@ for (const preset of ['desktop', 'mobile'] as const)
           }
           await Promise.all([reloadObservers.sender.dispose(), reloadObservers.peer.dispose()]);
         }
-        await writeFile(info.outputPath('spn108-metrics.json'), JSON.stringify(evidence, null, 2));
-        await cdp.detach().catch(() => {});
-        await f.close();
+        let diagnosticPersistenceFailure: unknown;
+        const persisted = writeFile(
+          info.outputPath('spn108-metrics.json'),
+          JSON.stringify(evidence, null, 2),
+        );
+        if (nativeDiagnostic)
+          await persisted.catch((error) => {
+            diagnosticPersistenceFailure = error;
+            evidence.nativeDiagnosticPersistenceFailure = String(error);
+          });
+        else await persisted;
+        if (nativeDiagnostic) {
+          const cleanup: Record<string, unknown> = { startedAt: performance.now() };
+          let cleanupFailure: unknown = diagnosticPersistenceFailure;
+          try {
+            await cdp.detach();
+            cleanup.cdp = 'detached';
+          } catch (error) {
+            cleanup.cdp = String(error);
+            cleanupFailure = error;
+          }
+          try {
+            await f.close();
+            cleanup.fixture = 'closed';
+          } catch (error) {
+            cleanup.fixture = String(error);
+            cleanupFailure ??= error;
+          }
+          cleanup.finishedAt = performance.now();
+          cleanup.complete = !cleanupFailure;
+          evidence.nativeDiagnosticCleanup = cleanup;
+          await writeFile(
+            info.outputPath('spn108-metrics.json'),
+            JSON.stringify(evidence, null, 2),
+          ).catch((error) => {
+            cleanupFailure ??= error;
+          });
+          diagnosticCleanupFailure = cleanupFailure;
+        } else {
+          await cdp.detach().catch(() => {});
+          await f.close();
+        }
       }
+      if (diagnosticCleanupFailure) throw diagnosticCleanupFailure;
     });
 
 /** Only the separate continuation case reads native state at its final key's first frame. */
