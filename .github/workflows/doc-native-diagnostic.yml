@@ -14,7 +14,9 @@ concurrency:
 
 jobs:
   observation:
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '02ef01a40fe8369b79477909673c76de6d2a4edf'
+    # Explicit changed-source collection repair; the first window failed before input.
+    # The superseding finite decision is in SPN-146-fixed-window.md.
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == 'ab8966044fdc9c7645d5768956d84852ff308df3'
     name: One prior-native fixed-window observation
     runs-on: ubuntu-latest
     timeout-minutes: 20

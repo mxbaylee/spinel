@@ -605,6 +605,7 @@ for (const preset of ['desktop', 'mobile'] as const)
             const build = evidence.nativeDiagnosticBuild as any;
             expect(build.role).toBe('prior-native');
             expect(build.source).toBe(evidence.source);
+            progress!.phase('loaded-source-retention');
             evidence.nativeLoadedSources = await loadedSources!.retain(
               info.outputPath('spn146-loaded-sources'),
               {
@@ -1033,7 +1034,10 @@ for (const preset of ['desktop', 'mobile'] as const)
           evidence.completed = true;
         } catch (error) {
           evidence.primaryFailure = String(error);
-          if (nativeDiagnostic) primaryDiagnosticFailure = error;
+          if (nativeDiagnostic) {
+            primaryDiagnosticFailure = error;
+            progress!.failed('operation');
+          }
           throw error;
         } finally {
           if (nativeDiagnostic) {

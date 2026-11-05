@@ -29,12 +29,18 @@ export function validateNativeMap(payload: any, identities: Record<string, strin
 export function validateLoadedNativeScript(
   executed: string,
   emitted: Buffer,
-  mapBytes: Buffer,
+  mapBytes: Buffer | null,
   identities: Record<string, string>,
 ) {
   assert.equal(hash(executed), hash(emitted), 'Loaded code differs from emitted code');
-  return validateNativeMap(JSON.parse(mapBytes.toString()), identities);
+  return mapBytes ? validateNativeMap(JSON.parse(mapBytes.toString()), identities) : {};
 }
+
+const optionalMapStat = async (path: string) =>
+  stat(path).catch((error) => {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
+    throw error;
+  });
 
 /** Final analysis independently verifies every retained emitted-code/map member. */
 export async function validateRetainedNativeSources(
@@ -74,7 +80,15 @@ export async function validateRetainedNativeSources(
     paths.add(row.path);
     assert.ok(row.path.endsWith('.js'));
     const emitted = await member(row.path, row.bytes, row.sha256);
-    const map = await member(row.path + '.map', row.mapBytes, row.mapSha256);
+    assert.ok(['present', 'absent-at-collection'].includes(row.mapStatus));
+    let map: Buffer | null = null;
+    if (row.mapStatus === 'present')
+      map = await member(row.path + '.map', row.mapBytes, row.mapSha256);
+    else {
+      assert.equal(row.mapBytes, null);
+      assert.equal(row.mapSha256, null);
+      assert.equal(await optionalMapStat(resolve(root, row.path + '.map')), null);
+    }
     const mapped = validateLoadedNativeScript(emitted.toString(), emitted, map, identities);
     assert.deepEqual(mapped, row.mapped);
     for (const [key, value] of Object.entries(mapped)) {
@@ -124,13 +138,17 @@ export async function observeNativeWindowSources(cdp: CDPSession, origin: string
         const path = await realpath(resolve(root, '.' + pathname));
         const local = relative(root, path);
         assert.ok(!local.startsWith('..') && !local.startsWith(sep));
-        const emitted = await readFile(path),
-          mapBytes = await readFile(path + '.map');
-        bytes += emitted.length + mapBytes.length;
+        const emitted = await readFile(path);
+        // Generated build helpers may have no original map. Record that absence;
+        // a map observed present must still be read successfully, never downgraded.
+        const mapStat = await optionalMapStat(path + '.map');
+        bytes += emitted.length + (mapStat?.size ?? 0);
         assert.ok(bytes <= 64 * 1024 ** 2, 'Loaded code/maps exceed64MiB');
         const { scriptSource } = await cdp.send('Debugger.getScriptSource', {
           scriptId: script.scriptId,
         });
+        const mapBytes = mapStat ? await readFile(path + '.map') : null;
+        if (mapBytes) assert.equal(mapBytes.length, mapStat!.size, 'Map changed during collection');
         const mapped = validateLoadedNativeScript(scriptSource, emitted, mapBytes, identities);
         for (const [key, value] of Object.entries(mapped)) {
           assert.equal(bindings[key], undefined, `Duplicate loaded native module ${key}`);
@@ -138,14 +156,15 @@ export async function observeNativeWindowSources(cdp: CDPSession, origin: string
         }
         await mkdir(dirname(destination + '/' + local), { recursive: true });
         await writeFile(destination + '/' + local, emitted);
-        await writeFile(destination + '/' + local + '.map', mapBytes);
+        if (mapBytes) await writeFile(destination + '/' + local + '.map', mapBytes);
         rows.push({
           ...script,
           path: local,
           bytes: emitted.length,
           sha256: hash(emitted),
-          mapBytes: mapBytes.length,
-          mapSha256: hash(mapBytes),
+          mapStatus: mapBytes ? 'present' : 'absent-at-collection',
+          mapBytes: mapBytes?.length ?? null,
+          mapSha256: mapBytes ? hash(mapBytes) : null,
           mapped,
         });
       }

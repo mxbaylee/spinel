@@ -209,3 +209,51 @@ cancellation IDs. Let only this new reviewed diagnostic finish once. A subsequen
 evidence-supported production repair still needs fresh local checks, both reviews
 and all ordinary selected acceptance. No workflow rerun follows an inconclusive
 or failed diagnostic, and this source transition cannot be re-anchored.
+
+## 🔧 Superseding decision: repair collection before any workload — November 5
+
+The first window attempt42039152201 onab896604 failed during source retention:
+the emitted module-preload helper had no `.map` file. It consumed the02ef→ab896604
+allowance, which remains closed. No native observer/arm, input, trace, profile or
+window began; the raw terminal state has zero history/queues and no drain witness.
+This is a concrete collector defect, not an adverse performance observation.
+[Full failed attempt and independent audit](https://github.com/mxbaylee/spinel/tree/d1c75e4dd09a3fa265ea17a5f9d87c372aa16e62/docs/review-assets/spn-146-window-outcome-ab896604).
+
+The original no-reanchor decision above remains the historical restriction for
+that attempt. This explicit prospective decision supersedes it **only for one
+changed-source validation after repairing this pre-workload collection defect**,
+conditional on both independent exact-commit grades and the controls below. This
+is not a claim that the failed attempt did not count. Do not rerun its workflow,
+renew the component experiment, move the window, change the100ms/80ms limits or
+repeat an adverse/inconclusive timing result. A later failure/inconclusive result
+does not automatically create another allowance.
+
+The narrow repair still verifies every in-scope executed JavaScript byte against
+its exact emitted file. Only map-stat ENOENT may produce the explicit
+`absent-at-collection`/unmapped state; that says nothing about original source
+ownership. Present maps, malformed maps, other read failures and a map disappearing
+after its presence was observed remain fatal. Exact prior Docs and Core must
+still bind through their complete source-map contents; an unmapped target cannot
+supply that closure. Every map declared present must survive final retained-file
+size/hash/content checks. Generated code without a map stays available as exact
+generated code, never a fabricated original-source attribution.
+
+The actual collector fixture must exercise an unmapped generated helper beside
+mapped native/Core source, wrong loaded helper bytes, missing target maps,
+malformed maps, map disappearance after observation, and deletion/tampering of
+declared retained members. Preserve the first source-retention phase/failure
+before cleanup changes the journal phase. Reuse the existing collector/validator;
+this is an expected sub200-line source/test correction, not another framework.
+
+If both exact-source reviews qualify, one same-repository synchronize transition
+fromab8966044fdc9c7645d5768956d84852ff308df3 to that reviewed repair, attempt1 only,
+may execute the unchanged384→448 experiment. All budgets, native preparation,
+input/grouping/source/clock/GC/semantic continuation and teardown remain as above.
+Ordinary workflows from the diagnostic-only publication are deliberately cancelled
+and recorded. No separate preliminary browser run or provider session is added.
+
+Operator avoids an unchanged failed collection and gets source-bound evidence;
+Owner/Collaborator keep content/history and unchanged performance limits; Link
+guest access remains separately required. The complete outcome remains XL and
+production qualification/acceptance is still unresolved. The user's latest scope
+is SPN-146 plus SPN-090, then stop; no unrelated backlog work is admitted here.

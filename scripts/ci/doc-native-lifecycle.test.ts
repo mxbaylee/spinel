@@ -11,6 +11,38 @@ import {
   runOwnedObservation,
 } from '../../e2e/doc-responsiveness-callback-progress.ts';
 
+test('recording a source-retention failure before cleanup preserves its actual phase', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'spn146-source-failure-'));
+  try {
+    const path = join(root, 'progress.json');
+    const progress = callbackProgress(path);
+    const primary = new Error('missing declared source map');
+    await assert.rejects(
+      runOwnedObservation(
+        async () => {
+          progress.phase('loaded-source-retention');
+          try {
+            throw primary;
+          } catch (error) {
+            progress.failed('operation');
+            throw error;
+          } finally {
+            progress.cleanup();
+          }
+        },
+        { progress, primaryFailure: () => primary, detach: async () => {}, close: async () => {} },
+      ),
+      (error) => error === primary,
+    );
+    const receipt = JSON.parse(await readFile(path, 'utf8'));
+    assert.equal(receipt.firstFailure.phase, 'loaded-source-retention');
+    assert.equal(receipt.firstFailure.kind, 'operation');
+    assert.equal(receipt.phase, 'fixture-cleanup');
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 for (const stage of [
   'partial-setup',
   'profile-retention',
