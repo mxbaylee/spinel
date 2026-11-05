@@ -245,8 +245,13 @@ export async function retainDocCallbackTrace(
   cdp: CDPSession,
   path: string,
   progress: ReturnType<typeof callbackProgress>,
-  ownership: { signal: AbortSignal; interrupt: () => Promise<void> },
+  ownership: { signal: AbortSignal; interrupt: () => Promise<void>; maxBytes?: number },
 ) {
+  // The native-flush diagnostic uses a smaller bound; callback acceptance keeps
+  // its registered 2 GiB ceiling. No caller may enlarge that ceiling.
+  const maxBytes = ownership.maxBytes ?? 2 * 1024 ** 3;
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || maxBytes > 2 * 1024 ** 3)
+    throw new Error('Invalid trace transport byte bound.');
   type Completion = {
     stream?: string;
     dataLossOccurred?: boolean;
@@ -334,8 +339,8 @@ export async function retainDocCallbackTrace(
         const value = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
         rawHash.update(value);
         rawBytes += value.length;
-        if (rawBytes > 2 * 1024 ** 3)
-          throw new Error('Captured protobuf exceeds the 2 GiB transport bound.');
+        if (rawBytes > maxBytes)
+          throw new Error('Captured protobuf exceeds the registered transport byte bound.');
         yield value;
         // Logarithmic milestones keep the early phases in the 128-entry journal.
         // Final exact bytes are always retained by stream-close and the manifest.

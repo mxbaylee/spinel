@@ -1,6 +1,9 @@
 name: 🔬 Native Doc flush diagnosis
 
 on:
+  pull_request:
+    branches: [main]
+    types: [opened]
   workflow_dispatch:
 
 permissions:
@@ -12,6 +15,7 @@ concurrency:
 
 jobs:
   observation:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush'
     name: One prior-native mobile observation
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -23,10 +27,12 @@ jobs:
       SPN146_DIAGNOSTIC: '1'
       SPN108_BASELINE: '0'
       SPINEL_E2E_PROJECT: doc-responsiveness
+      SPN146_REVIEWED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
