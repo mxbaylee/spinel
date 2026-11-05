@@ -24,10 +24,10 @@ export function protectionDetail(protection: PersistenceState | null) {
  */
 export function answeredMessage(
   shown: OfflineMessage | null,
-  text: string,
+  expected: OfflineMessage,
   protection: PersistenceState,
 ): OfflineMessage | null {
-  return shown?.text === text && shown.detail === protectionDetail(null).detail
+  return shown === expected && shown.detail === protectionDetail(null).detail
     ? { ...shown, ...protectionDetail(protection) }
     : shown;
 }

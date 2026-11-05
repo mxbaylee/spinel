@@ -403,8 +403,8 @@ export function useOfflineDownloads(
         !downloaded,
       );
       if (scope.isCurrent()) await refreshSummaries();
-      if (scope.isCurrent())
-        setMessage({
+      if (scope.isCurrent()) {
+        const result: OfflineMessage = {
           text:
             outcome === 'needs-recovery'
               ? 'Changes are saved on this device. Recover them or choose how to remove them in This device.'
@@ -414,13 +414,14 @@ export function useOfflineDownloads(
           failed: false,
           ...(outcome === 'needs-recovery' ? { recoveryItemId: item.id } : {}),
           ...(outcome === 'prepared' ? protectionDetail(protection) : {}),
-        });
-      if (outcome === 'prepared' && protection === null && asked) {
-        const text = `${item.name} is available offline on this device.`;
-        void asked.then((state) => {
-          if (!scope.isCurrent()) return;
-          setMessage((shown) => answeredMessage(shown, text, state));
-        });
+        };
+        setMessage(result);
+        if (outcome === 'prepared' && protection === null && asked) {
+          void asked.then((state) => {
+            if (!scope.isCurrent()) return;
+            setMessage((shown) => answeredMessage(shown, result, state));
+          });
+        }
       }
     } catch (error) {
       if (scope.isCurrent())

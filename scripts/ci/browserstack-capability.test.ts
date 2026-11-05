@@ -2593,15 +2593,20 @@ test('Safari negotiates eager navigation before proceeding and keeps navigation 
       if (path.endsWith('/screenshot')) return Response.json({ value: tinyPng });
       return Response.json({ value: null });
     });
-    const result = await runCapability(client, { ...target, browser }, fixture(() => closed++), {
-      localIdentifier: 'local-id',
-      buildName: 'test',
-      journal: async (value) => {
-        if (value.sessionId === sessionId && value.allocation === 'known')
-          knownBeforeNavigation = true;
+    const result = await runCapability(
+      client,
+      { ...target, browser },
+      fixture(() => closed++),
+      {
+        localIdentifier: 'local-id',
+        buildName: 'test',
+        journal: async (value) => {
+          if (value.sessionId === sessionId && value.allocation === 'known')
+            knownBeforeNavigation = true;
+        },
+        screenshot: async (name) => name,
       },
-      screenshot: async (name) => name,
-    });
+    );
     const negotiated = scenario === 'eager' || scenario === 'chrome';
     assert.equal(result.failure, negotiated ? 'http-500' : 'capability-safari-page-load-strategy');
     assert.equal(result.status, 'failed');

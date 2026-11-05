@@ -7,23 +7,33 @@ const deciding = { text, failed: false, ...protectionDetail(null) };
 test('a late storage answer replaces only its own still-deciding result', () => {
   expect(deciding.storageHelp).toBe(true);
   for (const state of ['granted', 'denied', 'unsupported', 'error'] as const)
-    expect(answeredMessage(deciding, text, state)).toEqual({
+    expect(answeredMessage(deciding, deciding, state)).toEqual({
       text,
       failed: false,
       ...protectionDetail(state),
     });
-  expect(answeredMessage(deciding, text, 'granted')?.storageHelp).toBe(false);
-  expect(answeredMessage(deciding, text, 'denied')?.storageHelp).toBe(true);
+  expect(answeredMessage(deciding, deciding, 'granted')?.storageHelp).toBe(false);
+  expect(answeredMessage(deciding, deciding, 'denied')?.storageHelp).toBe(true);
 });
 
 test('a dismissed, newer or already answered message stays exactly as it is', () => {
-  expect(answeredMessage(null, text, 'granted')).toBeNull();
+  expect(answeredMessage(null, deciding, 'granted')).toBeNull();
   const newer = { ...deciding, text: 'Field notes is available offline on this device.' };
-  expect(answeredMessage(newer, text, 'granted')).toBe(newer);
+  expect(answeredMessage(newer, deciding, 'granted')).toBe(newer);
   const removed = { text: 'Trip journal was removed from this device.', failed: false };
-  expect(answeredMessage(removed, text, 'granted')).toBe(removed);
+  expect(answeredMessage(removed, deciding, 'granted')).toBe(removed);
   const failed = { text: 'Could not change offline availability. Try again.', failed: true };
-  expect(answeredMessage(failed, text, 'granted')).toBe(failed);
+  expect(answeredMessage(failed, deciding, 'granted')).toBe(failed);
   const answered = { text, failed: false, ...protectionDetail('denied') };
-  expect(answeredMessage(answered, text, 'granted')).toBe(answered);
+  expect(answeredMessage(answered, deciding, 'granted')).toBe(answered);
+});
+
+test('an older storage answer cannot replace a newer identical-title preparation result', () => {
+  const newer = { ...deciding };
+  // Distinct files may share a name, or the same file may be prepared again.
+  // Visible text cannot identify which request owns the current result.
+  expect(answeredMessage(newer, deciding, 'granted')).toBe(newer);
+  const completed = answeredMessage(newer, newer, 'denied');
+  expect(completed).toEqual({ ...newer, ...protectionDetail('denied') });
+  expect(answeredMessage(completed, deciding, 'granted')).toBe(completed);
 });
