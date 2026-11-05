@@ -12,13 +12,12 @@ jobs:
   component:
     # One reachable pre-merge update only. Edits and later repair pushes cannot
     # renew the registered allowance; GitHub reruns fail before installation.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '1eeb90f1d50291791d39913350c28c672c7154ee'
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '7e041c0c7c84bc28c56aeff1bda35b2a93654114'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       SPN146_REVIEWED_HEAD: ${{ github.event.pull_request.head.sha }}
       SPN146_RUNTIME_OUTPUT: test-results/spn146-native-runtime
-      DOC_TRACE_PROCESSOR_PATH: ${{ runner.temp }}/spn146-trace-processor
     steps:
       - name: Admit only the first workflow attempt
         run: test "$GITHUB_RUN_ATTEMPT" = 1
@@ -33,6 +32,8 @@ jobs:
       - name: Clean dependencies and pinned browser/converter
         timeout-minutes: 8
         run: |
+          export DOC_TRACE_PROCESSOR_PATH="$RUNNER_TEMP/spn146-trace-processor"
+          printf '%s\n' "DOC_TRACE_PROCESSOR_PATH=$DOC_TRACE_PROCESSOR_PATH" >> "$GITHUB_ENV"
           npm ci
           node scripts/ci/prefer-ubuntu-archive.ts
           npx playwright install --with-deps chromium
