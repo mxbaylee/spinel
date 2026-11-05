@@ -126,6 +126,7 @@ function managerFixture(
     historyError?: Error;
     collaboration?: number;
     listEvaluation?: () => void;
+    bodySlice?: () => void;
   } = {},
 ) {
   const marker = '//#region src/services/doc-state-change-manager.service.ts\n';
@@ -133,7 +134,17 @@ function managerFixture(
   const end = source.indexOf('//#endregion', start);
   assert.ok(start >= 0 && end > start, 'Execute the actual hash-verified manager region.');
   const timers = clock();
-  const contextCore = { ...core, Inject: () => () => {}, Optional: () => () => {} };
+  const contextCore = {
+    ...core,
+    getBodySliceForSplitTextXAction: (
+      ...args: Parameters<typeof core.getBodySliceForSplitTextXAction>
+    ) => {
+      costs.bodySlice?.();
+      return core.getBodySliceForSplitTextXAction(...args);
+    },
+    Inject: () => () => {},
+    Optional: () => () => {},
+  };
   const ManagerClass = runInNewContext(
     `${source.slice(start + marker.length, end)}\nDocStateChangeManagerService;`,
     {
@@ -458,8 +469,18 @@ function ownDataShape(value: unknown, seen = new Map<object, number>()): unknown
   };
 }
 
-function flush(source: string, history: State[], collaboration = history, raw = false) {
-  const fixture = managerFixture(source);
+function flush(
+  source: string,
+  history: State[],
+  collaboration = history,
+  raw = false,
+  counts?: { bodySlices: number },
+) {
+  const fixture = managerFixture(source, {
+    bodySlice: () => {
+      if (counts) counts.bodySlices++;
+    },
+  });
   try {
     // Native caches are distinct arrays even when their state objects coincide.
     const inputCache = { history: [...history], collaboration: [...collaboration] };
@@ -621,7 +642,7 @@ function measuredFlush(source: string, states: State[], collaboration = states, 
     return Reflect.apply(clone, this, [value]) as T;
   };
   try {
-    return { output: flush(source, states, collaboration, raw), counts };
+    return { output: flush(source, states, collaboration, raw, counts), counts };
   } finally {
     core.TextX.compose = compose;
     core.ActionIterator.prototype.next = next;
@@ -716,7 +737,7 @@ for (const format of ['es', 'cjs'] as const) {
       );
       return;
     }
-    const { patched } = prepareDocsPatch(await readBuild(format), format);
+    const { patched, linearPrefixPatched } = prepareDocsPatch(await readBuild(format), format);
     const directory = await mkdtemp(resolve('.spinel-docs-module-'));
     async function load(source: string, name: string) {
       if (format === 'es') {
@@ -773,11 +794,11 @@ for (const format of ['es', 'cjs'] as const) {
       if (format === 'es') {
         // The isolated manager fixture supplies Core bindings and hid this exact
         // integration defect in rejected candidate418f8b6f. Execute the full file.
-        const missing = patched.replace(
+        const missing = linearPrefixPatched.replace(
           'import { ActionIterator, AlignTypeH,',
           'import { AlignTypeH,',
         );
-        assert.notEqual(missing, patched);
+        assert.notEqual(missing, linearPrefixPatched);
         assert.throws(() => prepareDocsPatch(missing, format), /Partially modified/);
         const broken = await load(missing, 'missing-iterator');
         assert.throws(
@@ -785,6 +806,26 @@ for (const format of ['es', 'cjs'] as const) {
           /ActionIterator is not defined/,
         );
       }
+      const missingSlice =
+        format === 'es'
+          ? patched.replace(
+              'ActionIterator, getBodySliceForSplitTextXAction, AlignTypeH,',
+              'ActionIterator, AlignTypeH,',
+            )
+          : patched.replace(
+              '_univerjs_core.getBodySliceForSplitTextXAction(leaf.body',
+              'getBodySliceForSplitTextXAction(leaf.body',
+            );
+      assert.notEqual(missingSlice, patched);
+      assert.throws(
+        () => prepareDocsPatch(missingSlice, format),
+        /Unrecognized|Partially modified/,
+      );
+      const missingModule = await load(missingSlice, 'missing-slicer');
+      assert.throws(
+        () => exercise(missingModule.DocStateChangeManagerService, paragraphSequence(4).states),
+        /getBodySliceForSplitTextXAction is not defined/,
+      );
     } finally {
       await rm(directory, { recursive: true, force: true });
     }
@@ -1611,10 +1652,11 @@ for (const format of ['es', 'cjs'] as const) {
   });
 
   test(`${format}: linear paragraph ranges preserve raw ownership and reduce repeated native copies`, async () => {
-    const { patched, qualifiedRangesPatched, linearTailPatched } = prepareDocsPatch(
-      await readBuild(format),
-      format,
-    );
+    const {
+      linearPrefixPatched: patched,
+      qualifiedRangesPatched,
+      linearTailPatched,
+    } = prepareDocsPatch(await readBuild(format), format);
     const helper = (source: string) => {
       const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
       const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
@@ -2270,6 +2312,7 @@ for (const format of ['es', 'cjs'] as const) {
       paragraphTailPatched,
       qualifiedRangesPatched,
       linearTailPatched,
+      linearPrefixPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
@@ -2340,10 +2383,19 @@ for (const format of ['es', 'cjs'] as const) {
       'Unpublished intermediate is not an accepted installed build',
     );
     assert.equal(
-      createHash('sha256').update(patched).digest('hex'),
+      createHash('sha256').update(linearPrefixPatched).digest('hex'),
       {
         es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
         cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(linearPrefixPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(linearPrefixPatched + '\n// unknown edit', format));
+    assert.equal(
+      createHash('sha256').update(patched).digest('hex'),
+      {
+        es: 'd77c290c1ac30aba9dad723e61dd88b9d0a0c867f9c29173dafc989f37234de2',
+        cjs: '948d12004209a969b98c5a89e030f00167a995fa190278fb67999ef443806103',
       }[format],
     );
     assert.equal(prepareDocsPatch(patched, format).patched, patched);
@@ -2438,6 +2490,92 @@ for (const format of ['es', 'cjs'] as const) {
   });
 }
 
+for (const format of ['es', 'cjs'] as const)
+  test(`${format}: single-clone leaves retain normalization and shared-style ownership`, async () => {
+    const { patched, linearPrefixPatched } = prepareDocsPatch(await readBuild(format), format);
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return Function(
+        'core',
+        `const {${Object.keys(core).join(',')}}=core; const _univerjs_core=core;\n${source.slice(start, end)}\nreturn composeDocStateActions;`,
+      )(core) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
+    };
+    const previous = helper(linearPrefixPatched),
+      current = helper(patched);
+    for (const position of [3, 4])
+      for (const repetitions of [0, 1, 3]) {
+        const color = { rgb: '#123456' },
+          style = { bl: 1, cl: color, ul: { s: 1, cl: color } };
+        const scenario = paragraphSequence(
+          position,
+          16,
+          core.UpdateDocsAttributeType.REPLACE,
+          7,
+          (body, enter) => {
+            if (enter) return;
+            body.textRuns![0].ts = style;
+            for (let index = 0; index < repetitions; index++) {
+              const normalized = new core.ActionIterator([
+                { t: core.TextXActionType.INSERT, len: 1, body },
+              ]).next(1);
+              if (normalized.t !== core.TextXActionType.INSERT)
+                throw new Error('Expected normalized insert');
+              for (const key of Reflect.ownKeys(body)) Reflect.deleteProperty(body, key);
+              Object.assign(body, normalized.body);
+            }
+          },
+        );
+        const input = ownDataShape(scenario.states);
+        for (const key of ['redoState', 'undoState'] as const) {
+          const before = previous(scenario.states, key),
+            after = current(scenario.states, key);
+          assert.deepEqual(after, before);
+          assert.deepEqual(
+            ownDataShape({ input: scenario.states, output: after }),
+            ownDataShape({ input: scenario.states, output: before }),
+          );
+        }
+        const before = measuredFlush(linearPrefixPatched, scenario.states);
+        const after = measuredFlush(patched, scenario.states);
+        assertNativePreservation(
+          before.output,
+          after.output,
+          scenario,
+          `${format}/${position}/${repetitions}`,
+        );
+        for (const counter of ['cloneVisits', 'allocations', 'iteratorNext'] as const)
+          assert.ok(
+            after.counts[counter] < before.counts[counter],
+            `Remove only duplicate ${counter}`,
+          );
+        for (const counter of ['textCompose', 'bodySlices'] as const)
+          assert.equal(after.counts[counter], before.counts[counter], `Preserve actual ${counter}`);
+        const published = current(scenario.states, 'redoState') as any;
+        const expected = structuredClone(published);
+        published[1].e.find((action: any) => action.t === 'i').body.textRuns[0].ts.cl.rgb =
+          '#ffffff';
+        assert.deepEqual(
+          ownDataShape(scenario.states),
+          input,
+          'Published mutation cannot change shared input styles',
+        );
+        assert.deepEqual(
+          current(scenario.states, 'redoState'),
+          expected,
+          'Independent calls own their output',
+        );
+      }
+    for (const position of [0, 1, 3]) {
+      const scenario = paragraphSequence(position, 4);
+      assert.deepEqual(
+        measuredFlush(patched, scenario.states),
+        measuredFlush(linearPrefixPatched, scenario.states),
+        'Unadmitted short groups keep exact work',
+      );
+    }
+  });
+
 test('Docs installer validates package identity and both complete builds before any write', async (t) => {
   const root = await mkdtemp(resolve(tmpdir(), 'spinel-docs-composition-'));
   t.after(() => rm(root, { recursive: true, force: true }));
@@ -2476,6 +2614,7 @@ test('Docs installer validates package identity and both complete builds before 
     'completeDeletePatched',
     'deletePrefixPatched',
     'paragraphTailPatched',
+    'linearPrefixPatched',
   ] as const) {
     // Existing installs upgrade exact complete prior patches, atomically with
     // respect to validation of both formats, just like fresh upstream installs.

@@ -10,10 +10,10 @@ import { test } from 'node:test';
 import { analyzeRuntime, validateRuntimeJournal } from './doc-native-runtime/analysis.ts';
 import { firstResourceViolation, owned, resourceFailure } from './doc-native-runtime/watchdog.ts';
 
-test('linear-copy qualification admits only the reviewed predecessor and first attempt', () => {
+test('single-clone qualification admits only the reviewed predecessor and first attempt', () => {
   const workflow = readFileSync('.github/workflows/doc-native-runtime.yml', 'utf8');
   assert.match(workflow, /types: \[synchronize\]/);
-  assert.match(workflow, /github.event.before == '8b6828196266f1fac6c46e2cc16b16321db72cf7'/);
+  assert.match(workflow, /github.event.before == '97d0b3203fbddc673d5a9bc729410949eb875523'/);
   assert.match(workflow, /github.event.pull_request.head.repo.full_name == github.repository/);
   assert.match(workflow, /github.event.pull_request.head.ref == 'codex\/spn-146-mobile-flush'/);
   assert.match(workflow, /test "\$GITHUB_RUN_ATTEMPT" = 1/);

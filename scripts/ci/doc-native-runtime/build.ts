@@ -100,10 +100,17 @@ for (const format of ['es', 'cjs'] as const) {
     }[format],
   );
   assert.equal(
-    hash(prepared.patched),
+    hash(prepared.linearPrefixPatched),
     {
       es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
       cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+    }[format],
+  );
+  assert.equal(
+    hash(prepared.patched),
+    {
+      es: 'd77c290c1ac30aba9dad723e61dd88b9d0a0c867f9c29173dafc989f37234de2',
+      cjs: '948d12004209a969b98c5a89e030f00167a995fa190278fb67999ef443806103',
     }[format],
   );
   assert.equal(
@@ -126,6 +133,7 @@ for (const format of ['es', 'cjs'] as const) {
     candidate: hash(prepared.patched),
     previousCandidate: record.installedSha256,
     previousQualifiedCandidate: hash(prepared.qualifiedRangesPatched),
+    previousLinearCandidate: hash(prepared.linearPrefixPatched),
     regions: { prior: hash(native[format].prior), candidate: hash(native[format].candidate) },
   };
 }

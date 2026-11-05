@@ -41,6 +41,8 @@ const formats = {
 export function prepareDocsPatch(source: string, format: keyof typeof formats) {
   const originalImport = 'import { AlignTypeH, BooleanNumber,';
   const iteratorImport = 'import { ActionIterator, AlignTypeH, BooleanNumber,';
+  const slicerImport =
+    'import { ActionIterator, getBodySliceForSplitTextXAction, AlignTypeH, BooleanNumber,';
   const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
   const anchor = 'const DEBOUNCE_DELAY = 300;';
   const markerField = ', "__textXPreserveParagraphIds"';
@@ -338,7 +340,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
 \t\t}
 \t\treturn ${json}.compose(head, ["body", { et: "text-x", e: tail.serialize() }]);`,
   );
-  const helper = linearTailHelper.replace(
+  const linearPrefixHelper = linearTailHelper.replace(
     `\t\t} else head = ${json}.compose(composeRange(0, prefix), states[prefix][key].actions);`,
     `\t\t} else {
 \t\t\tconst nativePrefix = new ${native}TextX();
@@ -351,6 +353,19 @@ function canComposeDocParagraphTail(states, key, prefix) {
 \t\t\thead = ${json}.compose(["body", { et: "text-x", e: nativePrefix.serialize() }], states[prefix][key].actions);
 \t\t}`,
   );
+  // ActionIterator.next sliced and cloned each qualified leaf, immediately
+  // followed by TextX.push's clone. Keep the identical public slice and final
+  // push ownership; only the redundant intermediate clone is removed.
+  const helper = linearPrefixHelper
+    .replace(
+      'function composeDocStateActions(states, key) {',
+      `function normalizeDocInsertLeaf(leaf) {\n\treturn { ...leaf, len: 1, body: { ...${native}getBodySliceForSplitTextXAction(leaf.body, 0, 1, false) } };\n}\nfunction composeDocStateActions(states, key) {`,
+    )
+    .replace(`new ${native}ActionIterator([leaf]).next(1)`, 'normalizeDocInsertLeaf(leaf)')
+    .replace(
+      `new ${native}ActionIterator([edits[edits.length - 1]]).next(1)`,
+      'normalizeDocInsertLeaf(edits[edits.length - 1])',
+    );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
     {
@@ -373,8 +388,13 @@ function canComposeDocParagraphTail(states, key, prefix) {
     docFlushObservationReplacements
       .reduce(
         (text, { before, after }) => text.replaceAll(after, before),
-        format === 'es' ? source.replaceAll(iteratorImport, originalImport) : source,
+        format === 'es'
+          ? source
+              .replaceAll(slicerImport, originalImport)
+              .replaceAll(iteratorImport, originalImport)
+          : source,
       )
+      .replaceAll(linearPrefixHelper, anchor)
       .replaceAll(qualifiedRangesHelper, anchor)
       .replaceAll(paragraphTailHelper, anchor)
       .replaceAll(constantGuardHelper, anchor)
@@ -401,7 +421,12 @@ function canComposeDocParagraphTail(states, key, prefix) {
   }, composed);
   if (format === 'es' && observed.split(originalImport).length !== 2)
     throw new Error('Docs native iterator import target count changed.');
-  const patched = format === 'es' ? observed.replace(originalImport, iteratorImport) : observed;
+  const patched = format === 'es' ? observed.replace(originalImport, slicerImport) : observed;
+  const linearPrefixObserved = observed.replace(helper, linearPrefixHelper);
+  const linearPrefixPatched =
+    format === 'es'
+      ? linearPrefixObserved.replace(originalImport, iteratorImport)
+      : linearPrefixObserved;
   // Historical controls retain their exact complete-module imports and hashes.
   const completeDeletePatched = observed.replace(helper, completeDeleteHelper);
   const deletePrefixPatched = observed.replace(helper, deletePrefixHelper);
@@ -413,6 +438,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
   if (
     source !== original &&
     source !== patched &&
+    source !== linearPrefixPatched &&
     source !== completeDeletePatched &&
     source !== deletePrefixPatched &&
     source !== constantGuardPatched &&
@@ -437,6 +463,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
     paragraphTailPatched,
     qualifiedRangesPatched,
     linearTailPatched,
+    linearPrefixPatched,
   };
 }
 

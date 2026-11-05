@@ -1,4 +1,4 @@
-name: 🔬 Native Doc linear-copy qualification
+name: 🔬 Native Doc single-clone qualification
 on:
   pull_request:
     branches: [main]
@@ -10,10 +10,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   component:
-    # One changed-algorithm qualification after isolated native-copy proofs.
-    # SPN-146-linear-tail.md preserves prior failures and the unchanged criterion.
+    # One changed-algorithm qualification after isolated single-clone proofs.
+    # SPN-146-single-clone.md preserves prior failures and the unchanged criterion.
     # This exact transition is consumed once; edits/later pushes/reruns cannot renew it.
-    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '8b6828196266f1fac6c46e2cc16b16321db72cf7'
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/spn-146-mobile-flush' && github.event.before == '97d0b3203fbddc673d5a9bc729410949eb875523'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -50,7 +50,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: spn146-linux-linear-copy-qualification
+          name: spn146-linux-single-clone-qualification
           path: test-results/spn146-native-runtime/
           if-no-files-found: error
           retention-days: 30
