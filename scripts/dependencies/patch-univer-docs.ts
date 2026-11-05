@@ -16,7 +16,8 @@
  * Modified for Spinel: compose contiguous, single-character root-body inserts
  * in an order-preserving balanced tree up to the first unsupported state. The
  * remaining actions keep their original fold, except SPN-146's strictly qualified
- * single-Enter boundary followed by a contiguous plain append run. SPN-135 aggregates only fully
+ * single-Enter boundary followed by a contiguous plain append run, assembled
+ * with one native normalization per admitted plain insert. SPN-135 aggregates only fully
  * qualified descending single-character deletes; SPN-142 also aggregates their
  * qualified leading prefixes before the unchanged sequential tail. It observes native flushes
  * through an opt-in scalar API. Native grouping, metadata,
@@ -309,7 +310,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
   // The full predicate already qualified these exact ranges. Re-entering the
   // generic composer repeats delete/prefix scans without changing its tree.
   // Keep the original null fold for a tiny head and every fallback unchanged.
-  const helper = paragraphTailHelper.replace(
+  const qualifiedRangesHelper = paragraphTailHelper.replace(
     `\t\tconst head = composeDocStateActions(states.slice(0, prefix + 1), key);
 \t\tconst tail = composeDocStateActions(states.slice(prefix + 1), key);
 \t\treturn ${json}.compose(head, tail);`,
@@ -319,6 +320,34 @@ function canComposeDocParagraphTail(states, key, prefix) {
 \t\t\tfor (let index = 0; index <= prefix; index++) head = ${json}.compose(head, states[index][key].actions);
 \t\t} else head = ${json}.compose(composeRange(0, prefix), states[prefix][key].actions);
 \t\treturn ${json}.compose(head, composeRange(prefix + 1, states.length));`,
+  );
+  const native = format === 'cjs' ? '_univerjs_core.' : '';
+  // Full-body slicing supplies native own-undefined fields; direct concatenation
+  // or raw leaf copying would change metadata. Push keeps native merge/ownership.
+  const linearTailHelper = qualifiedRangesHelper.replace(
+    `\t\treturn ${json}.compose(head, composeRange(prefix + 1, states.length));`,
+    `\t\tconst tail = new ${native}TextX();
+\t\tconst firstEdits = states[prefix + 1][key].actions[1].e;
+\t\tif (firstEdits.length === 2) tail.push(firstEdits[0]);
+\t\tfor (let index = prefix + 1; index < states.length; index++) {
+\t\t\tconst edits = states[index][key].actions[1].e;
+\t\t\tconst leaf = edits[edits.length - 1];
+\t\t\ttail.push(new ${native}ActionIterator([leaf]).next(1));
+\t\t}
+\t\treturn ${json}.compose(head, ["body", { et: "text-x", e: tail.serialize() }]);`,
+  );
+  const helper = linearTailHelper.replace(
+    `\t\t} else head = ${json}.compose(composeRange(0, prefix), states[prefix][key].actions);`,
+    `\t\t} else {
+\t\t\tconst nativePrefix = new ${native}TextX();
+\t\t\tconst firstEdits = states[0][key].actions[1].e;
+\t\t\tif (firstEdits.length === 2) nativePrefix.push(firstEdits[0]);
+\t\t\tfor (let index = 0; index < prefix; index++) {
+\t\t\t\tconst edits = states[index][key].actions[1].e;
+\t\t\t\tnativePrefix.push(new ${native}ActionIterator([edits[edits.length - 1]]).next(1));
+\t\t\t}
+\t\t\thead = ${json}.compose(["body", { et: "text-x", e: nativePrefix.serialize() }], states[prefix][key].actions);
+\t\t}`,
   );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
@@ -341,6 +370,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
     (text, { before, after }) => text.replaceAll(after, before),
     docFlushObservationReplacements
       .reduce((text, { before, after }) => text.replaceAll(after, before), source)
+      .replaceAll(qualifiedRangesHelper, anchor)
       .replaceAll(paragraphTailHelper, anchor)
       .replaceAll(constantGuardHelper, anchor)
       .replaceAll(deletePrefixHelper, anchor)
@@ -368,6 +398,9 @@ function canComposeDocParagraphTail(states, key, prefix) {
   const deletePrefixPatched = patched.replace(helper, deletePrefixHelper);
   const constantGuardPatched = patched.replace(helper, constantGuardHelper);
   const paragraphTailPatched = patched.replace(helper, paragraphTailHelper);
+  const qualifiedRangesPatched = patched.replace(helper, qualifiedRangesHelper);
+  // Isolated semantic/work control only: this intermediate was never installed.
+  const linearTailPatched = patched.replace(helper, linearTailHelper);
   if (
     source !== original &&
     source !== patched &&
@@ -375,6 +408,7 @@ function canComposeDocParagraphTail(states, key, prefix) {
     source !== deletePrefixPatched &&
     source !== constantGuardPatched &&
     source !== paragraphTailPatched &&
+    source !== qualifiedRangesPatched &&
     source !== previousPatched &&
     source !== markerPatched &&
     source !== prefixPatched
@@ -392,6 +426,8 @@ function canComposeDocParagraphTail(states, key, prefix) {
     deletePrefixPatched,
     constantGuardPatched,
     paragraphTailPatched,
+    qualifiedRangesPatched,
+    linearTailPatched,
   };
 }
 

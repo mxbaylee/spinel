@@ -16,9 +16,10 @@ extends this to qualified leading delete prefixes with the original sequential
 tail, preserving every unsupported action's call order. SPN-142 reuses private
 fixed qualification lists without changing their contents or iteration order.
 🔎 SPN-146 additionally recognizes one native Enter between contiguous plain
-append inserts. It keeps that Enter and its style retain in the original head,
-balances the qualified final run, and composes the two raw-equivalent results
-once. Other structural/metadata shapes retain the existing fold. Tests preserve
+append inserts. The fully qualified plain tail and prefixes of at least four
+inserts use one public native full-body normalization and push per leaf, avoiding
+repeated tree-level copies. Smaller heads keep their original null fold. It keeps
+the prefix/Enter join, its style retain and the final head/tail join in order. Other structural/metadata shapes retain the existing fold. Tests preserve
 the exact earlier build as a work negative and compare raw publications,
 metadata, accumulator ownership and complete applied snapshots.
 The SPN-146 component diagnostic in `scripts/ci/doc-native-runtime/` reuses
