@@ -1,0 +1,1087 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "base": "5d8676ec280ac6d5cc9dcedb7e9cc09527b24806",
+  "previousSource": "f432b5b890f12dc94c330de719e653d0d8b01aad",
+  "sourceSha256": {
+    ".github/workflows/ci.yml": "6f69599eaa79beb913b37a5259c9bd0a9b276a797b8d553d60d69b67a1604be9",
+    "e2e/doc-responsiveness-callback-progress.ts": "d14f1c8421e67ec218504a910e996fa0e69e9e6233ecf7294df84841fe0546e2",
+    "e2e/doc-responsiveness-callback-trace.ts": "bf1e1c46419de1fe929dd095086aafaa20e1cbe3b40e4377fdbe459a12e580da",
+    "e2e/doc-responsiveness-callbacks.spec.ts": "8260940eaeb1a9b4942fa3d8d396e727941019365782922b91dffc9c6136f5f2",
+    "scripts/ci/doc-callback-progress.test.ts": "554f144a2f1714973aa44961cf0dd8b99062b286b6f03a7a96c12e8a68e15e13",
+    "scripts/ci/doc-callback-trace.test.ts": "86b50d5a46b6ee98be09323a65597f36f5c31b584cc46bde597a22244fd49202",
+    "scripts/ci/doc-callback-comparison.ts": "037bb9fc2c8ed0eb814ab364dff71d148ac11c7a7e7496a5077b7ff4e51c5f70",
+    "scripts/ci/doc-callback-comparison.test.ts": "2adfde805d457fa670c9d6f7524a9174562546b8c51afc0ddfced588c5ee6c8f",
+    "scripts/ci/plan.test.ts": "1623638c6b3edb45880f1dec5735d464f426b9444fdcfb5b2542efa10bff1c8f"
+  },
+  "checks": {
+    "controls": {
+      "log": "✔ accepts matched committed first-attempt observations with bounded candidate cleanup (10.207041ms)\n✔ baseline structural failure stays visible without becoming a candidate waiver (2.514542ms)\n✔ commit, retry, failed checks, browser errors, missing source and unchecked analysis reject the pair (17.489584ms)\n✔ discloses unrelated unmapped function positions while requiring proven measured timer ownership (1.595042ms)\n✔ matching capture omissions or changes cannot replace the registered lossless method (7.705916ms)\n✔ requires paired runtime, runner, harness and fixture identities, not merely two passing flags (8.760042ms)\n✔ matching omissions or shortened/corrupt input do not satisfy the original workload (9.741667ms)\n✔ allows only controlled matched baseline harness copies, including trimmed porcelain output (6.1245ms)\n✔ CI overlays exactly the declared callback harness, preserving unrelated baseline source (5.949834ms)\n✔ loads exactly one case, hashes retained trace/maps/sources and recomputes the callback ledger (21.931083ms)\n✔ a changed retained build, missing file or incorrect byte count cannot borrow a valid manifest (12.626125ms)\n✔ stored accepted analysis is checked against raw lifetimes, even when the raw checksum is updated (7.403125ms)\n✔ artifact resolution rejects traversal and symlinks escaping the retained case (2.532709ms)\n✔ candidate-only callback evidence retains first-attempt/source/content/bounded-lifetime checks (4.670167ms)\n✔ missing input retains its exact pending paragraph and terminal timeout, never completion (8.311292ms)\n✔ a stalled trace is distinguishable from completed typing without accepting partial trace data (2.92925ms)\n✔ unexpected page-close remains the first cause through subsequent cleanup errors (5.096459ms)\n✔ unexpected context-close remains the first cause through subsequent cleanup errors (5.342417ms)\n✔ unexpected browser-disconnected remains the first cause through subsequent cleanup errors (4.414084ms)\n✔ unexpected page-crash remains the first cause through subsequent cleanup errors (3.70725ms)\n✔ ordinary owned cleanup closure is recorded but not misclassified as the original failure (3.179584ms)\n✔ crashes remain unexpected during cleanup and the observation buffer is bounded (194.766292ms)\n✔ real Playwright timeout runs the terminal hook without waiting for a stalled observation (1178.894208ms)\n✔ failed checkpoint replacement preserves the previous bytes and cannot bypass cleanup (3.440709ms)\n✔ manifest persistence failure preserves the original error after cleanup (5.45375ms)\n✔ manifest persistence failure rejects otherwise successful acceptance after cleanup (1.948625ms)\n✔ trace stream complete retains bytes or the first error through owned close (15.805375ms)\n✔ trace stream read-and-close-fail retains bytes or the first error through owned close (5.377208ms)\n✔ trace stream close-fails retains bytes or the first error through owned close (5.404625ms)\n✔ trace stream progress-write-fails retains bytes or the first error through owned close (4.399834ms)\n✔ trace stream output-open-fails retains bytes or the first error through owned close (3.909708ms)\n✔ retains every event index, all analyzer inputs and exact top frames without rewriting raw files (10.149833ms)\n✔ plain and gzip reads handle UTF-8, escaped delimiters and every small chunk boundary (96.018667ms)\n✔ malformed callback fields remain visible to attribution and lifetime validation (2.437625ms)\n✔ rejects corrupt events, duplicate arrays, missing separators and every truncated envelope state (15.938542ms)\n✔ gzip truncation, checksum errors, trailing garbage and corrupt decompressed JSON all fail closed (6.308125ms)\n✔ bounds individual records and metadata while permitting an arbitrarily chunked larger document (119.166167ms)\n✔ capture keeps all six categories and explicitly reserves a non-overwriting 1 GiB buffer (0.173083ms)\n✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (5.184209ms)\n✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.336708ms)\n✔ sized restore participates in the immutable plan and fails closed (1.753417ms)\n✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.579041ms)\n✔ labels only add coverage; removal recomputes automatic requirements (0.289125ms)\n✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.292708ms)\n✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.371875ms)\n✔ workflow keeps seven static code names and protected edit concurrency (0.42775ms)\n✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (0.969042ms)\nℹ tests 47\nℹ suites 0\nℹ pass 47\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 1546.363459\nWATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":1711,\"peakKiB\":610624}\n",
+      "watchdog": {
+        "root": 66332,
+        "started": 1793818209552,
+        "elapsedMs": 1711,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 94912,
+        "peakKiB": 610624,
+        "live": [
+          {
+            "pid": 66332,
+            "parent": 66293,
+            "group": 66332,
+            "rssKiB": 93328,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/controls-watchdog.json node --max-old-space-size=700 --test scripts/ci/doc-callback-progress.test.ts scripts/ci/doc-callback-trace.test.ts scripts/ci/doc-callback-comparison.test.ts scripts/ci/plan.test.ts"
+          },
+          {
+            "pid": 66467,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 66332,
+            "parent": 66293,
+            "group": 66332,
+            "rssKiB": 93328,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/controls-watchdog.json node --max-old-space-size=700 --test scripts/ci/doc-callback-progress.test.ts scripts/ci/doc-callback-trace.test.ts scripts/ci/doc-callback-comparison.test.ts scripts/ci/plan.test.ts"
+          },
+          {
+            "pid": 66351,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66377,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 59968,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "node --max-old-space-size=700 --test scripts/ci/doc-callback-progress.test.ts scripts/ci/doc-callback-trace.test.ts scripts/ci/doc-callback-comparison.test.ts scripts/ci/plan.test.ts"
+          },
+          {
+            "pid": 66378,
+            "parent": 66377,
+            "group": 66332,
+            "rssKiB": 102608,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log --max-old-space-size=700 scripts/ci/doc-callback-comparison.test.ts"
+          },
+          {
+            "pid": 66379,
+            "parent": 66377,
+            "group": 66332,
+            "rssKiB": 94128,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log --max-old-space-size=700 scripts/ci/doc-callback-progress.test.ts"
+          },
+          {
+            "pid": 66380,
+            "parent": 66377,
+            "group": 66332,
+            "rssKiB": 104032,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log --max-old-space-size=700 scripts/ci/doc-callback-trace.test.ts"
+          },
+          {
+            "pid": 66387,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:09 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66395,
+            "parent": 66379,
+            "group": 66332,
+            "rssKiB": 202736,
+            "started": "Wed Nov  4 10:50:10 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/@playwright/test/cli.js test --config /var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spn134-timeout-J4IayO/playwright.config.ts"
+          },
+          {
+            "pid": 66401,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66414,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66427,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66428,
+            "parent": 66395,
+            "group": 66332,
+            "rssKiB": 159104,
+            "started": "Wed Nov  4 10:50:10 2026",
+            "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          },
+          {
+            "pid": 66441,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:10 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66454,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 66467,
+            "parent": 66332,
+            "group": 66332,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:50:11 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    "lint": {
+      "log": "\n> lint\n> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check\n\n\n> dependencies:check\n> node scripts/dependencies/no-univer-pro.ts\n\nNo Univer Pro dependencies in 8 manifests or the resolved lockfile.\n\n> format:check\n> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts\n\nChecking formatting...\nAll matched files use Prettier code style!\nWATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":18322,\"peakKiB\":872832}\n",
+      "watchdog": {
+        "root": 67041,
+        "started": 1793818300368,
+        "elapsedMs": 18322,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 78080,
+        "peakKiB": 872832,
+        "live": [
+          {
+            "pid": 67041,
+            "parent": 67006,
+            "group": 67041,
+            "rssKiB": 76512,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/lint-watchdog.json npm run lint"
+          },
+          {
+            "pid": 68096,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:58 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 67041,
+            "parent": 67006,
+            "group": 67041,
+            "rssKiB": 76512,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/lint-watchdog.json npm run lint"
+          },
+          {
+            "pid": 67060,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67086,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 59184,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "npm run lint   "
+          },
+          {
+            "pid": 67098,
+            "parent": 67086,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "sh -c npm run dependencies:check && oxlint --deny-warnings . && npm run format:check"
+          },
+          {
+            "pid": 67099,
+            "parent": 67098,
+            "group": 67041,
+            "rssKiB": 74336,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "npm run dependencies:check   "
+          },
+          {
+            "pid": 67105,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67131,
+            "parent": 67098,
+            "group": 67041,
+            "rssKiB": 88896,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "node /Users/mxbaylee/projects/spinel-spn-134-integration/node_modules/.bin/oxlint --deny-warnings ."
+          },
+          {
+            "pid": 67137,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:51:40 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67145,
+            "parent": 67098,
+            "group": 67041,
+            "rssKiB": 55280,
+            "started": "Wed Nov  4 10:51:41 2026",
+            "command": "npm run format:check   "
+          },
+          {
+            "pid": 67163,
+            "parent": 67145,
+            "group": 67041,
+            "rssKiB": 465552,
+            "started": "Wed Nov  4 10:51:41 2026",
+            "command": "node /Users/mxbaylee/projects/spinel-spn-134-integration/node_modules/.bin/prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts playwright.config.ts prettier.config.ts vite.config.ts vitest.config.ts"
+          },
+          {
+            "pid": 67169,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67185,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67198,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67213,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:41 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67227,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:42 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67240,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:42 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67253,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:42 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67266,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:42 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67279,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:43 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67292,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:43 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67305,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:43 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67318,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:43 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67331,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:44 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67344,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:44 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67357,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:44 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67370,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:44 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67383,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:45 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67396,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:45 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67409,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:45 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67422,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:45 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67435,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:46 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67448,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:46 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67461,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:46 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67474,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:46 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67487,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67500,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67513,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67527,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67541,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67554,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67567,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1600,
+            "started": "Wed Nov  4 10:51:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67580,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67593,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:49 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67606,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:51:49 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67619,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:49 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67632,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:50 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67645,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:50 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67658,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:50 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67671,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:50 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67684,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:51 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67697,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:51 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67710,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:51 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67723,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:51 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67736,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:52 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67749,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:52 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67762,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:52 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67775,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:52 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67788,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:53 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67801,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:53 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67814,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 2128,
+            "started": "Wed Nov  4 10:51:53 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67830,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:53 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67843,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:54 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67858,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:54 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67871,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:54 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67886,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:54 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67899,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:55 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67912,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:55 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67925,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:55 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67940,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:55 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67953,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:56 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67966,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:56 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67979,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:56 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 67992,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:56 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68005,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:57 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68018,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:57 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68031,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:57 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68044,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:57 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68057,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:58 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68070,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:58 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68083,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:58 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68096,
+            "parent": 67041,
+            "group": 67041,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:51:58 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    "typecheck": {
+      "log": "\n> typecheck\n> tsc -p .\n\nWATCHDOG ABORT: {\"pressure\":\"2\",\"rssKiB\":1491424,\"elapsedMs\":2145}\nserial: waiting for remaining workers.\n",
+      "watchdog": {
+        "root": 68150,
+        "started": 1793818324098,
+        "elapsedMs": 2218,
+        "outcome": "resource-aborted",
+        "pressure": "2",
+        "rssKiB": 1525728,
+        "peakKiB": 1525728,
+        "live": [
+          {
+            "pid": 68150,
+            "parent": 68115,
+            "group": 68150,
+            "rssKiB": 61632,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/typecheck-watchdog.json npm run typecheck"
+          },
+          {
+            "pid": 68195,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 54896,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "npm run typecheck   "
+          },
+          {
+            "pid": 68207,
+            "parent": 68195,
+            "group": 68150,
+            "rssKiB": 1407632,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "/Users/mxbaylee/projects/spinel/node_modules/@typescript/typescript-darwin-arm64/lib/tsc -p ."
+          },
+          {
+            "pid": 68319,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 68150,
+            "parent": 68115,
+            "group": 68150,
+            "rssKiB": 61632,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/typecheck-watchdog.json npm run typecheck"
+          },
+          {
+            "pid": 68169,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68195,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 54896,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "npm run typecheck   "
+          },
+          {
+            "pid": 68207,
+            "parent": 68195,
+            "group": 68150,
+            "rssKiB": 1407632,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "/Users/mxbaylee/projects/spinel/node_modules/@typescript/typescript-darwin-arm64/lib/tsc -p ."
+          },
+          {
+            "pid": 68213,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68226,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68239,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:04 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68254,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 10:52:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68267,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68280,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68293,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:05 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68306,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68319,
+            "parent": 68150,
+            "group": 68150,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 10:52:06 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    "types-focused": {
+      "log": "WATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":241,\"peakKiB\":90512}\n",
+      "watchdog": {
+        "root": 68407,
+        "started": 1793818355559,
+        "elapsedMs": 241,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 90512,
+        "peakKiB": 90512,
+        "live": [
+          {
+            "pid": 68407,
+            "parent": 68372,
+            "group": 68407,
+            "rssKiB": 88960,
+            "started": "Wed Nov  4 10:52:35 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/types-focused-watchdog.json node_modules/.bin/tsc -p /tmp/spn134-resume/types.json"
+          },
+          {
+            "pid": 68440,
+            "parent": 68407,
+            "group": 68407,
+            "rssKiB": 1552,
+            "started": "Wed Nov  4 10:52:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 68407,
+            "parent": 68372,
+            "group": 68407,
+            "rssKiB": 88960,
+            "started": "Wed Nov  4 10:52:35 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn134-resume/types-focused-watchdog.json node_modules/.bin/tsc -p /tmp/spn134-resume/types.json"
+          },
+          {
+            "pid": 68426,
+            "parent": 68407,
+            "group": 68407,
+            "rssKiB": 1552,
+            "started": "Wed Nov  4 10:52:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 68440,
+            "parent": 68407,
+            "group": 68407,
+            "rssKiB": 1552,
+            "started": "Wed Nov  4 10:52:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    }
+  },
+  "focusedConfig": {
+    "extends": "/Users/mxbaylee/projects/spinel-spn-134-integration/tsconfig.json",
+    "compilerOptions": {
+      "typeRoots": [
+        "/Users/mxbaylee/projects/spinel-spn-134-integration/node_modules/@types"
+      ]
+    },
+    "include": [
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/e2e/doc-responsiveness-callback-progress.ts",
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/e2e/doc-responsiveness-callback-trace.ts",
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/scripts/ci/doc-callback-progress.test.ts",
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/scripts/ci/doc-callback-trace.test.ts",
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/scripts/ci/doc-callback-comparison.ts",
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/scripts/ci/doc-callback-comparison.test.ts",
+      "/Users/mxbaylee/projects/spinel-spn-134-integration/scripts/ci/plan.test.ts"
+    ]
+  },
+  "disposition": {
+    "controls": "47 focused controls passed; no application browser execution.",
+    "lint": "Full dependency/lint/format passed.",
+    "typecheck": "Full native TypeScript compiler resource-aborted when memory pressure became elevated; hosted full types remain pending.",
+    "focusedTypes": "Seven callback helper/validator/test roots and their imports passed. The browser spec is outside these roots. Native compiler measurement below watchdog sampling interval does not prove its peak RSS.",
+    "hosted": "All selected CI and both exact committed pre-push grades remain pending."
+  }
+}
