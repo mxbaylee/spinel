@@ -605,6 +605,13 @@ for (const preset of ['desktop', 'mobile'] as const)
             const build = evidence.nativeDiagnosticBuild as any;
             expect(build.role).toBe('prior-native');
             expect(build.source).toBe(evidence.source);
+            const sourcePreparation = JSON.parse(
+              await readFile('spn146-source-preparation.json', 'utf8'),
+            );
+            expect(sourcePreparation.source).toBe(build.source);
+            expect(sourcePreparation.tree).toBe(build.tree);
+            expect(sourcePreparation.eventBefore).toBe(build.eventBefore);
+            evidence.nativeSourcePreparation = sourcePreparation;
             progress!.phase('loaded-source-retention');
             evidence.nativeLoadedSources = await loadedSources!.retain(
               info.outputPath('spn146-loaded-sources'),
@@ -615,6 +622,7 @@ for (const preset of ['desktop', 'mobile'] as const)
                 'node_modules/@univerjs/core/lib/es/index.js':
                   build.sources['node_modules/@univerjs/core/lib/es/index.js'],
               },
+              sourcePreparation,
             );
             await loadedSources!.dispose();
             loadedSources = undefined;

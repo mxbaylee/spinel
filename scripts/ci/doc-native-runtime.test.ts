@@ -8,7 +8,7 @@ import {
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { analyzeRuntime, validateRuntimeJournal } from './doc-native-runtime/analysis.ts';
-import { owned, resourceFailure } from './doc-native-runtime/watchdog.ts';
+import { firstResourceViolation, owned, resourceFailure } from './doc-native-runtime/watchdog.ts';
 function fixture() {
   const records: any[] = [],
     events: any[] = [];
@@ -248,6 +248,26 @@ test('same resource policy rejects final-only memory/deadline/missing observatio
     if (!('elapsedMs' in change))
       assert.ok(resourceFailure({ ...good, ...change }, 'application-window'));
   }
+});
+
+test('first violating process sample survives later reaping and mutable inventory updates', () => {
+  const good = {
+    elapsedMs: 10,
+    rssKiB: 1000,
+    availableKiB: 2 * 1024 ** 2,
+    live: [{ pid: 1, parent: 0, start: 'original', rssKiB: 1000 }],
+  };
+  assert.equal(firstResourceViolation(null, good, 'application-window'), null);
+  const bad = { ...good, elapsedMs: 20, rssKiB: 2 * 1024 ** 2 + 1 };
+  const first = firstResourceViolation(null, bad, 'application-window');
+  assert.equal(first?.reason, 'Owned RSS exceeded2GiB');
+  bad.live[0].rssKiB = 0;
+  assert.equal(first?.live[0].rssKiB, 1000);
+  assert.equal(firstResourceViolation(first, { ...good, live: [] }, 'application-window'), first);
+  assert.equal(
+    firstResourceViolation(first, { ...good, elapsedMs: 450001 }, 'application-window'),
+    first,
+  );
 });
 
 test('terminal-only persistence failure and missing cleanup cannot pass analysis', () => {
