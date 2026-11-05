@@ -1,0 +1,203 @@
+{
+  "repository": "mxbaylee/spinel",
+  "runId": 41495432876,
+  "jobId": 125546133687,
+  "headSha": "54307c19c075c5dd67a8012341cc7cee716a09a3",
+  "artifactId": 13182689197,
+  "artifactName": "theme-screenshots-development-2",
+  "artifactSha256": "8f3a90e75dc33f9e644937034f419d2b198fa01ac31df9130fdd5660ea37a0bc",
+  "stats": {
+    "startTime": "2026-11-02T21:45:40.393Z",
+    "duration": 1104818.884,
+    "expected": 75,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 1
+  },
+  "results": [
+    {
+      "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "tests": [
+        {
+          "status": "flaky",
+          "results": [
+            {
+              "status": "failed",
+              "retry": 0,
+              "durationMs": 38339,
+              "startTime": "2026-11-02T21:49:15.579Z",
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/history.spec.ts",
+                "column": 27,
+                "line": 93
+              },
+              "error": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status', { name: 'Save status' })\nExpected substring: \u001b[32m\"View only\"\u001b[39m\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status', { name: 'Save status' }) with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status', { name: 'Save status' })\u001b[22m\n",
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "path": "development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/test-failed-1.png"
+                },
+                {
+                  "name": "error-context",
+                  "path": "development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/error-context.md"
+                }
+              ]
+            },
+            {
+              "status": "passed",
+              "retry": 1,
+              "durationMs": 19256,
+              "startTime": "2026-11-02T21:49:54.452Z",
+              "errorLocation": null,
+              "error": null,
+              "attachments": [
+                {
+                  "name": "trace",
+                  "path": "development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/trace.zip"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "doc versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "tests": [
+        {
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "durationMs": 10101,
+              "startTime": "2026-11-02T21:50:13.987Z",
+              "errorLocation": null,
+              "error": null,
+              "attachments": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "retryNetworkAfterCookieSwitch": [
+    {
+      "monotonicMs": 268257.93,
+      "method": "GET",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833/history",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270453.996,
+      "method": "GET",
+      "path": "/api/maintenance",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270463.172,
+      "method": "GET",
+      "path": "/api/auth/session",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270500.893,
+      "method": "GET",
+      "path": "/api/diagnostics/collection",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270500.984,
+      "method": "GET",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270501.039,
+      "method": "GET",
+      "path": "/api/health",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270501.093,
+      "method": "GET",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270502.124,
+      "method": "GET",
+      "path": "/api/items",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270502.199,
+      "method": "GET",
+      "path": "/api/items/shared",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270502.237,
+      "method": "GET",
+      "path": "/api/items",
+      "status": 200
+    },
+    {
+      "monotonicMs": 270559.325,
+      "method": "GET",
+      "path": "/api/appearance/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833",
+      "status": -1
+    },
+    {
+      "monotonicMs": 270559.382,
+      "method": "GET",
+      "path": "/api/appearance/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833",
+      "status": 200
+    },
+    {
+      "monotonicMs": 271837.836,
+      "method": "POST",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833/collaboration",
+      "status": 200
+    },
+    {
+      "monotonicMs": 271839.053,
+      "method": "POST",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833/collaboration",
+      "status": 200
+    },
+    {
+      "monotonicMs": 272696.562,
+      "method": "GET",
+      "path": "/api/maintenance",
+      "status": 200
+    },
+    {
+      "monotonicMs": 273714.586,
+      "method": "GET",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833/history",
+      "status": 200
+    },
+    {
+      "monotonicMs": 273715.064,
+      "method": "GET",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833/history",
+      "status": 200
+    },
+    {
+      "monotonicMs": 273720.891,
+      "method": "GET",
+      "path": "/api/items/25e253b9-ae1a-495c-8f82-9fc3b99ed833",
+      "status": 200
+    }
+  ],
+  "investigation": {
+    "observed": "First attempt rendered authenticated Version viewer on empty My files dashboard with no Sheet editor; retry passed all viewer/history assertions. CI fails flaky tests.",
+    "unavailable": "No first-attempt network trace: configuration trace=on-first-retry.",
+    "hypothesis": "Fixture clears all cookies while owner page remains active, adds viewer cookie, then reloads the current URL. A background request issued in this gap can receive 401 and navigate to /sign-in; an authenticated /sign-in request redirects to /. Five-second shared-items polling is one concrete request source.",
+    "classification": "Source-supported fixture race hypothesis; the exact first-attempt request is unobserved.",
+    "recommendedRepair": "Use an isolated viewer browser context, or stop owner page on about:blank before switching credentials and explicitly navigate to the original item URL. Keep native saved state, viewer status, history contents and forbidden controls assertions unchanged."
+  }
+}

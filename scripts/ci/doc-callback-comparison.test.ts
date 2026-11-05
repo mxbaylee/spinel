@@ -113,10 +113,13 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
         'e2e/doc-responsiveness-callbacks.spec.ts',
         'e2e/doc-responsiveness-callback-sources.ts',
         'e2e/doc-responsiveness-callback-trace.ts',
+        'e2e/doc-responsiveness-callback-progress.ts',
         'e2e/doc-responsiveness-fixture.ts',
         'e2e/doc-responsiveness.ts',
         'scripts/ci/doc-callback-lifetimes.ts',
         'web/docResponsivenessEvidence.ts',
+        'src/ui/docIdleEpisode.ts',
+        'src/ui/nativeDocFlush.ts',
         'playwright.config.ts',
         'package-lock.json',
       ].map((path) => [path, hash(path)]),
@@ -431,6 +434,7 @@ test('allows only controlled matched baseline harness copies, including trimmed 
     ' M web/DocEditor.tsx',
     'D web/docResponsivenessEvidence.ts',
     '?? unreviewed.ts',
+    'M e2e/doc-responsiveness.spec.ts',
   ]) {
     baseline.manifest.dirtyPaths = dirty;
     assert.equal(
@@ -439,6 +443,29 @@ test('allows only controlled matched baseline harness copies, including trimmed 
       false,
     );
   }
+});
+
+test('CI overlays exactly the declared callback harness, preserving unrelated baseline source', async () => {
+  const workflow = await readFile(
+    new URL('../../.github/workflows/ci.yml', import.meta.url),
+    'utf8',
+  );
+  const overlay = workflow
+    .split('      - name: Match callback workload and read-only observations\n')[1]
+    ?.split('      - name:')[0];
+  assert.ok(overlay, 'The callback baseline overlay must be present.');
+  const copied = [
+    ...overlay.matchAll(/^          cp (.+) baseline-callback-source\/.*$/gm),
+  ].flatMap((match) => match[1]!.split(' '));
+  const baseline = evidence('baselineObservation');
+  // Matching hashes cannot justify changing a file outside the measured harness.
+  assert.deepEqual(copied.toSorted(), Object.keys(baseline.manifest.harnessSha256).toSorted());
+  baseline.manifest.dirtyPaths = copied.map((path) => ` M ${path}`).join('\n');
+  assert.equal(
+    compareDocCallbackEvidence('desktop', baseline, evidence('candidate'), candidateSource)
+      .accepted,
+    true,
+  );
 });
 
 async function temporary(t: { after: (callback: () => Promise<void>) => void }) {

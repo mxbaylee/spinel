@@ -1,0 +1,711 @@
+{
+  "schema": "spinel-spn137-integration-local-validation-v1",
+  "scope": "Feasible local integration evidence only. Current combined-source hosted CI/native acceptance and both exact-source grades remain pending.",
+  "capturedAt": "2026-11-04T12:18:21.233Z",
+  "attribution": {
+    "originalSource": "5513ccb247401006982f628d0bac827691d51533",
+    "actualAcceptedBase": "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+    "accepted139Source": "edc84a82712f82b372e64b469109324735de9c97",
+    "accepted139Tree": "e85d9149ae00fbb0ddce764a690f792cd4d721d8",
+    "intendedParentOrder": [
+      "5513ccb247401006982f628d0bac827691d51533",
+      "f4ccbb699444a86f23a1ea8314d4415739b5fd07"
+    ],
+    "preVerificationTree": "71b4749c59ab3f0561d02ef6e83859c1df83171e",
+    "treeQualification": "Locally staged complete integration tree before adding this result record. Final provider-assigned commit/tree and exact committed-head PR result are recorded in the exact-source review/publication checkpoint."
+  },
+  "runtime": {
+    "expectedNode": "v26.12.1",
+    "node": "v26.12.1",
+    "dependencyDirectory": "/workspace/scratch/01384cef7048/spinel/node_modules",
+    "actualDirectory": true,
+    "dependencyMethod": "Reuse unchanged existing dependency contents and exact root/workspace manifests/lock; no fresh npm install claimed."
+  },
+  "bounds": {
+    "sharedSerialRunner": "scripts/serial.ts",
+    "processTreeRssKiB": 2097152,
+    "durationMs": 480000,
+    "typecheckHeapMiB": 1400,
+    "filesExcludedFromTypecheck": [],
+    "fullProjectCommand": "tsc -p ."
+  },
+  "exactRuntimeBlobs": {
+    "scripts/ci/desktop-browser.ts": "d5bf0e1931d9b5ad83a0212cd6d8e28536321b11",
+    "scripts/ci/desktop-pointer.ts": "cd1e41c97fa30a70f360d25dff25807fbce9c718",
+    "scripts/ci/desktop-pointer.test.ts": "472592c59554ee1191e7dfa60a21b6c2e2231dcd",
+    "scripts/ci/desktop-safari-identity.ts": "f7fb2b85baf91af71cf2d14d6587797bb7a1e0e4",
+    "scripts/ci/desktop-safari-identity.test.ts": "69e2405bcadf3199946d21f843ee30dcd8fc8977",
+    "e2e/offline-creation.spec.ts": "cb47ea0aaea2c88c1d9bd73fa4aeca208e307750",
+    ".github/workflows/desktop-offline.yml": "3cabc3b9fbc3a263f9c98bd6f0d19cb275ae5e29",
+    "scripts/ci/desktop-profile-probe.ts": "05f95ead7e9bf7e840091877592e9daa00144c0e"
+  },
+  "sharedDependencyClosure": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "gitBlob": "93c59142291d962a96a2582862a9615676a73bc6",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": ".github/workflows/desktop-offline.yml",
+      "gitBlob": "3cabc3b9fbc3a263f9c98bd6f0d19cb275ae5e29",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": ".nvmrc",
+      "gitBlob": "63f87c20ef9fd0ace28f8d0a3b74b5ef2e24feff",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "e2e/doc-image-fixture.ts",
+      "gitBlob": "f8622b78ccaec7342db01e1fc6bab771cec131d1",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "e2e/offline-creation.spec.ts",
+      "gitBlob": "cb47ea0aaea2c88c1d9bd73fa4aeca208e307750",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "e2e/offline-fixture.ts",
+      "gitBlob": "e911db7cd1b21d92e7b49227eb0d90a0236c90f6",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "e2e/sheet-image-fixture.ts",
+      "gitBlob": "7b875e1c0b315e73aa8b9f6681b0d179e73e7ce9",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/diagnostics/package.json",
+      "gitBlob": "84a3601b6e11d65fb3886503f08389700e84b511",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/doc-formulas/package.json",
+      "gitBlob": "e540665005a3082522a301163a8d2b73bebcf4a8",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/presence-ui/package.json",
+      "gitBlob": "40f92df9624e578ee93ccf692884de4d3d6209a9",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/print/package.json",
+      "gitBlob": "eed842d4b13ef7d6682688571c77a3032b000240",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/sync-client/package.json",
+      "gitBlob": "a46b3b7bd6d341f0363fc025cccf587c2f44609a",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/sync-server/package.json",
+      "gitBlob": "bec234b16cfc1ccf03b5e89bf6d883578d08bddc",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "lib/sync-transform/package.json",
+      "gitBlob": "50dc76378b2d9979bdfc739c18d5c46893f33d49",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "package-lock.json",
+      "gitBlob": "4e7c117548fd1caed8048588b42dfb122c67bb62",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "package.json",
+      "gitBlob": "f5772edccf157465975964205d30d37af2633288",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/changes.test.ts",
+      "gitBlob": "3d38cde59ceb0618ee5c64dc2b8ce120abfa6590",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/changes.ts",
+      "gitBlob": "ae21b33d963fb3fcacca173c251d9f8543b6efda",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/coverage-result.test.ts",
+      "gitBlob": "04df50eae508773d83c1f140ccbca481cf5cdcfe",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/coverage-result.ts",
+      "gitBlob": "8be7b998bb75649f7c995c3bf8cd2416f3774b5e",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/desktop-offline-fixture.ts",
+      "gitBlob": "ab5a0a3b7babf00884550466efac048bab074d3d",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/desktop-offline.ts",
+      "gitBlob": "8c4218c62cdee1a7552caebe24806ca8be330eb3",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/desktop-profile-probe.ts",
+      "gitBlob": "05f95ead7e9bf7e840091877592e9daa00144c0e",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/desktop-storage.test.ts",
+      "gitBlob": "49cde46c308c81a11e042971b43537013c875b74",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/desktop-storage.ts",
+      "gitBlob": "ae591054f146915f0c8a61e0cea8d619acc1f6ae",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/plan.test.ts",
+      "gitBlob": "54c0d76402c65c2f81dbe6ad8fcd33835e67f271",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/ci/plan.ts",
+      "gitBlob": "26a8666a6411ef786f6cc5188ecad80c37f803e5",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "scripts/serial.ts",
+      "gitBlob": "86b17290e1c8451039d0ed48db3d7d6ded767188",
+      "sameInBothParentsAndWorkingTree": true
+    },
+    {
+      "path": "tsconfig.json",
+      "gitBlob": "21bdb476af42d9d2cd0d22ce93ad48c219d24579",
+      "sameInBothParentsAndWorkingTree": true
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 34633,
+      "sha256": "a2743be09e490e022cd2ec09f68991832bf2a4e9dda6faa18b8f7eaf23820d8a",
+      "gitBlob": "93c59142291d962a96a2582862a9615676a73bc6"
+    },
+    {
+      "path": ".github/workflows/desktop-offline.yml",
+      "bytes": 3242,
+      "sha256": "626af9b4114ecd6b24ef0273bf5a50017c17acab44c35a29294c85d725ef5bfc",
+      "gitBlob": "3cabc3b9fbc3a263f9c98bd6f0d19cb275ae5e29"
+    },
+    {
+      "path": ".nvmrc",
+      "bytes": 8,
+      "sha256": "2a4a3fac7ea8694f168266bd3a930b3fc5faa6e503d577d99c024f74582e4cb5",
+      "gitBlob": "63f87c20ef9fd0ace28f8d0a3b74b5ef2e24feff"
+    },
+    {
+      "path": "docs/implementation/SPN-137.md",
+      "bytes": 37362,
+      "sha256": "67f4393cc108a158e2b4368deeacba1422f92b834c3790611076b251d461788a",
+      "gitBlob": "0752879d74b352d282e1d8e26cad5b91d90fe619"
+    },
+    {
+      "path": "docs/implementation/SPN-139.md",
+      "bytes": 18594,
+      "sha256": "a9cb2922ca72e84fab81ede345b00eef230fae0aec8f5c625e37994027199700",
+      "gitBlob": "5e10aeb1b77bc03687719b12f627f50e15d4921b"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-137-historical-5513-ci/README.md",
+      "bytes": 7999,
+      "sha256": "7c6371c6a50078cf62aaaf5b96a224ed8dce0b2371941bf970cfaea9b9e153aa",
+      "gitBlob": "1b9a33f19920d237fc9b4b1c9f62c1e00d45e148"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-137-historical-5513-ci/manifest.json",
+      "bytes": 26930,
+      "sha256": "f160ff0905f6cf5ef36b9299dd197d5fd5b7734d9c29a92d593e2aff7df493f6",
+      "gitBlob": "a9c35240553be560e7d5ae16dbdd99bfb181ba38"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-137-historical-5513-ci/records.json.gz",
+      "bytes": 442314,
+      "sha256": "b4285a5b57b77ba8283c300d7b944c1929307ea5bcf401ae6fe9fb95f9b6981b",
+      "gitBlob": "994194b05b4fa5d816e3a3f8f66bc54039062c3b"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-139-identity-recurrence/README.md",
+      "bytes": 9063,
+      "sha256": "8cb8f858bf9c960de8d32cd163ddda7dc5c1a964bfa1d6494f82ac040d4b4ee9",
+      "gitBlob": "e88d41f0e18918a6114b4b983078d66c49d081d6"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-139-identity-recurrence/manifest.json",
+      "bytes": 22315,
+      "sha256": "fd872eb9e066e0e3a08dba4741419e5c2a4844e3d3c896a1a7d5bc4b0dedc24d",
+      "gitBlob": "cb6e60ba05968badfbac5504f7aa12878fe3ee43"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-139-identity-recurrence/records.json.gz",
+      "bytes": 83805,
+      "sha256": "bdd43ef1d0e58745e2d50fa087b6ef9be1db92514f549f37eef413f3221b2645",
+      "gitBlob": "73a72e1e7f270ac5d67d84437017dbc44772198a"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-139-identity-recurrence/safari-capability-failure.png",
+      "bytes": 156458,
+      "sha256": "fce2d7878fe3168c61b9b8e646586440b542fc086ac548d34005fec425761ad8",
+      "gitBlob": "554fdfcb8b3199ef051d006444fa49751b541a6c"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-139-local-validation.json",
+      "bytes": 44395,
+      "sha256": "26020f1b2e3f2a044b80902830d5773a36c1d41ec328df38e0601faa0043e35f",
+      "gitBlob": "d88ce9b37b8c12e3d2eefb8b5b69581bd17d2f56"
+    },
+    {
+      "path": "docs/todo/backlog.json",
+      "bytes": 794,
+      "sha256": "3971b07586d4b7f9fb35d2f5d546909bf2264117e6e0024f3a0af4e59b6a1b13",
+      "gitBlob": "6010ef6917e15f7effffa355a1f4a81a36395ecf"
+    },
+    {
+      "path": "docs/todo/readme.md",
+      "bytes": 3808,
+      "sha256": "ce38efc20a791cc6cfcad0a2cb43db68542efc32f33738802702998f51a1da2a",
+      "gitBlob": "e34823416748dd05565cb3afd51426d03ae9fc0c"
+    },
+    {
+      "path": "e2e/doc-image-fixture.ts",
+      "bytes": 1980,
+      "sha256": "e9c13956e94309cde61d6d8fbe5c9bbd8da2e2ba3768d698cc4354d47a1e8d83",
+      "gitBlob": "f8622b78ccaec7342db01e1fc6bab771cec131d1"
+    },
+    {
+      "path": "e2e/offline-creation.spec.ts",
+      "bytes": 54815,
+      "sha256": "e2d8157b5cdcceecf20a104203a13677c2ed56ee48dfb95f4ca187e6a924b2ce",
+      "gitBlob": "cb47ea0aaea2c88c1d9bd73fa4aeca208e307750"
+    },
+    {
+      "path": "e2e/offline-fixture.ts",
+      "bytes": 21070,
+      "sha256": "c3ff136c22192eaee37facf4221a39e21c16d1fac9ddcaf6d207932cafbcdc8c",
+      "gitBlob": "e911db7cd1b21d92e7b49227eb0d90a0236c90f6"
+    },
+    {
+      "path": "e2e/sheet-image-fixture.ts",
+      "bytes": 2877,
+      "sha256": "3e0035fa3ea2653142921c02604567c36d238733be35550e8d572923bb11224a",
+      "gitBlob": "7b875e1c0b315e73aa8b9f6681b0d179e73e7ce9"
+    },
+    {
+      "path": "lib/diagnostics/package.json",
+      "bytes": 124,
+      "sha256": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5",
+      "gitBlob": "84a3601b6e11d65fb3886503f08389700e84b511"
+    },
+    {
+      "path": "lib/doc-formulas/package.json",
+      "bytes": 400,
+      "sha256": "c315066d8cefeaf5269f006185f9338fc317a79537022c65c948d56d83beebae",
+      "gitBlob": "e540665005a3082522a301163a8d2b73bebcf4a8"
+    },
+    {
+      "path": "lib/presence-ui/package.json",
+      "bytes": 410,
+      "sha256": "35f7219e120ffd5d1b7a69ec71d16440626fa42230246a1b8adf517728f61e08",
+      "gitBlob": "40f92df9624e578ee93ccf692884de4d3d6209a9"
+    },
+    {
+      "path": "lib/print/package.json",
+      "bytes": 454,
+      "sha256": "1f078c54bb81e0eca42292d3a06b707a705adb9af7522dad96003e9102502b56",
+      "gitBlob": "eed842d4b13ef7d6682688571c77a3032b000240"
+    },
+    {
+      "path": "lib/sync-client/package.json",
+      "bytes": 976,
+      "sha256": "3cb7cb2c8076fd1c687a826954901906152a31c08d2b7fbc9cfe680645e7bf9b",
+      "gitBlob": "a46b3b7bd6d341f0363fc025cccf587c2f44609a"
+    },
+    {
+      "path": "lib/sync-server/package.json",
+      "bytes": 848,
+      "sha256": "151af56fc001d85852ea363a9d8539c24d0fb2dc0d10838ab9d2ef59ad6fd42d",
+      "gitBlob": "bec234b16cfc1ccf03b5e89bf6d883578d08bddc"
+    },
+    {
+      "path": "lib/sync-transform/package.json",
+      "bytes": 931,
+      "sha256": "2d3059e3504046d1069de8dec5f729a2f19b39ba39db90efd1ca4acbc55a839f",
+      "gitBlob": "50dc76378b2d9979bdfc739c18d5c46893f33d49"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 361925,
+      "sha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+      "gitBlob": "4e7c117548fd1caed8048588b42dfb122c67bb62"
+    },
+    {
+      "path": "package.json",
+      "bytes": 4349,
+      "sha256": "a817f6510747557eeaaab490fb70d209bedb0a646ade837f87018a244ffcbe53",
+      "gitBlob": "f5772edccf157465975964205d30d37af2633288"
+    },
+    {
+      "path": "scripts/ci/changes.test.ts",
+      "bytes": 3884,
+      "sha256": "b7d4c4808e62d8fd602585783c38a4f4fbc55855cf4d19f085bb7d1fd12d51c8",
+      "gitBlob": "3d38cde59ceb0618ee5c64dc2b8ce120abfa6590"
+    },
+    {
+      "path": "scripts/ci/changes.ts",
+      "bytes": 3031,
+      "sha256": "6600236c204398809a1e596f85a3a5f2f8b445a94b0d24ccc2b4cb9311b53797",
+      "gitBlob": "ae21b33d963fb3fcacca173c251d9f8543b6efda"
+    },
+    {
+      "path": "scripts/ci/coverage-result.test.ts",
+      "bytes": 5509,
+      "sha256": "b74306e238421bfa413c33ec6651d599f66beb96ab8e673b97b79b9ade9a1830",
+      "gitBlob": "04df50eae508773d83c1f140ccbca481cf5cdcfe"
+    },
+    {
+      "path": "scripts/ci/coverage-result.ts",
+      "bytes": 2391,
+      "sha256": "d5ea7ae10040110e4caf98a4cf8cd05a47cf0dc4dcfb47a51ab345c9f40de701",
+      "gitBlob": "8be7b998bb75649f7c995c3bf8cd2416f3774b5e"
+    },
+    {
+      "path": "scripts/ci/desktop-browser.ts",
+      "bytes": 49392,
+      "sha256": "25b31d60ee13ce2692cab505304d25b5f77a55ba6007f5938b060a4301ef3847",
+      "gitBlob": "d5bf0e1931d9b5ad83a0212cd6d8e28536321b11"
+    },
+    {
+      "path": "scripts/ci/desktop-offline-fixture.ts",
+      "bytes": 20150,
+      "sha256": "139aa86b6fead19fa69d0ebdaec3ba2b74f149c8f9476eeff3a71f6bf25306eb",
+      "gitBlob": "ab5a0a3b7babf00884550466efac048bab074d3d"
+    },
+    {
+      "path": "scripts/ci/desktop-offline.ts",
+      "bytes": 32701,
+      "sha256": "5ec17bc147d76fd7185f34e266def50360229a49a53386addf77b006a1fea459",
+      "gitBlob": "8c4218c62cdee1a7552caebe24806ca8be330eb3"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.test.ts",
+      "bytes": 18223,
+      "sha256": "c5b517ae641c0de2f1329f29b541eccee2a8edcd58a0ea61a1763e0aa1486747",
+      "gitBlob": "472592c59554ee1191e7dfa60a21b6c2e2231dcd"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.ts",
+      "bytes": 14855,
+      "sha256": "0b16935123ba0e64af5d0fb556259f62f369f32a24ed34fd203247228cee83eb",
+      "gitBlob": "cd1e41c97fa30a70f360d25dff25807fbce9c718"
+    },
+    {
+      "path": "scripts/ci/desktop-profile-probe.ts",
+      "bytes": 23714,
+      "sha256": "ea13dd91a4182c2743e034a73d51cdcd439d63eccea5d5786b7b5162db30ef35",
+      "gitBlob": "05f95ead7e9bf7e840091877592e9daa00144c0e"
+    },
+    {
+      "path": "scripts/ci/desktop-safari-identity.test.ts",
+      "bytes": 11567,
+      "sha256": "b1e43a4564e2aef9820ac9acb84b2cff3a1288c1f34d3f0820ffb9cf97ac33f9",
+      "gitBlob": "69e2405bcadf3199946d21f843ee30dcd8fc8977"
+    },
+    {
+      "path": "scripts/ci/desktop-safari-identity.ts",
+      "bytes": 6477,
+      "sha256": "eb61bf9474da0789ba4aee3343725eadc730e9f22c145e699751961b92526a9b",
+      "gitBlob": "f7fb2b85baf91af71cf2d14d6587797bb7a1e0e4"
+    },
+    {
+      "path": "scripts/ci/desktop-storage.test.ts",
+      "bytes": 5754,
+      "sha256": "6cda4295094b33bb0e08d5168c160306e70482dd49185b0aa7a1b6f2ee1f4781",
+      "gitBlob": "49cde46c308c81a11e042971b43537013c875b74"
+    },
+    {
+      "path": "scripts/ci/desktop-storage.ts",
+      "bytes": 4403,
+      "sha256": "a1c71df18edbfd6a7fab858dbbffb2786b8491b18c917c80a17e7357ea9da5ce",
+      "gitBlob": "ae591054f146915f0c8a61e0cea8d619acc1f6ae"
+    },
+    {
+      "path": "scripts/ci/plan.test.ts",
+      "bytes": 9586,
+      "sha256": "f9d7cdc438c94ca361c44716be601206e1a24f142d1bcfd263267aeb92452b08",
+      "gitBlob": "54c0d76402c65c2f81dbe6ad8fcd33835e67f271"
+    },
+    {
+      "path": "scripts/ci/plan.ts",
+      "bytes": 10898,
+      "sha256": "29b07e0e80d010b8d24bedff3061cd825aee32015270d894089a60c935d40316",
+      "gitBlob": "26a8666a6411ef786f6cc5188ecad80c37f803e5"
+    },
+    {
+      "path": "scripts/serial.ts",
+      "bytes": 5532,
+      "sha256": "4a445fa1346633085a36e162015b97c11932064e0314ceb383082fd941e6c1e1",
+      "gitBlob": "86b17290e1c8451039d0ed48db3d7d6ded767188"
+    },
+    {
+      "path": "tsconfig.json",
+      "bytes": 860,
+      "sha256": "4a6c2b521b02d7cdd9ff5d91f4fb37cffee3caa847d044f1c08bd12d439c4e28",
+      "gitBlob": "21bdb476af42d9d2cd0d22ce93ad48c219d24579"
+    }
+  ],
+  "beforeExecutionCaptures": [
+    {
+      "name": "before-prepare",
+      "sourceCaptureAt": "2026-11-04T12:16:16.869Z",
+      "head": "5513ccb247401006982f628d0bac827691d51533",
+      "mergeHead": "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+      "stagedTree": "92e73f80b4801c7ebc8b8e43ae271783ba2a2aa5",
+      "sourceManifestBytes": 18223,
+      "sourceManifestSha256": "c1ff4de19de17aefc3cace3db64f702b23f2bd734a695b9f5e64a39a1fd32259",
+      "patch": {
+        "path": "source.patch",
+        "bytes": 1000305,
+        "sha256": "91fc396b002df61ff54582e5c3f3fe294742946144488f773c2aa0495c63bd82"
+      },
+      "copiedFileCount": 46,
+      "deletedFiles": []
+    },
+    {
+      "name": "before-typecheck",
+      "sourceCaptureAt": "2026-11-04T12:16:56.872Z",
+      "head": "5513ccb247401006982f628d0bac827691d51533",
+      "mergeHead": "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+      "stagedTree": "71b4749c59ab3f0561d02ef6e83859c1df83171e",
+      "sourceManifestBytes": 18224,
+      "sourceManifestSha256": "9d8b53bef3c8fcaf0fcbed7a4b734756ec7125b0dc7d5ece7f91ff06266d0940",
+      "patch": {
+        "path": "source.patch",
+        "bytes": 995226,
+        "sha256": "1f6e81342d9a2053f44e92868a9c015aaf6845c38b913ae4141b3f1d57bb6dd8"
+      },
+      "copiedFileCount": 46,
+      "deletedFiles": []
+    },
+    {
+      "name": "before-checks",
+      "sourceCaptureAt": "2026-11-04T12:17:10.077Z",
+      "head": "5513ccb247401006982f628d0bac827691d51533",
+      "mergeHead": "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+      "stagedTree": "71b4749c59ab3f0561d02ef6e83859c1df83171e",
+      "sourceManifestBytes": 18221,
+      "sourceManifestSha256": "a075b09429ab25490942f4f19ea3a8a1fac38e35da298b0d1c6b40eec4d0f39f",
+      "patch": {
+        "path": "source.patch",
+        "bytes": 995226,
+        "sha256": "1f6e81342d9a2053f44e92868a9c015aaf6845c38b913ae4141b3f1d57bb6dd8"
+      },
+      "copiedFileCount": 46,
+      "deletedFiles": []
+    }
+  ],
+  "preExecutionPreservation": "Each source manifest, exact source copy and full binary-capable Git patch was saved in scratch before the corresponding command started. Their hashes and exact runtime/shared-closure Git identities are retained here; current source and immutable parents preserve those runtime bytes. Scratch captures supplement this durable record.",
+  "focusedEvidenceReuse": {
+    "pointer": {
+      "controls": 39,
+      "source": "5513ccb247401006982f628d0bac827691d51533",
+      "evidence": "SPN-137-cursor-validation.json",
+      "firstAttempt": "38/39 controls; VM-realm fixture mismatch retained, then corrected without a production-source change."
+    },
+    "identity": {
+      "controls": 24,
+      "source": "edc84a82712f82b372e64b469109324735de9c97",
+      "evidence": "SPN-139-local-validation.json",
+      "firstAttempt": "All 24 passed. The separate first complete typecheck resource abort and successful constrained-heap attempt remain preserved in that record."
+    },
+    "closure": "Each exact focused test imports only its own exact helper and Node built-ins; Node pin, manifest/lock and listed shared inputs match both reviewed source lines.",
+    "newlyExecutedCombined63TestRun": false,
+    "older72ControlResult": "Historical; its pointer/browser/identity blobs differ. Only the unchanged storage/routing subset supports that scope.",
+    "noFocusedOrBrowserOrNativeRerun": true
+  },
+  "checks": [
+    {
+      "name": "prepare",
+      "status": "passed",
+      "beforeExecutionCapture": "before-prepare",
+      "log": {
+        "path": "prepare.log",
+        "bytes": 2830,
+        "sha256": "a1281839f791ba28bf649f03393783480a4250650c841f424f2cd51287190350",
+        "encoding": "utf8",
+        "content": "{\"event\":\"start\",\"at\":\"2026-11-04T12:16:23.707Z\",\"command\":\"node\",\"args\":[\"node_modules/prettier/bin/prettier.cjs\",\"--write\",\"docs/implementation/SPN-137.md\",\"docs/todo/backlog.json\"]}\ndocs/implementation/SPN-137.md 569ms\ndocs/todo/backlog.json 28ms\n{\"event\":\"finish\",\"at\":\"2026-11-04T12:16:24.594Z\",\"command\":\"node\",\"args\":[\"node_modules/prettier/bin/prettier.cjs\",\"--write\",\"docs/implementation/SPN-137.md\",\"docs/todo/backlog.json\"],\"elapsedMs\":886,\"status\":0,\"signal\":null}\n{\"event\":\"start\",\"at\":\"2026-11-04T12:16:24.602Z\",\"command\":\"npm\",\"args\":[\"run\",\"backlog:index\"]}\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> backlog:index\n> node scripts/backlog/cli.ts index\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-089.md: 63 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 16 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nwrote docs/todo/readme.md\n{\"event\":\"finish\",\"at\":\"2026-11-04T12:16:25.392Z\",\"command\":\"npm\",\"args\":[\"run\",\"backlog:index\"],\"elapsedMs\":789,\"status\":0,\"signal\":null}\n{\"startedAt\":\"2026-11-04T12:16:22.882Z\",\"finishedAt\":\"2026-11-04T12:16:25.406Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/prepare-run.ts\"],\"elapsedMs\":2524,\"peakKiB\":411096,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "watchdog": {
+        "path": "prepare.watchdog.json",
+        "bytes": 419,
+        "sha256": "6a6fe5b55bf49d4b2d69586058106d216ed60376057091c376e55210c72a8fb5",
+        "encoding": "utf8",
+        "content": "{\n  \"startedAt\": \"2026-11-04T12:16:22.882Z\",\n  \"finishedAt\": \"2026-11-04T12:16:25.406Z\",\n  \"node\": \"v26.12.1\",\n  \"cwd\": \"/workspace/scratch/01384cef7048/spinel\",\n  \"command\": \"node\",\n  \"args\": [\n    \"scripts/serial.ts\",\n    \"node\",\n    \"/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/prepare-run.ts\"\n  ],\n  \"elapsedMs\": 2524,\n  \"peakKiB\": 411096,\n  \"code\": 0,\n  \"signal\": null,\n  \"aborted\": null\n}\n",
+        "parsed": {
+          "startedAt": "2026-11-04T12:16:22.882Z",
+          "finishedAt": "2026-11-04T12:16:25.406Z",
+          "node": "v26.12.1",
+          "cwd": "/workspace/scratch/01384cef7048/spinel",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "node",
+            "/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/prepare-run.ts"
+          ],
+          "elapsedMs": 2524,
+          "peakKiB": 411096,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        }
+      }
+    },
+    {
+      "name": "typecheck",
+      "status": "passed",
+      "beforeExecutionCapture": "before-typecheck",
+      "log": {
+        "path": "typecheck.log",
+        "bytes": 382,
+        "sha256": "e1ef1cab4eff12c13f86bb0f610693fe98ec2c4f896e8bea671e7bf4fe305578",
+        "encoding": "utf8",
+        "content": "{\"startedAt\":\"2026-11-04T12:16:57.253Z\",\"finishedAt\":\"2026-11-04T12:17:05.245Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"--max-old-space-size=1400\",\"/workspace/scratch/01384cef7048/spinel/node_modules/typescript/bin/tsc\",\"-p\",\".\"],\"elapsedMs\":7992,\"peakKiB\":2064308,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "watchdog": {
+        "path": "typecheck.watchdog.json",
+        "bytes": 460,
+        "sha256": "b85d3aa16b7897555374cf500f81385e9d370e5e68e4e9d18bc1f8cadec144bd",
+        "encoding": "utf8",
+        "content": "{\n  \"startedAt\": \"2026-11-04T12:16:57.253Z\",\n  \"finishedAt\": \"2026-11-04T12:17:05.245Z\",\n  \"node\": \"v26.12.1\",\n  \"cwd\": \"/workspace/scratch/01384cef7048/spinel\",\n  \"command\": \"node\",\n  \"args\": [\n    \"scripts/serial.ts\",\n    \"node\",\n    \"--max-old-space-size=1400\",\n    \"/workspace/scratch/01384cef7048/spinel/node_modules/typescript/bin/tsc\",\n    \"-p\",\n    \".\"\n  ],\n  \"elapsedMs\": 7992,\n  \"peakKiB\": 2064308,\n  \"code\": 0,\n  \"signal\": null,\n  \"aborted\": null\n}\n",
+        "parsed": {
+          "startedAt": "2026-11-04T12:16:57.253Z",
+          "finishedAt": "2026-11-04T12:17:05.245Z",
+          "node": "v26.12.1",
+          "cwd": "/workspace/scratch/01384cef7048/spinel",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "node",
+            "--max-old-space-size=1400",
+            "/workspace/scratch/01384cef7048/spinel/node_modules/typescript/bin/tsc",
+            "-p",
+            "."
+          ],
+          "elapsedMs": 7992,
+          "peakKiB": 2064308,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        }
+      }
+    },
+    {
+      "name": "checks",
+      "status": "passed",
+      "beforeExecutionCapture": "before-checks",
+      "log": {
+        "path": "checks.log",
+        "bytes": 3071,
+        "sha256": "f96c8ec4035891de262159ca86c3e48febb989ccafb64f51ce8ccde702edb407",
+        "encoding": "utf8",
+        "content": "{\"event\":\"start\",\"at\":\"2026-11-04T12:17:10.789Z\",\"command\":\"npm\",\"args\":[\"run\",\"backlog:check\"]}\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n\n> backlog:check\n> node scripts/backlog/cli.ts check\n\nwarning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-089.md: 63 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 16 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nbacklog ok: 21 open tickets\n{\"event\":\"finish\",\"at\":\"2026-11-04T12:17:11.200Z\",\"command\":\"npm\",\"args\":[\"run\",\"backlog:check\"],\"elapsedMs\":410,\"status\":0,\"signal\":null}\n{\"event\":\"start\",\"at\":\"2026-11-04T12:17:11.200Z\",\"command\":\"node\",\"args\":[\"node_modules/prettier/bin/prettier.cjs\",\"--check\",\"docs/implementation/SPN-137.md\",\"docs/todo/backlog.json\"]}\nChecking formatting...\nAll matched files use Prettier code style!\n{\"event\":\"finish\",\"at\":\"2026-11-04T12:17:11.656Z\",\"command\":\"node\",\"args\":[\"node_modules/prettier/bin/prettier.cjs\",\"--check\",\"docs/implementation/SPN-137.md\",\"docs/todo/backlog.json\"],\"elapsedMs\":455,\"status\":0,\"signal\":null}\n{\"event\":\"start\",\"at\":\"2026-11-04T12:17:11.656Z\",\"command\":\"git\",\"args\":[\"diff\",\"--check\",\"HEAD\"]}\n{\"event\":\"finish\",\"at\":\"2026-11-04T12:17:11.666Z\",\"command\":\"git\",\"args\":[\"diff\",\"--check\",\"HEAD\"],\"elapsedMs\":10,\"status\":0,\"signal\":null}\n{\"startedAt\":\"2026-11-04T12:17:10.527Z\",\"finishedAt\":\"2026-11-04T12:17:11.682Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/checks-run.ts\"],\"elapsedMs\":1154,\"peakKiB\":394888,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      },
+      "watchdog": {
+        "path": "checks.watchdog.json",
+        "bytes": 418,
+        "sha256": "b8fbad2ce0f66a2f561bbb33cf2ccdad8ce41d7d0f77898e03b7d8129cd59083",
+        "encoding": "utf8",
+        "content": "{\n  \"startedAt\": \"2026-11-04T12:17:10.527Z\",\n  \"finishedAt\": \"2026-11-04T12:17:11.682Z\",\n  \"node\": \"v26.12.1\",\n  \"cwd\": \"/workspace/scratch/01384cef7048/spinel\",\n  \"command\": \"node\",\n  \"args\": [\n    \"scripts/serial.ts\",\n    \"node\",\n    \"/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/checks-run.ts\"\n  ],\n  \"elapsedMs\": 1154,\n  \"peakKiB\": 394888,\n  \"code\": 0,\n  \"signal\": null,\n  \"aborted\": null\n}\n",
+        "parsed": {
+          "startedAt": "2026-11-04T12:17:10.527Z",
+          "finishedAt": "2026-11-04T12:17:11.682Z",
+          "node": "v26.12.1",
+          "cwd": "/workspace/scratch/01384cef7048/spinel",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "node",
+            "/workspace/scratch/01384cef7048/spn137-hosted/integration-139-local/checks-run.ts"
+          ],
+          "elapsedMs": 1154,
+          "peakKiB": 394888,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        }
+      }
+    }
+  ],
+  "interruptions": [
+    {
+      "capturedAt": "2026-11-04T12:16:55.814Z",
+      "failedRequestedCommand": [
+        "git",
+        "add",
+        "docs/implementation/SPN-137.md",
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md"
+      ],
+      "toolError": "exec_command failed: CreateProcess { message: Rejected(\"Failed to create unified exec process: exec-server transport disconnected\") }",
+      "failedBeforeProcessCreation": true,
+      "typecheckStarted": false,
+      "evidence": [
+        {
+          "path": "before-typecheck",
+          "exists": false
+        },
+        {
+          "path": "typecheck.log",
+          "exists": false
+        },
+        {
+          "path": "typecheck.watchdog.json",
+          "exists": false
+        }
+      ],
+      "sharedLockPresent": false,
+      "disposition": "Read-only reconnection succeeded. No compiler workload was submitted before the failed preparation git-add call. Preserve interruption; continue the single originally planned typecheck, not a retry of executed validation."
+    }
+  ],
+  "resourceDisposition": "One actual complete combined typecheck passed under the unchanged 2 GiB/eight-minute watchdog. No resource abort or compiler diagnostics occurred. The earlier exec transport rejection happened before process creation and is not a validation attempt.",
+  "warnings": [
+    "Existing ticket-length and 16-completion grooming reminders; work may continue under the checker.",
+    "npm reported the pre-existing unknown http-proxy environment config. No credentials were printed and no environment/access change was made."
+  ],
+  "bookkeeping": {
+    "nextId": 140,
+    "completedCount": 16,
+    "completedTail": ["SPN-138", "SPN-139", "SPN-137"],
+    "lastGroomed": "2026-10-29",
+    "generatedIndex": true,
+    "status": "Provisional until PR251 actually merges; no other ticket completed."
+  },
+  "local139Cleanup": {
+    "at": "2026-11-04T12:13:41.040Z",
+    "worktree": "spinel-139",
+    "oldHead": "edc84a82712f82b372e64b469109324735de9c97",
+    "detachedHead": "f4ccbb699444a86f23a1ea8314d4415739b5fd07",
+    "treeUnchanged": "e85d9149ae00fbb0ddce764a690f792cd4d721d8",
+    "clean": true,
+    "deletedLocalRef": "refs/heads/codex/spn-139-safari-identity",
+    "deletionExpectedOld": "edc84a82712f82b372e64b469109324735de9c97",
+    "refAbsent": true,
+    "remoteCleanup": "Root verified PR255 merged and remote implementation branch auto-deleted (404); no remote deletion performed here."
+  },
+  "remainingBeforePublication": [
+    "Format/check this newly written evidence JSON without changing the preserved source inputs.",
+    "Create the complete unattached provider commit, import its exact SHA, and run committed-head PR validation against actual f4ccbb6.",
+    "Obtain two independent nonimplementing grades above 95 on that exact source; record the prospective fourth-complete native sample before a guarded source push."
+  ],
+  "hostedAcceptance": "Pending on the new combined source. Prior prerequisite/historical successes are not current-head gate results. No GitHub ref update, CI dispatch or native execution was performed during these local checks."
+}

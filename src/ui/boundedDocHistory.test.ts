@@ -159,6 +159,7 @@ function frameFixture(onObserve?: () => void) {
 
 test('rendering frames drain a quiet native phrase when SDK timers cannot run, without per-key history', async () => {
   const f = frameFixture();
+  const flush = vi.spyOn(f.manager, 'flushPendingChanges');
   try {
     await f.type('care');
     expect(f.frames.size).toBe(1);
@@ -169,10 +170,17 @@ test('rendering frames drain a quiet native phrase when SDK timers cannot run, w
     f.frameAt(1598);
     expect(f.history.getUndoRedoStatus('doc').undos).toBe(0);
     f.frameAt(1599);
+    expect(flush).toHaveBeenCalledWith('doc', 'idle');
     expect(f.manager.getStateCache('doc')).toEqual({ history: [], collaboration: [] });
     expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: 1, redos: 0 });
     expect(f.observations).toEqual([
-      expect.objectContaining({ reason: 'idle', history: 9, collaboration: 9, quietForMs: 300 }),
+      expect.objectContaining({
+        outcome: 'success',
+        reason: 'idle',
+        history: 9,
+        collaboration: 9,
+        quietForMs: 300,
+      }),
     ]);
     expect(f.frames.size).toBe(0);
     // The original SDK timeouts can still run later without duplicating history.
@@ -202,6 +210,7 @@ test('a native flush failure is observed without replacing the original exceptio
       throw failure;
     });
     expect(() => f.frameAt(1300)).toThrow(failure);
+    expect(flush).toHaveBeenCalledWith('doc', 'idle');
     expect(f.manager.getStateCache('doc')).toEqual(before);
     expect(f.text()).toBe('retain\r\n');
     expect(f.observations).toEqual([
@@ -346,6 +355,7 @@ test('a flush observer may synchronously tear down the editor without rearming a
 
 test('real native edits bound both caches and undo/redo exact ordered groups and selections', async () => {
   const f = fixture();
+  const flush = vi.spyOn(f.manager, 'flushPendingChanges');
   const value = Array.from({ length: 3 * DOC_HISTORY_GROUP_LIMIT + 7 }, (_, i) =>
     String.fromCharCode(97 + (i % 26)),
   ).join('');
@@ -359,8 +369,15 @@ test('real native edits bound both caches and undo/redo exact ordered groups and
     expect(f.manager.getStateCache('doc').history).toHaveLength(7);
     expect(f.manager.getStateCache('doc').collaboration).toHaveLength(7);
     expect(f.observations).toHaveLength(3);
+    expect(flush).toHaveBeenCalledTimes(3);
+    expect(flush).toHaveBeenCalledWith('doc', 'capacity');
     for (const observed of f.observations)
-      expect(observed).toMatchObject({ history: limit, collaboration: limit, reason: 'capacity' });
+      expect(observed).toMatchObject({
+        outcome: 'success',
+        history: limit,
+        collaboration: limit,
+        reason: 'capacity',
+      });
     expect(emitted).toHaveLength(3);
     // Undo before the idle timer fires must first include the seven pending keys.
     for (const length of [3 * limit, 2 * limit, limit, 0]) {

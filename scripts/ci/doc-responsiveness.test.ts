@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { test } from 'node:test';
 import {
   compositionCpu,
+  docHistoryShortcuts,
   DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
   DOC_RESPONSIVENESS_BUDGETS,
   DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT,
@@ -247,6 +248,8 @@ function fixture() {
             'e2e/doc-responsiveness-fixture.ts',
             'e2e/doc-responsiveness-boundaries.ts',
             'web/docResponsivenessEvidence.ts',
+            'src/ui/docIdleEpisode.ts',
+            'src/ui/nativeDocFlush.ts',
             'playwright.config.ts',
             'package-lock.json',
           ].map((path) => [path, 'd'.repeat(64)]),
@@ -367,6 +370,10 @@ function fixture() {
           highWater: { history: 0, collaboration: 0 },
           history: { undos: 0, redos: 0 },
         },
+        terminal: null,
+        nativeFlushes: [],
+        nativeObservationAvailable: !before,
+        idleEpisode: null,
         firstEmpty: null,
         sealedAt: null,
         invalidated: false,
@@ -386,6 +393,45 @@ function fixture() {
         },
         sealedAt: 21_650,
       };
+      if (!before) {
+        const witness = metrics.drainWitness;
+        witness.terminal = {
+          epoch: witness.epoch,
+          generation: witness.generation,
+          unitId: witness.unitId,
+          timeOrigin: witness.timeOrigin,
+          completedStates: 2086,
+          observedAt: witness.lastCompletedStateAt!,
+          pending: { history: 6, collaboration: 6 },
+        };
+        witness.nativeFlushes = [
+          {
+            sequence: 1,
+            phase: 'history',
+            origin: 'history-timer',
+            startedAt: 21_245,
+            endedAt: 21_246,
+            before: { history: 6, collaboration: 6 },
+            after: { history: 0, collaboration: 6 },
+          },
+          {
+            sequence: 2,
+            phase: 'collaboration',
+            origin: 'collaboration-timer',
+            startedAt: 21_246,
+            endedAt: 21_247,
+            before: { history: 0, collaboration: 6 },
+            after: { history: 0, collaboration: 0 },
+          },
+        ].map((value) => ({
+          ...value,
+          unitId: witness.unitId,
+          epoch: witness.epoch,
+          generation: witness.generation,
+          completedStates: 2086,
+          outcome: 'returned',
+        })) as typeof witness.nativeFlushes;
+      }
       metrics.native.drainWitness = { ...structuredClone(metrics.drainWitness), sealedAt: null };
       const groups = metrics.native.history.undos;
       const count = sample === 'plain-1' ? groups : 1;
@@ -467,7 +513,7 @@ test('capacity and idle flush distributions are retained independently', () => {
   for (const { metrics } of f.candidate) {
     metrics.native.flushes.push({
       reason: 'idle',
-      startedAt: 21_250,
+      startedAt: 20_000,
       durationMs: 2,
       history: 6,
       collaboration: 6,
@@ -484,7 +530,7 @@ test('capacity and idle flush distributions are retained independently', () => {
     (value) => value.role === 'candidate' && value.sample === 'plain-1',
   )!;
   assert.deepEqual(summary.capacityPairedFlushMs, { count: 1, p50: 4, p95: 4, max: 4, sum: 4 });
-  assert.deepEqual(summary.idlePairedFlushMs, { count: 1, p50: 2, p95: 2, max: 2, sum: 2 });
+  assert.deepEqual(summary.idlePairedFlushMs, { count: 2, p50: 2, p95: 2, max: 2, sum: 4 });
   assert.equal(summary.pairedFlushMaximumMs, 4);
   assert.equal(summary.firstEmptyAfterFinalKeyMs, 315);
   assert.equal(summary.nativeDrainUpperBoundMs, 500);
@@ -594,7 +640,7 @@ test('an isolated slow idle flush still fails the combined maximum when both p95
     (value) => value.role === 'candidate' && value.sample === 'plain-1',
   )!;
   assert.equal((summary.capacityPairedFlushMs as { p95: number }).p95, 4);
-  assert.equal((summary.idlePairedFlushMs as { p95: number }).p95, 1);
+  assert.equal((summary.idlePairedFlushMs as { p95: number }).p95, 2);
   assert.equal(summary.pairedFlushMaximumMs, 51);
 });
 
@@ -1212,4 +1258,127 @@ test('candidate-only evidence preserves all absolute/content/profile gates witho
     false,
     'missing selected baseline is not candidate-only',
   );
+});
+
+test('candidate idle acceptance rejects absent, partial, stale and failed native measurements', () => {
+  const changes: Array<(metrics: BenchmarkMetrics) => void> = [
+    (value) => {
+      value.native.drainWitness!.nativeObservationAvailable = false;
+    },
+    (value) => {
+      value.native.drainWitness!.terminal = null;
+    },
+    (value) => {
+      value.native.drainWitness!.nativeFlushes.length = 0;
+    },
+    (value) => {
+      value.native.drainWitness!.nativeFlushes.pop();
+    },
+    (value) => {
+      value.native.drainWitness!.nativeFlushes[0].epoch = 'stale';
+    },
+    (value) => {
+      value.native.drainWitness!.nativeFlushes[1].completedStates++;
+    },
+    (value) => {
+      value.native.drainWitness!.nativeFlushes[1].outcome = 'threw';
+    },
+    (value) => {
+      value.native.drainWitness!.terminal!.timeOrigin++;
+    },
+    (value) => {
+      value.native.drainWitness!.nativeFlushes[0].endedAt = NaN;
+    },
+  ];
+  for (const change of changes) {
+    const f = fixture();
+    change(f.candidate[0].metrics);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.ok(result.failures.some((reason) => reason.includes('terminal idle evidence')));
+  }
+});
+
+test('two 10 ms native timer phases and a delayed second callback fail the desktop paired budget', () => {
+  for (const gap of [0, 20]) {
+    const f = fixture();
+    const metrics = f.candidate[0].metrics;
+    for (const witness of [metrics.drainWitness!, metrics.native.drainWitness!]) {
+      witness.nativeFlushes[0].startedAt = 21_250;
+      witness.nativeFlushes[0].endedAt = 21_260;
+      witness.nativeFlushes[1].startedAt = 21_260 + gap;
+      witness.nativeFlushes[1].endedAt = 21_270 + gap;
+      witness.firstEmpty!.observedAt = 21_290;
+    }
+    metrics.drainDiagnostics.polls.at(-1)!.snapshot!.observedAt = 21_295;
+    metrics.drainDiagnostics.firstEmpty = structuredClone(metrics.drainDiagnostics.polls.at(-1)!);
+    const result = compareDocResponsiveness(f.baseline, f.candidate, 'desktop');
+    assert.equal(result.passed, false);
+    assert.ok(result.failures.some((reason) => reason.includes('absolute responsiveness budget')));
+  }
+});
+
+test('history shortcuts follow the browser platform rather than the host OS', () => {
+  assert.deepEqual(docHistoryShortcuts('5.0 (Windows NT 10.0)'), {
+    undo: 'Control+z',
+    redo: 'Control+y',
+  });
+  assert.deepEqual(docHistoryShortcuts('5.0 (Macintosh; Intel Mac OS X)'), {
+    undo: 'Meta+z',
+    redo: 'Meta+Shift+z',
+  });
+});
+
+test('acceptance helpers require exact harness identities and sealed native evidence', () => {
+  for (const path of ['src/ui/docIdleEpisode.ts', 'src/ui/nativeDocFlush.ts']) {
+    for (const missing of [false, true]) {
+      const f = fixture();
+      if (missing) delete f.candidate[0].metrics.harnessSha256[path];
+      else f.candidate[0].metrics.harnessSha256[path] = 'f'.repeat(64);
+      assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
+    }
+  }
+  for (const change of [
+    (value: BenchmarkMetrics) => {
+      value.drainWitness!.nativeFlushes[0].endedAt++;
+    },
+    (value: BenchmarkMetrics) => {
+      value.drainWitness!.terminal!.pending.history++;
+    },
+    (value: BenchmarkMetrics) => {
+      value.drainWitness!.nativeObservationAvailable = false;
+    },
+  ]) {
+    const f = fixture();
+    change(f.candidate[0].metrics);
+    assert.equal(compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed, false);
+  }
+});
+
+test('malformed later empty callbacks cannot hide in the sealed suffix', () => {
+  for (const change of [
+    { startedAt: NaN },
+    { endedAt: Infinity },
+    { epoch: 'stale' },
+    { sequence: 1 },
+    { completedStates: 999 },
+    { endedAt: 99_000 },
+  ]) {
+    const f = fixture();
+    const witness = f.candidate[0].metrics.drainWitness!;
+    witness.nativeFlushes.push({
+      ...witness.nativeFlushes[1],
+      sequence: 3,
+      before: { history: 0, collaboration: 0 },
+      after: { history: 0, collaboration: 0 },
+      startedAt: 21_300,
+      endedAt: 21_301,
+      ...change,
+    });
+    assert.equal(
+      compareDocResponsiveness(f.baseline, f.candidate, 'desktop').passed,
+      false,
+      JSON.stringify(change),
+    );
+  }
 });

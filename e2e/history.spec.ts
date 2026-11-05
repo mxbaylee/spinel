@@ -87,9 +87,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       expect(
         db.prepare('SELECT name FROM history_checkpoints WHERE id=?').get(String(stored.id))?.name,
       ).toBeNull();
+      // Retire the owner's polling/history requests before the deliberate
+      // no-cookie gap; a 401 redirect must not discard the viewer's item route.
+      await page.goto('about:blank');
       await context.clearCookies();
       await context.addCookies([cookie(viewer.id)]);
-      await page.reload();
+      await page.goto(`/?item=${item.id}`);
       await expect(saved).toContainText('View only', { timeout: 30_000 });
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();

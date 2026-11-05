@@ -1,8 +1,9 @@
 import type { Page } from '@playwright/test';
+import { terminalIdleEpisode } from '../src/ui/docIdleEpisode.ts';
 import type { DocDrainRequest, DocDrainWitness } from '../web/docResponsivenessEvidence.ts';
 export type { DocDrainRequest, DocDrainWitness } from '../web/docResponsivenessEvidence.ts';
 
-export const DOC_RESPONSIVENESS_SCHEMA = 4;
+export const DOC_RESPONSIVENESS_SCHEMA = 5;
 
 // Candidate policy after the 64- and 44-state experiments missed the unchanged
 // p95 budget. The public Doc constructor retains enough native history groups
@@ -25,6 +26,8 @@ export interface DocResponsivenessEvidence {
   pending: { history: number; collaboration: number };
   highWater: { history: number; collaboration: number };
   flushes: Array<{
+    /** Older retained schema-5 policy rows predate diagnostic outcomes. */
+    outcome?: 'success' | 'failure';
     reason: string;
     startedAt: number;
     durationMs: number;
@@ -423,4 +426,47 @@ export function compositionCpu(
     history: describe(families.history),
     collaboration: describe(families.collaboration),
   };
+}
+
+/** Recompute from raw phase records; never trust a stored passing summary. */
+export function docIdleDurations(native: DocResponsivenessEvidence): number[] {
+  const witness = native.drainWitness;
+  if (
+    !witness?.nativeObservationAvailable ||
+    !witness.terminal ||
+    !witness.firstEmpty ||
+    witness.invalidated
+  )
+    throw new Error('Missing or invalid terminal idle evidence.');
+  if (
+    witness.terminal.epoch !== witness.epoch ||
+    witness.terminal.generation !== witness.generation ||
+    witness.terminal.unitId !== witness.unitId ||
+    witness.terminal.timeOrigin !== witness.timeOrigin ||
+    witness.terminal.completedStates !== witness.expectedCompletedStates ||
+    witness.terminal.observedAt !== witness.lastCompletedStateAt
+  )
+    throw new Error('Mismatched terminal idle identity.');
+  if (
+    witness.nativeFlushes.some((value) => value.endedAt > (witness.sealedAt ?? native.observedAt))
+  )
+    throw new Error('Native observation after evidence boundary.');
+  const episode = terminalIdleEpisode(
+    witness.terminal,
+    witness.firstEmpty.observedAt,
+    witness.nativeFlushes,
+    native.flushes,
+  );
+  return [
+    ...native.flushes
+      .filter((value) => value.reason === 'idle' && value.startedAt < witness.terminal!.observedAt)
+      .map((value) => value.durationMs),
+    episode.durationMs,
+  ];
+}
+
+/** Match pinned Univer's browser PlatformService, independent of the Node host. */
+export function docHistoryShortcuts(appVersion: string) {
+  const isMac = /Mac/.test(appVersion);
+  return { undo: isMac ? 'Meta+z' : 'Control+z', redo: isMac ? 'Meta+Shift+z' : 'Control+y' };
 }
