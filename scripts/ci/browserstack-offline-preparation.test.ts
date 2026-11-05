@@ -263,6 +263,36 @@ test('the wait leaves the phase room to record its diagnosis', async () => {
   assert.equal(await waits(5_000), 'poll download-incomplete 1000');
 });
 
+test('failed evidence persistence cannot replace the original preparation failure', async () => {
+  for (const [state, primaryMessage] of [
+    [pending, 'test-download-incomplete'],
+    [{ dialogs: 1, done: false, alert: 'Download failed' }, 'test-download-failed'],
+  ] as const) {
+    const run = harness(item.name, [state], { states: [updating] });
+    const journalFailure = new Error('journal-unavailable');
+    run.driver.record = async (stage, value) => {
+      run.records.push([stage, value]);
+      throw journalFailure;
+    };
+    await assert.rejects(prepareDashboardItemOffline(run.driver, item), (error) => {
+      assert.ok(error instanceof AggregateError);
+      assert.equal(error.message, primaryMessage);
+      assert.equal(error.errors[0].message, primaryMessage);
+      assert.equal(error.cause, error.errors[0]);
+      assert.equal(error.errors[1], journalFailure);
+      return true;
+    });
+    assert.equal(run.records.length, 1);
+    assert.equal(
+      run.calls.filter(
+        (call) => call === 'click [role="menuitem"] Available offline on this device',
+      ).length,
+      1,
+    );
+    assert.ok(!run.calls.some((call) => call.endsWith(' Done')));
+  }
+});
+
 test('the runner diagnosis screenshots first and keeps the failed command', async () => {
   const result = { command: 'POST session/{sessionId}/execute/sync (download-incomplete)' };
   const steps: string[] = [];

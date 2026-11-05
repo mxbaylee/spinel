@@ -68,6 +68,25 @@ function row(value: unknown): Row {
   return value as Row;
 }
 
+/** Evidence failure stays secondary to the preparation failure it was recording. */
+async function failAfterRecording(
+  driver: OfflinePreparationDriver,
+  stage: string,
+  evidence: unknown,
+  primary: unknown,
+): Promise<never> {
+  try {
+    await driver.record(stage, evidence);
+  } catch (secondary) {
+    throw new AggregateError(
+      [primary, secondary],
+      primary instanceof Error ? primary.message : String(primary),
+      { cause: primary },
+    );
+  }
+  throw primary;
+}
+
 async function settle(
   driver: OfflinePreparationDriver,
   item: { kind: string; name: string },
@@ -117,12 +136,15 @@ async function settle(
     } catch {
       // The original failure stays the result; labels keep what was read.
     }
-    await driver.record(`${item.kind}:download-state`, { last, labels });
-    throw failure;
+    return failAfterRecording(driver, `${item.kind}:download-state`, { last, labels }, failure);
   }
   if (state.done !== true) {
-    await driver.record(`${item.kind}:download-state`, { last: state });
-    throw driver.failure('download-failed');
+    return failAfterRecording(
+      driver,
+      `${item.kind}:download-state`,
+      { last: state },
+      driver.failure('download-failed'),
+    );
   }
   await driver.click('[role="dialog"] button', close);
 }
