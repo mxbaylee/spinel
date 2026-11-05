@@ -1,0 +1,78 @@
+{
+  "root": 26005,
+  "started": 1793900100222,
+  "elapsedMs": 417,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90304,
+  "peakKiB": 245168,
+  "live": [
+    {
+      "pid": 26005,
+      "parent": 25818,
+      "group": 26005,
+      "rssKiB": 88752,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/candidate-backlog-watchdog.json npm run backlog:check"
+    },
+    {
+      "pid": 26081,
+      "parent": 26005,
+      "group": 26005,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 26005,
+      "parent": 25818,
+      "group": 26005,
+      "rssKiB": 88752,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/candidate-backlog-watchdog.json npm run backlog:check"
+    },
+    {
+      "pid": 26024,
+      "parent": 26005,
+      "group": 26005,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 26050,
+      "parent": 26005,
+      "group": 26005,
+      "rssKiB": 78608,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "npm run backlog:check   "
+    },
+    {
+      "pid": 26062,
+      "parent": 26050,
+      "group": 26005,
+      "rssKiB": 76688,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "node scripts/backlog/cli.ts check"
+    },
+    {
+      "pid": 26068,
+      "parent": 26005,
+      "group": 26005,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 26081,
+      "parent": 26005,
+      "group": 26005,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:35:00 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

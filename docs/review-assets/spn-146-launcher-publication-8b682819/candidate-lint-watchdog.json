@@ -1,0 +1,54 @@
+{
+  "root": 25854,
+  "started": 1793900099566,
+  "elapsedMs": 187,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91104,
+  "peakKiB": 91104,
+  "live": [
+    {
+      "pid": 25854,
+      "parent": 25828,
+      "group": 25854,
+      "rssKiB": 89552,
+      "started": "Thu Nov  5 09:34:59 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/candidate-lint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-native-runtime.test.ts"
+    },
+    {
+      "pid": 25905,
+      "parent": 25854,
+      "group": 25854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:34:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 25854,
+      "parent": 25828,
+      "group": 25854,
+      "rssKiB": 89552,
+      "started": "Thu Nov  5 09:34:59 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/candidate-lint-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/oxlint/bin/oxlint scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-native-runtime.test.ts"
+    },
+    {
+      "pid": 25873,
+      "parent": 25854,
+      "group": 25854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:34:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 25905,
+      "parent": 25854,
+      "group": 25854,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:34:59 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

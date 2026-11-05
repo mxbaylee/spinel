@@ -1,0 +1,101 @@
+{
+  "source": "8b6828196266f1fac6c46e2cc16b16321db72cf7",
+  "base": "2f442317dd2e1c188ae4a810ac094fd1162a4a2a",
+  "purpose": "one changed-launcher diagnostic, current production acceptance unresolved",
+  "reviews": {
+    "a": 98,
+    "b": 97
+  },
+  "payloads": [
+    {
+      "path": "publication-review-a.md",
+      "bytes": 11044,
+      "sha256": "682bb68756587f4b86bbc4b15fdd563345eacbbc7cfcde0f366a8c44d71c141b"
+    },
+    {
+      "path": "publication-review-b.md",
+      "bytes": 8581,
+      "sha256": "682b8f430576084ac67eaa363070e187ebd001c62eefe059d2b7ade8a82d2e15"
+    },
+    {
+      "path": "candidate-controls.log",
+      "bytes": 2456,
+      "sha256": "2e91b522f00b4e69f5677f8319e0c063b85df803ec0193135518b6e0e2c68788"
+    },
+    {
+      "path": "candidate-lint-watchdog.json",
+      "bytes": 1767,
+      "sha256": "322de1c1838d63fddee712d40ba5754c93e7de16499e2948fadccdf3ad4d5ec7"
+    },
+    {
+      "path": "candidate-backlog-watchdog.json",
+      "bytes": 2110,
+      "sha256": "791f5d351b760875e9427daddef6ed88999657f134a505b4b6a3f37b20a41a7e"
+    },
+    {
+      "path": "candidate-backlog.log",
+      "bytes": 1732,
+      "sha256": "8f99d843d067e01e55361f5cfea76eaad246329fdeaa85679cdb8954620aefc6"
+    },
+    {
+      "path": "candidate-actionlint-watchdog.json",
+      "bytes": 1627,
+      "sha256": "2ea789a91ff711083746bfa06fde42ce53a2073528d309b701af13d5e5894f14"
+    },
+    {
+      "path": "candidate-format-watchdog.json",
+      "bytes": 2717,
+      "sha256": "2290db88039405a4ef62f6879ff44219d0385f9f8a3d6b1fb8e936f92d7aa196"
+    },
+    {
+      "path": "candidate-types.log",
+      "bytes": 68,
+      "sha256": "d299f931cc6e7a073df6508c890bfc264892566b483dd6c29827f370ef67b047"
+    },
+    {
+      "path": "candidate-actionlint.log",
+      "bytes": 67,
+      "sha256": "e73475103295bafcdc1f3eaa2778ef47a14fbcd41ba5d5eb72c8baefdffe677e"
+    },
+    {
+      "path": "candidate-pr.log",
+      "bytes": 296,
+      "sha256": "13b6818c73294892e926304bb7ed74bbba8bea448a66aeda8f4965e010493f0f"
+    },
+    {
+      "path": "candidate-format.log",
+      "bytes": 338,
+      "sha256": "c7ffc2e9b488a0e9660a3b2f72fc2cb66f3fabecc71c8594f2e99621a7139407"
+    },
+    {
+      "path": "candidate-lint.log",
+      "bytes": 67,
+      "sha256": "94af9ce590f78c16b70cea53c7504915bacfe91c9d7af37cfcd55f60440cfc8b"
+    },
+    {
+      "path": "candidate-pr-watchdog.json",
+      "bytes": 3265,
+      "sha256": "0ff8d69638c152524ae43968a9e2297d631cf7a5bccdbcf6d334647857e35cca"
+    },
+    {
+      "path": "candidate-types-watchdog.json",
+      "bytes": 2240,
+      "sha256": "1f245b6902b372571f31b4b96eefad29900fad92c29aa2ccf3b37bf1fe3cf023"
+    },
+    {
+      "path": "candidate-controls-watchdog.json",
+      "bytes": 1567,
+      "sha256": "e9198105330ba09d14d4d56a697b990440f0a4865c7ac35be7dcefa1edfca7b5"
+    },
+    {
+      "path": "launcher-audit-plan.md",
+      "bytes": 3810,
+      "sha256": "4d200bb4b311f5e884dbdfbef38937ce3cd102cd9c7ff6e2897fc5ca083b1713"
+    },
+    {
+      "path": "launcher-plan-review-b.md",
+      "bytes": 6941,
+      "sha256": "f66d21ffe2f5f0b935c13d72255fc153a7e65c1f46c3f8abcbd0db0f3d9cf2d6"
+    }
+  ]
+}

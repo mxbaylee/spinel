@@ -1,0 +1,54 @@
+{
+  "root": 25640,
+  "started": 1793900059367,
+  "elapsedMs": 329,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90192,
+  "peakKiB": 90192,
+  "live": [
+    {
+      "pid": 25640,
+      "parent": 25605,
+      "group": 25640,
+      "rssKiB": 88640,
+      "started": "Thu Nov  5 09:34:19 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/candidate-controls-watchdog.json node --test scripts/ci/doc-native-runtime.test.ts"
+    },
+    {
+      "pid": 25692,
+      "parent": 25640,
+      "group": 25640,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:34:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 25640,
+      "parent": 25605,
+      "group": 25640,
+      "rssKiB": 88640,
+      "started": "Thu Nov  5 09:34:19 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-launcher-probe/candidate-controls-watchdog.json node --test scripts/ci/doc-native-runtime.test.ts"
+    },
+    {
+      "pid": 25659,
+      "parent": 25640,
+      "group": 25640,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:34:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 25692,
+      "parent": 25640,
+      "group": 25640,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 09:34:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,37 @@
+✔ one changed-launcher window retains source admission, direct guarded CLI and mandatory preparation (2.232541ms)
+✔ all fixed matched cases pass with complete same-thread clock and post-GC evidence (8.833083ms)
+✔ selected evidence cannot pass: missing case (1.199167ms)
+✔ selected evidence cannot pass: wrong case identity (0.862166ms)
+✔ selected evidence cannot pass: partial collection (0.735791ms)
+✔ selected evidence cannot pass: failed cleanup (0.270958ms)
+✔ selected evidence cannot pass: failed pair parity (0.242333ms)
+✔ selected evidence cannot pass: different publication (0.431ms)
+✔ selected evidence cannot pass: wrong phase order (0.304083ms)
+✔ selected evidence cannot pass: missing mark (0.859ms)
+✔ selected evidence cannot pass: duplicate mark (1.547625ms)
+✔ selected evidence cannot pass: different renderer (1.318584ms)
+✔ selected evidence cannot pass: clock drift (1.557542ms)
+✔ selected evidence cannot pass: missing GC control (1.891209ms)
+✔ selected evidence cannot pass: missing containing tasks (1.524208ms)
+✔ selected evidence cannot pass: unsupported GC representation (1.359291ms)
+✔ one below-threshold pair remains inconclusive; other improvements cannot hide it (3.111625ms)
+✔ overlapping GC is reported without subtracting its time from the threshold (2.407125ms)
+✔ process ownership retains reparented identity and excludes PID reuse and unrelated apps (0.160167ms)
+✔ duration-unknown GC cannot support positive temporal evidence (1.708167ms)
+✔ instant, flow and async GC context stays separate without changing any measured time (8.104667ms)
+✔ GC overlapping control from before its start does not prove forced-control visibility (1.46475ms)
+✔ synchronous GC pairs require matching closed endpoints on the measured thread (5.066ms)
+✔ same resource policy rejects final-only memory/deadline/missing observations (0.182958ms)
+✔ first violating process sample survives later reaping and mutable inventory updates (0.141291ms)
+✔ terminal-only persistence failure and missing cleanup cannot pass analysis (0.577667ms)
+✔ actual terminal write failure remains visible and cannot leave a passed journal (3.535292ms)
+✔ analysis persistence failure preserves earlier primary error (7.665583ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 180.083417
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":329,"peakKiB":90192}
