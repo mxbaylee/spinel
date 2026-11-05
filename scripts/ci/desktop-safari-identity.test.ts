@@ -4,10 +4,15 @@ import { runInNewContext } from 'node:vm';
 import { identifySafari, safariRequestScript } from './desktop-safari-identity.ts';
 
 type LoaderFailure =
-  | 'nil bundle'
-  | 'bundle lookup throws'
-  | 'failed load'
+  | 'dlopen binding throws'
+  | 'dlerror binding throws'
+  | 'error reset throws'
+  | 'null handle'
   | 'load throws'
+  | 'load error'
+  | 'empty load error'
+  | 'unexpected load error'
+  | 'error read throws'
   | 'nil class'
   | 'class lookup throws';
 
@@ -15,6 +20,16 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
   const trace: string[] = [];
   const calls: unknown[][] = [];
   const failure = new Error(loaderFailure);
+  const bound = new Set<string>();
+  let errorReads = 0;
+  const handle = new Proxy(
+    {},
+    {
+      get() {
+        throw new Error('An opaque loader handle must not be inspected.');
+      },
+    },
+  );
   let quit = false;
   const running = {
     isNil: () => false,
@@ -51,19 +66,25 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
     },
   };
   const foundation = Object.assign((value: string) => ({ stringValue: value }), {
-    NSBundle: {
-      bundleWithPath(path: string) {
-        calls.push(['bundle', path]);
-        if (loaderFailure === 'bundle lookup throws') throw failure;
-        return {
-          isNil: () => loaderFailure === 'nil bundle',
-          get load() {
-            calls.push(['load']);
-            if (loaderFailure === 'load throws') throw failure;
-            return loaderFailure !== 'failed load';
-          },
-        };
-      },
+    dlopen(path: string, mode: number) {
+      assert.ok(bound.has('dlopen'));
+      calls.push(['load', path, mode]);
+      if (loaderFailure === 'load throws') throw failure;
+      return loaderFailure === 'null handle' ? null : handle;
+    },
+    dlerror() {
+      assert.ok(bound.has('dlerror'));
+      calls.push(['error', ++errorReads]);
+      if (errorReads === 1) {
+        if (loaderFailure === 'error reset throws') throw failure;
+        return 'An unrelated earlier loader error';
+      }
+      assert.equal(errorReads, 2, 'Read the new error once, immediately after the single load.');
+      if (loaderFailure === 'error read throws') throw failure;
+      if (loaderFailure === 'load error') return 'injected loader diagnostic';
+      if (loaderFailure === 'empty load error') return '';
+      if (loaderFailure === 'unexpected load error') return { unexpected: true };
+      return null;
     },
     NSClassFromString(name: { stringValue: string }) {
       // C function arguments require an explicit NSString wrapper in JXA.
@@ -79,6 +100,20 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
       };
     },
   });
+  Object.defineProperty(foundation, 'NSBundle', {
+    get() {
+      throw new Error('The replaced bundle-construction route must not be used.');
+    },
+  });
+  for (const name of ['dlopen', 'dlerror'] as const) {
+    const native = foundation[name];
+    Object.defineProperty(foundation, name, {
+      get() {
+        assert.equal(errorReads, 0, 'Capture native functions before clearing the loader error.');
+        return native;
+      },
+    });
+  }
   return {
     trace,
     calls,
@@ -91,10 +126,29 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
         safariRequestScript + '; run(args)',
         {
           args,
-          console: { log: (line: string) => trace.push(line) },
+          console: {
+            log: (line: string) => {
+              assert.notEqual(
+                errorReads,
+                1,
+                'Do not log between clearing and capturing the error.',
+              );
+              trace.push(line);
+            },
+          },
           ObjC: {
             import: () => {
               throw new Error('A full framework import must not be used.');
+            },
+            bindFunction(name: string, types: unknown) {
+              calls.push(['bind', name, JSON.parse(JSON.stringify(types))]);
+              assert.ok(name === 'dlopen' || name === 'dlerror');
+              assert.deepEqual(
+                JSON.parse(JSON.stringify(types)),
+                name === 'dlopen' ? ['void*', ['char*', 'int']] : ['string', []],
+              );
+              if (loaderFailure === `${name} binding throws`) throw failure;
+              bound.add(name);
             },
             unwrap: (value: unknown) => value,
           },
@@ -135,13 +189,16 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
 }
 
 const loadingCalls = [
-  ['bundle', '/System/Library/Frameworks/AppKit.framework'],
-  ['load'],
+  ['bind', 'dlopen', ['void*', ['char*', 'int']]],
+  ['bind', 'dlerror', ['string', []]],
+  ['error', 1],
+  ['load', '/System/Library/Frameworks/AppKit.framework/AppKit', 1],
+  ['error', 2],
   ['class', 'NSRunningApplication'],
   ['lookup', 42],
 ];
 
-test('the checked system executable and class establish identity without any Apple Event', () => {
+test('the direct loader and checked class establish identity without inspecting the handle or sending Apple Events', () => {
   const f = fixture();
   const result = JSON.parse(f.execute(['42', '', 'identify']));
   assert.deepEqual(result, {
@@ -156,8 +213,8 @@ test('the checked system executable and class establish identity without any App
       .slice(0, 6)
       .map((line) => JSON.parse(line.slice('Safari request phase: '.length)).phase),
     [
-      'appkit-bundle-create-begin',
-      'appkit-bundle-create-end',
+      'appkit-loader-bind-begin',
+      'appkit-loader-bind-end',
       'appkit-executable-load-begin',
       'appkit-executable-load-end',
       'running-application-class-begin',
@@ -169,12 +226,17 @@ test('the checked system executable and class establish identity without any App
 });
 
 for (const [name, expected, phase, callCount] of [
-  ['nil bundle', /AppKit bundle is unavailable/, 'appkit-bundle-create-begin', 1],
-  ['bundle lookup throws', /bundle lookup throws/, 'appkit-bundle-create-begin', 1],
-  ['failed load', /AppKit executable could not be loaded/, 'appkit-executable-load-begin', 2],
-  ['load throws', /load throws/, 'appkit-executable-load-begin', 2],
-  ['nil class', /NSRunningApplication class is unavailable/, 'running-application-class-begin', 3],
-  ['class lookup throws', /class lookup throws/, 'running-application-class-begin', 3],
+  ['dlopen binding throws', /dlopen binding throws/, 'appkit-loader-bind-begin', 1],
+  ['dlerror binding throws', /dlerror binding throws/, 'appkit-loader-bind-begin', 2],
+  ['error reset throws', /error reset throws/, 'appkit-executable-load-begin', 3],
+  ['null handle', /AppKit loader returned no handle/, 'appkit-executable-load-begin', 5],
+  ['load throws', /load throws/, 'appkit-executable-load-begin', 4],
+  ['load error', /injected loader diagnostic/, 'appkit-executable-load-begin', 5],
+  ['empty load error', /AppKit executable could not be loaded/, 'appkit-executable-load-begin', 5],
+  ['unexpected load error', /Unexpected loader diagnostic/, 'appkit-executable-load-begin', 5],
+  ['error read throws', /error read throws/, 'appkit-executable-load-begin', 5],
+  ['nil class', /NSRunningApplication class is unavailable/, 'running-application-class-begin', 6],
+  ['class lookup throws', /class lookup throws/, 'running-application-class-begin', 6],
 ] as const)
   test(`${name} preserves the first loading failure before lookup or teardown authority`, () => {
     const f = fixture({}, name);

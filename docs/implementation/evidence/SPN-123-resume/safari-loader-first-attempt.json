@@ -1,0 +1,84 @@
+{
+  "source": "d7e9f996db07e362210e9d07bcdecd50ff093570",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "tested": "d1fe07394ed0de017128dd9e0d1b097eddaa5915",
+  "tree": "c4650caa39a03570ff40b9e4d529fad42411b8c4",
+  "run": 41957085101,
+  "job": 127014466411,
+  "attempt": 1,
+  "artifact": 13383687563,
+  "archiveSha256": "251097b3284d215d69fe723311b63a9bb53ee249ff8871c6a80dc0842f9285a8",
+  "probeSha256": "4f0ba8e9ccc1d092f76e46bad913c3dbb8e4629c48b286cf3deede91464f9a48",
+  "screenshotSha256": "128cdb05af0314270de628033d39c66bb7db46aa0cd62a6bf375abcd6f2f902b",
+  "browser": "safari",
+  "status": "failed",
+  "failedStep": "Prove same-profile ordinary Safari restart",
+  "probe": {
+    "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+    "sourceSha": "d7e9f996db07e362210e9d07bcdecd50ff093570",
+    "testedSha": "d1fe07394ed0de017128dd9e0d1b097eddaa5915",
+    "runner": {
+      "label": "macos-15-intel",
+      "arch": "x64",
+      "imageOS": "macos15",
+      "imageVersion": "20260824.0482.1"
+    },
+    "run": "https://github.com/mxbaylee/spinel/actions/runs/41957085101",
+    "status": "failed",
+    "safariTargets": [
+      {
+        "stage": "online",
+        "pid": 5863,
+        "time": "2026-11-05T02:46:23.035Z",
+        "phase": "appkit-bundle-create-begin",
+        "timeoutMs": 8000,
+        "trace": "Safari request phase: {\"at\":\"2026-11-05T02:46:23.436Z\",\"phase\":\"appkit-bundle-create-begin\"}\n",
+        "error": {
+          "message": "Error: Command failed: /usr/bin/osascript -l JavaScript -e ",
+          "code": null,
+          "signal": "SIGTERM",
+          "killed": true,
+          "stdout": "",
+          "stderr": "Safari request phase: {\"at\":\"2026-11-05T02:46:23.436Z\",\"phase\":\"appkit-bundle-create-begin\"}\n"
+        },
+        "elapsedMs": 8066
+      }
+    ],
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+    "machine": "x86_64",
+    "version": "27.2",
+    "beforePid": "5863",
+    "error": "Error: Command failed: /usr/bin/osascript -l JavaScript -e \nfunction phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }\n// Foundation is available by default. Retain the bundle for this helper's\n// lifetime while using its executable's class, without importing AppKit symbols.\nphase('appkit-bundle-create-begin');\nvar appkitBundle = $.NSBundle.bundleWithPath('/System/Library/Frameworks/AppKit.framework');\nif (appkitBundle.isNil()) throw new Error('The system AppKit bundle is unavailable.');\nphase('appkit-bundle-create-end');\nphase('appkit-executable-load-begin');\nif (!appkitBundle.load) throw new Error('The system AppKit executable could not be loaded.');\nphase('appkit-executable-load-end');\nphase('running-application-class-begin');\nvar runningApplication = $.NSClassFromString($('NSRunningApplication'));\nif (runningApplication.isNil()) throw new Error('The NSRunningApplication class is unavailable.');\nphase('running-application-class-end');\nfunction run(argv) {\n  var pid = Number(argv[0]);\n  phase('process-lookup-begin');\n  var running = runningApplication.runningApplicationWithProcessIdentifier(pid);\n  phase('process-lookup-end');\n  phase('process-liveness-begin');\n  if (running.isNil() || running.terminated) throw new Error('The observed Safari process exited.');\n  phase('process-liveness-end');\n  var identity = {};\n  phase('pid-read-begin');\n  identity.pid = running.processIdentifier;\n  phase('pid-read-end');\n  phase('bundle-read-begin');\n  identity.bundleIdentifier = ObjC.unwrap(running.bundleIdentifier);\n  phase('bundle-read-end');\n  phase('executable-read-begin');\n  identity.executablePath = ObjC.unwrap(running.executableURL.path);\n  phase('executable-read-end');\n  phase('launch-date-read-begin');\n  identity.launchedAt = running.launchDate.timeIntervalSince1970;\n  phase('launch-date-read-end');\n  phase('identity-validation-begin');\n  if (identity.pid !== pid || identity.bundleIdentifier !== 'com",
+    "errorDetail": {
+      "code": null,
+      "signal": "SIGTERM",
+      "killed": true,
+      "stderr": "Safari request phase: {\"at\":\"2026-11-05T02:46:23.436Z\",\"phase\":\"appkit-bundle-create-begin\"}\n"
+    },
+    "processes": [
+      "  150     1 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd",
+      "  425     1 /System/Library/PrivateFrameworks/TCC.framework/Support/tccd",
+      "  945     1 /bin/bash",
+      " 5847  4163 /bin/bash",
+      " 5848  5847 node",
+      " 5863     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/MacOS/Safari",
+      " 5876     1 /System/Cryptexes/App/usr/libexec/com.apple.Safari.History",
+      " 5880     1 /System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app/Contents/XPCServices/com.apple.Safari.SandboxBroker.xpc/Contents/MacOS/com.apple.Safari.SandboxBroker",
+      " 5882     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebPrivacy.framework/Versions/A/XPCServices/com.apple.WebPrivacy.Service.xpc/Contents/MacOS/com.apple.WebPrivacy.Service",
+      " 5883     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.xpc/Contents/MacOS/com.apple.WebKit.WebContent",
+      " 5884     1 /System/Cryptexes/App/usr/libexec/SafariNotificationAgent",
+      " 5888     1 /System/Cryptexes/App/System/Library/CoreServices/SafariSupport.bundle/Contents/MacOS/SafariBookmarksSyncAgent",
+      " 5898     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.Networking.xpc/Contents/MacOS/com.apple.WebKit.Networking",
+      " 5899     1 /System/Cryptexes/App/usr/libexec/SafariLaunchAgent",
+      " 5950     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.GPU.xpc/Contents/MacOS/com.apple.WebKit.GPU",
+      " 5985     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/SafariShared.framework/Versions/A/XPCServices/com.apple.Safari.SearchHelper.xpc/Contents/MacOS/com.apple.Safari.SearchHelper",
+      " 6016     1 /System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/com.apple.Safari.SafeBrowsing.Service",
+      " 6057     1 /System/Volumes/Preboot/Cryptexes/App/System/Library/StagedFrameworks/Safari/WebKit.framework/Versions/A/XPCServices/com.apple.WebKit.WebContent.xpc/Contents/MacOS/com.apple.WebKit.WebContent"
+    ],
+    "teardownError": "AssertionError [ERR_ASSERTION]: No owned Safari identity is available for teardown."
+  },
+  "applicationAcceptanceExecuted": false,
+  "inertContextExecuted": false,
+  "observedScreenshot": "Safari is active in the menu bar; no browser window or permission prompt is visible on the captured desktop. This does not establish the cause.",
+  "unknown": "Why the first NSBundle/AppKit construction region did not finish within the existing 8000ms bound is unknown; no transient cause or retry disposition is inferred."
+}
