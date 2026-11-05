@@ -1,0 +1,64 @@
+{
+  "source": "5265ab8d26c7c607bef189a1fd720f8bd28d6584",
+  "run": 42063895317,
+  "job": 127372615712,
+  "attempt": 1,
+  "outcome": "complete new emitted graph; no phone or historical-cause acceptance",
+  "payloads": [
+    {
+      "path": "build.zip",
+      "bytes": 3652178,
+      "sha256": "7e0e2b9c4a3c26f7e81b47dfcad7737e1cef349f2ca04ba30ce827d053b7ae61"
+    },
+    {
+      "path": "run.json",
+      "bytes": 11777,
+      "sha256": "35e2fbe791581ac9900d98e3db455ac5064355ca2f839c4024f4e66918b09048"
+    },
+    {
+      "path": "jobs.json",
+      "bytes": 2797,
+      "sha256": "01126a4d56d3d705de3b76d680a49535a4cf92100c376e3016110fa3b432d29c"
+    },
+    {
+      "path": "artifacts.json",
+      "bytes": 743,
+      "sha256": "9f024eba710749177ad6db3e15f4ed3baf4af0ce4b30cb24244cbe9e6c8080f2"
+    },
+    {
+      "path": "proof-b.json",
+      "bytes": 18829,
+      "sha256": "e30b60c9ae1f46dc99c4abe050d72467d47100d7bc1c6ffbb8de475ee1ffc271"
+    },
+    {
+      "path": "outcome-review-b.md",
+      "bytes": 5103,
+      "sha256": "e6ecec55e673f76c04536def2eb270d28e6e24ff83fefdb16a7bf2ae252bc4a4"
+    },
+    {
+      "path": "audit-b.ts",
+      "bytes": 5190,
+      "sha256": "46fe0320cf8a94487d420c11e9a0d02a35a6e1e66dc90a1bcadb1035d07d8a4b"
+    },
+    {
+      "path": "audit-b.log",
+      "bytes": 234,
+      "sha256": "d6d5e5f8649fb2ece4ed997f93d988e2143f36c6359e3295d54c321db94d6c61"
+    },
+    {
+      "path": "audit-watchdog-b.json",
+      "bytes": 2485,
+      "sha256": "887457b152dc4343f76dc6162b739f010447b4157b49a0932367019837846690"
+    },
+    {
+      "path": "metadata-run.json",
+      "bytes": 12173,
+      "sha256": "a0aac3a07836163e7d227f2cbddfc09e6ecb1c4c5f5853f77f9d8775f17e45aa"
+    },
+    {
+      "path": "metadata-jobs.json",
+      "bytes": 80236,
+      "sha256": "bf0ca0ebd0ad3ab084541156debcff0c721df0f01abbc2142ae8c15e84ed5d24"
+    }
+  ]
+}
