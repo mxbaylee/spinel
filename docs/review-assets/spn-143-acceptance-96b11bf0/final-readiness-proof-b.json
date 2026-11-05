@@ -1,0 +1,72 @@
+{
+  "identities": {
+    "source": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+    "base": "eb32117f5d09c28cd411063256db6d645335ae8a",
+    "tested": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+    "tree": "9920742df8645f3d963ba5de1b5819efa9d1de7a",
+    "pr": 263,
+    "ci": 41937955289,
+    "storybook": 41937955238,
+    "attempt": 1,
+    "prepushReviews": {
+      "A": 98,
+      "B": 97
+    }
+  },
+  "ciJobs": 33,
+  "ciAllSuccess": true,
+  "requiredGates": [
+    {
+      "id": 126951134732,
+      "name": "Pull request",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    },
+    {
+      "id": 126951454413,
+      "name": "Backlog",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    },
+    {
+      "id": 126951454461,
+      "name": "Lint",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    },
+    {
+      "id": 126951454453,
+      "name": "Typecheck",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    },
+    {
+      "id": 126954144026,
+      "name": "Unit tests",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    },
+    {
+      "id": 126961236864,
+      "name": "Lib tests",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    },
+    {
+      "id": 126969066440,
+      "name": "Playwright smoke",
+      "head_sha": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+      "conclusion": "success"
+    }
+  ],
+  "storybookSuccessJobs": 8,
+  "storybookOptionalSkipped": [
+    "Publish PR preview to GitHub Pages",
+    "Deploy to GitHub Pages"
+  ],
+  "planAll15Selected": true,
+  "planSha256": "2c0f6404c52386761d50ea450d60ca1f3eece891f29487e6ce3c9c3472f92bd1",
+  "unitLibBrowserDigestEvidencePassed": true,
+  "publicationVerified": false,
+  "mergeClaimed": false
+}

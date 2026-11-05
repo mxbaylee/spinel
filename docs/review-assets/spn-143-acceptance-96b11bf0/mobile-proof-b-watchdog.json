@@ -1,0 +1,126 @@
+{
+  "root": 24383,
+  "started": 1793839505385,
+  "elapsedMs": 1319,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91744,
+  "peakKiB": 233312,
+  "live": [
+    {
+      "pid": 24383,
+      "parent": 24347,
+      "group": 24383,
+      "rssKiB": 90176,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn143-hosted/mobile-proof-b-watchdog.json node /tmp/spn143-hosted/audit-mobile-b.ts"
+    },
+    {
+      "pid": 24662,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 24383,
+      "parent": 24347,
+      "group": 24383,
+      "rssKiB": 90176,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn143-hosted/mobile-proof-b-watchdog.json node /tmp/spn143-hosted/audit-mobile-b.ts"
+    },
+    {
+      "pid": 24402,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24428,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 137200,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "node /tmp/spn143-hosted/audit-mobile-b.ts"
+    },
+    {
+      "pid": 24503,
+      "parent": 24428,
+      "group": 24383,
+      "rssKiB": 2448,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 24509,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24552,
+      "parent": 24428,
+      "group": 24383,
+      "rssKiB": 5824,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 24558,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:05 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24588,
+      "parent": 24428,
+      "group": 24383,
+      "rssKiB": 6864,
+      "started": "Wed Nov  4 16:45:06 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 24594,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24625,
+      "parent": 24428,
+      "group": 24383,
+      "rssKiB": 2736,
+      "started": "Wed Nov  4 16:45:06 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 24631,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 24662,
+      "parent": 24383,
+      "group": 24383,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:45:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

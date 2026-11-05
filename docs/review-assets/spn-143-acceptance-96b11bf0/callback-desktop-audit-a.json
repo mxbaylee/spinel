@@ -1,0 +1,3105 @@
+{
+  "identities": {
+    "source": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+    "base": "eb32117f5d09c28cd411063256db6d645335ae8a",
+    "tested": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+    "tree": "9920742df8645f3d963ba5de1b5819efa9d1de7a",
+    "pr": 263,
+    "ci": 41937955289,
+    "storybook": 41937955238,
+    "attempt": 1,
+    "prepushReviews": {
+      "A": 98,
+      "B": 97
+    }
+  },
+  "archive": {
+    "bytes": 123988279,
+    "sha256": "824b949ebaf5ad6a4fbbb06194670ec585133e1035a0076fddbd08be933784ec"
+  },
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T00:01:38.856Z",
+        "duration": 218954.076,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 211749,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T00:05:23.811Z",
+        "duration": 199557.907,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "expectedStatus": "passed",
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 195147,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "dirtyPaths": "M e2e/doc-responsiveness-fixture.ts\n M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeKeydowns": 2086,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "instrumentation": {
+        "categories": [
+          "devtools.timeline",
+          "disabled-by-default-devtools.timeline.stack",
+          "toplevel",
+          "v8",
+          "blink.user_timing",
+          "disabled-by-default-renderer.scheduler"
+        ],
+        "traceConfig": {
+          "recordMode": "recordUntilFull",
+          "traceBufferSizeInKb": 1048576,
+          "includedCategories": [
+            "devtools.timeline",
+            "disabled-by-default-devtools.timeline.stack",
+            "toplevel",
+            "v8",
+            "blink.user_timing",
+            "disabled-by-default-renderer.scheduler"
+          ]
+        },
+        "transferMode": "ReturnAsStream",
+        "streamFormat": "json",
+        "streamCompression": "none",
+        "bufferUsageReportingInterval": 1000,
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "sourceMaps": "hidden; exact built bundle source content",
+        "cpuThrottle": 1,
+        "mountedEditors": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "touch": false,
+        "deviceScaleFactor": 1,
+        "playwrightTrace": false,
+        "latencyBudgetsEnforced": false,
+        "postDisposalMs": 1200,
+        "buildFlags": {
+          "VITE_DOC_RESPONSIVENESS_EVIDENCE": "1",
+          "VITE_DOC_SELECTION_EVIDENCE": "1",
+          "VITE_SYNC_EVIDENCE": "0"
+        }
+      },
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "none"
+        },
+        "bytes": 52013367,
+        "sha256": "88e5cc4e56c6602fc8ed928e39ff3afc43ef0c6c992af1f54177c395ea4fdcb0",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 665463063,
+          "sha256": "0495bb0cab91143bd47a2986c9f5cda7e697589214c6cb3f032527530c15739d"
+        }
+      },
+      "traceRead": {
+        "sourceEvents": 1050677,
+        "retainedEvents": 1050677,
+        "callbackEvents": 221575,
+        "uncompressedBytes": 665463063,
+        "uncompressedSha256": "0495bb0cab91143bd47a2986c9f5cda7e697589214c6cb3f032527530c15739d",
+        "maxEventBytes": 18371
+      },
+      "analysisKeys": [
+        "schema",
+        "role",
+        "complete",
+        "bounded",
+        "accepted",
+        "evidenceFailures",
+        "candidateViolations",
+        "frameId",
+        "renderer",
+        "phaseAtUs",
+        "caps",
+        "families",
+        "ledger",
+        "orphans",
+        "noOpRemovals",
+        "ignoredOtherFrames",
+        "unrelatedTimers",
+        "mainThreadTasks"
+      ],
+      "analysisComplete": true,
+      "analysisAccepted": true,
+      "analysisBounded": false,
+      "families": {
+        "cursor": {
+          "pendingHighWater": 5964,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 8,
+            "finalKey": 5960,
+            "disposed": 9,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 9,
+          "installationsAfterDisposal": 0,
+          "installations": 16731
+        },
+        "zoom-init": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 1
+        },
+        "zoom-update": {
+          "pendingHighWater": 1447,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1446,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 2087
+        }
+      },
+      "attribution": {
+        "unmapped": 10,
+        "artifacts": 33
+      },
+      "phaseEvents": [
+        {
+          "atMs": 374.4155810000002,
+          "phase": "before-navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 381.47936400000003,
+          "phase": "trace-start",
+          "kind": "phase"
+        },
+        {
+          "atMs": 386.877115,
+          "phase": "navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 1497.9713060000001,
+          "phase": "native-mount",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3021.174618,
+          "phase": "native-focus",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3127.1398610000006,
+          "phase": "typing",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3127.7743260000007,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 6400.991689,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 6401.388839,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 6431.613813,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 9640.637011,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 9641.116675000001,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 9666.374143000001,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 13356.7387,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 13357.2322,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 13383.429862,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 17489.012940999997,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 17748.346003,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 17881.651954999998,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 22255.534722999997,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 22255.974875,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 22288.349921999998,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 26506.634251,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 26507.100501999998,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 26536.397598,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 31010.925967,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 31011.336787999997,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 31044.520234,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 35915.450687000004,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 35915.892863,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 35958.172365,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 41327.784244,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 41328.268809,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 41370.387841,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 47031.825041000004,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 47032.288426,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 47090.074676000004,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 53247.913995,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 53248.454355,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 53292.736297,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 59614.368672000004,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 59614.782775,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 59661.573876,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 66198.735758,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 66199.143699,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 66248.11572799999,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 73168.901644,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 73169.36055099999,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 73229.355295,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 80558.92962,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 80559.350685,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 80616.518893,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 88284.396771,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 88284.862839,
+          "phase": "input-key-count",
+          "kind": "phase"
+        },
+        {
+          "atMs": 88898.933765,
+          "phase": "input-observation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 89028.65351199999,
+          "phase": "native-drain",
+          "kind": "phase"
+        },
+        {
+          "atMs": 89051.665325,
+          "phase": "native-content",
+          "kind": "phase"
+        },
+        {
+          "atMs": 90999.120531,
+          "phase": "live-caret",
+          "kind": "phase"
+        },
+        {
+          "atMs": 93267.005863,
+          "phase": "ordinary-zoom",
+          "kind": "phase"
+        },
+        {
+          "atMs": 93458.715199,
+          "phase": "ordinary-route-disposal",
+          "kind": "phase"
+        },
+        {
+          "atMs": 94763.55190199999,
+          "phase": "behavior-complete",
+          "kind": "phase"
+        },
+        {
+          "atMs": 94766.77827099999,
+          "phase": "trace-end-request",
+          "kind": "phase"
+        },
+        {
+          "atMs": 94771.25420699999,
+          "phase": "trace-completion",
+          "kind": "phase"
+        },
+        {
+          "atMs": 190059.22034300002,
+          "phase": "trace-stream-open",
+          "kind": "phase"
+        },
+        {
+          "atMs": 190062.412757,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 0
+        },
+        {
+          "atMs": 190086.87347700002,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 1048576
+        },
+        {
+          "atMs": 190106.048312,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 2097152
+        },
+        {
+          "atMs": 190161.740941,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 4194304
+        },
+        {
+          "atMs": 190229.041334,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 8388608
+        },
+        {
+          "atMs": 190351.930552,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 16777216
+        },
+        {
+          "atMs": 190602.10621700002,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 33554432
+        },
+        {
+          "atMs": 191097.051615,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 67108864
+        },
+        {
+          "atMs": 192048.70686600002,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 134217728
+        },
+        {
+          "atMs": 194041.16737,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 268435456
+        },
+        {
+          "atMs": 198021.509926,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 536870912
+        },
+        {
+          "atMs": 199911.608244,
+          "phase": "trace-stream-close",
+          "kind": "phase",
+          "count": 665463063
+        },
+        {
+          "atMs": 199914.644164,
+          "phase": "trace-parse",
+          "kind": "phase"
+        },
+        {
+          "atMs": 210059.34011000002,
+          "phase": "trace-attribution",
+          "kind": "phase"
+        },
+        {
+          "atMs": 210837.794567,
+          "phase": "trace-analysis",
+          "kind": "phase"
+        },
+        {
+          "atMs": 211392.44199800002,
+          "phase": "cdp-detach",
+          "kind": "phase"
+        },
+        {
+          "atMs": 211395.383221,
+          "phase": "fixture-cleanup",
+          "kind": "phase"
+        },
+        {
+          "atMs": 211455.47954600002,
+          "phase": "fixture-cleanup-complete",
+          "kind": "phase"
+        }
+      ],
+      "terminal": "passed",
+      "dropped": 0,
+      "behaviorKeys": [
+        "schema",
+        "cleanup",
+        "role",
+        "preset",
+        "attempt",
+        "runner",
+        "source",
+        "dirtyPaths",
+        "browser",
+        "runtime",
+        "playwright",
+        "harnessSha256",
+        "fixture",
+        "instrumentation",
+        "heapLimitations",
+        "complete",
+        "passed",
+        "phase",
+        "traceCategoryEnumeration",
+        "frameId",
+        "timeOrigin",
+        "environment",
+        "heapBefore",
+        "typingWallMs",
+        "observedKeydowns",
+        "nativeAfterTyping",
+        "textSha256",
+        "blink",
+        "zoom",
+        "heapBeforeDisposal",
+        "heapAfterDisposal",
+        "behaviorPassed",
+        "trace",
+        "traceRead",
+        "errors"
+      ],
+      "blink": {
+        "count": 133,
+        "allVisible": true,
+        "strokes": [
+          "rgba(0, 0, 0, 0)",
+          "spinel-primary-strong.0"
+        ]
+      },
+      "zoom": {
+        "before": {
+          "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+          "mobile": false,
+          "observedAt": 92835,
+          "currentUnitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 330.29700724283856,
+            "top": 785.1666666666664,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 1440,
+            "height": 796,
+            "scrollX": 0,
+            "scrollY": 105,
+            "bounds": {
+              "left": 0,
+              "right": 1440,
+              "top": 105,
+              "bottom": 901
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 87353.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87366,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87410.1,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87424,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87468.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87480.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87525.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87537.6,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87585.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87596.80000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87642.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87655,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87703.80000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87716,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87761.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87773.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87817.9,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87830.1,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87878,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87890.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            }
+          ],
+          "editing": true,
+          "bounds": {
+            "left": 330.29700724283856,
+            "right": 330.29700724283856,
+            "top": 839.4666666666664,
+            "bottom": 862.8666666666664
+          },
+          "scroll": 105,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        },
+        "changed": {
+          "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+          "mobile": false,
+          "observedAt": 92952.4,
+          "currentUnitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 241.87595461125966,
+            "top": 785.1666666666664,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 1440,
+            "height": 796,
+            "scrollX": 0,
+            "scrollY": 105,
+            "bounds": {
+              "left": 0,
+              "right": 1263.157894736842,
+              "top": 105.26315789473685,
+              "bottom": 803.5087719298247
+            }
+          },
+          "scale": {
+            "x": 1.14,
+            "y": 1.14
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 87424,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87468.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87480.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87525.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87537.6,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87585.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87596.80000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87642.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87655,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87703.80000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87716,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87761.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87773.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87817.9,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87830.1,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87878,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87890.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 92912.80000000002,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+              "zoomRatio": 1.14
+            },
+            {
+              "at": 92914.30000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 92914.6,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            }
+          ],
+          "editing": false,
+          "bounds": {
+            "left": 275.738588256836,
+            "right": 275.738588256836,
+            "top": 934.1719999999996,
+            "bottom": 960.8479999999996
+          },
+          "scroll": 105,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        },
+        "restored": {
+          "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+          "mobile": false,
+          "observedAt": 93021.20000000001,
+          "currentUnitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 330.29700724283856,
+            "top": 785.1666666666664,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 1440,
+            "height": 796,
+            "scrollX": 0,
+            "scrollY": 105,
+            "bounds": {
+              "left": 0,
+              "right": 1440,
+              "top": 105,
+              "bottom": 901
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 87525.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87537.6,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87585.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87596.80000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87642.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87655,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87703.80000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87716,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87761.4,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87773.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87817.9,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87830.1,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87878,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 87890.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 92912.80000000002,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+              "zoomRatio": 1.14
+            },
+            {
+              "at": 92914.30000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 92914.6,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 92993.9,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706",
+              "zoomRatio": 1
+            },
+            {
+              "at": 92994.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            },
+            {
+              "at": 92994.9,
+              "id": "doc.operation.set-selections",
+              "unitId": "13606e27-bb72-4fe8-8bb7-80d1bc055706"
+            }
+          ],
+          "editing": false,
+          "bounds": {
+            "left": 330.29700724283856,
+            "right": 330.29700724283856,
+            "top": 839.4666666666664,
+            "bottom": 862.8666666666664
+          },
+          "scroll": 105,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "bufferUsageCount": 94
+    },
+    {
+      "role": "candidate",
+      "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+      "dirtyPaths": "",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeKeydowns": 2086,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "instrumentation": {
+        "categories": [
+          "devtools.timeline",
+          "disabled-by-default-devtools.timeline.stack",
+          "toplevel",
+          "v8",
+          "blink.user_timing",
+          "disabled-by-default-renderer.scheduler"
+        ],
+        "traceConfig": {
+          "recordMode": "recordUntilFull",
+          "traceBufferSizeInKb": 1048576,
+          "includedCategories": [
+            "devtools.timeline",
+            "disabled-by-default-devtools.timeline.stack",
+            "toplevel",
+            "v8",
+            "blink.user_timing",
+            "disabled-by-default-renderer.scheduler"
+          ]
+        },
+        "transferMode": "ReturnAsStream",
+        "streamFormat": "json",
+        "streamCompression": "none",
+        "bufferUsageReportingInterval": 1000,
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "sourceMaps": "hidden; exact built bundle source content",
+        "cpuThrottle": 1,
+        "mountedEditors": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "touch": false,
+        "deviceScaleFactor": 1,
+        "playwrightTrace": false,
+        "latencyBudgetsEnforced": false,
+        "postDisposalMs": 1200,
+        "buildFlags": {
+          "VITE_DOC_RESPONSIVENESS_EVIDENCE": "1",
+          "VITE_DOC_SELECTION_EVIDENCE": "1",
+          "VITE_SYNC_EVIDENCE": "0"
+        }
+      },
+      "trace": {
+        "file": "spn113-trace.json.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "json",
+          "streamCompression": "none"
+        },
+        "bytes": 50153480,
+        "sha256": "d6cabd0c5c7e34e497511f14583668d5c5dce7c4a196a844290ae584ebc243b4",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 671730542,
+          "sha256": "96523455d30926706e6fb02997c393e83bc2f90a433a9f38ac1da9b324040ffb"
+        }
+      },
+      "traceRead": {
+        "sourceEvents": 956647,
+        "retainedEvents": 956647,
+        "callbackEvents": 197599,
+        "uncompressedBytes": 671730542,
+        "uncompressedSha256": "96523455d30926706e6fb02997c393e83bc2f90a433a9f38ac1da9b324040ffb",
+        "maxEventBytes": 18371
+      },
+      "analysisKeys": [
+        "schema",
+        "role",
+        "complete",
+        "bounded",
+        "accepted",
+        "evidenceFailures",
+        "candidateViolations",
+        "frameId",
+        "renderer",
+        "phaseAtUs",
+        "caps",
+        "families",
+        "ledger",
+        "orphans",
+        "noOpRemovals",
+        "ignoredOtherFrames",
+        "unrelatedTimers",
+        "mainThreadTasks"
+      ],
+      "analysisComplete": true,
+      "analysisAccepted": true,
+      "analysisBounded": true,
+      "families": {
+        "cursor": {
+          "pendingHighWater": 4,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 2,
+            "finalKey": 2,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 16725
+        },
+        "zoom-init": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 1
+        },
+        "zoom-update": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0,
+          "installations": 2087
+        }
+      },
+      "attribution": {
+        "unmapped": 10,
+        "artifacts": 35
+      },
+      "phaseEvents": [
+        {
+          "atMs": 561.975379,
+          "phase": "before-navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 568.41903,
+          "phase": "trace-start",
+          "kind": "phase"
+        },
+        {
+          "atMs": 572.423888,
+          "phase": "navigation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 1546.198608,
+          "phase": "native-mount",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3011.5825370000002,
+          "phase": "native-focus",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3121.416523,
+          "phase": "typing",
+          "kind": "phase"
+        },
+        {
+          "atMs": 3122.0829969999995,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 6090.194792,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 6090.816754,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 1
+        },
+        {
+          "atMs": 6134.506371,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 8996.777585,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 8997.276806999998,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 2
+        },
+        {
+          "atMs": 9034.524921999999,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 12068.851072,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 12069.196496999999,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 3
+        },
+        {
+          "atMs": 12090.153424999999,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 15324.938662999999,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 15325.275622,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 4
+        },
+        {
+          "atMs": 15349.771585999999,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 18752.020657,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 18752.571765,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 5
+        },
+        {
+          "atMs": 18775.937546999998,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 22214.450918,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 22214.818862,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 6
+        },
+        {
+          "atMs": 22246.574001999998,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 25933.945461,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 25934.387736,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 7
+        },
+        {
+          "atMs": 25962.565588999998,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 29736.697442,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 29737.345401,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 8
+        },
+        {
+          "atMs": 29764.966001,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 33738.280557000006,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 33738.872542000005,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 9
+        },
+        {
+          "atMs": 33768.727597000005,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 38104.162439,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 38104.644368,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 10
+        },
+        {
+          "atMs": 38154.127494,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 42628.546610000005,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 42628.949412,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 11
+        },
+        {
+          "atMs": 42663.422481,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 47332.643388000004,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 47333.069533,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 12
+        },
+        {
+          "atMs": 47366.175754,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 52311.25144,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 52311.667927,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 13
+        },
+        {
+          "atMs": 52348.374650000005,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 57505.197496,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 57505.58013,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 14
+        },
+        {
+          "atMs": 57546.524537000005,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 62982.049043000006,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 62982.472263,
+          "phase": "typing-enter",
+          "kind": "phase",
+          "count": 15
+        },
+        {
+          "atMs": 63022.19406,
+          "phase": "typing-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 68661.009801,
+          "phase": "typed-paragraph",
+          "kind": "phase",
+          "count": 16
+        },
+        {
+          "atMs": 68661.51720799999,
+          "phase": "input-key-count",
+          "kind": "phase"
+        },
+        {
+          "atMs": 68689.479186,
+          "phase": "input-observation",
+          "kind": "phase"
+        },
+        {
+          "atMs": 68841.302643,
+          "phase": "native-drain",
+          "kind": "phase"
+        },
+        {
+          "atMs": 68980.90921099999,
+          "phase": "native-content",
+          "kind": "phase"
+        },
+        {
+          "atMs": 70337.563728,
+          "phase": "live-caret",
+          "kind": "phase"
+        },
+        {
+          "atMs": 72593.911293,
+          "phase": "ordinary-zoom",
+          "kind": "phase"
+        },
+        {
+          "atMs": 72760.385855,
+          "phase": "ordinary-route-disposal",
+          "kind": "phase"
+        },
+        {
+          "atMs": 74059.078558,
+          "phase": "behavior-complete",
+          "kind": "phase"
+        },
+        {
+          "atMs": 74061.391743,
+          "phase": "trace-end-request",
+          "kind": "phase"
+        },
+        {
+          "atMs": 74066.58308899999,
+          "phase": "trace-completion",
+          "kind": "phase"
+        },
+        {
+          "atMs": 173869.554059,
+          "phase": "trace-stream-open",
+          "kind": "phase"
+        },
+        {
+          "atMs": 173872.772068,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 0
+        },
+        {
+          "atMs": 173893.930283,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 1048576
+        },
+        {
+          "atMs": 173915.198448,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 2097152
+        },
+        {
+          "atMs": 173982.693637,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 4194304
+        },
+        {
+          "atMs": 174058.78693899998,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 8388608
+        },
+        {
+          "atMs": 174173.512983,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 16777216
+        },
+        {
+          "atMs": 174405.06397299998,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 33554432
+        },
+        {
+          "atMs": 174849.131795,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 67108864
+        },
+        {
+          "atMs": 175783.886721,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 134217728
+        },
+        {
+          "atMs": 177781.73918,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 268435456
+        },
+        {
+          "atMs": 181709.81902999998,
+          "phase": "trace-stream-read",
+          "kind": "phase",
+          "count": 536870912
+        },
+        {
+          "atMs": 183747.215618,
+          "phase": "trace-stream-close",
+          "kind": "phase",
+          "count": 671730542
+        },
+        {
+          "atMs": 183749.950697,
+          "phase": "trace-parse",
+          "kind": "phase"
+        },
+        {
+          "atMs": 193670.191672,
+          "phase": "trace-attribution",
+          "kind": "phase"
+        },
+        {
+          "atMs": 194396.850694,
+          "phase": "trace-analysis",
+          "kind": "phase"
+        },
+        {
+          "atMs": 194873.46325,
+          "phase": "cdp-detach",
+          "kind": "phase"
+        },
+        {
+          "atMs": 194875.98399799998,
+          "phase": "fixture-cleanup",
+          "kind": "phase"
+        },
+        {
+          "atMs": 194939.065126,
+          "phase": "fixture-cleanup-complete",
+          "kind": "phase"
+        }
+      ],
+      "terminal": "passed",
+      "dropped": 0,
+      "behaviorKeys": [
+        "schema",
+        "cleanup",
+        "role",
+        "preset",
+        "attempt",
+        "runner",
+        "source",
+        "dirtyPaths",
+        "browser",
+        "runtime",
+        "playwright",
+        "harnessSha256",
+        "fixture",
+        "instrumentation",
+        "heapLimitations",
+        "complete",
+        "passed",
+        "phase",
+        "traceCategoryEnumeration",
+        "frameId",
+        "timeOrigin",
+        "environment",
+        "heapBefore",
+        "typingWallMs",
+        "observedKeydowns",
+        "nativeAfterTyping",
+        "textSha256",
+        "blink",
+        "zoom",
+        "heapBeforeDisposal",
+        "heapAfterDisposal",
+        "behaviorPassed",
+        "trace",
+        "traceRead",
+        "errors"
+      ],
+      "blink": {
+        "count": 134,
+        "allVisible": true,
+        "strokes": [
+          "rgba(0, 0, 0, 0)",
+          "spinel-primary-strong.0"
+        ]
+      },
+      "zoom": {
+        "before": {
+          "unitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+          "mobile": false,
+          "observedAt": 71991,
+          "currentUnitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 330.29700724283856,
+            "top": 785.1666666666664,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 1440,
+            "height": 796,
+            "scrollX": 0,
+            "scrollY": 105,
+            "bounds": {
+              "left": 0,
+              "right": 1440,
+              "top": 105,
+              "bottom": 901
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 67698.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67710,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67737.60000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67748.90000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67776.60000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67787.90000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67822.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67833.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67861.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67873.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67902.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67914.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67944.79999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67956.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67985.40000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67997.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68026.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68038.40000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68069.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68080.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            }
+          ],
+          "editing": true,
+          "bounds": {
+            "left": 330.29700724283856,
+            "right": 330.29700724283856,
+            "top": 839.4666666666664,
+            "bottom": 862.8666666666664
+          },
+          "scroll": 105,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        },
+        "changed": {
+          "unitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+          "mobile": false,
+          "observedAt": 72096.79999999999,
+          "currentUnitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 241.87595461125966,
+            "top": 785.1666666666664,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 1440,
+            "height": 796,
+            "scrollX": 0,
+            "scrollY": 105,
+            "bounds": {
+              "left": 0,
+              "right": 1263.157894736842,
+              "top": 105.26315789473685,
+              "bottom": 803.5087719298247
+            }
+          },
+          "scale": {
+            "x": 1.14,
+            "y": 1.14
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 67748.90000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67776.60000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67787.90000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67822.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67833.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67861.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67873.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67902.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67914.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67944.79999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67956.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67985.40000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67997.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68026.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68038.40000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68069.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68080.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 72054.90000000002,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+              "zoomRatio": 1.14
+            },
+            {
+              "at": 72056.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 72057,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            }
+          ],
+          "editing": false,
+          "bounds": {
+            "left": 275.738588256836,
+            "right": 275.738588256836,
+            "top": 934.1719999999996,
+            "bottom": 960.8479999999996
+          },
+          "scroll": 105,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        },
+        "restored": {
+          "unitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+          "mobile": false,
+          "observedAt": 72158.60000000003,
+          "currentUnitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+          "currentLogicalRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "unitLogicalRanges": [
+            {
+              "start": 2086,
+              "end": 2086,
+              "collapsed": true,
+              "segmentId": "",
+              "segmentPage": -1
+            }
+          ],
+          "unitSelectionOptions": {
+            "preserveInputStyle": true,
+            "forceFocus": false,
+            "shouldFocus": false
+          },
+          "unitSelectionStyles": [
+            {
+              "stroke": "spinel-primary-strong.0",
+              "fill": "spinel-primary-strong.3"
+            }
+          ],
+          "nativeRange": {
+            "start": 2086,
+            "end": 2086,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "start": 2086,
+          "end": 2086,
+          "hasAnchor": true,
+          "anchor": {
+            "visible": true,
+            "left": 330.29700724283856,
+            "top": 785.1666666666664,
+            "width": 0,
+            "height": 16
+          },
+          "inputConnected": true,
+          "inputFocused": true,
+          "pointerSelection": false,
+          "pendingSelection": false,
+          "shortcutContext": {
+            "doc": true,
+            "editor": true,
+            "drawing": false,
+            "activated": false,
+            "formulaBar": false
+          },
+          "viewport": {
+            "key": "viewMain",
+            "active": true,
+            "width": 1440,
+            "height": 796,
+            "scrollX": 0,
+            "scrollY": 105,
+            "bounds": {
+              "left": 0,
+              "right": 1440,
+              "top": 105,
+              "bottom": 901
+            }
+          },
+          "scale": {
+            "x": 1,
+            "y": 1
+          },
+          "layout": {
+            "viewportReady": true,
+            "firstNode": {
+              "glyph": 0,
+              "divide": 0,
+              "line": 0,
+              "column": 0,
+              "section": 0,
+              "page": 0,
+              "pageType": 0,
+              "segmentPage": -1,
+              "isBack": true,
+              "path": [
+                "pages",
+                0
+              ]
+            },
+            "progress": null
+          },
+          "commands": [
+            {
+              "at": 67822.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67833.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67861.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67873.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67902.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67914.10000000003,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67944.79999999999,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67956.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67985.40000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 67997.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68026.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68038.40000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68069.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 68080.70000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 72054.90000000002,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+              "zoomRatio": 1.14
+            },
+            {
+              "at": 72056.20000000001,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 72057,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 72135.90000000002,
+              "id": "doc.operation.set-zoom-ratio",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca",
+              "zoomRatio": 1
+            },
+            {
+              "at": 72136.5,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            },
+            {
+              "at": 72136.90000000002,
+              "id": "doc.operation.set-selections",
+              "unitId": "61140817-30b7-4199-b339-2d75ce16fdca"
+            }
+          ],
+          "editing": false,
+          "bounds": {
+            "left": 330.29700724283856,
+            "right": 330.29700724283856,
+            "top": 839.4666666666664,
+            "bottom": 862.8666666666664
+          },
+          "scroll": 105,
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\r\n"
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "bufferUsageCount": 73
+    }
+  ],
+  "proofs": [
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 23935459,
+      "sha256": "b69fec4867d1784eb949a3a5bd93ab8325c1b93871b334a779a6b1ccb23c249e"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js",
+      "bytes": 2630,
+      "sha256": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map",
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-application-DPLxUtGb.js",
+      "bytes": 266306,
+      "sha256": "1cdc49ac34968b878ed2c85dc1df743ce9c3de53b9edc5e2613b4d5c22406ee5"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-application-DPLxUtGb.js.map",
+      "bytes": 901126,
+      "sha256": "87dc5edf3b7b1998365df08df0c3e14af11bd477085de5c41587830657291c4b"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-download-TzfxHqpV.js",
+      "bytes": 3379,
+      "sha256": "53681751161b117b49984d4a3d6767166d4495ed380616c4143aeac2b842edcc"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-download-TzfxHqpV.js.map",
+      "bytes": 11959,
+      "sha256": "5e259db05feb8d96f3b8ba9ddca4a9f6ba855bf18aa0aadd99e1d15cb3fd316b"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-useDiagnostics-B9casXj5.js",
+      "bytes": 13163,
+      "sha256": "8b757580ef0aeaa96ae9920a8b03df5a87f619b03b2baa42b0439ea1ff97c36c"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-useDiagnostics-B9casXj5.js.map",
+      "bytes": 47294,
+      "sha256": "f56dd56ad26578009f53860c051f8abdc0302d2f38a92866659d6e6949f77fc7"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-portable-C-R3TxbO.js",
+      "bytes": 633002,
+      "sha256": "a12d25901ce9e2b0d5df2805808e7cb58b0ce8409c19d7bebf036dd0fc6bf99c"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-portable-C-R3TxbO.js.map",
+      "bytes": 206684,
+      "sha256": "7d0314b7e070dc6ebe2e34eb50d482e55175ec281dd297cd99d3e64cd69603ea"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-nativeSyncPermissions-CmnRMl9r.js",
+      "bytes": 3805503,
+      "sha256": "8623b2fa519ab21957e0a58a07d900e82fec1e937871b7275fc087167211d13c"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-nativeSyncPermissions-CmnRMl9r.js.map",
+      "bytes": 12091335,
+      "sha256": "bbabbc5ba5e5fcaaedb677a0ed95bc59a87757bb80bea5f227935b4cd389c07a"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js",
+      "bytes": 15364,
+      "sha256": "af7a9f3548d2297b47f29c73dac5d70fc7d7653e8480ca137ea828b7628a59da"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-univer-renderer-Cqyj3Y79.js",
+      "bytes": 5916007,
+      "sha256": "9d7e0ecfd029bf41605ce931cda85c1747eec94ed1ddd3cc51feab4ff202506f"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-univer-renderer-Cqyj3Y79.js.map",
+      "bytes": 13418035,
+      "sha256": "67a8b0011690f55e9153b7213c686f210aa0c559be49936e794b9b0bb297e09f"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-docs-ui.js",
+      "bytes": 1447161,
+      "sha256": "82ff8f5bb6a16cb52a0d7b10de81cebf5a1e004bb4c7fd629ddfc993d55913cf"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-documentReady-C8PJ1AWy.js",
+      "bytes": 178236,
+      "sha256": "2c5bf157878efda55a058991168edd6d1e5a9b0e575844056a26f2a5ced359cb"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-documentReady-C8PJ1AWy.js.map",
+      "bytes": 648596,
+      "sha256": "7de944711597097388514325ece7b51bed6229c71ead353020d9d27ff258df16"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-DocEditor-DW6gOGY5.js",
+      "bytes": 25488,
+      "sha256": "2722368c60e2ed5f605e4b19930946244887284cfa898eb06a32da65ba0a6c18"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-DocEditor-DW6gOGY5.js.map",
+      "bytes": 105141,
+      "sha256": "a56c8f39a5b775db0adc5ef2c2a302febdad00964f11262e887f380082a87fe3"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-guestPendingBuffer-Bmh2jA94.js",
+      "bytes": 118539,
+      "sha256": "01a9132650267dd20795fc48f2ad08ad9234a2d1cd0403203b8d44a6606f7293"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-guestPendingBuffer-Bmh2jA94.js.map",
+      "bytes": 501517,
+      "sha256": "68f2e71f61dc968d2c0af4a78b6e2f923a30db091cf50e4e43ad56a830403ccc"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-model-ljnzhaIx.js",
+      "bytes": 113797,
+      "sha256": "b6e9ef38f9002e119e9076bb66640067cfd2106742bb01eea151ca5f232885e4"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map",
+      "bytes": 46566,
+      "sha256": "07cbb1a8bfd3d4acce73dc7f152c708bb0f617aba23859d2624e3bff2085f20f"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-model-ljnzhaIx.js.map",
+      "bytes": 451475,
+      "sha256": "4b6f44b0b5e64c1f998d62324ef64c363fae89b04a66af9846e89836fbac618b"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-es-QsSEw2iP.js",
+      "bytes": 1166054,
+      "sha256": "eca07f3346de0702bc4261237dcf8e97b3e19c40a8463a8c55f547c12f293629"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-es-QsSEw2iP.js.map",
+      "bytes": 4025072,
+      "sha256": "b9c1d3f391514965725113c4652068bd1aaf6b91d0883d512256ae144c5fe99e"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js",
+      "bytes": 8292,
+      "sha256": "0a9b1f8d524aec5186d46e91b5e6c1d9bb2a062f0e9e09e2ed47a6de4fe0715e"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map",
+      "bytes": 19181,
+      "sha256": "bc3ffdc7d9972e80a79b5345c82132d09e460a1d9962725592fab22faeec1483"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-2a_vsjPx.js",
+      "bytes": 3722,
+      "sha256": "1ee70a0c84fa177dfd76d41281d65e71d89b5c7e4bfac7692614a0970401827e"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-2a_vsjPx.js.map",
+      "bytes": 7918,
+      "sha256": "ec6745e653c80bda8705a9db07b002c9af88cb20dd486a8e58fbab83e6780692"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-CUsnFDt0.js",
+      "bytes": 222152,
+      "sha256": "3267ebe92199e056723fc573b0049c56d7ee4bed6454b230fdfd7d0b0f0a55bc"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-CUsnFDt0.js.map",
+      "bytes": 1061580,
+      "sha256": "c02a4c8361db4cb7271f702f0a74778b4df69e3e4848f268b6ddafa6e5b24d95"
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz",
+      "bytes": 52013367,
+      "sha256": "88e5cc4e56c6602fc8ed928e39ff3afc43ef0c6c992af1f54177c395ea4fdcb0",
+      "raw": {
+        "bytes": 665463063,
+        "sha256": "0495bb0cab91143bd47a2986c9f5cda7e697589214c6cb3f032527530c15739d"
+      }
+    },
+    {
+      "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "bytes": 6460,
+      "sha256": "a1b10d8c16059a4e780bcc46ae8ecaf9663885640697836760de425fd1ccb29b"
+    },
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1354238,
+      "sha256": "5bc76eb18641ae7c6511faa2c9810f87f08b553014b19048c24df51a44c6e16d"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 18239080,
+      "sha256": "0047224a788bea4578b0b202127effac5f788b4b0f0b96e1426536f1b2a99fd8"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js",
+      "bytes": 2630,
+      "sha256": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map",
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-documentAccess-BpTD8alm.js",
+      "bytes": 3543,
+      "sha256": "e82196b4dadcbcec0a88ffe775e55898c57862e1ee3585df7067c9705b3b2035"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-documentAccess-BpTD8alm.js.map",
+      "bytes": 12434,
+      "sha256": "1c0832139b3566d9de4d9856f488b53049ebfef98112115f69448f8a4d25904c"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-application-D2glhAcP.js",
+      "bytes": 341507,
+      "sha256": "a2e2cb400c9c49e09d1618c2e7f22fd66f7b7606286170fe5aa97df144f523d9"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-application-D2glhAcP.js.map",
+      "bytes": 1132137,
+      "sha256": "7a5fca648c59cf2ff5b06b568f74e10bd1c70e01d0e2a57655ed95e2112d51dc"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-download-BPGf4w79.js",
+      "bytes": 3481,
+      "sha256": "570752f32765f636f82c347910c6bde324c51d8b707e5e958e4bb45f6f8b66f5"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-download-BPGf4w79.js.map",
+      "bytes": 12275,
+      "sha256": "67db225ce30b7689379d2e8710d821755cdab2de48274508ebaf886d0a34cebe"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-useDiagnostics-DuPOOcXt.js",
+      "bytes": 13208,
+      "sha256": "2cf868e1c96b1950048c992c0d64b61e3565d7a53a0c9d673e0036558601c776"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-useDiagnostics-DuPOOcXt.js.map",
+      "bytes": 47338,
+      "sha256": "81a379920b78fad5c612120d050c8abd014655d568a7824f5a626e83a0e4f3e6"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-CopyFile-qR382OFY.js",
+      "bytes": 637505,
+      "sha256": "ad8dd97fcb8b38fae1ccf7673425ad1e45252eb0762ba1ec0bf580a63745073a"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-CopyFile-qR382OFY.js.map",
+      "bytes": 222275,
+      "sha256": "985d91134450f7bef519aa87f8fac4aa38c0332e4915308d6d2ad0225ed600a8"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js",
+      "bytes": 15370,
+      "sha256": "9cefb2d9d82e0428400f948cc280e2a316b2f8ffe4f126891c5295134f9d9d57"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-nativeSyncPermissions-SuF-rts9.js",
+      "bytes": 3806095,
+      "sha256": "6a3e6c1c1a2a830cbec9c12de055139614aa63514b6dd3e1ff21e83c4ff575be"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-nativeSyncPermissions-SuF-rts9.js.map",
+      "bytes": 12092734,
+      "sha256": "cadd336053fc190a28740dadc77100028a788371a52389be1808b6912f8f6fa9"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-univer-renderer-Cqyj3Y79.js",
+      "bytes": 5916007,
+      "sha256": "9d7e0ecfd029bf41605ce931cda85c1747eec94ed1ddd3cc51feab4ff202506f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-univer-renderer-Cqyj3Y79.js.map",
+      "bytes": 13418035,
+      "sha256": "67a8b0011690f55e9153b7213c686f210aa0c559be49936e794b9b0bb297e09f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-docs-ui.js",
+      "bytes": 1447887,
+      "sha256": "635dced08421d4f9710af399cd84224678d1fbd3cb11ac7bd37510d9d99d40bc"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-documentReady-BTwXpX3d.js",
+      "bytes": 178333,
+      "sha256": "d6a385cc2889271186413fabd6f53ab6448ecfe3c3fe3700406785575c3eab44"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-documentReady-BTwXpX3d.js.map",
+      "bytes": 649015,
+      "sha256": "853cdb447a3f5998d9108427ff01fea6633de08dcb6bcfe15c04d8ea9ab70c73"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-DocEditor-DqfcJsZo.js",
+      "bytes": 26083,
+      "sha256": "0cb9636c7f7c8c065bbbe5174dbb96554b4a8be7e1ca652fd33e64775fced851"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-DocEditor-DqfcJsZo.js.map",
+      "bytes": 108756,
+      "sha256": "3ff72b9fef4813be5c61b3b3634dac31d0a245c25d4ab18a3ba5280b006cce6f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-nativeCopy-DPYNV4NP.js",
+      "bytes": 124524,
+      "sha256": "45ac6b29c12113c4e3b5155e168b849e749fdcf21403c49c092cd2e80f8c9d6f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map",
+      "bytes": 46566,
+      "sha256": "07cbb1a8bfd3d4acce73dc7f152c708bb0f617aba23859d2624e3bff2085f20f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-nativeCopy-DPYNV4NP.js.map",
+      "bytes": 526289,
+      "sha256": "e9428a89ee1a969a5ab7c32e24d9c88fb9c8b1e7be5d19bdefc02a3b584ad2cc"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-model-C-KJgbHu.js",
+      "bytes": 119357,
+      "sha256": "553c4ef1e01a609e8b7758ad57f63982fde186e7e86994bb22380b064dcbeec9"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-model-C-KJgbHu.js.map",
+      "bytes": 471069,
+      "sha256": "5c8ea64ce878e6b0feb89370d21cc8506d6504807bba538044e7611c793e927b"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/33-es-QsSEw2iP.js",
+      "bytes": 1166054,
+      "sha256": "eca07f3346de0702bc4261237dcf8e97b3e19c40a8463a8c55f547c12f293629"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js",
+      "bytes": 8292,
+      "sha256": "0a9b1f8d524aec5186d46e91b5e6c1d9bb2a062f0e9e09e2ed47a6de4fe0715e"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map",
+      "bytes": 19181,
+      "sha256": "bc3ffdc7d9972e80a79b5345c82132d09e460a1d9962725592fab22faeec1483"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/34-es-QsSEw2iP.js.map",
+      "bytes": 4025072,
+      "sha256": "b9c1d3f391514965725113c4652068bd1aaf6b91d0883d512256ae144c5fe99e"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-CAHwd6Ow.js",
+      "bytes": 3752,
+      "sha256": "bd6ea76a28330991c36e267ef20465bf5d4acec541de8d12df86538929ae143f"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-CAHwd6Ow.js.map",
+      "bytes": 7918,
+      "sha256": "459812f5dfffa972949f9c8d5b19762befcc9991384ed42cfcdd59180837da66"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-BtIrzXdr.js",
+      "bytes": 214315,
+      "sha256": "487dad52f87342f5bcd543dbdd070226af9019e1aa296bd0fb075adcc56ca6f2"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-BtIrzXdr.js.map",
+      "bytes": 1031396,
+      "sha256": "5a249df0eca1e44d593e7a7c6794ca06b58bfdbdfcc97925e961ca515a57ce43"
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz",
+      "bytes": 50153480,
+      "sha256": "d6cabd0c5c7e34e497511f14583668d5c5dce7c4a196a844290ae584ebc243b4",
+      "raw": {
+        "bytes": 671730542,
+        "sha256": "96523455d30926706e6fb02997c393e83bc2f90a433a9f38ac1da9b324040ffb"
+      }
+    },
+    {
+      "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "bytes": 6443,
+      "sha256": "89de4163643247a7134544845d579230a42569e0ed7c045b25f53a31bdc172d3"
+    },
+    {
+      "file": "test-results/spn113-comparison-desktop.json",
+      "bytes": 968487,
+      "sha256": "e49cb4bd8594e75086eeb3a65560578fe483b2603b20015fa5fec7c2d1a49100"
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1359388,
+      "sha256": "18f5e908631e2c32b72ac949b3fea689fc0ccce1f516b56cdb50f38c14844452"
+    }
+  ]
+}

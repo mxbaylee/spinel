@@ -1,0 +1,278 @@
+{
+  "root": 20652,
+  "started": 1793837594279,
+  "elapsedMs": 5038,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 94208,
+  "peakKiB": 349184,
+  "live": [
+    {
+      "pid": 20652,
+      "parent": 20615,
+      "group": 20652,
+      "rssKiB": 92640,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn143-hosted/callback-desktop-audit-a-watchdog.json node /tmp/spn143-hosted/audit-desktop-a.ts"
+    },
+    {
+      "pid": 21364,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 20652,
+      "parent": 20615,
+      "group": 20652,
+      "rssKiB": 92640,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn143-hosted/callback-desktop-audit-a-watchdog.json node /tmp/spn143-hosted/audit-desktop-a.ts"
+    },
+    {
+      "pid": 20671,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20697,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 252480,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "node /tmp/spn143-hosted/audit-desktop-a.ts"
+    },
+    {
+      "pid": 20705,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20726,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 0,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 20732,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:14 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20775,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1648,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20780,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 608,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 20842,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 2496,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "unzip -p /tmp/spn143-hosted/callback-desktop.zip baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-univer-renderer-Cqyj3Y79.js.map"
+    },
+    {
+      "pid": 20848,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20950,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 2528,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "unzip -p /tmp/spn143-hosted/callback-desktop.zip baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 20956,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20969,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:15 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20982,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 20995,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21008,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21021,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21034,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1648,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21039,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 1808,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 21131,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 2512,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "unzip -p /tmp/spn143-hosted/callback-desktop.zip test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-nativeSyncPermissions-SuF-rts9.js.map"
+    },
+    {
+      "pid": 21137,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21195,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1648,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21200,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 640,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 21263,
+      "parent": 20697,
+      "group": 20652,
+      "rssKiB": 2512,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "unzip -p /tmp/spn143-hosted/callback-desktop.zip test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz"
+    },
+    {
+      "pid": 21269,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21282,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21295,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21308,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21321,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21336,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1584,
+      "started": "Wed Nov  4 16:13:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21364,
+      "parent": 20652,
+      "group": 20652,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:13:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

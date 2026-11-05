@@ -1,0 +1,1138 @@
+{
+  "members": 18,
+  "metrics": 8,
+  "reports": [
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T00:03:07.936Z",
+        "duration": 409357.398,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop sustained native typing plain-1",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 101249,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-2",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 99119,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-3",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 99371,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing profile",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 102004,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T00:10:00.097Z",
+        "duration": 341055.988,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "desktop sustained native typing plain-1",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 69117,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-2",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 63325,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing plain-3",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 62867,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop sustained native typing profile",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 65370,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop resumes native typing after a quiet pause",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 64259,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop pending composition crosses the group limit without partial history",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 6760,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "desktop revocation refuses pending guest input and a late composition event",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 5584,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "budgets": [
+    {
+      "sample": "plain-1",
+      "capacity": {
+        "count": 65,
+        "p50": 2.400000000023283,
+        "p95": 6.2000000000116415,
+        "max": 7.7999999999883585,
+        "sum": 190.29999999975553
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.6999999999534339,
+        "p95": 0.6999999999534339,
+        "max": 0.6999999999534339,
+        "sum": 0.6999999999534339
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 20.400000000023283,
+        "p95": 30.300000000046566,
+        "max": 54.300000000046566,
+        "sum": 43858.300000000745
+      },
+      "tasks": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 20.400000000023283,
+          "p95": 30.300000000046566,
+          "max": 54.300000000046566,
+          "sum": 43858.300000000745
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 23.70000000001164,
+          "p95": 35.59999999997672,
+          "max": 65.19999999995343,
+          "sum": 51075.600000000035
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "sum": 0
+        },
+        "totalBlockingMs": 0,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.400000000023283,
+          "p95": 6.2000000000116415,
+          "max": 7.7999999999883585,
+          "sum": 190.29999999975553
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 0.6999999999534339,
+          "p95": 0.6999999999534339,
+          "max": 0.6999999999534339,
+          "sum": 0.6999999999534339
+        },
+        "pairedFlushMaximumMs": 7.7999999999883585,
+        "postFinalKeyDrainUpperBoundMs": 408.5,
+        "firstVerifiedBrowserLocalDrainMs": 301.5999999999767,
+        "lateReadMinusLocalWitnessMs": 106.90000000002328,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      }
+    },
+    {
+      "sample": "plain-2",
+      "capacity": {
+        "count": 65,
+        "p50": 2.099999999976717,
+        "p95": 6.299999999930151,
+        "max": 9.199999999953434,
+        "sum": 190.19999999995343
+      },
+      "idle": {
+        "count": 1,
+        "p50": 2.400000000023283,
+        "p95": 2.400000000023283,
+        "max": 2.400000000023283,
+        "sum": 2.400000000023283
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 20.800000000046566,
+        "p95": 29.599999999976717,
+        "max": 57.5,
+        "sum": 43083.69999999949
+      },
+      "tasks": {
+        "count": 2,
+        "p50": 51,
+        "p95": 51,
+        "max": 51,
+        "sum": 102
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 20.800000000046566,
+          "p95": 29.599999999976717,
+          "max": 57.5,
+          "sum": 43083.69999999949
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 24,
+          "p95": 34.5,
+          "max": 77,
+          "sum": 49949
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 2,
+          "p50": 51,
+          "p95": 51,
+          "max": 51,
+          "sum": 102
+        },
+        "totalBlockingMs": 2,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.099999999976717,
+          "p95": 6.299999999930151,
+          "max": 9.199999999953434,
+          "sum": 190.19999999995343
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2.400000000023283,
+          "p95": 2.400000000023283,
+          "max": 2.400000000023283,
+          "sum": 2.400000000023283
+        },
+        "pairedFlushMaximumMs": 9.199999999953434,
+        "postFinalKeyDrainUpperBoundMs": 439.29999999993015,
+        "firstVerifiedBrowserLocalDrainMs": 303.19999999995343,
+        "lateReadMinusLocalWitnessMs": 136.09999999997672,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      }
+    },
+    {
+      "sample": "plain-3",
+      "capacity": {
+        "count": 65,
+        "p50": 2,
+        "p95": 6.800000000046566,
+        "max": 9.099999999976717,
+        "sum": 186.40000000037253
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.40000000002328306,
+        "p95": 0.40000000002328306,
+        "max": 0.40000000002328306,
+        "sum": 0.40000000002328306
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 20.399999999906868,
+        "p95": 29.699999999953434,
+        "max": 57.09999999997672,
+        "sum": 42403.500000000815
+      },
+      "tasks": {
+        "count": 2,
+        "p50": 51,
+        "p95": 52,
+        "max": 52,
+        "sum": 103
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 20.399999999906868,
+          "p95": 29.699999999953434,
+          "max": 57.09999999997672,
+          "sum": 42403.500000000815
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 23.20000000006985,
+          "p95": 34.5,
+          "max": 66,
+          "sum": 48813.60000000009
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 2,
+          "p50": 51,
+          "p95": 52,
+          "max": 52,
+          "sum": 103
+        },
+        "totalBlockingMs": 3,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2,
+          "p95": 6.800000000046566,
+          "max": 9.099999999976717,
+          "sum": 186.40000000037253
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 0.40000000002328306,
+          "p95": 0.40000000002328306,
+          "max": 0.40000000002328306,
+          "sum": 0.40000000002328306
+        },
+        "pairedFlushMaximumMs": 9.099999999976717,
+        "postFinalKeyDrainUpperBoundMs": 410,
+        "firstVerifiedBrowserLocalDrainMs": 301.5,
+        "lateReadMinusLocalWitnessMs": 108.5,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      }
+    },
+    {
+      "sample": "profile",
+      "capacity": {
+        "count": 65,
+        "p50": 2.3999999999068677,
+        "p95": 6.800000000046566,
+        "max": 25.70000000006985,
+        "sum": 214.3000000002794
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.6999999999534339,
+        "p95": 0.6999999999534339,
+        "max": 0.6999999999534339,
+        "sum": 0.6999999999534339
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 20.900000000023283,
+        "p95": 30.400000000023283,
+        "max": 63.09999999997672,
+        "sum": 44129.599999997416
+      },
+      "tasks": {
+        "count": 1,
+        "p50": 51,
+        "p95": 51,
+        "max": 51,
+        "sum": 51
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 20.900000000023283,
+          "p95": 30.400000000023283,
+          "max": 63.09999999997672,
+          "sum": 44129.599999997416
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 24.5,
+          "p95": 35.5,
+          "max": 86.90000000002328,
+          "sum": 51615.5
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1,
+          "p50": 51,
+          "p95": 51,
+          "max": 51,
+          "sum": 51
+        },
+        "totalBlockingMs": 1,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 2.3999999999068677,
+          "p95": 6.800000000046566,
+          "max": 25.70000000006985,
+          "sum": 214.3000000002794
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 0.6999999999534339,
+          "p95": 0.6999999999534339,
+          "max": 0.6999999999534339,
+          "sum": 0.6999999999534339
+        },
+        "pairedFlushMaximumMs": 25.70000000006985,
+        "postFinalKeyDrainUpperBoundMs": 474.79999999993015,
+        "firstVerifiedBrowserLocalDrainMs": 334.4000000000233,
+        "lateReadMinusLocalWitnessMs": 140.39999999990687,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      }
+    }
+  ],
+  "boundaries": [
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "data": {
+        "schema": 5,
+        "scenario": "resume-native-typing-after-quiet-pause",
+        "preset": "desktop",
+        "attempt": 0,
+        "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+        "browser": "156.0.8078.4",
+        "playwright": "1.64.1",
+        "runtime": "v26.12.1",
+        "nodeTimeOrigin": 1793837403013.887,
+        "system": {
+          "platform": "linux",
+          "architecture": "x64",
+          "release": "7.0.0-1017-azure",
+          "cpu": "AMD EPYC 9V74 80-Core Processor",
+          "cpus": 4,
+          "totalmem": 16760348672
+        },
+        "runner": {
+          "name": "GitHub Actions 1000041653",
+          "run": "41937955289",
+          "attempt": "1"
+        },
+        "instrumentation": {
+          "cpuThrottle": 1,
+          "profiler": false,
+          "playwrightTrace": false,
+          "physicalDevice": false
+        },
+        "fixture": {
+          "originalInputCount": 2086,
+          "continuation": "x",
+          "totalInputCount": 2087,
+          "originalTextSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+        },
+        "budgets": {
+          "requestedQuietPauseMs": 350,
+          "continuationRequestReturnMs": 1000,
+          "continuationKeyToFrameMs": 200,
+          "continuationKeyToNativeReadMs": 200,
+          "finalOriginalKeyToContinuationFrameMs": 1550,
+          "finalOriginalKeyToContinuationNativeReadMs": 1550
+        },
+        "harnessSha256": {
+          "e2e/doc-responsiveness.ts": "6440df100d657ea5d808e7f558e05d3dce315aeca1037807ec4e924a0cbea3fd",
+          "e2e/doc-responsiveness.spec.ts": "7323adcd72cde31ffab6a41d0095e8e0cbd5b84c84972b3576b24ed8ce067ac5",
+          "e2e/doc-responsiveness-fixture.ts": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+          "e2e/doc-responsiveness-boundaries.ts": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+          "web/docResponsivenessEvidence.ts": "adc715b697a09b97333d6943b11431b511a3b94e41b8e2060068352b6c8d4e3c",
+          "src/ui/docIdleEpisode.ts": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+          "src/ui/nativeDocFlush.ts": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+          "playwright.config.ts": "8e49913b74aad03e810d7c993715688800507fa0cd28452477797bf4d293ea84",
+          "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+        },
+        "browserEnvironment": {
+          "configured": {
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "isMobile": false,
+            "hasTouch": false,
+            "deviceScaleFactor": 1
+          },
+          "observed": {
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "screen": {
+              "width": 1920,
+              "height": 1080
+            },
+            "devicePixelRatio": 1,
+            "coarsePointer": false,
+            "touchEvent": false,
+            "maxTouchPoints": 0,
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+            "visibility": "visible",
+            "hasFocus": true
+          }
+        },
+        "originalTypingNodeBracket": {
+          "requestAt": 263701.966528,
+          "returnedAt": 314459.422375
+        },
+        "quietPauseNodeBracket": {
+          "startedAt": 314459.438279,
+          "returnedAt": 314809.151471,
+          "requestedMs": 350
+        },
+        "continuationNodeBracket": {
+          "requestAt": 314809.151471,
+          "returnedAt": 314852.907417
+        },
+        "input": {
+          "timeOrigin": 1793837664535.8,
+          "startedAt": 2178.4000000000233,
+          "endedAt": 53384.59999999998,
+          "keydownAt": {
+            "length": 2087,
+            "first": [
+              2180.8000000000466,
+              2210.9000000000233
+            ]
+          },
+          "keyToFrameMs": {
+            "length": 2087,
+            "first": [
+              23.400000000023283,
+              14.900000000023283
+            ]
+          },
+          "longTasks": {
+            "length": 2,
+            "first": [
+              {
+                "startedAt": 32978,
+                "durationMs": 56
+              },
+              {
+                "startedAt": 43881.80000000005,
+                "durationMs": 58
+              }
+            ]
+          }
+        },
+        "continuationFrame": {
+          "installedAt": 2179.70000000007,
+          "unitId": "67ec66d1-bf57-45e0-acbf-563c2398d5d4",
+          "expectedKeys": 2087,
+          "keyCount": 2087,
+          "result": {
+            "keyAt": 53293.80000000005,
+            "frameAt": 53325.70000000007,
+            "readStartedAt": 53325.70000000007,
+            "readReturnedAt": 53325.70000000007,
+            "responses": 1,
+            "snapshot": {
+              "unitId": "67ec66d1-bf57-45e0-acbf-563c2398d5d4",
+              "mobile": false,
+              "observedAt": 53325.70000000007,
+              "pending": [
+                "history",
+                "collaboration"
+              ],
+              "highWater": [
+                "history",
+                "collaboration"
+              ],
+              "flushes": {
+                "length": 65
+              },
+              "history": [
+                "undos",
+                "redos"
+              ],
+              "drainWitness": [],
+              "selection": [
+                "start",
+                "end",
+                "segmentId"
+              ],
+              "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.x\r\n"
+            }
+          }
+        },
+        "summary": {
+          "finalOriginalKeyAt": 52905.70000000007,
+          "continuationKeyAt": 53293.80000000005,
+          "continuationFrameAt": 53325.70000000007,
+          "browserQuietGapMs": 388.0999999999767,
+          "continuationKeyToFrameMs": 31.900000000023283,
+          "continuationKeyToNativeReadMs": 31.900000000023283,
+          "continuationRequestReturnMs": 43.75594599999022,
+          "finalOriginalKeyToContinuationFrameMs": 420,
+          "finalOriginalKeyToContinuationNativeReadMs": 420
+        },
+        "native": {
+          "unitId": "67ec66d1-bf57-45e0-acbf-563c2398d5d4",
+          "mobile": false,
+          "observedAt": 62735.80000000005,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 65,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 2714.3000000000466,
+                "durationMs": 5.299999999930151,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "capacity",
+                "startedAt": 3225.3000000000466,
+                "durationMs": 3.5,
+                "history": 32,
+                "collaboration": 32
+              }
+            ]
+          },
+          "history": {
+            "undos": 67,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 2087,
+            "end": 2087,
+            "segmentId": ""
+          },
+          "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the origina…(2089)"
+        },
+        "peer": {
+          "unitId": "67ec66d1-bf57-45e0-acbf-563c2398d5d4",
+          "observedAt": 62757,
+          "textLength": 2089,
+          "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+          "selection": {
+            "start": 0,
+            "end": 0,
+            "segmentId": ""
+          }
+        },
+        "saved": {
+          "textLength": 2089,
+          "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d"
+        },
+        "reloadObservers": {
+          "length": 2,
+          "first": [
+            {
+              "surface": "sender",
+              "installedAt": 45.40000000002328,
+              "sourceInstalledAt": 45.40000000002328,
+              "sourceTimeOrigin": 1793837664535.8,
+              "dropped": 0,
+              "malformed": 0
+            },
+            {
+              "surface": "peer",
+              "installedAt": 44.79995117185172,
+              "sourceInstalledAt": 44.09999999997672,
+              "sourceTimeOrigin": 1793837664536.5,
+              "dropped": 0,
+              "malformed": 0
+            }
+          ]
+        },
+        "reloads": {
+          "length": 0,
+          "first": []
+        },
+        "completed": true,
+        "errors": {
+          "length": 0,
+          "first": []
+        }
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "desktop",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "pendingBeforeRevocation": {
+          "unitId": "2528d99d-4f90-4383-b9ab-6c3eb996c064",
+          "mobile": false,
+          "observedAt": 3294.4000000000233,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 1,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 2547.4000000000233,
+                "durationMs": 7.5,
+                "history": 32,
+                "collaboration": 32
+              }
+            ]
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 65,
+            "end": 65,
+            "segmentId": ""
+          }
+        },
+        "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+        "heldWrites": 1,
+        "forwardedAfterRevocation": {
+          "length": 1,
+          "first": [
+            false
+          ]
+        },
+        "compositionEvents": {
+          "events": {
+            "length": 4,
+            "first": [
+              {
+                "order": 0,
+                "phase": "guest-provisional",
+                "type": "compositionstart",
+                "data": "",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 3235.6999999999534
+              },
+              {
+                "order": 1,
+                "phase": "guest-provisional",
+                "type": "compositionupdate",
+                "data": "保留",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 3236.6999999999534
+              }
+            ]
+          },
+          "dropped": 0
+        },
+        "errors": {
+          "length": 0,
+          "first": []
+        }
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "desktop",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "beforeCancellation": {
+          "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+          "mobile": false,
+          "observedAt": 3832.3000000000466,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 1,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3209.5,
+                "durationMs": 5.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              }
+            ]
+          },
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 63,
+            "end": 63,
+            "segmentId": ""
+          }
+        },
+        "intermediate": {
+          "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+          "mobile": false,
+          "observedAt": 5258.400000000023,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3209.5,
+                "durationMs": 5.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4113.5,
+                "durationMs": 4.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 305.9000000000233
+              }
+            ]
+          },
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 66,
+            "end": 66,
+            "segmentId": ""
+          }
+        },
+        "composingEnter": {
+          "before": {
+            "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+            "mobile": false,
+            "observedAt": 5281.800000000047,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": {
+              "length": 2
+            },
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+          },
+          "after": {
+            "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+            "mobile": false,
+            "observedAt": 5332.699999999953,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": {
+              "length": 2
+            },
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp仮69\r\n"
+          }
+        },
+        "beforeFinalComposition": {
+          "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+          "mobile": false,
+          "observedAt": 6026.300000000047,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3209.5,
+                "durationMs": 5.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4113.5,
+                "durationMs": 4.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 305.9000000000233
+              }
+            ]
+          },
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 94,
+            "end": 94,
+            "segmentId": ""
+          }
+        },
+        "afterFinalComposition": {
+          "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+          "mobile": false,
+          "observedAt": 6317.400000000023,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3209.5,
+                "durationMs": 5.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4113.5,
+                "durationMs": 4.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 305.9000000000233
+              }
+            ]
+          },
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "final": {
+          "unitId": "0bbfcf0b-845f-4632-ab1e-a9f86b441e37",
+          "mobile": false,
+          "observedAt": 6555.699999999953,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": {
+            "length": 2,
+            "first": [
+              {
+                "reason": "capacity",
+                "startedAt": 3209.5,
+                "durationMs": 5.800000000046566,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 4113.5,
+                "durationMs": 4.800000000046566,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 305.9000000000233
+              }
+            ]
+          },
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "correctness": "composing Enter preserves provisional text and history; cancelled provisional te…(168)",
+        "compositionEvents": {
+          "events": {
+            "length": 226,
+            "first": [
+              {
+                "order": 0,
+                "phase": "cancellation-updates",
+                "type": "compositionstart",
+                "data": "",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 3882.0999999999767
+              },
+              {
+                "order": 1,
+                "phase": "cancellation-updates",
+                "type": "compositionupdate",
+                "data": "仮0",
+                "inputType": [],
+                "isComposing": [],
+                "isTrusted": true,
+                "observedAt": 3883.1999999999534
+              }
+            ]
+          },
+          "dropped": 0
+        },
+        "errors": {
+          "length": 0,
+          "first": []
+        }
+      }
+    }
+  ]
+}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":1137,"peakKiB":214608}

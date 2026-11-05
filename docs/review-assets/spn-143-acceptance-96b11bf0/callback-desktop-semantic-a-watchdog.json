@@ -1,0 +1,70 @@
+{
+  "root": 21464,
+  "started": 1793837666307,
+  "elapsedMs": 383,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92256,
+  "peakKiB": 308496,
+  "live": [
+    {
+      "pid": 21464,
+      "parent": 21429,
+      "group": 21464,
+      "rssKiB": 90688,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn143-hosted/callback-desktop-semantic-a-watchdog.json node /tmp/spn143-hosted/audit-desktop-semantic-a.ts"
+    },
+    {
+      "pid": 21528,
+      "parent": 21464,
+      "group": 21464,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 21464,
+      "parent": 21429,
+      "group": 21464,
+      "rssKiB": 90688,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn143-hosted/callback-desktop-semantic-a-watchdog.json node /tmp/spn143-hosted/audit-desktop-semantic-a.ts"
+    },
+    {
+      "pid": 21483,
+      "parent": 21464,
+      "group": 21464,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21509,
+      "parent": 21464,
+      "group": 21464,
+      "rssKiB": 216400,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 21515,
+      "parent": 21464,
+      "group": 21464,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 21528,
+      "parent": 21464,
+      "group": 21464,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 16:14:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

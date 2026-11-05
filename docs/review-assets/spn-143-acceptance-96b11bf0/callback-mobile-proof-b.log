@@ -1,0 +1,185 @@
+{
+  "verified": 77,
+  "artifacts": 70,
+  "comparisonAccepted": true,
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T00:13:01.005Z",
+        "duration": 408417.758,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 401258,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-05T00:19:55.349Z",
+        "duration": 317652.007,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 313378,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "timing": {
+        "behaviorCompleteMs": 290800.933245,
+        "completionWaitMs": 87784.35643599997,
+        "streamStoreMs": 10434.17489200004,
+        "parseMs": 10495.90070899995,
+        "attributionMs": 875.026268000016,
+        "cleanupCompleteMs": 401018.715141,
+        "terminalMs": 401253.351854
+      },
+      "raw": {
+        "bytes": 604063314,
+        "sha256": "3adfe9cc6925f287290e8b603f3b5809cee27be3de21369f77f40f8177cef574"
+      },
+      "stored": {
+        "bytes": 48473130,
+        "sha256": "0a6213252e71a339e8642b611437eb9f26257f92347ce296f0d08f2b6fe8a5e3"
+      },
+      "families": {
+        "cursor": {
+          "pendingHighWater": 8346,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 2,
+            "finalKey": 8342,
+            "disposed": 8,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 8,
+          "installationsAfterDisposal": 0
+        },
+        "zoom-init": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0
+        },
+        "zoom-update": {
+          "pendingHighWater": 2085,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 2084,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0
+        }
+      }
+    },
+    {
+      "role": "candidate",
+      "timing": {
+        "behaviorCompleteMs": 199477.08373299998,
+        "completionWaitMs": 92451.70425399998,
+        "streamStoreMs": 9952.310860999976,
+        "parseMs": 10013.389185999986,
+        "attributionMs": 820.3307860000059,
+        "cleanupCompleteMs": 313214.51531499997,
+        "terminalMs": 313373.425993
+      },
+      "raw": {
+        "bytes": 596012631,
+        "sha256": "c1abfd1133c22a928a3f02397ac2ccba40aa8a3f61fc1ace90a98d897dd83daf"
+      },
+      "stored": {
+        "bytes": 45717642,
+        "sha256": "da0a5d557f0fa66ebae105bb0f9f17cff0735c551af48e71f3457341385a0c26"
+      },
+      "families": {
+        "cursor": {
+          "pendingHighWater": 4,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 2,
+            "finalKey": 2,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0
+        },
+        "zoom-init": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0
+        },
+        "zoom-update": {
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1,
+            "disposed": 0,
+            "end": 0
+          },
+          "pendingAtTraceEnd": 0,
+          "callbacksAfterDisposal": 0,
+          "installationsAfterDisposal": 0
+        }
+      }
+    }
+  ],
+  "elapsedMs": 2138
+}
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":2347,"peakKiB":300976}

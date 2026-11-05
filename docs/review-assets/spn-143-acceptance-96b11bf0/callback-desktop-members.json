@@ -1,0 +1,447 @@
+[
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/app.sqlite",
+    "bytes": 4096,
+    "zipBytes": 71
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/app.sqlite-shm",
+    "bytes": 32768,
+    "zipBytes": 3055
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/app.sqlite-wal",
+    "bytes": 3061192,
+    "zipBytes": 137398
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/diagnostics.sqlite",
+    "bytes": 135168,
+    "zipBytes": 29571
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/diagnostics.sqlite-shm",
+    "bytes": 32768,
+    "zipBytes": 184
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/diagnostics.sqlite-wal",
+    "bytes": 61832,
+    "zipBytes": 11861
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "bytes": 23935459,
+    "zipBytes": 1050236
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js",
+    "bytes": 2630,
+    "zipBytes": 1062
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map",
+    "bytes": 10296,
+    "zipBytes": 3303
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-application-DPLxUtGb.js",
+    "bytes": 266306,
+    "zipBytes": 75834
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-application-DPLxUtGb.js.map",
+    "bytes": 901126,
+    "zipBytes": 226353
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-download-TzfxHqpV.js",
+    "bytes": 3379,
+    "zipBytes": 1637
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-download-TzfxHqpV.js.map",
+    "bytes": 11959,
+    "zipBytes": 4436
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-useDiagnostics-B9casXj5.js",
+    "bytes": 13163,
+    "zipBytes": 4275
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-useDiagnostics-B9casXj5.js.map",
+    "bytes": 47294,
+    "zipBytes": 12140
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-portable-C-R3TxbO.js",
+    "bytes": 633002,
+    "zipBytes": 109551
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-portable-C-R3TxbO.js.map",
+    "bytes": 206684,
+    "zipBytes": 59362
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-nativeSyncPermissions-CmnRMl9r.js",
+    "bytes": 3805503,
+    "zipBytes": 1010273
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-nativeSyncPermissions-CmnRMl9r.js.map",
+    "bytes": 12091335,
+    "zipBytes": 2491900
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js",
+    "bytes": 15364,
+    "zipBytes": 5831
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-univer-renderer-Cqyj3Y79.js",
+    "bytes": 5916007,
+    "zipBytes": 1456169
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-univer-renderer-Cqyj3Y79.js.map",
+    "bytes": 13418035,
+    "zipBytes": 2464052
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-docs-ui.js",
+    "bytes": 1447161,
+    "zipBytes": 277387
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-documentReady-C8PJ1AWy.js",
+    "bytes": 178236,
+    "zipBytes": 47937
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-documentReady-C8PJ1AWy.js.map",
+    "bytes": 648596,
+    "zipBytes": 146181
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-DocEditor-DW6gOGY5.js",
+    "bytes": 25488,
+    "zipBytes": 9407
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-DocEditor-DW6gOGY5.js.map",
+    "bytes": 105141,
+    "zipBytes": 28622
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-guestPendingBuffer-Bmh2jA94.js",
+    "bytes": 118539,
+    "zipBytes": 37595
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-guestPendingBuffer-Bmh2jA94.js.map",
+    "bytes": 501517,
+    "zipBytes": 139549
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-model-ljnzhaIx.js",
+    "bytes": 113797,
+    "zipBytes": 32422
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map",
+    "bytes": 46566,
+    "zipBytes": 14005
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-model-ljnzhaIx.js.map",
+    "bytes": 451475,
+    "zipBytes": 105696
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-es-QsSEw2iP.js",
+    "bytes": 1166054,
+    "zipBytes": 202228
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-es-QsSEw2iP.js.map",
+    "bytes": 4025072,
+    "zipBytes": 644918
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js",
+    "bytes": 8292,
+    "zipBytes": 3037
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map",
+    "bytes": 19181,
+    "zipBytes": 5385
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-2a_vsjPx.js",
+    "bytes": 3722,
+    "zipBytes": 1816
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-2a_vsjPx.js.map",
+    "bytes": 7918,
+    "zipBytes": 3118
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-CUsnFDt0.js",
+    "bytes": 222152,
+    "zipBytes": 68784
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-CUsnFDt0.js.map",
+    "bytes": 1061580,
+    "zipBytes": 234774
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz",
+    "bytes": 52013367,
+    "zipBytes": 51485106
+  },
+  {
+    "file": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+    "bytes": 6460,
+    "zipBytes": 1316
+  },
+  {
+    "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "bytes": 1354238,
+    "zipBytes": 365038
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/app.sqlite",
+    "bytes": 4096,
+    "zipBytes": 71
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/app.sqlite-shm",
+    "bytes": 32768,
+    "zipBytes": 3211
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/app.sqlite-wal",
+    "bytes": 3304272,
+    "zipBytes": 139132
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/diagnostics.sqlite",
+    "bytes": 73728,
+    "zipBytes": 13487
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/diagnostics.sqlite-shm",
+    "bytes": 32768,
+    "zipBytes": 174
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/diagnostics.sqlite-wal",
+    "bytes": 61832,
+    "zipBytes": 9325
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "bytes": 18239080,
+    "zipBytes": 735639
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/0-runtime-BUQS9nEo.js",
+    "bytes": 2630,
+    "zipBytes": 1062
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map",
+    "bytes": 10296,
+    "zipBytes": 3303
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/10-documentAccess-BpTD8alm.js",
+    "bytes": 3543,
+    "zipBytes": 1601
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-documentAccess-BpTD8alm.js.map",
+    "bytes": 12434,
+    "zipBytes": 4426
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/12-application-D2glhAcP.js",
+    "bytes": 341507,
+    "zipBytes": 96172
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-application-D2glhAcP.js.map",
+    "bytes": 1132137,
+    "zipBytes": 283269
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/14-download-BPGf4w79.js",
+    "bytes": 3481,
+    "zipBytes": 1676
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-download-BPGf4w79.js.map",
+    "bytes": 12275,
+    "zipBytes": 4534
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/16-useDiagnostics-DuPOOcXt.js",
+    "bytes": 13208,
+    "zipBytes": 4298
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-useDiagnostics-DuPOOcXt.js.map",
+    "bytes": 47338,
+    "zipBytes": 12155
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/18-CopyFile-qR382OFY.js",
+    "bytes": 637505,
+    "zipBytes": 110878
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-CopyFile-qR382OFY.js.map",
+    "bytes": 222275,
+    "zipBytes": 63398
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/2-service-worker.js",
+    "bytes": 15370,
+    "zipBytes": 5831
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/20-nativeSyncPermissions-SuF-rts9.js",
+    "bytes": 3806095,
+    "zipBytes": 1010386
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-nativeSyncPermissions-SuF-rts9.js.map",
+    "bytes": 12092734,
+    "zipBytes": 2492215
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/22-univer-renderer-Cqyj3Y79.js",
+    "bytes": 5916007,
+    "zipBytes": 1456169
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-univer-renderer-Cqyj3Y79.js.map",
+    "bytes": 13418035,
+    "zipBytes": 2464052
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/24-docs-ui.js",
+    "bytes": 1447887,
+    "zipBytes": 277574
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/25-documentReady-BTwXpX3d.js",
+    "bytes": 178333,
+    "zipBytes": 47969
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-documentReady-BTwXpX3d.js.map",
+    "bytes": 649015,
+    "zipBytes": 146303
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/27-DocEditor-DqfcJsZo.js",
+    "bytes": 26083,
+    "zipBytes": 9607
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-DocEditor-DqfcJsZo.js.map",
+    "bytes": 108756,
+    "zipBytes": 29638
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/29-nativeCopy-DPYNV4NP.js",
+    "bytes": 124524,
+    "zipBytes": 39725
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map",
+    "bytes": 46566,
+    "zipBytes": 14005
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-nativeCopy-DPYNV4NP.js.map",
+    "bytes": 526289,
+    "zipBytes": 146206
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/31-model-C-KJgbHu.js",
+    "bytes": 119357,
+    "zipBytes": 33891
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-model-C-KJgbHu.js.map",
+    "bytes": 471069,
+    "zipBytes": 109978
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/33-es-QsSEw2iP.js",
+    "bytes": 1166054,
+    "zipBytes": 202228
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/4-existingDatabase-D6zEq-NF.js",
+    "bytes": 8292,
+    "zipBytes": 3037
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map",
+    "bytes": 19181,
+    "zipBytes": 5385
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/34-es-QsSEw2iP.js.map",
+    "bytes": 4025072,
+    "zipBytes": 644918
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/6-main-CAHwd6Ow.js",
+    "bytes": 3752,
+    "zipBytes": 1829
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-CAHwd6Ow.js.map",
+    "bytes": 7918,
+    "zipBytes": 3119
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/8-floating-ui.react-dom-BtIrzXdr.js",
+    "bytes": 214315,
+    "zipBytes": 66394
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-BtIrzXdr.js.map",
+    "bytes": 1031396,
+    "zipBytes": 227216
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-trace.json.gz",
+    "bytes": 50153480,
+    "zipBytes": 49632659
+  },
+  {
+    "file": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+    "bytes": 6443,
+    "zipBytes": 1306
+  },
+  {
+    "file": "test-results/spn113-comparison-desktop.json",
+    "bytes": 968487,
+    "zipBytes": 59308
+  },
+  {
+    "file": "playwright-report/doc-callback-lifetimes.json",
+    "bytes": 1359388,
+    "zipBytes": 321019
+  }
+]

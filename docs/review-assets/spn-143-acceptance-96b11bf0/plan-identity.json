@@ -1,0 +1,6 @@
+{
+  "artifact": 13374771825,
+  "zipSha256": "5506151d02ea092345016911ecf191f491ca1ba67f7863ccc3b249775e42975d",
+  "all15Selected": true,
+  "selectionReason": "Immutable range or event labels unavailable; full coverage."
+}

@@ -1,0 +1,4843 @@
+{
+  "ids": {
+    "source": "96b11bf0374540d28e5537d4a9cddb1280403e21",
+    "base": "eb32117f5d09c28cd411063256db6d645335ae8a",
+    "tested": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+    "tree": "9920742df8645f3d963ba5de1b5819efa9d1de7a",
+    "pr": 263,
+    "ci": 41937955289,
+    "storybook": 41937955238,
+    "attempt": 1,
+    "prepushReviews": {
+      "A": 98,
+      "B": 97
+    }
+  },
+  "proof": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 258388,
+      "sha256": "749b1635d2b13f451604c28638f6e9b736c357720274b31c7ef83fc5e7b9dbdf"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 266813,
+      "sha256": "7b2b2590e6c90482f20bb0c76e626fcc243028cad89c29f6f3ac9f5404fb33b4"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 264942,
+      "sha256": "a71f2aa0ad59fa56eba3be4e4108589276549391c1c1e1462953bd5343ae59d3"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 270343,
+      "sha256": "181596fcb1c1a328b1416f838ea966ca269e64a025db96b30166759d4a3fa3b7"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 240,
+      "sha256": "5a9df276f5bec76bb57796a0e104ffd5aa5e715d3ba4e529a64da6d2f59a3615"
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 6267805,
+      "sha256": "2e609f20e3cd9921c2046d94aef49b199dd50417f7036aa22fdbef27767c8839"
+    },
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1381413,
+      "sha256": "14f5f225b5773a8adcfa9b59874002e52313d50bb88b1746c8659e8d35f8a757"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+      "bytes": 241914,
+      "sha256": "6574c46d15d8d66cfa17a3b282908d93b2b097d7920bd228f2c956a6c4d4b14b"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "bytes": 645085,
+      "sha256": "eced2414b714ef8010f09c31497d0235ed2a6452a139a5b407dbf8ae0dd86781"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "bytes": 646351,
+      "sha256": "078ff0f40ab1e1f94d7641c4a50b3b2579303614b80a97607f635f2ea4dfff69"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "bytes": 645961,
+      "sha256": "9ab99f756b588358613403f294c26153d12bbfafd81b603492c08675109282c4"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 646999,
+      "sha256": "baa5cc8bd33c7ca92f256aa4b1c498f8af45486d347faf5baf35e46735bf7e44"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 241,
+      "sha256": "a20ae87a67e1334707dc2066baf3dccf4aac835e22aff165bd78c70121c43c69"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 4595375,
+      "sha256": "ba79eba223afb0210ffd54f16868c346e6188c972898fd9b576ccb96568de654"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 2327,
+      "sha256": "819cee160fd090271ec66cb8ff8914a87e017c4210dd2da1fa55d2a8bfe57de9"
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "bytes": 67488,
+      "sha256": "230f65d1070494fdce0e2a7e17954bbfd32ef6a0863c8cb8b23961af39354223"
+    },
+    {
+      "file": "test-results/spn108-comparison-mobile.json",
+      "bytes": 12740,
+      "sha256": "e6e339054799a4fa505f8236ddaf8699521d8e9a6fd9bb89ded4ed97f14284a1"
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "bytes": 1366304,
+      "sha256": "d8ccf0c7f38047d5a40665760bf1ff6fc4f3291e687e8930456c63d9debabbfb"
+    }
+  ],
+  "metrics": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-1",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 114.89999999999418,
+        "p95": 187.59999999997672,
+        "max": 319.5,
+        "sum": 236684.19999999992
+      },
+      "tasks": {
+        "count": 1757,
+        "p50": 113,
+        "p95": 184,
+        "max": 40429,
+        "sum": 283620
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 114.89999999999418,
+          "p95": 187.59999999997672,
+          "max": 319.5,
+          "sum": 236684.19999999992
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 125,
+          "p95": 198.69999999995343,
+          "max": 433.29999999998836,
+          "sum": 258552.1
+        },
+        "debounceBreakingGaps": 5,
+        "longTaskMs": {
+          "count": 1757,
+          "p50": 113,
+          "p95": 184,
+          "max": 40429,
+          "sum": 283620
+        },
+        "totalBlockingMs": 195770,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 83643.6,
+        "firstVerifiedBrowserLocalDrainMs": 83006.79999999996,
+        "lateReadMinusLocalWitnessMs": 636.8000000000466,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-3",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 119,
+        "p95": 191.5,
+        "max": 321,
+        "sum": 239003.10000000207
+      },
+      "tasks": {
+        "count": 1762,
+        "p50": 114,
+        "p95": 190,
+        "max": 41140,
+        "sum": 287935
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 119,
+          "p95": 191.5,
+          "max": 321,
+          "sum": 239003.10000000207
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 129,
+          "p95": 202.60000000009313,
+          "max": 411,
+          "sum": 260664.69999999995
+        },
+        "debounceBreakingGaps": 10,
+        "longTaskMs": {
+          "count": 1762,
+          "p50": 114,
+          "p95": 190,
+          "max": 41140,
+          "sum": 287935
+        },
+        "totalBlockingMs": 199835,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 86106.6000000001,
+        "firstVerifiedBrowserLocalDrainMs": 85437.30000000005,
+        "lateReadMinusLocalWitnessMs": 669.3000000000466,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "plain-2",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 117,
+        "p95": 189.29999999993015,
+        "max": 307.19999999995343,
+        "sum": 237358.09999999643
+      },
+      "tasks": {
+        "count": 1742,
+        "p50": 117,
+        "p95": 187,
+        "max": 41190,
+        "sum": 284580
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 117,
+          "p95": 189.29999999993015,
+          "max": 307.19999999995343,
+          "sum": 237358.09999999643
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 127.40000000002328,
+          "p95": 202.59999999997672,
+          "max": 333.80000000004657,
+          "sum": 258777.39999999997
+        },
+        "debounceBreakingGaps": 7,
+        "longTaskMs": {
+          "count": 1742,
+          "p50": 117,
+          "p95": 187,
+          "max": 41190,
+          "sum": 284580
+        },
+        "totalBlockingMs": 197480,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 85499.90000000002,
+        "firstVerifiedBrowserLocalDrainMs": 84751.40000000002,
+        "lateReadMinusLocalWitnessMs": 748.5,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "role": "baseline-observation",
+      "sample": "profile",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "capacity": {
+        "count": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "sum": 0
+      },
+      "idle": null,
+      "frame": {
+        "count": 2086,
+        "p50": 120.5,
+        "p95": 198.60000000009313,
+        "max": 320.89999999990687,
+        "sum": 247825.699999996
+      },
+      "tasks": {
+        "count": 1787,
+        "p50": 120,
+        "p95": 195,
+        "max": 42218,
+        "sum": 300950
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 120.5,
+          "p95": 198.60000000009313,
+          "max": 320.89999999990687,
+          "sum": 247825.699999996
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 131.10000000009313,
+          "p95": 211.5,
+          "max": 406.39999999990687,
+          "sum": 270235.09999999986
+        },
+        "debounceBreakingGaps": 21,
+        "longTaskMs": {
+          "count": 1787,
+          "p50": 120,
+          "p95": 195,
+          "max": 42218,
+          "sum": 300950
+        },
+        "totalBlockingMs": 211600,
+        "capacityFlushPairMs": null,
+        "idleFlushPairMs": null,
+        "pairedFlushMaximumMs": null,
+        "postFinalKeyDrainUpperBoundMs": 87601.40000000014,
+        "firstVerifiedBrowserLocalDrainMs": 86904.6000000001,
+        "lateReadMinusLocalWitnessMs": 696.8000000000466,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "compositionCpu": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 1,
+        "reorderedSampleCount": 2,
+        "clock": {
+          "beforeMs": 2360.899999999907,
+          "afterMs": 4254.399999999907,
+          "uncertaintyMs": 1893.5,
+          "profileStartTimeUs": 1180224635,
+          "profileEndTimeUs": 1540211722
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 35946,
+          "sampledCpuMs": 38661.63100000078,
+          "certainContainingTasks": [
+            {
+              "index": 1784,
+              "startedAt": 278896.30000000005,
+              "durationMs": 40324,
+              "sampleCount": 34232
+            }
+          ],
+          "maxContainingTaskMs": 40324,
+          "taskAttribution": "certain-whole-containing-task"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 37696,
+          "sampledCpuMs": 40598.000999999895,
+          "certainContainingTasks": [
+            {
+              "index": 1785,
+              "startedAt": 319222.19999999995,
+              "durationMs": 42218,
+              "sampleCount": 35999
+            }
+          ],
+          "maxContainingTaskMs": 42218,
+          "taskAttribution": "certain-whole-containing-task"
+        }
+      },
+      "profileSha256": "2e609f20e3cd9921c2046d94aef49b199dd50417f7036aa22fdbef27767c8839",
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": null
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+      "capacity": {
+        "count": 65,
+        "p50": 12.600000000093132,
+        "p95": 32.700000000186265,
+        "max": 45.800000000046566,
+        "sum": 1023.7999999993481
+      },
+      "idle": {
+        "count": 1,
+        "p50": 2.6000000000931323,
+        "p95": 2.6000000000931323,
+        "max": 2.6000000000931323,
+        "sum": 2.6000000000931323
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 73.80000000004657,
+        "p95": 111.80000000004657,
+        "max": 217.80000000004657,
+        "sum": 149611.0000000007
+      },
+      "tasks": {
+        "count": 1361,
+        "p50": 76,
+        "p95": 116,
+        "max": 185,
+        "sum": 107870
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 73.80000000004657,
+          "p95": 111.80000000004657,
+          "max": 217.80000000004657,
+          "sum": 149611.0000000007
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 83.9000000001397,
+          "p95": 122.19999999995343,
+          "max": 226.4000000001397,
+          "sum": 169893.40000000014
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1361,
+          "p50": 76,
+          "p95": 116,
+          "max": 185,
+          "sum": 107870
+        },
+        "totalBlockingMs": 39820,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.600000000093132,
+          "p95": 32.700000000186265,
+          "max": 45.800000000046566,
+          "sum": 1023.7999999993481
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2.6000000000931323,
+          "p95": 2.6000000000931323,
+          "max": 2.6000000000931323,
+          "sum": 2.6000000000931323
+        },
+        "pairedFlushMaximumMs": 45.800000000046566,
+        "postFinalKeyDrainUpperBoundMs": 1278.5999999998603,
+        "firstVerifiedBrowserLocalDrainMs": 444.89999999990687,
+        "lateReadMinusLocalWitnessMs": 833.6999999999534,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 66,
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": true,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 172752.2999999998,
+        "endedAt": 172754.8999999999,
+        "durationMs": 2.6000000000931323,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+      "capacity": {
+        "count": 65,
+        "p50": 13,
+        "p95": 33,
+        "max": 48.10000000009313,
+        "sum": 1081.2999999998137
+      },
+      "idle": {
+        "count": 1,
+        "p50": 2.6000000000931323,
+        "p95": 2.6000000000931323,
+        "max": 2.6000000000931323,
+        "sum": 2.6000000000931323
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 73.80000000004657,
+        "p95": 109.30000000004657,
+        "max": 205.80000000004657,
+        "sum": 146258.99999999627
+      },
+      "tasks": {
+        "count": 1356,
+        "p50": 73,
+        "p95": 113,
+        "max": 181,
+        "sum": 104213
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 73.80000000004657,
+          "p95": 109.30000000004657,
+          "max": 205.80000000004657,
+          "sum": 146258.99999999627
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 83.69999999995343,
+          "p95": 119.30000000004657,
+          "max": 281,
+          "sum": 165967.69999999995
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1356,
+          "p50": 73,
+          "p95": 113,
+          "max": 181,
+          "sum": 104213
+        },
+        "totalBlockingMs": 36413,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 13,
+          "p95": 33,
+          "max": 48.10000000009313,
+          "sum": 1081.2999999998137
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 2.6000000000931323,
+          "p95": 2.6000000000931323,
+          "max": 2.6000000000931323,
+          "sum": 2.6000000000931323
+        },
+        "pairedFlushMaximumMs": 48.10000000009313,
+        "postFinalKeyDrainUpperBoundMs": 996.3000000000466,
+        "firstVerifiedBrowserLocalDrainMs": 407.60000000009313,
+        "lateReadMinusLocalWitnessMs": 588.6999999999534,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": true,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 168766.69999999995,
+        "endedAt": 168769.30000000005,
+        "durationMs": 2.6000000000931323,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+      "capacity": {
+        "count": 65,
+        "p50": 12.5,
+        "p95": 31.899999999906868,
+        "max": 49.300000000046566,
+        "sum": 1031.5
+      },
+      "idle": {
+        "count": 1,
+        "p50": 4,
+        "p95": 4,
+        "max": 4,
+        "sum": 4
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 72.39999999990687,
+        "p95": 108.10000000009313,
+        "max": 211.30000000004657,
+        "sum": 144825.29999999446
+      },
+      "tasks": {
+        "count": 1352,
+        "p50": 73,
+        "p95": 112,
+        "max": 184,
+        "sum": 103424
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 72.39999999990687,
+          "p95": 108.10000000009313,
+          "max": 211.30000000004657,
+          "sum": 144825.29999999446
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 81.4000000001397,
+          "p95": 118,
+          "max": 223.69999999995343,
+          "sum": 165053.2999999998
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1352,
+          "p50": 73,
+          "p95": 112,
+          "max": 184,
+          "sum": 103424
+        },
+        "totalBlockingMs": 35824,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 12.5,
+          "p95": 31.899999999906868,
+          "max": 49.300000000046566,
+          "sum": 1031.5
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 4,
+          "p95": 4,
+          "max": 4,
+          "sum": 4
+        },
+        "pairedFlushMaximumMs": 49.300000000046566,
+        "postFinalKeyDrainUpperBoundMs": 787,
+        "firstVerifiedBrowserLocalDrainMs": 337.8000000002794,
+        "lateReadMinusLocalWitnessMs": 449.1999999997206,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": false,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": true,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 167761.09999999986,
+        "endedAt": 167765.09999999986,
+        "durationMs": 4,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "role": "candidate",
+      "sample": "profile",
+      "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+      "capacity": {
+        "count": 65,
+        "p50": 15,
+        "p95": 38,
+        "max": 63.5,
+        "sum": 1180.4000000008382
+      },
+      "idle": {
+        "count": 1,
+        "p50": 3.6999999997206032,
+        "p95": 3.6999999997206032,
+        "max": 3.6999999997206032,
+        "sum": 3.6999999997206032
+      },
+      "frame": {
+        "count": 2086,
+        "p50": 74.39999999990687,
+        "p95": 111.20000000018626,
+        "max": 210.8000000002794,
+        "sum": 150931.80000001937
+      },
+      "tasks": {
+        "count": 1374,
+        "p50": 76,
+        "p95": 116,
+        "max": 193,
+        "sum": 109520
+      },
+      "summary": {
+        "frameOpportunityMs": {
+          "count": 2086,
+          "p50": 74.39999999990687,
+          "p95": 111.20000000018626,
+          "max": 210.8000000002794,
+          "sum": 150931.80000001937
+        },
+        "interKeyGapMs": {
+          "count": 2085,
+          "p50": 83.5,
+          "p95": 122.09999999962747,
+          "max": 278.5,
+          "sum": 171334.8999999999
+        },
+        "debounceBreakingGaps": 0,
+        "longTaskMs": {
+          "count": 1374,
+          "p50": 76,
+          "p95": 116,
+          "max": 193,
+          "sum": 109520
+        },
+        "totalBlockingMs": 40820,
+        "capacityFlushPairMs": {
+          "count": 65,
+          "p50": 15,
+          "p95": 38,
+          "max": 63.5,
+          "sum": 1180.4000000008382
+        },
+        "idleFlushPairMs": {
+          "count": 1,
+          "p50": 3.6999999997206032,
+          "p95": 3.6999999997206032,
+          "max": 3.6999999997206032,
+          "sum": 3.6999999997206032
+        },
+        "pairedFlushMaximumMs": 63.5,
+        "postFinalKeyDrainUpperBoundMs": 1113.2999999998137,
+        "firstVerifiedBrowserLocalDrainMs": 356.60000000009313,
+        "lateReadMinusLocalWitnessMs": 756.6999999997206,
+        "drainAcceptanceMetric": "first-verified-browser-local-empty"
+      },
+      "requestedGroups": 1,
+      "compositionCpu": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 2,
+        "reorderedSampleCount": 4,
+        "clock": {
+          "beforeMs": 2319.4000000003725,
+          "afterMs": 4165.100000000093,
+          "uncertaintyMs": 1845.6999999997206,
+          "profileStartTimeUs": 2125635868,
+          "profileEndTimeUs": 2300204749
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 604,
+          "sampledCpuMs": 640.5000000000005,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 459,
+          "sampledCpuMs": 490.3870000000005,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        }
+      },
+      "profileSha256": "ba79eba223afb0210ffd54f16868c346e6188c972898fd9b576ccb96568de654",
+      "runner": {
+        "name": "GitHub Actions 1000041635",
+        "os": "Linux",
+        "arch": "X64",
+        "run": "41937955289",
+        "attempt": "1"
+      },
+      "instrumentation": {
+        "profiler": true,
+        "cpuThrottle": 4,
+        "longTaskObserver": true,
+        "perKeyRequestAnimationFrame": true,
+        "playwrightTrace": false,
+        "perMutationSnapshot": false,
+        "physicalDevice": false,
+        "nativeDrainWitness": "browser-local-events-microtask"
+      },
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100
+      },
+      "budgetEnforced": false,
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "idleEpisode": {
+        "startedAt": 175886.80000000028,
+        "endedAt": 175890.5,
+        "durationMs": 3.6999999997206032,
+        "history": 6,
+        "collaboration": 6,
+        "origin": "policy-idle",
+        "nativeSequences": [
+          197,
+          198
+        ]
+      }
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T00:01:36.587Z",
+        "duration": 1465280.797,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile sustained native typing plain-1",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 358061,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-2",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 359996,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-3",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 362699,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing profile",
+          "timeout": 600000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 376604,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-05T00:26:05.343Z",
+        "duration": 949879.031,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "tests": [
+        {
+          "title": "mobile sustained native typing plain-1",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 197489,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-2",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 182356,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing plain-3",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 181478,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile sustained native typing profile",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 190147,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile resumes native typing after a quiet pause",
+          "timeout": 300000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 184934,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile pending composition crosses the group limit without partial history",
+          "timeout": 120000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 4927,
+              "errors": []
+            }
+          ]
+        },
+        {
+          "title": "mobile revocation refuses pending guest input and a late composition event",
+          "timeout": 120000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 4473,
+              "errors": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "mobile",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "pendingBeforeRevocation": {
+          "unitId": "7e7425fe-3386-4306-90c7-5c0d4c4474c7",
+          "mobile": true,
+          "observedAt": 2689.600000000093,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2293,
+              "durationMs": 9.600000000093132,
+              "history": 32,
+              "collaboration": 32
+            }
+          ],
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 65,
+            "end": 65,
+            "segmentId": ""
+          }
+        },
+        "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+        "heldWrites": 1,
+        "forwardedAfterRevocation": [
+          false
+        ],
+        "compositionEvents": {
+          "events": [
+            {
+              "order": 0,
+              "phase": "guest-provisional",
+              "type": "compositionstart",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2635.100000000093
+            },
+            {
+              "order": 1,
+              "phase": "guest-provisional",
+              "type": "compositionupdate",
+              "data": "\u4fdd\u7559",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2636
+            },
+            {
+              "order": 2,
+              "phase": "guest-provisional",
+              "type": "beforeinput",
+              "data": "\u4fdd\u7559",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2644.100000000093
+            },
+            {
+              "order": 3,
+              "phase": "guest-provisional",
+              "type": "input",
+              "data": "\u4fdd\u7559",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2644.899999999907
+            }
+          ],
+          "dropped": 0
+        },
+        "errors": []
+      }
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "data": {
+        "preset": "mobile",
+        "physicalIme": false,
+        "browser": {
+          "protocolVersion": "1.3",
+          "product": "HeadlessChrome/156.0.8078.4",
+          "revision": "@f842f52ef39fd97b449eb27cff414bf05a98ddce",
+          "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+          "jsVersion": "15.6.75"
+        },
+        "beforeCancellation": {
+          "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+          "mobile": true,
+          "observedAt": 2916.5999999996275,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2649,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            }
+          ],
+          "history": {
+            "undos": 1,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 63,
+            "end": 63,
+            "segmentId": ""
+          }
+        },
+        "intermediate": {
+          "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+          "mobile": true,
+          "observedAt": 3782.0999999996275,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2649,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3204.2999999998137,
+              "durationMs": 6.399999999906868,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 308.29999999981374
+            }
+          ],
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 66,
+            "end": 66,
+            "segmentId": ""
+          }
+        },
+        "composingEnter": {
+          "before": {
+            "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+            "mobile": true,
+            "observedAt": 3854.2999999998137,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": [
+              {
+                "reason": "capacity",
+                "startedAt": 2649,
+                "durationMs": 7.7999999998137355,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 3204.2999999998137,
+                "durationMs": 6.399999999906868,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 308.29999999981374
+              }
+            ],
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp\u4eee69\r\n"
+          },
+          "after": {
+            "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+            "mobile": true,
+            "observedAt": 3891.399999999907,
+            "pending": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "highWater": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "flushes": [
+              {
+                "reason": "capacity",
+                "startedAt": 2649,
+                "durationMs": 7.7999999998137355,
+                "history": 32,
+                "collaboration": 32
+              },
+              {
+                "reason": "idle",
+                "startedAt": 3204.2999999998137,
+                "durationMs": 6.399999999906868,
+                "history": 31,
+                "collaboration": 31,
+                "quietForMs": 308.29999999981374
+              }
+            ],
+            "history": {
+              "undos": 2,
+              "redos": 0
+            },
+            "drainWitness": null,
+            "selection": {
+              "start": 66,
+              "end": 66,
+              "segmentId": ""
+            },
+            "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBppppppppppppppppppppppppppppppp\u4eee69\r\n"
+          }
+        },
+        "beforeFinalComposition": {
+          "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+          "mobile": true,
+          "observedAt": 4249.899999999907,
+          "pending": {
+            "history": 31,
+            "collaboration": 31
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2649,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3204.2999999998137,
+              "durationMs": 6.399999999906868,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 308.29999999981374
+            }
+          ],
+          "history": {
+            "undos": 2,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 94,
+            "end": 94,
+            "segmentId": ""
+          }
+        },
+        "afterFinalComposition": {
+          "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+          "mobile": true,
+          "observedAt": 4440.5,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2649,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3204.2999999998137,
+              "durationMs": 6.399999999906868,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 308.29999999981374
+            }
+          ],
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "final": {
+          "unitId": "1cdd7f09-f216-4c21-80b0-2abaa9a40715",
+          "mobile": true,
+          "observedAt": 4725.299999999814,
+          "pending": {
+            "history": 0,
+            "collaboration": 0
+          },
+          "highWater": {
+            "history": 32,
+            "collaboration": 32
+          },
+          "flushes": [
+            {
+              "reason": "capacity",
+              "startedAt": 2649,
+              "durationMs": 7.7999999998137355,
+              "history": 32,
+              "collaboration": 32
+            },
+            {
+              "reason": "idle",
+              "startedAt": 3204.2999999998137,
+              "durationMs": 6.399999999906868,
+              "history": 31,
+              "collaboration": 31,
+              "quietForMs": 308.29999999981374
+            }
+          ],
+          "history": {
+            "undos": 3,
+            "redos": 0
+          },
+          "drainWitness": null,
+          "selection": {
+            "start": 96,
+            "end": 96,
+            "segmentId": ""
+          }
+        },
+        "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+        "compositionEvents": {
+          "events": [
+            {
+              "order": 0,
+              "phase": "cancellation-updates",
+              "type": "compositionstart",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2939.5
+            },
+            {
+              "order": 1,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee0",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2941.5999999996275
+            },
+            {
+              "order": 2,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee0",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2958.0999999996275
+            },
+            {
+              "order": 3,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee0",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2961.5
+            },
+            {
+              "order": 4,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee1",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2965.899999999907
+            },
+            {
+              "order": 5,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee1",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2975
+            },
+            {
+              "order": 6,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee1",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2975.399999999907
+            },
+            {
+              "order": 7,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee2",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 2982.6999999997206
+            },
+            {
+              "order": 8,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee2",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2989.399999999907
+            },
+            {
+              "order": 9,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee2",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 2989.899999999907
+            },
+            {
+              "order": 10,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee3",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3003.5999999996275
+            },
+            {
+              "order": 11,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee3",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3010
+            },
+            {
+              "order": 12,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee3",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3010.399999999907
+            },
+            {
+              "order": 13,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee4",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3013.2999999998137
+            },
+            {
+              "order": 14,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee4",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3018.399999999907
+            },
+            {
+              "order": 15,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee4",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3018.6999999997206
+            },
+            {
+              "order": 16,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee5",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3027.2999999998137
+            },
+            {
+              "order": 17,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee5",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3036.0999999996275
+            },
+            {
+              "order": 18,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee5",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3036.399999999907
+            },
+            {
+              "order": 19,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee6",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3039.5999999996275
+            },
+            {
+              "order": 20,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee6",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3044.899999999907
+            },
+            {
+              "order": 21,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee6",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3045.399999999907
+            },
+            {
+              "order": 22,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee7",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3049.0999999996275
+            },
+            {
+              "order": 23,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee7",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3054.399999999907
+            },
+            {
+              "order": 24,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee7",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3054.7999999998137
+            },
+            {
+              "order": 25,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee8",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3058.1999999997206
+            },
+            {
+              "order": 26,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee8",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3063.5
+            },
+            {
+              "order": 27,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee8",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3063.7999999998137
+            },
+            {
+              "order": 28,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee9",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3072.399999999907
+            },
+            {
+              "order": 29,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee9",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3079
+            },
+            {
+              "order": 30,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee9",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3079.399999999907
+            },
+            {
+              "order": 31,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee10",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3083.5
+            },
+            {
+              "order": 32,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee10",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3089.7999999998137
+            },
+            {
+              "order": 33,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee10",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3090.1999999997206
+            },
+            {
+              "order": 34,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee11",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3094.899999999907
+            },
+            {
+              "order": 35,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee11",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3099.7999999998137
+            },
+            {
+              "order": 36,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee11",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3100.1999999997206
+            },
+            {
+              "order": 37,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee12",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3108.1999999997206
+            },
+            {
+              "order": 38,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee12",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3114.1999999997206
+            },
+            {
+              "order": 39,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee12",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3114.5999999996275
+            },
+            {
+              "order": 40,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee13",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3121.6999999997206
+            },
+            {
+              "order": 41,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee13",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3128
+            },
+            {
+              "order": 42,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee13",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3128.399999999907
+            },
+            {
+              "order": 43,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee14",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3132.899999999907
+            },
+            {
+              "order": 44,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee14",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3138.5
+            },
+            {
+              "order": 45,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee14",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3138.899999999907
+            },
+            {
+              "order": 46,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee15",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3147.0999999996275
+            },
+            {
+              "order": 47,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee15",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3152.6999999997206
+            },
+            {
+              "order": 48,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee15",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3153
+            },
+            {
+              "order": 49,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee16",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3159.6999999997206
+            },
+            {
+              "order": 50,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee16",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3169.1999999997206
+            },
+            {
+              "order": 51,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee16",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3169.5999999996275
+            },
+            {
+              "order": 52,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee17",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3171.899999999907
+            },
+            {
+              "order": 53,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee17",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3177.2999999998137
+            },
+            {
+              "order": 54,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee17",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3177.6999999997206
+            },
+            {
+              "order": 55,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee18",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3184.7999999998137
+            },
+            {
+              "order": 56,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee18",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3190.5999999996275
+            },
+            {
+              "order": 57,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee18",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3191
+            },
+            {
+              "order": 58,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee19",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3196.1999999997206
+            },
+            {
+              "order": 59,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee19",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3202
+            },
+            {
+              "order": 60,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee19",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3202.2999999998137
+            },
+            {
+              "order": 61,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee20",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3213.5
+            },
+            {
+              "order": 62,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee20",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3219.5
+            },
+            {
+              "order": 63,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee20",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3219.899999999907
+            },
+            {
+              "order": 64,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee21",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3227.0999999996275
+            },
+            {
+              "order": 65,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee21",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3232.5999999996275
+            },
+            {
+              "order": 66,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee21",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3233.0999999996275
+            },
+            {
+              "order": 67,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee22",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3240
+            },
+            {
+              "order": 68,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee22",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3245.5
+            },
+            {
+              "order": 69,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee22",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3245.899999999907
+            },
+            {
+              "order": 70,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee23",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3249.899999999907
+            },
+            {
+              "order": 71,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee23",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3255
+            },
+            {
+              "order": 72,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee23",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3255.399999999907
+            },
+            {
+              "order": 73,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee24",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3258.5
+            },
+            {
+              "order": 74,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee24",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3264.0999999996275
+            },
+            {
+              "order": 75,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee24",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3264.5
+            },
+            {
+              "order": 76,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee25",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3272.0999999996275
+            },
+            {
+              "order": 77,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee25",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3278.2999999998137
+            },
+            {
+              "order": 78,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee25",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3278.6999999997206
+            },
+            {
+              "order": 79,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee26",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3282.5
+            },
+            {
+              "order": 80,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee26",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3287.7999999998137
+            },
+            {
+              "order": 81,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee26",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3288.1999999997206
+            },
+            {
+              "order": 82,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee27",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3296.0999999996275
+            },
+            {
+              "order": 83,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee27",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3300.899999999907
+            },
+            {
+              "order": 84,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee27",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3301.1999999997206
+            },
+            {
+              "order": 85,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee28",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3304.399999999907
+            },
+            {
+              "order": 86,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee28",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3310.1999999997206
+            },
+            {
+              "order": 87,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee28",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3310.5
+            },
+            {
+              "order": 88,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee29",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3315.1999999997206
+            },
+            {
+              "order": 89,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee29",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3322.1999999997206
+            },
+            {
+              "order": 90,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee29",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3322.5999999996275
+            },
+            {
+              "order": 91,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee30",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3330.5
+            },
+            {
+              "order": 92,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee30",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3336.2999999998137
+            },
+            {
+              "order": 93,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee30",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3336.6999999997206
+            },
+            {
+              "order": 94,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee31",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3344.0999999996275
+            },
+            {
+              "order": 95,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee31",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3350.1999999997206
+            },
+            {
+              "order": 96,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee31",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3350.5999999996275
+            },
+            {
+              "order": 97,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee32",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3356.5999999996275
+            },
+            {
+              "order": 98,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee32",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3361.6999999997206
+            },
+            {
+              "order": 99,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee32",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3362.0999999996275
+            },
+            {
+              "order": 100,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee33",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3372.6999999997206
+            },
+            {
+              "order": 101,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee33",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3379.899999999907
+            },
+            {
+              "order": 102,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee33",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3380.2999999998137
+            },
+            {
+              "order": 103,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee34",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3389.1999999997206
+            },
+            {
+              "order": 104,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee34",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3395.7999999998137
+            },
+            {
+              "order": 105,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee34",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3396.1999999997206
+            },
+            {
+              "order": 106,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee35",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3398.399999999907
+            },
+            {
+              "order": 107,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee35",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3401.6999999997206
+            },
+            {
+              "order": 108,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee35",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3402
+            },
+            {
+              "order": 109,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee36",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3404.7999999998137
+            },
+            {
+              "order": 110,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee36",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3409.1999999997206
+            },
+            {
+              "order": 111,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee36",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3409.5999999996275
+            },
+            {
+              "order": 112,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee37",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3412.1999999997206
+            },
+            {
+              "order": 113,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee37",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3416.399999999907
+            },
+            {
+              "order": 114,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee37",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3416.5999999996275
+            },
+            {
+              "order": 115,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee38",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3420
+            },
+            {
+              "order": 116,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee38",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3424.6999999997206
+            },
+            {
+              "order": 117,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee38",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3425
+            },
+            {
+              "order": 118,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee39",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3427.399999999907
+            },
+            {
+              "order": 119,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee39",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3430.7999999998137
+            },
+            {
+              "order": 120,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee39",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3431
+            },
+            {
+              "order": 121,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee40",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3434.1999999997206
+            },
+            {
+              "order": 122,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee40",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3439
+            },
+            {
+              "order": 123,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee40",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3439.2999999998137
+            },
+            {
+              "order": 124,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee41",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3441.899999999907
+            },
+            {
+              "order": 125,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee41",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3447
+            },
+            {
+              "order": 126,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee41",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3447.399999999907
+            },
+            {
+              "order": 127,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee42",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3450.0999999996275
+            },
+            {
+              "order": 128,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee42",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3455.2999999998137
+            },
+            {
+              "order": 129,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee42",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3455.6999999997206
+            },
+            {
+              "order": 130,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee43",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3459.6999999997206
+            },
+            {
+              "order": 131,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee43",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3465
+            },
+            {
+              "order": 132,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee43",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3465.399999999907
+            },
+            {
+              "order": 133,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee44",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3472.2999999998137
+            },
+            {
+              "order": 134,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee44",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3478.2999999998137
+            },
+            {
+              "order": 135,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee44",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3478.6999999997206
+            },
+            {
+              "order": 136,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee45",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3486.5999999996275
+            },
+            {
+              "order": 137,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee45",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3492.2999999998137
+            },
+            {
+              "order": 138,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee45",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3492.5
+            },
+            {
+              "order": 139,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee46",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3495
+            },
+            {
+              "order": 140,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee46",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3499.5
+            },
+            {
+              "order": 141,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee46",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3499.6999999997206
+            },
+            {
+              "order": 142,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee47",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3511
+            },
+            {
+              "order": 143,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee47",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3516.5999999996275
+            },
+            {
+              "order": 144,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee47",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3517.1999999997206
+            },
+            {
+              "order": 145,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee48",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3520.5999999996275
+            },
+            {
+              "order": 146,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee48",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3526.0999999996275
+            },
+            {
+              "order": 147,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee48",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3526.399999999907
+            },
+            {
+              "order": 148,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee49",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3530.2999999998137
+            },
+            {
+              "order": 149,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee49",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3536.7999999998137
+            },
+            {
+              "order": 150,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee49",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3537
+            },
+            {
+              "order": 151,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee50",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3543.0999999996275
+            },
+            {
+              "order": 152,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee50",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3548.5999999996275
+            },
+            {
+              "order": 153,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee50",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3548.899999999907
+            },
+            {
+              "order": 154,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee51",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3551.5
+            },
+            {
+              "order": 155,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee51",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3557
+            },
+            {
+              "order": 156,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee51",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3557.399999999907
+            },
+            {
+              "order": 157,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee52",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3561.0999999996275
+            },
+            {
+              "order": 158,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee52",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3566.2999999998137
+            },
+            {
+              "order": 159,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee52",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3566.6999999997206
+            },
+            {
+              "order": 160,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee53",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3573.399999999907
+            },
+            {
+              "order": 161,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee53",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3578.5999999996275
+            },
+            {
+              "order": 162,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee53",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3579.0999999996275
+            },
+            {
+              "order": 163,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee54",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3585.399999999907
+            },
+            {
+              "order": 164,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee54",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3591.7999999998137
+            },
+            {
+              "order": 165,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee54",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3592.0999999996275
+            },
+            {
+              "order": 166,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee55",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3594.899999999907
+            },
+            {
+              "order": 167,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee55",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3604.5
+            },
+            {
+              "order": 168,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee55",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3604.6999999997206
+            },
+            {
+              "order": 169,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee56",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3608.1999999997206
+            },
+            {
+              "order": 170,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee56",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3614
+            },
+            {
+              "order": 171,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee56",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3614.399999999907
+            },
+            {
+              "order": 172,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee57",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3621.0999999996275
+            },
+            {
+              "order": 173,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee57",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3626.899999999907
+            },
+            {
+              "order": 174,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee57",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3627.1999999997206
+            },
+            {
+              "order": 175,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee58",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3629.899999999907
+            },
+            {
+              "order": 176,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee58",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3633.5
+            },
+            {
+              "order": 177,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee58",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3633.899999999907
+            },
+            {
+              "order": 178,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee59",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3638.7999999998137
+            },
+            {
+              "order": 179,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee59",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3643.2999999998137
+            },
+            {
+              "order": 180,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee59",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3643.5
+            },
+            {
+              "order": 181,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee60",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3648.6999999997206
+            },
+            {
+              "order": 182,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee60",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3652.399999999907
+            },
+            {
+              "order": 183,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee60",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3652.6999999997206
+            },
+            {
+              "order": 184,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee61",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3656.5999999996275
+            },
+            {
+              "order": 185,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee61",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3662.0999999996275
+            },
+            {
+              "order": 186,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee61",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3662.5
+            },
+            {
+              "order": 187,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee62",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3666.6999999997206
+            },
+            {
+              "order": 188,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee62",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3672
+            },
+            {
+              "order": 189,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee62",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3672.5
+            },
+            {
+              "order": 190,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee63",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3678.5999999996275
+            },
+            {
+              "order": 191,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee63",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3683
+            },
+            {
+              "order": 192,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee63",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3683.2999999998137
+            },
+            {
+              "order": 193,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee64",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3685.5999999996275
+            },
+            {
+              "order": 194,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee64",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3690.6999999997206
+            },
+            {
+              "order": 195,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee64",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3691.1999999997206
+            },
+            {
+              "order": 196,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee65",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3699.7999999998137
+            },
+            {
+              "order": 197,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee65",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3704.7999999998137
+            },
+            {
+              "order": 198,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee65",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3705.2999999998137
+            },
+            {
+              "order": 199,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee66",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3712.899999999907
+            },
+            {
+              "order": 200,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee66",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3716.2999999998137
+            },
+            {
+              "order": 201,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee66",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3716.5999999996275
+            },
+            {
+              "order": 202,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee67",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3720.1999999997206
+            },
+            {
+              "order": 203,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee67",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3725
+            },
+            {
+              "order": 204,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee67",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3725.2999999998137
+            },
+            {
+              "order": 205,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee68",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3731.0999999996275
+            },
+            {
+              "order": 206,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee68",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3736.2999999998137
+            },
+            {
+              "order": 207,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee68",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3736.7999999998137
+            },
+            {
+              "order": 208,
+              "phase": "cancellation-updates",
+              "type": "compositionupdate",
+              "data": "\u4eee69",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3739.899999999907
+            },
+            {
+              "order": 209,
+              "phase": "cancellation-updates",
+              "type": "beforeinput",
+              "data": "\u4eee69",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3744.6999999997206
+            },
+            {
+              "order": 210,
+              "phase": "cancellation-updates",
+              "type": "input",
+              "data": "\u4eee69",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3745.0999999996275
+            },
+            {
+              "order": 211,
+              "phase": "cancellation-end",
+              "type": "compositionupdate",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 3906.5999999996275
+            },
+            {
+              "order": 212,
+              "phase": "cancellation-end",
+              "type": "beforeinput",
+              "data": "",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3906.7999999998137
+            },
+            {
+              "order": 213,
+              "phase": "cancellation-end",
+              "type": "input",
+              "data": "\u4eee69",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 3907.399999999907
+            },
+            {
+              "order": 214,
+              "phase": "cancellation-end",
+              "type": "compositionend",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": false,
+              "observedAt": 3907.5
+            },
+            {
+              "order": 215,
+              "phase": "converted-updates",
+              "type": "compositionstart",
+              "data": "",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4277.699999999721
+            },
+            {
+              "order": 216,
+              "phase": "converted-updates",
+              "type": "compositionupdate",
+              "data": "\u304b",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4278.399999999907
+            },
+            {
+              "order": 217,
+              "phase": "converted-updates",
+              "type": "beforeinput",
+              "data": "\u304b",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4284.5999999996275
+            },
+            {
+              "order": 218,
+              "phase": "converted-updates",
+              "type": "input",
+              "data": "\u304b",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4284.799999999814
+            },
+            {
+              "order": 219,
+              "phase": "converted-updates",
+              "type": "compositionupdate",
+              "data": "\u304b\u3093",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4289.0999999996275
+            },
+            {
+              "order": 220,
+              "phase": "converted-updates",
+              "type": "beforeinput",
+              "data": "\u304b\u3093",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4295.5999999996275
+            },
+            {
+              "order": 221,
+              "phase": "converted-updates",
+              "type": "input",
+              "data": "\u304b\u3093",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4295.899999999907
+            },
+            {
+              "order": 222,
+              "phase": "converted-commit",
+              "type": "compositionupdate",
+              "data": "\u6f22\u5b57",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": true,
+              "observedAt": 4318.199999999721
+            },
+            {
+              "order": 223,
+              "phase": "converted-commit",
+              "type": "beforeinput",
+              "data": "\u6f22\u5b57",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4327.199999999721
+            },
+            {
+              "order": 224,
+              "phase": "converted-commit",
+              "type": "input",
+              "data": "\u6f22\u5b57",
+              "inputType": "insertCompositionText",
+              "isComposing": true,
+              "isTrusted": true,
+              "observedAt": 4327.5999999996275
+            },
+            {
+              "order": 225,
+              "phase": "converted-commit",
+              "type": "compositionend",
+              "data": "\u6f22\u5b57",
+              "inputType": null,
+              "isComposing": null,
+              "isTrusted": false,
+              "observedAt": 4327.799999999814
+            }
+          ],
+          "dropped": 0
+        },
+        "errors": []
+      }
+    }
+  ],
+  "post": {
+    "file": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "summary": {
+      "finalOriginalKeyAt": 172782.7000000002,
+      "continuationKeyAt": 173318.30000000028,
+      "continuationFrameAt": 173463.80000000028,
+      "browserQuietGapMs": 535.6000000000931,
+      "continuationKeyToFrameMs": 145.5,
+      "continuationKeyToNativeReadMs": 145.6999999997206,
+      "continuationRequestReturnMs": 190.413336000056,
+      "finalOriginalKeyToContinuationFrameMs": 681.1000000000931,
+      "finalOriginalKeyToContinuationNativeReadMs": 681.2999999998137
+    },
+    "budgets": {
+      "requestedQuietPauseMs": 350,
+      "continuationRequestReturnMs": 1000,
+      "continuationKeyToFrameMs": 500,
+      "continuationKeyToNativeReadMs": 500,
+      "finalOriginalKeyToContinuationFrameMs": 1850,
+      "finalOriginalKeyToContinuationNativeReadMs": 1850
+    },
+    "fixture": {
+      "originalInputCount": 2086,
+      "continuation": "x",
+      "totalInputCount": 2087,
+      "originalTextSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44"
+    },
+    "native": {
+      "unitId": "7c60e427-7732-4d48-951c-90ec74f09db7",
+      "mobile": true,
+      "observedAt": 184658.1000000001,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "highWater": {
+        "history": 32,
+        "collaboration": 32
+      },
+      "flushes": [
+        {
+          "reason": "capacity",
+          "startedAt": 3729.100000000093,
+          "durationMs": 31.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 4990.200000000186,
+          "durationMs": 18.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 6262.100000000093,
+          "durationMs": 12.300000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 7508,
+          "durationMs": 11.400000000372529,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 8775.900000000373,
+          "durationMs": 45.1999999997206,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 10144.900000000373,
+          "durationMs": 23.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 11513.80000000028,
+          "durationMs": 15,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 12896.30000000028,
+          "durationMs": 18.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 14254.30000000028,
+          "durationMs": 34.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 15753.30000000028,
+          "durationMs": 11.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 17259.5,
+          "durationMs": 10.900000000372529,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 18836.700000000186,
+          "durationMs": 11.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 20563.5,
+          "durationMs": 24.90000000037253,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 22213.700000000186,
+          "durationMs": 8.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 23826.200000000186,
+          "durationMs": 10,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 25588,
+          "durationMs": 9.400000000372529,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 27572.600000000093,
+          "durationMs": 26.700000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 29398.600000000093,
+          "durationMs": 9.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 31278.600000000093,
+          "durationMs": 9.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 33370.200000000186,
+          "durationMs": 11.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 35303.5,
+          "durationMs": 28.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 37397.60000000009,
+          "durationMs": 8.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 39479.5,
+          "durationMs": 10.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 41700.200000000186,
+          "durationMs": 14.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 43957.40000000037,
+          "durationMs": 39.39999999990687,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 46095.40000000037,
+          "durationMs": 8.599999999627471,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 48472.40000000037,
+          "durationMs": 11.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 50892.10000000009,
+          "durationMs": 15.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 53344.90000000037,
+          "durationMs": 31.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 55829.5,
+          "durationMs": 10.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 58332.40000000037,
+          "durationMs": 9.199999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 61052,
+          "durationMs": 11.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 63716.200000000186,
+          "durationMs": 20.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 66602,
+          "durationMs": 13.800000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 69264.30000000028,
+          "durationMs": 11,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 72113,
+          "durationMs": 12.700000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 74933.40000000037,
+          "durationMs": 23,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 77916.90000000037,
+          "durationMs": 15.199999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 80781.1000000001,
+          "durationMs": 9.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 83953.90000000037,
+          "durationMs": 10.099999999627471,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 86984.30000000028,
+          "durationMs": 20.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 90135.30000000028,
+          "durationMs": 17.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 93243.30000000028,
+          "durationMs": 15.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 96522.5,
+          "durationMs": 14.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 99868.6000000001,
+          "durationMs": 23.700000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 103038.5,
+          "durationMs": 12,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 106268.80000000028,
+          "durationMs": 13.100000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 109669.1000000001,
+          "durationMs": 13,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 112953,
+          "durationMs": 15.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 116241.90000000037,
+          "durationMs": 11.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 119658.90000000037,
+          "durationMs": 13.299999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 123069.90000000037,
+          "durationMs": 9.099999999627471,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 126561.70000000019,
+          "durationMs": 17.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 130141.80000000028,
+          "durationMs": 11.600000000093132,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 133802.80000000028,
+          "durationMs": 13,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 137456.80000000028,
+          "durationMs": 10.899999999906868,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 141129.6000000001,
+          "durationMs": 11.300000000279397,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 144715,
+          "durationMs": 23.40000000037253,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 148433.7000000002,
+          "durationMs": 13.200000000186265,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 152120.30000000028,
+          "durationMs": 11.699999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 156018.30000000028,
+          "durationMs": 12.699999999720603,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 159927.40000000037,
+          "durationMs": 28.799999999813735,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 163855.40000000037,
+          "durationMs": 13.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 167842.80000000028,
+          "durationMs": 11.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "capacity",
+          "startedAt": 172021.5,
+          "durationMs": 13.5,
+          "history": 32,
+          "collaboration": 32
+        },
+        {
+          "reason": "idle",
+          "startedAt": 173690.40000000037,
+          "durationMs": 4.5,
+          "history": 7,
+          "collaboration": 7,
+          "quietForMs": 366.10000000009313
+        }
+      ],
+      "history": {
+        "undos": 66,
+        "redos": 0
+      },
+      "drainWitness": null,
+      "selection": {
+        "start": 2087,
+        "end": 2087,
+        "segmentId": ""
+      },
+      "text": "Line 1: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 2: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 3: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 4: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 5: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 6: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 7: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 8: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 9: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 10: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 11: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 12: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 13: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 14: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 15: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.\rLine 16: Read the whole paragraph, including the far right edge. Keep the original page size and all of this text when navigating.x\r\n"
+    },
+    "peer": {
+      "unitId": "7c60e427-7732-4d48-951c-90ec74f09db7",
+      "observedAt": 184667.90000000037,
+      "textLength": 2089,
+      "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+      "selection": {
+        "start": 0,
+        "end": 0,
+        "segmentId": ""
+      }
+    },
+    "saved": {
+      "textLength": 2089,
+      "textSha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d"
+    }
+  },
+  "clocks": [
+    {
+      "file": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bracket": {
+        "beforeMs": 2360.899999999907,
+        "afterMs": 4254.399999999907
+      },
+      "profileStartTimeUs": 1180224635,
+      "profileEndTimeUs": 1540211722,
+      "sha256": "2e609f20e3cd9921c2046d94aef49b199dd50417f7036aa22fdbef27767c8839",
+      "uncertaintyMs": 1893.5
+    },
+    {
+      "file": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bracket": {
+        "beforeMs": 2319.4000000003725,
+        "afterMs": 4165.100000000093
+      },
+      "profileStartTimeUs": 2125635868,
+      "profileEndTimeUs": 2300204749,
+      "sha256": "ba79eba223afb0210ffd54f16868c346e6188c972898fd9b576ccb96568de654",
+      "uncertaintyMs": 1845.6999999997206
+    }
+  ],
+  "comparison": {
+    "schema": 2,
+    "mode": "paired",
+    "candidateGroupLimit": 32,
+    "candidateHistoryLimit": 100,
+    "baselineHistoryLimit": 50,
+    "protocolRevision": 5,
+    "drainAcceptance": {
+      "metric": "first-verified-browser-local-empty",
+      "maximumMs": 1000,
+      "lateReadUpperBound": "descriptive-only"
+    },
+    "preset": "mobile",
+    "physicalDevice": false,
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "baselineRedoOutcome": [
+      {
+        "sample": "profile",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-3",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-2",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      },
+      {
+        "sample": "plain-1",
+        "outcome": "baseline-capacity-refusal",
+        "integrityEvidenceValid": true
+      }
+    ],
+    "candidateIntegrity": true,
+    "failures": [],
+    "unavailable": [],
+    "summaries": [
+      {
+        "role": "baseline-observation",
+        "sample": "profile",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 198.60000000009313,
+        "longestTaskMs": 42218,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 87601.40000000014,
+        "firstVerifiedBrowserLocalDrainMs": 86904.6000000001,
+        "lateReadMinusLocalWitnessMs": 696.8000000000466,
+        "drainPollCount": 8,
+        "firstEmptyAfterFinalKeyMs": 86909.30000000005,
+        "typingWallMs": 270416.99869100004,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-3",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 191.5,
+        "longestTaskMs": 41140,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 86106.6000000001,
+        "firstVerifiedBrowserLocalDrainMs": 85437.30000000005,
+        "lateReadMinusLocalWitnessMs": 669.3000000000466,
+        "drainPollCount": 9,
+        "firstEmptyAfterFinalKeyMs": 85444.69999999995,
+        "typingWallMs": 260862.25818400003,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-2",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 189.29999999993015,
+        "longestTaskMs": 41190,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 85499.90000000002,
+        "firstVerifiedBrowserLocalDrainMs": 84751.40000000002,
+        "lateReadMinusLocalWitnessMs": 748.5,
+        "drainPollCount": 9,
+        "firstEmptyAfterFinalKeyMs": 84753.6000000001,
+        "typingWallMs": 258958.91363699996,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "baseline-observation",
+        "sample": "plain-1",
+        "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+        "inputP95Ms": 187.59999999997672,
+        "longestTaskMs": 40429,
+        "capacityPairedFlushMs": null,
+        "idlePairedFlushMs": null,
+        "pairedFlushMaximumMs": null,
+        "nativeDrainUpperBoundMs": 83643.6,
+        "firstVerifiedBrowserLocalDrainMs": 83006.79999999996,
+        "lateReadMinusLocalWitnessMs": 636.8000000000466,
+        "drainPollCount": 9,
+        "firstEmptyAfterFinalKeyMs": 83013.19999999998,
+        "typingWallMs": 258762.34851400004,
+        "initialIntegrity": true,
+        "redoOutcome": "baseline-capacity-refusal",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "profile",
+        "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+        "inputP95Ms": 111.20000000018626,
+        "longestTaskMs": 193,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 15,
+          "p95": 38,
+          "max": 63.5,
+          "sum": 1180.4000000008382
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 3.6999999997206032,
+          "p95": 3.6999999997206032,
+          "max": 3.6999999997206032,
+          "sum": 3.6999999997206032
+        },
+        "pairedFlushMaximumMs": 63.5,
+        "nativeDrainUpperBoundMs": 1113.2999999998137,
+        "firstVerifiedBrowserLocalDrainMs": 356.60000000009313,
+        "lateReadMinusLocalWitnessMs": 756.6999999997206,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 625.6000000000931,
+        "typingWallMs": 171426.3530430001,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-3",
+        "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+        "inputP95Ms": 108.10000000009313,
+        "longestTaskMs": 184,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 12.5,
+          "p95": 31.899999999906868,
+          "max": 49.300000000046566,
+          "sum": 1031.5
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 4,
+          "p95": 4,
+          "max": 4,
+          "sum": 4
+        },
+        "pairedFlushMaximumMs": 49.300000000046566,
+        "nativeDrainUpperBoundMs": 787,
+        "firstVerifiedBrowserLocalDrainMs": 337.8000000002794,
+        "lateReadMinusLocalWitnessMs": 449.1999999997206,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 439.3000000002794,
+        "typingWallMs": 165157.95451100002,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-2",
+        "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+        "inputP95Ms": 109.30000000004657,
+        "longestTaskMs": 181,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 13,
+          "p95": 33,
+          "max": 48.10000000009313,
+          "sum": 1081.2999999998137
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 2.6000000000931323,
+          "p95": 2.6000000000931323,
+          "max": 2.6000000000931323,
+          "sum": 2.6000000000931323
+        },
+        "pairedFlushMaximumMs": 48.10000000009313,
+        "nativeDrainUpperBoundMs": 996.3000000000466,
+        "firstVerifiedBrowserLocalDrainMs": 407.60000000009313,
+        "lateReadMinusLocalWitnessMs": 588.6999999999534,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 489,
+        "typingWallMs": 166060.705661,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-1",
+        "source": "159aa2ab36bdb7313d6a2c7770b685512bf19216",
+        "inputP95Ms": 111.80000000004657,
+        "longestTaskMs": 185,
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 12.600000000093132,
+          "p95": 32.700000000186265,
+          "max": 45.800000000046566,
+          "sum": 1023.7999999993481
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 2.6000000000931323,
+          "p95": 2.6000000000931323,
+          "max": 2.6000000000931323,
+          "sum": 2.6000000000931323
+        },
+        "pairedFlushMaximumMs": 45.800000000046566,
+        "nativeDrainUpperBoundMs": 1278.5999999998603,
+        "firstVerifiedBrowserLocalDrainMs": 444.89999999990687,
+        "lateReadMinusLocalWitnessMs": 833.6999999999534,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 621.1999999999534,
+        "typingWallMs": 170018.312584,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 66
+      }
+    ],
+    "improvement": {
+      "history": {
+        "baselineContainingTaskMs": 40324,
+        "candidateEntireTaskUpperBoundMs": 193,
+        "reductionPercent": 99.52137684753497,
+        "status": "registered-relative-gate-applied",
+        "candidateAttribution": "sampled-native-reducer",
+        "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+      },
+      "collaboration": {
+        "baselineContainingTaskMs": 42218,
+        "candidateEntireTaskUpperBoundMs": 193,
+        "reductionPercent": 99.54284902174429,
+        "status": "registered-relative-gate-applied",
+        "candidateAttribution": "sampled-native-reducer",
+        "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+      }
+    },
+    "unprofiledImprovement": {
+      "metric": "whole-browser-longest-task-reduction",
+      "samples": [
+        {
+          "sample": "plain-3",
+          "baselineLongestTaskMs": 41140,
+          "candidateEntireTaskUpperBoundMs": 193,
+          "reductionPercent": 99.5308701993194
+        },
+        {
+          "sample": "plain-2",
+          "baselineLongestTaskMs": 41190,
+          "candidateEntireTaskUpperBoundMs": 193,
+          "reductionPercent": 99.53143966982277
+        },
+        {
+          "sample": "plain-1",
+          "baselineLongestTaskMs": 40429,
+          "candidateEntireTaskUpperBoundMs": 193,
+          "reductionPercent": 99.52261990155581
+        }
+      ],
+      "conservativeAggregateReductionPercent": 99.52261990155581,
+      "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+    },
+    "profilingVariation": [
+      {
+        "role": "baseline-observation",
+        "plainTypingMs": {
+          "count": 3,
+          "p50": 258958.91363699996,
+          "p95": 260862.25818400003,
+          "max": 260862.25818400003,
+          "sum": 778583.520335
+        },
+        "profileTypingMs": 270416.99869100004,
+        "profileMinusPlainMedianMs": 11458.085054000083,
+        "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+      },
+      {
+        "role": "candidate",
+        "plainTypingMs": {
+          "count": 3,
+          "p50": 166060.705661,
+          "p95": 170018.312584,
+          "max": 170018.312584,
+          "sum": 501236.97275600006
+        },
+        "profileTypingMs": 171426.3530430001,
+        "profileMinusPlainMedianMs": 5365.647382000083,
+        "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+      }
+    ],
+    "composition": {
+      "baseline": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 1,
+        "reorderedSampleCount": 2,
+        "clock": {
+          "beforeMs": 2360.899999999907,
+          "afterMs": 4254.399999999907,
+          "uncertaintyMs": 1893.5,
+          "profileStartTimeUs": 1180224635,
+          "profileEndTimeUs": 1540211722
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 35946,
+          "sampledCpuMs": 38661.63100000078,
+          "certainContainingTasks": [
+            {
+              "index": 1784,
+              "startedAt": 278896.30000000005,
+              "durationMs": 40324,
+              "sampleCount": 34232
+            }
+          ],
+          "maxContainingTaskMs": 40324,
+          "taskAttribution": "certain-whole-containing-task"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 1,
+          "sampleCount": 37696,
+          "sampledCpuMs": 40598.000999999895,
+          "certainContainingTasks": [
+            {
+              "index": 1785,
+              "startedAt": 319222.19999999995,
+              "durationMs": 42218,
+              "sampleCount": 35999
+            }
+          ],
+          "maxContainingTaskMs": 42218,
+          "taskAttribution": "certain-whole-containing-task"
+        }
+      },
+      "candidate": {
+        "sampleIntervalUs": 1000,
+        "negativeDeltaCount": 2,
+        "reorderedSampleCount": 4,
+        "clock": {
+          "beforeMs": 2319.4000000003725,
+          "afterMs": 4165.100000000093,
+          "uncertaintyMs": 1845.6999999997206,
+          "profileStartTimeUs": 2125635868,
+          "profileEndTimeUs": 2300204749
+        },
+        "history": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 604,
+          "sampledCpuMs": 640.5000000000005,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        },
+        "collaboration": {
+          "status": "sampled",
+          "reason": null,
+          "functionNodes": 3,
+          "sampleCount": 459,
+          "sampledCpuMs": 490.3870000000005,
+          "certainContainingTasks": [],
+          "maxContainingTaskMs": null,
+          "taskAttribution": "unavailable"
+        }
+      }
+    }
+  },
+  "postExactIntegrityVerified": {
+    "length": 2089,
+    "sha256": "f21602221e3091f141f63ff89697afed6413ab4f9798c3a832b714e55830c96d",
+    "selection": 2087,
+    "savedPeerMatch": true
+  }
+}
