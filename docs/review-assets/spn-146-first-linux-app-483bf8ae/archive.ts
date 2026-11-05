@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync,readdirSync,statSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const from='/tmp/spn146-linux-hosted',root='/tmp/spn146-first-linux-app',prefix='docs/review-assets/spn-146-first-linux-app-483bf8ae';
+const source='483bf8ae4609fa8027485293e6050fe8dca88e1c';
+const run=JSON.parse(readFileSync(from+'/ci-run-final.json','utf8')),jobs=JSON.parse(readFileSync(from+'/ci-jobs-final.json','utf8')).jobs;
+assert.equal(run.head_sha,source);assert.equal(run.conclusion,'success');assert.equal(run.run_attempt,1);assert.equal(jobs.length,33);assert.ok(jobs.every((j:any)=>j.conclusion==='success'));
+const required=['Pull request','Backlog','Lint','Typecheck','Unit tests','Lib tests','Playwright smoke'];assert.equal(jobs.filter((j:any)=>required.includes(j.name)).length,7);
+mkdirSync(root);
+const files=['ci-run-final.json','ci-jobs-final.json','ci-artifacts.json','storybook-run.json','storybook-jobs.json','native-run.json','native-jobs.json','native-artifacts.json','mobile-artifact.json','tested-merge.json','tested-source.json','application-inspection.json','mobile-inspection.json','callback-extraction.json','mobile-13407971387.zip','desktop-13406510507.zip','native-13405306741.zip','native-13405026474.zip','native-13404937198.zip','cancelled-42006100854-run.json','cancelled-42006100854-jobs.json'];
+for(const n of files)copyFileSync(from+'/'+n,root+'/'+n);
+for(const side of ['mobile','desktop']){const base=from+'/callback-'+side;for(const e of readdirSync(base,{recursive:true,withFileTypes:true})){if(!e.isFile())continue;const local=(e.parentPath+'/'+e.name).slice(base.length+1),name='callback-'+side+'__'+local.replaceAll('/','__');copyFileSync(base+'/'+local,root+'/'+name);files.push(name);}}
+copyFileSync(import.meta.filename,root+'/archive.ts');files.push('archive.ts');
+const note=`# ✅ SPN-146 first Linux source: application acceptance only\n\nSource ${source}; tested merge853de9794611bbe56c55429a349cef4b7dcbc8fa has the identical tree02fe8769b8b3b6568fd9356cfd7adf6d661654d1. CI42006109864 attempt1 has33successes/all7required gates. Story42006109837 attempt1 has8successes/2inapplicable Pages skips. Native42006109796 attempt1 passes Chrome/Firefox/Safari37/37/39stages. Both callback comparisons accept.\n\nMobile plain1/2/3 capacityp95 23.3/23.3/19.7ms, maxima27.4/50.3/28.0ms, idlemax3.3/1.8/2.3ms. Plain1traverses66UndoRedo groups; otherplain/profile1each. Full native and responsiveness ZIPs retained here. Callback comparison/evidence/reporter JSON is retained with exact ZIP digests; full callback raw traces/maps remain supplementary local ZIPs and Actions artifacts13405961161/13405590934 expiring2026-11-12. These summaries are not complete callback traces.\n\nSeparate component42006109881 FAILED its original analysis and had8/16positive timing comparisons: inconclusive, no merge acceptance. Its complete artifact and reviews are maintained under source02ef01a40fe8369b79477909673c76de6d2a4edf/docs/implementation/evidence/SPN-146/linux-runtime-outcome. This archive grants no current-head credit to that changed candidate. Metadata CI42006100854 on7e041c0c was deliberately cancelled; no cancelled work is acceptance.\n`;
+writeFileSync(root+'/README.md',note);files.push('README.md');
+const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+const payloads=files.map(path=>{const b=readFileSync(root+'/'+path);assert.ok(b.length<100*1024**2);return{path,bytes:b.length,sha256:hash(b)};});
+writeFileSync(root+'/manifest.json',JSON.stringify({source,prefix,payloads},null,2)+'\n');
+const env={...process.env,GIT_INDEX_FILE:'/tmp/spn146-first-linux-app.index'};
+const git=(...args:string[])=>execFileSync('git',args,{env,encoding:'utf8'}).trim();
+git('read-tree','--empty');
+for(const path of [...files,'manifest.json'])git('update-index','--add','--cacheinfo','100644',git('hash-object','-w',root+'/'+path),prefix+'/'+path);
+const commit=git('commit-tree',git('write-tree'),'-m','Preserve SPN-146 first Linux application acceptance on483bf8ae');
+writeFileSync('/tmp/spn146-first-linux-app-commit.txt',commit+'\n');console.log(JSON.stringify({commit,payloads:payloads.length,bytes:payloads.reduce((n,p)=>n+p.bytes,0)}));

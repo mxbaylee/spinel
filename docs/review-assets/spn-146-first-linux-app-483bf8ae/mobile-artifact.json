@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "id": 13407971387,
+      "name": "doc-responsiveness-mobile",
+      "size_in_bytes": 2747768,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13407971387",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13407971387/zip",
+      "expired": false,
+      "created_at": "2026-11-05T10:40:11Z",
+      "expires_at": "2026-11-12T10:40:10Z",
+      "updated_at": "2026-11-05T10:40:11Z",
+      "digest": "sha256:072df6d71a2f57b6523086836fa74d45479091f80497656460bceaa556647606",
+      "workflow_run": {
+        "id": 42006109864,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-146-mobile-flush",
+        "head_sha": "483bf8ae4609fa8027485293e6050fe8dca88e1c"
+      }
+    }
+  ]
+}

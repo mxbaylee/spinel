@@ -1,0 +1,28 @@
+[
+  {
+    "id": 13405961161,
+    "name": "doc-callback-lifetimes-mobile",
+    "bytes": 177576306,
+    "sha256": "490d64edecb9361e45407f5bee1f46589bef160d14c25f18daa25d91476f6713",
+    "members": 93,
+    "selected": [
+      "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "test-results/spn113-comparison-mobile.json",
+      "playwright-report/doc-callback-lifetimes.json"
+    ]
+  },
+  {
+    "id": 13405590934,
+    "name": "doc-callback-lifetimes-desktop",
+    "bytes": 189673159,
+    "sha256": "87bf3653906638c2668191d7fad8af8dafac98141155f8fa1ff7bc6296e8665c",
+    "members": 93,
+    "selected": [
+      "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "test-results/spn113-comparison-desktop.json",
+      "playwright-report/doc-callback-lifetimes.json"
+    ]
+  }
+]

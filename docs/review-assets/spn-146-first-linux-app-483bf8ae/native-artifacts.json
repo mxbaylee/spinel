@@ -1,0 +1,61 @@
+{
+  "artifacts": [
+    {
+      "id": 13405306741,
+      "name": "desktop-offline-safari-macos-15-intel-42006109796-1",
+      "size_in_bytes": 1004308,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13405306741",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13405306741/zip",
+      "expired": false,
+      "created_at": "2026-11-05T10:01:45Z",
+      "expires_at": "2026-11-19T10:01:43Z",
+      "updated_at": "2026-11-05T10:01:45Z",
+      "digest": "sha256:0ae38d5f4d7296200125d8d5eabf2a7a4cbb31739068a2c2b2dcccbc9f7d7caa",
+      "workflow_run": {
+        "id": 42006109796,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-146-mobile-flush",
+        "head_sha": "483bf8ae4609fa8027485293e6050fe8dca88e1c"
+      }
+    },
+    {
+      "id": 13405026474,
+      "name": "desktop-offline-chrome-macos-26-42006109796-1",
+      "size_in_bytes": 228032,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13405026474",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13405026474/zip",
+      "expired": false,
+      "created_at": "2026-11-05T09:57:02Z",
+      "expires_at": "2026-11-19T09:57:00Z",
+      "updated_at": "2026-11-05T09:57:02Z",
+      "digest": "sha256:a79ebc202788b30df12191c486805e26ed45bf78d9d27955a1d71ac244af9178",
+      "workflow_run": {
+        "id": 42006109796,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-146-mobile-flush",
+        "head_sha": "483bf8ae4609fa8027485293e6050fe8dca88e1c"
+      }
+    },
+    {
+      "id": 13404937198,
+      "name": "desktop-offline-firefox-macos-26-42006109796-1",
+      "size_in_bytes": 453423,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13404937198",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13404937198/zip",
+      "expired": false,
+      "created_at": "2026-11-05T09:57:36Z",
+      "expires_at": "2026-11-19T09:57:34Z",
+      "updated_at": "2026-11-05T09:57:36Z",
+      "digest": "sha256:7d2c5ae06c8022d77d00f59d64ba5036a055b0d5038a25135c4cf86cbb00a806",
+      "workflow_run": {
+        "id": 42006109796,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-146-mobile-flush",
+        "head_sha": "483bf8ae4609fa8027485293e6050fe8dca88e1c"
+      }
+    }
+  ]
+}

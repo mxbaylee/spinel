@@ -1,0 +1,128 @@
+{
+  "source": "483bf8ae4609fa8027485293e6050fe8dca88e1c",
+  "testedMerge": "853de9794611bbe56c55429a349cef4b7dcbc8fa",
+  "tree": "02fe8769b8b3b6568fd9356cfd7adf6d661654d1",
+  "native": [
+    {
+      "browser": "chrome",
+      "stages": 37,
+      "status": "passed",
+      "attempt": "1",
+      "path": "/tmp/spn146-linux-hosted/native-13405026474/chrome/acceptance.json"
+    },
+    {
+      "browser": "safari",
+      "stages": 39,
+      "status": "passed",
+      "attempt": "1",
+      "path": "/tmp/spn146-linux-hosted/native-13405306741/safari/acceptance.json"
+    },
+    {
+      "browser": "firefox",
+      "stages": 37,
+      "status": "passed",
+      "attempt": "1",
+      "path": "/tmp/spn146-linux-hosted/native-13404937198/firefox/acceptance.json"
+    }
+  ],
+  "callback": [
+    {
+      "path": "/tmp/spn146-linux-hosted/callback-desktop/test-results/spn113-comparison-desktop.json",
+      "accepted": true,
+      "status": null,
+      "failures": []
+    },
+    {
+      "path": "/tmp/spn146-linux-hosted/callback-mobile/test-results/spn113-comparison-mobile.json",
+      "accepted": true,
+      "status": null,
+      "failures": []
+    }
+  ],
+  "desktop": {
+    "passed": true,
+    "failures": [],
+    "candidate": [
+      {
+        "sample": "profile",
+        "source": "853de9794611bbe56c55429a349cef4b7dcbc8fa",
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 3.5,
+          "p95": 8.199999999953434,
+          "max": 19.300000000046566,
+          "sum": 257.80000000004657
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 1.2000000000698492,
+          "p95": 1.2000000000698492,
+          "max": 1.2000000000698492,
+          "sum": 1.2000000000698492
+        },
+        "initialIntegrity": true,
+        "undoRedoGroups": 1
+      },
+      {
+        "sample": "plain-3",
+        "source": "853de9794611bbe56c55429a349cef4b7dcbc8fa",
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 3.300000000046566,
+          "p95": 6.100000000093132,
+          "max": 9.29999999993015,
+          "sum": 225.00000000023283
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 1,
+          "p95": 1,
+          "max": 1,
+          "sum": 1
+        },
+        "initialIntegrity": true,
+        "undoRedoGroups": 1
+      },
+      {
+        "sample": "plain-2",
+        "source": "853de9794611bbe56c55429a349cef4b7dcbc8fa",
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 2.800000000046566,
+          "p95": 5.5,
+          "max": 9.20000000006985,
+          "sum": 202.70000000030268
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.6999999999534339,
+          "p95": 0.6999999999534339,
+          "max": 0.6999999999534339,
+          "sum": 0.6999999999534339
+        },
+        "initialIntegrity": true,
+        "undoRedoGroups": 1
+      },
+      {
+        "sample": "plain-1",
+        "source": "853de9794611bbe56c55429a349cef4b7dcbc8fa",
+        "capacityPairedFlushMs": {
+          "count": 65,
+          "p50": 3.099999999976717,
+          "p95": 5.600000000093132,
+          "max": 7.700000000069849,
+          "sum": 211.0000000006985
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.7999999999301508,
+          "p95": 0.7999999999301508,
+          "max": 0.7999999999301508,
+          "sum": 0.7999999999301508
+        },
+        "initialIntegrity": true,
+        "undoRedoGroups": 66
+      }
+    ]
+  }
+}
