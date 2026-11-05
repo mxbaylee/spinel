@@ -1,0 +1,19 @@
+{
+  "candidate": "a4eb19e4c5b95ba589042fe181cbcec2aa848990",
+  "measuredSource": "fcd9fcb6c3b1a6478e9212f26344b83469bb492c",
+  "baselineSource": "df76fb78fa0258f8c28c068767970e8e869a5838",
+  "originalInputArchive": "7a16c4764218dda8edfdc872b0f5fa67c255b72b",
+  "outcome": "one retained-input collector capability passed; no browser or production acceptance",
+  "payloads": [
+    {
+      "path": "publication-review-a.md",
+      "bytes": 10774,
+      "sha256": "3103522fb3b180eda2d0ba7910e18568d83dc3818fc7315e37be1d154a86b502"
+    },
+    {
+      "path": "publication-review-b.md",
+      "bytes": 10130,
+      "sha256": "36acbb835bb360d795e6e4139c1046ef747dac52c6137cf97a38e5c54853e4af"
+    }
+  ]
+}
