@@ -9,6 +9,7 @@ import { analyzeDocCallbackLifetimes } from './doc-callback-lifetimes.ts';
 import type { DocCallbackCallsite } from './doc-callback-lifetimes.ts';
 import {
   DOC_CALLBACK_TRACE_SETTINGS,
+  DOC_CALLBACK_TRACE_STORAGE,
   readDocCallbackTrace,
 } from '../../e2e/doc-responsiveness-callback-trace.ts';
 import type { DocCallbackTraceSummary } from '../../e2e/doc-responsiveness-callback-trace.ts';
@@ -70,6 +71,8 @@ export interface DocCallbackManifest {
   frameId: string;
   trace: DocCallbackArtifactFile & {
     completion: { dataLossOccurred: boolean; traceFormat?: string; streamCompression?: string };
+    storage: typeof DOC_CALLBACK_TRACE_STORAGE;
+    transport: { bytes: number; sha256: string };
   };
   traceRead?: DocCallbackTraceSummary;
   attribution: {
@@ -79,6 +82,7 @@ export interface DocCallbackManifest {
   };
   analysis: Analysis;
   errors: unknown[];
+  cleanup: { sessionDetached: boolean; fixtureClosed: boolean };
   input: { keydownAt: number[]; keyToFrameMs: number[] };
   nativeAfterTyping: {
     text: string;
@@ -135,6 +139,20 @@ export async function loadDocCallbackEvidence(
   const failures: string[] = [];
   let analysis: Analysis | null = null;
   try {
+    const progress = JSON.parse(
+      await readFile(resolve(dirname(path), 'spn134-progress.json'), 'utf8'),
+    );
+    if (
+      progress.schema !== 1 ||
+      progress.terminal !== 'passed' ||
+      progress.firstFailure !== null ||
+      progress.persistenceFailure !== null ||
+      !Array.isArray(progress.events) ||
+      !progress.events.some(
+        (event: { phase?: string }) => event.phase === 'fixture-cleanup-complete',
+      )
+    )
+      failures.push('Terminal callback progress does not confirm successful owned cleanup.');
     const files = [manifest.trace, ...(manifest.attribution?.artifacts ?? [])];
     if (!manifest.attribution?.artifacts?.length)
       throw new Error('Retained source attribution artifacts are missing.');
@@ -150,12 +168,21 @@ export async function loadDocCallbackEvidence(
       names.add(file.file);
       await verifyDocCallbackFile(dirname(path), file);
     }
-    const compression = manifest.trace.completion.streamCompression ?? 'none';
-    if (compression !== 'gzip' && compression !== 'none')
-      throw new Error('Unknown retained trace compression.');
+    if (!isDeepStrictEqual(manifest.trace.storage, DOC_CALLBACK_TRACE_STORAGE))
+      throw new Error(
+        'Retained trace storage provenance differs from the registered lossless method.',
+      );
+    if (manifest.trace.completion.streamCompression !== 'none')
+      throw new Error('Retained trace transport is not uncompressed.');
+    const compression = manifest.trace.storage.compression;
     const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.trace.file), {
       compression,
     });
+    if (
+      raw.summary.uncompressedBytes !== manifest.trace.transport?.bytes ||
+      raw.summary.uncompressedSha256 !== manifest.trace.transport?.sha256
+    )
+      failures.push('Retained decoded bytes differ from the received transport hash/length.');
     if (manifest.traceRead && !isDeepStrictEqual(raw.summary, manifest.traceRead))
       failures.push('Stored trace read summary differs from retained raw evidence.');
     analysis = analyzeDocCallbackLifetimes({
@@ -209,6 +236,10 @@ export function compareDocCallbackEvidence(
       `${label}: callback collection or native behavior did not complete successfully.`,
     );
     check(
+      value.cleanup?.sessionDetached === true && value.cleanup.fixtureClosed === true,
+      `${label}: owned session/fixture cleanup is unconfirmed.`,
+    );
+    check(
       Array.isArray(value.errors) && value.errors.length === 0,
       `${label}: browser errors remain.`,
     );
@@ -218,8 +249,12 @@ export function compareDocCallbackEvidence(
     );
     check(
       value.trace?.completion?.traceFormat === 'json' &&
-        value.trace.completion.streamCompression === 'gzip',
-      `${label}: trace completion did not confirm gzip JSON.`,
+        value.trace.completion.streamCompression === 'none' &&
+        isDeepStrictEqual(value.trace.storage, DOC_CALLBACK_TRACE_STORAGE) &&
+        Number.isSafeInteger(value.trace.transport?.bytes) &&
+        value.trace.transport.bytes > 0 &&
+        validHash(value.trace.transport?.sha256),
+      `${label}: trace completion/storage/transport provenance is incomplete or changed.`,
     );
     // The mapper also records arbitrary FunctionCall positions. Only unknown
     // measured timer ownership blocks completeness in the recomputed analyzer;
@@ -288,6 +323,10 @@ export function compareDocCallbackEvidence(
         value.instrumentation.playwrightTrace === false &&
         value.instrumentation.latencyBudgetsEnforced === false,
       `${label}: the registered traced browser preset changed.`,
+    );
+    check(
+      isDeepStrictEqual(value.instrumentation?.storage, DOC_CALLBACK_TRACE_STORAGE),
+      `${label}: registered local trace storage changed.`,
     );
     for (const [key, expected] of Object.entries(DOC_CALLBACK_TRACE_SETTINGS))
       check(

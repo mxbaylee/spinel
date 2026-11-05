@@ -142,8 +142,9 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
       },
       transferMode: 'ReturnAsStream',
       streamFormat: 'json',
-      streamCompression: 'gzip',
+      streamCompression: 'none',
       bufferUsageReportingInterval: 1000,
+      storage: { compression: 'gzip', producer: 'node:zlib', level: 1 },
       cpuThrottle: 1,
       mountedEditors: 1,
       deviceScaleFactor: 1,
@@ -159,7 +160,12 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
       file: 'spn113-trace.json.gz',
       sha256: hash(rawBytes),
       bytes: rawBytes.length,
-      completion: { dataLossOccurred: false, traceFormat: 'json', streamCompression: 'gzip' },
+      completion: { dataLossOccurred: false, traceFormat: 'json', streamCompression: 'none' },
+      storage: { compression: 'gzip', producer: 'node:zlib', level: 1 },
+      transport: {
+        bytes: Buffer.byteLength(JSON.stringify(raw)),
+        sha256: hash(JSON.stringify(raw)),
+      },
     },
     attribution: {
       callsites,
@@ -173,6 +179,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
     },
     analysis,
     errors: [],
+    cleanup: { sessionDetached: true, fixtureClosed: true },
     input: {
       keydownAt: Array.from({ length: 2086 }, (_, index) => index + 1),
       keyToFrameMs: Array(2086).fill(8),
@@ -317,7 +324,22 @@ test('matching capture omissions or changes cannot replace the registered lossle
       value.manifest.instrumentation.bufferUsageReportingInterval = 0;
     },
     (value) => {
-      value.manifest.trace.completion.streamCompression = 'none';
+      value.manifest.trace.completion.streamCompression = 'gzip';
+    },
+    (value) => {
+      value.manifest.trace.storage.level = 9;
+    },
+    (value) => {
+      value.manifest.cleanup.fixtureClosed = false;
+    },
+    (value) => {
+      value.manifest.cleanup.sessionDetached = false;
+    },
+    (value) => {
+      value.manifest.trace.transport.sha256 = '';
+    },
+    (value) => {
+      delete value.manifest.instrumentation.storage;
     },
     (value) => {
       delete value.manifest.harnessSha256['e2e/doc-responsiveness-callback-trace.ts'];
@@ -478,6 +500,16 @@ async function retain(directory: string) {
   const value = evidence('candidate');
   await writeFile(join(directory, value.manifest.trace.file), rawBytes);
   for (const source of sourceFiles) await writeFile(join(directory, source.file), source.content);
+  await writeFile(
+    join(directory, 'spn134-progress.json'),
+    JSON.stringify({
+      schema: 1,
+      terminal: 'passed',
+      firstFailure: null,
+      persistenceFailure: null,
+      events: [{ phase: 'fixture-cleanup-complete' }],
+    }),
+  );
   await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(value.manifest));
   return value.manifest;
 }
@@ -587,6 +619,70 @@ test('candidate-only callback evidence retains first-attempt/source/content/boun
     mutate(candidate);
     assert.equal(
       compareDocCallbackEvidence('desktop', null, candidate, candidateSource).accepted,
+      false,
+    );
+  }
+});
+
+test('stored gzip provenance and decoded transport identity cannot be borrowed or omitted', async (t) => {
+  const directory = await temporary(t);
+  for (const change of [
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.transport.sha256 = '0'.repeat(64);
+    },
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.transport.bytes++;
+    },
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.storage.level = 9;
+    },
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.completion.streamCompression = 'gzip';
+    },
+  ]) {
+    const manifest = await retain(directory);
+    change(manifest);
+    await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+    const loaded = await loadDocCallbackEvidence(directory);
+    assert.ok(loaded.failures.length);
+    assert.equal(
+      compareDocCallbackEvidence(
+        'desktop',
+        evidence('baselineObservation'),
+        loaded,
+        candidateSource,
+      ).accepted,
+      false,
+    );
+  }
+});
+
+test('a stale passing manifest cannot override missing, timed-out or failed terminal progress', async (t) => {
+  const directory = await temporary(t);
+  for (const terminal of [undefined, 'timedOut', 'failed']) {
+    await retain(directory);
+    if (terminal === undefined) await rm(join(directory, 'spn134-progress.json'));
+    else
+      await writeFile(
+        join(directory, 'spn134-progress.json'),
+        JSON.stringify({
+          schema: 1,
+          terminal,
+          firstFailure: { kind: terminal },
+          persistenceFailure: null,
+          events: [{ phase: 'fixture-cleanup-complete' }],
+        }),
+      );
+    const loaded = await loadDocCallbackEvidence(directory);
+    assert.equal(loaded.manifest.passed, true);
+    assert.ok(loaded.failures.length);
+    assert.equal(
+      compareDocCallbackEvidence(
+        'desktop',
+        evidence('baselineObservation'),
+        loaded,
+        candidateSource,
+      ).accepted,
       false,
     );
   }

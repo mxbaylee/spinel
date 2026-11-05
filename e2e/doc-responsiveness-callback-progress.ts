@@ -7,6 +7,7 @@ type Failure =
   | 'operation'
   | 'input-observation'
   | 'trace'
+  | 'trace-output-cleanup'
   | 'detach'
   | 'fixture-cleanup'
   | 'manifest-persistence';
@@ -26,6 +27,27 @@ export async function persistCallbackManifest(
     return primary ?? new Error('Callback acceptance manifest could not be persisted.');
   }
   return primary;
+}
+
+export interface CallbackObservation {
+  progress: ReturnType<typeof callbackProgress>;
+  detach: () => void;
+  abort: () => void;
+  interrupt: () => Promise<unknown>;
+  done?: Promise<void>;
+  rejectManifest?: () => Promise<void>;
+}
+
+/** A timeout remains durable even if owned teardown cannot finish. */
+export async function settleCallbackObservation(observation: CallbackObservation, status: string) {
+  observation.progress.terminal(status);
+  if (status !== 'passed') {
+    observation.abort();
+    await observation.interrupt();
+    await observation.done?.catch(() => {});
+    await observation.rejectManifest?.();
+    observation.progress.terminal(status);
+  }
 }
 
 /** Node-side observations survive a test-body timeout without querying the renderer.

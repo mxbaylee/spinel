@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-04",
+  "base": "5c565b61e11ce29780581f33410749436ecef42f",
+  "previousSource": "c4e64fa110a57d70fb682649d7f4d45ca3d20951",
+  "sourceFiles": {
+    "scripts/ci/desktop-browser.ts": "3cd324a2aa9e9cab9b24204c2d5ffa906a7403edd46e29c99a5c4d65c3f9b744",
+    "scripts/ci/desktop-offline-fixture.ts": "508fd58d3d8df85a662c45f54a50e1fc186896bc5a47bf8bf711149540ca3cbf",
+    "scripts/ci/desktop-offline.ts": "952bbffe21f851ffe47c59b1b653e017ed789400475d298b661aa8cecf99a3aa",
+    "scripts/ci/desktop-storage.ts": "46b468698f98ce2321f0f528d4d2b6c293b34b6ea1f9637b6407d3d57769ab73",
+    "scripts/ci/desktop-storage.test.ts": "a80a56f5c08ccdde13ae4d5369f6e9f4290a6c0e3b7ca9c9e92fb897c6299c14"
+  },
+  "implementationByteIdentical": true,
+  "checks": [
+    {
+      "name": "tests",
+      "elapsedMs": 331,
+      "sampledCombinedPeakKiB": 90624,
+      "pressure": "1",
+      "outcome": "command-passed"
+    },
+    {
+      "name": "format",
+      "elapsedMs": 320,
+      "sampledCombinedPeakKiB": 90976,
+      "pressure": "1",
+      "outcome": "command-passed"
+    },
+    {
+      "name": "lint",
+      "elapsedMs": 17013,
+      "sampledCombinedPeakKiB": 756432,
+      "pressure": "1",
+      "outcome": "command-passed"
+    },
+    {
+      "name": "types",
+      "elapsedMs": 1265,
+      "sampledCombinedPeakKiB": 578384,
+      "pressure": "1",
+      "outcome": "command-passed"
+    }
+  ],
+  "focusedTypes": {
+    "extends": "/Users/mxbaylee/projects/spinel-spn-141/tsconfig.json",
+    "compilerOptions": {
+      "typeRoots": ["/Users/mxbaylee/projects/spinel-spn-141/node_modules/@types"]
+    },
+    "include": [
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-browser.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-offline-fixture.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-offline.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-storage.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-storage.test.ts"
+    ]
+  },
+  "hostedAcceptance": "Pending fresh current-source ordinary and native first-attempt workflows after two qualifying exact-head pre-push reviews",
+  "priorReceiptRun": {
+    "id": 41944489914,
+    "status": "completed",
+    "conclusion": "cancelled"
+  },
+  "firstIntegrationBookkeepingFailure": "Initial index generation correctly rejected SPN-140 dependency on the deleted SPN-141 ticket. Removed the resolved dependency, regenerated through CLI and passed backlog/title checks."
+}
