@@ -423,6 +423,8 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
     /contents: write|GITHUB_TOKEN|needs:|continue-on-error:|setup-local|setup-env|npm ci|npm run build|browserstack-capability\.ts/,
   );
   const capability = source.split('  capability:\n')[1];
+  assert.match(diagnostics, /BS_DIAGNOSTIC_KIND: \$\{\{ inputs.diagnostic_kind \|\| 'driver' \}\}/);
+  assert.doesNotMatch(capability, /diagnostic_kind|BS_DIAGNOSTIC_KIND/);
   // Without a budget job nothing needs to write repository or Actions state.
   assert.doesNotMatch(source, /actions: write|contents: write|GITHUB_TOKEN|needs:/);
   assert.match(capability, /github.event_name == 'schedule'/);

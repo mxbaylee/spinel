@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { pathToFileURL } from 'node:url';
 import { webdriverErrorCode } from './browserstack.ts';
+import { analyzeNetworkLog } from './browserstack-network-log.ts';
 
 // These are completed-session GETs, not WebDriver commands or allocation routes.
 // Response formats: https://www.browserstack.com/docs/automate/api-reference/selenium/session
@@ -15,7 +16,8 @@ export const diagnosticLimits = Object.freeze({
   responseBytes: 1024 * 1024,
   retainedFailures: 16,
 });
-type Endpoint = 'appiumlogs' | 'logs';
+type DriverEndpoint = 'appiumlogs' | 'logs';
+type Endpoint = DriverEndpoint | 'networklogs';
 type Row = Record<string, unknown>;
 type Cause =
   | 'renderer-crashed'
@@ -38,7 +40,7 @@ type FailureRecord = {
   errorClass: 'UnknownError' | 'JavaScriptError' | null;
 };
 type Analysis = {
-  format: Endpoint | 'unrecognized';
+  format: DriverEndpoint | 'unrecognized';
   recognizedRequests: number;
   failures: FailureRecord[];
   omittedFailures: number;
@@ -60,6 +62,7 @@ type Retrieval = {
   elapsedMilliseconds: number | null;
   failure: string | null;
   analysis: Analysis | null;
+  network?: ReturnType<typeof analyzeNetworkLog>;
   structure: ReturnType<typeof logStructure> | null;
 };
 export type SessionDiagnostics = {
@@ -83,6 +86,7 @@ export type SessionDiagnostics = {
   retrievals: Retrieval[];
 };
 type Options = {
+  logKind?: 'driver' | 'network';
   sessionId?: string;
   sourceSha?: string;
   testedSha?: string;
@@ -393,7 +397,7 @@ function versions(payload: Row | null, command: string | null, result: Analysis)
 }
 
 /** Only framed request/failed-response pairs supply evidence; echoed bodies do not. */
-export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
+export function analyzeSessionLog(text: string, endpoint: DriverEndpoint): Analysis {
   const result: Analysis = {
     format: 'unrecognized',
     recognizedRequests: 0,
@@ -644,7 +648,7 @@ export function analyzeSessionLog(text: string, endpoint: Endpoint): Analysis {
 
 function safeFailure(error: unknown): string {
   const message = error instanceof Error ? error.message : '';
-  return /^(?:request-timeout|overall-timeout|request-failed|redirect-blocked|unexpected-response-url|response-too-large|response-empty|response-invalid-encoding|response-stream-failed|journal-failed|http-\d{3})$/.test(
+  return /^(?:request-timeout|overall-timeout|request-failed|redirect-blocked|unexpected-response-url|response-too-large|response-empty|response-invalid-encoding|response-stream-failed|journal-failed|invalid-network-log|http-\d{3})$/.test(
     message,
   )
     ? message
@@ -674,7 +678,7 @@ async function retrieve(options: Options, endpoint: Endpoint, deadline: number, 
           signal: controller.signal,
           headers: {
             Authorization: `Basic ${Buffer.from(`${options.username}:${options.accessKey}`).toString('base64')}`,
-            Accept: 'text/plain',
+            Accept: endpoint === 'networklogs' ? 'application/json' : 'text/plain',
           },
         });
         check();
@@ -720,7 +724,10 @@ async function retrieve(options: Options, endpoint: Endpoint, deadline: number, 
           response.headers.get('content-type'),
           bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf,
         );
-        const analysis = analyzeSessionLog(text, endpoint);
+        const analysis =
+          endpoint === 'networklogs'
+            ? { network: analyzeNetworkLog(text) }
+            : { analysis: analyzeSessionLog(text, endpoint) };
         check();
         entry.sha256 = digest.digest('hex');
         return analysis;
@@ -779,15 +786,18 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
     ![...options.username, ...options.accessKey].some(
       (character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127,
     );
-  const invalid = !report.target.sessionId
-    ? 'invalid-session-id'
-    : !report.execution.sourceSha
-      ? 'invalid-source-sha'
-      : !report.execution.testedSha
-        ? 'invalid-tested-sha'
-        : !credentials
-          ? 'missing-or-invalid-credentials'
-          : null;
+  const invalid =
+    options.logKind !== undefined && !['driver', 'network'].includes(options.logKind)
+      ? 'invalid-log-kind'
+      : !report.target.sessionId
+        ? 'invalid-session-id'
+        : !report.execution.sourceSha
+          ? 'invalid-source-sha'
+          : !report.execution.testedSha
+            ? 'invalid-tested-sha'
+            : !credentials
+              ? 'missing-or-invalid-credentials'
+              : null;
   const journal = async () => {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const left = deadline - performance.now();
@@ -821,7 +831,9 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
   try {
     await journal(); // A failed initial report write prevents every provider GET.
     if (invalid) return report;
-    for (const endpoint of ['appiumlogs', 'logs'] as const) {
+    const endpoints: Endpoint[] =
+      options.logKind === 'network' ? ['networklogs'] : ['appiumlogs', 'logs'];
+    for (const endpoint of endpoints) {
       report.stage = 'retrieving';
       const entry: Retrieval = {
         endpoint,
@@ -837,7 +849,7 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
       report.retrievals.push(entry);
       await journal();
       try {
-        entry.analysis = await retrieve(options, endpoint, deadline, entry);
+        Object.assign(entry, await retrieve(options, endpoint, deadline, entry));
         entry.status = 'available';
       } catch (error) {
         entry.status = 'failed';
@@ -846,7 +858,7 @@ export async function collectSessionDiagnostics(options: Options): Promise<Sessi
       }
       await journal();
       if (
-        entry.analysis.failures.length &&
+        entry.analysis?.failures.length &&
         !entry.analysis.omittedFailures &&
         !entry.analysis.ambiguousTransactions &&
         !entry.analysis.malformedRecords &&
@@ -899,6 +911,7 @@ async function main() {
   }
   await mkdir('artifacts', { recursive: true });
   const report = await collectSessionDiagnostics({
+    logKind: (process.env.BS_DIAGNOSTIC_KIND ?? 'driver') as Options['logKind'],
     sessionId: process.env.BS_DIAGNOSTIC_SESSION,
     sourceSha: process.env.SOURCE_SHA,
     testedSha,

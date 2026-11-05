@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { test } from 'node:test';
+import { analyzeNetworkLog, retainedNetworkEntries } from './browserstack-network-log.ts';
 import {
   analyzeSessionLog,
   collectSessionDiagnostics,
@@ -70,6 +71,159 @@ const sessionLifecycle = [
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
 const privateValues =
   /fixture-user|fixture-key|private|secret|bootstrap|signed\.example|127\.0\.0\.1|"script"|stacktrace|Authorization/;
+
+function networkEntry(
+  url = 'https://bs-local.com:8176/assets/application-fixture.js?token=secret',
+) {
+  return {
+    request: {
+      url,
+      headers: [{ name: 'Authorization', value: 'private' }],
+      cookies: ['private'],
+      postData: { text: 'private' },
+    },
+    response: {
+      status: 503,
+      bodySize: 12,
+      content: { mimeType: 'text/html; charset=utf-8', text: 'private document' },
+      headers: ['private'],
+      cookies: ['private'],
+    },
+    time: 120,
+    timings: { wait: 110, receive: 10 },
+    serverIPAddress: '127.0.0.1',
+    comment: 'private',
+  };
+}
+const networkHar = (entries: unknown[]) =>
+  JSON.stringify({ log: { version: '1.2', entries, pages: ['private'], comment: 'private' } });
+
+test('network diagnostics retain resource status and timing without URLs, headers, cookies or content', () => {
+  const result = analyzeNetworkLog(networkHar([networkEntry()]));
+  assert.equal(result.complete, true);
+  assert.equal(result.totalEntries, 1);
+  assert.deepEqual(result.entries, [
+    {
+      index: 0,
+      fixtureHost: true,
+      pathSha256: hash('/assets/application-fixture.js'),
+      kind: 'script',
+      status: 503,
+      mime: 'html',
+      timeMs: 120,
+      waitMs: 110,
+      receiveMs: 10,
+      bodyBytes: 12,
+    },
+  ]);
+  assert.doesNotMatch(
+    JSON.stringify(result),
+    /private|secret|Authorization|bs-local|application-fixture|8176|127\.0\.0\.1/,
+  );
+});
+
+test('network diagnostics distinguish unsupported metadata, truncation and a valid empty HAR', () => {
+  for (const text of ['private malformed', '{}', networkHar([]).replace('1.2', '1.1')])
+    assert.throws(() => analyzeNetworkLog(text), /^Error: invalid-network-log$/);
+  const empty = analyzeNetworkLog(networkHar([]));
+  assert.equal(empty.totalEntries, 0);
+  assert.equal(empty.complete, true);
+  const result = analyzeNetworkLog(
+    networkHar([
+      null,
+      networkEntry('not a private URL'),
+      { ...networkEntry(), response: { status: '200' } },
+      ...Array.from({ length: retainedNetworkEntries + 1 }, () => networkEntry()),
+    ]),
+  );
+  assert.equal(result.complete, false);
+  assert.equal(result.malformedEntries, 3);
+  assert.equal(result.omittedEntries, 1);
+  assert.equal(result.entries.length, retainedNetworkEntries);
+  assert.equal(result.totalEntries, retainedNetworkEntries + 4);
+});
+
+test('network timing unknowns and status zero do not become a measured download or identified failure cause', () => {
+  const input = networkEntry('https://private.example/secret.css?private=secret');
+  input.response.status = 0;
+  input.response.bodySize = -1;
+  input.time = -1;
+  input.timings.wait = -1;
+  input.timings.receive = 3_600_001;
+  const [entry] = analyzeNetworkLog(networkHar([input])).entries;
+  assert.equal(entry.fixtureHost, false);
+  assert.equal(entry.kind, 'stylesheet');
+  assert.equal(entry.status, 0);
+  assert.equal(entry.bodyBytes, null);
+  assert.equal(entry.timeMs, null);
+  assert.equal(entry.waitMs, null);
+  assert.equal(entry.receiveMs, null);
+  assert.doesNotMatch(JSON.stringify(entry), /private|secret/);
+});
+
+test('selected network diagnostics make exactly one bounded completed-session GET and never fall back to driver or allocation routes', async () => {
+  const calls: string[] = [];
+  const report = await collectSessionDiagnostics({
+    ...options,
+    logKind: 'network',
+    fetcher: async (url, init) => {
+      calls.push(String(url));
+      assert.equal(init?.method, 'GET');
+      assert.equal(init?.redirect, 'error');
+      return new Response(networkHar([networkEntry()]));
+    },
+  });
+  assert.deepEqual(calls, [
+    `https://api.browserstack.com/automate/sessions/${sessionId}/networklogs`,
+  ]);
+  assert.equal(report.status, 'available');
+  assert.equal(report.diagnosis, 'unclassified');
+  assert.equal(report.providerSessionsAllocated, 0);
+  assert.equal(report.capabilityAcceptance, 'not-assessed');
+  assert.equal(report.retrievals.length, 1);
+  assert.equal(report.retrievals[0].analysis, null);
+  assert.equal(report.retrievals[0].network?.entries[0].status, 503);
+  assert.doesNotMatch(JSON.stringify(report), /private|secret|Authorization|application-fixture/);
+});
+
+test('invalid network selection, missing HAR, provider refusal and oversized HAR cannot pass or allocate a fallback session', async () => {
+  const invalid = await collectSessionDiagnostics({
+    ...options,
+    logKind: 'private' as never,
+    fetcher: async () => {
+      throw new Error('Must not fetch');
+    },
+  });
+  assert.equal(invalid.status, 'failed');
+  assert.equal(invalid.failure, 'invalid-log-kind');
+  assert.equal(invalid.retrievals.length, 0);
+  for (const [response, failure] of [
+    [new Response('private malformed'), 'invalid-network-log'],
+    [new Response('private', { status: 404 }), 'http-404'],
+    [
+      new Response('private', {
+        headers: { 'content-length': String(diagnosticLimits.responseBytes + 1) },
+      }),
+      'response-too-large',
+    ],
+  ] as const) {
+    let calls = 0;
+    const report = await collectSessionDiagnostics({
+      ...options,
+      logKind: 'network',
+      fetcher: async () => {
+        calls++;
+        return response;
+      },
+    });
+    assert.equal(calls, 1);
+    assert.equal(report.status, 'failed');
+    assert.equal(report.failure, failure);
+    assert.equal(report.providerSessionsAllocated, 0);
+    assert.equal(report.capabilityAcceptance, 'not-assessed');
+    assert.doesNotMatch(JSON.stringify(report), /private|secret/);
+  }
+});
 
 test('diagnostics require exact session and execution identities and credentials before any provider request', async () => {
   for (const changed of [
