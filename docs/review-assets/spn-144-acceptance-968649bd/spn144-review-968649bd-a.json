@@ -1,0 +1,52 @@
+{
+  "reviewer": "A",
+  "head": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+  "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+  "tree": "5552cf754b509ac4ce8f2857c08ea24509304722",
+  "score": 100,
+  "rubric": {
+    "scope": 35,
+    "correctnessIntegrityAccess": 25,
+    "meaningfulVerification": 20,
+    "ciOperations": 10,
+    "maintainabilityComplexity": 10
+  },
+  "findings": [],
+  "sourceBlockers": [],
+  "prePushQualified": true,
+  "mergeApproved": false,
+  "nonImplementing": true,
+  "codeUnchangedFrom": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "independentProof": "/tmp/spn144-integration-review-proof-a.json",
+  "verification": {
+    "payloads": 16,
+    "storedBytes": 22036,
+    "decodedBytes": 117118,
+    "elapsedMs": 379,
+    "peakKiB": 182192,
+    "pressure": "1"
+  },
+  "reviewerHelperFirstFailure": {
+    "reason": "Expected nonexistent oxlint success banner; corrected to actual formatting-success line with zero-exit lint watchdog retained",
+    "script": "/tmp/spn144-integration-review-proof-first-a.ts",
+    "log": "/tmp/spn144-integration-review-proof-first-a.log",
+    "watchdog": "/tmp/spn144-integration-review-proof-first-a-watchdog.json"
+  },
+  "personas": [
+    "Operator",
+    "Owner",
+    "Collaborator",
+    "Link guest"
+  ],
+  "complexity": "Narrow authority/framing/owned conversion helpers; no unnecessary generic framework or production dependency",
+  "pending": [
+    "Second independent qualifying exact-head review before push",
+    "Fresh seven current-head gates and all selected owners",
+    "Desktop/mobile full first-attempt callback pairs and Linux converter within unchanged420s",
+    "Unprofiled native content/history/access/responsiveness owners",
+    "Final immutable evidence and fresh merge guards",
+    "Actual squash/receipt/cleanup readback"
+  ],
+  "oldHostedGateCredit": false,
+  "runtimeReruns": false
+}

@@ -1,0 +1,15 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+const root='/tmp/spn144-integrated-hosted';
+const p=JSON.parse(await readFile(root+'/ci-plan.json','utf8'));
+assert.equal(p.head,'968649bdec92469e8761d6e09ed7f6900c79abc0');
+assert.equal(p.base,'89d93c8b23db65d3fe6a83d1853acc716c024b80');
+assert.equal(p.tested,'9e27273f7b616dd48b641f544fac1ab1cb72b13a');
+assert.ok(Object.values(p.suites).every((s:any)=>s.selected===true));
+const zip=await readFile(root+'/ci-plan.zip');
+const zipSha=createHash('sha256').update(zip).digest('hex');
+assert.equal(zip.length,922);assert.equal(zipSha,'c6bc34fefce4fa6a7ec81065ac8d91affcc0864571635ee40d30979de906e286');
+const proof={source:p.head,base:p.base,tested:p.tested,sourceAndTestedTree:'5552cf754b509ac4ce8f2857c08ea24509304722',ci:41965105059,storybook:41965105108,attempt:1,planArtifact:13387316885,planZipSha256:zipSha,planDigest:createHash('sha256').update(JSON.stringify(p)).digest('hex'),selectedSuites:Object.keys(p.suites),mode:p.mode,paths:p.paths,reason:p.suites.backlog.reason,priorAcceptedSource:'7b06d7516c4c386f5a23044e74d0c09b95a5a929',priorAcceptedArchive:'02541cea2c28adadb988394be84515effa205b22',priorAcceptanceIsCurrentHeadCredit:false};
+await writeFile(root+'/initial-identity.json',JSON.stringify(proof,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({planDigest:proof.planDigest,selected:proof.selectedSuites.length,mode:proof.mode}));

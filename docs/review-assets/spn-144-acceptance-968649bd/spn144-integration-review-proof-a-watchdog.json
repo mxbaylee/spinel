@@ -1,0 +1,78 @@
+{
+  "root": 91072,
+  "started": 1793851129062,
+  "elapsedMs": 379,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91056,
+  "peakKiB": 182192,
+  "live": [
+    {
+      "pid": 91072,
+      "parent": 91033,
+      "group": 91072,
+      "rssKiB": 89488,
+      "started": "Wed Nov  4 19:58:48 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn144-integration-review-proof-a-watchdog.json node /tmp/spn144-integration-review-proof-a.ts"
+    },
+    {
+      "pid": 91153,
+      "parent": 91072,
+      "group": 91072,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:58:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 91072,
+      "parent": 91033,
+      "group": 91072,
+      "rssKiB": 89488,
+      "started": "Wed Nov  4 19:58:48 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn144-integration-review-proof-a-watchdog.json node /tmp/spn144-integration-review-proof-a.ts"
+    },
+    {
+      "pid": 91091,
+      "parent": 91072,
+      "group": 91072,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:58:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 91117,
+      "parent": 91072,
+      "group": 91072,
+      "rssKiB": 91008,
+      "started": "Wed Nov  4 19:58:49 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 91138,
+      "parent": 91072,
+      "group": 91072,
+      "rssKiB": 1600,
+      "started": "Wed Nov  4 19:58:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 91139,
+      "parent": 91117,
+      "group": 91072,
+      "rssKiB": 256,
+      "started": "Wed Nov  4 19:58:49 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 91153,
+      "parent": 91072,
+      "group": 91072,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:58:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,23 @@
+{
+  "head": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+  "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+  "previousAcceptedSource": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "tree": "5552cf754b509ac4ce8f2857c08ea24509304722",
+  "clean": true,
+  "baseAncestor": true,
+  "nonDocumentationDeltaFromAcceptedSource": [],
+  "verifiedPayloads": 16,
+  "storedBytes": 22036,
+  "decodedBytes": 117118,
+  "allStoredAndRawSha256Match": true,
+  "inheritedRegistrationsByteIdentical": true,
+  "landingLedgerOnlyAppends144": true,
+  "lint": {
+    "elapsedMs": 17633,
+    "peakKiB": 748208,
+    "pressure": "1",
+    "outcome": "command-passed"
+  },
+  "hostedNewSourceAcceptance": "pending",
+  "outcome": "passed"
+}

@@ -1,0 +1,57 @@
+{
+  "reviewer": "B",
+  "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+  "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+  "score": 100,
+  "rubric": {
+    "scope": 35,
+    "correctnessIntegrityAccess": 25,
+    "meaningfulVerification": 20,
+    "ciOperations": 10,
+    "maintainabilityOverComplexity": 10
+  },
+  "findings": [],
+  "unresolvedBlockers": [],
+  "validationPushReady": true,
+  "condition": "both independent exact-head scores above95",
+  "mergeApproval": false,
+  "runtimeIdenticalTo": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "baseDocumentationOnly": true,
+  "evidence": {
+    "payloads": 16,
+    "storedBytes": 22036,
+    "rawBytes": 117118,
+    "manifestSha256": "21acdcaff649c1d18ff78a8429793f3dedb225329516819f00ec24f6f656afcf",
+    "independentProof": "/tmp/spn144-integration-review-proof-b.json",
+    "watchdog": {
+      "outcome": "command-passed",
+      "elapsedMs": 459,
+      "peakKiB": 181792,
+      "pressure": "1"
+    },
+    "freshLint": {
+      "outcome": "command-passed",
+      "elapsedMs": 17633,
+      "peakKiB": 748208,
+      "pressure": "1"
+    },
+    "controls": "125 original-source controls and12-root types reused only as local byte-identical-code evidence"
+  },
+  "bookkeeping": {
+    "nextId": 147,
+    "openTickets": 23,
+    "proposedCompletions": 20,
+    "newRegistrationsPreserved": true
+  },
+  "pending": [
+    "fresh current-head seven CI gates",
+    "first-attempt complete desktop/mobile callback pairs under420s",
+    "both selected unprofiled responsiveness/content/history/access owners",
+    "every other selected owner and applicable Storybook",
+    "immutable final evidence and fresh merge guards",
+    "actual squash/receipt/cleanup"
+  ],
+  "oldHostedPassesAreCurrentHeadCredit": false,
+  "newBrowserConverterRuntimeExecutions": 0,
+  "report": "/tmp/spn144-review-968649bd-b.md"
+}

@@ -1,0 +1,120 @@
+{
+  "head": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+  "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+  "old": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "runtimeDeltaEmpty": true,
+  "baseDocsOnly": true,
+  "payloads": 16,
+  "storedBytes": 22036,
+  "rawBytes": 117118,
+  "manifestSha256": "21acdcaff649c1d18ff78a8429793f3dedb225329516819f00ec24f6f656afcf",
+  "nextId": 147,
+  "openTickets": 23,
+  "completions": 20,
+  "baseRegistrationsIdentical": true,
+  "lint": {
+    "outcome": "command-passed",
+    "elapsedMs": 17633,
+    "peakKiB": 748208,
+    "pressure": "1"
+  },
+  "publication": {
+    "outcome": "passed",
+    "commit": "02541cea2c28adadb988394be84515effa205b22",
+    "archiveTree": "2617672ee1d326a59a81f3933c0b5699438a92c3",
+    "remote": "02541cea2c28adadb988394be84515effa205b22\trefs/tags/archive/spn-144-acceptance-7b06d751",
+    "prefix": "docs/review-assets/spn-144-acceptance-7b06d751/",
+    "manifestSha256": "f7980c7d12c6f32b11c16f0e8582f23ca0f93455f32a25953ac58d2d8a30977c",
+    "payloads": 304,
+    "totalGitBlobs": 305,
+    "payloadBytes": 640487657,
+    "allGitBlobSha1Verified": true,
+    "allManifestSha256Verified": true,
+    "allFrozenInputsMatched": true,
+    "exactSelectedFileSet": true,
+    "members": [
+      {
+        "kind": "callback",
+        "preset": "desktop",
+        "retained": 81,
+        "omitted": 12,
+        "originalZip": {
+          "bytes": 196654763,
+          "sha256": "2c46913b24c75fe2fb3e3ba6a81c1d2ae9d79c7422e09d0070149748b786d714"
+        }
+      },
+      {
+        "kind": "callback",
+        "preset": "mobile",
+        "retained": 81,
+        "omitted": 12,
+        "originalZip": {
+          "bytes": 172754850,
+          "sha256": "05aadafd837328996c94455904e55fce77445e7e072caf0929f41e6c96cfec67"
+        }
+      },
+      {
+        "kind": "responsiveness",
+        "preset": "desktop",
+        "retained": 18,
+        "omitted": 0,
+        "originalZip": {
+          "bytes": 1686582,
+          "sha256": "d2b65e6e6c5968a6f4bcf45558fc69067154dc926c9700c499e228875943217a"
+        }
+      },
+      {
+        "kind": "responsiveness",
+        "preset": "mobile",
+        "retained": 18,
+        "omitted": 0,
+        "originalZip": {
+          "bytes": 2755515,
+          "sha256": "2c1c743c49f7081ae18b3d8f9b16e61837d73d777c88ec18f3a567282780a5bd"
+        }
+      }
+    ],
+    "source": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "tested": "eb91917064bd9d7665683fade860cd82457fbca4",
+    "sourceAndTestedTree": "d451532408b37f1cb5da12511c6fca38520599e2",
+    "ci": 41959231289,
+    "all33JobsSuccessful": true,
+    "allSevenGatesSuccessful": true,
+    "limits": "Publication verification of retained evidence only; no application, converter, browser, benchmark or profile-event rerun; fresh merge guards and actual merge/cleanup remain separate.",
+    "validation": {
+      "firstAttempt": {
+        "outcome": "helper assertion failed after all blob/local hashes completed",
+        "reason": "Obsolete spn113-trace.json.gz expectation; actual reviewed SPN144 output is spn144-derived.json.gz",
+        "elapsedMs": 8403,
+        "peakKiB": 304880,
+        "script": "/tmp/spn144-publication-check-first-a.ts",
+        "log": "/tmp/spn144-final-publication-first-a.log",
+        "watchdog": "/tmp/spn144-final-publication-first-a-watchdog.json"
+      },
+      "correctedAttempt": {
+        "outcome": "passed",
+        "elapsedMs": 8172,
+        "peakKiB": 300512,
+        "pressure": "1",
+        "change": "Derived JSON filename assertion only",
+        "script": "/tmp/spn144-publication-check-a.ts",
+        "log": "/tmp/spn144-final-publication-a.log",
+        "watchdog": "/tmp/spn144-final-publication-a-watchdog.json"
+      },
+      "runtimeOrConverterRerun": false,
+      "frozenRootMutated": false
+    },
+    "receipt": {
+      "path": "/tmp/spn144-final-body.md",
+      "sha256": "50fc4880ff6d518026e84e723898f9f8ee859ed4bef988bc797adbded98225a8",
+      "archiveUrl": "https://github.com/mxbaylee/spinel/tree/02541cea2c28adadb988394be84515effa205b22/docs/review-assets/spn-144-acceptance-7b06d751",
+      "concreteUrlVerified": true,
+      "publicationAndHelperFailureClaimsAccurate": true,
+      "pendingMarkers": [
+        "PENDING_MERGE_CLEANUP"
+      ],
+      "remoteBodyNotYetReadBack": true
+    }
+  }
+}

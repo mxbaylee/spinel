@@ -1,0 +1,54 @@
+{
+  "root": 95525,
+  "started": 1793853016678,
+  "elapsedMs": 221,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91280,
+  "peakKiB": 91280,
+  "live": [
+    {
+      "pid": 95525,
+      "parent": 48367,
+      "group": 95525,
+      "rssKiB": 89712,
+      "started": "Wed Nov  4 20:30:16 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-integrated-hosted/final-ci-b-watchdog.json node /tmp/spn144-integrated-hosted/final-ci-b.ts"
+    },
+    {
+      "pid": 95656,
+      "parent": 95525,
+      "group": 95525,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:30:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 95525,
+      "parent": 48367,
+      "group": 95525,
+      "rssKiB": 89712,
+      "started": "Wed Nov  4 20:30:16 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-integrated-hosted/final-ci-b-watchdog.json node /tmp/spn144-integrated-hosted/final-ci-b.ts"
+    },
+    {
+      "pid": 95563,
+      "parent": 95525,
+      "group": 95525,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:30:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 95656,
+      "parent": 95525,
+      "group": 95525,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:30:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

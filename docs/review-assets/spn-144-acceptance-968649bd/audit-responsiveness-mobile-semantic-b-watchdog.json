@@ -1,0 +1,54 @@
+{
+  "root": 95395,
+  "started": 1793852931737,
+  "elapsedMs": 202,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91264,
+  "peakKiB": 91264,
+  "live": [
+    {
+      "pid": 95395,
+      "parent": 48367,
+      "group": 95395,
+      "rssKiB": 89696,
+      "started": "Wed Nov  4 20:28:51 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-integrated-hosted/audit-responsiveness-mobile-semantic-b-watchdog.json node /tmp/spn144-integrated-hosted/audit-responsiveness-mobile-semantic-b.ts"
+    },
+    {
+      "pid": 95459,
+      "parent": 95395,
+      "group": 95395,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:28:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 95395,
+      "parent": 48367,
+      "group": 95395,
+      "rssKiB": 89696,
+      "started": "Wed Nov  4 20:28:51 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-integrated-hosted/audit-responsiveness-mobile-semantic-b-watchdog.json node /tmp/spn144-integrated-hosted/audit-responsiveness-mobile-semantic-b.ts"
+    },
+    {
+      "pid": 95432,
+      "parent": 95395,
+      "group": 95395,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:28:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 95459,
+      "parent": 95395,
+      "group": 95395,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:28:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,396 @@
+{
+  "schema": 2,
+  "mode": "paired",
+  "candidateGroupLimit": 32,
+  "candidateHistoryLimit": 100,
+  "baselineHistoryLimit": 50,
+  "protocolRevision": 5,
+  "drainAcceptance": {
+    "metric": "first-verified-browser-local-empty",
+    "maximumMs": 1000,
+    "lateReadUpperBound": "descriptive-only"
+  },
+  "preset": "mobile",
+  "physicalDevice": false,
+  "status": "passed",
+  "passed": true,
+  "timingValid": true,
+  "baselineRedoOutcome": [
+    {
+      "sample": "profile",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    },
+    {
+      "sample": "plain-3",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    },
+    {
+      "sample": "plain-2",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    },
+    {
+      "sample": "plain-1",
+      "outcome": "baseline-capacity-refusal",
+      "integrityEvidenceValid": true
+    }
+  ],
+  "candidateIntegrity": true,
+  "failures": [],
+  "unavailable": [],
+  "summaries": [
+    {
+      "role": "baseline-observation",
+      "sample": "profile",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "inputP95Ms": 105.09999999997672,
+      "longestTaskMs": 20670,
+      "capacityPairedFlushMs": null,
+      "idlePairedFlushMs": null,
+      "pairedFlushMaximumMs": null,
+      "nativeDrainUpperBoundMs": 42167.89999999991,
+      "firstVerifiedBrowserLocalDrainMs": 41828.89999999991,
+      "lateReadMinusLocalWitnessMs": 339,
+      "drainPollCount": 6,
+      "firstEmptyAfterFinalKeyMs": 41831,
+      "typingWallMs": 137881.43765500002,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-3",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "inputP95Ms": 102.5,
+      "longestTaskMs": 20545,
+      "capacityPairedFlushMs": null,
+      "idlePairedFlushMs": null,
+      "pairedFlushMaximumMs": null,
+      "nativeDrainUpperBoundMs": 41763.20000000007,
+      "firstVerifiedBrowserLocalDrainMs": 41447.40000000002,
+      "lateReadMinusLocalWitnessMs": 315.80000000004657,
+      "drainPollCount": 7,
+      "firstEmptyAfterFinalKeyMs": 41451.09999999998,
+      "typingWallMs": 132912.89345700003,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-2",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "inputP95Ms": 103.80000000004657,
+      "longestTaskMs": 20778,
+      "capacityPairedFlushMs": null,
+      "idlePairedFlushMs": null,
+      "pairedFlushMaximumMs": null,
+      "nativeDrainUpperBoundMs": 41901.29999999999,
+      "firstVerifiedBrowserLocalDrainMs": 41570.5,
+      "lateReadMinusLocalWitnessMs": 330.79999999998836,
+      "drainPollCount": 7,
+      "firstEmptyAfterFinalKeyMs": 41573.29999999999,
+      "typingWallMs": 134664.011661,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "baseline-observation",
+      "sample": "plain-1",
+      "source": "2c84a18449c7dae09e2817989fac6236be96ef98",
+      "inputP95Ms": 102.89999999996508,
+      "longestTaskMs": 20355,
+      "capacityPairedFlushMs": null,
+      "idlePairedFlushMs": null,
+      "pairedFlushMaximumMs": null,
+      "nativeDrainUpperBoundMs": 41217.20000000001,
+      "firstVerifiedBrowserLocalDrainMs": 41031.5,
+      "lateReadMinusLocalWitnessMs": 185.70000000001164,
+      "drainPollCount": 6,
+      "firstEmptyAfterFinalKeyMs": 41034.79999999999,
+      "typingWallMs": 135500.541537,
+      "initialIntegrity": true,
+      "redoOutcome": "baseline-capacity-refusal",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "profile",
+      "source": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+      "inputP95Ms": 60.800000000046566,
+      "longestTaskMs": 128,
+      "capacityPairedFlushMs": {
+        "count": 65,
+        "p50": 7.2999999998137355,
+        "p95": 18.899999999906868,
+        "max": 21.9000000001397,
+        "sum": 591.2999999995809
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 1.5999999998603016,
+        "p95": 1.5999999998603016,
+        "max": 1.5999999998603016,
+        "sum": 1.5999999998603016
+      },
+      "pairedFlushMaximumMs": 21.9000000001397,
+      "nativeDrainUpperBoundMs": 460.39999999990687,
+      "firstVerifiedBrowserLocalDrainMs": 310.5,
+      "lateReadMinusLocalWitnessMs": 149.89999999990687,
+      "drainPollCount": 1,
+      "firstEmptyAfterFinalKeyMs": 314.0999999998603,
+      "typingWallMs": 90468.23636899999,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+      "inputP95Ms": 59.10000000009313,
+      "longestTaskMs": 130,
+      "capacityPairedFlushMs": {
+        "count": 65,
+        "p50": 6.099999999976717,
+        "p95": 18.29999999993015,
+        "max": 37,
+        "sum": 574.6000000007916
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 1.5,
+        "p95": 1.5,
+        "max": 1.5,
+        "sum": 1.5
+      },
+      "pairedFlushMaximumMs": 37,
+      "nativeDrainUpperBoundMs": 512.6000000000931,
+      "firstVerifiedBrowserLocalDrainMs": 368,
+      "lateReadMinusLocalWitnessMs": 144.60000000009313,
+      "drainPollCount": 2,
+      "firstEmptyAfterFinalKeyMs": 402.4000000001397,
+      "typingWallMs": 87569.03047199998,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+      "inputP95Ms": 59.5,
+      "longestTaskMs": 116,
+      "capacityPairedFlushMs": {
+        "count": 65,
+        "p50": 6.299999999930151,
+        "p95": 15.5,
+        "max": 19.400000000023283,
+        "sum": 510.79999999993015
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 2,
+        "p95": 2,
+        "max": 2,
+        "sum": 2
+      },
+      "pairedFlushMaximumMs": 19.400000000023283,
+      "nativeDrainUpperBoundMs": 454.10000000009313,
+      "firstVerifiedBrowserLocalDrainMs": 308.20000000006985,
+      "lateReadMinusLocalWitnessMs": 145.90000000002328,
+      "drainPollCount": 2,
+      "firstEmptyAfterFinalKeyMs": 352.5,
+      "typingWallMs": 87530.10742799999,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+      "inputP95Ms": 59.09999999997672,
+      "longestTaskMs": 130,
+      "capacityPairedFlushMs": {
+        "count": 65,
+        "p50": 6.399999999906868,
+        "p95": 17.20000000006985,
+        "max": 20.300000000046566,
+        "sum": 537.3000000000466
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 1.6000000000931323,
+        "p95": 1.6000000000931323,
+        "max": 1.6000000000931323,
+        "sum": 1.6000000000931323
+      },
+      "pairedFlushMaximumMs": 20.300000000046566,
+      "nativeDrainUpperBoundMs": 533.0999999999767,
+      "firstVerifiedBrowserLocalDrainMs": 335.80000000004657,
+      "lateReadMinusLocalWitnessMs": 197.29999999993015,
+      "drainPollCount": 2,
+      "firstEmptyAfterFinalKeyMs": 371.80000000004657,
+      "typingWallMs": 88073.262193,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 66
+    }
+  ],
+  "improvement": {
+    "history": {
+      "baselineContainingTaskMs": 19465,
+      "candidateEntireTaskUpperBoundMs": 130,
+      "reductionPercent": 99.33213460056511,
+      "status": "registered-relative-gate-applied",
+      "candidateAttribution": "sampled-native-reducer",
+      "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+    },
+    "collaboration": {
+      "baselineContainingTaskMs": 20670,
+      "candidateEntireTaskUpperBoundMs": 130,
+      "reductionPercent": 99.37106918238993,
+      "status": "registered-relative-gate-applied",
+      "candidateAttribution": "sampled-native-reducer",
+      "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+    }
+  },
+  "unprofiledImprovement": {
+    "metric": "whole-browser-longest-task-reduction",
+    "samples": [
+      {
+        "sample": "plain-3",
+        "baselineLongestTaskMs": 20545,
+        "candidateEntireTaskUpperBoundMs": 130,
+        "reductionPercent": 99.36724263811146
+      },
+      {
+        "sample": "plain-2",
+        "baselineLongestTaskMs": 20778,
+        "candidateEntireTaskUpperBoundMs": 130,
+        "reductionPercent": 99.37433824237173
+      },
+      {
+        "sample": "plain-1",
+        "baselineLongestTaskMs": 20355,
+        "candidateEntireTaskUpperBoundMs": 130,
+        "reductionPercent": 99.36133628101203
+      }
+    ],
+    "conservativeAggregateReductionPercent": 99.36133628101203,
+    "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+  },
+  "profilingVariation": [
+    {
+      "role": "baseline-observation",
+      "plainTypingMs": {
+        "count": 3,
+        "p50": 134664.011661,
+        "p95": 135500.541537,
+        "max": 135500.541537,
+        "sum": 403077.446655
+      },
+      "profileTypingMs": 137881.43765500002,
+      "profileMinusPlainMedianMs": 3217.4259940000193,
+      "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+    },
+    {
+      "role": "candidate",
+      "plainTypingMs": {
+        "count": 3,
+        "p50": 87569.03047199998,
+        "p95": 88073.262193,
+        "max": 88073.262193,
+        "sum": 263172.400093
+      },
+      "profileTypingMs": 90468.23636899999,
+      "profileMinusPlainMedianMs": 2899.205897000007,
+      "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+    }
+  ],
+  "composition": {
+    "baseline": {
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 0,
+      "reorderedSampleCount": 0,
+      "clock": {
+        "beforeMs": 1752.8999999999069,
+        "afterMs": 2818.79999999993,
+        "uncertaintyMs": 1065.9000000000233,
+        "profileStartTimeUs": 626499489,
+        "profileEndTimeUs": 807637047
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 17291,
+        "sampledCpuMs": 18329.251000000015,
+        "certainContainingTasks": [
+          {
+            "index": 1116,
+            "startedAt": 142307,
+            "durationMs": 19465,
+            "sampleCount": 16347
+          }
+        ],
+        "maxContainingTaskMs": 19465,
+        "taskAttribution": "certain-whole-containing-task"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 18414,
+        "sampledCpuMs": 19572.891000000065,
+        "certainContainingTasks": [
+          {
+            "index": 1117,
+            "startedAt": 161774.79999999993,
+            "durationMs": 20670,
+            "sampleCount": 17460
+          }
+        ],
+        "maxContainingTaskMs": 20670,
+        "taskAttribution": "certain-whole-containing-task"
+      }
+    },
+    "candidate": {
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 2,
+      "reorderedSampleCount": 4,
+      "clock": {
+        "beforeMs": 1689.8999999999069,
+        "afterMs": 2755.399999999907,
+        "uncertaintyMs": 1065.5,
+        "profileStartTimeUs": 1119083968,
+        "profileEndTimeUs": 1211080928
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 319,
+        "sampledCpuMs": 319.91799999999984,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 2,
+        "sampleCount": 214,
+        "sampledCpuMs": 232.29399999999995,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      }
+    }
+  }
+}

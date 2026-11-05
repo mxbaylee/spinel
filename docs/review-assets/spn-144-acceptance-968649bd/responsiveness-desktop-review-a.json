@@ -1,0 +1,471 @@
+{
+  "owner": "desktop responsiveness",
+  "accepted": true,
+  "mergeApproval": false,
+  "identities": {
+    "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+    "tested": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+    "sourceAndTestedTree": "5552cf754b509ac4ce8f2857c08ea24509304722",
+    "ci": 41965105059,
+    "storybook": 41965105108,
+    "attempt": 1,
+    "planArtifact": 13387316885,
+    "planZipSha256": "c6bc34fefce4fa6a7ec81065ac8d91affcc0864571635ee40d30979de906e286",
+    "planDigest": "ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "priorAcceptedSource": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "priorAcceptedArchive": "02541cea2c28adadb988394be84515effa205b22",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "job": {
+    "id": 127040403708,
+    "run": 41965105059,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "start": "2026-11-05T04:01:27Z",
+    "end": "2026-11-05T04:18:04Z",
+    "jsonSha256": "9f4141cdb6a668d126b9cb4362c3b7b274bda6613237a1160c924fec1b781fb0",
+    "logSha256": "7824cc3eec3694c58c8f1cf11a25028076df5d4eec2383c6188e5c7b6735e3f4"
+  },
+  "archive": {
+    "bytes": 1711679,
+    "sha256": "1cca41c0e9ee9f8ad41589d210fa6101b584995a79a784618a47d37b17b95813"
+  },
+  "members": 18,
+  "omitted": 0,
+  "memberProof": "responsiveness-desktop-members-a.json",
+  "rawMetricsProof": "responsiveness-desktop-audit-a.json",
+  "semanticProof": "responsiveness-desktop-semantics-a.json",
+  "all11CasesRetry0": true,
+  "rawUnprofiledBudgets": [
+    {
+      "sample": "plain-1",
+      "capacity": {
+        "count": 65,
+        "p50": 2.800000000046566,
+        "p95": 8,
+        "max": 22.400000000023283,
+        "sum": 247.50000000034925
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.5999999999767169,
+        "p95": 0.5999999999767169,
+        "max": 0.5999999999767169,
+        "sum": 0.5999999999767169
+      },
+      "input": {
+        "count": 2086,
+        "p50": 24.199999999953434,
+        "p95": 35.29999999993015,
+        "max": 65.80000000004657,
+        "sum": 51180.49999999814
+      },
+      "longTask": {
+        "count": 4,
+        "p50": 52,
+        "p95": 55,
+        "max": 55,
+        "sum": 210
+      },
+      "localDrainMs": 301.5999999999767
+    },
+    {
+      "sample": "plain-2",
+      "capacity": {
+        "count": 65,
+        "p50": 3,
+        "p95": 7.799999999930151,
+        "max": 32,
+        "sum": 267.30000000004657
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.5999999999767169,
+        "p95": 0.5999999999767169,
+        "max": 0.5999999999767169,
+        "sum": 0.5999999999767169
+      },
+      "input": {
+        "count": 2086,
+        "p50": 24.5,
+        "p95": 36.29999999993015,
+        "max": 79.20000000006985,
+        "sum": 52093.599999999045
+      },
+      "longTask": {
+        "count": 2,
+        "p50": 58,
+        "p95": 71,
+        "max": 71,
+        "sum": 129
+      },
+      "localDrainMs": 324.5
+    },
+    {
+      "sample": "plain-3",
+      "capacity": {
+        "count": 65,
+        "p50": 3.300000000046566,
+        "p95": 6.700000000069849,
+        "max": 15.199999999953434,
+        "sum": 244.1999999997206
+      },
+      "idle": {
+        "count": 1,
+        "p50": 0.7999999999301508,
+        "p95": 0.7999999999301508,
+        "max": 0.7999999999301508,
+        "sum": 0.7999999999301508
+      },
+      "input": {
+        "count": 2086,
+        "p50": 24.199999999953434,
+        "p95": 36.40000000002328,
+        "max": 72.59999999997672,
+        "sum": 52043.10000000044
+      },
+      "longTask": {
+        "count": 1,
+        "p50": 52,
+        "p95": 52,
+        "max": 52,
+        "sum": 52
+      },
+      "localDrainMs": 305.19999999995343
+    }
+  ],
+  "profileLimits": [
+    {
+      "role": "baseline-observation",
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 0,
+      "reorderedSampleCount": 0,
+      "clock": {
+        "beforeMs": 2642.4000000000233,
+        "afterMs": 3075.2000000000116,
+        "uncertaintyMs": 432.79999999998836,
+        "profileStartTimeUs": 469840327,
+        "profileEndTimeUs": 578989336
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 8140,
+        "sampledCpuMs": 8755.506999999907,
+        "certainContainingTasks": [
+          {
+            "index": 69,
+            "startedAt": 92072.20000000007,
+            "durationMs": 9699,
+            "sampleCount": 7756
+          }
+        ],
+        "maxContainingTaskMs": 9699,
+        "taskAttribution": "certain-whole-containing-task"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 1,
+        "sampleCount": 8421,
+        "sampledCpuMs": 9102.351999999864,
+        "certainContainingTasks": [
+          {
+            "index": 70,
+            "startedAt": 101772.40000000002,
+            "durationMs": 9921,
+            "sampleCount": 8054
+          }
+        ],
+        "maxContainingTaskMs": 9921,
+        "taskAttribution": "certain-whole-containing-task"
+      }
+    },
+    {
+      "role": "candidate",
+      "sampleIntervalUs": 1000,
+      "negativeDeltaCount": 0,
+      "reorderedSampleCount": 0,
+      "clock": {
+        "beforeMs": 2347.20000000007,
+        "afterMs": 2780.20000000007,
+        "uncertaintyMs": 433,
+        "profileStartTimeUs": 851179074,
+        "profileEndTimeUs": 915399352
+      },
+      "history": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 138,
+        "sampledCpuMs": 128.6319999999999,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      },
+      "collaboration": {
+        "status": "sampled",
+        "reason": null,
+        "functionNodes": 3,
+        "sampleCount": 107,
+        "sampledCpuMs": 118.14999999999993,
+        "certainContainingTasks": [],
+        "maxContainingTaskMs": null,
+        "taskAttribution": "unavailable"
+      }
+    }
+  ],
+  "semanticSummaries": [
+    {
+      "sample": "plain-1",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "history-timer",
+          "durationMs": 0.30000000004656613,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "collaboration-timer",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 301.5999999999767,
+      "groups": 66
+    },
+    {
+      "sample": "plain-2",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.5,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.09999999997671694,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.5999999999767169,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 324.5,
+      "groups": 1
+    },
+    {
+      "sample": "plain-3",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "policy-idle",
+          "durationMs": 0.5,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "policy-idle",
+          "durationMs": 0.19999999995343387,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        },
+        {
+          "phase": "pair",
+          "origin": "policy-idle",
+          "durationMs": 0.7999999999301508,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 305.19999999995343,
+      "groups": 1
+    },
+    {
+      "sample": "profile",
+      "terminalPending": {
+        "history": 6,
+        "collaboration": 6
+      },
+      "idleOwners": [
+        {
+          "phase": "history",
+          "origin": "history-timer",
+          "durationMs": 0.5,
+          "before": {
+            "history": 6,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 6
+          }
+        },
+        {
+          "phase": "collaboration",
+          "origin": "collaboration-timer",
+          "durationMs": 0.2999999999301508,
+          "before": {
+            "history": 0,
+            "collaboration": 6
+          },
+          "after": {
+            "history": 0,
+            "collaboration": 0
+          }
+        }
+      ],
+      "localDrainMs": 301.79999999993015,
+      "groups": 1
+    },
+    {
+      "scenario": "resume-native-typing-after-quiet-pause",
+      "summary": {
+        "finalOriginalKeyAt": 64701.69999999995,
+        "continuationKeyAt": 65091,
+        "continuationFrameAt": 65128.89999999991,
+        "browserQuietGapMs": 389.30000000004657,
+        "continuationKeyToFrameMs": 37.89999999990687,
+        "continuationKeyToNativeReadMs": 38,
+        "continuationRequestReturnMs": 43.34109800000442,
+        "finalOriginalKeyToContinuationFrameMs": 427.19999999995343,
+        "finalOriginalKeyToContinuationNativeReadMs": 427.30000000004657
+      }
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "pending and late guest edits refused; persisted snapshot/revision unchanged; old capability denied",
+      "eventCount": 4,
+      "physicalIme": false
+    },
+    {
+      "boundary": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+      "correctness": "composing Enter preserves provisional text and history; cancelled provisional text absent; finalized composition atomically undone/redone with exact saved and peer text",
+      "eventCount": 226,
+      "physicalIme": false
+    }
+  ],
+  "unavailable": [],
+  "runtimeRerun": false,
+  "profileEventsReanalyzed": false,
+  "artifact": {
+    "id": 13387857563,
+    "bytes": 1711679,
+    "digest": "sha256:1cca41c0e9ee9f8ad41589d210fa6101b584995a79a784618a47d37b17b95813",
+    "metadataSha256": "24f4e2dc53027d23a72ad693967bda1cf092ab140674d97808097484ef7060a6",
+    "expiresAt": "2026-11-12T04:18:01Z"
+  },
+  "validation": {
+    "firstExecutionsOnly": true,
+    "normalPressure": true,
+    "extract": {
+      "elapsedMs": 283,
+      "peakKiB": 91616
+    },
+    "rawAudit": {
+      "elapsedMs": 1188,
+      "peakKiB": 226416
+    },
+    "semanticAudit": {
+      "elapsedMs": 298,
+      "peakKiB": 91488
+    }
+  },
+  "oldPassCredit": false,
+  "sourceAssertionLimits": "Saved/peer/history/idle records inspected directly; boundary source proves persisted equality and guest403 assertions. Fixture close is awaited in source and job/cases passed; no separate OS-wide cleanup inventory."
+}

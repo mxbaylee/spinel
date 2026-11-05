@@ -1,0 +1,40 @@
+# ✅ Integrated SPN-144 final acceptance readiness — reviewer B
+
+**Current-source acceptance is complete; no unresolved acceptance blocker found.** Source `968649bdec92469e8761d6e09ed7f6900c79abc0` is ready for final evidence freeze/publication and fresh guarded landing checks after both readiness reports are finalized. Actual remote publication verification, squash, canonical receipt readback and branch cleanup remain pending and are not claimed complete.
+
+## 🔗 Exact source and current gates
+
+Base `89d93c8b23db65d3fe6a83d1853acc716c024b80`; tested merge `9e27273f7b616dd48b641f544fac1ab1cb72b13a`; independently equal source/tested tree `5552cf754b509ac4ce8f2857c08ea24509304722`. Both independent exact-head source reviews are100/100, rubric35/25/20/10/10, with no blockers. This is agent review only. No product UI changed. Old7b06d751 grades/passes are preserved history, not current-head credit.
+
+Independently reconciled raw terminal CI41965105059 attempt1: **all33 jobs succeed**, exact source/run/attempt/status. Seven required successful gates are Pull request127040194590, Backlog127040403735, Lint127040403718, Typecheck127040403799, Unit tests127043117830, Lib tests127043930217 and Playwright smoke127048534067. None of the selected work is absent, skipped, failed or cancelled.
+
+The current synchronize-event plan selects all15 suites conservatively because immutable range/event labels were unavailable. Canonical digest `ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9` binds exact source/base/tested. Independently verified original aggregate ZIP sizes/hashes and member contents against metadata: unit13387283391, library13388035827, browser13387988394. Embedded plans/digests match; current `verifyCoverage` re-evaluation exactly matches every selected-success result. Browser aggregate separately binds successful Typecheck/Unit/Lib. Current full Typecheck supplies project-wide coverage beyond reusable focused local checks.
+
+Storybook41965105108 attempt1 is completed/success on this head. All eight selected jobs succeed; only the two optional PR-preview/main Pages publication jobs are inapplicable skips. They are not missing rendering/interaction owners. Proof `final-ci-proof-b.json`, script/log/watchdog `final-ci-b.*`: independent bounded execution221ms/91,280KiB, normal pressure, no acceptance workload replay.
+
+## 🧪 Four current-source owners accepted
+
+Read A's current desktop callback and desktop responsiveness reports and reconciled them with these identities and my two fresh mobile audits. Every owner has current artifacts and first-attempt raw acceptance:
+
+- Desktop callback127040403721/artifact13386678808: baseline114.455s/candidate94.811s, unchanged420s limit, complete original/derived bytes, pinned authority, behavior/caps and cleanup accepted by A.
+- Mobile callback127040403830/artifact13387424096: baseline380.154s/candidate280.097s, leaving39.846s/139.903s. My complete93-member integrity/81-retained-member audit, full original framing and original/derived hashes, current harness/maps, native behavior/mobile zoom, 4/1/1 candidate caps, clean parser statistics and child/temp/session/fixture cleanup all pass. The baseline's39.846s margin remains an explicit measured limitation.
+- Desktop responsiveness127040403708/artifact13387857563: all11 retry0 cases accepted by A. Plain1 terminal work is actually timer-owned; plain2/3 are policy-idle-owned. No false uniform-owner claim is made.
+- Mobile responsiveness127040403777/artifact13388331298: all18 members, eight metrics and11 retry0 cases accepted by B. Plain1/2/3 capacity p9517.2/15.5/18.3ms, max20.3/19.4/37.0ms; actual policy-idle1.6/2.0/1.5ms; input p9559.1/59.5/59.1ms; taskmax130/116/130ms; localdrain335.8/308.2/368.0ms meet unchanged mobile limits. Full66-group history, exact sender/peer/saved content, native idle sequences, continuation, composition and guest revocation pass.
+
+Current unprofiled owners independently establish latency/content/access acceptance. Profiles have uncertain alignment and unavailable exact candidate containing-task attribution; sample-derived whole-task comparisons do not establish exclusive reducer CPU or SPN144 causal performance gains. Browser mobile/composition tests do not establish physical-device/IME behavior. Callback review independently streams complete bytes/framing and retained analyses, not a second full raw-event analysis or unknown inner-protobuf semantic decoder. No hosted converter process-tree peak-memory or system-wide absence claim is made.
+
+## 🧾 Receipt, historical limits and archive builder
+
+Read back the completed mobile section in `/tmp/spn144-integrated-final-body.md` and current `README.md`. Exact source/base/tested, two grades,33jobs/seven gates, four owner IDs, actual timings, complete history/content/access, actual timer-versus-policy ownership, profiles and limitations agree with current proofs. Mobile-pending wording is removed. Remaining `ARCHIVE_URL` and `PENDING_MERGE_CLEANUP` are honest unfinished publication/landing fields, not missing runtime acceptance.
+
+The original403bd8c1 timeout remains failed, with357.090s behavior and420.040s completion timeout before read/parser work, and successful SPN143 owned cleanup. Current observations do not identify its browser-internal cause or guarantee future deadline headroom. Prior7b acceptance, publication-verifier filename failure, mobile reviewer zoom-expectation failure, integration reviewer lint-banner failure and their corrected source-based checks remain retained without native/converter reruns. Separately registered SPN146 flush failures retain their owner and are not retroactively passed.
+
+Statically reviewed external `/tmp/spn144-integrated-archive-build.ts` and its retained copy. It checks exact current run/attempt/head/completion success, all33jobs and exact seven gates; requires all four owner reports and both final-readiness reports before staging. Isolated prefix/index preserve source separation. Every retained payload gets streamed SHA-256 plus Git-blob identity and is rechecked at staging, with a100MiB per-blob bound. Exactly81 callback members per preset must match complete original93-member proofs; only12 synthetic SQLite members are omitted explicitly. Both whole responsiveness ZIPs and all extracted records remain. Duplicate oversized callback ZIP containers and mutable CI/Storybook polling snapshots are excluded while final raw records supersede snapshots. No original trace, derived trace, source/map or failure record is silently filtered.
+
+A builder/report file existing is not proof of accepted content or remote publication; this review and A's final reconciliation establish the current content, and actual publication still needs independent remote exact-ref/tree/manifest verification. Freeze only after both reviewers stop input writes. Keep build/push/publication logs outside frozen inputs.
+
+## 🚧 Remaining operational conditions
+
+Retained premerge snapshots show PR265 open draft, correct968649bd/89d93c8b head/base, mergeabletrue and empty comments/reviews/threads. These are snapshots, not future guards. Finalize both readiness reports, freeze inputs, publish and independently verify immutable evidence, and bind its concrete URL. Refresh actual main/head/source checks and thread/comment/mergeability state immediately before any guarded squash; the earlier concurrent-main guard demonstrates why this matters. Reconcile every metadata-triggered workflow rather than assuming a closed-body edit is inert. Verify actual squash SHA/tree, publish/read back the factual canonical receipt and recheck obsolete-ref heads/active ownership before cleanup.
+
+Publication/merge/cleanup are pending operational actions, not unresolved acceptance failures. No runtime rerun or source change is requested. SPN141, thenSPN140/SPN120 still require their own fresh integrated-source verification/reviews/native-CI acceptance, including SPN120's finite24-case audit. This prerequisite provides no substitute gate credit to those heads.

@@ -1,0 +1,54 @@
+{
+  "root": 93501,
+  "started": 1793852341415,
+  "elapsedMs": 283,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91616,
+  "peakKiB": 91616,
+  "live": [
+    {
+      "pid": 93501,
+      "parent": 93465,
+      "group": 93501,
+      "rssKiB": 90048,
+      "started": "Wed Nov  4 20:19:01 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn144-integrated-hosted/retain-responsiveness-desktop-a-watchdog.json node /tmp/spn144-integrated-hosted/retain-responsiveness-desktop-a.ts"
+    },
+    {
+      "pid": 93552,
+      "parent": 93501,
+      "group": 93501,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:19:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 93501,
+      "parent": 93465,
+      "group": 93501,
+      "rssKiB": 90048,
+      "started": "Wed Nov  4 20:19:01 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn144-integrated-hosted/retain-responsiveness-desktop-a-watchdog.json node /tmp/spn144-integrated-hosted/retain-responsiveness-desktop-a.ts"
+    },
+    {
+      "pid": 93520,
+      "parent": 93501,
+      "group": 93501,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:19:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93552,
+      "parent": 93501,
+      "group": 93501,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:19:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

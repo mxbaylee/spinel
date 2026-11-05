@@ -1,0 +1,20 @@
+{
+  "id": 13387424096,
+  "node_id": "MDg6QXJ0aWZhY3QxMzM4NzQyNDA5Ng==",
+  "name": "doc-callback-lifetimes-mobile",
+  "size_in_bytes": 182452232,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13387424096",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13387424096/zip",
+  "expired": false,
+  "digest": "sha256:899bfc1f02fea598351e1c422ae228daa6847b6a6823ef400ccabda2df8b496e",
+  "created_at": "2026-11-05T04:16:19Z",
+  "updated_at": "2026-11-05T04:16:19Z",
+  "expires_at": "2026-11-12T04:16:09Z",
+  "workflow_run": {
+    "id": 41965105059,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-144-trace-deadline",
+    "head_sha": "968649bdec92469e8761d6e09ed7f6900c79abc0"
+  }
+}

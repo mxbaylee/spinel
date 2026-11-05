@@ -1,0 +1,208 @@
+{
+  "reviewer": "B",
+  "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+  "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+  "tested": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+  "tree": "5552cf754b509ac4ce8f2857c08ea24509304722",
+  "status": "acceptance-complete-publication-and-fresh-guards-pending",
+  "unresolvedAcceptanceBlockers": [],
+  "sourceGrades": {
+    "A": 100,
+    "B": 100
+  },
+  "ci": {
+    "run": 41965105059,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "allJobs": 33,
+    "allJobsSuccessful": true,
+    "gates": [
+      {
+        "name": "Pull request",
+        "id": 127040194590,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "id": 127040403718,
+        "conclusion": "success"
+      },
+      {
+        "name": "Backlog",
+        "id": 127040403735,
+        "conclusion": "success"
+      },
+      {
+        "name": "Typecheck",
+        "id": 127040403799,
+        "conclusion": "success"
+      },
+      {
+        "name": "Unit tests",
+        "id": 127043117830,
+        "conclusion": "success"
+      },
+      {
+        "name": "Lib tests",
+        "id": 127043930217,
+        "conclusion": "success"
+      },
+      {
+        "name": "Playwright smoke",
+        "id": 127048534067,
+        "conclusion": "success"
+      }
+    ]
+  },
+  "storybook": {
+    "run": 41965105108,
+    "attempt": 1,
+    "selectedSuccesses": 8,
+    "inapplicablePagesSkips": 2
+  },
+  "planDigest": "ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9",
+  "aggregates": [
+    {
+      "group": "unit",
+      "artifact": 13387283391,
+      "zipBytes": 1140,
+      "zipSha256": "7a6d16d71671dfd290b01c419157761bf86d00608da6927c685d9f617269232d",
+      "member": "ci-results-unit.json",
+      "memberBytes": 6197,
+      "memberSha256": "9ca5f154a60aa506d7ea2a0221093b3167eb011e782ba0b61b7e83f07f315a1f",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "unit-tests"
+      ]
+    },
+    {
+      "group": "lib",
+      "artifact": 13388035827,
+      "zipBytes": 1160,
+      "zipSha256": "3a672e2c83032bdbdfdaef8404ec33acceea0c6f7d1a2cf32637d4c9ad888070",
+      "member": "ci-results-lib.json",
+      "memberBytes": 6304,
+      "memberSha256": "f12def16069ffc4212654c5a2f405042d32ebfa357d21171f252b870c9df7071",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "lib-test-run"
+      ]
+    },
+    {
+      "group": "browser",
+      "artifact": 13387988394,
+      "zipBytes": 1298,
+      "zipSha256": "05ab33345249e87f04745fb7abd2864c7e7d4ce6cd0857ac63052f12aadccda6",
+      "member": "ci-results-browser.json",
+      "memberBytes": 10253,
+      "memberSha256": "8f543785fcdc5bc0b62960676f32eb6d138d00c70ab8208fc60b8ffc02dc8c58",
+      "coverageRevalidated": true,
+      "selectedSuccessfulSuites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes"
+      ]
+    }
+  ],
+  "owners": {
+    "desktopCallback": "accepted-A",
+    "mobileCallback": "accepted-B",
+    "desktopResponsiveness": "accepted-A",
+    "mobileResponsiveness": "accepted-B"
+  },
+  "priorAcceptanceIsCurrentCredit": false,
+  "remotePublicationVerified": false,
+  "merged": false,
+  "cleanupComplete": false,
+  "pending": [
+    "both final-readiness reports finalized and all input writes stopped",
+    "freeze and publish exact immutable evidence",
+    "independent remote ref/tree/manifest verification and concrete receipt URL",
+    "fresh head/base/check/thread/mergeability guards",
+    "metadata-triggered workflow reconciliation",
+    "guarded squash/actual merge readback",
+    "canonical receipt readback and scoped obsolete-ref cleanup"
+  ],
+  "inspected": [
+    {
+      "path": "/tmp/spn144-integrated-final-body.md",
+      "bytes": 8777,
+      "sha256": "f80b7d95785d9f8f1f67f5781e2065cf63f250361b44abfba2cc5fd23a95d1ea"
+    },
+    {
+      "path": "/tmp/spn144-integrated-archive-build.ts",
+      "bytes": 4504,
+      "sha256": "e902f3329f99e9e3b1bb899b099a9a7d8cfb24f84caa90d6ff63353902286aca"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/README.md",
+      "bytes": 6811,
+      "sha256": "f9301e069fd46bccf4561dc94a198658c6d447eaed6b5052afdba352c98cc915"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/archive-build.ts",
+      "bytes": 4504,
+      "sha256": "e902f3329f99e9e3b1bb899b099a9a7d8cfb24f84caa90d6ff63353902286aca"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/desktop-review-a.md",
+      "bytes": 8044,
+      "sha256": "370b668a53513506b4916570221980032ff0516f352c5ba4ef6e1be0936fd6e4"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/mobile-review-b.md",
+      "bytes": 9203,
+      "sha256": "1d47be8ce2816804fbcb0db3f96bc0eb9e3ebe32449e0ec8422c1c4486d1bc27"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/responsiveness-desktop-review-a.md",
+      "bytes": 7447,
+      "sha256": "ffd866706a898c2fca69022412be1b74cadc405134bff4e4c8a90b444e3f2c8e"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/responsiveness-mobile-review-b.md",
+      "bytes": 7272,
+      "sha256": "56fa21af1f4dc441cff09c2cc4d9a31b65f3a462212b8511e8d4e8383e7a1895"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/premerge-pr.json",
+      "bytes": 4304,
+      "sha256": "4ef3458b893dd3e217f8a0e8171c4937c903f42d5fca6b147dfd5e06d67585be"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/premerge-threads.json",
+      "bytes": 27,
+      "sha256": "3e8a08aebce453c022e75a478b159f99c0a339d175c62baff78fe85551e8213d"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/premerge-reviews.json",
+      "bytes": 20,
+      "sha256": "8c1f6e8a8f0cc2d4e4a74c436878676c6ce7be8fdccfd2b5e060ebaac22e6901"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/premerge-comments.json",
+      "bytes": 243,
+      "sha256": "78472c1ef9fab47c9821a70edd1e97f3344b0c9dd8ad21e8ac69d472477d5413"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/spn144-review-968649bd-a.json",
+      "bytes": 1867,
+      "sha256": "1ab6ebe270f595aa27002df3f628ba9af848a551d51b9a68f46fe64f4395b2b1"
+    },
+    {
+      "path": "/tmp/spn144-integrated-hosted/spn144-review-968649bd-b.json",
+      "bytes": 1850,
+      "sha256": "8ac32b1b341b73b76447356d243d1ca9772a98fd710865496b9b6f1fd4469fbc"
+    }
+  ]
+}

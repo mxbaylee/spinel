@@ -1,0 +1,230 @@
+{
+  "root": 92615,
+  "started": 1793852270193,
+  "elapsedMs": 5097,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 95168,
+  "peakKiB": 349440,
+  "live": [
+    {
+      "pid": 92615,
+      "parent": 48367,
+      "group": 92615,
+      "rssKiB": 93600,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-integrated-hosted/audit-mobile-b-watchdog.json node /tmp/spn144-integrated-hosted/audit-mobile-b.ts"
+    },
+    {
+      "pid": 93378,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 92615,
+      "parent": 48367,
+      "group": 92615,
+      "rssKiB": 93600,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "node /tmp/spn144-framing-watchdog.ts /tmp/spn144-integrated-hosted/audit-mobile-b-watchdog.json node /tmp/spn144-integrated-hosted/audit-mobile-b.ts"
+    },
+    {
+      "pid": 92652,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92667,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 254384,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "node /tmp/spn144-integrated-hosted/audit-mobile-b.ts"
+    },
+    {
+      "pid": 92716,
+      "parent": 92667,
+      "group": 92615,
+      "rssKiB": 2240,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 92728,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92823,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92848,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92873,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92898,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92923,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92948,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92973,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 92998,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93023,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93071,
+      "parent": 92667,
+      "group": 92615,
+      "rssKiB": 7424,
+      "started": "Wed Nov  4 20:17:53 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 93083,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93178,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93203,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93228,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:53 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93253,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93278,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93303,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93328,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:54 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93353,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 93378,
+      "parent": 92615,
+      "group": 92615,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 20:17:55 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,1382 @@
+{
+  "identities": {
+    "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+    "tested": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+    "sourceAndTestedTree": "5552cf754b509ac4ce8f2857c08ea24509304722",
+    "ci": 41965105059,
+    "storybook": 41965105108,
+    "attempt": 1,
+    "planArtifact": 13387316885,
+    "planZipSha256": "c6bc34fefce4fa6a7ec81065ac8d91affcc0864571635ee40d30979de906e286",
+    "planDigest": "ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "priorAcceptedSource": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "priorAcceptedArchive": "02541cea2c28adadb988394be84515effa205b22",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "archive": {
+    "bytes": 182452232,
+    "sha256": "899bfc1f02fea598351e1c422ae228daa6847b6a6823ef400ccabda2df8b496e"
+  },
+  "memberProof": "callback-mobile-members-b.json",
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41965105059",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042279"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 33,
+      "behavior": {
+        "fixture": {
+          "paragraphs": 16,
+          "typedCharacters": 2071,
+          "enterKeys": 15,
+          "nativeKeydowns": 2086,
+          "nativeTextLength": 2088,
+          "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+        },
+        "observedKeydowns": 2086,
+        "typingWallMs": 279840.598588,
+        "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "pending": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "selection": {
+          "start": 2086,
+          "end": 2086,
+          "segmentId": ""
+        },
+        "environment": {
+          "coarsePointer": true,
+          "devicePixelRatio": 1,
+          "maxTouchPoints": 1,
+          "visibility": "visible",
+          "focused": true
+        }
+      },
+      "progress": {
+        "terminal": "passed",
+        "events": [
+          {
+            "atMs": 250.69185700000025,
+            "phase": "before-navigation",
+            "kind": "phase"
+          },
+          {
+            "atMs": 257.2572070000001,
+            "phase": "trace-start",
+            "kind": "phase"
+          },
+          {
+            "atMs": 261.1864910000004,
+            "phase": "navigation",
+            "kind": "phase"
+          },
+          {
+            "atMs": 1264.9449840000002,
+            "phase": "native-mount",
+            "kind": "phase"
+          },
+          {
+            "atMs": 3669.632454,
+            "phase": "native-focus",
+            "kind": "phase"
+          },
+          {
+            "atMs": 3940.810451,
+            "phase": "typing",
+            "kind": "phase"
+          },
+          {
+            "atMs": 3941.5513350000006,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 1
+          },
+          {
+            "atMs": 12014.752831,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 1
+          },
+          {
+            "atMs": 12015.202806,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 1
+          },
+          {
+            "atMs": 12092.377018,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 2
+          },
+          {
+            "atMs": 20627.716652,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 2
+          },
+          {
+            "atMs": 20628.082675999998,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 2
+          },
+          {
+            "atMs": 20688.802203,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 3
+          },
+          {
+            "atMs": 29525.917778,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 3
+          },
+          {
+            "atMs": 29526.324288,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 3
+          },
+          {
+            "atMs": 29686.052504000003,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 4
+          },
+          {
+            "atMs": 40004.333956,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 4
+          },
+          {
+            "atMs": 40004.70286500001,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 4
+          },
+          {
+            "atMs": 40097.254482000004,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 5
+          },
+          {
+            "atMs": 52029.482432000004,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 5
+          },
+          {
+            "atMs": 52029.945996,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 5
+          },
+          {
+            "atMs": 52095.765855000005,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 6
+          },
+          {
+            "atMs": 65296.843584,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 6
+          },
+          {
+            "atMs": 65297.356721000004,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 6
+          },
+          {
+            "atMs": 65407.590744,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 7
+          },
+          {
+            "atMs": 80701.351437,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 7
+          },
+          {
+            "atMs": 80704.007368,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 7
+          },
+          {
+            "atMs": 80812.104028,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 8
+          },
+          {
+            "atMs": 97641.41115500001,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 8
+          },
+          {
+            "atMs": 97641.89243400001,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 8
+          },
+          {
+            "atMs": 97777.291056,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 9
+          },
+          {
+            "atMs": 115870.120154,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 9
+          },
+          {
+            "atMs": 115870.538866,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 9
+          },
+          {
+            "atMs": 115987.982351,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 10
+          },
+          {
+            "atMs": 136045.87909499998,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 10
+          },
+          {
+            "atMs": 136046.260877,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 10
+          },
+          {
+            "atMs": 136175.028276,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 11
+          },
+          {
+            "atMs": 156952.80680599998,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 11
+          },
+          {
+            "atMs": 156953.167388,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 11
+          },
+          {
+            "atMs": 157105.092751,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 12
+          },
+          {
+            "atMs": 179164.857456,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 12
+          },
+          {
+            "atMs": 179165.253117,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 12
+          },
+          {
+            "atMs": 179326.69230599998,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 13
+          },
+          {
+            "atMs": 203681.257678,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 13
+          },
+          {
+            "atMs": 203681.625304,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 13
+          },
+          {
+            "atMs": 203853.78646099998,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 14
+          },
+          {
+            "atMs": 228900.250928,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 14
+          },
+          {
+            "atMs": 228903.071546,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 14
+          },
+          {
+            "atMs": 229088.72284399997,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 15
+          },
+          {
+            "atMs": 255089.04259099998,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 15
+          },
+          {
+            "atMs": 255089.463456,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 15
+          },
+          {
+            "atMs": 255296.451694,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 16
+          },
+          {
+            "atMs": 283781.48579199996,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 16
+          },
+          {
+            "atMs": 283782.130226,
+            "phase": "input-key-count",
+            "kind": "phase"
+          },
+          {
+            "atMs": 288507.058501,
+            "phase": "input-observation",
+            "kind": "phase"
+          },
+          {
+            "atMs": 289082.330602,
+            "phase": "native-drain",
+            "kind": "phase"
+          },
+          {
+            "atMs": 289103.620742,
+            "phase": "native-content",
+            "kind": "phase"
+          },
+          {
+            "atMs": 294913.018527,
+            "phase": "live-caret",
+            "kind": "phase"
+          },
+          {
+            "atMs": 297225.05337599997,
+            "phase": "ordinary-zoom",
+            "kind": "phase"
+          },
+          {
+            "atMs": 297475.901633,
+            "phase": "ordinary-route-disposal",
+            "kind": "phase"
+          },
+          {
+            "atMs": 298963.60334599996,
+            "phase": "behavior-complete",
+            "kind": "phase"
+          },
+          {
+            "atMs": 298968.206334,
+            "phase": "trace-end-request",
+            "kind": "phase"
+          },
+          {
+            "atMs": 298974.46214099997,
+            "phase": "trace-completion",
+            "kind": "phase"
+          },
+          {
+            "atMs": 309502.458675,
+            "phase": "trace-stream-open",
+            "kind": "phase"
+          },
+          {
+            "atMs": 309506.168641,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 0
+          },
+          {
+            "atMs": 309528.699475,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 1048576
+          },
+          {
+            "atMs": 309583.402654,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 2097152
+          },
+          {
+            "atMs": 309655.250924,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 5242879
+          },
+          {
+            "atMs": 309728.211034,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 9437183
+          },
+          {
+            "atMs": 309877.468231,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 17825791
+          },
+          {
+            "atMs": 310153.416013,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 34603004
+          },
+          {
+            "atMs": 310689.957683,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 68157435
+          },
+          {
+            "atMs": 311744.15139099996,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 135266293
+          },
+          {
+            "atMs": 313965.873056,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 269484019
+          },
+          {
+            "atMs": 317652.08628499997,
+            "phase": "trace-stream-close",
+            "kind": "phase",
+            "count": 482446682
+          },
+          {
+            "atMs": 317671.392284,
+            "phase": "trace-proto-validate",
+            "kind": "phase"
+          },
+          {
+            "atMs": 320992.129626,
+            "phase": "trace-convert",
+            "kind": "phase"
+          },
+          {
+            "atMs": 360212.005139,
+            "phase": "trace-converter-statistics",
+            "kind": "phase"
+          },
+          {
+            "atMs": 367771.49746499996,
+            "phase": "trace-parse",
+            "kind": "phase"
+          },
+          {
+            "atMs": 378470.04673299997,
+            "phase": "trace-attribution",
+            "kind": "phase"
+          },
+          {
+            "atMs": 379299.530666,
+            "phase": "trace-analysis",
+            "kind": "phase"
+          },
+          {
+            "atMs": 379887.270162,
+            "phase": "cdp-detach",
+            "kind": "phase"
+          },
+          {
+            "atMs": 379890.041141,
+            "phase": "fixture-cleanup",
+            "kind": "phase"
+          },
+          {
+            "atMs": 379926.881573,
+            "phase": "fixture-cleanup-complete",
+            "kind": "phase"
+          },
+          {
+            "atMs": 380150.184341,
+            "phase": "fixture-cleanup-complete",
+            "kind": "terminal"
+          }
+        ]
+      },
+      "unmapped": 10,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 34576471,
+        "sha256": "91b6d55fe3afd2f5c735d6f476a20fc2fef9b2a8ccf7944cfe0c3ebdc51eb1b7",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 482446682,
+          "sha256": "4f3033ec2bcb2d7355b8d56230f23ec01abf90d7f5abb4314457b2601c29a40a"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 48618545,
+        "sha256": "df10d1470ad1a32bf2e4acec178c33a72b7702d9ce7e5d7249ad2472e6dfb389",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 605081079,
+          "sha256": "93f54ad062d95d18adcb35ffa42a7a6c355e2b72fa1897a75ab145da7d4334b5"
+        }
+      },
+      "framing": {
+        "bytes": 482446682,
+        "sha256": "4f3033ec2bcb2d7355b8d56230f23ec01abf90d7f5abb4314457b2601c29a40a",
+        "packets": 1850229,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 990129,
+        "retainedEvents": 990129,
+        "callbackEvents": 167672,
+        "uncompressedBytes": 605081079,
+        "uncompressedSha256": "93f54ad062d95d18adcb35ffa42a7a6c355e2b72fa1897a75ab145da7d4334b5",
+        "maxEventBytes": 17411
+      },
+      "timing": {
+        "behaviorCompleteMs": 298963.60334599996,
+        "completionWaitMs": 10527.996534000034,
+        "endResponseMs": 6.255806999979541,
+        "readStoreMs": 8149.627609999967,
+        "framingMaterializeMs": 3320.7373420000076,
+        "conversionMs": 39219.19215900003,
+        "statisticsMs": 7513.52961800003,
+        "parseMs": 10698.549268000002,
+        "attributionMs": 829.4839330000104,
+        "analysisMs": 587.7394959999947,
+        "cleanupCompleteMs": 379926.881573,
+        "cleanupHeadroomMs": 40073.11842700001
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": false,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 8346,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 8,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 2085,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 482.45 MB in 7.42s (65.0 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.4s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-X1qSD7/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    },
+    {
+      "role": "candidate",
+      "source": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41965105059",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042279"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 35,
+      "behavior": {
+        "fixture": {
+          "paragraphs": 16,
+          "typedCharacters": 2071,
+          "enterKeys": 15,
+          "nativeKeydowns": 2086,
+          "nativeTextLength": 2088,
+          "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+          "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+        },
+        "observedKeydowns": 2086,
+        "typingWallMs": 186271.920903,
+        "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "pending": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "selection": {
+          "start": 2086,
+          "end": 2086,
+          "segmentId": ""
+        },
+        "environment": {
+          "coarsePointer": true,
+          "devicePixelRatio": 1,
+          "maxTouchPoints": 1,
+          "visibility": "visible",
+          "focused": true
+        }
+      },
+      "progress": {
+        "terminal": "passed",
+        "events": [
+          {
+            "atMs": 594.4785320000001,
+            "phase": "before-navigation",
+            "kind": "phase"
+          },
+          {
+            "atMs": 600.93364,
+            "phase": "trace-start",
+            "kind": "phase"
+          },
+          {
+            "atMs": 605.04359,
+            "phase": "navigation",
+            "kind": "phase"
+          },
+          {
+            "atMs": 1212.808972,
+            "phase": "native-mount",
+            "kind": "phase"
+          },
+          {
+            "atMs": 3610.0578269999996,
+            "phase": "native-focus",
+            "kind": "phase"
+          },
+          {
+            "atMs": 3898.9822779999995,
+            "phase": "typing",
+            "kind": "phase"
+          },
+          {
+            "atMs": 3899.830631,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 1
+          },
+          {
+            "atMs": 10188.932063,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 1
+          },
+          {
+            "atMs": 10189.338722,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 1
+          },
+          {
+            "atMs": 10246.080947,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 2
+          },
+          {
+            "atMs": 17029.169531,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 2
+          },
+          {
+            "atMs": 17029.591719,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 2
+          },
+          {
+            "atMs": 17077.951083,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 3
+          },
+          {
+            "atMs": 24599.195809,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 3
+          },
+          {
+            "atMs": 24599.540251000002,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 3
+          },
+          {
+            "atMs": 24640.920902,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 4
+          },
+          {
+            "atMs": 32421.325378999998,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 4
+          },
+          {
+            "atMs": 32421.707994,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 4
+          },
+          {
+            "atMs": 32481.317933000002,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 5
+          },
+          {
+            "atMs": 40988.174168,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 5
+          },
+          {
+            "atMs": 40988.51560599999,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 5
+          },
+          {
+            "atMs": 41051.68793199999,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 6
+          },
+          {
+            "atMs": 50994.664178,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 6
+          },
+          {
+            "atMs": 50995.041673,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 6
+          },
+          {
+            "atMs": 51054.358839,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 7
+          },
+          {
+            "atMs": 61570.834614,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 7
+          },
+          {
+            "atMs": 61571.219413,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 7
+          },
+          {
+            "atMs": 61634.390004999994,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 8
+          },
+          {
+            "atMs": 72846.916291,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 8
+          },
+          {
+            "atMs": 72847.283111,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 8
+          },
+          {
+            "atMs": 72939.478793,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 9
+          },
+          {
+            "atMs": 84725.41496899999,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 9
+          },
+          {
+            "atMs": 84725.841131,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 9
+          },
+          {
+            "atMs": 84816.900562,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 10
+          },
+          {
+            "atMs": 97496.239357,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 10
+          },
+          {
+            "atMs": 97496.60442799999,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 10
+          },
+          {
+            "atMs": 97596.236664,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 11
+          },
+          {
+            "atMs": 111064.080529,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 11
+          },
+          {
+            "atMs": 111064.533835,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 11
+          },
+          {
+            "atMs": 111172.533627,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 12
+          },
+          {
+            "atMs": 125477.475253,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 12
+          },
+          {
+            "atMs": 125477.89098899999,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 12
+          },
+          {
+            "atMs": 125582.565817,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 13
+          },
+          {
+            "atMs": 140826.306412,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 13
+          },
+          {
+            "atMs": 140826.714423,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 13
+          },
+          {
+            "atMs": 140946.26202700002,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 14
+          },
+          {
+            "atMs": 156574.85297100001,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 14
+          },
+          {
+            "atMs": 156575.21134,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 14
+          },
+          {
+            "atMs": 156658.731536,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 15
+          },
+          {
+            "atMs": 172648.034313,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 15
+          },
+          {
+            "atMs": 172648.41294,
+            "phase": "typing-enter",
+            "kind": "phase",
+            "count": 15
+          },
+          {
+            "atMs": 172764.52670500003,
+            "phase": "typing-paragraph",
+            "kind": "phase",
+            "count": 16
+          },
+          {
+            "atMs": 190171.31074100002,
+            "phase": "typed-paragraph",
+            "kind": "phase",
+            "count": 16
+          },
+          {
+            "atMs": 190171.72927200003,
+            "phase": "input-key-count",
+            "kind": "phase"
+          },
+          {
+            "atMs": 190813.584398,
+            "phase": "input-observation",
+            "kind": "phase"
+          },
+          {
+            "atMs": 191140.14601300002,
+            "phase": "native-drain",
+            "kind": "phase"
+          },
+          {
+            "atMs": 191282.054646,
+            "phase": "native-content",
+            "kind": "phase"
+          },
+          {
+            "atMs": 194504.21449900002,
+            "phase": "live-caret",
+            "kind": "phase"
+          },
+          {
+            "atMs": 196809.379076,
+            "phase": "ordinary-zoom",
+            "kind": "phase"
+          },
+          {
+            "atMs": 197092.83094400002,
+            "phase": "ordinary-route-disposal",
+            "kind": "phase"
+          },
+          {
+            "atMs": 198543.205632,
+            "phase": "behavior-complete",
+            "kind": "phase"
+          },
+          {
+            "atMs": 198546.979763,
+            "phase": "trace-end-request",
+            "kind": "phase"
+          },
+          {
+            "atMs": 198552.10084600002,
+            "phase": "trace-completion",
+            "kind": "phase"
+          },
+          {
+            "atMs": 209770.544574,
+            "phase": "trace-stream-open",
+            "kind": "phase"
+          },
+          {
+            "atMs": 209774.043413,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 0
+          },
+          {
+            "atMs": 209798.494569,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 1048576
+          },
+          {
+            "atMs": 209819.899577,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 2097152
+          },
+          {
+            "atMs": 209857.51510400002,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 4194304
+          },
+          {
+            "atMs": 209928.077664,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 8388608
+          },
+          {
+            "atMs": 210092.953172,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 16777216
+          },
+          {
+            "atMs": 210341.56420800003,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 33554432
+          },
+          {
+            "atMs": 210899.32680200003,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 68157436
+          },
+          {
+            "atMs": 212020.835995,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 135266292
+          },
+          {
+            "atMs": 214306.01954100002,
+            "phase": "trace-stream-read",
+            "kind": "phase",
+            "count": 269484015
+          },
+          {
+            "atMs": 218037.076417,
+            "phase": "trace-stream-close",
+            "kind": "phase",
+            "count": 488897326
+          },
+          {
+            "atMs": 218055.77889100002,
+            "phase": "trace-proto-validate",
+            "kind": "phase"
+          },
+          {
+            "atMs": 221360.598667,
+            "phase": "trace-convert",
+            "kind": "phase"
+          },
+          {
+            "atMs": 260875.6056,
+            "phase": "trace-converter-statistics",
+            "kind": "phase"
+          },
+          {
+            "atMs": 268480.206177,
+            "phase": "trace-parse",
+            "kind": "phase"
+          },
+          {
+            "atMs": 278604.475602,
+            "phase": "trace-attribution",
+            "kind": "phase"
+          },
+          {
+            "atMs": 279399.90098000003,
+            "phase": "trace-analysis",
+            "kind": "phase"
+          },
+          {
+            "atMs": 279899.789772,
+            "phase": "cdp-detach",
+            "kind": "phase"
+          },
+          {
+            "atMs": 279902.503546,
+            "phase": "fixture-cleanup",
+            "kind": "phase"
+          },
+          {
+            "atMs": 279936.921752,
+            "phase": "fixture-cleanup-complete",
+            "kind": "phase"
+          },
+          {
+            "atMs": 280093.147497,
+            "phase": "fixture-cleanup-complete",
+            "kind": "terminal"
+          }
+        ]
+      },
+      "unmapped": 10,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 33154361,
+        "sha256": "f7e742e05378b8675d891418dfa4c6439abb6609442b7bd39b03b9b4dac21183",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 488897326,
+          "sha256": "0737e830ad771a3bbbfd4feec182f770a8b3932356d480e7cb12a86d40c4b54a"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 45385646,
+        "sha256": "b881c19bb035f0920fd21576932386064e343c17e8dce266ad4c047ffecc5f28",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 594106209,
+          "sha256": "48c07b1b805ebd83ccd26ed9832a7616ece5ffb29efd956dce27346cc0b0b28e"
+        }
+      },
+      "framing": {
+        "bytes": 488897326,
+        "sha256": "0737e830ad771a3bbbfd4feec182f770a8b3932356d480e7cb12a86d40c4b54a",
+        "packets": 1560077,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 843782,
+        "retainedEvents": 843782,
+        "callbackEvents": 144673,
+        "uncompressedBytes": 594106209,
+        "uncompressedSha256": "48c07b1b805ebd83ccd26ed9832a7616ece5ffb29efd956dce27346cc0b0b28e",
+        "maxEventBytes": 17403
+      },
+      "timing": {
+        "behaviorCompleteMs": 198543.205632,
+        "completionWaitMs": 11218.443727999984,
+        "endResponseMs": 5.121083000005456,
+        "readStoreMs": 8266.531843000004,
+        "framingMaterializeMs": 3304.8197759999894,
+        "conversionMs": 39514.335453999985,
+        "statisticsMs": 7558.410210000031,
+        "parseMs": 10124.269425000006,
+        "attributionMs": 795.4253780000145,
+        "analysisMs": 499.88879199995426,
+        "cleanupCompleteMs": 279936.921752,
+        "cleanupHeadroomMs": 140063.078248
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": true,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 4,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 488.90 MB in 7.46s (65.5 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 7.5s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-C8Nb4Y/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 380154,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 39846
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "mobile native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 280097,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 139903
+    }
+  ],
+  "comparisonAccepted": true,
+  "comparisonExactlyReproducedFromRetainedAnalysis": true,
+  "reviewerFirstAttemptDisposition": "Uses actual mobile unchanged-scale assertion; prior source reviewer assertion repair is historical evidence only.",
+  "rawEventAnalysisReparsed": false,
+  "innerProtoDecoded": false,
+  "scope": "complete streamed framing/raw hashes plus retained hosted analysis and actual source assertions; no browser/converter rerun",
+  "hostedJob": {
+    "id": 127040403830,
+    "run": 41965105059,
+    "attempt": 1,
+    "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "status": "completed",
+    "conclusion": "success",
+    "started": "2026-11-05T04:03:04Z",
+    "completed": "2026-11-05T04:16:22Z",
+    "allStepsSuccessful": 19,
+    "files": [
+      {
+        "file": "callback-mobile-job.json",
+        "bytes": 4351,
+        "sha256": "91f731ef8a634302b2aefe7882b260bb9e738cc47290fd93ed71ba16dc73b8d4"
+      },
+      {
+        "file": "callback-mobile-job.log",
+        "bytes": 87090,
+        "sha256": "b2e2526314c1520d77a9e80f8d674ea2fb2926a326ee6c032b903ed1bb7f8ade"
+      },
+      {
+        "file": "callback-mobile-artifact.json",
+        "bytes": 797,
+        "sha256": "0ca8f244d0e498f1c835db86305549612eaf48aabac525bc5402b068d51cd20a"
+      }
+    ]
+  },
+  "disposition": "accepted current integrated-source first mobile callback pair only; not overall merge approval",
+  "priorSourceAcceptanceUsedAsCurrentCredit": false
+}

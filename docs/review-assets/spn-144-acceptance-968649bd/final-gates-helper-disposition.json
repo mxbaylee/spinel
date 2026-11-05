@@ -1,0 +1,6 @@
+{
+  "firstAttempt": "The initial node -e metadata summarizer had an extra closing parenthesis after console.log(JSON.stringify(...)) and failed at parse time with SyntaxError: Unexpected token ')'.",
+  "sideEffects": "Earlier GitHub read-only fetches completed and saved the terminal raw records; the summarizer executed no checks or writes.",
+  "repair": "Run the corrected named final-gates.ts helper against those same retained records.",
+  "acceptanceRerun": false
+}

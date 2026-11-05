@@ -1,0 +1,14 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const root='/tmp/spn144-integrated-hosted';
+const run=JSON.parse(readFileSync(root+'/ci-run.json','utf8'));
+const jobs=JSON.parse(readFileSync(root+'/ci-jobs.json','utf8')).jobs;
+const artifacts=JSON.parse(readFileSync(root+'/ci-artifacts.json','utf8')).artifacts;
+assert.equal(run.id,41965105059);assert.equal(run.conclusion,'success');assert.equal(run.run_attempt,1);
+assert.equal(run.head_sha,'968649bdec92469e8761d6e09ed7f6900c79abc0');
+assert.equal(jobs.length,33);assert.ok(jobs.every((j:any)=>j.conclusion==='success'&&j.head_sha===run.head_sha));
+const required=['Backlog','Pull request','Lint','Typecheck','Unit tests','Lib tests','Playwright smoke'];
+const gates=jobs.filter((j:any)=>required.includes(j.name));
+assert.deepEqual(gates.map((j:any)=>j.name).sort(),[...required].sort());
+writeFileSync(root+'/required-gates.json',JSON.stringify(gates.map((j:any)=>({id:j.id,name:j.name,conclusion:j.conclusion,html_url:j.html_url})),null,2)+'\n');
+console.log(JSON.stringify({gates:gates.map((j:any)=>({id:j.id,name:j.name})),artifacts:artifacts.filter((a:any)=>/doc-responsiveness-mobile|ci-results-browser/.test(a.name))}));

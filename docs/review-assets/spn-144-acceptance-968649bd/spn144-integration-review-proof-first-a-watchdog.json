@@ -1,0 +1,54 @@
+{
+  "root": 90721,
+  "started": 1793851116618,
+  "elapsedMs": 248,
+  "outcome": "command-failed",
+  "pressure": "1",
+  "rssKiB": 90576,
+  "peakKiB": 90576,
+  "live": [
+    {
+      "pid": 90721,
+      "parent": 90685,
+      "group": 90721,
+      "rssKiB": 89008,
+      "started": "Wed Nov  4 19:58:36 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn144-integration-review-proof-a-watchdog.json node /tmp/spn144-integration-review-proof-a.ts"
+    },
+    {
+      "pid": 90776,
+      "parent": 90721,
+      "group": 90721,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:58:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 90721,
+      "parent": 90685,
+      "group": 90721,
+      "rssKiB": 89008,
+      "started": "Wed Nov  4 19:58:36 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn144-integration-review-proof-a-watchdog.json node /tmp/spn144-integration-review-proof-a.ts"
+    },
+    {
+      "pid": 90740,
+      "parent": 90721,
+      "group": 90721,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:58:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 90776,
+      "parent": 90721,
+      "group": 90721,
+      "rssKiB": 1568,
+      "started": "Wed Nov  4 19:58:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

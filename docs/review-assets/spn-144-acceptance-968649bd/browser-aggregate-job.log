@@ -1,0 +1,532 @@
+﻿2026-11-05T04:25:42.2367892Z Current runner version: '2.338.2'
+2026-11-05T04:25:42.2404470Z ##[group]Runner Image Provisioner
+2026-11-05T04:25:42.2405047Z Hosted Compute Agent
+2026-11-05T04:25:42.2405411Z Version: 20261028.624
+2026-11-05T04:25:42.2405868Z Commit: 54898b74c23fde5556c9b3c3a2290865feef0dfe
+2026-11-05T04:25:42.2406662Z Build Date: 2026-10-28T21:51:42Z
+2026-11-05T04:25:42.2407120Z Worker ID: {681c8cfb-6ffc-4910-9943-d9c0193407d9}
+2026-11-05T04:25:42.2407586Z Region: centralus
+2026-11-05T04:25:42.2407964Z Cloud: Azure
+2026-11-05T04:25:42.2408362Z ##[endgroup]
+2026-11-05T04:25:42.2409251Z ##[group]Operating System
+2026-11-05T04:25:42.2409674Z Ubuntu
+2026-11-05T04:25:42.2410027Z 24.04.5
+2026-11-05T04:25:42.2410366Z LTS
+2026-11-05T04:25:42.2410755Z ##[endgroup]
+2026-11-05T04:25:42.2411145Z ##[group]Runner Image
+2026-11-05T04:25:42.2411520Z Image: ubuntu-24.04
+2026-11-05T04:25:42.2411967Z Version: 20261101.360.1
+2026-11-05T04:25:42.2412725Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261101.360/images/ubuntu/Ubuntu2404-Readme.md
+2026-11-05T04:25:42.2413736Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261101.360
+2026-11-05T04:25:42.2414317Z ##[endgroup]
+2026-11-05T04:25:42.2415073Z ##[group]GITHUB_TOKEN Permissions
+2026-11-05T04:25:42.2416564Z Contents: read
+2026-11-05T04:25:42.2416990Z Metadata: read
+2026-11-05T04:25:42.2417353Z ##[endgroup]
+2026-11-05T04:25:42.2418783Z Secret source: Actions
+2026-11-05T04:25:42.2419356Z Cache mode: write
+2026-11-05T04:25:42.2419897Z Prepare workflow directory
+2026-11-05T04:25:42.2641435Z Prepare all required actions
+2026-11-05T04:25:42.2677118Z Getting action download info
+2026-11-05T04:25:42.5638982Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-05T04:25:43.0565641Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-05T04:25:43.2225216Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-05T04:25:43.4253957Z Complete job name: Playwright smoke
+2026-11-05T04:25:43.4837958Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-05T04:25:43.4838831Z with:
+2026-11-05T04:25:43.4839104Z   persist-credentials: false
+2026-11-05T04:25:43.4839406Z   repository: mxbaylee/spinel
+2026-11-05T04:25:43.4841698Z   token: ***
+2026-11-05T04:25:43.4841945Z   ssh-strict: true
+2026-11-05T04:25:43.4842204Z   ssh-user: git
+2026-11-05T04:25:43.4842455Z   clean: true
+2026-11-05T04:25:43.4842716Z   sparse-checkout-cone-mode: true
+2026-11-05T04:25:43.4843016Z   fetch-depth: 1
+2026-11-05T04:25:43.4843268Z   fetch-tags: false
+2026-11-05T04:25:43.4843557Z   show-progress: true
+2026-11-05T04:25:43.4843819Z   lfs: false
+2026-11-05T04:25:43.4844067Z   submodules: false
+2026-11-05T04:25:43.4844340Z   set-safe-directory: true
+2026-11-05T04:25:43.4844639Z   allow-unsafe-pr-checkout: false
+2026-11-05T04:25:43.4845061Z ##[endgroup]
+2026-11-05T04:25:45.6839116Z Syncing repository: mxbaylee/spinel
+2026-11-05T04:25:45.6840015Z ##[group]Getting Git version info
+2026-11-05T04:25:45.6840358Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-05T04:25:45.6840745Z [command]/usr/bin/git version
+2026-11-05T04:25:45.8084788Z git version 2.56.0
+2026-11-05T04:25:45.8099691Z ##[endgroup]
+2026-11-05T04:25:45.8108217Z Temporarily overriding HOME='/home/runner/work/_temp/3a689417-38fd-4e3f-bafc-60604239c912' before making global git config changes
+2026-11-05T04:25:45.8109189Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T04:25:45.8113382Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-05T04:25:45.8328187Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-05T04:25:45.8330685Z ##[group]Determining repository object format
+2026-11-05T04:25:45.8331897Z ##[endgroup]
+2026-11-05T04:25:45.8332756Z ##[group]Initializing the repository
+2026-11-05T04:25:45.8335412Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-05T04:25:45.9023856Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-05T04:25:45.9024372Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-05T04:25:45.9024721Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-05T04:25:45.9025028Z hint: call:
+2026-11-05T04:25:45.9025251Z hint:
+2026-11-05T04:25:45.9025593Z hint: 	git config --global init.defaultBranch <name>
+2026-11-05T04:25:45.9025934Z hint:
+2026-11-05T04:25:45.9026383Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-05T04:25:45.9026725Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-05T04:25:45.9026972Z hint:
+2026-11-05T04:25:45.9027137Z hint: 	git branch -m <name>
+2026-11-05T04:25:45.9027304Z hint:
+2026-11-05T04:25:45.9027549Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-05T04:25:45.9118051Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-05T04:25:45.9126123Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-05T04:25:45.9351137Z ##[endgroup]
+2026-11-05T04:25:45.9351457Z ##[group]Disabling automatic garbage collection
+2026-11-05T04:25:45.9351719Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-05T04:25:45.9389500Z ##[endgroup]
+2026-11-05T04:25:45.9389846Z ##[group]Setting up auth
+2026-11-05T04:25:45.9390107Z Removing SSH command configuration
+2026-11-05T04:25:45.9393387Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:25:45.9435309Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:25:46.1215708Z Removing HTTP extra header
+2026-11-05T04:25:46.1219880Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:25:46.1259959Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:25:46.1453953Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:25:46.1457986Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:25:46.1495388Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:25:46.1695818Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-05T04:25:46.1737103Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:46.1775180Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:46.1813526Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:46.1852065Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:46.1888841Z ##[endgroup]
+2026-11-05T04:25:46.1889306Z ##[group]Fetching the repository
+2026-11-05T04:25:46.1893730Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9e27273f7b616dd48b641f544fac1ab1cb72b13a:refs/remotes/pull/265/merge
+2026-11-05T04:25:48.7826291Z From https://github.com/mxbaylee/spinel
+2026-11-05T04:25:48.7826834Z  * [new ref]         9e27273f7b616dd48b641f544fac1ab1cb72b13a -> pull/265/merge
+2026-11-05T04:25:48.7830950Z ##[endgroup]
+2026-11-05T04:25:48.7831649Z ##[group]Determining the checkout info
+2026-11-05T04:25:48.7832067Z ##[endgroup]
+2026-11-05T04:25:48.7836914Z [command]/usr/bin/git sparse-checkout disable
+2026-11-05T04:25:48.7981380Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-05T04:25:48.8019647Z ##[group]Checking out the ref
+2026-11-05T04:25:48.8022732Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/265/merge
+2026-11-05T04:25:49.2185160Z Note: switching to 'refs/remotes/pull/265/merge'.
+2026-11-05T04:25:49.2185448Z 
+2026-11-05T04:25:49.2185640Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-05T04:25:49.2186187Z changes and commit them, and you can discard any commits you make in this
+2026-11-05T04:25:49.2186659Z state without impacting any branches by switching back to a branch.
+2026-11-05T04:25:49.2187048Z 
+2026-11-05T04:25:49.2187244Z If you want to create a new branch to retain commits you create, you may
+2026-11-05T04:25:49.2187615Z do so (now or later) by using -c with the switch command. Example:
+2026-11-05T04:25:49.2187823Z 
+2026-11-05T04:25:49.2187919Z   git switch -c <new-branch-name>
+2026-11-05T04:25:49.2188064Z 
+2026-11-05T04:25:49.2188160Z Or undo this operation with:
+2026-11-05T04:25:49.2188296Z 
+2026-11-05T04:25:49.2188376Z   git switch -
+2026-11-05T04:25:49.2188484Z 
+2026-11-05T04:25:49.2188657Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-05T04:25:49.2188909Z 
+2026-11-05T04:25:49.2189195Z HEAD is now at 9e27273 Merge 968649bdec92469e8761d6e09ed7f6900c79abc0 into 89d93c8b23db65d3fe6a83d1853acc716c024b80
+2026-11-05T04:25:49.2259074Z ##[endgroup]
+2026-11-05T04:25:49.2373293Z [command]/usr/bin/git log -1 --format=%H
+2026-11-05T04:25:49.2413355Z 9e27273f7b616dd48b641f544fac1ab1cb72b13a
+2026-11-05T04:25:49.2421035Z ##[group]Removing auth
+2026-11-05T04:25:49.2421387Z Removing SSH command configuration
+2026-11-05T04:25:49.2423684Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:25:49.2474745Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:25:49.2674592Z Removing HTTP extra header
+2026-11-05T04:25:49.2676927Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:25:49.2779024Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:25:49.2920401Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:25:49.2923050Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:25:49.2958649Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-05T04:25:49.2959055Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T04:25:49.2959406Z includeif.gitdir:/github/workspace/.git.path
+2026-11-05T04:25:49.2959706Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T04:25:49.2966506Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-05T04:25:49.2997061Z /home/runner/work/_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:49.3005676Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-36113bed\-c607\-47f6\-b050\-a1df69d7a681\.config
+2026-11-05T04:25:49.3074068Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-05T04:25:49.3104551Z /home/runner/work/_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:49.3111197Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-36113bed\-c607\-47f6\-b050\-a1df69d7a681\.config
+2026-11-05T04:25:49.3150480Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-05T04:25:49.3180836Z /github/runner_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:49.3186427Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-36113bed\-c607\-47f6\-b050\-a1df69d7a681\.config
+2026-11-05T04:25:49.3227758Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-05T04:25:49.3259082Z /github/runner_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config
+2026-11-05T04:25:49.3264499Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-36113bed\-c607\-47f6\-b050\-a1df69d7a681\.config
+2026-11-05T04:25:49.3303487Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:25:49.3499175Z Removing credentials config '/home/runner/work/_temp/git-credentials-36113bed-c607-47f6-b050-a1df69d7a681.config'
+2026-11-05T04:25:49.3507599Z ##[endgroup]
+2026-11-05T04:25:49.3703962Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-05T04:25:49.3704188Z with:
+2026-11-05T04:25:49.3704314Z   node-version-file: .nvmrc
+2026-11-05T04:25:49.3704462Z   package-manager-cache: false
+2026-11-05T04:25:49.3704606Z   check-latest: false
+2026-11-05T04:25:49.3706209Z   token: ***
+2026-11-05T04:25:49.3706341Z ##[endgroup]
+2026-11-05T04:25:49.4593516Z Node version file is not JSON file
+2026-11-05T04:25:49.4597322Z Node version file is not TOML file
+2026-11-05T04:25:49.4597718Z Resolved .nvmrc as 26.12.1
+2026-11-05T04:25:49.5085348Z Attempting to download 26.12.1...
+2026-11-05T04:25:50.2998006Z Acquiring 26.12.1 - x64 from https://github.com/actions/node-versions/releases/download/26.12.1-39618969937/node-26.12.1-linux-x64.tar.gz
+2026-11-05T04:25:50.9888280Z Extracting ...
+2026-11-05T04:25:51.0146962Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/003565bd-2588-42e5-83d7-81e96a4fa774 -f /home/runner/work/_temp/9936f4cc-cd08-42f1-b57d-b5124804cf06
+2026-11-05T04:25:52.0377864Z Adding to the cache ...
+2026-11-05T04:25:53.9101899Z ##[group]Environment details
+2026-11-05T04:25:54.1429138Z node: v26.12.1
+2026-11-05T04:25:54.1429373Z npm: 11.20.0
+2026-11-05T04:25:54.1429490Z yarn: 1.22.22
+2026-11-05T04:25:54.1429828Z ##[endgroup]
+2026-11-05T04:25:54.1600245Z ##[group]Run node scripts/ci/coverage-result.ts browser
+2026-11-05T04:25:54.1600518Z [36;1mnode scripts/ci/coverage-result.ts browser[0m
+2026-11-05T04:25:54.1620099Z shell: /usr/bin/bash -e {0}
+2026-11-05T04:25:54.1620239Z env:
+2026-11-05T04:25:54.1620354Z   CLASSIFICATION: success
+2026-11-05T04:25:54.1626864Z   COVERAGE_PLAN: {"version":1,"event":"pull_request","action":"synchronize","base":"89d93c8b23db65d3fe6a83d1853acc716c024b80","head":"968649bdec92469e8761d6e09ed7f6900c79abc0","tested":"9e27273f7b616dd48b641f544fac1ab1cb72b13a","mode":"full","labels":[],"paths":null,"suites":{"backlog":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"pull-request":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"lint":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"typecheck":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"unit-tests":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"lib-test-run":{"selected":true,"dependencies":["lib/**","scripts/dependencies/**","package{,-lock}.json","vitest.config.ts","tsconfig.json",".nvmrc",".github/workflows/ci.yml"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"playwright-run":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"container-smoke":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"restore-timing":{"selected":true,"dependencies":["server/**","src/{server,shared}/**","lib/**","web/** and src/ui/** (shared application/authentication bundle)","e2e restore/shared helpers","runtime/build/dependency/workflow inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"sync-transition":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"doc-responsiveness":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"doc-callback-lifetimes":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"responsiveness-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"callback-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"phone-compatibility":{"selected":true,"dependencies":["full plan backstop; ordinary phone owners remain in routine browser coverage"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."}}}
+2026-11-05T04:25:54.1633240Z   COVERAGE_PLAN_SHA256: ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9
+2026-11-05T04:25:54.1633553Z   COVERAGE_GATE_RESULTS: {"typecheck":"success","unit-tests":"success","lib-tests":"success"}
+2026-11-05T04:25:54.1634221Z   COVERAGE_RESULTS: {"backlog":"success","pull-request":"success","lint":"success","typecheck":"success","unit-tests":"success","lib-test-run":"success","playwright-run":"success","container-smoke":"success","restore-timing":"success","sync-transition":"success","doc-responsiveness":"success","doc-callback-lifetimes":"success"}
+2026-11-05T04:25:54.1634807Z ##[endgroup]
+2026-11-05T04:25:54.2257342Z {
+2026-11-05T04:25:54.2257599Z   "passed": true,
+2026-11-05T04:25:54.2257753Z   "evidence": {
+2026-11-05T04:25:54.2258061Z     "planSha256": "ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9",
+2026-11-05T04:25:54.2258536Z     "plan": {
+2026-11-05T04:25:54.2258657Z       "version": 1,
+2026-11-05T04:25:54.2258806Z       "event": "pull_request",
+2026-11-05T04:25:54.2258962Z       "action": "synchronize",
+2026-11-05T04:25:54.2259143Z       "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+2026-11-05T04:25:54.2259356Z       "head": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+2026-11-05T04:25:54.2259566Z       "tested": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+2026-11-05T04:25:54.2259761Z       "mode": "full",
+2026-11-05T04:25:54.2259883Z       "labels": [],
+2026-11-05T04:25:54.2260003Z       "paths": null,
+2026-11-05T04:25:54.2260124Z       "suites": {
+2026-11-05T04:25:54.2260239Z         "backlog": {
+2026-11-05T04:25:54.2260362Z           "selected": true,
+2026-11-05T04:25:54.2260500Z           "dependencies": [
+2026-11-05T04:25:54.2260701Z             "complete immutable change range and current event metadata"
+2026-11-05T04:25:54.2260902Z           ],
+2026-11-05T04:25:54.2261021Z           "inputs": [],
+2026-11-05T04:25:54.2261236Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2261442Z         },
+2026-11-05T04:25:54.2261558Z         "pull-request": {
+2026-11-05T04:25:54.2261722Z           "selected": true,
+2026-11-05T04:25:54.2261873Z           "dependencies": [
+2026-11-05T04:25:54.2262112Z             "complete immutable change range and current event metadata"
+2026-11-05T04:25:54.2262297Z           ],
+2026-11-05T04:25:54.2262408Z           "inputs": [],
+2026-11-05T04:25:54.2262737Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2263005Z         },
+2026-11-05T04:25:54.2263135Z         "lint": {
+2026-11-05T04:25:54.2263256Z           "selected": true,
+2026-11-05T04:25:54.2263384Z           "dependencies": [
+2026-11-05T04:25:54.2263863Z             "complete immutable change range and current event metadata"
+2026-11-05T04:25:54.2264236Z           ],
+2026-11-05T04:25:54.2264452Z           "inputs": [],
+2026-11-05T04:25:54.2264846Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2265175Z         },
+2026-11-05T04:25:54.2265362Z         "typecheck": {
+2026-11-05T04:25:54.2265646Z           "selected": true,
+2026-11-05T04:25:54.2265877Z           "dependencies": [
+2026-11-05T04:25:54.2266530Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2266959Z           ],
+2026-11-05T04:25:54.2267126Z           "inputs": [],
+2026-11-05T04:25:54.2267333Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2267528Z         },
+2026-11-05T04:25:54.2267640Z         "unit-tests": {
+2026-11-05T04:25:54.2267763Z           "selected": true,
+2026-11-05T04:25:54.2267891Z           "dependencies": [
+2026-11-05T04:25:54.2268152Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2268533Z           ],
+2026-11-05T04:25:54.2268724Z           "inputs": [],
+2026-11-05T04:25:54.2268920Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2269117Z         },
+2026-11-05T04:25:54.2269228Z         "lib-test-run": {
+2026-11-05T04:25:54.2269357Z           "selected": true,
+2026-11-05T04:25:54.2269487Z           "dependencies": [
+2026-11-05T04:25:54.2269627Z             "lib/**",
+2026-11-05T04:25:54.2269774Z             "scripts/dependencies/**",
+2026-11-05T04:25:54.2269973Z             "package{,-lock}.json",
+2026-11-05T04:25:54.2270146Z             "vitest.config.ts",
+2026-11-05T04:25:54.2270322Z             "tsconfig.json",
+2026-11-05T04:25:54.2270473Z             ".nvmrc",
+2026-11-05T04:25:54.2270611Z             ".github/workflows/ci.yml"
+2026-11-05T04:25:54.2270760Z           ],
+2026-11-05T04:25:54.2270901Z           "inputs": [],
+2026-11-05T04:25:54.2271113Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2271328Z         },
+2026-11-05T04:25:54.2271562Z         "playwright-run": {
+2026-11-05T04:25:54.2271695Z           "selected": true,
+2026-11-05T04:25:54.2271834Z           "dependencies": [
+2026-11-05T04:25:54.2272079Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2272308Z           ],
+2026-11-05T04:25:54.2272414Z           "inputs": [],
+2026-11-05T04:25:54.2272612Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2272807Z         },
+2026-11-05T04:25:54.2272917Z         "container-smoke": {
+2026-11-05T04:25:54.2273050Z           "selected": true,
+2026-11-05T04:25:54.2273176Z           "dependencies": [
+2026-11-05T04:25:54.2273412Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2273640Z           ],
+2026-11-05T04:25:54.2273747Z           "inputs": [],
+2026-11-05T04:25:54.2273945Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2274143Z         },
+2026-11-05T04:25:54.2274250Z         "restore-timing": {
+2026-11-05T04:25:54.2274379Z           "selected": true,
+2026-11-05T04:25:54.2274507Z           "dependencies": [
+2026-11-05T04:25:54.2274633Z             "server/**",
+2026-11-05T04:25:54.2274776Z             "src/{server,shared}/**",
+2026-11-05T04:25:54.2274934Z             "lib/**",
+2026-11-05T04:25:54.2275121Z             "web/** and src/ui/** (shared application/authentication bundle)",
+2026-11-05T04:25:54.2275333Z             "e2e restore/shared helpers",
+2026-11-05T04:25:54.2275530Z             "runtime/build/dependency/workflow inputs"
+2026-11-05T04:25:54.2275691Z           ],
+2026-11-05T04:25:54.2275799Z           "inputs": [],
+2026-11-05T04:25:54.2276231Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2276552Z         },
+2026-11-05T04:25:54.2276755Z         "sync-transition": {
+2026-11-05T04:25:54.2276986Z           "selected": true,
+2026-11-05T04:25:54.2277210Z           "dependencies": [
+2026-11-05T04:25:54.2277551Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2277810Z           ],
+2026-11-05T04:25:54.2277921Z           "inputs": [],
+2026-11-05T04:25:54.2278134Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2278332Z         },
+2026-11-05T04:25:54.2278473Z         "doc-responsiveness": {
+2026-11-05T04:25:54.2278621Z           "selected": true,
+2026-11-05T04:25:54.2278753Z           "dependencies": [
+2026-11-05T04:25:54.2279004Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2279252Z           ],
+2026-11-05T04:25:54.2279361Z           "inputs": [],
+2026-11-05T04:25:54.2279573Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2279893Z         },
+2026-11-05T04:25:54.2280062Z         "doc-callback-lifetimes": {
+2026-11-05T04:25:54.2280212Z           "selected": true,
+2026-11-05T04:25:54.2280358Z           "dependencies": [
+2026-11-05T04:25:54.2280613Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2280858Z           ],
+2026-11-05T04:25:54.2280966Z           "inputs": [],
+2026-11-05T04:25:54.2281177Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2281392Z         },
+2026-11-05T04:25:54.2281533Z         "responsiveness-baseline": {
+2026-11-05T04:25:54.2281739Z           "selected": true,
+2026-11-05T04:25:54.2281941Z           "dependencies": [
+2026-11-05T04:25:54.2282131Z             "web/**",
+2026-11-05T04:25:54.2282306Z             "server/**",
+2026-11-05T04:25:54.2282490Z             "lib/**",
+2026-11-05T04:25:54.2282665Z             "e2e/**",
+2026-11-05T04:25:54.2282849Z             "src/shared/**",
+2026-11-05T04:25:54.2283112Z             "src/server/{sync,history,collaboration}/**",
+2026-11-05T04:25:54.2283437Z             "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-05T04:25:54.2283655Z             "build/runtime/dependency/workflow configuration"
+2026-11-05T04:25:54.2283826Z           ],
+2026-11-05T04:25:54.2283935Z           "inputs": [],
+2026-11-05T04:25:54.2284131Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2284325Z         },
+2026-11-05T04:25:54.2284445Z         "callback-baseline": {
+2026-11-05T04:25:54.2284581Z           "selected": true,
+2026-11-05T04:25:54.2284712Z           "dependencies": [
+2026-11-05T04:25:54.2284835Z             "web/**",
+2026-11-05T04:25:54.2284951Z             "server/**",
+2026-11-05T04:25:54.2285073Z             "lib/**",
+2026-11-05T04:25:54.2285184Z             "e2e/**",
+2026-11-05T04:25:54.2285300Z             "src/shared/**",
+2026-11-05T04:25:54.2285473Z             "src/server/{sync,history,collaboration}/**",
+2026-11-05T04:25:54.2285682Z             "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-05T04:25:54.2285895Z             "build/runtime/dependency/workflow configuration"
+2026-11-05T04:25:54.2287126Z           ],
+2026-11-05T04:25:54.2287259Z           "inputs": [],
+2026-11-05T04:25:54.2287460Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2287682Z         },
+2026-11-05T04:25:54.2287883Z         "phone-compatibility": {
+2026-11-05T04:25:54.2288028Z           "selected": true,
+2026-11-05T04:25:54.2288157Z           "dependencies": [
+2026-11-05T04:25:54.2288382Z             "full plan backstop; ordinary phone owners remain in routine browser coverage"
+2026-11-05T04:25:54.2288601Z           ],
+2026-11-05T04:25:54.2288708Z           "inputs": [],
+2026-11-05T04:25:54.2288905Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-05T04:25:54.2289101Z         }
+2026-11-05T04:25:54.2289202Z       }
+2026-11-05T04:25:54.2289304Z     },
+2026-11-05T04:25:54.2289415Z     "gateResults": {
+2026-11-05T04:25:54.2289540Z       "typecheck": "success",
+2026-11-05T04:25:54.2289686Z       "unit-tests": "success",
+2026-11-05T04:25:54.2289824Z       "lib-tests": "success"
+2026-11-05T04:25:54.2289947Z     },
+2026-11-05T04:25:54.2290049Z     "results": [
+2026-11-05T04:25:54.2290155Z       {
+2026-11-05T04:25:54.2290273Z         "suite": "backlog",
+2026-11-05T04:25:54.2290400Z         "selected": true,
+2026-11-05T04:25:54.2290527Z         "dependencies": [
+2026-11-05T04:25:54.2290712Z           "complete immutable change range and current event metadata"
+2026-11-05T04:25:54.2290894Z         ],
+2026-11-05T04:25:54.2290999Z         "inputs": [],
+2026-11-05T04:25:54.2291197Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2291399Z         "result": "success"
+2026-11-05T04:25:54.2291521Z       },
+2026-11-05T04:25:54.2291620Z       {
+2026-11-05T04:25:54.2291864Z         "suite": "pull-request",
+2026-11-05T04:25:54.2292004Z         "selected": true,
+2026-11-05T04:25:54.2292128Z         "dependencies": [
+2026-11-05T04:25:54.2292311Z           "complete immutable change range and current event metadata"
+2026-11-05T04:25:54.2292493Z         ],
+2026-11-05T04:25:54.2292633Z         "inputs": [],
+2026-11-05T04:25:54.2292933Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2293146Z         "result": "success"
+2026-11-05T04:25:54.2293267Z       },
+2026-11-05T04:25:54.2293368Z       {
+2026-11-05T04:25:54.2293475Z         "suite": "lint",
+2026-11-05T04:25:54.2293604Z         "selected": true,
+2026-11-05T04:25:54.2293731Z         "dependencies": [
+2026-11-05T04:25:54.2293916Z           "complete immutable change range and current event metadata"
+2026-11-05T04:25:54.2294095Z         ],
+2026-11-05T04:25:54.2294199Z         "inputs": [],
+2026-11-05T04:25:54.2294394Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2294597Z         "result": "success"
+2026-11-05T04:25:54.2294808Z       },
+2026-11-05T04:25:54.2294905Z       {
+2026-11-05T04:25:54.2295013Z         "suite": "typecheck",
+2026-11-05T04:25:54.2295149Z         "selected": true,
+2026-11-05T04:25:54.2295272Z         "dependencies": [
+2026-11-05T04:25:54.2295514Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2295796Z         ],
+2026-11-05T04:25:54.2296065Z         "inputs": [],
+2026-11-05T04:25:54.2296459Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2296924Z         "result": "success"
+2026-11-05T04:25:54.2297216Z       },
+2026-11-05T04:25:54.2297431Z       {
+2026-11-05T04:25:54.2297677Z         "suite": "unit-tests",
+2026-11-05T04:25:54.2297893Z         "selected": true,
+2026-11-05T04:25:54.2298093Z         "dependencies": [
+2026-11-05T04:25:54.2298493Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2298877Z         ],
+2026-11-05T04:25:54.2299043Z         "inputs": [],
+2026-11-05T04:25:54.2299357Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2299687Z         "result": "success"
+2026-11-05T04:25:54.2299882Z       },
+2026-11-05T04:25:54.2300036Z       {
+2026-11-05T04:25:54.2300229Z         "suite": "lib-test-run",
+2026-11-05T04:25:54.2300444Z         "selected": true,
+2026-11-05T04:25:54.2300644Z         "dependencies": [
+2026-11-05T04:25:54.2300836Z           "lib/**",
+2026-11-05T04:25:54.2301049Z           "scripts/dependencies/**",
+2026-11-05T04:25:54.2301307Z           "package{,-lock}.json",
+2026-11-05T04:25:54.2301539Z           "vitest.config.ts",
+2026-11-05T04:25:54.2301757Z           "tsconfig.json",
+2026-11-05T04:25:54.2301957Z           ".nvmrc",
+2026-11-05T04:25:54.2302202Z           ".github/workflows/ci.yml"
+2026-11-05T04:25:54.2302418Z         ],
+2026-11-05T04:25:54.2302587Z         "inputs": [],
+2026-11-05T04:25:54.2302897Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2303224Z         "result": "success"
+2026-11-05T04:25:54.2303417Z       },
+2026-11-05T04:25:54.2303575Z       {
+2026-11-05T04:25:54.2303764Z         "suite": "playwright-run",
+2026-11-05T04:25:54.2303986Z         "selected": true,
+2026-11-05T04:25:54.2304190Z         "dependencies": [
+2026-11-05T04:25:54.2304625Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2305003Z         ],
+2026-11-05T04:25:54.2305168Z         "inputs": [],
+2026-11-05T04:25:54.2305487Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2305825Z         "result": "success"
+2026-11-05T04:25:54.2306120Z       },
+2026-11-05T04:25:54.2306278Z       {
+2026-11-05T04:25:54.2306467Z         "suite": "container-smoke",
+2026-11-05T04:25:54.2306695Z         "selected": true,
+2026-11-05T04:25:54.2306938Z         "dependencies": [
+2026-11-05T04:25:54.2307254Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2307770Z         ],
+2026-11-05T04:25:54.2307980Z         "inputs": [],
+2026-11-05T04:25:54.2308311Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2308682Z         "result": "success"
+2026-11-05T04:25:54.2308874Z       },
+2026-11-05T04:25:54.2309041Z       {
+2026-11-05T04:25:54.2309227Z         "suite": "restore-timing",
+2026-11-05T04:25:54.2309456Z         "selected": true,
+2026-11-05T04:25:54.2309660Z         "dependencies": [
+2026-11-05T04:25:54.2309856Z           "server/**",
+2026-11-05T04:25:54.2310076Z           "src/{server,shared}/**",
+2026-11-05T04:25:54.2310294Z           "lib/**",
+2026-11-05T04:25:54.2310579Z           "web/** and src/ui/** (shared application/authentication bundle)",
+2026-11-05T04:25:54.2310914Z           "e2e restore/shared helpers",
+2026-11-05T04:25:54.2311200Z           "runtime/build/dependency/workflow inputs"
+2026-11-05T04:25:54.2311491Z         ],
+2026-11-05T04:25:54.2311602Z         "inputs": [],
+2026-11-05T04:25:54.2311809Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2312012Z         "result": "success"
+2026-11-05T04:25:54.2312134Z       },
+2026-11-05T04:25:54.2312256Z       {
+2026-11-05T04:25:54.2312450Z         "suite": "sync-transition",
+2026-11-05T04:25:54.2312703Z         "selected": true,
+2026-11-05T04:25:54.2312958Z         "dependencies": [
+2026-11-05T04:25:54.2313454Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2313924Z         ],
+2026-11-05T04:25:54.2314095Z         "inputs": [],
+2026-11-05T04:25:54.2314424Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2314769Z         "result": "success"
+2026-11-05T04:25:54.2314966Z       },
+2026-11-05T04:25:54.2315128Z       {
+2026-11-05T04:25:54.2315330Z         "suite": "doc-responsiveness",
+2026-11-05T04:25:54.2315573Z         "selected": true,
+2026-11-05T04:25:54.2315778Z         "dependencies": [
+2026-11-05T04:25:54.2320321Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2320694Z         ],
+2026-11-05T04:25:54.2320863Z         "inputs": [],
+2026-11-05T04:25:54.2321189Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2321494Z         "result": "success"
+2026-11-05T04:25:54.2321674Z       },
+2026-11-05T04:25:54.2321835Z       {
+2026-11-05T04:25:54.2322035Z         "suite": "doc-callback-lifetimes",
+2026-11-05T04:25:54.2322274Z         "selected": true,
+2026-11-05T04:25:54.2322479Z         "dependencies": [
+2026-11-05T04:25:54.2322876Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-05T04:25:54.2323241Z         ],
+2026-11-05T04:25:54.2323448Z         "inputs": [],
+2026-11-05T04:25:54.2323870Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-05T04:25:54.2324296Z         "result": "success"
+2026-11-05T04:25:54.2324538Z       }
+2026-11-05T04:25:54.2324741Z     ]
+2026-11-05T04:25:54.2324945Z   }
+2026-11-05T04:25:54.2325128Z }
+2026-11-05T04:25:54.2423993Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-05T04:25:54.2424209Z with:
+2026-11-05T04:25:54.2424327Z   name: ci-results-browser
+2026-11-05T04:25:54.2424461Z   path: ci-results-browser.json
+2026-11-05T04:25:54.2424593Z   retention-days: 30
+2026-11-05T04:25:54.2424711Z   if-no-files-found: warn
+2026-11-05T04:25:54.2424833Z   compression-level: 6
+2026-11-05T04:25:54.2424949Z   overwrite: false
+2026-11-05T04:25:54.2425068Z   include-hidden-files: false
+2026-11-05T04:25:54.2425195Z   archive: true
+2026-11-05T04:25:54.2425308Z ##[endgroup]
+2026-11-05T04:25:54.3403974Z With the provided path, there will be 1 file uploaded
+2026-11-05T04:25:54.3408080Z Artifact name is valid!
+2026-11-05T04:25:54.3408375Z Root directory input is valid!
+2026-11-05T04:25:54.7000169Z Uploading artifact: ci-results-browser.zip
+2026-11-05T04:25:54.7024885Z Beginning upload of artifact content to blob storage
+2026-11-05T04:25:54.9136657Z Uploaded bytes 1298
+2026-11-05T04:25:54.9547289Z Finished uploading artifact content to blob storage!
+2026-11-05T04:25:54.9548690Z SHA256 digest of uploaded artifact is 05ab33345249e87f04745fb7abd2864c7e7d4ce6cd0857ac63052f12aadccda6
+2026-11-05T04:25:54.9549149Z Finalizing artifact upload
+2026-11-05T04:25:55.4658675Z Artifact ci-results-browser successfully finalized. Artifact ID 13387988394
+2026-11-05T04:25:55.4659223Z Artifact ci-results-browser has been successfully uploaded! Final size is 1298 bytes. Artifact ID is 13387988394
+2026-11-05T04:25:55.4661395Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/41965105059/artifacts/13387988394
+2026-11-05T04:25:55.4797880Z Post job cleanup.
+2026-11-05T04:25:55.5669320Z Post job cleanup.
+2026-11-05T04:25:55.6262403Z [command]/usr/bin/git version
+2026-11-05T04:25:55.6297212Z git version 2.56.0
+2026-11-05T04:25:55.6319755Z Temporarily overriding HOME='/home/runner/work/_temp/4271895e-d300-4386-9eda-ecc606c89af7' before making global git config changes
+2026-11-05T04:25:55.6320532Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-05T04:25:55.6322508Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-05T04:25:55.6352268Z Removing SSH command configuration
+2026-11-05T04:25:55.6356922Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-05T04:25:55.6386855Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-05T04:25:55.6604418Z Removing HTTP extra header
+2026-11-05T04:25:55.6609552Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-05T04:25:55.6646647Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-05T04:25:55.6873159Z Removing includeIf entries pointing to credentials config files
+2026-11-05T04:25:55.6879982Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-05T04:25:55.6948151Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-05T04:25:55.7289587Z Cleaning up orphan processes

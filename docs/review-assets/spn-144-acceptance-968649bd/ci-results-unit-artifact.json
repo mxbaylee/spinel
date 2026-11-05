@@ -1,0 +1,20 @@
+{
+  "id": 13387283391,
+  "node_id": "MDg6QXJ0aWZhY3QxMzM4NzI4MzM5MQ==",
+  "name": "ci-results-unit",
+  "size_in_bytes": 1140,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13387283391",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13387283391/zip",
+  "expired": false,
+  "digest": "sha256:7a6d16d71671dfd290b01c419157761bf86d00608da6927c685d9f617269232d",
+  "created_at": "2026-11-05T04:09:39Z",
+  "updated_at": "2026-11-05T04:09:39Z",
+  "expires_at": "2026-12-05T04:09:38Z",
+  "workflow_run": {
+    "id": 41965105059,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-144-trace-deadline",
+    "head_sha": "968649bdec92469e8761d6e09ed7f6900c79abc0"
+  }
+}

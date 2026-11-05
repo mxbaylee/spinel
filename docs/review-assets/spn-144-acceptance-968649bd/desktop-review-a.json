@@ -1,0 +1,385 @@
+{
+  "identities": {
+    "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "base": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+    "tested": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+    "sourceAndTestedTree": "5552cf754b509ac4ce8f2857c08ea24509304722",
+    "ci": 41965105059,
+    "storybook": 41965105108,
+    "attempt": 1,
+    "planArtifact": 13387316885,
+    "planZipSha256": "c6bc34fefce4fa6a7ec81065ac8d91affcc0864571635ee40d30979de906e286",
+    "planDigest": "ca6d9ecff29351cbb20b78b4e592d73bbc0c39280db55adeae2d105d77dc44c9",
+    "selectedSuites": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes",
+      "responsiveness-baseline",
+      "callback-baseline",
+      "phone-compatibility"
+    ],
+    "mode": "full",
+    "paths": null,
+    "reason": "Immutable range or event labels unavailable; full coverage.",
+    "priorAcceptedSource": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+    "priorAcceptedArchive": "02541cea2c28adadb988394be84515effa205b22",
+    "priorAcceptanceIsCurrentHeadCredit": false
+  },
+  "archive": {
+    "bytes": 181521481,
+    "sha256": "9a7f792b83798951ab8a28b58adec7d581d13ed924467938b3ddddd63d50758d"
+  },
+  "memberProof": "callback-desktop-members-a.json",
+  "summaries": [
+    {
+      "role": "baselineObservation",
+      "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41965105059",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042269"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 33,
+      "unmapped": 10,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 35343625,
+        "sha256": "0f9d67421b8d53b4e03a17d62a3430b2143b8a30a90893d93f9ffc4fe26b1622",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 526315493,
+          "sha256": "3bcd1ed089ee4f5b7b02f34746df79fce024873f04f507d1871f84cba2bcc4ea"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 48037491,
+        "sha256": "128719582bb7340fae959de735ff360e8c08ec3573fc5438a140201e69a5853d",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 650923020,
+          "sha256": "28b0f4125e41d250b012568839a9da0ee1771a33ad88d4164cb946ab9bbe8759"
+        }
+      },
+      "framing": {
+        "bytes": 526315493,
+        "sha256": "3bcd1ed089ee4f5b7b02f34746df79fce024873f04f507d1871f84cba2bcc4ea",
+        "packets": 1802958,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 984129,
+        "retainedEvents": 984129,
+        "callbackEvents": 218666,
+        "uncompressedBytes": 650923020,
+        "uncompressedSha256": "28b0f4125e41d250b012568839a9da0ee1771a33ad88d4164cb946ab9bbe8759",
+        "maxEventBytes": 18370
+      },
+      "timing": {
+        "behaviorCompleteMs": 66667.400833,
+        "completionWaitMs": 6151.166803999993,
+        "endResponseMs": 2.9008860000030836,
+        "readStoreMs": 4784.7498970000015,
+        "framingMaterializeMs": 1639.6578830000071,
+        "conversionMs": 24955.15521299999,
+        "statisticsMs": 4138.1365480000095,
+        "parseMs": 4880.0477339999925,
+        "attributionMs": 622.8272910000087,
+        "analysisMs": 343.44437100000505,
+        "cleanupCompleteMs": 114284.60786,
+        "cleanupHeadroomMs": 305715.39214
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": false,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 7723,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 9,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1870,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 526.32 MB in 4.07s (129.4 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 4.1s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-B6p56n/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    },
+    {
+      "role": "candidate",
+      "source": "9e27273f7b616dd48b641f544fac1ab1cb72b13a",
+      "browser": "156.0.8078.4",
+      "runtime": "v26.12.1",
+      "playwright": "1.64.1",
+      "runner": {
+        "run": "41965105059",
+        "attempt": "1",
+        "name": "GitHub Actions 1000042269"
+      },
+      "harnessFiles": 15,
+      "sourceArtifacts": 35,
+      "unmapped": 9,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 33782769,
+        "sha256": "0a1461999d427e3f2c64191ba3dd81759afb622f52cbf83eac09912579c848ed",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 541247638,
+          "sha256": "8abefea69243dcdc396c5b5a0b8b3493455a4e7f27cae24cf03737457d9d1af9"
+        }
+      },
+      "convertedTrace": {
+        "file": "spn144-derived.json.gz",
+        "bytes": 44051702,
+        "sha256": "1a44dadbf7d04edab13192df37aa1c3ddbd4a678d23dd597883662719d2387be",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "decoded": {
+          "bytes": 646064677,
+          "sha256": "434785315b734be42d372ceee1a560f1ff4c2a861683df71ba79787d6866ebe9"
+        }
+      },
+      "framing": {
+        "bytes": 541247638,
+        "sha256": "8abefea69243dcdc396c5b5a0b8b3493455a4e7f27cae24cf03737457d9d1af9",
+        "packets": 1548962,
+        "emptyPackets": 0
+      },
+      "traceRead": {
+        "sourceEvents": 848356,
+        "retainedEvents": 848356,
+        "callbackEvents": 191293,
+        "uncompressedBytes": 646064677,
+        "uncompressedSha256": "434785315b734be42d372ceee1a560f1ff4c2a861683df71ba79787d6866ebe9",
+        "maxEventBytes": 18371
+      },
+      "timing": {
+        "behaviorCompleteMs": 46483.628854,
+        "completionWaitMs": 6143.550808,
+        "endResponseMs": 2.884717000000819,
+        "readStoreMs": 4809.347545999997,
+        "framingMaterializeMs": 1881.9226990000025,
+        "conversionMs": 25419.436152000002,
+        "statisticsMs": 4249.10203899999,
+        "parseMs": 4682.230981000001,
+        "attributionMs": 625.1738309999928,
+        "analysisMs": 289.18107600000803,
+        "cleanupCompleteMs": 94692.983527,
+        "cleanupHeadroomMs": 325307.016473
+      },
+      "analysis": {
+        "complete": true,
+        "bounded": true,
+        "accepted": true,
+        "caps": {
+          "cursor": 4,
+          "zoom-init": 1,
+          "zoom-update": 1
+        },
+        "families": {
+          "cursor": {
+            "pendingHighWater": 4,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-init": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          },
+          "zoom-update": {
+            "pendingHighWater": 1,
+            "pendingAtTraceEnd": 0,
+            "callbacksAfterDisposal": 0,
+            "installationsAfterDisposal": 0
+          }
+        }
+      },
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership.",
+      "converterWarnings": {
+        "conversion": "",
+        "statistics": "\u001b[1;32mTrace loaded\u001b[0m: 541.25 MB in 4.18s (129.5 MB/s)\n\u001b[1;36mTip\u001b[0m: parsing took 4.2s and `query TRACE` re-parses on every call. To run many queries, load once and reuse the session:\n  trace_processor server unix --name S --daemonize /home/runner/work/spinel/spinel/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-oguLof/input.pftrace\n  trace_processor query --remote S \"SELECT ...\"\n  trace_processor server kill S\nScripts and AI agents: `trace_processor help agent` covers this, schema discovery and PerfettoSQL tips.\n\u001b[2mQuery executed in 0 ms\u001b[0m\n"
+      },
+      "terminal": "passed"
+    }
+  ],
+  "reports": [
+    {
+      "file": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 114455,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 305545
+    },
+    {
+      "file": "playwright-report/doc-callback-lifetimes.json",
+      "tests": [
+        {
+          "title": "desktop native callback lifetimes",
+          "timeout": 420000,
+          "status": "expected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 94811,
+              "errors": []
+            }
+          ]
+        }
+      ],
+      "headroomMs": 325189
+    }
+  ],
+  "comparisonAccepted": true,
+  "comparisonExactlyReproducedFromRetainedAnalysis": true,
+  "rawEventAnalysisReparsed": false,
+  "innerProtoDecoded": false,
+  "scope": "complete streamed framing/raw hashes plus retained hosted analysis and actual source assertions; no browser/converter rerun",
+  "nativeAssertions": [
+    {
+      "role": "baselineObservation",
+      "textBytes": 2088,
+      "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+      "keyCount": 2086,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "selection": {
+        "start": 2086,
+        "end": 2086,
+        "segmentId": ""
+      },
+      "unmappedFunctionCallPositions": 10,
+      "maxObservedBufferFill": 0.4846000075340271,
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership."
+    },
+    {
+      "role": "candidate",
+      "textBytes": 2088,
+      "textSha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+      "keyCount": 2086,
+      "pending": {
+        "history": 0,
+        "collaboration": 0
+      },
+      "selection": {
+        "start": 2086,
+        "end": 2086,
+        "segmentId": ""
+      },
+      "unmappedFunctionCallPositions": 9,
+      "maxObservedBufferFill": 0.4996986985206604,
+      "heapLimitations": "Renderer heap snapshots without forced GC; not retained-object ownership."
+    }
+  ],
+  "terminalJob": {
+    "id": 127040403721,
+    "run": 41965105059,
+    "attempt": 1,
+    "source": "968649bdec92469e8761d6e09ed7f6900c79abc0",
+    "status": "completed",
+    "conclusion": "success",
+    "startedAt": "2026-11-05T04:01:27Z",
+    "completedAt": "2026-11-05T04:06:35Z",
+    "successfulSteps": 19,
+    "jobSha256": "43789aae8511a2d4b2504b2a68d2d6aa44987bfd64e2161bddedc7a94d7acc68",
+    "logSha256": "e9f6c4edbed6905636f214961c0ca996b69d95926cd59f0ba0b43afbd072010e",
+    "artifact": 13386678808,
+    "artifactMetadataSha256": "710337c522c52be7a2adf0ad8a42ca0f063d0ec3a5c4b5f4109c6d42814dbb03"
+  },
+  "accepted": true,
+  "acceptanceScope": "current-source desktop callback first pair only",
+  "oldPassCredit": false,
+  "overallMergeApproval": false,
+  "validation": {
+    "extract": {
+      "firstExecution": true,
+      "elapsedMs": 2347,
+      "peakKiB": 229776
+    },
+    "streamAudit": {
+      "firstExecution": true,
+      "elapsedMs": 5393,
+      "peakKiB": 366816
+    },
+    "normalPressure": true
+  }
+}

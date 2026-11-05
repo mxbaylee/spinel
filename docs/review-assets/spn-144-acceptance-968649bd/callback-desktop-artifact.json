@@ -1,0 +1,20 @@
+{
+  "id": 13386678808,
+  "node_id": "MDg6QXJ0aWZhY3QxMzM4NjY3ODgwOA==",
+  "name": "doc-callback-lifetimes-desktop",
+  "size_in_bytes": 181521481,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13386678808",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13386678808/zip",
+  "expired": false,
+  "digest": "sha256:9a7f792b83798951ab8a28b58adec7d581d13ed924467938b3ddddd63d50758d",
+  "created_at": "2026-11-05T04:06:31Z",
+  "updated_at": "2026-11-05T04:06:31Z",
+  "expires_at": "2026-11-12T04:06:25Z",
+  "workflow_run": {
+    "id": 41965105059,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-144-trace-deadline",
+    "head_sha": "968649bdec92469e8761d6e09ed7f6900c79abc0"
+  }
+}
