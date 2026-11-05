@@ -1,0 +1,1222 @@
+{
+  "root": 36420,
+  "started": 1793906656340,
+  "elapsedMs": 36157,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 116944,
+  "peakKiB": 751360,
+  "live": [
+    {
+      "pid": 36420,
+      "parent": 36394,
+      "group": 36420,
+      "rssKiB": 115392,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/tests-final-watchdog.json node --test scripts/ci/browserstack-input-observation.test.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-capability.test.ts"
+    },
+    {
+      "pid": 38396,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 36420,
+      "parent": 36394,
+      "group": 36420,
+      "rssKiB": 115392,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/tests-final-watchdog.json node --test scripts/ci/browserstack-input-observation.test.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-capability.test.ts"
+    },
+    {
+      "pid": 36439,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36465,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 61152,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "node --test scripts/ci/browserstack-input-observation.test.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-capability.test.ts"
+    },
+    {
+      "pid": 36466,
+      "parent": 36465,
+      "group": 36420,
+      "rssKiB": 268240,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 36467,
+      "parent": 36465,
+      "group": 36420,
+      "rssKiB": 267568,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/browserstack-capability.test.ts"
+    },
+    {
+      "pid": 36474,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36487,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:16 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36500,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36513,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36526,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36539,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:17 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36552,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36565,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36578,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36591,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:18 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36604,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36618,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36631,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36646,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:19 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36659,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36672,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36685,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36698,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:20 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36711,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36724,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36737,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36750,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36763,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36776,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36789,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36802,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36815,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36828,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36841,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36854,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36867,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36880,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36893,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36906,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36919,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36932,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36959,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36972,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36985,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36998,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37011,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37024,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37037,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37050,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37063,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37076,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37089,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37102,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37115,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37128,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37141,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:29 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37154,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:29 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37167,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:29 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37180,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:29 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37193,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37206,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37219,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37232,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37245,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37258,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37271,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37284,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:31 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37297,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37310,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37323,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37336,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:32 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37349,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37362,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37375,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37388,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:33 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37401,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37414,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37427,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37440,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37453,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37466,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37479,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37492,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37505,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37518,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37531,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37546,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1584,
+      "started": "Thu Nov  5 11:24:36 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37583,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37596,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37609,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37622,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:37 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37635,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37648,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37661,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:38 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37674,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37687,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37700,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37713,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:39 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37726,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37739,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37752,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37765,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:40 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37778,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37791,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37804,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37817,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:41 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37830,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37843,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37858,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37871,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37884,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37897,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37918,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1600,
+      "started": "Thu Nov  5 11:24:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37941,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37954,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37967,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37980,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 37993,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:44 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38006,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38019,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38032,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38045,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:45 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38058,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38071,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38084,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38097,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:46 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38110,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38123,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38136,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38149,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:47 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38162,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38175,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38188,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38201,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:48 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38214,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38227,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38240,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38253,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:49 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38266,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38279,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:24:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38292,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38305,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38318,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38331,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38344,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38357,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:51 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38370,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38383,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38396,
+      "parent": 36420,
+      "group": 36420,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

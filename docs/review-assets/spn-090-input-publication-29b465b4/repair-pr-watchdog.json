@@ -1,0 +1,86 @@
+{
+  "root": 40533,
+  "started": 1793907022425,
+  "elapsedMs": 621,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91184,
+  "peakKiB": 189872,
+  "live": [
+    {
+      "pid": 40533,
+      "parent": 40507,
+      "group": 40533,
+      "rssKiB": 89632,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/repair-pr-watchdog.json node scripts/backlog/cli.ts pr --base origin/main --title 🧪 SPN-090 Verify offline launches on real phones"
+    },
+    {
+      "pid": 40643,
+      "parent": 40533,
+      "group": 40533,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 40533,
+      "parent": 40507,
+      "group": 40533,
+      "rssKiB": 89632,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/repair-pr-watchdog.json node scripts/backlog/cli.ts pr --base origin/main --title 🧪 SPN-090 Verify offline launches on real phones"
+    },
+    {
+      "pid": 40552,
+      "parent": 40533,
+      "group": 40533,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 40578,
+      "parent": 40533,
+      "group": 40533,
+      "rssKiB": 98944,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 40591,
+      "parent": 40578,
+      "group": 40533,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 40597,
+      "parent": 40533,
+      "group": 40533,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 40630,
+      "parent": 40533,
+      "group": 40533,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 40643,
+      "parent": 40533,
+      "group": 40533,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

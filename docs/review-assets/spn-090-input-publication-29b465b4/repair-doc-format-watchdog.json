@@ -1,0 +1,70 @@
+{
+  "root": 40411,
+  "started": 1793907021586,
+  "elapsedMs": 575,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91120,
+  "peakKiB": 240800,
+  "live": [
+    {
+      "pid": 40411,
+      "parent": 40385,
+      "group": 40411,
+      "rssKiB": 89568,
+      "started": "Thu Nov  5 11:30:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/repair-doc-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --check docs/implementation/SPN-090-input-delivery.md scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-offline-preparation.ts scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 40475,
+      "parent": 40411,
+      "group": 40411,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 40411,
+      "parent": 40385,
+      "group": 40411,
+      "rssKiB": 89568,
+      "started": "Thu Nov  5 11:30:21 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/repair-doc-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --check docs/implementation/SPN-090-input-delivery.md scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-offline-preparation.ts scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 40430,
+      "parent": 40411,
+      "group": 40411,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 40456,
+      "parent": 40411,
+      "group": 40411,
+      "rssKiB": 149984,
+      "started": "Thu Nov  5 11:30:21 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --check docs/implementation/SPN-090-input-delivery.md scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-offline-preparation.ts scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 40462,
+      "parent": 40411,
+      "group": 40411,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:21 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 40475,
+      "parent": 40411,
+      "group": 40411,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:30:22 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

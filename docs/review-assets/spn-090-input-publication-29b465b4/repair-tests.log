@@ -1,0 +1,41 @@
+✔ recovery content is read only after the phone opens its already-created generation (2.939791ms)
+✔ late observation and fixture successes cannot pass a deadline before its timer callback runs (0.50075ms)
+✔ phone authoring refuses a reader path and requires the observed mobile editor (0.225958ms)
+✔ the actual Doc readiness script accepts the icon-only Edit control and rejects unavailable authoring controls (5.918208ms)
+✔ native Doc acceptance compares the entire independently transformed document, including body image anchors (5.03025ms)
+✔ native Sheet acceptance requires the intended A1 value and preserves every other cell and image field (0.880958ms)
+✔ a content mismatch reports differing paths and value types, never values (0.726416ms)
+✔ durable proof requires the original account, item, generation, write grant and actual pending native queue (14.446625ms)
+✔ image checkpoints reject missing pixels and failed required captures despite intact retained content (3.991042ms)
+✔ read-only local-copy observation opens no new database, writes no records and always closes (6.714083ms)
+✔ native read requests consume only the matching observation and leave no listener behind (1.183875ms)
+✔ the shared text raster locator rejects images and carets while mapping real glyph rows into CSS coordinates (1.686375ms)
+✔ acceptance prepares its Space page through the shared Offline copies flow (0.647333ms)
+✔ every Shared with me visit on a phone goes through the Browse files drawer (1.041792ms)
+✔ a successful action sequence tolerates only an unknown-command release, recorded once (0.435958ms)
+✔ without native touch, a phone double tap calibrates its aim once, then taps twice 250 ms apart in one W3C sequence (603.211833ms)
+✔ with native touch (Safari), the calibration and the double tap are one native gesture each, the calibration at its own checked point (603.148958ms)
+✔ a deadline during tap calibration fails as the deadline, not as an unseen tap (1.437417ms)
+✔ tap calibration refuses an unseen or implausible landing (0.631375ms)
+✔ the page tap trace keeps 24 bounded events and removes its listeners when read (3.116917ms)
+✔ given the canvas selector, the tap trace names each target and reads the viewport and box (1.662ms)
+✔ an editor that never opens records the tap trace and keeps its own failure (0.543958ms)
+✔ native typing preserves each observation boundary and never resends a dropped key (4009.592333ms)
+✔ Dashboard preparation waits for the app result and closes its dialog once (1.44ms)
+✔ an app alert fails as download-failed with its text and no dismissal (1.194292ms)
+✔ a Dashboard timeout reads labels first, reopens a closed menu once and keeps the original failure (0.660375ms)
+✔ a Space page prepares through the Offline copies dialog and reads it in place on timeout (2.837416ms)
+✔ the page scripts read only dialog roles and bounded visible labels (2.610709ms)
+✔ the wait leaves the phase room to record its diagnosis (0.284167ms)
+✔ failed evidence persistence cannot replace the original preparation failure (0.411959ms)
+✔ the runner diagnosis screenshots first and keeps the failed command (0.214375ms)
+✔ failed screenshot evidence cannot skip cleanup work or replace its command owner (0.227958ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6241.169083
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":6396,"peakKiB":420784}

@@ -1,0 +1,5 @@
+scripts/ci/browserstack-acceptance.ts 189ms
+scripts/ci/browserstack-acceptance.test.ts 104ms
+scripts/ci/browserstack-offline-preparation.ts 11ms (unchanged)
+scripts/ci/browserstack-offline-preparation.test.ts 21ms
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":515,"peakKiB":239984}

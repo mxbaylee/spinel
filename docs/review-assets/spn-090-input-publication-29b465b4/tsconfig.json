@@ -1,0 +1,56 @@
+{
+  "extends": "/Users/mxbaylee/projects/spinel-spn-090-production/tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": [
+      "/Users/mxbaylee/projects/spinel/node_modules/@types"
+    ],
+    "paths": {
+      "*": [
+        "/Users/mxbaylee/projects/spinel/node_modules/*"
+      ],
+      "vite": [
+        "/Users/mxbaylee/projects/spinel/node_modules/vite/dist/node/index.d.ts"
+      ],
+      "sharp": [
+        "/Users/mxbaylee/projects/spinel/node_modules/sharp/dist/index.d.mts"
+      ],
+      "@univerjs/core": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/core/./lib/types/index.d.ts"
+      ],
+      "@univerjs/docs": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/docs/./lib/types/index.d.ts"
+      ],
+      "rxjs": [
+        "/Users/mxbaylee/projects/spinel/node_modules/rxjs/dist/types/index.d.ts"
+      ],
+      "@playwright/test": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@playwright/test/index.d.ts"
+      ],
+      "@univerjs/docs-ui": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/docs-ui/lib/types/index.d.ts"
+      ],
+      "@univerjs/engine-render": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@univerjs/engine-render/lib/types/index.d.ts"
+      ],
+      "@simplewebauthn/server": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@simplewebauthn/server/esm/index.d.ts"
+      ],
+      "@modelcontextprotocol/sdk/*.js": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@modelcontextprotocol/sdk/dist/esm/*.d.ts"
+      ],
+      "send": [
+        "/Users/mxbaylee/projects/spinel/node_modules/@types/send/index.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-input-observation.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-input-observation.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-acceptance.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-acceptance.test.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-capability.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-capability.test.ts",
+    "/Users/mxbaylee/projects/spinel/node_modules/vite/client.d.ts",
+    "/Users/mxbaylee/projects/spinel-spn-090-production/scripts/ci/browserstack-offline-preparation.test.ts"
+  ]
+}

@@ -1,0 +1,14 @@
+✔ native input observation waits for dispatch completion and copies content-free metadata (4.025208ms)
+✔ per-key ranges retain gaps, focus changes and insertion counts without claiming causation (0.874583ms)
+✔ overflow bounds retained event references and remains visible after marking another key (1.229416ms)
+✔ stopped and replaced recorders release listeners and cannot touch the replacement (0.790167ms)
+✔ malformed, missing and injected input observations fail closed without retaining extra fields (0.851333ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 117.673459
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":264,"peakKiB":90480}

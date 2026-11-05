@@ -1,0 +1,70 @@
+{
+  "root": 39578,
+  "started": 1793906974101,
+  "elapsedMs": 515,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90848,
+  "peakKiB": 239984,
+  "live": [
+    {
+      "pid": 39578,
+      "parent": 39552,
+      "group": 39578,
+      "rssKiB": 89296,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/repair-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-offline-preparation.ts scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 39642,
+      "parent": 39578,
+      "group": 39578,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 39578,
+      "parent": 39552,
+      "group": 39578,
+      "rssKiB": 89296,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/repair-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-offline-preparation.ts scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 39597,
+      "parent": 39578,
+      "group": 39578,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 39623,
+      "parent": 39578,
+      "group": 39578,
+      "rssKiB": 149616,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts scripts/ci/browserstack-offline-preparation.ts scripts/ci/browserstack-offline-preparation.test.ts"
+    },
+    {
+      "pid": 39629,
+      "parent": 39578,
+      "group": 39578,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 39642,
+      "parent": 39578,
+      "group": 39578,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:29:34 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,86 @@
+{
+  "root": 38467,
+  "started": 1793906711960,
+  "elapsedMs": 1006,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91824,
+  "peakKiB": 630560,
+  "live": [
+    {
+      "pid": 38467,
+      "parent": 38441,
+      "group": 38467,
+      "rssKiB": 90272,
+      "started": "Thu Nov  5 11:25:11 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/types-final-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc --project /tmp/spn090-input/tsconfig.json --pretty false"
+    },
+    {
+      "pid": 38559,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:25:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 38467,
+      "parent": 38441,
+      "group": 38467,
+      "rssKiB": 90272,
+      "started": "Thu Nov  5 11:25:11 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/types-final-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc --project /tmp/spn090-input/tsconfig.json --pretty false"
+    },
+    {
+      "pid": 38486,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:25:11 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38512,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 539088,
+      "started": "Thu Nov  5 11:25:12 2026",
+      "command": "/Users/mxbaylee/projects/spinel/node_modules/@typescript/typescript-darwin-arm64/lib/tsc --project /tmp/spn090-input/tsconfig.json --pretty false"
+    },
+    {
+      "pid": 38518,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 1568,
+      "started": "Thu Nov  5 11:25:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38533,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:25:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38546,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:25:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 38559,
+      "parent": 38467,
+      "group": 38467,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:25:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

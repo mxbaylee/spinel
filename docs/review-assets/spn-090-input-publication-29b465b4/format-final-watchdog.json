@@ -1,0 +1,94 @@
+{
+  "root": 36268,
+  "started": 1793906649268,
+  "elapsedMs": 1135,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91856,
+  "peakKiB": 372576,
+  "live": [
+    {
+      "pid": 36268,
+      "parent": 36232,
+      "group": 36268,
+      "rssKiB": 90304,
+      "started": "Thu Nov  5 11:24:09 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/format-final-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-input-observation.ts scripts/ci/browserstack-input-observation.test.ts scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts docs/implementation/SPN-090-input-delivery.md docs/implementation/SPN-090.md"
+    },
+    {
+      "pid": 36373,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 36268,
+      "parent": 36232,
+      "group": 36268,
+      "rssKiB": 90304,
+      "started": "Thu Nov  5 11:24:09 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn090-input/format-final-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-input-observation.ts scripts/ci/browserstack-input-observation.test.ts scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts docs/implementation/SPN-090-input-delivery.md docs/implementation/SPN-090.md"
+    },
+    {
+      "pid": 36287,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36313,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 281568,
+      "started": "Thu Nov  5 11:24:09 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/browserstack-input-observation.ts scripts/ci/browserstack-input-observation.test.ts scripts/ci/browserstack-acceptance.ts scripts/ci/browserstack-acceptance.test.ts docs/implementation/SPN-090-input-delivery.md docs/implementation/SPN-090.md"
+    },
+    {
+      "pid": 36321,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36334,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:09 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36347,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36360,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 36373,
+      "parent": 36268,
+      "group": 36268,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 11:24:10 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

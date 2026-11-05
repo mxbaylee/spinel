@@ -1,0 +1,3 @@
+# ⌨️ SPN-090 native input observation publication
+
+Exact29b465b42f5616a1c3e18007cd9561b6a008e211, tree091d6bf932c08031c62c555adcff6e3a3cbfe16d, base2f442317dd2e1c188ae4a810ac094fd1162a4a2a. Independent A98/B97 source reviews after retained A94/B94 cleanup finding on30fb. Original97 combined controls and11 CI plan controls, then32 repaired acceptance/preparation controls passed; counts overlap and are not added as unique tests. Scoped types/lint/format/backlog/committedPR passed. Donor tooling/types only; no full local application install/acceptance. Initial type failure retained. Full current hosted/native/Story/visual/physical acceptance pending; no device allocation follows publication. The original Safari42080221117 failed731→73 and remains unexplained.

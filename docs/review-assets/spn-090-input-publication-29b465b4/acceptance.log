@@ -1,0 +1,32 @@
+✔ recovery content is read only after the phone opens its already-created generation (4.085167ms)
+✔ late observation and fixture successes cannot pass a deadline before its timer callback runs (0.75ms)
+✔ phone authoring refuses a reader path and requires the observed mobile editor (0.237292ms)
+✔ the actual Doc readiness script accepts the icon-only Edit control and rejects unavailable authoring controls (5.989041ms)
+✔ native Doc acceptance compares the entire independently transformed document, including body image anchors (5.398083ms)
+✔ native Sheet acceptance requires the intended A1 value and preserves every other cell and image field (0.895584ms)
+✔ a content mismatch reports differing paths and value types, never values (0.820709ms)
+✔ durable proof requires the original account, item, generation, write grant and actual pending native queue (14.693334ms)
+✔ image checkpoints reject missing pixels and failed required captures despite intact retained content (4.976875ms)
+✔ read-only local-copy observation opens no new database, writes no records and always closes (6.519667ms)
+✔ native read requests consume only the matching observation and leave no listener behind (1.097792ms)
+✔ the shared text raster locator rejects images and carets while mapping real glyph rows into CSS coordinates (1.785166ms)
+✔ acceptance prepares its Space page through the shared Offline copies flow (0.596209ms)
+✔ every Shared with me visit on a phone goes through the Browse files drawer (1.235583ms)
+✔ a successful action sequence tolerates only an unknown-command release, recorded once (0.364916ms)
+✔ without native touch, a phone double tap calibrates its aim once, then taps twice 250 ms apart in one W3C sequence (601.0555ms)
+✔ with native touch (Safari), the calibration and the double tap are one native gesture each, the calibration at its own checked point (601.753833ms)
+✔ a deadline during tap calibration fails as the deadline, not as an unseen tap (1.431792ms)
+✔ tap calibration refuses an unseen or implausible landing (0.638584ms)
+✔ the page tap trace keeps 24 bounded events and removes its listeners when read (3.154625ms)
+✔ given the canvas selector, the tap trace names each target and reads the viewport and box (2.015875ms)
+✔ an editor that never opens records the tap trace and keeps its own failure (0.553333ms)
+✔ native typing preserves each observation boundary and never resends a dropped key (4005.734333ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6454.100291
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":6598,"peakKiB":421360}

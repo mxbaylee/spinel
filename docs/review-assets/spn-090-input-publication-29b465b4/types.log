@@ -1,0 +1,9 @@
+scripts/ci/browserstack-input-observation.ts(113,11): error TS2322: Type 'never[]' is not assignable to type 'never'.
+scripts/ci/browserstack-input-observation.ts(119,47): error TS2339: Property 'length' does not exist on type 'never'.
+scripts/ci/browserstack-input-observation.ts(133,14): error TS2339: Property 'push' does not exist on type 'never'.
+scripts/ci/browserstack-input-observation.ts(146,14): error TS2339: Property 'length' does not exist on type 'never'.
+scripts/ci/browserstack-input-observation.ts(147,30): error TS2339: Property 'filter' does not exist on type 'never'.
+scripts/ci/browserstack-input-observation.ts(147,38): error TS7006: Parameter 'event' implicitly has an 'any' type.
+scripts/ci/browserstack-input-observation.ts(148,14): error TS2339: Property 'length' does not exist on type 'never'.
+scripts/ci/browserstack-input-observation.ts(149,51): error TS2339: Property 'length' does not exist on type 'never'.
+WATCHDOG: {"code":1,"signal":null,"elapsedMs":2078,"peakKiB":888128}

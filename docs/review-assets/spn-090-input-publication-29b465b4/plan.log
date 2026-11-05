@@ -1,0 +1,20 @@
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (3.504458ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.28225ms)
+✔ sized restore participates in the immutable plan and fails closed (2.362917ms)
+✔ the extracted Doc touch raster keeps every browser owner and the sized restore dependency (0.374708ms)
+✔ shared offline image assertions retain ordinary CI and native desktop coverage (0.436541ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.326708ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.199208ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.214ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.326125ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.422083ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (0.845833ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121.178166
+WATCHDOG: {"code":0,"signal":null,"elapsedMs":260,"peakKiB":90368}

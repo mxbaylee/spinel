@@ -1,0 +1,29 @@
+# 🔎 SPN-090 repaired exact-head review
+
+**Reviewed commit:** `29b465b42f5616a1c3e18007cd9561b6a008e211`, tree `091d6bf932c08031c62c555adcff6e3a3cbfe16d`, against original-ticket/main base `2f442317dd2e1c188ae4a810ac094fd1162a4a2a`. Worktree was clean at review. **Independent score: 98/100. No unresolved source-publication blocker found.** This qualifies the source for validation publication, subject to the other independent exact-head review; it is not device-plan, hosted-acceptance or merge approval.
+
+The rejected `30fbfef980a5f257b7879cf6dead0541ad207a23` review is preserved separately in `review-a.md` at 94/100. I inspected the complete five-file repair delta against that commit, actual shared-hook consumers, current tests and raw passing receipts. Full-ticket scope, original main ticket, all four personas, sustainable testing, runbook rubric and prior unchanged source review remain part of this assessment; this is not an approval of only the new helper.
+
+## ✅ Finding disposition
+
+The screenshot-before-removal P2 is resolved. `failureDiagnosis` now attempts its work exactly once after a failed screenshot. It preserves the original screenshot failure, includes both failures in ordered `AggregateError.errors` if work also rejects, and restores the original failed command in `finally`. The actual helper has a negative control for both work-success and work-failure after screenshot rejection.
+
+`nativeType` now records and validates its removal result inside the callback. A later diagnostic-wrapper rejection therefore leaves `cleanup: stopped` and its actual observation intact, while `diagnosticFailure: true` distinguishes incomplete failure evidence. A real-hook integration control demonstrates screenshot failure followed by exactly one stop and retained original action failure. Ordinary removal failure still fails a previously successful operation; earlier typing/action failure still stays primary. No additional key action, resend, deadline extension or recovery loop was introduced.
+
+I also inspected the shared preparation consumer: its existing failure-only evidence read still remains bounded and subordinate to the original preparation failure. Running that already-intended read after a failed screenshot does not repeat the download action. No new issue was established by this shared-helper change.
+
+## 🧮 Rubric and scope
+
+- **35/35 scope:** complete XL phone-lifecycle outcome and unresolved platform evidence remain explicit. The observation answers a concrete retained failure question without calling a diagnostic an input-delivery fix.
+- **25/25 correctness/integrity/access:** the ownership blocker is repaired; bounded passive listeners, copied content-free records, sequence/drop validation, first-failure precedence and existing access boundaries remain intact.
+- **18/20 verification:** useful VM/driver and actual-hook negatives now cover the source regression. Two points reflect the remaining boundary between these fixtures/scoped toolchain checks and current installed/browser/provider behavior. Hosted-only checks remain expressly pending rather than waived.
+- **10/10 CI/operations:** `scripts/ci/` selects full ordinary coverage; aggregate verification requires selected success and rejects missing/failed selected work. Paid physical execution remains separately gated. No CI routing exemption or automatic device allowance is introduced.
+- **10/10 maintainability/process/over-complexity:** a small dedicated fixed-schema recorder and the shared-hook repair are simpler than alternate typing strategies, retries or a general telemetry framework. No avoidable abstraction/dependency was found. The resulting PR checker reports **29,708 changed lines**, beyond the 10,000 soft limit; this is a real review burden, retained here. The added repair is five files and remains within one original XL outcome. Splitting this into an allegedly completed phone parent would hide unresolved integration/physical requirements; no such closure is approved. Preserve the clear diagnostic/source/acceptance distinction in the PR receipt.
+
+Operator receives bounded private diagnostics with truthful cleanup states; Owner receives no hidden input replay; Collaborator keeps complete authored-content and conflict assertions beyond event counts; Link guest keeps existing token isolation/revocation boundaries. No UI change was introduced by this repair. Earlier visual review remains agent-only and tied to its actual source/fixture captures; it is not physical persistence evidence.
+
+## 🧪 Verified receipts and explicit limits
+
+The revised acceptance/preparation suite passed **32/32**, zero skips/cancellations, **6,396 ms / 420,784 KiB**, normal pressure. Expanded scoped types passed **918 ms / 666,976 KiB**. Revised warning-denying lint, format and committed PR checks passed; PR check **621 ms / 189,872 KiB** retained the soft-size warning. The earlier unchanged observer/capability tests and CI-plan controls remain separately recorded (97 combined and 11 plan controls); these are not added together as a new unique-test count. The first failed type invocation and rejected review remain retained. I checked receipts and source read-only, without running tests, builds, browser or provider calls.
+
+Full clean-install/application validation was not performed locally. Current-head selected hosted gates and physical acceptance remain outstanding. Safari `42080221117` remains the consumed first-failure allowance with expected `731` versus actual `73`; the new observation has not explained or repaired its cause. The next physical attempt, if pursued, requires the separately declared finite exact-source device plan after its prerequisites. No new device allocation, repeated failed action or budget change is authorized by this source review. SPN-090 is not complete and cannot merge on this review alone.
