@@ -1,8 +1,94 @@
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { interruptibleNetwork } from './live-network.ts';
+
+// A successful configured retry cannot explain the original preview failure.
+test.use({ trace: 'retain-on-failure' });
+
+const sheetInputSelector = `[id="__editor_${DOCS_NORMAL_EDITOR_UNIT_ID_KEY}"][contenteditable="true"][data-u-comp="editor"]`;
+
+/** Passive, bounded observations of the one native click/key attempt. */
+const observeSheetInput = (page: Page) =>
+  page.evaluateHandle((selector) => {
+    const describe = (target: EventTarget | null) =>
+      target instanceof Element
+        ? {
+            tag: target.tagName,
+            id: target.id,
+            role: target.getAttribute('role'),
+            component: target.getAttribute('data-u-comp'),
+            editable: target.getAttribute('contenteditable'),
+          }
+        : null;
+    const state = () => {
+      const input = document.querySelector(selector);
+      const selection = document.getSelection();
+      return {
+        at: performance.now(),
+        documentFocused: document.hasFocus(),
+        visibility: document.visibilityState,
+        active: describe(document.activeElement),
+        input: describe(input),
+        inputParent: describe(input?.parentElement ?? null),
+        inputConnected: input?.isConnected,
+        inputInViewer: !!input?.closest('.univer-container'),
+        inputFocused: input !== null && input === document.activeElement,
+        inputBounds: input?.getBoundingClientRect().toJSON(),
+        inputVisibility: input && getComputedStyle(input).visibility,
+        selectedCell: document.querySelector<HTMLInputElement>('[data-u-comp="defined-name"] input')
+          ?.value,
+        selection: selection && {
+          ranges: selection.rangeCount,
+          collapsed: selection.isCollapsed,
+          anchorInInput: !!input?.contains(selection.anchorNode),
+          focusInInput: !!input?.contains(selection.focusNode),
+          anchorOffset: selection.anchorOffset,
+          focusOffset: selection.focusOffset,
+        },
+      };
+    };
+    const events: unknown[] = [];
+    const marks: { stage: string; state: ReturnType<typeof state> }[] = [];
+    let droppedEvents = 0;
+    const record = (event: Event) => {
+      if (events.length === 32) {
+        droppedEvents++;
+        return;
+      }
+      events.push({
+        type: event.type,
+        at: performance.now(),
+        trusted: event.isTrusted,
+        target: describe(event.target),
+        active: describe(document.activeElement),
+        key: event instanceof KeyboardEvent ? event.key : undefined,
+        inputType: event instanceof InputEvent ? event.inputType : undefined,
+        dataLength: event instanceof InputEvent ? event.data?.length : undefined,
+      });
+    };
+    const types = [
+      'pointerdown',
+      'pointerup',
+      'focusin',
+      'focusout',
+      'keydown',
+      'keyup',
+      'beforeinput',
+      'input',
+    ];
+    for (const type of types) document.addEventListener(type, record, true);
+    return {
+      mark: (stage: string) => marks.push({ stage, state: state() }),
+      finish: () => {
+        for (const type of types) document.removeEventListener(type, record, true);
+        return { marks, events, droppedEvents, final: state() };
+      },
+    };
+  }, sheetInputSelector);
 
 for (const kind of ['sheet', 'doc'] as const) {
   test(`${kind} preview is read only and restore preserves the state seen by both editors`, async ({
@@ -93,19 +179,51 @@ for (const kind of ['sheet', 'doc'] as const) {
         animations: 'disabled',
       });
       const untouched = await read();
-      await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
-      // The Sheet warning focuses OK, so later spaces would dismiss the warning.
-      if (kind === 'sheet') await preview.keyboard.press('m');
-      else await preview.keyboard.type('must not edit');
-      if (kind === 'sheet') {
-        await expect(
-          preview.getByText('The range is protected, and you do not have edit permission.', {
-            exact: false,
-          }),
-        ).toBeVisible();
-        await preview.getByRole('button', { name: 'ok', exact: true }).click();
+      const inputObserver = kind === 'sheet' ? await observeSheetInput(preview) : undefined;
+      let inputFailure: { error: unknown } | undefined;
+      try {
+        await inputObserver?.evaluate((observer) => observer.mark('before click'));
+        await preview.locator('.univer-container').click({ position: { x: 130, y: 200 } });
+        if (kind === 'sheet') {
+          await inputObserver!.evaluate((observer) => observer.mark('after click'));
+          // Observe the real click's keyboard target; never manufacture focus.
+          await expect(preview.locator(sheetInputSelector)).toBeFocused();
+          await inputObserver!.evaluate((observer) => observer.mark('before key'));
+          // The Sheet warning focuses OK, so later spaces would dismiss it.
+          await preview.keyboard.press('m');
+          await inputObserver!.evaluate((observer) => observer.mark('after key'));
+          await expect(
+            preview.getByText('The range is protected, and you do not have edit permission.', {
+              exact: false,
+            }),
+          ).toBeVisible();
+          await preview.getByRole('button', { name: 'ok', exact: true }).click();
+        } else await preview.keyboard.type('must not edit');
+      } catch (cause) {
+        inputFailure = { error: cause };
       }
-      expect((await read()).revision).toBe(untouched.revision);
+      if (inputObserver) {
+        try {
+          const observation = await inputObserver.evaluate((observer) => observer.finish());
+          await info.attach('sheet-preview-input', {
+            body: JSON.stringify(observation, null, 2),
+            contentType: 'application/json',
+          });
+        } catch (captureError) {
+          // Preserve the original assertion if the failed page cannot be read.
+          console.error('Preview input capture failed:', captureError);
+          inputFailure ??= { error: captureError };
+        } finally {
+          await inputObserver.dispose().catch((captureError: unknown) => {
+            console.error('Preview input disposal failed:', captureError);
+            inputFailure ??= { error: captureError };
+          });
+        }
+      }
+      if (inputFailure) throw inputFailure.error;
+      const afterInput = await read();
+      expect(afterInput.revision).toBe(untouched.revision);
+      expect(afterInput.snapshot).toEqual(untouched.snapshot);
       await other.goto(`${baseURL}/?item=${item.id}`);
       await saved(other);
       await edit(other, 'Latest collaborative change');
@@ -166,6 +284,19 @@ for (const kind of ['sheet', 'doc'] as const) {
       await saved(undo);
       expect(JSON.stringify((await read()).snapshot)).toContain('Latest collaborative change');
       await undo.close();
+    } catch (cause) {
+      // Automatic screenshots run after finally, when the popup is already gone.
+      if (preview && !preview.isClosed()) {
+        try {
+          await info.attach(`${kind}-preview-at-failure`, {
+            body: await preview.screenshot({ timeout: 5_000 }),
+            contentType: 'image/png',
+          });
+        } catch (captureError) {
+          console.error('Preview capture failed:', captureError);
+        }
+      }
+      throw cause;
     } finally {
       await preview?.close();
       await second.close();

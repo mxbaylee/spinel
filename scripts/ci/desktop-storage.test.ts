@@ -4,11 +4,15 @@ import { runInNewContext } from 'node:vm';
 import { setImmediate } from 'node:timers/promises';
 import { clearDesktopStorage } from './desktop-storage.ts';
 
-function fixture(fault?: string, rejection = false) {
+const page = 'https://localhost/_desktop-storage-clear/fixture';
+
+function fixture(fault?: string, rejection = false, unloadApplication = true) {
   let workers = true,
     cache = true,
     database = true,
     entries = 1;
+  let applicationActive = true,
+    interleavedWrite = false;
   let expire: (() => void) | undefined;
   let cleared = false;
   const calls: string[] = [];
@@ -21,6 +25,14 @@ function fixture(fault?: string, rejection = false) {
   const sandbox = {
     performance,
     console,
+    location: { href: 'https://localhost/' },
+    document: {
+      documentElement: {
+        hasAttribute: (name: string) =>
+          name === 'data-desktop-storage-clear' && fault !== 'unmarked-page',
+      },
+      scripts: { length: fault === 'scripted-page' ? 1 : 0 },
+    },
     setTimeout(callback: () => void, timeout: number) {
       assert.equal(timeout, 28000);
       expire = callback;
@@ -82,6 +94,10 @@ function fixture(fault?: string, rejection = false) {
             if (rejection) request.onerror();
           } else {
             database = fault === 'retained';
+            if (fault === 'concurrent-writer') {
+              interleavedWrite = true;
+              if (applicationActive) entries = 1;
+            }
             request.onsuccess();
           }
         });
@@ -92,10 +108,30 @@ function fixture(fault?: string, rejection = false) {
     },
   };
   const promise = clearDesktopStorage(
-    { evaluate: async <T>(script: string) => runInNewContext(script, sandbox) as T },
+    {
+      goto: async (url) => {
+        calls.push('navigate');
+        assert.equal(url, page);
+        if (fault === 'navigation') throw new Error('injected navigation');
+        sandbox.location.href = fault === 'wrong-page' ? 'https://localhost/' : url;
+        if (unloadApplication) applicationActive = false;
+      },
+      evaluate: async <T>(script: string) => {
+        calls.push('evaluate');
+        return runInNewContext(script, sandbox) as T;
+      },
+    },
     'private-test',
+    page,
   );
-  return { promise, calls, sandbox, expire: () => expire!(), cleared: () => cleared };
+  return {
+    promise,
+    calls,
+    sandbox,
+    expire: () => expire!(),
+    cleared: () => cleared,
+    interleavedWrite: () => interleavedWrite,
+  };
 }
 
 test('serialized browser deletion removes every store and proves the resulting state', async () => {
@@ -110,6 +146,37 @@ test('serialized browser deletion removes every store and proves the resulting s
     localStorageEntries: 0,
   });
   assert.ok(f.cleared());
+});
+
+test('unloading the page stops an application write interleaved with database deletion', async () => {
+  const f = fixture('concurrent-writer');
+  const report = await f.promise;
+  assert.equal(report.status, 'passed');
+  assert.ok(f.interleavedWrite());
+  assert.deepEqual(f.calls.slice(0, 2), ['navigate', 'evaluate']);
+});
+
+test('an interleaved live writer still fails the strict empty-storage predicate', async () => {
+  const f = fixture('concurrent-writer', false, false);
+  const report = await f.promise;
+  assert.ok(f.interleavedWrite());
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /Storage remains after deletion:.*"localStorageEntries":1/);
+});
+
+for (const fault of ['wrong-page', 'unmarked-page', 'scripted-page'])
+  test(`${fault} is rejected before any storage operation`, async () => {
+    const f = fixture(fault);
+    const report = await f.promise;
+    assert.equal(report.status, 'failed');
+    assert.equal(report.operations.at(-1)!.name, 'verify-inert-page');
+    assert.deepEqual(f.calls, ['navigate', 'evaluate']);
+  });
+
+test('failed navigation preserves the first error and never attempts deletion', async () => {
+  const f = fixture('navigation');
+  await assert.rejects(f.promise, /injected navigation/);
+  assert.deepEqual(f.calls, ['navigate']);
 });
 
 for (const [fault, name] of [
@@ -164,12 +231,14 @@ test('crashed or timed-out driver propagates the first error without another dia
   await assert.rejects(
     clearDesktopStorage(
       {
+        goto: async () => {},
         evaluate: async () => {
           calls++;
           throw original;
         },
       },
       'private-test',
+      page,
     ),
     (error) => error === original,
   );
