@@ -415,12 +415,12 @@ Run 42142168016. The mobile gate passed on its first attempt for the second time
 faster runner (the throttled sample input p95 was about 58 ms against about 104 ms before, so this is a
 less stressful sample than the first).
 
-| Sample | Input p95 | Longest task | Paired flush max |
-| --- | --- | --- | --- |
-| `plain-1` | 57.5 ms | 130 ms | 31.4 ms |
-| `plain-2` | 59.6 ms | 124 ms | 37.0 ms |
-| `plain-3` | 57.3 ms | 122 ms | 18.8 ms |
-| `profile` | 61.1 ms | 126 ms | 32.8 ms |
+| Sample    | Input p95 | Longest task | Paired flush max |
+| --------- | --------- | ------------ | ---------------- |
+| `plain-1` | 57.5 ms   | 130 ms       | 31.4 ms          |
+| `plain-2` | 59.6 ms   | 124 ms       | 37.0 ms          |
+| `plain-3` | 57.3 ms   | 122 ms       | 18.8 ms          |
+| `profile` | 61.1 ms   | 126 ms       | 32.8 ms          |
 
 Desktop responsiveness, desktop and mobile callback lifetimes, Pull request, Backlog, Lint, Typecheck,
 Unit tests and Lib tests passed on the first attempt. `Playwright smoke (supervised-restore)` failed
@@ -437,12 +437,12 @@ whole-browser numbers, are not gated, and must not be read as the flush budget.
 **Third hosted pass on `7af4691`** (run 42170171728, attempt 1, docs-only delta from `6ef3b79`; every job
 passed, including both responsiveness gates, comparison file `passed`, timing valid, no failures):
 
-| Sample | Input p95 | Longest task | Paired flush max | Flush p95 |
-| --- | --- | --- | --- | --- |
-| `plain-1` | 80.2 ms | 138 ms | 41.8 ms | 10.7 ms |
-| `plain-2` | 77.0 ms | 149 ms | 18.5 ms | 10.8 ms |
-| `plain-3` | 74.1 ms | 146 ms | 18.5 ms | 11.0 ms |
-| `profile` | 83.1 ms | 179 ms | 19.9 ms | 14.9 ms |
+| Sample    | Input p95 | Longest task | Paired flush max | Flush p95 |
+| --------- | --------- | ------------ | ---------------- | --------- |
+| `plain-1` | 80.2 ms   | 138 ms       | 41.8 ms          | 10.7 ms   |
+| `plain-2` | 77.0 ms   | 149 ms       | 18.5 ms          | 10.8 ms   |
+| `plain-3` | 74.1 ms   | 146 ms       | 18.5 ms          | 11.0 ms   |
+| `profile` | 83.1 ms   | 179 ms       | 19.9 ms          | 14.9 ms   |
 
 The unchanged baseline in the same job stalled for 23.2–24.4 s (longest task) on all four samples. The
 runner's input p95 (74–83 ms) sits between the first run's (about 104 ms, from the `dde23e1` run's artifacts as first recorded) and the second's (about 58 ms).
@@ -452,12 +452,12 @@ That makes three first-attempt mobile passes on three runners.
 42246654363, attempt 1 for the mobile gate; comparison file `passed`, timing valid, no failures). The
 code is identical to `f0c3e5b`; `9ea505a7` adds only the third push exception below.
 
-| Sample | Input p95 | Longest task | Paired flush max | Flush p95 |
-| --- | --- | --- | --- | --- |
-| `plain-1` | 93.0 ms | 154 ms | 23.0 ms | 14.0 ms |
-| `plain-2` | 90.4 ms | 152 ms | 23.1 ms | 14.8 ms |
-| `plain-3` | 86.2 ms | 200 ms | 29.8 ms | 15.7 ms |
-| `profile` | 93.9 ms | 200 ms | 27.9 ms | 16.2 ms |
+| Sample    | Input p95 | Longest task | Paired flush max | Flush p95 |
+| --------- | --------- | ------------ | ---------------- | --------- |
+| `plain-1` | 93.0 ms   | 154 ms       | 23.0 ms          | 14.0 ms   |
+| `plain-2` | 90.4 ms   | 152 ms       | 23.1 ms          | 14.8 ms   |
+| `plain-3` | 86.2 ms   | 200 ms       | 29.8 ms          | 15.7 ms   |
+| `profile` | 93.9 ms   | 200 ms       | 27.9 ms          | 16.2 ms   |
 
 The unchanged baseline in the same job stalled for 31.0–32.2 s on all four samples. Desktop
 responsiveness, Desktop offline and Storybook passed first time. `Playwright smoke (development 2/2)`
@@ -509,14 +509,14 @@ same image, sample (`mobile sustained native typing plain-1`) and flags were run
 Docs build toggled between the previously installed build (`qualifiedRangesPatched`) and this PR's build
 (`patched`), in three alternating pairs, with the installed sha256 checked each time.
 
-| Pair | Build | Flush p95 / max (ms) | Longest task (ms) |
-| --- | --- | --- | --- |
-| 1 | previous | 10.3 / 14.2 | 80 |
-| 1 | this PR | 8.1 / 11.7 | 58 |
-| 2 | previous | 8.9 / 11.1 | 67 |
-| 2 | this PR | 7.6 / 11.5 | 54 |
-| 3 | previous | 10.0 / 12.0 | 58 |
-| 3 | this PR | 10.8 / 25.8 | 68 |
+| Pair | Build    | Flush p95 / max (ms) | Longest task (ms) |
+| ---- | -------- | -------------------- | ----------------- |
+| 1    | previous | 10.3 / 14.2          | 80                |
+| 1    | this PR  | 8.1 / 11.7           | 58                |
+| 2    | previous | 8.9 / 11.1           | 67                |
+| 2    | this PR  | 7.6 / 11.5           | 54                |
+| 3    | previous | 10.0 / 12.0          | 58                |
+| 3    | this PR  | 10.8 / 25.8          | 68                |
 
 All six runs met both flush budgets. The previous build showed no flush tail near 100 ms here, and this
 PR's build shows no measurable improvement at n=3 (its worst flush, 25.8 ms in pair 3, is noise). This
@@ -564,7 +564,27 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
   head that merges is graded again; all seven current-head gates remain merge requirements. The workflow
   and scripts are removable once the question is answered.
 
-**Result:** pending.
+**Result (run 42309178838 on `c4be221c`, 2026-11-06, completed, 4 pairs):**
+
+| Variant                         | Pairs passing budget           | Flush p95    | Paired flush max                               | Longest task | Input p95      |
+| ------------------------------- | ------------------------------ | ------------ | ---------------------------------------------- | ------------ | -------------- |
+| `previous` (sha `110890e889ac`) | 3 of 4 (pair 2 failed, exit 1) | 21.2–25.0 ms | 31.8, 33.3, 40.1 ms, and **108.6 ms** (pair 2) | 184–240 ms   | 100.1–104.0 ms |
+| `patched` (sha `4b30f509d742`)  | 4 of 4                         | 18.7–20.8 ms | 28.8–32.2 ms                                   | 172–229 ms   | 100.8–103.9 ms |
+
+- **What it shows.** The previous build produced one flush maximum of 108.6 ms, over the 100 ms budget and
+  inside the 102–129 ms range of the original failures, on the same runner, sample and budgets where the
+  patched build stayed at or below 32.2 ms in all four pairs. The patched flush p95 was lower than the
+  previous one in every pair (about 1.5–4 ms). This is the first hosted observation of the original tail
+  with the patch toggled, and it points the right way.
+- **What it does not show.** One tail in four previous runs against none in four patched runs is not
+  statistically separable (Fisher exact, one-sided p = 0.5), and four pairs are far too few to estimate a
+  failure rate. The previous build's three other pairs
+  (31.8–40.1 ms) overlap the patched range (28.8–32.2 ms). Input p95 (about 100 ms) and the longest task
+  (172–240 ms) do not differ and are not gated. So the patch is **consistent with** causing the improvement,
+  and the original failing builds are not shown to have failed for this reason alone.
+- **Disposition.** The mitigation stands with an attribution observation, not a proof. The harness behaved
+  (installed hashes matched for all eight runs; the table is in the artifact). Treat the next review as
+  grading this added evidence, not as a waiver. The workflow and scripts remain removable.
 
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
@@ -579,13 +599,13 @@ the Operator needs and cost another full review and hosted cycle for no change i
 
 **Reviews on `7af4691` (78 and 80, no defect found), and where each deduction is answered:**
 
-| Finding | Answer |
-| --- | --- |
-| Cause undiagnosed (scope, correctness) | Tested locally with the patch toggled; the tail did not reproduce, so attribution remains open (see above). |
-| Few hosted passes, one on a faster runner | A third and a fourth first-attempt pass are recorded (runs 42170171728 and 42246654363, the latter on the restructured patch file); runner speed is reported with each. |
-| Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated. |
-| Ticket described as accepted repair | SPN-089 wording corrected to a mitigation. |
-| Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output compared old against new for every variant (ES and CJS) and pinned by the test hashes; first hosted run on `9ea505a7` (run 42246654363) passed. |
+| Finding                                                   | Answer                                                                                                                                                                                                                                                                            |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cause undiagnosed (scope, correctness)                    | Local toggling did not reproduce the tail. The hosted A/B (run 42309178838) did: the previous build hit 108.6 ms once in four and the patched build never exceeded 32.2 ms in four, which is consistent with the patch but too small a sample to prove it (see the result above). |
+| Few hosted passes, one on a faster runner                 | A third and a fourth first-attempt pass are recorded (runs 42170171728 and 42246654363, the latter on the restructured patch file); runner speed is reported with each.                                                                                                           |
+| Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated.                                                                                                                                                         |
+| Ticket described as accepted repair                       | SPN-089 wording corrected to a mitigation.                                                                                                                                                                                                                                        |
+| Layered patch helpers                                     | Restructured into `helperGenerations()` with a documented list of generations; installed output compared old against new for every variant (ES and CJS) and pinned by the test hashes; first hosted run on `9ea505a7` (run 42246654363) passed.                                   |
 
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
