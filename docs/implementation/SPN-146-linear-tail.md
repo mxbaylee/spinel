@@ -1,9 +1,9 @@
 # ⚡ SPN-146 linear native tail assembly question
 
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
-candidate and the hosted result. Status: the candidate passed three first-hosted-mobile attempts
+candidate and the hosted result. Status: the candidate passed four first-hosted-mobile attempts
 ([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second and third](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
-failures is still undiagnosed, so the disposition is a mitigation with three passing first attempts. The
+failures is still undiagnosed, so the disposition is a mitigation with four passing first attempts. The
 fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
 
@@ -448,8 +448,31 @@ The unchanged baseline in the same job stalled for 23.2–24.4 s (longest task) 
 runner's input p95 (74–83 ms) sits between the first run's (about 104 ms, from the `dde23e1` run's artifacts as first recorded) and the second's (about 58 ms).
 That makes three first-attempt mobile passes on three runners.
 
-**Status after three hosted passes:** three first-attempt mobile passes and green full runs on the
-current code (the restructured `patch-univer-docs.ts` has had no hosted run yet). The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
+**Fourth hosted pass on `9ea505a7`, the first with the restructured `patch-univer-docs.ts`** (run
+42246654363, attempt 1 for the mobile gate; comparison file `passed`, timing valid, no failures). The
+code is identical to `f0c3e5b`; `9ea505a7` adds only the third push exception below.
+
+| Sample | Input p95 | Longest task | Paired flush max | Flush p95 |
+| --- | --- | --- | --- | --- |
+| `plain-1` | 93.0 ms | 154 ms | 23.0 ms | 14.0 ms |
+| `plain-2` | 90.4 ms | 152 ms | 23.1 ms | 14.8 ms |
+| `plain-3` | 86.2 ms | 200 ms | 22.3 ms | 15.7 ms |
+| `profile` | 93.9 ms | 200 ms | 27.9 ms | 16.2 ms |
+
+The unchanged baseline in the same job stalled for 31.0–32.2 s on all four samples. Desktop
+responsiveness, Desktop offline and Storybook passed first time. `Playwright smoke (development 2/2)`
+reported 74 passed and 1 flaky: `e2e/restore.spec.ts:8` (the Sheet preview restore test) timed out on a
+5 s `toBeVisible` check, passed on its retry, and the job counts a flaky pass as a failure. It is a Sheet
+test, unrelated to the Docs patch, and the second unrelated smoke flake after supervised-restore. The
+owner re-ran the failed jobs (attempt 2) and every job, including the aggregate **Playwright smoke**
+gate, passed.
+
+**Pushes.** The head was pushed twice in a row: `1c5631b7` (the restructure and doc fixes) and `9ea505a7`
+(the exception paragraph). The runs on `1c5631b7` were cancelled by the workflow's concurrency setting
+when the second push arrived, so `9ea505a7` is the head that carries the hosted evidence.
+
+**Status after four hosted passes:** four first-attempt mobile passes on three runner speeds, the latest
+on the restructured `patch-univer-docs.ts`, and green full runs on the current code. The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
 mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
@@ -464,7 +487,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Owner:** trimming is a code change needing new local validation, a hosted cycle and fresh
   reviews, to answer a size deduction rather than a correctness one.
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
-  proven by three first-attempt hosted passes; trimming would not improve it.
+  proven by four first-attempt hosted passes; trimming would not improve it.
 
 The PR size, about 16k changed lines across 638 files, is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
@@ -504,7 +527,7 @@ nor refutes an effect on the hosted tail.
 mechanism, or that this patch is what brought them under budget. The baseline stall and the allocation
 drop show the repeated copying exists and is removed; the A/B shows the previous build does not
 reproduce the hosted tail locally. Only a hosted run with the same toggle (previous build against this
-build on the same runner) could attribute it, and none exists. The three hosted passes are therefore
+build on the same runner) could attribute it, and none exists. The four hosted passes are therefore
 evidence that the current head meets the budget, not evidence of what fixed it. The disposition stays a
 mitigation, and the diagnostics stay so a recurrence can be attributed from CI evidence.
 
@@ -534,7 +557,7 @@ the Operator needs and cost another full review and hosted cycle for no change i
 | Finding | Answer |
 | --- | --- |
 | Cause undiagnosed (scope, correctness) | Tested locally with the patch toggled; the tail did not reproduce, so attribution remains open (see above). |
-| Few hosted passes, one on a faster runner | A third first-attempt pass on a third runner is recorded (run 42170171728); runner speed is reported with each. |
+| Few hosted passes, one on a faster runner | A third and a fourth first-attempt pass are recorded (runs 42170171728 and 42246654363, the latter on the restructured patch file); runner speed is reported with each. |
 | Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated. |
 | Ticket described as accepted repair | SPN-089 wording corrected to a mitigation. |
 | Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output compared old against new for every variant (ES and CJS) and pinned by the test hashes; no hosted run of the restructure yet. |
