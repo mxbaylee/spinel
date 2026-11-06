@@ -45,6 +45,7 @@ const Chrome = createContext<{
   toolsTarget: HTMLElement | null;
   actions: Action[];
   guest: boolean;
+  feedbackAccountId?: string;
   editing: { current: boolean };
 } | null>(null);
 export const useEditorChrome = () => useContext(Chrome);
@@ -66,6 +67,7 @@ export function EditorFrame({
   appearanceTarget,
   appearanceDisabled = false,
   offlineAccountId,
+  feedbackAccountId,
 }: {
   name: string;
   connection: ConnectionState;
@@ -82,6 +84,8 @@ export function EditorFrame({
   appearanceTarget?: AppearanceTarget;
   appearanceDisabled?: boolean;
   offlineAccountId?: string;
+  /** Verified everyday account; document tools never infer identity from collaborators. */
+  feedbackAccountId?: string;
 }) {
   const appearanceOffline = appearanceDisabled || connection === 'offline';
   const appearance = useAppearance(appearanceTarget, appearanceOffline);
@@ -168,7 +172,16 @@ export function EditorFrame({
     };
   }, [theatre]);
   return (
-    <Chrome.Provider value={{ saveTarget, toolsTarget, actions, guest, editing }}>
+    <Chrome.Provider
+      value={{
+        saveTarget,
+        toolsTarget,
+        actions,
+        guest,
+        editing,
+        feedbackAccountId: guest ? undefined : feedbackAccountId,
+      }}
+    >
       <section
         ref={frame}
         className="editor-frame"

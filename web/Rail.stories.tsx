@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, within, userEvent } from 'storybook/test';
+import { expect, fn, within, userEvent, waitFor } from 'storybook/test';
 import { Rail } from './Rail.tsx';
 
 const meta = {
@@ -12,7 +12,13 @@ const meta = {
   // The guard declines, as it would with unsaved changes, so clicking a link
   // leaves the canvas where it is instead of loading the app's routes.
   args: {
-    user: { isAdmin: false, name: 'Alex Baylee', icon: 'lucide:flower', color: 'info-strong' },
+    user: {
+      id: '11111111-1111-4111-8111-111111111111',
+      isAdmin: false,
+      name: 'Alex Baylee',
+      icon: 'lucide:flower',
+      color: 'info-strong',
+    },
     navigation: { allow: () => false },
     onSignOut: fn(),
     connection: 'online',
@@ -80,7 +86,11 @@ export const FilesLongProfileName: Story = {
   ...Files,
   args: {
     ...Files.args,
-    user: { isAdmin: false, name: 'Alex With A Very Long Display Name That Stays In The Sidebar' },
+    user: {
+      id: '11111111-1111-4111-8111-111111111111',
+      isAdmin: false,
+      name: 'Alex With A Very Long Display Name That Stays In The Sidebar',
+    },
   },
   play: async ({ canvasElement, args }) => {
     const profile = within(canvasElement).getByRole('link', { name: 'Your profile' });
@@ -103,6 +113,7 @@ export const FilesPhone: Story = {
     await expect(profile).toBeVisible();
     const controls = [
       profile,
+      canvas.getByRole('button', { name: 'Account actions' }),
       ...['Follow system', 'Light', 'Dark'].map((name) => canvas.getByRole('radio', { name })),
     ];
     for (const control of controls) {
@@ -116,6 +127,32 @@ export const FilesPhone: Story = {
       }
     }
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
+  },
+};
+export const Feedback: Story = {
+  ...Files,
+  parameters: {
+    api: {
+      'GET /api/diagnostics/feedback-context': {
+        generation: '22222222-2222-4222-8222-222222222222',
+        binding: 'a'.repeat(64),
+        maxMessageLength: 2000,
+        maxMessageBytes: 8000,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Account actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Send feedback…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Send feedback' });
+    await expect(within(dialog).getByRole('textbox', { name: 'Message' })).toBeVisible();
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Account actions' })).toHaveFocus(),
+    );
   },
 };
 export const FilesDrawer: Story = {

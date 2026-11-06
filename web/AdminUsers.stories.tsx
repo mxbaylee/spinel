@@ -54,6 +54,7 @@ const users = [
   },
 ];
 const loaded = {
+  'GET /api/admin/diagnostics/feedback': { generation: 'feedback-generation', actors: [] },
   'GET /api/auth/admin/users': { users },
   'GET /api/auth/invites': { invites: [] },
   'GET /api/auth/invites/recipients': { users: [{ id: 'u-alex', name: 'Alex Kim', isAdmin: 0 }] },

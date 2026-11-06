@@ -104,6 +104,8 @@ function RecoveryFixture({
           return failure('Account details could not be refreshed. Try again.');
         return Response.json({ users });
       }
+      if (url.pathname === '/api/admin/diagnostics/feedback')
+        return Response.json({ generation: 'feedback-generation', actors: [] });
       if (url.pathname === '/api/auth/invites') return Response.json({ invites: [] });
       if (url.pathname === '/api/auth/invites/recipients')
         return Response.json({
