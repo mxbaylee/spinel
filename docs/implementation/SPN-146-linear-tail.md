@@ -1,9 +1,9 @@
 # ⚡ SPN-146 linear native tail assembly question
 
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
-candidate and the hosted result. Status: the candidate passed its first hosted mobile attempt
-([result](#-first-attempt-hosted-mobile-result-on-dde23e1)); the cause of the original 102–129 ms
-failures is still undiagnosed, so the disposition is a mitigation with one passing attempt. The
+candidate and the hosted result. Status: the candidate passed two first-hosted-mobile attempts
+([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
+failures is still undiagnosed, so the disposition is a mitigation with two passing attempts. The
 fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
 
@@ -408,6 +408,32 @@ first-attempt hosted validation. As before, this raises no score and certifies n
 deductions remain open until the owner decides the disposition and the tooling cleanup. A Docker smoke
 check of the unchanged code passed all three plain mobile samples first (flush maxima 11.7–12.3 ms; see
 the rehearsal below). That run is a smoke check only.
+
+## ✅ Second hosted attempt on `6ef3b79` (docs-only delta from `dde23e1`)
+
+Run 42142168016. The mobile gate passed on its first attempt for the second time, on a different and
+faster runner (the throttled sample input p95 was about 58 ms against about 104 ms before, so this is a
+less stressful sample than the first).
+
+| Sample | Input p95 | Longest task | Paired flush max |
+| --- | --- | --- | --- |
+| `plain-1` | 57.5 ms | 130 ms | 31.4 ms |
+| `plain-2` | 59.6 ms | 124 ms | 37.0 ms |
+| `plain-3` | 57.3 ms | 122 ms | 18.8 ms |
+| `profile` | 61.1 ms | 126 ms | 32.8 ms |
+
+Desktop responsiveness, desktop and mobile callback lifetimes, Pull request, Backlog, Lint, Typecheck,
+Unit tests and Lib tests passed on the first attempt. `Playwright smoke (supervised-restore)` failed
+once in `e2e/supervised-restore.spec.ts` (the catalog-restore test timed out waiting for
+`Owner plan in the backup.`), passed on its own retry, and the job counts a flaky pass as a failure, so
+the aggregate gate went red. The same job passed on `dde23e1`, the delta is documentation only, and the
+test does not touch Doc typing, so it is recorded as an unrelated flake. The owner re-ran the failed
+jobs and every job, including the aggregate **Playwright smoke** gate, passed (attempt 4).
+
+**Status after two hosted attempts:** two first-attempt mobile passes and one green full run on the
+current code. The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
+mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
+`nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
