@@ -2,7 +2,7 @@
 
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
 candidate and the hosted result. Status: the candidate passed three first-hosted-mobile attempts
-([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
+([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second and third](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
 failures is still undiagnosed, so the disposition is a mitigation with three passing first attempts. The
 fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
@@ -445,7 +445,7 @@ passed, including both responsiveness gates, comparison file `passed`, timing va
 | `profile` | 83.1 ms | 179 ms | 19.9 ms | 14.9 ms |
 
 The unchanged baseline in the same job stalled for 23.2–24.4 s (longest task) on all four samples. The
-runner's input p95 (74–83 ms) sits between the first run's (about 104 ms) and the second's (about 58 ms).
+runner's input p95 (74–83 ms) sits between the first run's (about 104 ms, from the `dde23e1` run's artifacts as first recorded) and the second's (about 58 ms).
 That makes three first-attempt mobile passes on three runners.
 
 **Status after three hosted passes:** three first-attempt mobile passes and green full runs on the
@@ -466,7 +466,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
   proven by three first-attempt hosted passes; trimming would not improve it.
 
-The PR size (15,967 insertions and 587 deletions across 638 files) is accepted for the same reason: the diff is mostly
+The PR size, about 16k changed lines across 638 files, is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
 has stayed absent over further runs, is a later owner decision; nothing is deleted here.
 
@@ -513,7 +513,7 @@ mitigation, and the diagnostics stay so a recurrence can be attributed from CI e
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
 PR and the final head is graded again, not waived. The one recorded exception is size.
 
-The PR is 15,967 insertions and 587 deletions across 638 files, past the 10k soft limit (a checker warning; the
+The PR is about 16k changed lines across 638 files (`git diff --shortstat` drifts with every docs commit), past the 10k soft limit (a checker warning; the
 100k hard limit is not reached). The production change is `scripts/dependencies/patch-univer-docs.ts`
 (+238/−50 lines, including the restructure into `helperGenerations()`); the rest is tests, retained diagnostics, evidence and docs.
 The owner accepts landing it whole instead of splitting it, because splitting would drop the diagnostics
