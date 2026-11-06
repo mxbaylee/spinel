@@ -9,6 +9,9 @@ import { DocSelectionRenderService } from '@univerjs/docs-ui';
 import { IRenderManagerService } from '@univerjs/engine-render';
 
 import type { DocFlushObservation } from '../src/ui/boundedDocHistory.ts';
+import type { NativeDocFlushManager } from '../src/ui/nativeDocFlush.ts';
+import { terminalIdleEpisode } from '../src/ui/docIdleEpisode.ts';
+import type { DocIdleEpisode, DocTerminalState, EpochDocFlush } from '../src/ui/docIdleEpisode.ts';
 
 type CacheCounts = { history: number; collaboration: number };
 type HistoryCounts = { undos: number; redos: number };
@@ -44,6 +47,10 @@ export interface DocDrainWitness {
   completedStates: number;
   lastCompletedStateAt: number | null;
   initial: DocDrainSnapshot;
+  terminal: DocTerminalState | null;
+  nativeFlushes: EpochDocFlush[];
+  nativeObservationAvailable: boolean;
+  idleEpisode: DocIdleEpisode | null;
   firstEmpty: (DocDrainSnapshot & { completedStates: number; wakeups: DocDrainWakeup[] }) | null;
   sealedAt: number | null;
   invalidated: boolean;
@@ -133,7 +140,51 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       }
     });
   };
+  const nativeObservation = (
+    manager as typeof manager & Partial<NativeDocFlushManager>
+  ).observeFlushes?.(unitId, (value) => {
+    if (!active() || !drain) return;
+    if (drain.nativeFlushes.length >= 4096) {
+      invalidate('native-flush-overflow');
+      return;
+    }
+    if (!Number.isFinite(value.startedAt) || !Number.isFinite(value.endedAt))
+      invalidate('native-flush-clock');
+    drain.nativeFlushes.push({
+      ...value,
+      epoch: drain.epoch,
+      generation,
+      completedStates: drain.completedStates,
+    });
+    if (value.outcome !== 'returned') invalidate('native-flush-threw');
+  });
   const readDrain = () => {
+    if (active() && drain && nativeObservation) {
+      const status = nativeObservation.readStatus();
+      if (!status.active || status.observerErrors) invalidate('native-observer-failed');
+      if (
+        drain.firstEmpty &&
+        drain.terminal &&
+        Math.max(drain.terminal.pending.history, drain.terminal.pending.collaboration) > 0 &&
+        !drain.nativeFlushes.some(
+          (value) =>
+            value.phase === 'pair' &&
+            value.origin === 'policy-capacity' &&
+            value.startedAt >= drain!.terminal!.observedAt,
+        )
+      ) {
+        try {
+          drain.idleEpisode = terminalIdleEpisode(
+            drain.terminal,
+            drain.firstEmpty.observedAt,
+            drain.nativeFlushes,
+            flushes,
+          );
+        } catch (error) {
+          invalidate(String(error));
+        }
+      }
+    }
     if (active() && drain?.firstEmpty) {
       try {
         coherentAfterEmpty(snapshot());
@@ -160,6 +211,10 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       completedStates: 0,
       lastCompletedStateAt: null,
       initial,
+      terminal: null,
+      nativeFlushes: [],
+      nativeObservationAvailable: Boolean(nativeObservation),
+      idleEpisode: null,
       firstEmpty: null,
       sealedAt: null,
       invalidated: false,
@@ -213,8 +268,21 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
         drain.lastCompletedStateAt = performance.now();
         if (drain.completedStates > drain.expectedCompletedStates)
           invalidate('extra-completed-state');
-        if (drain.completedStates === drain.expectedCompletedStates)
+        if (drain.completedStates === drain.expectedCompletedStates) {
+          drain.terminal = {
+            epoch: drain.epoch,
+            generation,
+            unitId,
+            timeOrigin,
+            completedStates: drain.completedStates,
+            observedAt: drain.lastCompletedStateAt,
+            pending: {
+              history: pending.history.length,
+              collaboration: pending.collaboration.length,
+            },
+          };
           scheduleCheck('terminal-state');
+        }
       }
     });
   const collaborationSubscription = manager.docStateChange$.subscribe((state) => {
@@ -303,10 +371,12 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
     flushed(value: DocFlushObservation) {
       // Bounded even when a benchmark tab is accidentally left open.
       if (flushes.length < 4096) flushes.push({ ...value });
+      else invalidate('policy-flush-overflow');
     },
     dispose() {
       invalidate('disposed-before-seal');
       disposed = true;
+      nativeObservation?.dispose();
       subscription.unsubscribe();
       collaborationSubscription.unsubscribe();
       historySubscription.unsubscribe();

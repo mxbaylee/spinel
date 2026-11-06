@@ -41,13 +41,13 @@ affected personas, including denied access, persisted content and recovery where
 relevant. Extend an existing case or fixture when it covers that boundary; do
 not reproduce the implementation's branches as an independent expected result.
 
-| Contract | Usual owner | Add a heavier layer when |
-| --- | --- | --- |
-| Pure transformation, selection policy or validator | Focused unit test; built-in Node tests for scripts | The wiring or runtime boundary can fail independently. |
-| Persistence, authorization or API behavior | Existing server/store integration suite with an isolated database | Browser sessions, lifecycle or native editing change the result. |
-| Component states and interactions | Production-component Storybook stories and interaction checks | The real application or native editor integration is the contract. |
-| Native editing, browser storage, peer updates or recovery | The relevant Playwright project and fixture | Another protocol, build, device or instrumentation mode adds a distinct failure mode. |
-| Input latency or callback lifetime | Existing candidate harness and its validators | A historical comparison is needed to establish the claimed improvement. |
+| Contract                                                  | Usual owner                                                       | Add a heavier layer when                                                              |
+| --------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Pure transformation, selection policy or validator        | Focused unit test; built-in Node tests for scripts                | The wiring or runtime boundary can fail independently.                                |
+| Persistence, authorization or API behavior                | Existing server/store integration suite with an isolated database | Browser sessions, lifecycle or native editing change the result.                      |
+| Component states and interactions                         | Production-component Storybook stories and interaction checks     | The real application or native editor integration is the contract.                    |
+| Native editing, browser storage, peer updates or recovery | The relevant Playwright project and fixture                       | Another protocol, build, device or instrumentation mode adds a distinct failure mode. |
+| Input latency or callback lifetime                        | Existing candidate harness and its validators                     | A historical comparison is needed to establish the claimed improvement.               |
 
 For a repair, reproduce the original failure or use a bounded negative control
 that demonstrates detection. Assert the actual outcome: exact authored/saved/peer
@@ -82,6 +82,23 @@ test invented to mirror the prose.
   traces. Performance acceptance uses its existing unprofiled first attempts;
   profiled diagnostics and successful retries cannot replace those samples.
 
+## 🔬 Callback trace conversion
+
+The callback lifetime project keeps its original420-second observation budget,
+categories,1GiB non-overwriting buffer and full native workload. SPN-144's guarded
+candidate retains original protobuf separately from derived Chrome JSON; both
+have stored/decoded hashes. Complete framing, pinned converter identity, strict
+parser statistics, source attribution and owned cleanup are all required. See
+[the implementation and acceptance checkpoint](implementation/SPN-144.md#-guarded-integration-decision).
+
+CI prepares the official pinned converter before either paired observation. For
+local capability work, explicitly install it into a new task-owned path with
+`node scripts/ci/doc-trace-processor.ts <new-binary-path>` and set
+`SPINEL_TRACE_PROCESSOR` to that absolute path. The harness verifies its platform
+hash before execution and never downloads during an observation. Only the pinned
+Linux x64 CI and macOS arm64 development binaries are supported. Installing the
+tool or passing a small retained-data probe does not establish native acceptance.
+
 ## Give each browser execution a reason
 
 Before adding a project, tag or duplicate execution, record which contract each
@@ -109,13 +126,13 @@ Most new tests belong to an existing suite and need no new CI job. Check that
 their source and shared dependencies select that suite automatically. The
 maintained routing interfaces are:
 
-| File | Responsibility when a suite or dependency changes |
-| --- | --- |
-| `scripts/ci/plan.ts` | `suiteIds`, dependency predicates and each suite's selected/inapplicable reason, dependency description and inputs. |
-| `scripts/ci/changes.ts` | Complete immutable diff, including old/deleted paths, plan serialization/digest and suite outputs. |
-| `.github/workflows/ci.yml` | Expose outputs, schedule workers, wire `needs`, pass actual results to required aggregates, and retain evidence. |
-| `scripts/ci/coverage-result.ts` | Include required worker results in the appropriate aggregate group and verify the plan's digest and tested identity. |
-| `scripts/ci/plan.test.ts`, `changes.test.ts`, `coverage-result.test.ts` | Prove selection, event boundaries and rejection of incomplete evidence. |
+| File                                                                    | Responsibility when a suite or dependency changes                                                                    |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `scripts/ci/plan.ts`                                                    | `suiteIds`, dependency predicates and each suite's selected/inapplicable reason, dependency description and inputs.  |
+| `scripts/ci/changes.ts`                                                 | Complete immutable diff, including old/deleted paths, plan serialization/digest and suite outputs.                   |
+| `.github/workflows/ci.yml`                                              | Expose outputs, schedule workers, wire `needs`, pass actual results to required aggregates, and retain evidence.     |
+| `scripts/ci/coverage-result.ts`                                         | Include required worker results in the appropriate aggregate group and verify the plan's digest and tested identity. |
+| `scripts/ci/plan.test.ts`, `changes.test.ts`, `coverage-result.test.ts` | Prove selection, event boundaries and rejection of incomplete evidence.                                              |
 
 For example, the `unit-test-run` matrix supplies worker evidence for the plan's
 `unit-tests` suite. The required **Unit tests** aggregate invokes
@@ -147,17 +164,24 @@ latency checks remain automatic for application changes; historical comparisons
 follow their dependency inputs or additive labels. Weekly/manual full coverage
 is the backstop, not a substitute for applicable PR coverage. Keep the seven
 stable required check names and isolated edit concurrency. PR edits currently
-run full validation; cheap metadata validation requires SPN-129's protected-merge
-proof before it can return. Broad soak, retained
+run full validation. 🪶 [SPN-129's proposed metadata optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system);
+there is no pending router setup or exception to these gates. Broad soak, retained
 transition, container, BrowserStack and live-provider scopes are not permission
 to narrow additional coverage without equivalent evidence.
 
 ## Verify once at the right scope and preserve the result
 
 Use the pinned Node version and existing commands in [development](development.md#checks).
-Run focused checks while repairing a concrete failure, then the required CI gates
-and acceptance checks for the current commit. Prefer hosted CI for heavy work;
+Run focused checks while repairing a concrete failure, commit the candidate and
+obtain [both independent grades before a validation push](implementation/grooming-2026-11-02.md#review-before-push),
+then run the required CI gates and acceptance checks on the published head.
+Reviewers distinguish local evidence from pending hosted acceptance; grades do
+not convert unavailable checks into passes. Prefer hosted CI for heavy work;
 local workloads follow the [shared memory/watchdog rules](run-backlog.md#2-implement-one-ticket).
+Draft [checkpoint pushes](run-backlog.md#checkpoint-pushes-and-deliberate-ci-use)
+can preserve work while cancelling triggered CI. Record that cancellation and
+pending evidence; preserve file-based selection and let fresh applicable checks
+finish on the final reviewed head before merge. Coordinate agents' expensive runs.
 Repeat or broaden a check to resolve a remaining risk or satisfy a gate, with the
 reason recorded. CI changes themselves require full validation.
 

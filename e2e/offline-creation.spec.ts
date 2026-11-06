@@ -133,6 +133,11 @@ async function openPreparedFolder(
   await f.page.getByRole('button', { name: `${folder.name} Folder`, exact: true }).click();
   await expect(f.page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
   await expect(f.page.getByRole('button', { name: 'New', exact: true })).toBeVisible();
+  // The shared-list row can render the heading and New before the folder GET finishes.
+  await expect(
+    f.page.getByRole('list', { name: 'Folder contents', exact: true }),
+    'The requested folder contents must load before disconnecting.',
+  ).toBeAttached();
 }
 
 async function readCreated(f: OfflineFixture, id: string, unitId: string) {
@@ -189,6 +194,78 @@ async function capture(page: Page, info: TestInfo, state: string, phone = false)
 
 test.describe('documents created offline', () => {
   test.setTimeout(180_000);
+
+  for (const response of ['released', 'withheld'] as const) {
+    test(`shared folder preparation ${response === 'released' ? 'waits for held contents before disconnecting' : 'rejects withheld contents within its readiness budget'}`, async ({
+      browser,
+      baseURL,
+    }, info) => {
+      const f = await fixture(browser, baseURL!, info, 'sheet', { actor: 'editor' });
+      let releaseFolder!: () => void;
+      const held = new Promise<void>((resolve) => {
+        releaseFolder = resolve;
+      });
+      let requested = false;
+      let offlineStarted = false;
+      let preparation: Promise<{ prepared: boolean; error?: unknown }> | undefined;
+      try {
+        const folder = f.workspace.create(f.owner.id, {
+          name: 'Held shared folder',
+          kind: 'folder',
+          parentId: null,
+        });
+        f.workspace.share(f.owner.id, folder.id, f.actor.id, 'editor');
+        await f.download();
+        await f.context.route(`${baseURL}/api/items/${folder.id}`, async (route) => {
+          requested = true;
+          await held;
+          await route.fallback();
+        });
+        preparation = openPreparedFolder(f, folder, true)
+          .then(async () => {
+            offlineStarted = true;
+            await f.network.setOffline(true);
+          })
+          .then(
+            () => ({ prepared: true }),
+            (error: unknown) => ({ prepared: false, error }),
+          );
+        await expect.poll(() => requested).toBe(true);
+        await expect(f.page.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
+        await expect(f.page.getByRole('button', { name: 'New', exact: true })).toBeVisible();
+        await expect(f.page.getByText('Loading your files…', { exact: true })).toBeVisible();
+        expect(offlineStarted).toBe(false);
+        if (response === 'released') {
+          releaseFolder();
+          expect(await preparation).toEqual({ prepared: true });
+          await expect.poll(() => f.page.evaluate(() => navigator.onLine)).toBe(false);
+          await expect(
+            f.page.getByRole('list', { name: 'Folder contents', exact: true }),
+          ).toBeAttached();
+          await expect(f.page.getByText('This folder is empty.', { exact: true })).toBeVisible();
+        } else {
+          const result = await preparation;
+          expect(result.prepared).toBe(false);
+          expect(String(result.error)).toContain(
+            'The requested folder contents must load before disconnecting.',
+          );
+          // Keep the existing default readiness budget, rather than reaching the test deadline.
+          expect(String(result.error)).toContain('Timeout: 5000ms');
+          expect(offlineStarted).toBe(false);
+          expect(await f.page.evaluate(() => navigator.onLine)).toBe(true);
+          await expect(f.page.getByText('Loading your files…', { exact: true })).toBeVisible();
+        }
+      } finally {
+        releaseFolder();
+        await preparation;
+        try {
+          await f.context.unrouteAll({ behavior: 'wait' });
+        } finally {
+          await f.close();
+        }
+      }
+    });
+  }
 
   test('shared creation survives same-profile browser-process restarts', async ({
     baseURL,

@@ -26,6 +26,7 @@ import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
+import { gunzipSync } from 'node:zlib';
 import * as core from '@univerjs/core';
 import type { IDocumentData, JSONXActions } from '@univerjs/core';
 import type {
@@ -35,6 +36,10 @@ import type {
 } from '@univerjs/docs';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { patchInstalledDocs, prepareDocsPatch } from './patch-univer-docs.ts';
+import type {
+  NativeDocFlushManager,
+  NativeDocFlushObservation,
+} from '../../src/ui/nativeDocFlush.ts';
 
 type Format = 'es' | 'cjs';
 type State = IDocStateChangeParams;
@@ -61,12 +66,35 @@ const readBuild = (format: Format) =>
     'utf8',
   );
 
+// Lossless native capture encoding preserves own undefined fields and arrays.
+function decodeCapture(value: any): any {
+  if (value.kind === 'undefined') return undefined;
+  if (value.kind === 'value') return value.value;
+  assert.ok(value.kind === 'array' || value.kind === 'object');
+  const result: any = value.kind === 'array' ? [] : {};
+  for (const [key, child] of value.entries) {
+    if (Array.isArray(result) && key === 'length') result.length = decodeCapture(child);
+    else
+      Object.defineProperty(result, key, {
+        value: decodeCapture(child),
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
+  }
+  return result;
+}
+
 function clock() {
   let now = 0;
   let nextId = 1;
   const pending = new Map<number, { at: number; callback: () => void }>();
   return {
     count: () => pending.size,
+    now: () => now,
+    elapse(milliseconds: number) {
+      now += milliseconds;
+    },
     setTimeout(callback: () => void, delay: number) {
       const id = nextId++;
       pending.set(id, { at: now + delay, callback });
@@ -86,7 +114,15 @@ function clock() {
   };
 }
 
-function managerFixture(source: string) {
+function managerFixture(
+  source: string,
+  costs: {
+    history?: number;
+    historyError?: Error;
+    collaboration?: number;
+    listEvaluation?: () => void;
+  } = {},
+) {
   const marker = '//#region src/services/doc-state-change-manager.service.ts\n';
   const start = source.indexOf(marker);
   const end = source.indexOf('//#endregion', start);
@@ -96,7 +132,14 @@ function managerFixture(source: string) {
   const ManagerClass = runInNewContext(
     `${source.slice(start + marker.length, end)}\nDocStateChangeManagerService;`,
     {
+      __spn142List: <T>(value: T): T => {
+        costs.listEvaluation?.();
+        return value;
+      },
       ...contextCore,
+      Object,
+      Array,
+      performance: { now: timers.now },
       ...timers,
       BehaviorSubject,
       takeUntil,
@@ -129,6 +172,8 @@ function managerFixture(source: string) {
   manager = new ManagerClass(
     {
       pushUndoRedo(entry: Entry) {
+        timers.elapse(costs.history ?? 0);
+        if (costs.historyError) throw costs.historyError;
         observe('history');
         history.push(structuredClone(entry));
       },
@@ -144,6 +189,7 @@ function managerFixture(source: string) {
   ) as Manager;
   const subscription = manager.docStateChange$.subscribe((state) => {
     if (!state) return;
+    timers.elapse(costs.collaboration ?? 0);
     observe('collaboration');
     changes.push(structuredClone(state));
   });
@@ -352,16 +398,46 @@ const mixed: Request[] = [
   (snapshot) => edit(new core.TextX().retain(snapshot.body!.paragraphs![0].startIndex).delete(1)),
 ];
 
-function flush(source: string, history: State[], collaboration = history) {
+function ownDataShape(value: unknown, seen = new Map<object, number>()): unknown {
+  if (value === null || typeof value !== 'object') return value;
+  if (seen.has(value)) return { reference: seen.get(value) };
+  seen.set(value, seen.size);
+  return {
+    prototype: Object.getPrototypeOf(value),
+    properties: Reflect.ownKeys(value).map((key) => {
+      const descriptor = Object.getOwnPropertyDescriptor(value, key)!;
+      return [
+        key,
+        'value' in descriptor
+          ? { ...descriptor, value: ownDataShape(descriptor.value, seen) }
+          : descriptor,
+      ];
+    }),
+  };
+}
+
+function flush(source: string, history: State[], collaboration = history, raw = false) {
   const fixture = managerFixture(source);
   try {
     // Native caches are distinct arrays even when their state objects coincide.
-    const cache = structuredClone({ history: [...history], collaboration: [...collaboration] });
+    const inputCache = { history: [...history], collaboration: [...collaboration] };
+    const cache = raw ? inputCache : structuredClone(inputCache);
     const retainedStates = [...cache.history, ...cache.collaboration];
     const before = structuredClone(retainedStates);
+    const shapeBefore = raw ? ownDataShape(retainedStates) : undefined;
     fixture.manager.setStateCache(unitId, cache);
     fixture.manager.flushPendingChanges(unitId);
-    assert.deepEqual(retainedStates, before, 'Composition must not mutate native state objects.');
+    if (raw)
+      assert.deepEqual(
+        ownDataShape(retainedStates),
+        shapeBefore,
+        'Own keys, descriptors and prototypes remain unchanged without reading accessors.',
+      );
+    assert.deepEqual(
+      raw ? structuredClone(retainedStates) : retainedStates,
+      before,
+      'Composition must not mutate native state objects.',
+    );
     assert.deepEqual(structuredClone(fixture.manager.getStateCache(unitId)), {
       history: [],
       collaboration: [],
@@ -468,7 +544,7 @@ function assertNativePreservation(
   }
 }
 
-function measuredFlush(source: string, states: State[], collaboration = states) {
+function measuredFlush(source: string, states: State[], collaboration = states, raw = false) {
   const counts = { textCompose: 0, iteratorNext: 0, bodySlices: 0, cloneVisits: 0, allocations: 0 };
   const compose = core.TextX.compose;
   const next = core.ActionIterator.prototype.next;
@@ -503,7 +579,7 @@ function measuredFlush(source: string, states: State[], collaboration = states) 
     return Reflect.apply(clone, this, [value]) as T;
   };
   try {
-    return { output: flush(source, states, collaboration), counts };
+    return { output: flush(source, states, collaboration, raw), counts };
   } finally {
     core.TextX.compose = compose;
     core.ActionIterator.prototype.next = next;
@@ -651,7 +727,7 @@ for (const format of ['es', 'cjs'] as const) {
         124,
         'The native subtype counter must observe all four nontrivial folds.',
       );
-      assert.equal(candidate.counts.textCompose, control.counts.textCompose);
+      assert.ok(candidate.counts.textCompose <= control.counts.textCompose);
       for (const key of ['iteratorNext', 'bodySlices', 'cloneVisits', 'allocations'] as const)
         assert.ok(
           candidate.counts[key] < control.counts[key],
@@ -660,8 +736,379 @@ for (const format of ['es', 'cjs'] as const) {
     }
   });
 
+  test(`${format}: opt-in native observations preserve outputs and include synchronous publication`, async () => {
+    const { original, patched } = prepareDocsPatch(await readBuild(format), format);
+    const scenario = sequence([insertAt(0), insertAt(1)], seed('\r\n'));
+    const fixture = managerFixture(patched, { history: 10, collaboration: 12 });
+    const manager = fixture.manager as Manager & NativeDocFlushManager;
+    const observations: NativeDocFlushObservation[] = [];
+    const observer = manager.observeFlushes(unitId, (value) => observations.push(value));
+    const other: NativeDocFlushObservation[] = [];
+    const otherObserver = manager.observeFlushes('other-doc', (value) => other.push(value));
+    try {
+      for (const state of scenario.states) fixture.input.next(state);
+      fixture.timers.tick(300);
+      assert.deepEqual(
+        observations.map((value) => [
+          value.phase,
+          value.origin,
+          value.startedAt,
+          value.endedAt,
+          value.outcome,
+        ]),
+        [
+          ['history', 'history-timer', 300, 310, 'returned'],
+          ['collaboration', 'collaboration-timer', 310, 322, 'returned'],
+        ],
+      );
+      assert.equal(other.length, 0);
+      assert.deepEqual(
+        { history: fixture.history, changes: fixture.changes, publication: fixture.publication },
+        flush(original, scenario.states),
+      );
+      assert.deepEqual(structuredClone(observer.readStatus()), { active: true, observerErrors: 0 });
+      manager.flushPendingChanges(unitId, 'idle');
+      assert.deepEqual(
+        observations
+          .slice(2)
+          .map((value) => [value.phase, value.origin, structuredClone(value.before)]),
+        [
+          ['history', 'policy-idle', { history: 0, collaboration: 0 }],
+          ['collaboration', 'policy-idle', { history: 0, collaboration: 0 }],
+          ['pair', 'policy-idle', { history: 0, collaboration: 0 }],
+        ],
+      );
+      const broken = manager.observeFlushes(unitId, () => {
+        throw new Error('observer failed');
+      });
+      assert.doesNotThrow(() => manager.flushPendingChanges(unitId));
+      assert.equal(broken.readStatus().observerErrors, 3);
+      broken.dispose();
+      observer.dispose();
+      const count = observations.length;
+      manager.flushPendingChanges(unitId);
+      assert.equal(observations.length, count);
+    } finally {
+      fixture.close();
+    }
+    assert.equal(otherObserver.readStatus().active, false);
+  });
+
+  test(`${format}: observed native exceptions preserve identity and uncleared cache`, async () => {
+    const { patched } = prepareDocsPatch(await readBuild(format), format);
+    const error = new Error('native publication failed');
+    const fixture = managerFixture(patched, { history: 7, historyError: error });
+    const manager = fixture.manager as Manager & NativeDocFlushManager;
+    const observations: NativeDocFlushObservation[] = [];
+    manager.observeFlushes(unitId, (value) => observations.push(value));
+    try {
+      const { states } = sequence([insertAt(0)], seed('\r\n'));
+      manager.setStateCache(unitId, { history: [...states], collaboration: [...states] });
+      assert.throws(
+        () => manager.flushPendingChanges(unitId),
+        (value) => value === error,
+      );
+      assert.deepEqual(
+        observations.map((value) => [
+          value.phase,
+          value.origin,
+          value.outcome,
+          value.endedAt - value.startedAt,
+        ]),
+        [
+          ['history', 'public-flush', 'threw', 7],
+          ['pair', 'public-flush', 'threw', 7],
+        ],
+      );
+      assert.equal(manager.getStateCache(unitId).history.length, 1);
+      assert.equal(manager.getStateCache(unitId).collaboration.length, 1);
+    } finally {
+      fixture.close();
+    }
+  });
+
+  test(`${format}: retained six-state native caches preserve raw publications with less Undo work`, async () => {
+    const { original, patched, prefixPatched } = prepareDocsPatch(await readBuild(format), format);
+    const archive = JSON.parse(
+      gunzipSync(
+        await readFile(
+          new URL(
+            '../../docs/implementation/evidence/SPN-135/corrected-3g/plain-2/spn135-native-caches.json.gz',
+            import.meta.url,
+          ),
+        ),
+      ).toString(),
+    );
+    const phases = archive.native.filter((entry: any) => entry.count === 6 && entry.cache);
+    assert.equal(phases.length, 2);
+    const history = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'history').cache,
+    ) as State[];
+    const collaboration = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'collaboration').cache,
+    ) as State[];
+    const control = measuredFlush(original, history, collaboration);
+    const previous = measuredFlush(prefixPatched, history, collaboration);
+    const candidate = measuredFlush(patched, history, collaboration);
+    assert.deepEqual(candidate.output, control.output);
+    assert.deepEqual(candidate.output, previous.output);
+    const reduced = (counts: typeof candidate.counts) => {
+      assert.equal(counts.textCompose, 10);
+      assert.ok(counts.iteratorNext < previous.counts.iteratorNext);
+      assert.ok(counts.cloneVisits < previous.counts.cloneVisits);
+      assert.ok(counts.allocations < previous.counts.allocations);
+    };
+    reduced(candidate.counts);
+    assert.throws(() => reduced(previous.counts));
+    console.log(
+      `${format}: retained tail work ${JSON.stringify({ original: control.counts, previous: previous.counts, candidate: candidate.counts })}`,
+    );
+    // The last (lowest-offset) deleted body survives native merging. Distinct
+    // characters/styles plus own undefined fields must remain byte-shape exact.
+    const undo = (candidate.output.history[0].undoMutations[0].params.actions as any)[1].e.at(-1);
+    assert.equal(undo.len, 6);
+    assert.equal(undo.body.dataStream, 'a');
+    const mutations = [
+      (edits: any[]) => {
+        edits[0].len += 2;
+      },
+      (edits: any[]) => {
+        edits.at(-1).valueRangeId = 'range';
+      },
+      (edits: any[]) => {
+        edits.at(-1).unknown = undefined;
+      },
+      (edits: any[]) => {
+        edits.at(-1).len = 2;
+      },
+      (edits: any[]) => {
+        edits.at(-1).body.dataStream = '\r';
+      },
+      (edits: any[]) => {
+        edits.at(-1).body.customRanges = [{ rangeId: 'range' }];
+      },
+      (edits: any[]) => {
+        edits.at(-1).body.__textXPreserveParagraphIds = false;
+      },
+      (edits: any[]) => {
+        Object.setPrototypeOf(edits.at(-1), { extra: true });
+      },
+      (edits: any[]) => {
+        Object.defineProperty(edits.at(-1), 'body', {
+          get: () => keyboardBody(),
+          enumerable: true,
+          configurable: true,
+        });
+      },
+      (edits: any[]) => {
+        Object.defineProperty(edits.at(-1), 'valueRangeId', {
+          value: undefined,
+          enumerable: false,
+        });
+      },
+    ];
+    mutations.push((edits: any[]) => {
+      edits.at(-1)[Symbol.for('spn142-unsupported')] = undefined;
+    });
+    for (const change of mutations)
+      for (let index = 0; index < history.length; index++) {
+        const makeStates = () => {
+          const states = structuredClone(history);
+          change((states[index].undoState.actions as any)[1].e);
+          return states;
+        };
+        const candidateStates = makeStates();
+        const previousStates = makeStates();
+        const candidate = measuredFlush(patched, candidateStates, candidateStates, true);
+        const previous = measuredFlush(prefixPatched, previousStates, previousStates, true);
+        assert.deepEqual(
+          candidate.output,
+          previous.output,
+          `Unsupported raw delete shape ${mutations.indexOf(change)} member ${index} keeps raw publication.`,
+        );
+        // Undo folds in reverse order: only the leading plain members qualify.
+        if (history.length - 1 - index < 2) assert.deepEqual(candidate.counts, previous.counts);
+        else assert.ok(candidate.counts.allocations < previous.counts.allocations);
+      }
+  });
+
+  test(`${format}: qualification reuses fixed lists across actual manager flushes`, async () => {
+    const { patched, deletePrefixPatched } = prepareDocsPatch(await readBuild(format), format);
+    const archive = JSON.parse(
+      gunzipSync(
+        await readFile(
+          new URL(
+            '../../docs/implementation/evidence/SPN-135/corrected-3g/plain-2/spn135-native-caches.json.gz',
+            import.meta.url,
+          ),
+        ),
+      ).toString(),
+    );
+    const phases = archive.native.filter((entry: any) => entry.count === 6 && entry.cache);
+    const history = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'history').cache,
+    ) as State[];
+    const collaboration = decodeCapture(
+      phases.find((entry: any) => entry.phase === 'collaboration').cache,
+    ) as State[];
+    const outputs = [];
+    const work: { initialization: number; flushes: number[] }[] = [];
+    for (const source of [deletePrefixPatched, patched]) {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      assert.ok(start > 0 && end > start);
+      const helper = source.slice(start, end);
+      // Count executed string-list expressions, not native allocations or time.
+      const instrumented = helper.replace(
+        /\[(?:"[^"]*"(?:,\s*)?)+\]/g,
+        (literal) => `__spn142List(${literal})`,
+      );
+      assert.notEqual(instrumented, helper);
+      let evaluations = 0;
+      const fixture = managerFixture(source.replace(helper, instrumented), {
+        listEvaluation: () => {
+          evaluations++;
+        },
+      });
+      const initialization = evaluations;
+      try {
+        const flushes = [];
+        for (let flushIndex = 0; flushIndex < 2; flushIndex++) {
+          evaluations = 0;
+          fixture.manager.setStateCache(unitId, structuredClone({ history, collaboration }));
+          fixture.manager.flushPendingChanges(unitId);
+          flushes.push(evaluations);
+        }
+        outputs.push(
+          structuredClone({
+            history: fixture.history,
+            changes: fixture.changes,
+            publication: fixture.publication,
+          }),
+        );
+        work.push({ initialization, flushes });
+      } finally {
+        fixture.close();
+      }
+    }
+    assert.deepEqual(outputs[1], outputs[0]);
+    assert.equal(work[0].initialization, 0);
+    assert.equal(work[1].initialization, 9);
+    const noRepeatedLists = (counts: (typeof work)[number]) =>
+      assert.deepEqual(counts.flushes, [0, 0]);
+    noRepeatedLists(work[1]);
+    assert.throws(
+      () => noRepeatedLists(work[0]),
+      'Exact pre-hoist build fails the repeated-work contract.',
+    );
+    assert.deepEqual(work[0].flushes, [274, 274]);
+    // Uninstrumented execution remains the semantic oracle, and no native work changes.
+    assert.deepEqual(
+      measuredFlush(patched, history, collaboration),
+      measuredFlush(deletePrefixPatched, history, collaboration),
+    );
+  });
+
+  test(`${format}: retained capacity caches preserve publications and reduce structural Undo prefix work`, async () => {
+    const { patched, completeDeletePatched } = prepareDocsPatch(await readBuild(format), format);
+    const raw = gunzipSync(
+      await readFile(
+        new URL(
+          '../../docs/implementation/evidence/SPN-142/native-caches.json.gz',
+          import.meta.url,
+        ),
+      ),
+    );
+    assert.equal(
+      createHash('sha256').update(raw).digest('hex'),
+      '714376723b3ef6a048796f7a1903a58181098960960cecb111e22e0594a2e7c8',
+    );
+    const archive = JSON.parse(raw.toString());
+    assert.equal(archive.captures.length, 8);
+    let improved = 0;
+    for (const capture of archive.captures) {
+      const { history, collaboration } = decodeCapture(capture) as {
+        history: State[];
+        collaboration: State[];
+      };
+      assert.equal(history.length, 32);
+      assert.equal(collaboration.length, 32);
+      const before = measuredFlush(completeDeletePatched, history, collaboration);
+      const after = measuredFlush(patched, history, collaboration);
+      assert.deepEqual(after.output, before.output);
+      assert.ok(after.counts.allocations <= before.counts.allocations);
+      if (after.counts.allocations < before.counts.allocations) improved++;
+    }
+    assert.equal(
+      improved,
+      1,
+      'Only the captured paragraph-containing group gains a delete prefix.',
+    );
+  });
+
+  test(`${format}: delete prefixes own their accumulator and preserve every tail call`, async () => {
+    const { patched, completeDeletePatched } = prepareDocsPatch(await readBuild(format), format);
+    const start = patched.indexOf('const DEBOUNCE_DELAY = 300;');
+    const end = patched.indexOf('const IDocStateChangeInterceptorService =', start);
+    assert.ok(start > 0 && end > start);
+    const calls: { left: JSONXActions; right: JSONXActions }[] = [];
+    const json = {
+      compose(left: JSONXActions, right: JSONXActions) {
+        calls.push({ left: structuredClone(left), right });
+        return core.JSONX.compose(left, right);
+      },
+    };
+    const compose = runInNewContext(patched.slice(start, end) + ';composeDocStateActions;', {
+      ...core,
+      JSONX: json,
+      _univerjs_core: { ...core, JSONX: json },
+      Object,
+      Array,
+    }) as (states: State[], key: 'undoState') => JSONXActions;
+    for (const prefix of [0, 1, 2, 3, 5, 7]) {
+      const scenario = sequence(
+        Array.from({ length: 7 }, (_, i) => insertAt(i, keyboardBody(i))),
+        seed('z\r\n'),
+      );
+      const states = [...scenario.states].reverse();
+      if (prefix < states.length) {
+        // Own unknown fields forbid admission even when native composition ignores them.
+        (states[prefix].undoState.actions as any)[1].e.at(-1).unsupported = undefined;
+      }
+      const before = structuredClone(states);
+      const expected = states.reduce(
+        (a, s) => core.JSONX.compose(a, s.undoState.actions),
+        null as JSONXActions,
+      );
+      calls.length = 0;
+      const actual = compose(states, 'undoState');
+      assert.deepEqual(actual, expected);
+      assert.deepEqual(states, before);
+      const firstTail = prefix >= 2 ? prefix : 0;
+      assert.equal(
+        calls.length,
+        states.length - firstTail,
+        'Do not optimize later eligible islands.',
+      );
+      for (let i = 0; i < calls.length; i++)
+        assert.equal(calls[i].right, states[firstTail + i].undoState.actions);
+      if (prefix >= 2 && calls.length)
+        assert.deepEqual(
+          calls[0].left,
+          states
+            .slice(0, prefix)
+            .reduce((a, s) => core.JSONX.compose(a, s.undoState.actions), null as JSONXActions),
+        );
+      // Mutating the actual result must not mutate even the lowest-offset input body.
+      (actual as any)[1].e.at(-1).body.dataStream = 'changed result';
+      assert.deepEqual(states, before);
+      const control = flush(completeDeletePatched, scenario.states);
+      assert.deepEqual(flush(patched, scenario.states), control);
+    }
+  });
+
   test(`${format}: eligible keyboard shapes preserve odd tails, offsets and independent cache folds`, async () => {
-    const { original, patched, markerPatched } = prepareDocsPatch(await readBuild(format), format);
+    const { original, patched, prefixPatched } = prepareDocsPatch(await readBuild(format), format);
     const cases = [
       { name: 'odd five', length: 5, start: 0 },
       { name: 'six-state tail', length: 6, start: 0 },
@@ -701,13 +1148,15 @@ for (const format of ['es', 'cjs'] as const) {
         `${format}: ${name}`,
         historyStart,
       );
-      if (name === 'six-state tail')
-        assert.deepEqual(
-          candidate,
-          measuredFlush(markerPatched, history, scenario.states),
-          'The fully eligible six-state idle path has identical native output and work; SPN-135 retains its unexplained latency obligation.',
-        );
-      assert.equal(candidate.counts.textCompose, control.counts.textCompose);
+      if (name === 'six-state tail') {
+        const previous = measuredFlush(prefixPatched, history, scenario.states);
+        assert.deepEqual(candidate.output, previous.output);
+        assert.equal(candidate.counts.textCompose, 10);
+        assert.equal(previous.counts.textCompose, 20);
+        assert.ok(candidate.counts.cloneVisits < previous.counts.cloneVisits);
+        assert.ok(candidate.counts.allocations < previous.counts.allocations);
+      }
+      assert.ok(candidate.counts.textCompose <= control.counts.textCompose);
       assert.ok(control.counts.textCompose > 0);
       assert.ok(
         candidate.counts.allocations < control.counts.allocations,
@@ -962,7 +1411,10 @@ for (const format of ['es', 'cjs'] as const) {
   });
 
   test(`${format}: every paragraph position preserves exact native output and reduces eligible prefix work`, async () => {
-    const { original, patched, markerPatched } = prepareDocsPatch(await readBuild(format), format);
+    const { original, patched, markerPatched, completeDeletePatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
     for (let position = 0; position < 32; position++) {
       const scenario = sequence(
         Array.from({ length: 32 }, (_, index) => {
@@ -995,6 +1447,7 @@ for (const format of ['es', 'cjs'] as const) {
       const native = measuredFlush(original, scenario.states);
       const previous = measuredFlush(markerPatched, scenario.states);
       const candidate = measuredFlush(patched, scenario.states);
+      const beforePrefix = measuredFlush(completeDeletePatched, scenario.states);
       assertNativePreservation(
         native.output,
         candidate.output,
@@ -1006,7 +1459,16 @@ for (const format of ['es', 'cjs'] as const) {
         native,
         'The previous patch uses the complete original mixed fold.',
       );
-      if (position < 4) assert.deepEqual(candidate.counts, native.counts);
+      assert.deepEqual(candidate.output, beforePrefix.output);
+      if (position < 30) {
+        const reduced = (counts: typeof candidate.counts) =>
+          assert.ok(
+            counts.allocations < beforePrefix.counts.allocations,
+            'Qualified inverse prefix must reduce actual native allocations.',
+          );
+        reduced(candidate.counts);
+        assert.throws(() => reduced(beforePrefix.counts), /inverse prefix/);
+      } else assert.deepEqual(candidate.counts, beforePrefix.counts);
       if (position >= 5) {
         const reduced = (counts: typeof candidate.counts) =>
           assert.ok(
@@ -1020,7 +1482,7 @@ for (const format of ['es', 'cjs'] as const) {
           'The previous patch fails the work regression.',
         );
       }
-      if (position === 19) {
+      if (position === 5 || position === 19) {
         const historyStart = 7;
         assertNativePreservation(
           flush(original, scenario.states.slice(historyStart), scenario.states),
@@ -1049,26 +1511,52 @@ for (const format of ['es', 'cjs'] as const) {
           native.output,
           `prefix=${length}, marker=${String(value)}`,
         );
-        if (length < 4) assert.deepEqual(candidate.counts, native.counts);
-        else if (length >= 6)
-          assert.ok(
-            candidate.counts.allocations < native.counts.allocations,
-            `prefix=${length}, marker=${String(value)}: ${candidate.counts.allocations} < ${native.counts.allocations}`,
-          );
+        // A short forward prefix still falls back; its inverse may now have a
+        // long qualified delete prefix. Do not confuse their combined work.
+        if (length < 4) assert.equal(candidate.counts.bodySlices, native.counts.bodySlices);
+        assert.ok(
+          candidate.counts.allocations < native.counts.allocations,
+          `prefix=${length}, marker=${String(value)}: ${candidate.counts.allocations} < ${native.counts.allocations}`,
+        );
       }
   });
 
   test(`${format}: guard accepts the pinned original and exact current or previous patch`, async () => {
-    const { original, patched, previousPatched, markerPatched } = prepareDocsPatch(
-      await readBuild(format),
-      format,
-    );
+    const {
+      original,
+      patched,
+      previousPatched,
+      markerPatched,
+      prefixPatched,
+      completeDeletePatched,
+      deletePrefixPatched,
+    } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
       cjs: 'd96e32ba1177187d3bffa1ac0dce9cbddb589070b5303159b7b6b6b460eb4f92',
     }[format];
     assert.equal(createHash('sha256').update(markerPatched).digest('hex'), markerHash);
     assert.equal(prepareDocsPatch(markerPatched, format).patched, patched);
+    assert.equal(prepareDocsPatch(prefixPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(completeDeletePatched).digest('hex'),
+      {
+        es: '2288928025f2d6e168613614ec6fe5dd57f8675202d35e5ccff2e189fe391563',
+        cjs: 'f0302d8a70cff8ba33dba075d6b7b4fb52f95bd73b5ed53c835d7cbb2f4db2c3',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(completeDeletePatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(deletePrefixPatched).digest('hex'),
+      {
+        es: 'fe7b6b735d8e5f2ef1979fb3bd97267c3c9d53ce0d107ff7473b140f5d3eafb1',
+        cjs: 'ce23b364acdd917ab0b4c645092b64c974567fc0ffea7aec94e3bd1bdfb0bb02',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(deletePrefixPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(deletePrefixPatched + '\n// unknown edit', format));
+    assert.throws(() => prepareDocsPatch(completeDeletePatched + '\n// unknown edit', format));
+    assert.throws(() => prepareDocsPatch(prefixPatched + '\n// unknown edit', format));
     assert.throws(
       () => prepareDocsPatch(markerPatched + '\n// unknown edit', format),
       /Unrecognized/,
@@ -1127,9 +1615,9 @@ for (const format of ['es', 'cjs'] as const) {
           );
           if (mode === 'absent')
             assert.deepEqual(
-              candidate,
-              previous,
-              'Existing unmarked behavior and work are unchanged.',
+              candidate.output,
+              previous.output,
+              'Existing unmarked publications remain unchanged.',
             );
           else if (length === 32) {
             const reduced = (counts: typeof candidate.counts) => {
@@ -1151,10 +1639,21 @@ for (const format of ['es', 'cjs'] as const) {
       const scenario = sequence(Array.from({ length: 7 }, (_, index) => insertAt(index)));
       const actions = scenario.states[1].redoState.actions as any;
       actions[1].e.at(-1).body[marker] = value;
+      const candidate = measuredFlush(patched, scenario.states);
+      const native = measuredFlush(original, scenario.states);
       assert.deepEqual(
-        measuredFlush(patched, scenario.states),
-        measuredFlush(original, scenario.states),
-        'An unsupported own marker after one insert keeps the complete native fold.',
+        candidate.output,
+        native.output,
+        'An unsupported own marker retains raw publication in both directions.',
+      );
+      assert.equal(
+        candidate.counts.bodySlices,
+        native.counts.bodySlices,
+        'One leading insert retains the complete forward fold.',
+      );
+      assert.ok(
+        candidate.counts.allocations < native.counts.allocations,
+        'The independently qualified inverse prefix still reduces native allocation work.',
       );
     }
   });
@@ -1194,4 +1693,25 @@ test('Docs installer validates package identity and both complete builds before 
       await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
       prepareDocsPatch(originals[format], format).patched,
     );
+  for (const previous of ['completeDeletePatched', 'deletePrefixPatched'] as const) {
+    // Existing installs upgrade exact complete prior patches, atomically with
+    // respect to validation of both formats, just like fresh upstream installs.
+    for (const format of ['es', 'cjs'] as const)
+      await writeFile(
+        resolve(directory, 'lib', format, 'index.js'),
+        prepareDocsPatch(originals[format], format)[previous],
+      );
+    const oldEs = await readFile(resolve(directory, 'lib/es/index.js'), 'utf8');
+    const oldCjs = await readFile(cjs, 'utf8');
+    await writeFile(cjs, oldCjs + '\n// unknown edit');
+    await assert.rejects(patchInstalledDocs(root), /Unrecognized/);
+    assert.equal(await readFile(resolve(directory, 'lib/es/index.js'), 'utf8'), oldEs);
+    await writeFile(cjs, oldCjs);
+    await patchInstalledDocs(root);
+    for (const format of ['es', 'cjs'] as const)
+      assert.equal(
+        await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
+        prepareDocsPatch(originals[format], format).patched,
+      );
+  }
 });

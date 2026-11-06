@@ -116,10 +116,10 @@ reserved.
   main job. A ticket's impact is the highest of its persona impacts. Judge at
   least one; leave out personas it doesn't touch. Owner, chat 2026-10-19.
 
-| Factor | S | M | L | XL |
-| --- | --- | --- | --- | --- |
-| Impact | 🤍 10 | 💜 20 | 🩷 30 | — |
-| Effort | 🌱 0 | 🌿 1 | 🌳 2 | 🏔️ 3 |
+| Factor | S     | M     | L     | XL   |
+| ------ | ----- | ----- | ----- | ---- |
+| Impact | 🤍 10 | 💜 20 | 🩷 30 | —    |
+| Effort | 🌱 0  | 🌿 1  | 🌳 2  | 🏔️ 3 |
 
 A ticket's own points are impact plus effort, from **10 to 33**. Impact is weighted
 one order of magnitude higher than before, and larger effort comes first within
@@ -225,7 +225,9 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    are exempt: their changes are low effort, such as scaffolding or generated
    code, so a large diff is still easy to review. CI reads the effort from the
    base branch's copy of the ticket.
-5. **Independent review.** Have two subagents that did not implement the change
+5. **Independent review before pushing.** Include the landing bookkeeping in
+   step 6, run relevant feasible local checks and commit the complete candidate.
+   Have two subagents that did not implement the change
    independently inspect and verify it, using the original ticket, full diff and
    evidence, without a prior or hoped-for grade. Require **each score above 95/100
    on the same current commit and no unresolved blockers**; an average does not
@@ -238,7 +240,13 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
    ticket separable work without hiding a blocker. Both reviewers revalidate
    repairs; put both scores, the shared reviewed SHA and every finding's
-   disposition in the PR.
+   disposition in the PR. Obtain both qualifying grades on the exact committed
+   head before its first validation push and every repair push intended to run CI. Hosted acceptance may remain
+   explicitly pending, but must not be represented as passed or waived by a grade.
+   Revalidate landing bookkeeping and base updates before validation publication too.
+   Draft checkpoint pushes may preserve unreviewed work with intentional CI
+   cancellation and explicit missing evidence; follow the
+   [checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
 6. **Prepare to land.** In the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
@@ -295,6 +303,22 @@ one the ticket is for, and preserve the rationale alongside implementation notes
 Implementation records survive ticket deletion. Maintained product/design/process
 docs still carry the resulting behavior and link to the rationale. An implementation
 note or agent recommendation is never evidence of owner approval or a completed check.
+
+## Documentation style
+
+📝 **Use meaningful emoji cues.** New documentation and substantive updates
+should use relevant emojis in headings, callouts or checklists so readers can scan
+the page more easily. For example, use 🔎 beside verification guidance or ⚠️ beside
+a real warning. Use several cues where a longer document benefits; keep short
+notes proportionate and avoid repeating an emoji on every line.
+
+Keep descriptive words alongside each cue so meaning does not depend on emoji,
+color or a particular renderer. Preserve existing linked heading anchors when
+updating a page; put the cue in a nearby callout if changing the heading would
+break links. Keep ticket headings/identities and the generated index's reserved
+emoji conventions unchanged. This is forward-looking guidance, not a requirement
+to reformat the whole backlog. Owner, chat 2026-11-03;
+[decision](../implementation/grooming-2026-11-02.md#documentation-emoji-guidance).
 
 ## Grooming
 
@@ -356,8 +380,9 @@ toward the reminder.
 The [SPN-115 coverage policy](../implementation/SPN-115.md) keeps all seven code
 check names and publishes a digest-bound plan from the immutable event range.
 All PR edits run fresh full validation, including title/body changes and base
-retargets. Edit concurrency is isolated from code pushes. The cheap metadata
-optimization remains in [SPN-129](SPN-129.md); renamed metadata-only jobs failed
+retargets. Edit concurrency is isolated from code pushes. 🪶 The cheap metadata
+optimization was [retired as SPN-129](../implementation/SPN-129.md#retire-the-metadata-validation-system)
+on 2026-11-04; no router setup is pending. Renamed metadata-only jobs failed
 actual protected-branch readiness and are not used. Ambiguous events,
 unavailable ranges and unknown paths also select full coverage.
 `ci-performance` and `ci-full` add coverage; removing labels never removes
@@ -395,12 +420,16 @@ Owner setup, once, in the repository settings:
 
 ## Commands
 
-CI may be the default for all checks, including typecheck, lint and backlog.
-Draft pushes do not require local checks first. Keep unverified work draft and
-retain every required CI, independent review and visual/merge gate. Local work
-still follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket).
-Owner, chat 2026-10-23;
-[decision](../implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
+Run relevant feasible local checks and obtain both independent grades before
+making a validation push of the committed candidate. Draft checkpoint pushes may
+save unfinished work with intentional CI cancellation under the
+[checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
+Hosted CI still owns its required gates and
+checks that cannot run safely or usefully locally; document those as pending.
+Keep incompletely verified PRs draft and retain every CI, review and visual/merge
+gate. Local work follows the [memory watchdog](../run-backlog.md#2-implement-one-ticket);
+do not duplicate the full hosted matrix on the Mac. Owner, chat 2026-11-02;
+[decision](../implementation/grooming-2026-11-02.md#review-before-push).
 
 ```bash
 npm run typecheck                          # type-check every .ts and .tsx file

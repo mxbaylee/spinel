@@ -22,6 +22,12 @@ that isn't waiting on another is next.
 
 - **Never edit `docs/todo/readme.md` by hand.** Run `npm run backlog:index`.
 - **Never reuse a ticket ID.** Use `npm run backlog:new`.
+- **📝 Use more meaningful emojis in documentation.** New and substantively
+  updated docs should include relevant emoji cues in headings, callouts or
+  checklists to make them easier to scan. Keep the words clear without the emoji;
+  avoid decorating every line. Preserve existing ticket identities, generated
+  index conventions and linked heading anchors. Owner, chat 2026-11-03;
+  [documentation guidance](docs/todo/process.md#documentation-style).
 - **One ticket per PR**, titled `<ticket emoji> SPN-NNN <ticket title>`. Squash
   merge only.
 - **Size the complete outcome before building.** Include integration, authority,
@@ -88,13 +94,18 @@ that isn't waiting on another is next.
 - **Code copied from Univer Workspace** or any other Apache-2.0 project keeps its
   license header, gets a note saying it was changed, and is listed in
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
-- **CI may be the default for validation**, including typecheck, lint, backlog,
-  unit and browser checks. Draft pushes do not require local checks to pass first.
-  Keep unverified work draft; all seven CI gates, two independent nonimplementing
-  subagents each scoring **above 95/100 on the same current commit**, no unresolved
-  blockers and required visual approval remain merge requirements. Owner, chat
-  2026-10-26; [review gate](docs/implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
-  Local workloads still obey the memory watchdog. Owner, chat 2026-10-23;
-  [decision](docs/implementation/backlog-workflow.md#ci-as-the-default-validation-environment).
+- **Review locally before pushing.** Run the relevant feasible local checks,
+  commit the complete candidate, and obtain two independent nonimplementing
+  reviews, each **above 95/100 on that exact commit**, before a validation push
+  or repair push intended to run CI. Fix findings and revalidate each new head.
+  Draft checkpoint pushes may save unfinished work remotely with triggered CI
+  deliberately cancelled; record missing checks/grades and verify cancellation.
+  Coordinate agents' validation runs and preserve file-based job selection.
+  Hosted-only or resource-blocked
+  acceptance stays explicitly pending; a pre-push grade is not a CI pass.
+  All seven current-head CI gates, no unresolved blockers and required visual
+  approval remain merge requirements. Local workloads obey the memory watchdog;
+  this does not require duplicating the full hosted matrix on the Mac. Owner,
+  chat 2026-11-02–03; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.

@@ -202,8 +202,9 @@ Investigate the first failed attempt and its durations before rerunning;
 Every PR edit, including title/body changes and base retargets, runs fresh full
 validation. Edits have isolated concurrency so they do not cancel or replace
 pending code runs; new code pushes still supersede older code runs for that PR.
-Cheap text-edit validation remains tracked in [SPN-129](todo/SPN-129.md) after
-hosted trials showed that renamed metadata jobs left required checks unsatisfied.
+🪶 The [SPN-129 text-edit optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system)
+on 2026-11-04 because its complexity outweighed unproven savings. Batch PR text
+updates; the existing full-edit validation behavior remains in place.
 PR policy checks use the event's
 immutable base SHA, so an advancing `main` cannot silently change their baseline.
 The digest-bound coverage plan records each suite's dependencies and reason;

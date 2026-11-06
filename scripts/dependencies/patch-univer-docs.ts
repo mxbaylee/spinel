@@ -15,7 +15,10 @@
  *
  * Modified for Spinel: compose contiguous, single-character root-body inserts
  * in an order-preserving balanced tree up to the first unsupported state. The
- * remaining actions keep their original fold, including deletes and rich metadata. Native grouping, metadata,
+ * remaining actions keep their original fold. SPN-135 aggregates only fully
+ * qualified descending single-character deletes; SPN-142 also aggregates their
+ * qualified leading prefixes before the unchanged sequential tail. It observes native flushes
+ * through an opt-in scalar API. Native grouping, metadata,
  * cache ownership, publication order and timers remain in the pinned SDK service.
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
  * dream-num/univer v1.1.0 (Apache-2.0). No Pro code is read or modified.
@@ -26,6 +29,7 @@ import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { docFlushObservationReplacements } from './doc-flush-observation.ts';
 
 const formats = {
   es: '84349b3374cafabaf0baee661b97b4a76a2ac47d1bc68e73cef34f9b8c58e145',
@@ -104,7 +108,7 @@ function composeDocStateActions(states, key) {
 }`;
   // Keep the exact SPN-132 bytes for install upgrades and regression controls.
   // Qualification is unchanged; return the length of its leading valid prefix.
-  const helper = markerHelper
+  const prefixHelper = markerHelper
     .replace(
       '// Modified for Spinel: only plain single-character insert groups have the\n// qualified native action shape. Mixed composition can change own undefined\n// body fields, so an ineligible state keeps the entire original cache fold.',
       '// Modified for Spinel: balance only the qualified leading insert prefix.\n// Its raw result equals the original fold; keep every remaining call in order.\n// Never balance later islands or reassociate an unsupported native action.',
@@ -125,6 +129,102 @@ function composeDocStateActions(states, key) {
       'return composeRange(0, states.length);',
       `let result = composeRange(0, prefix);\n\tfor (let index = prefix; index < states.length; index++) result = ${json}.compose(result, states[index][key].actions);\n\treturn result;`,
     );
+  // Retain the exact SPN-133 helper as an upgrade source and regression control.
+  // Descending adjacent deletes preserve the lowest-offset action's body: the
+  // native TextX.push merges only lengths, never concatenates deleted bodies.
+  // Reuse the same strict root-body/metadata qualification as keyboard inserts.
+  const deleteShapeGuard = `
+function isPlainDocDeleteData(value, depth = 0) {
+\tif (value === null || typeof value !== "object") return value === void 0 || value === null || (typeof value === "string" || typeof value === "number" || typeof value === "boolean");
+\tif (depth > 16 || Object.getPrototypeOf(value) !== (Array.isArray(value) ? Array.prototype : Object.prototype)) return false;
+\treturn Reflect.ownKeys(value).every((key) => {
+\t\tconst descriptor = Object.getOwnPropertyDescriptor(value, key);
+\t\treturn typeof key === "string" && Object.hasOwn(descriptor, "value") && (descriptor.enumerable || (Array.isArray(value) && key === "length")) && isPlainDocDeleteData(descriptor.value, depth + 1);
+\t});
+}
+`;
+  const deleteGuard = markerHelper
+    .slice(anchor.length, markerHelper.indexOf('function composeDocStateActions'))
+    .replace('canBalanceDocInserts', 'canCombineDocDeletes')
+    .replace(
+      'const actions = state[key].actions;',
+      'const actions = state[key].actions;\n\t\tif (!isPlainDocDeleteData(actions)) return false;',
+    )
+    .replace('insert.t !== "i"', 'insert.t !== "d"')
+    .replace('offset === previousOffset + 1', 'offset === previousOffset - 1')
+    .replace('prepend = prepend && offset === previousOffset;', 'prepend = false;')
+    .replace(/function hasOnlyDocInsertKeys[\s\S]*?\n}\n/, '')
+    .replace(
+      /\/\/ Modified for Spinel:[\s\S]*?function canCombineDocDeletes/,
+      '// Modified for Spinel: aggregate only complete descending single-character\n// delete groups; native merging retains the lowest-offset deleted body.\nfunction canCombineDocDeletes',
+    );
+  const clone = format === 'cjs' ? '_univerjs_core.Tools.deepClone' : 'Tools.deepClone';
+  const completeDeleteHelper = prefixHelper.replace(
+    'function composeDocStateActions(states, key) {',
+    `${deleteShapeGuard}${deleteGuard}function composeDocStateActions(states, key) {
+\tif (canCombineDocDeletes(states, key)) {
+\t\tconst result = ${clone}(states[states.length - 1][key].actions);
+\t\tconst edits = result[1].e;
+\t\tedits[edits.length - 1].len = states.length;
+\t\treturn result;
+\t}`,
+  );
+  // Keep the exact SPN-135 helper for hash-verified install upgrades and controls.
+  // A qualified prefix is itself a previously admitted complete delete group.
+  // Its equal accumulator leaves every unsupported/later compose call unchanged.
+  const deletePrefixGuard = deleteGuard
+    .replace('canCombineDocDeletes', 'docDeletePrefixLength')
+    .replace(
+      'aggregate only complete descending single-character',
+      'aggregate only leading qualified descending single-character',
+    )
+    .replace('if (states.length < 2) return false;', 'if (states.length < 2) return 0;')
+    .replace(
+      'for (const state of states) {',
+      'for (let index = 0; index < states.length; index++) {\n\t\tconst state = states[index];',
+    )
+    .replaceAll('return false;', 'return index;')
+    .replace('return true;', 'return states.length;');
+  const deletePrefixHelper = completeDeleteHelper
+    .replace(deleteGuard, deletePrefixGuard)
+    .replace(
+      'if (canCombineDocDeletes(states, key)) {',
+      'const deletePrefix = docDeletePrefixLength(states, key);\n\tif (deletePrefix >= 2) {',
+    )
+    .replace(
+      `const result = ${clone}(states[states.length - 1][key].actions);`,
+      `let result = ${clone}(states[deletePrefix - 1][key].actions);`,
+    )
+    .replace(
+      'edits[edits.length - 1].len = states.length;',
+      `edits[edits.length - 1].len = deletePrefix;\n\t\tfor (let index = deletePrefix; index < states.length; index++) result = ${json}.compose(result, states[index][key].actions);`,
+    );
+  // Retain the exact first SPN-142 candidate for install upgrades and controls.
+  // These private read-only lists are module constants: qualification preserves
+  // the same includes/iteration order without rebuilding them for every state.
+  const guardLists = [
+    ['docActionKeys', '["0", "1", "length"]'],
+    ['docComponentKeys', '["et", "e"]'],
+    ['docRetainKeys', '["t", "len"]'],
+    ['docEditKeys', '["t", "len", "body", "valueRangeId"]'],
+    [
+      'docBodyKeys',
+      '["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks", "__textXPreserveParagraphIds"]',
+    ],
+    [
+      'docEmptyBodyFields',
+      '["paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks"]',
+    ],
+    ['docEmptyArrayKeys', '["length"]'],
+    ['docRunArrayKeys', '["0", "length"]'],
+    ['docRunKeys', '["st", "ed", "ts", "sId"]'],
+  ];
+  const helper = guardLists
+    .reduce((text, [name, literal]) => text.replaceAll(literal, name), deletePrefixHelper)
+    .replace(
+      anchor,
+      anchor + '\n' + guardLists.map(([name, literal]) => `const ${name} = ${literal};`).join('\n'),
+    );
   const replacements = [
     { before: anchor, after: helper, count: 1 },
     {
@@ -144,27 +244,52 @@ function composeDocStateActions(states, key) {
   // The recovered original also supplies an executable negative control.
   const original = replacements.reduce(
     (text, { before, after }) => text.replaceAll(after, before),
-    source.replaceAll(previousHelper, anchor).replaceAll(markerHelper, anchor),
+    docFlushObservationReplacements
+      .reduce((text, { before, after }) => text.replaceAll(after, before), source)
+      .replaceAll(deletePrefixHelper, anchor)
+      .replaceAll(completeDeleteHelper, anchor)
+      .replaceAll(previousHelper, anchor)
+      .replaceAll(markerHelper, anchor)
+      .replaceAll(prefixHelper, anchor),
   );
   if (createHash('sha256').update(original).digest('hex') !== formats[format])
     throw new Error(`Unrecognized @univerjs/docs ${format} build; review native composition.`);
-  const patched = replacements.reduce((text, { before, after, count }) => {
+  const composed = replacements.reduce((text, { before, after, count }) => {
     if (text.split(before).length !== count + 1)
       throw new Error('Docs composition patch target count changed.');
     return text.replaceAll(before, after);
   }, original);
-  const previousPatched = patched.replace(helper, previousHelper);
-  const markerPatched = patched.replace(helper, markerHelper);
+  const previousPatched = composed.replace(helper, previousHelper);
+  const markerPatched = composed.replace(helper, markerHelper);
+  const prefixPatched = composed.replace(helper, prefixHelper);
+  const patched = docFlushObservationReplacements.reduce((text, { before, after, count }) => {
+    if (text.split(before).length !== count + 1)
+      throw new Error('Docs observation patch target count changed.');
+    return text.replaceAll(before, after);
+  }, composed);
+  const completeDeletePatched = patched.replace(helper, completeDeleteHelper);
+  const deletePrefixPatched = patched.replace(helper, deletePrefixHelper);
   if (
     source !== original &&
     source !== patched &&
+    source !== completeDeletePatched &&
+    source !== deletePrefixPatched &&
     source !== previousPatched &&
-    source !== markerPatched
+    source !== markerPatched &&
+    source !== prefixPatched
   )
     throw new Error(
       `Partially modified @univerjs/docs ${format} build; restore the pinned package.`,
     );
-  return { original, patched, previousPatched, markerPatched };
+  return {
+    original,
+    patched,
+    previousPatched,
+    markerPatched,
+    prefixPatched,
+    completeDeletePatched,
+    deletePrefixPatched,
+  };
 }
 
 export async function patchInstalledDocs(root: string) {

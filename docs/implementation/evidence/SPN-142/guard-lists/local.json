@@ -1,0 +1,85 @@
+{
+  "base": "7679351822caaa9535d73d656191f2a6597a3380",
+  "priorCandidate": "2b173b29b3c0894a45b8d48d92073c3645110673",
+  "checks": [
+    {
+      "name": "tests-first",
+      "logSha256": "84055ac0931909984a15120f16f84fb4242d4e99c8f8bfc48754aa0b09779a3a",
+      "outcome": "command-failed",
+      "elapsedMs": 12543,
+      "peakKiB": 549888,
+      "pressure": "1"
+    },
+    {
+      "name": "tests-second",
+      "logSha256": "e3b7cf6b5fb3cc48f85995f359edca6ae9a6213eb683fd716e11d2dbeb644ad1",
+      "outcome": "command-passed",
+      "elapsedMs": 11522,
+      "peakKiB": 546912,
+      "pressure": "1"
+    },
+    {
+      "name": "tests-final",
+      "logSha256": "f62376a92fae58a535dc8264ff460cfc5d0cd2ac6ec654abb4819a7e96d2a3d1",
+      "outcome": "command-passed",
+      "elapsedMs": 11754,
+      "peakKiB": 547072,
+      "pressure": "1"
+    },
+    {
+      "name": "types",
+      "logSha256": "87e74caed227e3d8b1ea345a48149682ced21aa799b2c1fd5714ef6f9181eaa5",
+      "outcome": "command-failed",
+      "elapsedMs": 493,
+      "peakKiB": 226080,
+      "pressure": "1"
+    },
+    {
+      "name": "types-final",
+      "logSha256": "723601ad5a79dbdc80d6f769917301b4695fb1fa54b810edcc171d0133e24afe",
+      "outcome": "command-passed",
+      "elapsedMs": 265,
+      "peakKiB": 91440,
+      "pressure": "1"
+    },
+    {
+      "name": "lint",
+      "logSha256": "d053ccea58e0f637d3bfecf26e586015163183a46dbd0fc4f333539f8e01cf21",
+      "outcome": "resource-aborted",
+      "elapsedMs": 9230,
+      "peakKiB": 713888,
+      "pressure": "2"
+    },
+    {
+      "name": "lint-final",
+      "logSha256": "715b8a5aec33f126bfd14e8cde03856cb78baad3d41bf8f013e56aca7303a526",
+      "outcome": "command-passed",
+      "elapsedMs": 18160,
+      "peakKiB": 740192,
+      "pressure": "1"
+    }
+  ],
+  "hashes": {
+    "scripts/dependencies/patch-univer-docs.ts": "41e7204223f5d9df1c9e1785d27d6d061f354f6e8022c55411244abeee6419a1",
+    "scripts/dependencies/patch-univer-docs.test.ts": "c66478aa7f2759701694a2de7abc23c333566eece38e208ca0cca798a33316e2",
+    "scripts/dependencies/doc-flush-observation.ts": "44a089f08216f0988c78a05990a727afd27313bdc4fc9ba9bf466d0b9119eb51",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "typecheckConfig": {
+    "extends": "/Users/mxbaylee/projects/spinel-spn-142/tsconfig.json",
+    "include": [
+      "/Users/mxbaylee/projects/spinel-spn-142/scripts/dependencies/patch-univer-docs.ts",
+      "/Users/mxbaylee/projects/spinel-spn-142/scripts/dependencies/patch-univer-docs.test.ts"
+    ],
+    "compilerOptions": {
+      "typeRoots": [
+        "/Users/mxbaylee/projects/spinel-spn-142/node_modules/@types"
+      ]
+    }
+  },
+  "firstFailures": [
+    "First test run190/192: new instrumentation replacement accidentally interpolated a source-insertion marker; actual production/old controls passed. Replaced temporary string replacement with literal callback. Second/final192/192.",
+    "Initial focused types rejected inferred any[] in the new work-count record; explicit initialization/flushes type fixed it. Final focused types passed."
+  ],
+  "limits": "Array-literal evaluations are not proven heap allocations or latency. StructuredClone-only input checks were strengthened to direct own-key/descriptor/prototype snapshots; final suite includes symbols. Short native compiler sampling does not establish instantaneous peak RSS. Full hosted types and all current-source selected acceptance remain pending. No browser/installed shared-package mutation; all local workloads serialized under watchdog."
+}
