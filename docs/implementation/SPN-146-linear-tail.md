@@ -430,6 +430,10 @@ the aggregate gate went red. The same job passed on `dde23e1`, the delta is docu
 test does not touch Doc typing, so it is recorded as an unrelated flake. The owner re-ran the failed
 jobs and every job, including the aggregate **Playwright smoke** gate, passed (attempt 4).
 
+The gated metric is the paired flush maximum (18.8–37.0 ms against the 100 ms budget) and the flush p95
+(10.4–13.8 ms against 50 ms). The 122–130 ms longest task and the 57–61 ms input p95 above are
+whole-browser numbers, are not gated, and must not be read as the flush budget.
+
 **Status after two hosted attempts:** two first-attempt mobile passes and one green full run on the
 current code. The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
 mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
@@ -450,7 +454,45 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 
 The PR size (about 15.9k lines, 635 files) is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
-has stayed absent over further runs, is left to a follow-up ticket decision; nothing is deleted here.
+has stayed absent over further runs, is a later owner decision; nothing is deleted here.
+
+## 🔬 What the evidence does and does not attribute
+
+**Shown (same harness, same sample, unchanged workload):**
+
+- The baseline source stalls for 38.7–40.3 s (longest task) on every hosted mobile sample, and 16.8 s in
+  the local container; the candidate does not stall (flush maxima 18.8–37.0 ms hosted, 11.3 ms local).
+- The patch removes the repeated forward-tail copying it targets: offline allocation counts fall from
+  23,258 to 7,622 for the same qualified tail.
+- Undo and every unqualified shape take the old fold unchanged, so the improvement is confined to the
+  qualified single-Enter append tail.
+
+**Not shown:** that the 102–129 ms flush maxima seen on earlier candidate heads are the same mechanism as
+the baseline stall. Those heads were not rebuilt with only this patch toggled, so the link is an inference
+from the repeated-copy work removed, not a measured attribution. The disposition therefore stays a
+mitigation backed by two first-attempt hosted passes, and the diagnostics stay so a recurrence can be
+attributed from CI evidence.
+
+## 📏 PR-size exception (owner, chat 2026-11-05)
+
+The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
+PR and the final head is graded again, not waived. The one recorded exception is size.
+
+The PR is about 15.7k changed lines across 636 files, past the 10k soft limit (a checker warning; the
+100k hard limit is not reached). The production change is about 160 lines in
+`scripts/dependencies/patch-univer-docs.ts`; the rest is tests, retained diagnostics, evidence and docs.
+The owner accepts landing it whole instead of splitting it, because splitting would drop the diagnostics
+the Operator needs and cost another full review and hosted cycle for no change in behavior.
+
+**Reviews on `7af4691` (78 and 80, no defect found), and where each deduction is answered:**
+
+| Finding | Answer |
+| --- | --- |
+| Cause undiagnosed (scope, correctness) | See the attribution section below. |
+| Two hosted passes, one on a faster runner | The second run's sample was less stressful; both are reported as such. |
+| Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated. |
+| Ticket described as accepted repair | SPN-089 wording corrected to a mitigation. |
+| Layered patch helpers | Kept deliberately as hash-verified upgrade sources and negative controls. |
 
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
