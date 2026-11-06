@@ -467,11 +467,32 @@ has stayed absent over further runs, is a later owner decision; nothing is delet
 - Undo and every unqualified shape take the old fold unchanged, so the improvement is confined to the
   qualified single-Enter append tail.
 
-**Not shown:** that the 102–129 ms flush maxima seen on earlier candidate heads are the same mechanism as
-the baseline stall. Those heads were not rebuilt with only this patch toggled, so the link is an inference
-from the repeated-copy work removed, not a measured attribution. The disposition therefore stays a
-mitigation backed by two first-attempt hosted passes, and the diagnostics stay so a recurrence can be
-attributed from CI evidence.
+**Tested and not reproduced (local container A/B, `docs/implementation/evidence/SPN-146/patch-ab/`):** the
+same image, sample (`mobile sustained native typing plain-1`) and flags were run with only the installed
+Docs build toggled between the previously installed build (`qualifiedRangesPatched`) and this PR's build
+(`patched`), in three alternating pairs, with the installed sha256 checked each time.
+
+| Pair | Build | Flush p95 / max (ms) | Longest task (ms) |
+| --- | --- | --- | --- |
+| 1 | previous | 10.3 / 14.2 | 80 |
+| 1 | this PR | 8.1 / 11.7 | 58 |
+| 2 | previous | 8.9 / 11.1 | 67 |
+| 2 | this PR | 7.6 / 11.5 | 54 |
+| 3 | previous | 10.0 / 12.0 | 58 |
+| 3 | this PR | 10.8 / 25.8 | 68 |
+
+All six runs met both flush budgets. The previous build showed no flush tail near 100 ms here, and this
+PR's build shows no measurable improvement at n=3 (its worst flush, 25.8 ms in pair 3, is noise). This
+machine is about 2.3× faster than the hosted runner and the check is one sample, so it neither supports
+nor refutes an effect on the hosted tail.
+
+**Not shown:** that the 102–129 ms flush maxima seen on earlier candidate heads came from this
+mechanism, or that this patch is what brought them under budget. The baseline stall and the allocation
+drop show the repeated copying exists and is removed; the A/B shows the previous build does not
+reproduce the hosted tail locally. Only a hosted run with the same toggle (previous build against this
+build on the same runner) could attribute it, and none exists. The two hosted passes are therefore
+evidence that the current head meets the budget, not evidence of what fixed it. The disposition stays a
+mitigation, and the diagnostics stay so a recurrence can be attributed from CI evidence.
 
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
@@ -488,11 +509,11 @@ the Operator needs and cost another full review and hosted cycle for no change i
 
 | Finding | Answer |
 | --- | --- |
-| Cause undiagnosed (scope, correctness) | See the attribution section below. |
+| Cause undiagnosed (scope, correctness) | Tested locally with the patch toggled; the tail did not reproduce, so attribution remains open (see above). |
 | Two hosted passes, one on a faster runner | The second run's sample was less stressful; both are reported as such. |
 | Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated. |
 | Ticket described as accepted repair | SPN-089 wording corrected to a mitigation. |
-| Layered patch helpers | Kept deliberately as hash-verified upgrade sources and negative controls. |
+| Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output verified byte-identical (sha256, ES and CJS). |
 
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
