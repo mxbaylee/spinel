@@ -508,6 +508,16 @@ build on the same runner) could attribute it, and none exists. The three hosted 
 evidence that the current head meets the budget, not evidence of what fixed it. The disposition stays a
 mitigation, and the diagnostics stay so a recurrence can be attributed from CI evidence.
 
+## 🚀 Third push exception: hosted run of the restructured patch file (owner, chat 2026-11-06)
+
+Four independent reviews of the restructured head (`f0c3e5b`: 96 and 91; `d1af661`: 88 and 91) found no
+code defect and verified, each by running old against new, that every `prepareDocsPatch` output is
+byte-identical for ES and CJS. Their remaining deduction is that `patch-univer-docs.ts` has not had a
+hosted run, and the review-before-push rule would block the push that provides it. The owner authorized
+one push of the final head so CI runs on it. This raises no grade and certifies nothing. The head that
+merges is graded again after that run, and all seven current-head gates and two grades above 95 remain
+merge requirements.
+
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
