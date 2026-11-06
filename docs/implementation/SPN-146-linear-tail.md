@@ -291,11 +291,11 @@ The criterion (unchanged) requires every one of 16 matched whole-flush compariso
 at least 20% and 1 ms. **13 of 16 met it**, with reductions of 28–66% in ES and CJS at 544,
 672 and 1,984 completed states. The three misses are all at completed state **1,440**:
 
-| Format | Order | Prior ms | Candidate ms | Change |
-| --- | --- | --- | --- | --- |
-| ES | candidate-prior | 11.0 | 13.7 | −25% (slower) |
-| CJS | prior-candidate | 8.9 | 7.5 | 16% |
-| CJS | candidate-prior | 12.7 | 12.4 | 2% |
+| Format | Order           | Prior ms | Candidate ms | Change        |
+| ------ | --------------- | -------- | ------------ | ------------- |
+| ES     | candidate-prior | 11.0     | 13.7         | −25% (slower) |
+| CJS    | prior-candidate | 8.9      | 7.5          | 16%           |
+| CJS    | candidate-prior | 12.7     | 12.4         | 2%            |
 
 State 1,440 is also where the recorded `plain-3` failure (114.4 ms) occurred, so the repair is
 not shown to help at the state that failed in CI. The ES 1,440 prior-candidate pair did meet
@@ -340,12 +340,12 @@ current-head native acceptance.
 **2026-11-05.** Four independent read-only reviewers graded two committed heads, each against the
 repository rubric (none was given a prior score or target):
 
-| Head | Reviewer | Score | Main deductions |
-| --- | --- | --- | --- |
-| `97d0b32` | A | 66 | no latency evidence; spent workflows; patcher/docs weight |
-| `97d0b32` | B | 86 | no latency evidence; dead workflow; historical variants |
-| `64f208d` | C | 52 | ticket closed before acceptance; SPN-089 unblocked; no repair or disposition |
-| `64f208d` | D | 66 | no repair or disposition; component numbers unretained; unreachable tooling |
+| Head      | Reviewer | Score | Main deductions                                                              |
+| --------- | -------- | ----- | ---------------------------------------------------------------------------- |
+| `97d0b32` | A        | 66    | no latency evidence; spent workflows; patcher/docs weight                    |
+| `97d0b32` | B        | 86    | no latency evidence; dead workflow; historical variants                      |
+| `64f208d` | C        | 52    | ticket closed before acceptance; SPN-089 unblocked; no repair or disposition |
+| `64f208d` | D        | 66    | no repair or disposition; component numbers unretained; unreachable tooling  |
 
 None reached the 95 bar, and no reviewer found a semantic or access-boundary defect in the patch.
 The recurring deduction is the ticket's own scope: neither a causal repair nor an evidence-supported
@@ -367,3 +367,62 @@ the ticket file and SPN-089's dependency. Both are deleted/removed here because 
 validation fails, restore `docs/todo/SPN-146.md`, SPN-146's removal from `completed_since` and
 SPN-089's `depends_on: [SPN-146]` from `origin/main` before any other work.
 
+## ✅ First-attempt hosted mobile result on `dde23e1`
+
+**2026-11-05.** CI run `42133642819` on `dde23e1` succeeded end to end, including
+**Doc responsiveness (mobile)** and **(desktop)**, with no rerun. The mobile job took 38 minutes.
+Candidate observations from the retained `doc-responsiveness-mobile` artifact (all budgets
+enforced, `attempt` 0):
+
+| Sample                   | Input frame p95 | Longest task | Paired flush maximum |
+| ------------------------ | --------------- | ------------ | -------------------- |
+| `plain-1`                | 104.3 ms        | 182 ms       | 48.6 ms              |
+| `plain-2`                | 104.4 ms        | 215 ms       | 27.7 ms              |
+| `plain-3`                | 104.2 ms        | 202 ms       | 75.5 ms              |
+| `profile` (not enforced) | 109.4 ms        | 162 ms       | 43.7 ms              |
+
+The unchanged baseline source in the same job stalled for 38.7–40.3 s (longest task) on every
+sample. All candidate flush maxima are below 100 ms. This is **one attempt**: earlier heads without
+the repair passed about two of three times, so a single pass is supporting evidence, not proof that
+the intermittent failure is gone. The PR stays a draft until two independent reviews grade the final
+head above 95 and every required check is green on that head.
+
+The pre-push waiver above is spent: the validation ran once and passed, and no unchanged rerun was
+needed. Restoring the ticket bookkeeping is therefore not required.
+
+## 🐳 Local container rehearsal (optional, not an acceptance gate)
+
+A Linux container can run the same spec before a push, so a failing change is found in minutes
+instead of the 30-plus-minute hosted job. A local pass never replaces the hosted gate, and a local
+number is not comparable to a hosted one. Use it as a smoke check.
+
+**What it ran (2026-11-05).** One sample, mobile `plain-1`, on two images built from this repository's
+`Dockerfile`-style recipe (Node from `.nvmrc`, `npm ci`, `npx playwright install --with-deps chromium`,
+`npm run build`) with the CI environment (`VITE_DOC_RESPONSIVENESS_EVIDENCE=1`,
+`SPINEL_E2E_PROJECT=doc-responsiveness`):
+
+| Image                                                                    | Command                                                            | Result                                                                   |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| baseline source `2c84a18` plus the current harness files, as in `ci.yml` | `SPN108_BASELINE=1`, grep `mobile sustained native typing plain-1` | ran 2.6 min; longest task 16.8 s, input p95 80 ms (the stall reproduces) |
+| candidate `dde23e1`                                                      | `SPN108_BASELINE=0`, same grep                                     | passed in 1.3 min; input p95 41.7 ms, paired flush maximum 11.3 ms       |
+
+**How a machine can verify it is able to run this test.** Work through these in order and stop at
+the first one that fails; a machine that fails one cannot give a meaningful result.
+
+1. **Container runtime is up.** `docker info` answers and the daemon has memory for Chromium
+   (several GiB, plus `--shm-size=2g` for the browser).
+2. **The image builds.** `npm ci` and the Playwright browser install complete inside the container.
+   If package downloads are refused, the machine's network policy blocks the registry from containers.
+   Use an organization-approved mirror or run natively instead; do not bypass the policy.
+3. **The spec can start.** The spec shells out to `git`, so the container needs a throwaway
+   repository (`git init` and one commit inside `/work`). Without it the test fails before typing with
+   `not a git repository`, which is a harness error, not a result.
+4. **The baseline reproduces the stall.** Run the baseline image on the same sample. A pass in a few
+   minutes with a long task of seconds (not milliseconds) shows this machine exercises the failure
+   being repaired. A baseline with no long task means the check cannot detect the defect here; treat
+   any candidate pass as uninformative and rely on the hosted gate.
+5. **The candidate passes.** The candidate image on the same sample passes with its enforced budgets.
+   A failure here is a real signal to fix before pushing; a pass is necessary, not sufficient.
+
+Retain what is run (image source SHA, grep, environment, summary numbers). A local run carries no
+weight toward review grades or merge; those remain the hosted gate and the independent reviews.
