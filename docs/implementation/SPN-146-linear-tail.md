@@ -1,9 +1,11 @@
 # ⚡ SPN-146 linear native tail assembly question
 
-Historical proposal, November 5, 2026; subsequent checkpoints below record its
-execution and the changed production candidate. Source8b682819 remains unqualified;
-the fixed-window and retained-profile avenues remain closed with their original
-failures. This is a distinct lower-layer semantic/work question, not their retry.
+Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
+candidate and the hosted result. Status: the candidate passed its first hosted mobile attempt
+([result](#-first-attempt-hosted-mobile-result-on-dde23e1)); the cause of the original 102–129 ms
+failures is still undiagnosed, so the disposition is a mitigation with one passing attempt. The
+fixed-window and retained-profile avenues remain closed with their original failures. This is a
+distinct lower-layer semantic/work question, not their retry.
 
 ## 🔎 Concrete source mechanism
 
@@ -319,7 +321,8 @@ against those production maxima; only the unchanged native acceptance gate can, 
 preregistered question that explains the gap (document size, memory/GC state or runtime pauses in
 the real 2,086-key workload).
 
-**Redo-only scope, not yet exercised at workload scale.** The linear path is intentionally gated to `redoState` with more than four
+**Redo-only scope.** (Exercised at workload scale by the later hosted run: every candidate sample's
+redo outcome passed; see the hosted result below.) The linear path is intentionally gated to `redoState` with more than four
 qualified tail states. `undoState` keeps the unchanged native fold by design, not oversight;
 the raw-equality tests in `patch-univer-docs.test.ts` cover both states and show undo unchanged.
 
@@ -333,7 +336,8 @@ next question may reuse them; move or remove them once the ticket's verdict is i
 dependency are prepared in this PR as the process requires before grading
 ([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). They take effect only on
 merge, which still requires a causal repair or evidence-supported disposition and a green
-current-head native acceptance.
+current-head native acceptance. (Status update: the hosted mobile gate has since passed once on
+`dde23e1`; the head's remaining checks are recorded in the hosted result below.)
 
 ## ⚖️ Pre-push review grades and owner decision to validate on CI
 
@@ -365,7 +369,9 @@ the ticket file and SPN-089's dependency. Both are deleted/removed here because 
 (required **Pull request** gate) fails a ticket-titled PR that keeps its ticket file or omits its
 `completed_since` entry. The PR is a draft and merging is gated by the acceptance above. If the
 validation fails, restore `docs/todo/SPN-146.md`, SPN-146's removal from `completed_since` and
-SPN-089's `depends_on: [SPN-146]` from `origin/main` before any other work.
+SPN-089's `depends_on: [SPN-146]` from `origin/main` before any other work. (The validation passed,
+so this restore is not needed now. It applies again if a later hosted attempt on the final head
+fails.)
 
 ## ✅ First-attempt hosted mobile result on `dde23e1`
 
@@ -380,6 +386,10 @@ enforced, `attempt` 0):
 | `plain-2`                | 104.4 ms        | 215 ms       | 27.7 ms              |
 | `plain-3`                | 104.2 ms        | 202 ms       | 75.5 ms              |
 | `profile` (not enforced) | 109.4 ms        | 162 ms       | 43.7 ms              |
+
+The artifact records the candidate source as `8fcb0834…`; that is the GitHub PR merge commit of
+`dde23e1` into `main` at `2f44231` (parents `2f44231` and `dde23e1`), which is what `pull_request`
+CI builds. The tested head is `dde23e1`.
 
 The unchanged baseline source in the same job stalled for 38.7–40.3 s (longest task) on every
 sample. All candidate flush maxima are below 100 ms. This is **one attempt**: earlier heads without
@@ -396,10 +406,45 @@ A Linux container can run the same spec before a push, so a failing change is fo
 instead of the 30-plus-minute hosted job. A local pass never replaces the hosted gate, and a local
 number is not comparable to a hosted one. Use it as a smoke check.
 
-**What it ran (2026-11-05).** One sample, mobile `plain-1`, on two images built from this repository's
-`Dockerfile`-style recipe (Node from `.nvmrc`, `npm ci`, `npx playwright install --with-deps chromium`,
-`npm run build`) with the CI environment (`VITE_DOC_RESPONSIVENESS_EVIDENCE=1`,
-`SPINEL_E2E_PROJECT=doc-responsiveness`):
+**Recipe.** Build one image per source tree (candidate: the checked-out head; baseline: the
+`ci.yml` baseline commit with the harness files copied over it, as the hosted job does). The
+source tree is copied without `node_modules`, `.git` or build output:
+
+```dockerfile
+FROM node:26.12.1-bookworm
+ARG SRC
+WORKDIR /work
+COPY ${SRC}/ /work/
+RUN npm ci
+RUN npx playwright install --with-deps chromium
+ENV VITE_SYNC_EVIDENCE=0 VITE_DOC_SELECTION_EVIDENCE=0 VITE_DOC_RESPONSIVENESS_EVIDENCE=1 \
+    SPINEL_E2E_PROJECT=doc-responsiveness CI=1
+RUN npm run build
+```
+
+The spec calls `git`, so the container entry point creates a throwaway repository first. Save this
+as an executable script and mount it read-only:
+
+```sh
+#!/bin/sh
+set -e
+cd /work
+git init -q
+git config user.email a@example.invalid
+git config user.name harness
+git add -A >/dev/null 2>&1 || true
+git commit -q -m container-snapshot
+exec npx playwright test --project=doc-responsiveness --grep "$GREP"
+```
+
+Run each image with `docker run --rm --cpus=4 --memory=6g --shm-size=2g -e PRESET=mobile
+-e SPN108_BASELINE=<1 for baseline, 0 for candidate> -e "GREP=mobile sustained native typing plain-1"
+-v <results dir>:/work/test-results -v <script>:/run.sh:ro <image> /run.sh`.
+The retained numbers are in
+[`evidence/SPN-146/docker-rehearsal/summary.json`](evidence/SPN-146/docker-rehearsal/summary.json).
+
+**What it ran (2026-11-05).** One sample, mobile `plain-1`, on two images built from that recipe
+with the CI environment:
 
 | Image                                                                    | Command                                                            | Result                                                                   |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------ | ------------------------------------------------------------------------ |
