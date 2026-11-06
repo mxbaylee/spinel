@@ -1,10 +1,17 @@
 import type { DesktopBrowser } from './desktop-browser.ts';
 
-export function clearDesktopStorage(browser: Pick<DesktopBrowser, 'evaluate'>, database: string) {
+export async function clearDesktopStorage(
+  browser: Pick<DesktopBrowser, 'goto' | 'evaluate'>,
+  database: string,
+  page: string,
+) {
+  // Unload the application before deleting its stores: a live page can write
+  // between localStorage.clear() and the asynchronous IndexedDB verification.
+  await browser.goto(page);
   // One driver request only: an unresponsive/crashed page must not consume a
   // second script budget trying to recover diagnostic state.
   return browser.evaluate<StorageDeletion>(
-    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)})`,
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)},${JSON.stringify(page)})`,
   );
 }
 
@@ -25,7 +32,10 @@ export type StorageDeletion = {
 
 // Serialized into the real browser page. Keep this function self-contained.
 // Leave two seconds within the existing 30-second driver bound to return evidence.
-export async function deleteDesktopStorage(database: string): Promise<StorageDeletion> {
+export async function deleteDesktopStorage(
+  database: string,
+  page: string,
+): Promise<StorageDeletion> {
   const report: StorageDeletion = {
     status: 'running',
     database,
@@ -61,6 +71,18 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     }
   }
   try {
+    await step('verify-inert-page', () => {
+      const state = {
+        url: location.href,
+        marked: document.documentElement.hasAttribute('data-desktop-storage-clear'),
+        scripts: document.scripts.length,
+      };
+      if (state.url !== page || !state.marked || state.scripts)
+        throw new Error(
+          `Storage deletion requires the inert fixture page: ${JSON.stringify(state)}`,
+        );
+      return state;
+    });
     const registrations = await step('serviceWorker.getRegistrations', () =>
       navigator.serviceWorker.getRegistrations(),
     );
