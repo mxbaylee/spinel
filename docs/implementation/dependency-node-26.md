@@ -78,7 +78,7 @@ matches [Docker's official image record](https://github.com/docker-library/repo-
 Retain bookworm/glibc, all package resolutions and the independent print
 library's Node 24+ contract.
 
-The original Docker-only candidate's [container check](https://github.com/mxbaylee/spinel/actions/runs/41489528110/job/125430989943)
+🔎 The original Docker-only candidate's [container check](https://github.com/mxbaylee/spinel/actions/runs/41489528110/job/125430989943)
 built the image but correctly rejected actual `v26.13.0` against `.nvmrc`'s
 expected `v26.12.1`. Its successful host tests used the old runtime. Keep that
 assertion and require fresh full host and production-container validation on the
