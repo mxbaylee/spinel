@@ -456,7 +456,7 @@ code is identical to `f0c3e5b`; `9ea505a7` adds only the third push exception be
 | --- | --- | --- | --- | --- |
 | `plain-1` | 93.0 ms | 154 ms | 23.0 ms | 14.0 ms |
 | `plain-2` | 90.4 ms | 152 ms | 23.1 ms | 14.8 ms |
-| `plain-3` | 86.2 ms | 200 ms | 22.3 ms | 15.7 ms |
+| `plain-3` | 86.2 ms | 200 ms | 29.8 ms | 15.7 ms |
 | `profile` | 93.9 ms | 200 ms | 27.9 ms | 16.2 ms |
 
 The unchanged baseline in the same job stalled for 31.0–32.2 s on all four samples. Desktop
@@ -472,7 +472,7 @@ gate, passed.
 when the second push arrived, so `9ea505a7` is the head that carries the hosted evidence.
 
 **Status after four hosted passes:** four first-attempt mobile passes on three runner speeds, the latest
-on the restructured `patch-univer-docs.ts`, and green full runs on the current code. The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
+on the restructured `patch-univer-docs.ts`, and a full green run on the current code (after one rerun of a flaky unrelated smoke test). The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
 mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
@@ -541,6 +541,31 @@ one push of the final head so CI runs on it. This raises no grade and certifies 
 merges is graded again after that run, and all seven current-head gates and two grades above 95 remain
 merge requirements.
 
+## 🔬 Hosted patch A/B (opt-in) and fourth push exception (owner, chat 2026-11-06)
+
+The local container A/B could not attribute the tail, and eight reviews of the final heads (78–96, with
+only one above 95) kept the same open points. The owner chose to keep working instead of accepting the
+mitigation unattributed, so the PR adds an opt-in hosted A/B:
+`.github/workflows/patch-ab.yml` with `scripts/ci/patch-ab/` and `scripts/ci/patch-ab.test.ts`.
+
+- **What it runs.** On one GitHub runner, four alternating pairs of the previously installed Docs build
+  (`previous`, the build earlier failing heads used) and this PR's build (`patched`), each rebuilt and run
+  on the same `mobile sustained native typing plain-1` sample with the unchanged budgets. The installed
+  sha256 is checked for every run, and the table, JSON and raw runs are published as the job summary and a
+  7-day artifact.
+- **How to start it.** Add the exact label `ci-patch-ab` to a same-repository PR, or dispatch it manually.
+  It is never a required gate, and it fails only for harness problems (a wrong installed build, missing
+  metrics), not for a variant exceeding the budget, because both variants are meant to be observed.
+- **CI plan.** The four experiment paths are excluded from the full and performance suites so adding them
+  does not widen coverage; their script tests, lint and typecheck still run, and `plan.test.ts` covers the
+  exclusion and that look-alike paths stay full.
+- **Exception.** The owner authorized one further push, the fourth, so the experiment can run. This
+  raises no grade and certifies nothing. The result will be recorded here whichever way it falls, and the
+  head that merges is graded again; all seven current-head gates remain merge requirements. The workflow
+  and scripts are removable once the question is answered.
+
+**Result:** pending.
+
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
@@ -560,7 +585,7 @@ the Operator needs and cost another full review and hosted cycle for no change i
 | Few hosted passes, one on a faster runner | A third and a fourth first-attempt pass are recorded (runs 42170171728 and 42246654363, the latter on the restructured patch file); runner speed is reported with each. |
 | Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated. |
 | Ticket described as accepted repair | SPN-089 wording corrected to a mitigation. |
-| Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output compared old against new for every variant (ES and CJS) and pinned by the test hashes; no hosted run of the restructure yet. |
+| Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output compared old against new for every variant (ES and CJS) and pinned by the test hashes; first hosted run on `9ea505a7` (run 42246654363) passed. |
 
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
