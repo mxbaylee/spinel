@@ -261,6 +261,8 @@ export async function createDesktopOfflineFixture(options: {
 
     const loginPath = `/_desktop-login/${randomBytes(32).toString('hex')}`;
     const loginURL = origin + loginPath;
+    const storageDeletionPath = `/_desktop-storage-clear/${randomBytes(32).toString('hex')}`;
+    const storageDeletionURL = origin + storageDeletionPath;
     const certificate = await readFile(options.certPath);
     tls = createServer({ key: await readFile(options.keyPath), cert: certificate });
     tls.on('connection', track);
@@ -269,6 +271,24 @@ export async function createDesktopOfflineFixture(options: {
       if (offline) {
         counts.blockedRequests++;
         request.socket.destroy();
+        return;
+      }
+      if (request.url === storageDeletionPath) {
+        if (request.method !== 'GET' || request.headers.host !== new URL(origin).host) {
+          response.writeHead(404, { 'Cache-Control': 'no-store' }).end();
+          return;
+        }
+        response
+          .writeHead(200, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'Content-Security-Policy':
+              "default-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+            'X-Content-Type-Options': 'nosniff',
+          })
+          .end(
+            '<!doctype html><html data-desktop-storage-clear><title>Storage deletion</title></html>',
+          );
         return;
       }
       if (request.url === loginPath) {
@@ -513,6 +533,7 @@ export async function createDesktopOfflineFixture(options: {
     return {
       origin,
       loginURL,
+      storageDeletionURL,
       actor,
       owner,
       items,
