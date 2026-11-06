@@ -400,6 +400,15 @@ head above 95 and every required check is green on that head.
 The pre-push waiver above is spent: the validation ran once and passed, and no unchanged rerun was
 needed. Restoring the ticket bookkeeping is therefore not required.
 
+**Second owner exception (chat, 2026-11-05).** Two independent reviews of `d0054c4` graded it 67 and 84
+(both below 95; neither found a defect in the patch or bookkeeping; the deductions were one hosted
+attempt, no diagnosed cause, no CI on the final head, stale docs, and the PR's size and retained
+tooling). The owner authorized one more push of the docs-reconciled head so CI runs on it as a second
+first-attempt hosted validation. As before, this raises no score and certifies nothing; the unresolved
+deductions remain open until the owner decides the disposition and the tooling cleanup. A Docker smoke
+check of the unchanged code passed all three plain mobile samples first (flush maxima 11.7–12.3 ms; see
+the rehearsal below). That run is a smoke check only.
+
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
 A Linux container can run the same spec before a push, so a failing change is found in minutes
