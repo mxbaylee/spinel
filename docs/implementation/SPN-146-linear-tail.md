@@ -435,6 +435,23 @@ current code. The cause of the original 102–129 ms tail is still undiagnosed, 
 mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
+## ⚖️ Disposition: mitigation kept with its diagnostics (owner, chat 2026-11-05)
+
+The cause of the original 102–129 ms tail is undiagnosed, so the retained tooling stays and is
+deliberate, not leftover scaffolding. Weighed across the personas:
+
+- **Operator:** a recurrence on a slow runner can be diagnosed from CI evidence only if
+  `scripts/ci/doc-native-runtime/*` and `nativeDocFlushDiagnostic.ts` remain. Removing them leaves a
+  mitigation nobody can investigate.
+- **Owner:** trimming is a code change needing new local validation, a hosted cycle and fresh
+  reviews, to answer a size deduction rather than a correctness one.
+- **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
+  proven by two first-attempt hosted passes; trimming would not improve it.
+
+The PR size (about 15.9k lines, 635 files) is accepted for the same reason: the diff is mostly
+retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
+has stayed absent over further runs, is left to a follow-up ticket decision; nothing is deleted here.
+
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
 A Linux container can run the same spec before a push, so a failing change is found in minutes
