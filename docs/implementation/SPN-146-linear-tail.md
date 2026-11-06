@@ -1,9 +1,9 @@
 # ⚡ SPN-146 linear native tail assembly question
 
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
-candidate and the hosted result. Status: the candidate passed two first-hosted-mobile attempts
+candidate and the hosted result. Status: the candidate passed three first-hosted-mobile attempts
 ([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
-failures is still undiagnosed, so the disposition is a mitigation with two passing attempts. The
+failures is still undiagnosed, so the disposition is a mitigation with three passing first attempts. The
 fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
 
@@ -434,8 +434,22 @@ The gated metric is the paired flush maximum (18.8–37.0 ms against the 100 ms 
 (10.4–13.8 ms against 50 ms). The 122–130 ms longest task and the 57–61 ms input p95 above are
 whole-browser numbers, are not gated, and must not be read as the flush budget.
 
-**Status after two hosted attempts:** two first-attempt mobile passes and one green full run on the
-current code. The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
+**Third hosted pass on `7af4691`** (run 42170171728, attempt 1, docs-only delta from `6ef3b79`; every job
+passed, including both responsiveness gates, comparison file `passed`, timing valid, no failures):
+
+| Sample | Input p95 | Longest task | Paired flush max | Flush p95 |
+| --- | --- | --- | --- | --- |
+| `plain-1` | 80.2 ms | 138 ms | 41.8 ms | 10.7 ms |
+| `plain-2` | 77.0 ms | 149 ms | 18.5 ms | 10.8 ms |
+| `plain-3` | 74.1 ms | 146 ms | 18.5 ms | 11.0 ms |
+| `profile` | 83.1 ms | 179 ms | 19.9 ms | 14.9 ms |
+
+The unchanged baseline in the same job stalled for 23.2–24.4 s (longest task) on all four samples. The
+runner's input p95 (74–83 ms) sits between the first run's (about 104 ms) and the second's (about 58 ms).
+That makes three first-attempt mobile passes on three runners.
+
+**Status after three hosted passes:** three first-attempt mobile passes and green full runs on the
+current code (the restructured `patch-univer-docs.ts` has had no hosted run yet). The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
 mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
@@ -450,9 +464,9 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Owner:** trimming is a code change needing new local validation, a hosted cycle and fresh
   reviews, to answer a size deduction rather than a correctness one.
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
-  proven by two first-attempt hosted passes; trimming would not improve it.
+  proven by three first-attempt hosted passes; trimming would not improve it.
 
-The PR size (about 15.9k lines, 635 files) is accepted for the same reason: the diff is mostly
+The PR size (15,967 insertions and 587 deletions across 638 files) is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
 has stayed absent over further runs, is a later owner decision; nothing is deleted here.
 
@@ -490,7 +504,7 @@ nor refutes an effect on the hosted tail.
 mechanism, or that this patch is what brought them under budget. The baseline stall and the allocation
 drop show the repeated copying exists and is removed; the A/B shows the previous build does not
 reproduce the hosted tail locally. Only a hosted run with the same toggle (previous build against this
-build on the same runner) could attribute it, and none exists. The two hosted passes are therefore
+build on the same runner) could attribute it, and none exists. The three hosted passes are therefore
 evidence that the current head meets the budget, not evidence of what fixed it. The disposition stays a
 mitigation, and the diagnostics stay so a recurrence can be attributed from CI evidence.
 
@@ -499,9 +513,9 @@ mitigation, and the diagnostics stay so a recurrence can be attributed from CI e
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
 PR and the final head is graded again, not waived. The one recorded exception is size.
 
-The PR is about 15.7k changed lines across 636 files, past the 10k soft limit (a checker warning; the
-100k hard limit is not reached). The production change is about 160 lines in
-`scripts/dependencies/patch-univer-docs.ts`; the rest is tests, retained diagnostics, evidence and docs.
+The PR is 15,967 insertions and 587 deletions across 638 files, past the 10k soft limit (a checker warning; the
+100k hard limit is not reached). The production change is `scripts/dependencies/patch-univer-docs.ts`
+(+238/−50 lines, including the restructure into `helperGenerations()`); the rest is tests, retained diagnostics, evidence and docs.
 The owner accepts landing it whole instead of splitting it, because splitting would drop the diagnostics
 the Operator needs and cost another full review and hosted cycle for no change in behavior.
 
@@ -510,10 +524,10 @@ the Operator needs and cost another full review and hosted cycle for no change i
 | Finding | Answer |
 | --- | --- |
 | Cause undiagnosed (scope, correctness) | Tested locally with the patch toggled; the tail did not reproduce, so attribution remains open (see above). |
-| Two hosted passes, one on a faster runner | The second run's sample was less stressful; both are reported as such. |
+| Few hosted passes, one on a faster runner | A third first-attempt pass on a third runner is recorded (run 42170171728); runner speed is reported with each. |
 | Candidate longest task 122–130 ms read as a budget breach | The gated metric is the paired flush maximum (18.8–37.0 ms); the longest task is a whole-browser number and is not gated. |
 | Ticket described as accepted repair | SPN-089 wording corrected to a mitigation. |
-| Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output verified byte-identical (sha256, ES and CJS). |
+| Layered patch helpers | Restructured into `helperGenerations()` with a documented list of generations; installed output compared old against new for every variant (ES and CJS) and pinned by the test hashes; no hosted run of the restructure yet. |
 
 ## 🐳 Local container rehearsal (optional, not an acceptance gate)
 
