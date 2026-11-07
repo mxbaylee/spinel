@@ -22,7 +22,7 @@ import { docTraceProcessorAuthority } from './doc-trace-processor.ts';
 
 type Preset = 'desktop' | 'mobile';
 type Analysis = ReturnType<typeof analyzeDocCallbackLifetimes>;
-export const DOC_CALLBACK_BASELINE = '4f401568f41c76de4daabb5711aeb5e7428885b3';
+export const DOC_CALLBACK_BASELINE = '6c01242fc5f948785983a7c6620a7c9e9842485c';
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
 const validHash = (value: unknown): value is string =>
   typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
