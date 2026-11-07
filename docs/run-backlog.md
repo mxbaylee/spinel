@@ -183,6 +183,30 @@ bookkeeping edit or base update, both reviewers revalidate the new committed SHA
 before the next validation push; focused revalidation may reuse unchanged evidence with its
 original source identity. Do not inflate a score to get access to CI.
 
+### 🔁 Review–repair loop before a validation push
+
+Owner, chat 2026-11-06. Repeat this loop until both reviewers clear the gate; do not
+push to see whether CI passes in the meantime.
+
+1. **Commit** the complete candidate and record its SHA.
+2. **Review** that exact SHA with two fresh subagents as above. Give no target score.
+   A head whose hosted result is still pending is reported as pending, not deducted
+   again; deduct only for what the committed code, tests and docs fail to show.
+3. **Require every step to 100.** A reviewer who withholds points lists *every* actionable
+   step to a perfect score, not only the steps to clear 95: for each, the points at
+   stake, the exact file and line or command, the concrete change, and whether it can
+   be done locally, only on hosted CI, or needs an owner decision. Include one-point
+   items, and steps judged impossible with the reason.
+4. **Repair** every local step. Hosted-only and owner-decision steps stay explicitly
+   pending in the PR; never reword or trim a finding to make a deduction disappear.
+5. **Revalidate** with the relevant local checks, commit the repair as a new SHA, and
+   return to step 2.
+6. **Push** only when both reviews exceed 95 on the SHA being pushed. If every remaining
+   deduction is hosted-only or an owner decision, stop and put it to the owner as an
+   explicit one-time push exception, recorded in the PR, rather than looping.
+
+Record each iteration's SHA, both scores, deductions and dispositions in the PR.
+
 ## 4. Fix here or file separately
 
 Before substantial implementation, assess the whole accepted outcome and its
