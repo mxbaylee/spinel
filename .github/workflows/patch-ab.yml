@@ -2,6 +2,8 @@
 # once the mobile Doc typing flush-tail question is answered. On one hosted
 # runner it alternates the previously installed Docs build (previous) with this
 # PR's build (patched), everything else identical, and tabulates the flush tail.
+# Rerun: remove, then re-add, the ci-patch-ab label (each cycle adds PAIRS pairs).
+# `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
 name: 🔬 SPN-146 Docs patch A/B
 
 on:

@@ -17,3 +17,15 @@ single machine. A hosted-runner A/B (same toggle in CI) would be needed to say a
 
 Rerun: build the image, then per variant run the container with a script that calls `prepareDocsPatch` on both lib files,
 writes `qualifiedRangesPatched` or `patched`, runs `npm run build`, then `/run.sh` from the rehearsal recipe.
+
+## Hosted runs (`.github/workflows/patch-ab.yml`)
+
+Retained here because workflow artifacts expire after 7 days. Each folder holds the workflow's own
+`summary.json` and `summary.md` (per-run metrics, installed hashes, budgets):
+
+- `run-42309178838-4-pairs/`: head `c4be221c`, previous over budget in 1 of 4 pairs, patched 0 of 4.
+- `run-42320780806-8-pairs/`: head `53fad9fe`, 8 of 8 pairs within budget on both builds.
+
+Rerun: remove, then re-add, the `ci-patch-ab` label on the PR (`gh pr edit <n> --remove-label ci-patch-ab`,
+then `--add-label ci-patch-ab`); each cycle adds `PAIRS` pairs.
+

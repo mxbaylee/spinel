@@ -3,20 +3,21 @@
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
 candidate and the hosted result. Status: the candidate passed five first-hosted-mobile attempts
 ([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second and third](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
-failures is not proven, so the disposition is a mitigation with five passing first attempts. A hosted
-A/B on one runner ([result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06))
-saw the previous build exceed the budget once in four pairs (108.6 ms) and the patched build never
-exceed 32.2 ms: consistent with the patch, too small to prove it. The fixed-window and retained-profile avenues remain closed with their original failures. This is a
+failures is not proven, so the disposition is a mitigation with five passing first attempts. Hosted
+A/B runs on one runner ([results](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06))
+saw the previous build exceed the budget in 1 of 12 pairs (108.6 ms, in the first run of 4) and the patched
+build in none of 12; the second run of 8 reproduced no tail on either build. That is consistent with the
+patch and too small to prove it. The fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
 
 ## 📌 Final status (2026-11-06)
 
 | Question | Answer | Where |
 | --- | --- | --- |
-| Does the head meet the mobile flush budget? | Five first-attempt hosted passes (the fifth on `c4be221c`, [run 42309178728](#-fifth-hosted-pass-on-c4be221c-the-head-with-the-ab-workflow)); code since then differs only in the opt-in A/B files, the CI-plan exclusion for them, and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
+| Does the head meet the mobile flush budget? | Five first-attempt hosted passes (the fifth on `c4be221c`, [run 42309178728](#-fifth-hosted-pass-on-c4be221c-the-head-with-the-ab-workflow)); `patch-univer-docs.ts` is byte-identical to `c4be221c`; other differences are the opt-in A/B files, the CI-plan exclusion for them, the guard test, the A/B size, docs, and the rebase onto the Node 26.13 `main` (the fifth pass predates that rebase; head `53fad9fe` has all seven gates green in run 42320777184) | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
 | Is the cause of the original tail proven? | No. Hosted A/B over 12 pairs (two runs): previous build 1 over budget (108.6 ms), patched 0; one-sided p = 0.5. The second run (8 pairs, rebased head) did not reproduce the tail on either build | [A/B result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06) |
 | Why is the diagnostic tooling still here? | Operator needs it to investigate a recurrence | [disposition](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
-| Exceptions on record | PR size (owner); four one-time push exceptions to date below the 95 bar; no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
+| Exceptions on record | PR size (owner); five one-time push exceptions to date below the 95 bar (the fifth covers the rebased head `53fad9fe`; the pushes after it are pending the owner's yes); no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
 | What remains before merge | Seven current-head CI gates on the final head and two independent reviews above 95 | `AGENTS.md`, "Review locally before pushing" |
 
 ## 🔎 Concrete source mechanism
@@ -521,7 +522,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
   proven by five first-attempt hosted passes; trimming would not improve it.
 
-The PR size (about 16.5k changed lines; see [the size exception](#-pr-size-exception-owner-chat-2026-11-05) and the PR header for the current count) is accepted for the same reason: the diff is mostly
+The PR size (about 17.4k changed lines, +16.8k −0.6k at `53fad9fe`; see [the size exception](#-pr-size-exception-owner-chat-2026-11-05) and the PR header for the current count) is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
 has stayed absent over further runs, is a later owner decision; nothing is deleted here.
 
@@ -560,7 +561,7 @@ mechanism, or that this patch is what brought them under budget. The baseline st
 drop show the repeated copying exists and is removed; the A/B shows the previous build does not
 reproduce the hosted tail locally. A hosted run with the same toggle (previous build against this
 build on the same runner) was added afterwards and is recorded [below](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06):
-it reproduced a 108.6 ms tail once in four previous-build pairs and none in four patched pairs, which is
+it reproduced a 108.6 ms tail once in twelve previous-build pairs and none in twelve patched pairs, which is
 consistent with the patch but not statistically separable. The five hosted passes are therefore
 evidence that the current head meets the budget, and the A/B is suggestive, not conclusive, evidence of
 what fixed it. The disposition stays a
@@ -638,7 +639,7 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
   distribution, so numbers are comparable only within a run.
 - **Disposition.** Attribution stays "consistent with, not proven": the tail appeared once in twelve
   previous-build pairs and never in twelve patched-build pairs, and it does not occur often enough on
-  these runs to separate them without many more pairs (at a rate near 1 in 12, roughly 40 pairs per
+  these runs to separate them without many more pairs (at a rate near 1 in 12, about 24 pairs per
   arm to expect even two events). The mitigation disposition stands; the measurement is recorded as an
   evidence-supported disposition for SPN-089's Verify clause rather than a causal repair.
 
@@ -646,9 +647,9 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
 
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
 PR and the final head is graded again, not waived. The recorded exception to the merge requirements is
-size; the separate one-time push exceptions are recorded in their own sections above.
+size; the separate one-time push exceptions are recorded in their own sections (the fifth is the last section).
 
-The PR is about 16.5k changed lines (see the PR header for the exact count; it drifts with every commit), past the 10k soft limit (a checker warning; the
+The PR is about 17.4k changed lines (+16.8k −0.6k at `53fad9fe`; the PR header has the exact count, which drifts with every commit), past the 10k soft limit (a checker warning; the
 100k hard limit is not reached). The production change is `scripts/dependencies/patch-univer-docs.ts`
 (+238/−50 lines, including the restructure into `helperGenerations()`); the rest is tests, retained diagnostics, evidence and docs.
 The owner accepts landing it whole instead of splitting it, because splitting would drop the diagnostics
@@ -675,7 +676,7 @@ number is not comparable to a hosted one. Use it as a smoke check.
 source tree is copied without `node_modules`, `.git` or build output:
 
 ```dockerfile
-FROM node:26.12.1-bookworm
+FROM node:26.13.0-bookworm
 ARG SRC
 WORKDIR /work
 COPY ${SRC}/ /work/
@@ -751,6 +752,7 @@ owner-decision steps stay pending below.
 | `5be496ea` | 94, 87 | Decision record, per-path plan test, structural workflow test, stale claims and counts |
 | `aff91762` | 94, 86 | Fifth hosted pass recorded, broken anchors, scope list, push-exception count, keep-in-PR decision |
 | `d5b8bebf` | 94, 89 | Rerun and job-state wording, size stated once, AGENTS.md ordering and stop rule, this table |
+| `9639b78f` (docs-only over `53fad9fe`, which has all seven gates green) | 87, 92 | Exception counts, stale 1-of-4 wording, Fisher and sample-size arithmetic, PR size, Node image tag, guard test widened to six cases, hosted A/B summaries committed under `evidence/SPN-146/patch-ab/`, rerun note in `patch-ab.yml`, `process.md` stop rule |
 
 Still pending after the last round, none doable locally: the unproven cause of the original tail (more
 hosted A/B pairs, or an accepted mitigation disposition), the seven current-head gates on the final
@@ -765,7 +767,7 @@ Four exceptions were used before this one (`dde23e1`, `6ef3b79`, `1c5631b7`+`9ea
 After `d5b8bebf` the reviewers (94 and 89) listed only steps that are hosted-only or owner decisions,
 so the [loop's stop rule](../run-backlog.md#-reviewrepair-loop-before-a-validation-push) applies.
 The owner said to push to CI for the final score and to cycle the `ci-patch-ab` label. This
-one-time exception covers a single push of the final, rebased head. It was requested for two
+one-time exception covers the push of the final, rebased head (`53fad9fe`). The docs-and-repair commits after it (the second A/B record and review repairs) are a further push; each needs the owner's yes, or both reviews above 95, before it is made. Pending. It was requested for two
 reasons that only hosted runs can settle: the seven current-head gates on the merging head, and
 more A/B pairs to attribute the original tail.
 
@@ -782,6 +784,6 @@ What changed locally first, in the same push:
   job and step timeouts raised to fit. The workflow is opt-in and not a gate.
 
 **Plan for attribution.** Each label cycle adds 8 pairs. At 5 previous failures and 0 patched in 12
-pairs, Fisher's exact test gives a one-sided p of about 0.04. If the previous build keeps failing
+pairs (12 per arm), Fisher's exact test gives a one-sided p of about 0.02. If the previous build keeps failing
 and the patched build does not, that is attribution. If neither fails, record that the tail did not
 reproduce and keep the mitigation disposition. Add each result to the A/B section as a new run.
