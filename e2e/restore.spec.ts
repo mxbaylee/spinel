@@ -5,6 +5,7 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { interruptibleNetwork } from './live-network.ts';
+import { readRestoreSnapshot } from './restore-snapshot.ts';
 
 // A successful configured retry cannot explain the original preview failure.
 test.use({ trace: 'retain-on-failure' });
@@ -126,8 +127,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       expect(target.getByRole('status', { name: 'Save status' })).toHaveText('All changes saved.', {
         timeout: 30_000,
       });
-    const read = async () =>
-      await (await context.request.get(`/api/items/${item.id}/${kind}`)).json();
+    const read = () => readRestoreSnapshot(context.request, `/api/items/${item.id}/${kind}`);
     const edit = async (target: typeof page, text: string, cell = 'A1') => {
       const region = target.getByRole('region', {
         name: kind === 'sheet' ? 'Sheet document' : 'Doc document',
