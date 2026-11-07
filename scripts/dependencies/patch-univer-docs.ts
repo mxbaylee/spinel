@@ -69,7 +69,7 @@ function toPrefixLength(text: string) {
  *  3. prefix        SPN-133 leading-prefix balancing.            (upgrade source)
  *  4. completeDelete SPN-135 complete descending deletes.        (upgrade source)
  *  5. deletePrefix  SPN-142 qualified delete prefixes.           (upgrade source)
- *  6. constantGuard SPN-142 hoisted guard lists; also the diagnostic's prior.
+ *  6. constantGuard SPN-142 hoisted guard lists; also the diagnostic's prior.  (upgrade source)
  *  7. paragraphTail SPN-146 single-Enter append tail.            (upgrade source)
  *  8. qualifiedRanges SPN-146 reuses the qualified ranges.       (upgrade source)
  *  9. linearTail    SPN-146 linear tail only. NEVER INSTALLED: the isolating

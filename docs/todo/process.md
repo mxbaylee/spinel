@@ -249,7 +249,8 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    [checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
    Run it as a [review–repair loop](../run-backlog.md#-reviewrepair-loop-before-a-validation-push):
    commit, review, have reviewers list every step to 100, repair, commit, and review
-   again until both exceed 95, then push (owner, chat 2026-11-06,
+   again until both exceed 95, then push; if every remaining deduction is hosted-only or an owner
+   decision, ask for a recorded one-time push exception instead (owner, chat 2026-11-06,
    [decision](../implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push)).
 6. **Prepare to land.** In the same PR:
    - Delete the ticket file.

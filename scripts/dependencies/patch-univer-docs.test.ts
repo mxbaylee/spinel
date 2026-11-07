@@ -1996,10 +1996,14 @@ for (const format of ['es', 'cjs'] as const) {
     }
   });
 
-  test(`${format}: each admission guard changes behavior when removed, independent of hash pins`, async () => {
+  test(`${format}: six tail admission guard cases each change the native fold when removed, independent of hash pins`, async () => {
     // Remove one guard from the generated helper and show that a scenario it must
-    // reject now leaves the native fold. This proves each guard by behavior, so a
-    // regenerated pin could never hide a guard that stopped doing its job.
+    // reject now leaves the native fold. This proves these guards by behavior, so a
+    // regenerated pin could never hide one that stopped doing its job. The offset and
+    // plain-insert checks are proven as a pair. Other conditions (accessors, paragraph
+    // and old-body shapes, markers) are covered by the fallback matrices in "unsupported
+    // paragraph bridges" and "following-retain and old-body variants". The assertion is
+    // on compose calls: without the guard the helper stops reproducing the native fold.
     const { patched, constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
     const composeCalls = (source: string, states: State[], key: 'redoState' | 'undoState') => {
       const calls: JSONXActions[] = [];
@@ -2080,6 +2084,31 @@ for (const format of ['es', 'cjs'] as const) {
         states: () => {
           const states = paragraphSequence(3, 12).states;
           (states[4].redoState.actions as any)[1].e[0].len++;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'one unit and segment',
+        mutated: without(
+          patched,
+          'if (state.unitId !== states[0].unitId || state.segmentId !== states[0].segmentId) return false;',
+        ),
+        key: 'redoState',
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          states[7].unitId = 'different';
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'native cover modes only',
+        mutated: without(patched, '(following.coverType !== 0 && following.coverType !== 1) || '),
+        key: 'redoState',
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          (states[3].redoState.actions as any)[1].e[2].coverType = 3;
           return states;
         },
         admitted: () => paragraphSequence(3, 12).states,
