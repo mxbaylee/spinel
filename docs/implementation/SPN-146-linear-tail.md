@@ -737,3 +737,30 @@ head, and the owner's call on trimming the retained diagnostics and the A/B harn
 suggestions were not taken: extracting a shared linear-assembly helper or dropping the never-installed
 generation in `patch-univer-docs.ts` (both change production bytes and would invalidate the hosted
 evidence), and a YAML-parser test for the workflow (no parser is installed; the string checks stay).
+
+## 🚀 Fifth push exception and larger hosted A/B (owner, chat 2026-11-06)
+
+Four exceptions were used before this one (`dde23e1`, `6ef3b79`, `1c5631b7`+`9ea505a7`, `c4be221c`).
+After `d5b8bebf` the reviewers (94 and 89) listed only steps that are hosted-only or owner decisions,
+so the [loop's stop rule](../run-backlog.md#-reviewrepair-loop-before-a-validation-push) applies.
+The owner said to push to CI for the final score and to cycle the `ci-patch-ab` label. This
+one-time exception covers a single push of the final, rebased head. It was requested for two
+reasons that only hosted runs can settle: the seven current-head gates on the merging head, and
+more A/B pairs to attribute the original tail.
+
+What changed locally first, in the same push:
+
+- **Guard behavior test** in `patch-univer-docs.test.ts` removes one admission guard at a time from
+  the generated helper and shows the scenario it must reject then leaves the native fold. It does
+  not depend on hash pins. The redo-only key guard and the more-than-four-states guard each change
+  behavior alone. The plain-insert tail check and the offset check overlap (the prefix scan also
+  walks offsets, and a second Enter's three edits never match an append offset), so each is
+  redundant while the other is present; the test proves them as a pair. Production bytes are
+  unchanged.
+- **A/B size** in `.github/workflows/patch-ab.yml`: 8 pairs per label cycle instead of 4, with the
+  job and step timeouts raised to fit. The workflow is opt-in and not a gate.
+
+**Plan for attribution.** Each label cycle adds 8 pairs. At 5 previous failures and 0 patched in 12
+pairs, Fisher's exact test gives a one-sided p of about 0.04. If the previous build keeps failing
+and the patched build does not, that is attribution. If neither fails, record that the tail did not
+reproduce and keep the mitigation disposition. Add each result to the A/B section as a new run.
