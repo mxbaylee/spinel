@@ -1,5 +1,15 @@
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  chmodSync,
+  cpSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -19,6 +29,13 @@ const metrics = (p95: number, paired: number) => ({
     pairedFlushMaximumMs: paired,
     longTaskMs: { max: 120 },
     frameOpportunityMs: { p95: 80 },
+  },
+});
+const withBudgetFields = (input: number, longTask: number) => ({
+  summary: {
+    ...metrics(10, 10).summary,
+    longTaskMs: { max: longTask },
+    frameOpportunityMs: { p95: input },
   },
 });
 const run = (pair: number, variant: string, m: unknown, es = variant): Run => ({
@@ -81,7 +98,12 @@ test('summary applies the mobile flush gates and reports harness problems', () =
     ok.rows.map((row) => row.budget),
     ['pass', 'fail', 'fail', 'pass'],
   );
-  assert.deepEqual(ok.budgets, { flushP95Ms: 50, flushMaxMs: 100 });
+  assert.deepEqual(ok.budgets, {
+    flushP95Ms: 50,
+    flushMaxMs: 100,
+    inputP95Ms: 200,
+    longTaskMaxMs: 500,
+  });
   const table = renderTable(ok);
   assert.match(
     table,
@@ -140,7 +162,7 @@ test('summary tallies over-budget runs, records run order and requires every exp
   const table = renderTable(result);
   assert.match(
     table,
-    /previous 1 of 2 \(flush budgets\), 0 of 2 non-zero exits, patched 0 of 2 \(flush budgets\), 0 of 2 non-zero exits/,
+    /previous 1 of 2 \(budgets\), 0 of 2 non-zero exits, patched 0 of 2 \(budgets\), 0 of 2 non-zero exits/,
   );
   assert.match(table, /Do not pool/);
   // A half-empty run is a harness problem, not a quiet gap.
@@ -215,4 +237,86 @@ test('the opt-in workflow stays label-gated, same-repository and read-only', () 
   assert.match(summarize, /summarize\.ts/);
   assert.match(summarize, /PAIRS="\$PAIRS"/, 'the expected pair count reaches the summarizer');
   assert.match(workflow, /echo "\$seq" > "\$run\/seq"/, 'run order is recorded per run');
+});
+
+test('summarize fails a run over the input p95 or longest-task budget even when the flush budgets pass', () => {
+  const rows = summarize(
+    [
+      run(1, 'previous', withBudgetFields(80, 120)),
+      run(1, 'patched', withBudgetFields(205, 120)),
+      run(2, 'previous', withBudgetFields(80, 520)),
+      run(2, 'patched', withBudgetFields(200, 500)),
+    ],
+    2,
+  ).rows;
+  assert.deepEqual(
+    rows.map((row) => `${row.pair}-${row.variant}-${row.budget}`),
+    ['1-previous-pass', '1-patched-fail', '2-previous-fail', '2-patched-pass'],
+  );
+});
+
+// Runs the workflow's real "Alternate previous and patched" script with stubbed tools. `measured`
+// says which run numbers (1-based) leave a metrics file behind.
+const runAlternation = (pairs: number, measured: (n: number) => boolean) => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  const step = workflow.split(/\n {6}- /).find((s) => s.startsWith('name: Alternate'));
+  assert.ok(step, 'the alternation step exists');
+  const body = step.split(/run: \|\n/)[1]!;
+  const script = body
+    .split('\n')
+    .map((line) => line.replace(/^ {10}/, ''))
+    .join('\n');
+  const root = mkdtempSync(join(tmpdir(), 'patch-ab-flow-'));
+  try {
+    const bin = join(root, 'bin');
+    mkdirSync(bin);
+    // node: the toggle writes its output file; npm: no-op; npx: creates metrics when the run is measured.
+    writeFileSync(join(bin, 'node'), '#!/bin/bash\nmkdir -p "$(dirname "$3")"; echo "{}" > "$3"\n');
+    writeFileSync(join(bin, 'npm'), '#!/bin/bash\nexit 0\n');
+    const count = join(root, 'count');
+    writeFileSync(
+      join(bin, 'npx'),
+      `#!/bin/bash
+mkdir -p test-results
+n=$(( $(cat "${count}" 2>/dev/null || echo 0) + 1 )); echo $n > "${count}"
+if [ -f "${root}/measured-$n" ]; then mkdir -p test-results/x; echo '{}' > test-results/x/spn108-metrics.json; fi
+exit 1
+`,
+    );
+    for (let n = 1; n <= pairs * 2; n++)
+      if (measured(n)) writeFileSync(join(root, `measured-${n}`), '');
+    for (const tool of ['node', 'npm', 'npx']) chmodSync(join(bin, tool), 0o755);
+    const result = spawnSync('bash', ['-e', '-c', script], {
+      cwd: root,
+      env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, PAIRS: String(pairs) },
+      encoding: 'utf8',
+    });
+    const runs = Number(existsSync(count) ? readFileSync(count, 'utf8') : 0);
+    return { status: result.status, stdout: result.stdout + result.stderr, runs };
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+};
+
+test('the alternation stops after four consecutive runs with no metrics and never on measured runs', () => {
+  const dead = runAlternation(8, () => false);
+  assert.equal(dead.status, 0, dead.stdout);
+  assert.equal(dead.runs, 4, 'four unmeasured runs end the cycle');
+  assert.match(dead.stdout, /Stopping: 4 consecutive runs produced no metrics/);
+  // Every run is measured (and exits 1, as a budget failure would): all 16 still run.
+  const live = runAlternation(8, () => true);
+  assert.equal(live.runs, 16);
+  assert.doesNotMatch(live.stdout, /Stopping/);
+  // A measured run resets the count: three dead, one live, three dead never reaches four in a row.
+  const gappy = runAlternation(2, (n) => n === 4);
+  assert.equal(gappy.runs, 4);
+  const resets = runAlternation(6, (n) => n === 4);
+  assert.equal(
+    resets.runs,
+    8,
+    'the count restarts after run 4, so runs 5 to 8 are the four that stop it',
+  );
 });

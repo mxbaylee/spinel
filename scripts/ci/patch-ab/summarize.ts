@@ -7,7 +7,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DOC_RESPONSIVENESS_BUDGETS } from '../../../e2e/doc-responsiveness.ts';
 
-const { flushP95Ms, flushMaxMs } = DOC_RESPONSIVENESS_BUDGETS.mobile;
+const { flushP95Ms, flushMaxMs, inputP95Ms, longTaskMaxMs } = DOC_RESPONSIVENESS_BUDGETS.mobile;
 
 export interface Run {
   variant: string;
@@ -52,6 +52,8 @@ export function summarize(runs: Run[], expectedPairs?: number) {
     if (!run.installed) problems.push(`${label}: missing installed.json`);
     const flushP95 = number(summary?.capacityFlushPairMs?.p95);
     const pairedFlushMax = number(summary?.pairedFlushMaximumMs);
+    const inputP95 = number(summary?.frameOpportunityMs?.p95);
+    const longestTask = number(summary?.longTaskMs?.max);
     return {
       variant: run.variant,
       pair: run.pair,
@@ -59,13 +61,18 @@ export function summarize(runs: Run[], expectedPairs?: number) {
       flushP95,
       flushMax: number(summary?.capacityFlushPairMs?.max),
       pairedFlushMax,
-      longestTask: number(summary?.longTaskMs?.max),
-      inputP95: number(summary?.frameOpportunityMs?.p95),
+      longestTask,
+      inputP95,
       sha: run.installed?.es.slice(0, 12) ?? '-',
+      // Every budget the spec gates on, not only the flush ones: a run over the input p95 or the
+      // longest-task budget fails here too, so a failing spec cannot read as a pass.
       budget:
         flushP95 === null || pairedFlushMax === null
           ? 'n/a'
-          : flushP95 <= flushP95Ms && pairedFlushMax <= flushMaxMs
+          : flushP95 <= flushP95Ms &&
+              pairedFlushMax <= flushMaxMs &&
+              (inputP95 === null || inputP95 <= inputP95Ms) &&
+              (longestTask === null || longestTask <= longTaskMaxMs)
             ? 'pass'
             : 'fail',
       order:
@@ -119,7 +126,13 @@ export function summarize(runs: Run[], expectedPairs?: number) {
   ].sort((a, b) => a - b);
   if (cpuThrottles.length > 1)
     problems.push(`runs used different CPU throttles: ${cpuThrottles.join(', ')}`);
-  return { budgets: { flushP95Ms, flushMaxMs }, rows, problems, tally, cpuThrottles };
+  return {
+    budgets: { flushP95Ms, flushMaxMs, inputP95Ms, longTaskMaxMs },
+    rows,
+    problems,
+    tally,
+    cpuThrottles,
+  };
 }
 
 const cell = (value: number | null) => (value === null ? '-' : value.toFixed(1));
@@ -134,7 +147,7 @@ export function renderTable({
   const lines = [
     '## SPN-146 hosted Docs A/B (mobile plain-1)',
     '',
-    `Budget: capacity flush p95 <= ${budgets.flushP95Ms} ms, paired flush max <= ${budgets.flushMaxMs} ms. Times in ms. CPU throttle (from the metrics): ${cpuThrottles.length ? cpuThrottles.map((rate) => `${rate}x`).join(', ') : 'unrecorded'}.`,
+    `Budget: capacity flush p95 <= ${budgets.flushP95Ms} ms, paired flush max <= ${budgets.flushMaxMs} ms, input p95 <= ${budgets.inputP95Ms} ms, longest task <= ${budgets.longTaskMaxMs} ms. Times in ms. CPU throttle (from the metrics): ${cpuThrottles.length ? cpuThrottles.map((rate) => `${rate}x`).join(', ') : 'unrecorded'}.`,
     '',
     '| variant | pair | order | flush p95 | flush max | paired flush max | longest task | input p95 | sha | exit | budget |',
     '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -149,10 +162,10 @@ export function renderTable({
       (Object.entries(tally)
         .map(
           ([variant, t]) =>
-            `${variant} ${t.overBudget} of ${t.measured} (flush budgets), ${t.nonZeroExit} of ${t.runs} non-zero exits`,
+            `${variant} ${t.overBudget} of ${t.measured} (budgets), ${t.nonZeroExit} of ${t.runs} non-zero exits`,
         )
         .join(', ') || 'no runs') +
-      '. Do not pool these counts with another run or another runner without saying so; the rate is about 1 in 12 and a single run cannot separate the builds.',
+      '. Do not pool these counts with another run or another runner without saying so; one run cannot separate the builds when the tail is rare (1 of 28 previous-build pairs at 4x).',
   );
   if (problems.length) lines.push('', '**Harness problems**', '', ...problems.map((p) => `- ${p}`));
   return `${lines.join('\n')}\n`;

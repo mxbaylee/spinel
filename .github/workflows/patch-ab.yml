@@ -10,6 +10,7 @@
 # Stress levels: label ci-patch-ab runs the normal 4x mobile CPU throttle; ci-patch-ab-6x and
 # ci-patch-ab-8x run 6x and 8x (SPN146_AB_CPU_THROTTLE), to check whether the old build's tail grows with
 # the load while the patched build's does not. Never pool results across throttle levels.
+# The 8x level is best effort: a cycle can time out on every run (it stops after four in a row).
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
 name: 🔬 SPN-146 Docs patch A/B
@@ -74,7 +75,7 @@ jobs:
       - name: Alternate previous and patched
         timeout-minutes: 120
         run: |
-          seq=0
+          seq=0; unmeasured=0
           for pair in $(seq 1 "$PAIRS"); do
             # Swap the order every other pair so neither build always runs first.
             if (( pair % 2 == 0 )); then variants="patched previous"; else variants="previous patched"; fi
@@ -91,7 +92,14 @@ jobs:
                 --grep "mobile sustained native typing plain-1" || code=$?
               echo "$code" > "$run/exit-code"
               metrics=$(find test-results -name spn108-metrics.json | head -n 1)
-              if [ -n "$metrics" ]; then cp "$metrics" "$run/metrics.json"; fi
+              if [ -n "$metrics" ]; then
+                cp "$metrics" "$run/metrics.json"; unmeasured=0
+              else
+                unmeasured=$((unmeasured + 1))
+              fi
+              # Four runs in a row with no metrics (every run timed out) is a runner that cannot finish
+              # this load; stop the cycle instead of spending the remaining runs on nothing.
+              if (( unmeasured >= 4 )); then echo "Stopping: $unmeasured consecutive runs produced no metrics."; break 2; fi
             done
           done
       - name: Summarize

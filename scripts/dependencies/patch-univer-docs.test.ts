@@ -586,6 +586,38 @@ function assertNativePreservation(
   }
 }
 
+/** Doubling the states: linear work at most doubles, quadratic work roughly quadruples. */
+const LINEAR_DOUBLING_MAX = 2;
+const QUADRATIC_DOUBLING_MIN = 3;
+type TailCounts = Record<'allocations' | 'cloneVisits', number>;
+type TailWork = { length: number; native: TailCounts; before: TailCounts; after: TailCounts };
+function assertTailWorkScaling(work: TailWork[], label: string) {
+  for (const key of ['allocations', 'cloneVisits'] as const) {
+    for (let i = 0; i < work.length; i++) {
+      const row = work[i]!;
+      assert.ok(
+        row.after[key] < row.before[key],
+        `${label} ${key} at ${row.length}: patched < previous`,
+      );
+      assert.ok(row.before[key] < row.native[key], `${key} at ${row.length}: previous < native`);
+      if (i === 0) continue;
+      const last = work[i - 1]!;
+      assert.ok(
+        row.after[key] <= LINEAR_DOUBLING_MAX * last.after[key],
+        `${label} ${key} ${last.length}->${row.length}: patched work must be linear`,
+      );
+      assert.ok(
+        row.native[key] > QUADRATIC_DOUBLING_MIN * last.native[key],
+        `${key} ${last.length}->${row.length}: native work must be quadratic`,
+      );
+      assert.ok(
+        row.before[key] > LINEAR_DOUBLING_MAX * last.before[key],
+        `${key} ${last.length}->${row.length}: previous work is superlinear`,
+      );
+    }
+  }
+}
+
 function measuredFlush(source: string, states: State[], collaboration = states, raw = false) {
   const counts = { textCompose: 0, iteratorNext: 0, bodySlices: 0, cloneVisits: 0, allocations: 0 };
   const compose = core.TextX.compose;
@@ -866,6 +898,114 @@ for (const format of ['es', 'cjs'] as const) {
         );
     }
   });
+
+  test(`${format}: Enter-tail work grows quadratically in the original, superlinearly before this patch and linearly after`, async () => {
+    // SPN-146 demonstrates the diagnosed cost at the lowest layer: the native Undo fold's work
+    // against the number of states in one flush, with one Enter in the middle (so the fold has a
+    // forward tail to assemble). Counts are deterministic operation counts, not timings, so the
+    // contract holds on any runner. `previous` is the build installed before this PR (the build
+    // the hosted A/B labels `previous`).
+    const {
+      original,
+      qualifiedRangesPatched: previous,
+      patched,
+    } = prepareDocsPatch(await readBuild(format), format);
+    const work = [16, 32, 64, 128, 256].map((length) => {
+      const scenario = paragraphSequence(length >> 1, length);
+      const native = measuredFlush(original, scenario.states);
+      const before = measuredFlush(previous, scenario.states);
+      const after = measuredFlush(patched, scenario.states);
+      assertNativePreservation(native.output, after.output, scenario, `length ${length}`);
+      assertNativePreservation(native.output, before.output, scenario, `length ${length}`);
+      return { length, native: native.counts, before: before.counts, after: after.counts };
+    });
+    assertTailWorkScaling(work, 'after');
+    // Negative controls: each assertion branch must reject a build that lacks the property, so the
+    // test is known to fail without this patch's linear tail assembly.
+    const times = (counts: TailCounts, by: number): TailCounts => ({
+      allocations: counts.allocations * by,
+      cloneVisits: counts.cloneVisits * by,
+    });
+    // The previous build in the patched slot (slightly cheaper than itself): not linear.
+    assert.throws(
+      () =>
+        assertTailWorkScaling(
+          work.map((row) => ({ ...row, after: times(row.before, 0.9) })),
+          'previous',
+        ),
+      /patched work must be linear/,
+    );
+    // A native build whose growth is only the previous build's: not quadratic.
+    assert.throws(
+      () =>
+        assertTailWorkScaling(
+          work.map((row) => ({ ...row, native: times(row.before, 1.1) })),
+          'native',
+        ),
+      /native work must be quadratic/,
+    );
+    // A previous build that is just a constant multiple of the patched one: not superlinear.
+    assert.throws(
+      () =>
+        assertTailWorkScaling(
+          work.map((row) => ({ ...row, before: times(row.after, 1.1) })),
+          'constant',
+        ),
+      /previous work is superlinear/,
+    );
+    console.log(
+      `${format}: tail work by states ${JSON.stringify(work.map((r) => [r.length, r.native.allocations, r.before.allocations, r.after.allocations]))} (native, previous, patched allocations)`,
+    );
+  });
+
+  // Wall-clock distribution of one real native flush through each build (SPN-146 supporting
+  // measurement; timing is never asserted, so it is off unless SPN146_BENCH=1 and cannot flake).
+  //   SPN146_BENCH=1 [SPN146_BENCH_STATES=128] [SPN146_BENCH_REPS=100] node --test --test-name-pattern="wall-clock flush" scripts/dependencies/patch-univer-docs.test.ts
+  test(
+    `${format}: wall-clock flush per build (SPN146_BENCH_STATES, default 32)`,
+    { skip: process.env.SPN146_BENCH !== '1' },
+    async () => {
+      const builds = prepareDocsPatch(await readBuild(format), format);
+      const variants = [
+        ['original', builds.original],
+        ['previous', builds.qualifiedRangesPatched],
+        ['patched', builds.patched],
+      ] as const;
+      const fixtures = variants.map(([, source]) => managerFixture(source));
+      try {
+        for (const position of [4, 16, 28]) {
+          const count = Number(process.env.SPN146_BENCH_STATES ?? 32);
+          const { states } = paragraphSequence(Math.min(position, count - 1), count);
+          const samples = variants.map((): number[] => []);
+          const reps = Number(process.env.SPN146_BENCH_REPS ?? 300);
+          for (let rep = 0; rep < reps + 20; rep++)
+            // Rotate which build goes first so none always runs on a warm or cold heap.
+            for (let k = 0; k < variants.length; k++) {
+              const v = (k + rep) % variants.length;
+              const fixture = fixtures[v]!;
+              fixture.manager.setStateCache(unitId, {
+                history: structuredClone(states),
+                collaboration: structuredClone(states),
+              });
+              const started = performance.now();
+              fixture.manager.flushPendingChanges(unitId);
+              const took = performance.now() - started;
+              if (rep >= 20) samples[v]!.push(took);
+            }
+          const q = (values: number[], at: number) =>
+            [...values].sort((a, b) => a - b)[
+              Math.min(values.length - 1, Math.floor(at * values.length))
+            ]!;
+          for (let v = 0; v < variants.length; v++)
+            console.log(
+              `BENCH ${format} enter@${position} ${variants[v]![0]} p50=${q(samples[v]!, 0.5).toFixed(3)} p95=${q(samples[v]!, 0.95).toFixed(3)} p99=${q(samples[v]!, 0.99).toFixed(3)} max=${Math.max(...samples[v]!).toFixed(3)} ms`,
+            );
+        }
+      } finally {
+        for (const fixture of fixtures) fixture.close();
+      }
+    },
+  );
 
   test(`${format}: opt-in native observations preserve outputs and include synchronous publication`, async () => {
     const { original, patched } = prepareDocsPatch(await readBuild(format), format);
