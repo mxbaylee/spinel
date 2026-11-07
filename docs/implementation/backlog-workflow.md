@@ -390,3 +390,20 @@ steps to clear 95, and hosted-only deductions looked like unfinished local work.
 the personas: the Operator gets a visible path to a perfect score and an explicit stopping
 rule; the Owner can see which gaps need a decision; Collaborators and Guests are unaffected.
 The procedure is in [run-backlog](../run-backlog.md#-reviewrepair-loop-before-a-validation-push).
+
+## Reviewers do not deduct for CI results
+
+Owner, chat 2026-11-06 (SPN-146). Reviewers give no points less for CI that is pending, queued,
+missing, cancelled, failing or not yet run, on the reviewed SHA or another, and are not asked to
+check it. GitHub's required checks already gate every merge, and the numerical gate and the checks
+are separate. The rubric's 10 CI points grade whether the delivered workflows, job selection,
+diagnostics and runbooks are usable, never whether a run passed. Reviewers do still care about the
+specific tests related to the work: they run those locally, and a missing, weak or failing local
+test costs regression-evidence points. A report still lists the hosted acceptance that is pending
+so nobody mistakes the grade for a check result.
+
+**Why.** On SPN-146 reviewers repeatedly withheld a point or two for CI that had not run, which no
+local edit could clear and which duplicated a merge requirement. Weighed across the personas: the
+Operator keeps one clear gate per concern; the Owner sees grades about the work; Collaborators and
+Guests are unaffected. Procedure: [run-backlog](../run-backlog.md#3-get-two-independent-grades).
+
