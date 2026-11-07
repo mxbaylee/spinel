@@ -1996,6 +1996,117 @@ for (const format of ['es', 'cjs'] as const) {
     }
   });
 
+  test(`${format}: each admission guard changes behavior when removed, independent of hash pins`, async () => {
+    // Remove one guard from the generated helper and show that a scenario it must
+    // reject now leaves the native fold. This proves each guard by behavior, so a
+    // regenerated pin could never hide a guard that stopped doing its job.
+    const { patched, constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
+    const composeCalls = (source: string, states: State[], key: 'redoState' | 'undoState') => {
+      const calls: JSONXActions[] = [];
+      const json = {
+        compose(left: JSONXActions, right: JSONXActions) {
+          calls.push(right);
+          return core.JSONX.compose(left, right);
+        },
+      };
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      const compose = runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        JSONX: json,
+        _univerjs_core: { ...core, JSONX: json },
+        Object,
+        Array,
+      }) as (states: State[], key: string) => JSONXActions;
+      compose(states, key);
+      return calls;
+    };
+    const without = (source: string, text: string, replacement = '') => {
+      assert.ok(source.includes(text), `generated helper contains guard: ${text}`);
+      return source.replace(text, replacement);
+    };
+    const guards: {
+      name: string;
+      mutated: string;
+      key: 'redoState' | 'undoState';
+      states: () => State[];
+      admitted: () => State[];
+    }[] = [
+      {
+        name: 'redo-only key',
+        mutated: without(patched, 'key === "redoState" && '),
+        key: 'undoState',
+        // An undo cache that is otherwise a qualified single-Enter append tail.
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          for (const state of states) state.undoState.actions = state.redoState.actions;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'tail of more than four states',
+        mutated: without(patched, 'states.length - prefix > 4', 'states.length - prefix > 0'),
+        key: 'redoState',
+        states: () => paragraphSequence(28, 32).states,
+        admitted: () => paragraphSequence(27, 32).states,
+      },
+      {
+        // The plain-insert tail check and the offset check each reject what the
+        // other would (the prefix scan also walks offsets; a second Enter's three
+        // edits never match an append offset), so removing either alone changes
+        // nothing. Only the pair keeps exactly one Enter and a contiguous tail.
+        name: 'exactly one native Enter (plain-insert tail and offset checks together)',
+        mutated: without(
+          without(patched, 'if (docInsertPrefixLength(tail, key) !== tail.length) return false;'),
+          'if (currentOffset !== firstOffset + index) return false;',
+        ),
+        key: 'redoState',
+        states: () => {
+          // A second Enter whose offset is correct, so only this guard rejects it.
+          const states = paragraphSequence(3, 12).states;
+          states[8].redoState.actions = paragraphSequence(8, 12).states[8].redoState.actions;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'contiguous tail offsets (same overlapping pair)',
+        mutated: without(
+          without(patched, 'if (docInsertPrefixLength(tail, key) !== tail.length) return false;'),
+          'if (currentOffset !== firstOffset + index) return false;',
+        ),
+        key: 'redoState',
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          (states[4].redoState.actions as any)[1].e[0].len++;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+    ];
+    for (const guard of guards) {
+      const rejected = guard.states();
+      const fallback = composeCalls(constantGuardPatched, rejected, guard.key);
+      assert.deepEqual(
+        composeCalls(patched, guard.states(), guard.key),
+        fallback,
+        `${guard.name}: the guard keeps the native fold`,
+      );
+      assert.notDeepEqual(
+        composeCalls(guard.mutated, guard.states(), guard.key),
+        fallback,
+        `${guard.name}: without the guard the scenario leaves the native fold`,
+      );
+      // The same guard still admits the qualified shape, so it is not a blanket reject.
+      assert.notDeepEqual(
+        composeCalls(patched, guard.admitted(), 'redoState'),
+        composeCalls(constantGuardPatched, guard.admitted(), 'redoState'),
+        `${guard.name}: a qualified shape takes the linear path`,
+      );
+    }
+  });
+
   test(`${format}: admitted paragraph joins preserve absent, undefined and empty metadata`, async () => {
     const { original, patched, constantGuardPatched } = prepareDocsPatch(
       await readBuild(format),
