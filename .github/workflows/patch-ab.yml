@@ -3,6 +3,7 @@
 # runner it alternates the previously installed Docs build (previous) with this
 # PR's build (patched), everything else identical, and tabulates the flush tail.
 # Rerun: remove, then re-add, the ci-patch-ab label (each cycle adds PAIRS pairs).
+# Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
 name: 🔬 SPN-146 Docs patch A/B
 
@@ -57,7 +58,9 @@ jobs:
         timeout-minutes: 120
         run: |
           for pair in $(seq 1 "$PAIRS"); do
-            for variant in previous patched; do
+            # Swap the order every other pair so neither build always runs first.
+            if (( pair % 2 == 0 )); then variants="patched previous"; else variants="previous patched"; fi
+            for variant in $variants; do
               run="patch-ab/runs/pair-$pair-$variant"
               mkdir -p "$run"
               node scripts/ci/patch-ab/toggle.ts "$variant" "$run/installed.json"
