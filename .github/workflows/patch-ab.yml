@@ -70,6 +70,7 @@ jobs:
             done
           done
       - name: Summarize
+        if: always()
         run: node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
       - name: Publish summary
         if: always()

@@ -99,6 +99,7 @@ export function renderTable({ budgets, rows, problems }: ReturnType<typeof summa
 
 export function readRuns(directory: string): Run[] {
   const read = (path: string) => (existsSync(path) ? readFileSync(path, 'utf8') : null);
+  if (!existsSync(directory)) return [];
   return readdirSync(directory)
     .flatMap((name) => {
       const match = /^pair-(\d+)-(previous|patched)$/.exec(name);
