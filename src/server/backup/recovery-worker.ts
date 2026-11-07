@@ -4,6 +4,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isRecoveryResourceCode, RecoveryResourceError } from './resource-error.ts';
 
+export const RECOVERY_HEADROOM_PREFIX = 'spinel:recovery-memory-headroom ';
+
 /** A child heap cap alone cannot protect a smaller application cgroup. Linux
  * probes are best-effort; missing cgroup files still leave the host check, child
  * RSS watchdog and V8/time bounds in force. Tests supply the kernel file reader. */
@@ -11,6 +13,7 @@ export async function checkVerificationHeadroom(
   phase: 'start' | 'running',
   read: (path: string) => Promise<string> = (path) => readFile(path, 'utf8'),
   platform: string = process.platform,
+  report: (line: string) => void = (line) => console.error(line),
 ) {
   if (platform !== 'linux') return;
   const probes = await Promise.allSettled([
@@ -39,6 +42,8 @@ export async function checkVerificationHeadroom(
     'file_writeback',
   ].map(counter);
   let charged = used;
+  let reclaimable = 0;
+  let cacheCountersValid = false;
   if (
     used !== undefined &&
     file !== undefined &&
@@ -56,18 +61,50 @@ export async function checkVerificationHeadroom(
     // inactive disk-file pages, never active cache, shared/tmpfs, dirty pages or
     // writeback. Missing, malformed or inconsistent counters retain raw usage.
     // Subtract dirty/writeback conservatively even when those categories overlap.
-    const reclaimable = Math.max(0, Math.min(inactive, file - shared) - dirty - writeback);
+    cacheCountersValid = true;
+    reclaimable = Math.max(0, Math.min(inactive, file - shared) - dirty - writeback);
     charged = used - reclaimable;
   }
   const availableKiB = bytes(/^MemAvailable:\s+(\d+)\s+kB\s*$/m.exec(values[2])?.[1] ?? '');
   const MiB = 1024 ** 2;
-  if (
-    (maximum !== undefined &&
-      charged !== undefined &&
-      maximum - charged < (phase === 'start' ? 640 : 128) * MiB) ||
-    (availableKiB !== undefined && availableKiB * 1024 < (phase === 'start' ? 768 : 256) * MiB)
-  )
+  const cgroupRequiredBytes = (phase === 'start' ? 640 : 128) * MiB;
+  const hostRequiredKiB = (phase === 'start' ? 768 : 256) * 1024;
+  const cgroupRefused =
+    maximum !== undefined && charged !== undefined && maximum - charged < cgroupRequiredBytes;
+  const hostRefused = availableKiB !== undefined && availableKiB < hostRequiredKiB;
+  if (cgroupRefused || hostRefused) {
+    // Record the actual decision inputs, never raw kernel text or private paths.
+    // Diagnostics cannot change this refusal or the public resource error.
+    try {
+      report(
+        RECOVERY_HEADROOM_PREFIX +
+          JSON.stringify({
+            version: 1,
+            observedAtMs: Date.now(),
+            phase,
+            probes: probes.map((probe) => probe.status),
+            maximumBytes: maximum ?? null,
+            usedBytes: used ?? null,
+            chargedBytes: charged ?? null,
+            fileBytes: file ?? null,
+            sharedBytes: shared ?? null,
+            inactiveBytes: inactive ?? null,
+            dirtyBytes: dirty ?? null,
+            writebackBytes: writeback ?? null,
+            reclaimableBytes: reclaimable,
+            cacheCountersValid,
+            availableKiB: availableKiB ?? null,
+            cgroupRequiredBytes,
+            hostRequiredKiB,
+            cgroupRefused,
+            hostRefused,
+          }),
+      );
+    } catch {
+      // A failed diagnostic sink must not replace or suppress the memory guard.
+    }
     throw new RecoveryResourceError('memory-headroom');
+  }
 }
 
 /** Shared isolated runner. Only internal callers supply the fixed protocol and
