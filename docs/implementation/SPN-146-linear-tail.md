@@ -1,9 +1,9 @@
 # ⚡ SPN-146 linear native tail assembly question
 
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
-candidate and the hosted result. Status: the candidate passed four first-hosted-mobile attempts
+candidate and the hosted result. Status: the candidate passed five first-hosted-mobile attempts
 ([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second and third](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
-failures is not proven, so the disposition is a mitigation with four passing first attempts. A hosted
+failures is not proven, so the disposition is a mitigation with five passing first attempts. A hosted
 A/B on one runner ([result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06))
 saw the previous build exceed the budget once in four pairs (108.6 ms) and the patched build never
 exceed 32.2 ms: consistent with the patch, too small to prove it. The fixed-window and retained-profile avenues remain closed with their original failures. This is a
@@ -13,10 +13,10 @@ distinct lower-layer semantic/work question, not their retry.
 
 | Question | Answer | Where |
 | --- | --- | --- |
-| Does the head meet the mobile flush budget? | Four first-attempt hosted passes on earlier heads; code since then differs only in the opt-in A/B files, the CI-plan exclusion for them, and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
+| Does the head meet the mobile flush budget? | Five first-attempt hosted passes (the fifth on `c4be221c`, [run 42309178728](#-fifth-hosted-pass-on-c4be221c-the-head-with-the-ab-workflow)); code since then differs only in the opt-in A/B files, the CI-plan exclusion for them, and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
 | Is the cause of the original tail proven? | No. Hosted A/B: previous build 1 of 4 pairs over budget (108.6 ms), patched 0 of 4 (max 32.2 ms); p = 0.5 | [A/B result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06) |
 | Why is the diagnostic tooling still here? | Operator needs it to investigate a recurrence | [disposition](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
-| Exceptions on record | PR size (owner); four one-time push exceptions below the 95 bar; no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
+| Exceptions on record | PR size (owner); four one-time push exceptions to date below the 95 bar; no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
 | What remains before merge | Seven current-head CI gates on the final head and two independent reviews above 95 | `AGENTS.md`, "Review locally before pushing" |
 
 ## 🔎 Concrete source mechanism
@@ -73,7 +73,7 @@ owners remain unresolved and unchanged.
 Operator gets a finite test of a concrete repeated-copy mechanism; Owner and
 Collaborator keep exact native metadata/history/content; Link guest keeps access
 fences. The complete accepted outcome remains XL. This is scoped to SPN-146,
-with SPN-090 the only other authorized ticket, plus the SPN-089 dependency bookkeeping and the SPN-146 ticket removal that landing requires.
+with SPN-090 the only other authorized ticket, plus the SPN-089 dependency bookkeeping and the SPN-146 ticket removal that landing requires, and the review–repair loop process addition (`docs/run-backlog.md`, `docs/todo/process.md`, `docs/implementation/backlog-workflow.md`, `AGENTS.md`). The loop is included because this ticket's reviews were the case that exposed the gap and the owner asked for it in the same chat; if the owner prefers, those four files move to their own PR without touching the patch.
 
 ## ✅ Exact scratch-script checkpoint
 
@@ -483,7 +483,26 @@ gate, passed.
 (the exception paragraph). The runs on `1c5631b7` were cancelled by the workflow's concurrency setting
 when the second push arrived, so `9ea505a7` is the head that carries the hosted evidence.
 
-**Status after four hosted passes:** four first-attempt mobile passes on three runner speeds, the latest
+## ✅ Fifth hosted pass on `c4be221c`, the head with the A/B workflow
+
+Main CI run 42309178728, `Doc responsiveness (mobile)` attempt 1 (started 23:44:58Z, finished 00:25:22Z;
+success, no rerun). Every other job in the run was green when read; the `Lib tests` aggregate was still
+running, so the seven-gate result is pending. `c4be221c` differs from the production head `9ea505a7`
+only in the opt-in A/B files and the CI-plan exclusion for them, and later commits change only docs, one
+workflow step, the summarizer's missing-directory guard and tests, so this run exercised the same
+production code as the current head.
+
+| Sample | Paired flush max | Capacity flush p95 | Input p95 (frame opportunity) | Longest task max | Baseline stall (same job) |
+| --- | --- | --- | --- | --- | --- |
+| profile | 38.5 ms | 20.8 ms | 111.1 ms | 188 ms | 41.7 s |
+| plain-1 | 29.9 ms | 19.8 ms | 106.5 ms | 184 ms | 40.0 s |
+| plain-2 | 33.2 ms | 20.4 ms | 103.6 ms | 188 ms | 39.8 s |
+| plain-3 | 33.1 ms | 21.0 ms | 110.3 ms | 162 ms | 39.5 s |
+
+The gated values are the paired flush maximum (budget 100 ms) and capacity flush p95 (budget 50 ms); input
+p95 and longest task are not gated. The artifact is `doc-responsiveness-mobile`.
+
+**Status after five hosted passes:** five first-attempt mobile passes on four runner speeds, the latest
 on the restructured `patch-univer-docs.ts`, and a full green run on the current code (after one rerun of a flaky unrelated smoke test). The cause of the original 102–129 ms tail is not proven (the later hosted A/B is consistent with the
 patch but only four pairs), so this remains a mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
@@ -499,7 +518,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Owner:** trimming is a code change needing new local validation, a hosted cycle and fresh
   reviews, to answer a size deduction rather than a correctness one.
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
-  proven by four first-attempt hosted passes; trimming would not improve it.
+  proven by five first-attempt hosted passes; trimming would not improve it.
 
 The PR size (see the PR header for the current count; about 16.5k changed lines), is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
@@ -541,7 +560,7 @@ drop show the repeated copying exists and is removed; the A/B shows the previous
 reproduce the hosted tail locally. A hosted run with the same toggle (previous build against this
 build on the same runner) was added afterwards and is recorded [below](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06):
 it reproduced a 108.6 ms tail once in four previous-build pairs and none in four patched pairs, which is
-consistent with the patch but not statistically separable. The four hosted passes are therefore
+consistent with the patch but not statistically separable. The five hosted passes are therefore
 evidence that the current head meets the budget, and the A/B is suggestive, not conclusive, evidence of
 what fixed it. The disposition stays a
 mitigation, and the diagnostics stay so a recurrence can be attributed from CI evidence.
