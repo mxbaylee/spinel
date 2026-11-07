@@ -486,8 +486,9 @@ when the second push arrived, so `9ea505a7` is the head that carries the hosted 
 ## ✅ Fifth hosted pass on `c4be221c`, the head with the A/B workflow
 
 Main CI run 42309178728, `Doc responsiveness (mobile)` attempt 1 (started 23:44:58Z, finished 00:25:22Z;
-success, no rerun). Every other job in the run was green when read; the `Lib tests` aggregate was still
-running, so the seven-gate result is pending. `c4be221c` differs from the production head `9ea505a7`
+success, no rerun). Every job in the run was green when last read except the `Playwright smoke`
+aggregate, still queued (all 14 smoke shards are green and `Lib tests` has passed), so the seven-gate
+result is pending. `c4be221c` differs from the production head `9ea505a7`
 only in the opt-in A/B files and the CI-plan exclusion for them, and later commits change only docs, one
 workflow step, the summarizer's missing-directory guard and tests, so this run exercised the same
 production code as the current head.
@@ -503,7 +504,7 @@ The gated values are the paired flush maximum (budget 100 ms) and capacity flush
 p95 and longest task are not gated. The artifact is `doc-responsiveness-mobile`.
 
 **Status after five hosted passes:** five first-attempt mobile passes on four runner speeds, the latest
-on the restructured `patch-univer-docs.ts`, and a full green run on the current code (after one rerun of a flaky unrelated smoke test). The cause of the original 102–129 ms tail is not proven (the later hosted A/B is consistent with the
+on the restructured `patch-univer-docs.ts`, and, for the fifth, a run with no rerun (the second pass's run needed one rerun of an unrelated flaky smoke test). The cause of the original 102–129 ms tail is not proven (the later hosted A/B is consistent with the
 patch but only four pairs), so this remains a mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
@@ -520,7 +521,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
   proven by five first-attempt hosted passes; trimming would not improve it.
 
-The PR size (see the PR header for the current count; about 16.5k changed lines), is accepted for the same reason: the diff is mostly
+The PR size (about 16.5k changed lines; see [the size exception](#-pr-size-exception-owner-chat-2026-11-05) and the PR header for the current count) is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
 has stayed absent over further runs, is a later owner decision; nothing is deleted here.
 
@@ -713,3 +714,26 @@ the first one that fails; a machine that fails one cannot give a meaningful resu
 
 Retain what is run (image source SHA, grep, environment, summary numbers). A local run carries no
 weight toward review grades or merge; those remain the hosted gate and the independent reviews.
+
+## 🔁 Review–repair iterations (2026-11-06)
+
+Recorded under the [review–repair loop](../run-backlog.md#-reviewrepair-loop-before-a-validation-push).
+Each row is two fresh independent reviews of the committed SHA, given no prior grade. The reviewers
+reported no defect in the production patch in any round; the deductions were attribution, hosted
+evidence, process scope, stale or inconsistent documentation and volume. Hosted-only and
+owner-decision steps stay pending below.
+
+| Reviewed SHA | Scores | Local steps repaired in the next commit |
+| --- | --- | --- |
+| `6a053a0b` | 86, 83 | A/B p95 range, stale attribution wording, `if: always()`, missing-directory guard |
+| `3cd4aba6` | 86, 85 | Typos, direction wording, scope wording, final-status table, hub pointer, workflow guard test |
+| `5be496ea` | 94, 87 | Decision record, per-path plan test, structural workflow test, stale claims and counts |
+| `aff91762` | 94, 86 | Fifth hosted pass recorded, broken anchors, scope list, push-exception count, keep-in-PR decision |
+| `d5b8bebf` | 94, 89 | Rerun and job-state wording, size stated once, AGENTS.md ordering and stop rule, this table |
+
+Still pending after the last round, none doable locally: the unproven cause of the original tail (more
+hosted A/B pairs, or an accepted mitigation disposition), the seven current-head gates on the final
+head, and the owner's call on trimming the retained diagnostics and the A/B harness. Two local
+suggestions were not taken: extracting a shared linear-assembly helper or dropping the never-installed
+generation in `patch-univer-docs.ts` (both change production bytes and would invalidate the hosted
+evidence), and a YAML-parser test for the workflow (no parser is installed; the string checks stay).
