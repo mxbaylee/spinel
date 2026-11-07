@@ -575,7 +575,7 @@ jobs:
         if: needs.changes.outputs.responsiveness_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 6ee50161c9eeeb7296ffb282d7ae52abd9e61d1b
+          ref: b21979c3fdb78e3736d7ded0f7b91f44d45e5968
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
@@ -675,7 +675,7 @@ jobs:
         if: needs.changes.outputs.callback_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 48dc8d4698129d5c7748ff2dac3b5d18cb0bcd6b
+          ref: dd6b3f397ea89c9eb024fcbe9f52d77b865d45d4
           path: baseline-callback-source
           persist-credentials: false
       - name: Match callback workload and read-only observations
