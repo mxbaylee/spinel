@@ -9,6 +9,16 @@ saw the previous build exceed the budget once in four pairs (108.6 ms) and the p
 exceed 32.2 ms: consistent with the patch, too small to prove it. The fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
 
+## 📌 Final status (2026-11-06)
+
+| Question | Answer | Where |
+| --- | --- | --- |
+| Does the head meet the mobile flush budget? | Four first-attempt hosted passes on earlier heads; code since then differs only in the opt-in A/B files and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
+| Is the cause of the original tail proven? | No. Hosted A/B: previous build 1 of 4 pairs over budget (108.6 ms), patched 0 of 4 (max 32.2 ms); p = 0.5 | [A/B result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06) |
+| Why is the diagnostic tooling still here? | Operator needs it to investigate a recurrence | [disposition](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
+| Exceptions on record | PR size (owner); four one-time push exceptions below the 95 bar; no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
+| What remains before merge | Seven current-head CI gates on the final head and two independent reviews above 95 | `AGENTS.md`, "Review locally before pushing" |
+
 ## 🔎 Concrete source mechanism
 
 The retained segment diagnostic already located repeated forward-tail copies
@@ -37,7 +47,7 @@ using the existing deterministic manager fixture and exact pinned public Core.
 Do not modify any installed package or production source. Reuse the four lossless
 retained real pairs at completed544/672/1440/1984, exact pair hash
 e7768818642407ee6f559e251f49f9f408fb95e1ba317e1e9d92053134e97fb5.
-Exactly16 flushes maximum: four pairs × two formats × current/prototype.
+Exactly 16 flushes maximum: four pairs × two formats × current/prototype.
 
 Require complete raw output/property-presence/publication-order equality,
 input/descriptor nonmutation, fixture-owned timers/listeners/cache cleanup and
@@ -63,7 +73,7 @@ owners remain unresolved and unchanged.
 Operator gets a finite test of a concrete repeated-copy mechanism; Owner and
 Collaborator keep exact native metadata/history/content; Link guest keeps access
 fences. The complete accepted outcome remains XL. This is scoped to SPN-146,
-with SPN-090 the only other authorized ticket.
+with SPN-090 the only other authorized ticket, plus the SPN-089 dependency bookkeeping and the SPN-146 ticket removal that landing requires.
 
 ## ✅ Exact scratch-script checkpoint
 
@@ -144,7 +154,7 @@ The four retained pairs have Enter indices7/9/23/3, equal in history and
 collaboration. Thus completed544/672/1440 are eligible for strict per-phase work
 reduction; completed1984 is an ineligible exact-work negative control. Compare
 tail-only against tail-plus-prefix, never attribute their combined benefit to
-prefix alone. The proposed first16 flushes remain four pairs × two manager
+prefix alone. The proposed first 16 flushes remain four pairs × two manager
 formats × two variants, with the same raw proof/ownership/cleanup and bounded
 execution requirements. Broader boundary/metadata/normalization/fallback checks
 must separately pass, including prefix3/4. No prefix prototype has executed at
@@ -595,7 +605,7 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
 
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
 PR and the final head is graded again, not waived. The recorded exception to the merge requirements is
-size; the separate one-time push exceptions are recorded in their own sections below.
+size; the separate one-time push exceptions are recorded in their own sections above.
 
 The PR is about 16.5k changed lines across about 644 files (GitHub shows +16,500 −598; the count drifts with every docs commit), past the 10k soft limit (a checker warning; the
 100k hard limit is not reached). The production change is `scripts/dependencies/patch-univer-docs.ts`

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -128,4 +128,17 @@ test('runs are read in alternating order and tolerate missing files', () => {
 
 test('a missing runs directory reads as no runs instead of throwing', () => {
   assert.deepEqual(readRuns(join(tmpdir(), 'patch-ab-does-not-exist')), []);
+});
+
+test('the opt-in workflow stays label-gated, same-repository and read-only', () => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  assert.match(workflow, /ci-patch-ab/);
+  assert.match(workflow, /head\.repo\.full_name == github\.repository/);
+  assert.match(workflow, /contents: read/);
+  assert.match(workflow, /persist-credentials: false/);
+  assert.doesNotMatch(workflow, /pull_request_target/);
+  assert.match(workflow, /name: Summarize\n\s+if: always\(\)/);
 });
