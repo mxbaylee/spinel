@@ -1,6 +1,135 @@
 # ⬆️ Follow-up dependency integration
 
+## 🔁 Same-PR recovery: exclude Canvas
+
+**2026-11-07 — owner-directed recovery of PR #273.** Retain Storybook #269,
+Node types #270 and S3 #272; exclude Canvas #271 and leave it open alongside
+Caddy #238 and Univer #240. This is the current cohort. The original four-update
+proposal and local visual receipts below remain historical evidence, not current
+acceptance. Do not open a replacement PR or add another dependency family.
+
+The original candidate `6d73d8dcc9a63904bbd1c8d299eb3e7799cea8ce` failed
+[core run 42339972597](https://github.com/mxbaylee/spinel/actions/runs/42339972597)
+in both attempt 1, job `128319772669`, and attempt 2, job `128336288557`:
+
+| Unchanged assertion | Observed text top | Required image boundary |
+| --- | ---: | ---: |
+| `doc-multiple-images.test.ts:251` | 169.892583 | strictly greater than 170 |
+| `doc-story-geometry.test.ts:167` | 81.80273324999999 | strictly greater than 82 |
+
+Both shards reported 951 passed, two failed and three existing skips. The tests
+are byte-identical to accepted main. The earlier local fixture review and green
+ancillary workflows did not override those failures. The second failed attempt
+is preserved as a retry, not first-attempt acceptance. Canvas 1.1.0 is correlated
+with the changed output; exclusion and later passing checks do not prove a
+particular upstream renderer defect. Investigating and correctly resolving that
+compatibility remains with #271. No assertion, renderer override, deadline,
+retry policy, resource guard, workload or acceptance budget changes here.
+
+### 📦 Revised dependencies and comparison inputs
+
+Preparation commit `5255360f5ceef31673f2b48f1da9afe12aa7c6e2`, tree
+`89b52115f40101d04a19f9dc27c472926226a01d`, reverses Canvas preparation commit
+`25ea51e27620c4a3a48d9aad4b46d84cc6476f56` without rewriting the four earlier
+preparation commits. Both Canvas pins and all 12 installed Canvas records
+(parent plus 11 platforms) return to main's 1.0.11 values. The print-workspace
+manifest is byte-identical to main. The retained three bot updates contribute
+exactly 32 disjoint installed-package record changes; their complete records,
+including integrity and transitive metadata, match the three source PRs.
+
+| Retained source | Direct pin | Source head |
+| --- | --- | --- |
+| #269 | `@storybook/react-vite` 10.6.5 | `971f3269193282767963c3b7c9ef44573c59dd5f` |
+| #270 | `@types/node` 26.6.6 | `bf718aa9ef0d71e4afda501e637207df830ebcc7` |
+| #272 | `@aws-sdk/client-s3` 3.1161.0 | `3d1b01701a017df39ae655b5fd7228b905ad4c2b` |
+
+The revised lock SHA-256 is
+`268591be235eb52d14b907112c548d9a71b2c274bba0d756c8e8decae3ac94a6`.
+Node remains pinned to **26.13.0**. Both new comparison sources are dependency-only
+descendants of the failed candidate's historical inputs:
+
+| Comparison | Preserved parent | Revised source | New retention ref under `ci-baseline/` |
+| --- | --- | --- | --- |
+| Responsiveness | `b21979c3fdb78e3736d7ded0f7b91f44d45e5968` | `e4d361f0ce3c08d4a1e80b000e29f2c2f28f6670` | `doc-responsiveness-canvas-excluded-2026-11-07` |
+| Callback lifetimes | `dd6b3f397ea89c9eb024fcbe9f52d77b865d45d4` | `f609961e4a2460bae0feedb62cedd722af270e86` | `doc-callback-canvas-excluded-2026-11-07` |
+
+Each new descendant changes exactly `package.json`, `lib/print/package.json`
+and `package-lock.json`. All eight manifest dependency maps match the revised
+candidate; each complete lock is byte-identical to it. Historical nondependency
+manifest fields, three postinstall patchers and all application source remain
+unchanged. The current application retains its five patchers. The two checkout
+SHAs and callback-comparator constant use the new commits. The four existing
+`doc-{responsiveness,callback}-{storybook-10.6.5,dependabot-2026-11-07}` refs
+remain at their original SHAs; the new refs supplement them. None is obsolete
+branch-cleanup work. Preserve allowed overlays, first-attempt observations,
+attribution and historical stall requirements.
+
+### 🧪 Recovery verification and retained failures
+
+Use the existing native fixtures and strict geometry assertions, then the
+comparison/CI-plan negative controls, strict typecheck, lint, dependency boundary,
+backlog and PR-shape checks. Local commands use Node 26.13.0, `scripts/serial.ts`
+and the unchanged two-GiB/eight-minute process-tree watchdog. Native checks use
+the restored application/dependency tree above; comparison controls use the new
+baseline wiring. Exact logs, commands, measurements, dependency integrity audit,
+PDF inventories and the prior PR/recovery records are retained in
+[recovery-evidence.zip](evidence/dependabot-2026-11-07-canvas-excluded/recovery-evidence.zip).
+Its SHA-256 is `d94c6cf8bec0e1960710d40b53d27c924d0badc3efe82c0ecbd0155190cff54b`.
+The final PR records current source/review identities and the exact-commit PR check.
+
+| Recovery local check | Actual result | Seconds | Peak process-tree KiB |
+| --- | --- | ---: | ---: |
+| Clean install | 500 packages; five guarded postinstall patchers | 14.617 | 821,416 |
+| Sheet/Doc/PDF geometry, including both failing files | 38/38 tests, five files, no skips | 36.299 | 1,130,528 |
+| Typecheck after final baseline wiring | Passed | 3.623 | 2,086,724 |
+| Dependency boundary, lint and formatting after wiring | Passed | 18.683 | 923,004 |
+| Comparison, immutable-plan and aggregate controls | 74/74 tests, no skips | 2.068 | 720,616 |
+| Backlog | Passed; 23 open tickets, existing nonblocking notices | 0.335 | 337,588 |
+
+The initial typecheck/lint receipts remain distinct from the repeated checks of
+the final SHA wiring. Every recorded workload completed below 2,097,152 KiB and
+480 seconds. No resource-aborted result is counted as a pass.
+
+The archive also retains both failed Lib-job logs and every generated output of
+the two failed geometry fixtures from both original Doc artifacts. Full original
+artifact inventories and hashes distinguish the attempts:
+
+| Failed Doc artifact | ID | Original ZIP SHA-256 |
+| --- | ---: | --- |
+| Attempt 1 | 13563204574 | `e51d15b545e252911381c3b08fd55bd9b400d25cdf1fafeb650eab785cdf22bf` |
+| Attempt 2 | 13565591779 | `2117a90a9fa1e9c8f95ad5c20c3e56adc95c2c7d46f9b6fd0e17f48af70beb86` |
+
+The full historical hosted artifacts are supplementary and expire after seven
+days; the archived failure logs, original inventory hashes and affected PDF/PNG
+bytes remain in this repository. Original local images and `local-evidence.zip`
+below are unchanged. Fresh local examples show the restored
+[mixed-image boundary](evidence/dependabot-2026-11-07-canvas-excluded/mixed-image-boundary.png)
+and [header-image boundary](evidence/dependabot-2026-11-07-canvas-excluded/header-image-boundary.png).
+These are synthetic fixture pages, not hosted acceptance or physical-print proof.
+
+**Fresh hosted acceptance remains required on the complete reviewed commit.**
+Obtain two fresh independent nonimplementing reviews before the validation push.
+Require all seven gates and every selected worker, the full Storybook catalogue,
+native Chrome/Firefox/Safari persistence and restart checks, actual Spaces
+backup/catalog/restore with complete cleanup, fresh PDF and collaboration-overlap
+evidence, paired desktop/mobile historical comparisons and first-attempt sized
+restore. Inspect the full job list, immutable plan and result identities; the
+default jobs API page omits three of the 33 core jobs. Prior green workflows and
+old review scores cannot qualify this source. Preserve any first failure and
+investigate before another attempt. Keep the PR draft until qualified.
+
+The Operator retains patched storage tooling with demonstrated recovery; the
+Owner keeps the already accepted Canvas renderer and complete exports; the
+Collaborator and Link guest retain their full editing, persistence and access
+acceptance. Deferring an unqualified renderer update is preferable to weakening
+those contracts. No product UI or design change is introduced. Close only
+#269/#270/#272 after checking their latest complete changes against landed main;
+leave #271/#238/#240 open. Final evidence belongs in the PR description before
+guarded squash merge, including any additional core run triggered by that edit.
+
 ## 🧭 Decision and scope
+
+**Historical four-update preparation; superseded by the recovery above.**
 
 **2026-11-07 — agent judgment under the owner's dependency-integration request.**
 [PR #268](https://github.com/mxbaylee/spinel/pull/268) landed as
