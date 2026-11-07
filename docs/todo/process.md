@@ -247,6 +247,9 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    Draft checkpoint pushes may preserve unreviewed work with intentional CI
    cancellation and explicit missing evidence; follow the
    [checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
+   Run it as a [review–repair loop](../run-backlog.md#-reviewrepair-loop-before-a-validation-push):
+   commit, review, have reviewers list every step to 100, repair, commit, and review
+   again until both exceed 95, then push (owner, chat 2026-11-06).
 6. **Prepare to land.** In the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
