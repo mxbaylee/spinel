@@ -73,7 +73,7 @@ owners remain unresolved and unchanged.
 Operator gets a finite test of a concrete repeated-copy mechanism; Owner and
 Collaborator keep exact native metadata/history/content; Link guest keeps access
 fences. The complete accepted outcome remains XL. This is scoped to SPN-146,
-with SPN-090 the only other authorized ticket, plus the SPN-089 dependency bookkeeping and the SPN-146 ticket removal that landing requires, and the review–repair loop process addition (`docs/run-backlog.md`, `docs/todo/process.md`, `docs/implementation/backlog-workflow.md`, `AGENTS.md`). The loop is included because this ticket's reviews were the case that exposed the gap and the owner asked for it in the same chat; if the owner prefers, those four files move to their own PR without touching the patch.
+with SPN-090 the only other authorized ticket, plus the SPN-089 dependency bookkeeping and the SPN-146 ticket removal that landing requires, and the review–repair loop process addition (`docs/run-backlog.md`, `docs/todo/process.md`, `docs/implementation/backlog-workflow.md`, `AGENTS.md`). The loop is included because this ticket's reviews were the case that exposed the gap and the owner asked for it in the same chat. The owner decided to keep it in this PR (chat 2026-11-06) instead of splitting it out.
 
 ## ✅ Exact scratch-script checkpoint
 
