@@ -107,5 +107,8 @@ that isn't waiting on another is next.
   approval remain merge requirements. Local workloads obey the memory watchdog;
   this does not require duplicating the full hosted matrix on the Mac. Owner,
   chat 2026-11-02–03; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
+  Run this as a review–repair loop: reviewers list every step to 100, repair, recommit and
+  review again until both exceed 95. Owner, chat 2026-11-06;
+  [decision](docs/implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.
