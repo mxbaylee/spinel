@@ -1610,6 +1610,54 @@ for (const format of ['es', 'cjs'] as const) {
     }
   });
 
+  test(`${format}: seeded random Enter positions, tail lengths, offsets and covers match the previous build`, async () => {
+    const { patched, qualifiedRangesPatched } = prepareDocsPatch(await readBuild(format), format);
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return Function(
+        'core',
+        `const {${Object.keys(core).join(',')}}=core; const _univerjs_core=core;\n${source.slice(start, end)}\nreturn composeDocStateActions;`,
+      )(core) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
+    };
+    const current = helper(qualifiedRangesPatched),
+      candidate = helper(patched);
+    // mulberry32: a fixed seed keeps the cases reproducible; a failure names its parameters.
+    let state = 0x146a5eed;
+    const random = () => {
+      state = (state + 0x6d2b79f5) | 0;
+      let t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const between = (low: number, high: number) => low + Math.floor(random() * (high - low + 1));
+    const covers = [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE];
+    let admitted = 0;
+    for (let index = 0; index < 150; index++) {
+      const length = between(2, 48),
+        position = between(0, length - 1),
+        offset = between(0, 20),
+        cover = covers[between(0, 1)]!,
+        equalStyle = random() < 0.5;
+      const scenario = paragraphSequence(position, length, cover, offset, (body) => {
+        if (equalStyle) body.textRuns![0].ts = { bl: 1, cl: { rgb: '#123456' } };
+      });
+      const label = `${format} case ${index}: length ${length}, Enter ${position}, offset ${offset}, cover ${cover}, equalStyle ${equalStyle}`;
+      for (const key of ['redoState', 'undoState'] as const) {
+        const before = current(scenario.states, key),
+          after = candidate(scenario.states, key);
+        assert.deepEqual(after, before, `${label}/${key}`);
+        assert.deepEqual(
+          ownDataShape({ input: scenario.states, output: after }),
+          ownDataShape({ input: scenario.states, output: before }),
+          `${label}/${key}: descriptors, prototypes and alias topology`,
+        );
+      }
+      if (length - position > 5) admitted++;
+    }
+    assert.ok(admitted > 40, `the seeded cases exercise the admitted tail shape (${admitted})`);
+  });
+
   test(`${format}: linear paragraph ranges preserve raw ownership and reduce repeated native copies`, async () => {
     const { patched, qualifiedRangesPatched, linearTailPatched } = prepareDocsPatch(
       await readBuild(format),

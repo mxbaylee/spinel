@@ -47,6 +47,19 @@ import {
 } from './doc-responsiveness-callback-progress.ts';
 import type { CallbackObservation } from './doc-responsiveness-callback-progress.ts';
 
+/**
+ * Mobile CPU throttle: 4 unless SPN146_AB_CPU_THROTTLE (the opt-in patch A/B only) asks for a
+ * heavier one, so the rare flush tail is easier to provoke on a fast runner. Required CI never sets it.
+ */
+const cpuThrottleRate = (mobile: boolean) => {
+  if (!mobile) return 1;
+  const raw = process.env.SPN146_AB_CPU_THROTTLE;
+  if (raw === undefined || raw === '') return 4;
+  const rate = Number(raw);
+  if (!Number.isFinite(rate) || rate < 1) throw new Error(`Invalid SPN146_AB_CPU_THROTTLE ${raw}.`);
+  return rate;
+};
+
 // Recorded before the production fix. These are responsiveness budgets for this
 // fixed workload/runtime, not physical-device, INP, or arbitrary-document claims.
 const budgets = DOC_RESPONSIVENESS_BUDGETS;
@@ -527,7 +540,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           },
           instrumentation: {
             profiler: profiled,
-            cpuThrottle: mobile ? 4 : 1,
+            cpuThrottle: cpuThrottleRate(mobile),
             longTaskObserver: true,
             perKeyRequestAnimationFrame: true,
             playwrightTrace: false,
@@ -596,7 +609,7 @@ for (const preset of ['desktop', 'mobile'] as const)
               userAgent: navigator.userAgent,
             })),
           };
-          await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
+          await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottleRate(mobile) });
           evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
           if (nativeDiagnostic) {
             evidence.nativeDiagnosticBuild = JSON.parse(
@@ -1268,7 +1281,7 @@ for (const preset of ['desktop', 'mobile'] as const)
         attempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
       },
       instrumentation: {
-        cpuThrottle: mobile ? 4 : 1,
+        cpuThrottle: cpuThrottleRate(mobile),
         profiler: false,
         playwrightTrace: false,
         physicalDevice: false,
@@ -1338,7 +1351,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           hasFocus: document.hasFocus(),
         })),
       };
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottleRate(mobile) });
       const initialNative = (await readDocResponsiveness(f.page))!;
       expect(initialNative.mobile).toBe(mobile);
       finishInput = await observeInput(f.page);

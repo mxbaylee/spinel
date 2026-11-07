@@ -109,7 +109,7 @@ that isn't waiting on another is next.
   chat 2026-11-02–03; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.
-  Reviewers never deduct for CI results (pending, missing or failing); required checks gate
+- **Reviews never deduct for CI, and run as a loop.** Reviewers never deduct for CI results (pending, missing or failing); required checks gate
   the merge. They do run the tests related to the work locally and grade those. Owner, chat 2026-11-06; [decision](docs/implementation/backlog-workflow.md#reviewers-do-not-deduct-for-ci-results).
   Run the review as a loop: reviewers list every step to 100, repair, recommit and review
   again until both exceed 95; if every remaining deduction is hosted-only or an owner

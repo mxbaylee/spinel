@@ -3,7 +3,13 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { assertInstalled, sha256, toggle, variantName } from './patch-ab/toggle.ts';
+import {
+  assertInstalled,
+  pinnedInstalled,
+  sha256,
+  toggle,
+  variantName,
+} from './patch-ab/toggle.ts';
 import { readRuns, renderTable, summarize, type Run } from './patch-ab/summarize.ts';
 
 const installed = (es: string) => ({ es, cjs: `${es}-cjs` });
@@ -53,6 +59,9 @@ test('toggling rewrites both bundles to distinct, repeatable builds', async () =
     assert.notEqual(previous.es, patched.es);
     assert.notEqual(previous.cjs, patched.cjs);
     assert.deepEqual(await toggle(root, 'previous'), previous);
+    // The installed bytes are the pinned builds, not merely whatever was just written.
+    assert.deepEqual({ es: previous.es, cjs: previous.cjs }, pinnedInstalled.previous);
+    assert.deepEqual({ es: patched.es, cjs: patched.cjs }, pinnedInstalled.patched);
     assert.match(previous.es, /^[0-9a-f]{64}$/);
     assert.equal(sha256(''), 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
   } finally {
@@ -76,7 +85,7 @@ test('summary applies the mobile flush gates and reports harness problems', () =
   const table = renderTable(ok);
   assert.match(
     table,
-    /\| previous \| 1 \| 50\.0 \| 100\.0 \| 100\.0 \| 120\.0 \| 80\.0 \| previous0123 \| 0 \| pass \|/,
+    /\| previous \| 1 \| - \| 50\.0 \| 100\.0 \| 100\.0 \| 120\.0 \| 80\.0 \| previous0123 \| 0 \| pass \|/,
   );
   assert.ok(!table.includes('Harness problems'));
 
@@ -104,6 +113,47 @@ test('summary applies the mobile flush gates and reports harness problems', () =
   assert.deepEqual(same.problems, ['previous and patched installed the same build']);
 });
 
+test('summary tallies over-budget runs, records run order and requires every expected pair', () => {
+  const seq = (r: Run, n: number): Run => ({ ...r, seq: n });
+  const runs = [
+    seq(run(1, 'previous', metrics(10, 120)), 1),
+    seq(run(1, 'patched', metrics(10, 10)), 2),
+    seq(run(2, 'patched', metrics(10, 10)), 3),
+    seq(run(2, 'previous', metrics(10, 10)), 4),
+  ];
+  const result = summarize(runs, 2);
+  assert.deepEqual(result.problems, []);
+  assert.deepEqual(result.tally, {
+    previous: { runs: 2, measured: 2, overBudget: 1 },
+    patched: { runs: 2, measured: 2, overBudget: 0 },
+  });
+  assert.deepEqual(
+    result.rows.map((row) => `${row.pair}-${row.variant}-${row.order}`),
+    ['1-previous-first', '1-patched-second', '2-patched-first', '2-previous-second'],
+  );
+  const table = renderTable(result);
+  assert.match(table, /previous 1 of 2, patched 0 of 2/);
+  assert.match(table, /Do not pool/);
+  // A half-empty run is a harness problem, not a quiet gap.
+  const short = summarize([...runs.slice(0, 3), seq(run(2, 'previous', null), 4)], 2);
+  assert.ok(short.problems.some((p) => /previous: 1 of 2 expected pairs produced metrics/.test(p)));
+  assert.equal(summarize(runs.slice(0, 2)).problems.length, 0, 'no expectation, no count check');
+});
+
+test('summary records the CPU throttle and flags a mix of throttles', () => {
+  const throttled = (rate: number) => ({
+    ...metrics(10, 10),
+    instrumentation: { cpuThrottle: rate },
+  });
+  const one = summarize([run(1, 'previous', throttled(6)), run(1, 'patched', throttled(6))]);
+  assert.deepEqual(one.cpuThrottles, [6]);
+  assert.deepEqual(one.problems, []);
+  assert.match(renderTable(one), /CPU throttle \(from the metrics\): 6x/);
+  const mixed = summarize([run(1, 'previous', throttled(4)), run(1, 'patched', throttled(8))]);
+  assert.ok(mixed.problems.some((p) => /different CPU throttles: 4, 8/.test(p)));
+  assert.match(renderTable(summarize([run(1, 'previous', metrics(1, 1))])), /unrecorded/);
+});
+
 test('runs are read in alternating order and tolerate missing files', () => {
   const root = mkdtempSync(join(tmpdir(), 'patch-ab-'));
   try {
@@ -111,6 +161,7 @@ test('runs are read in alternating order and tolerate missing files', () => {
       mkdirSync(join(root, name));
     }
     writeFileSync(join(root, 'pair-1-previous/exit-code'), '1\n');
+    writeFileSync(join(root, 'pair-1-previous/seq'), '2\n');
     writeFileSync(join(root, 'pair-1-previous/metrics.json'), JSON.stringify(metrics(1, 2)));
     writeFileSync(join(root, 'pair-1-previous/installed.json'), JSON.stringify(installed('a')));
     const runs = readRuns(root);
@@ -119,6 +170,8 @@ test('runs are read in alternating order and tolerate missing files', () => {
       ['1-previous', '1-patched', '2-patched'],
     );
     assert.equal(runs[0]!.exitCode, 1);
+    assert.equal(runs[0]!.seq, 2);
+    assert.equal(runs[1]!.seq, null);
     assert.equal(runs[1]!.metrics, null);
     assert.equal(runs[1]!.exitCode, null);
   } finally {
@@ -136,6 +189,12 @@ test('the opt-in workflow stays label-gated, same-repository and read-only', () 
     'utf8',
   );
   assert.match(workflow, /ci-patch-ab/);
+  assert.match(workflow, /"ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x"/);
+  // The label reaches the shell through env and is matched against fixed names only.
+  assert.match(workflow, /LABEL: \$\{\{ github\.event\.label\.name \}\}/);
+  assert.match(workflow, /ci-patch-ab-6x\) rate=6 ;;/);
+  assert.match(workflow, /ci-patch-ab-8x\) rate=8 ;;/);
+  assert.match(workflow, /\*\) rate=4 ;;/);
   assert.match(workflow, /head\.repo\.full_name == github\.repository/);
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /persist-credentials: false/);
@@ -145,4 +204,6 @@ test('the opt-in workflow stays label-gated, same-repository and read-only', () 
   assert.ok(summarize, 'a Summarize step exists');
   assert.match(summarize, /^\s+if: always\(\)$/m);
   assert.match(summarize, /summarize\.ts/);
+  assert.match(summarize, /PAIRS="\$PAIRS"/, 'the expected pair count reaches the summarizer');
+  assert.match(workflow, /echo "\$seq" > "\$run\/seq"/, 'run order is recorded per run');
 });

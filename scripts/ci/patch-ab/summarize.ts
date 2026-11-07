@@ -18,6 +18,8 @@ export interface Run {
   installed: { es: string; cjs: string } | null;
   /** Parsed spn108-metrics.json, or null if the run produced none. */
   metrics: any;
+  /** Position in the job's execution order (1-based), when the workflow recorded it. */
+  seq?: number | null;
 }
 
 export interface Row {
@@ -31,12 +33,18 @@ export interface Row {
   inputP95: number | null;
   sha: string;
   budget: 'pass' | 'fail' | 'n/a';
+  /** Whether this run went first or second within its pair, from the recorded sequence. */
+  order: 'first' | 'second' | '-';
 }
 
 const number = (value: unknown) => (typeof value === 'number' ? value : null);
 
-export function summarize(runs: Run[]) {
+export function summarize(runs: Run[], expectedPairs?: number) {
   const problems: string[] = [];
+  const firstSeq = new Map<number, number>();
+  for (const run of runs)
+    if (typeof run.seq === 'number')
+      firstSeq.set(run.pair, Math.min(firstSeq.get(run.pair) ?? Infinity, run.seq));
   const rows: Row[] = runs.map((run) => {
     const label = `pair-${run.pair}-${run.variant}`;
     const summary = run.metrics?.summary;
@@ -60,6 +68,8 @@ export function summarize(runs: Run[]) {
           : flushP95 <= flushP95Ms && pairedFlushMax <= flushMaxMs
             ? 'pass'
             : 'fail',
+      order:
+        typeof run.seq !== 'number' ? '-' : run.seq === firstSeq.get(run.pair) ? 'first' : 'second',
     };
   });
   // Each variant must be one build, and the two variants must differ.
@@ -75,24 +85,62 @@ export function summarize(runs: Run[]) {
   const [first, second] = [...byVariant.values()];
   if (byVariant.size === 2 && [...first!][0] === [...second!][0])
     problems.push('previous and patched installed the same build');
-  return { budgets: { flushP95Ms, flushMaxMs }, rows, problems };
+  // Per-variant tally. A variant that did not produce metrics for every expected pair
+  // is a harness problem, not a quiet gap in the sample.
+  const tally: Record<string, { runs: number; measured: number; overBudget: number }> = {};
+  for (const row of rows) {
+    const entry = (tally[row.variant] ??= { runs: 0, measured: 0, overBudget: 0 });
+    entry.runs += 1;
+    if (row.budget !== 'n/a') entry.measured += 1;
+    if (row.budget === 'fail') entry.overBudget += 1;
+  }
+  if (expectedPairs !== undefined)
+    for (const variant of ['previous', 'patched'])
+      if ((tally[variant]?.measured ?? 0) !== expectedPairs)
+        problems.push(
+          `${variant}: ${tally[variant]?.measured ?? 0} of ${expectedPairs} expected pairs produced metrics`,
+        );
+  const cpuThrottles = [
+    ...new Set(
+      runs
+        .map((run) => run.metrics?.instrumentation?.cpuThrottle)
+        .filter((value): value is number => typeof value === 'number'),
+    ),
+  ].sort((a, b) => a - b);
+  if (cpuThrottles.length > 1)
+    problems.push(`runs used different CPU throttles: ${cpuThrottles.join(', ')}`);
+  return { budgets: { flushP95Ms, flushMaxMs }, rows, problems, tally, cpuThrottles };
 }
 
 const cell = (value: number | null) => (value === null ? '-' : value.toFixed(1));
 
-export function renderTable({ budgets, rows, problems }: ReturnType<typeof summarize>) {
+export function renderTable({
+  budgets,
+  rows,
+  problems,
+  tally,
+  cpuThrottles,
+}: ReturnType<typeof summarize>) {
   const lines = [
     '## SPN-146 hosted Docs A/B (mobile plain-1)',
     '',
-    `Budget: capacity flush p95 <= ${budgets.flushP95Ms} ms, paired flush max <= ${budgets.flushMaxMs} ms. Times in ms.`,
+    `Budget: capacity flush p95 <= ${budgets.flushP95Ms} ms, paired flush max <= ${budgets.flushMaxMs} ms. Times in ms. CPU throttle (from the metrics): ${cpuThrottles.length ? cpuThrottles.map((rate) => `${rate}x`).join(', ') : 'unrecorded'}.`,
     '',
-    '| variant | pair | flush p95 | flush max | paired flush max | longest task | input p95 | sha | exit | budget |',
-    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
+    '| variant | pair | order | flush p95 | flush max | paired flush max | longest task | input p95 | sha | exit | budget |',
+    '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
     ...rows.map(
       (r) =>
-        `| ${r.variant} | ${r.pair} | ${cell(r.flushP95)} | ${cell(r.flushMax)} | ${cell(r.pairedFlushMax)} | ${cell(r.longestTask)} | ${cell(r.inputP95)} | ${r.sha} | ${r.exitCode ?? '-'} | ${r.budget} |`,
+        `| ${r.variant} | ${r.pair} | ${r.order} | ${cell(r.flushP95)} | ${cell(r.flushMax)} | ${cell(r.pairedFlushMax)} | ${cell(r.longestTask)} | ${cell(r.inputP95)} | ${r.sha} | ${r.exitCode ?? '-'} | ${r.budget} |`,
     ),
   ];
+  lines.push(
+    '',
+    '**Over budget per variant:** ' +
+      (Object.entries(tally)
+        .map(([variant, t]) => `${variant} ${t.overBudget} of ${t.measured}`)
+        .join(', ') || 'no runs') +
+      '. Do not pool these counts with another run or another runner without saying so; the rate is about 1 in 12 and a single run cannot separate the builds.',
+  );
   if (problems.length) lines.push('', '**Harness problems**', '', ...problems.map((p) => `- ${p}`));
   return `${lines.join('\n')}\n`;
 }
@@ -108,6 +156,7 @@ export function readRuns(directory: string): Run[] {
       const metrics = read(join(dir, 'metrics.json'));
       const installed = read(join(dir, 'installed.json'));
       const exitCode = read(join(dir, 'exit-code'));
+      const seq = read(join(dir, 'seq'));
       return [
         {
           variant: match[2]!,
@@ -115,16 +164,22 @@ export function readRuns(directory: string): Run[] {
           exitCode: exitCode === null ? null : Number(exitCode),
           installed: installed && JSON.parse(installed),
           metrics: metrics && JSON.parse(metrics),
+          seq: seq === null ? null : Number(seq),
         },
       ];
     })
-    .sort((a, b) => a.pair - b.pair || (a.variant === 'previous' ? -1 : 1));
+    .sort(
+      (a, b) =>
+        a.pair - b.pair ||
+        (a.seq != null && b.seq != null ? a.seq - b.seq : a.variant === 'previous' ? -1 : 1),
+    );
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [directory, json, markdown] = process.argv.slice(2);
   if (!directory || !json || !markdown) throw new Error('Usage: summarize.ts <runs> <json> <md>');
-  const result = summarize(readRuns(directory));
+  const expectedPairs = process.env.PAIRS ? Number(process.env.PAIRS) : undefined;
+  const result = summarize(readRuns(directory), expectedPairs);
   if (!result.rows.length) result.problems.push('no runs found');
   writeFileSync(json, `${JSON.stringify(result, null, 2)}\n`);
   writeFileSync(markdown, renderTable(result));
