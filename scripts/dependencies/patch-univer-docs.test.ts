@@ -21,9 +21,12 @@
  */
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
 import { gunzipSync } from 'node:zlib';
@@ -36,6 +39,8 @@ import type {
 } from '@univerjs/docs';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { patchInstalledDocs, prepareDocsPatch } from './patch-univer-docs.ts';
+import { observeNativeDocComposition } from '../../src/ui/nativeDocFlushDiagnostic.ts';
+import type { DiagnosticManager } from '../../src/ui/nativeDocFlushDiagnostic.ts';
 import type {
   NativeDocFlushManager,
   NativeDocFlushObservation,
@@ -326,6 +331,43 @@ const insertAt =
   (offset: number, body = keyboardBody()): Request =>
   () =>
     edit(new core.TextX().retain(offset).insert(body.dataStream.length, body));
+
+function paragraphSequence(
+  position: number,
+  length = 32,
+  coverType = core.UpdateDocsAttributeType.COVER,
+  offset = 0,
+  decorate?: (body: core.IDocumentBody, isEnter: boolean) => void,
+) {
+  return sequence(
+    Array.from({ length }, (_, index) => {
+      const body = keyboardBody(index);
+      decorate?.(body, index === position);
+      if (index !== position) return insertAt(offset + index, body);
+      return () =>
+        edit(
+          new core.TextX()
+            .retain(offset + index)
+            .insert(1, {
+              ...body,
+              dataStream: '\r',
+              paragraphs: [
+                { startIndex: 0, paragraphId: `para_insert_${position}`, paragraphStyle: {} },
+              ],
+            })
+            .retain(
+              1,
+              {
+                dataStream: '',
+                textRuns: [{ st: 0, ed: 1, ts: { cl: { rgb: '#123456' } } }],
+              },
+              coverType,
+            ),
+        );
+    }),
+    seed('z'.repeat(offset + 1) + '\r\n'),
+  );
+}
 
 const mixed: Request[] = [
   () =>
@@ -659,6 +701,95 @@ test('sequential style oracle preserves complete attributes and rejects ambiguou
 });
 
 for (const format of ['es', 'cjs'] as const) {
+  test(`${format}: complete module binds native helpers for qualified paragraph flushes`, async () => {
+    if (format === 'cjs' && process.env.SPINEL_DOCS_MODULE_CHILD !== '1') {
+      // CJS Core registers its TextX type in JSONX's shared registry. Keep that
+      // real registration isolated from the ES primitive-work instrumentation.
+      execFileSync(
+        process.execPath,
+        [
+          '--test',
+          '--test-name-pattern=^cjs: complete module binds',
+          'scripts/dependencies/patch-univer-docs.test.ts',
+        ],
+        { env: { ...process.env, SPINEL_DOCS_MODULE_CHILD: '1' }, timeout: 10_000 },
+      );
+      return;
+    }
+    const { patched } = prepareDocsPatch(await readBuild(format), format);
+    const directory = await mkdtemp(resolve('.spinel-docs-module-'));
+    async function load(source: string, name: string) {
+      if (format === 'es') {
+        const path = resolve(directory, `${name}.ts`);
+        await writeFile(path, source);
+        return import(pathToFileURL(path).href);
+      }
+      const module = { exports: {} };
+      Function(
+        'require',
+        'module',
+        'exports',
+        source,
+      )(createRequire(import.meta.url), module, module.exports);
+      return module.exports as Record<string, any>;
+    }
+    function exercise(ManagerClass: any, states: State[]) {
+      const input = new Subject<IDocStateChangeInfo>();
+      const history: Entry[] = [],
+        changes: State[] = [];
+      const manager = new ManagerClass(
+        { pushUndoRedo: (entry: Entry) => history.push(structuredClone(entry)) },
+        { beforeCommandExecuted: () => ({ dispose() {} }) },
+        { getCurrentUnitOfType: () => ({ getUnitId: () => unitId }) },
+        { docStateChangeParams$: input },
+      );
+      const subscription = manager.docStateChange$.subscribe((state: State | null) => {
+        if (state) changes.push(structuredClone(state));
+      });
+      try {
+        manager.setStateCache(
+          unitId,
+          structuredClone({ history: [...states], collaboration: [...states] }),
+        );
+        manager.flushPendingChanges(unitId);
+        assert.deepEqual(manager.getStateCache(unitId), { history: [], collaboration: [] });
+        return { history, changes };
+      } finally {
+        subscription.unsubscribe();
+        manager.dispose();
+        input.complete();
+      }
+    }
+    try {
+      const module = await load(patched, 'complete');
+      for (const position of [3, 4, 23]) {
+        const { states } = paragraphSequence(position);
+        const expected = flush(patched, states);
+        assert.deepEqual(exercise(module.DocStateChangeManagerService, states), {
+          history: expected.history,
+          changes: expected.changes,
+        });
+      }
+      if (format === 'es') {
+        // The isolated manager fixture supplies Core bindings and hid this exact
+        // integration defect in rejected candidate418f8b6f. Execute the full file.
+        const missing = patched.replace(
+          'import { ActionIterator, AlignTypeH,',
+          'import { AlignTypeH,',
+        );
+        assert.notEqual(missing, patched);
+        assert.throws(() => prepareDocsPatch(missing, format), /Partially modified/);
+        const broken = await load(missing, 'missing-iterator');
+        assert.throws(
+          () => exercise(broken.DocStateChangeManagerService, paragraphSequence(4).states),
+          /ActionIterator is not defined/,
+        );
+      }
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   test(`${format}: native publications preserve mixed operations, independent caches and complete metadata`, async () => {
     const { original, patched } = prepareDocsPatch(await readBuild(format), format);
     assert.deepEqual(flush(patched, []), flush(original, []));
@@ -993,7 +1124,9 @@ for (const format of ['es', 'cjs'] as const) {
     }
     assert.deepEqual(outputs[1], outputs[0]);
     assert.equal(work[0].initialization, 0);
-    assert.equal(work[1].initialization, 9);
+    // Three additional Enter-shape lists are initialized once with the nine
+    // existing lists; the regression contract is still zero per-flush lists.
+    assert.equal(work[1].initialization, 12);
     const noRepeatedLists = (counts: (typeof work)[number]) =>
       assert.deepEqual(counts.flushes, [0, 0]);
     noRepeatedLists(work[1]);
@@ -1411,43 +1544,15 @@ for (const format of ['es', 'cjs'] as const) {
   });
 
   test(`${format}: every paragraph position preserves exact native output and reduces eligible prefix work`, async () => {
-    const { original, patched, markerPatched, completeDeletePatched } = prepareDocsPatch(
-      await readBuild(format),
-      format,
-    );
+    const { original, patched, markerPatched, completeDeletePatched, constantGuardPatched } =
+      prepareDocsPatch(await readBuild(format), format);
     for (let position = 0; position < 32; position++) {
-      const scenario = sequence(
-        Array.from({ length: 32 }, (_, index) => {
-          if (index !== position) return insertAt(index, keyboardBody(index));
-          // Native Enter inserts a paragraph and retains the following character's
-          // style. This unsupported state and all following calls stay sequential.
-          return () =>
-            edit(
-              new core.TextX()
-                .retain(index)
-                .insert(1, {
-                  ...keyboardBody(index),
-                  dataStream: '\r',
-                  paragraphs: [
-                    { startIndex: 0, paragraphId: `para_insert_${position}`, paragraphStyle: {} },
-                  ],
-                })
-                .retain(
-                  1,
-                  {
-                    dataStream: '',
-                    textRuns: [{ st: 0, ed: 1, ts: { cl: { rgb: '#123456' } } }],
-                  },
-                  core.UpdateDocsAttributeType.COVER,
-                ),
-            );
-        }),
-        seed('z\r\n'),
-      );
+      const scenario = paragraphSequence(position);
       const native = measuredFlush(original, scenario.states);
       const previous = measuredFlush(markerPatched, scenario.states);
       const candidate = measuredFlush(patched, scenario.states);
       const beforePrefix = measuredFlush(completeDeletePatched, scenario.states);
+      const beforeTail = measuredFlush(constantGuardPatched, scenario.states);
       assertNativePreservation(
         native.output,
         candidate.output,
@@ -1460,6 +1565,16 @@ for (const format of ['es', 'cjs'] as const) {
         'The previous patch uses the complete original mixed fold.',
       );
       assert.deepEqual(candidate.output, beforePrefix.output);
+      assert.deepEqual(candidate.output, beforeTail.output);
+      if (position <= 23) {
+        const reducedTail = (counts: typeof candidate.counts) =>
+          assert.ok(
+            counts.allocations < beforeTail.counts.allocations,
+            'Enter tail work decreases.',
+          );
+        reducedTail(candidate.counts);
+        assert.throws(() => reducedTail(beforeTail.counts), /Enter tail work/);
+      }
       if (position < 30) {
         const reduced = (counts: typeof candidate.counts) =>
           assert.ok(
@@ -1492,6 +1607,815 @@ for (const format of ['es', 'cjs'] as const) {
           historyStart,
         );
       }
+    }
+  });
+
+  test(`${format}: seeded random Enter positions, tail lengths, offsets and covers match the previous build`, async () => {
+    const { patched, qualifiedRangesPatched } = prepareDocsPatch(await readBuild(format), format);
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return Function(
+        'core',
+        `const {${Object.keys(core).join(',')}}=core; const _univerjs_core=core;\n${source.slice(start, end)}\nreturn composeDocStateActions;`,
+      )(core) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
+    };
+    const current = helper(qualifiedRangesPatched),
+      candidate = helper(patched);
+    // mulberry32: a fixed seed keeps the cases reproducible; a failure names its parameters.
+    let state = 0x146a5eed;
+    const random = () => {
+      state = (state + 0x6d2b79f5) | 0;
+      let t = Math.imul(state ^ (state >>> 15), 1 | state);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const between = (low: number, high: number) => low + Math.floor(random() * (high - low + 1));
+    const covers = [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE];
+    let admitted = 0;
+    for (let index = 0; index < 150; index++) {
+      const length = between(2, 48),
+        position = between(0, length - 1),
+        offset = between(0, 20),
+        cover = covers[between(0, 1)]!,
+        equalStyle = random() < 0.5;
+      const scenario = paragraphSequence(position, length, cover, offset, (body) => {
+        if (equalStyle) body.textRuns![0].ts = { bl: 1, cl: { rgb: '#123456' } };
+      });
+      const label = `${format} case ${index}: length ${length}, Enter ${position}, offset ${offset}, cover ${cover}, equalStyle ${equalStyle}`;
+      for (const key of ['redoState', 'undoState'] as const) {
+        const before = current(scenario.states, key),
+          after = candidate(scenario.states, key);
+        assert.deepEqual(after, before, `${label}/${key}`);
+        assert.deepEqual(
+          ownDataShape({ input: scenario.states, output: after }),
+          ownDataShape({ input: scenario.states, output: before }),
+          `${label}/${key}: descriptors, prototypes and alias topology`,
+        );
+      }
+      if (length - position > 5) admitted++;
+    }
+    assert.ok(admitted > 40, `the seeded cases exercise the admitted tail shape (${admitted})`);
+  });
+
+  test(`${format}: linear paragraph ranges preserve raw ownership and reduce repeated native copies`, async () => {
+    const { patched, qualifiedRangesPatched, linearTailPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      // Same realm keeps prototype/descriptor comparisons about native semantics.
+      // Only the complete hash-verified public manager region is evaluated.
+      return Function(
+        'core',
+        `const {${Object.keys(core).join(',')}}=core; const _univerjs_core=core;\n${source.slice(start, end)}\nreturn composeDocStateActions;`,
+      )(core) as (states: State[], key: 'redoState' | 'undoState') => JSONXActions;
+    };
+    const current = helper(qualifiedRangesPatched),
+      candidate = helper(patched);
+    for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
+      for (const offset of [0, 7])
+        for (let position = 0; position < 32; position++) {
+          const scenario = paragraphSequence(position, 32, cover, offset);
+          const label = `${format}/${cover}/${offset}/${position}`;
+          const originalShape = ownDataShape(scenario.states);
+          for (const key of ['redoState', 'undoState'] as const) {
+            const before = current(scenario.states, key),
+              after = candidate(scenario.states, key);
+            assert.deepEqual(after, before, `${label}/${key}: every native field`);
+            assert.deepEqual(
+              ownDataShape({ input: scenario.states, output: after }),
+              ownDataShape({ input: scenario.states, output: before }),
+              `${label}/${key}: descriptors, prototypes and alias topology`,
+            );
+          }
+          assert.deepEqual(ownDataShape(scenario.states), originalShape);
+          const before = measuredFlush(qualifiedRangesPatched, scenario.states);
+          const tailOnly = measuredFlush(linearTailPatched, scenario.states);
+          const after = measuredFlush(patched, scenario.states);
+          assertNativePreservation(before.output, after.output, scenario, label);
+          assert.deepEqual(after.output, tailOnly.output);
+          if (position < 28) {
+            assert.ok(
+              after.counts.allocations < before.counts.allocations,
+              'Admitted native copying falls',
+            );
+            if (position >= 4)
+              for (const counter of [
+                'textCompose',
+                'iteratorNext',
+                'bodySlices',
+                'allocations',
+              ] as const)
+                assert.ok(
+                  after.counts[counter] < tailOnly.counts[counter],
+                  `${label}: isolated prefix ${counter}`,
+                );
+            else
+              assert.deepEqual(
+                after.counts,
+                tailOnly.counts,
+                'Tiny head keeps its original null fold',
+              );
+          } else assert.deepEqual(after.counts, before.counts, 'Short tail is not admitted');
+        }
+    for (const position of [3, 4, 23])
+      for (const repetitions of [0, 1, 3])
+        for (const equalStyle of [false, true]) {
+          const scenario = paragraphSequence(
+            position,
+            32,
+            core.UpdateDocsAttributeType.REPLACE,
+            7,
+            (body, enter) => {
+              if (equalStyle) body.textRuns![0].ts = { bl: 1, cl: { rgb: '#123456' } };
+              if (!enter)
+                for (let index = 0; index < repetitions; index++) {
+                  const normalized = new core.ActionIterator([
+                    { t: core.TextXActionType.INSERT, len: 1, body },
+                  ]).next(1);
+                  assert.ok(normalized.t === core.TextXActionType.INSERT);
+                  for (const key of Object.keys(body)) delete (body as any)[key];
+                  Object.assign(body, normalized.body);
+                }
+            },
+          );
+          const before = current(scenario.states, 'redoState'),
+            after = candidate(scenario.states, 'redoState');
+          assert.deepEqual(after, before);
+          assert.deepEqual(
+            ownDataShape({ input: scenario.states, output: after }),
+            ownDataShape({ input: scenario.states, output: before }),
+          );
+          const originalShape = ownDataShape(scenario.states),
+            expected = structuredClone(after);
+          const edits = (after as any)[1].e;
+          edits.find((edit: any) => edit.t === 'i').body.dataStream = 'changed output';
+          assert.deepEqual(
+            ownDataShape(scenario.states),
+            originalShape,
+            'Output mutation cannot alter inputs',
+          );
+          assert.deepEqual(
+            candidate(scenario.states, 'redoState'),
+            expected,
+            'Independent calls own their result',
+          );
+        }
+  });
+
+  test(`${format}: REPLACE paragraph tails preserve the non-null accumulator and own their result`, async () => {
+    const { patched, constantGuardPatched, original } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        _univerjs_core: core,
+        Object,
+        Array,
+      }) as (states: State[], key: 'redoState') => JSONXActions;
+    };
+    const current = helper(constantGuardPatched),
+      candidate = helper(patched);
+    for (let position = 0; position < 32; position++) {
+      const scenario = paragraphSequence(position, 32, core.UpdateDocsAttributeType.REPLACE, 7);
+      const before = measuredFlush(constantGuardPatched, scenario.states);
+      const after = measuredFlush(patched, scenario.states);
+      assertNativePreservation(
+        flush(original, scenario.states),
+        after.output,
+        scenario,
+        `REPLACE ${position}`,
+      );
+      assert.deepEqual(after.output, before.output);
+      const expected = current(scenario.states, 'redoState');
+      const actual = candidate(scenario.states, 'redoState');
+      assert.deepEqual(
+        actual,
+        expected,
+        'The result from the non-null structural accumulator is raw-equal.',
+      );
+      const prior = structuredClone(scenario.states);
+      const references = new Set<object>();
+      const collect = (value: unknown) => {
+        if (!value || typeof value !== 'object' || references.has(value)) return;
+        references.add(value);
+        for (const child of Object.values(value)) collect(child);
+      };
+      collect(scenario.states);
+      const checkOwned = (value: unknown) => {
+        if (!value || typeof value !== 'object') return;
+        assert.ok(!references.has(value), 'No result object aliases a source state.');
+        assert.equal(
+          Object.getPrototypeOf(value),
+          Array.isArray(value) ? Array.prototype : Object.prototype,
+        );
+        for (const child of Object.values(value)) checkOwned(child);
+      };
+      checkOwned(actual);
+      (actual as any)[1].e[1].body.dataStream = 'mutated output';
+      assert.deepEqual(scenario.states, prior, 'Output mutation leaves all source states intact.');
+      assert.deepEqual(
+        candidate(scenario.states, 'redoState'),
+        expected,
+        'Independent composition retains its own output.',
+      );
+      if (position < 24) assert.ok(after.counts.allocations < before.counts.allocations);
+      if (position === 5 || position === 19)
+        assertNativePreservation(
+          flush(original, scenario.states.slice(7), scenario.states),
+          flush(patched, scenario.states.slice(7), scenario.states),
+          scenario,
+          'REPLACE unequal caches',
+          7,
+        );
+    }
+  });
+
+  test(`${format}: unsupported paragraph bridges retain exact fallback calls and accessor reads`, async () => {
+    const { patched, constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
+    const calls: { left: unknown; right: JSONXActions }[] = [];
+    const json = {
+      compose(left: JSONXActions, right: JSONXActions) {
+        calls.push({ left: ownDataShape(left), right });
+        return core.JSONX.compose(left, right);
+      },
+    };
+    const helper = (source: string) => {
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      return runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        JSONX: json,
+        _univerjs_core: { ...core, JSONX: json },
+        Object,
+        Array,
+      }) as (states: State[], key: 'redoState') => JSONXActions;
+    };
+    const current = helper(constantGuardPatched),
+      candidate = helper(patched);
+    let getterReads = 0;
+    const cases: [string, (states: State[]) => void][] = [
+      [
+        'paragraph identity absent',
+        (states) => {
+          delete (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].paragraphId;
+        },
+      ],
+      [
+        'paragraph attributes',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].paragraphStyle = {
+            spaceAbove: 2,
+          };
+        },
+      ],
+      ...[0, false, '', 'style'].map((value): [string, (states: State[]) => void] => [
+        `primitive paragraph style ${JSON.stringify(value)}`,
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].paragraphStyle = value;
+        },
+      ]),
+      [
+        'unknown paragraph key',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.paragraphs[0].future = undefined;
+        },
+      ],
+      [
+        'unknown body key',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.future = undefined;
+        },
+      ],
+      [
+        'unknown symbol',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body[Symbol('unknown')] = 1;
+        },
+      ],
+      [
+        'wrong structural token',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].body.dataStream = '\n';
+        },
+      ],
+      [
+        'unknown cover mode',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[2].coverType = 3;
+        },
+      ],
+      [
+        'old body absent',
+        (states) => {
+          delete (states[3].redoState.actions as any)[1].e[2].oldBody;
+        },
+      ],
+      [
+        'second Enter',
+        (states) => {
+          states[8].redoState.actions = structuredClone(states[3].redoState.actions);
+        },
+      ],
+      [
+        'unsupported final marker',
+        (states) => {
+          (states.at(-1)!.redoState.actions as any)[1].e[1].body.__textXPreserveParagraphIds =
+            false;
+        },
+      ],
+      [
+        'tail offset gap',
+        (states) => {
+          (states[4].redoState.actions as any)[1].e[0].len++;
+        },
+      ],
+      [
+        'internally contiguous but displaced tail',
+        (states) => {
+          for (const state of states.slice(4)) (state.redoState.actions as any)[1].e[0].len++;
+        },
+      ],
+      [
+        'prepend suffix',
+        (states) => {
+          for (const state of states.slice(4)) (state.redoState.actions as any)[1].e[0].len = 4;
+        },
+      ],
+      [
+        'prefix offset gap',
+        (states) => {
+          (states[1].redoState.actions as any)[1].e[0].len++;
+        },
+      ],
+      [
+        'different unit',
+        (states) => {
+          states[7].unitId = 'different';
+        },
+      ],
+      [
+        'different segment',
+        (states) => {
+          states[7].segmentId = 'different';
+        },
+      ],
+      [
+        'scope accessor',
+        (states) => {
+          Object.defineProperty(states[7], 'segmentId', {
+            configurable: true,
+            enumerable: true,
+            get: () => {
+              getterReads++;
+              return '';
+            },
+          });
+        },
+      ],
+      [
+        'body accessor',
+        (states) => {
+          const action = (states[3].redoState.actions as any)[1].e[1];
+          const body = action.body;
+          Object.defineProperty(action, 'body', {
+            configurable: true,
+            enumerable: true,
+            get: () => {
+              getterReads++;
+              return body;
+            },
+          });
+        },
+      ],
+      [
+        'nonplain prototype',
+        (states) => {
+          Object.setPrototypeOf((states[3].redoState.actions as any)[1].e[1].body, {
+            inherited: 1,
+          });
+        },
+      ],
+      [
+        'generic unsupported boundary',
+        (states) => {
+          (states[3].redoState.actions as any)[1].e[1].t = 'd';
+        },
+      ],
+    ];
+    for (const [name, mutate] of cases) {
+      const states = paragraphSequence(3, 12).states;
+      mutate(states);
+      const shape = ownDataShape(states);
+      const run = (compose: typeof current) => {
+        calls.length = 0;
+        getterReads = 0;
+        let output: unknown, error: unknown;
+        try {
+          output = ownDataShape(compose(states, 'redoState'));
+        } catch (value) {
+          error = String(value);
+        }
+        return { output, error, calls: [...calls], getterReads };
+      };
+      const expected = run(current),
+        actual = run(candidate);
+      assert.deepEqual(
+        actual,
+        expected,
+        `${name}: exact fallback calls, raw result/failure and reads.`,
+      );
+      actual.calls.forEach((call, index) => {
+        if (states.some((state) => state.redoState.actions === expected.calls[index].right))
+          assert.equal(
+            call.right,
+            expected.calls[index].right,
+            `${name}: original right operand identity`,
+          );
+      });
+      assert.deepEqual(ownDataShape(states), shape, `${name}: descriptors and inputs unchanged.`);
+    }
+  });
+
+  test(`${format}: six tail admission guard cases each change the native fold when removed, independent of hash pins`, async () => {
+    // Remove one guard from the generated helper and show that a scenario it must
+    // reject now leaves the native fold. This proves these guards by behavior, so a
+    // regenerated pin could never hide one that stopped doing its job. The offset and
+    // plain-insert checks are proven as a pair. Other conditions (accessors, paragraph
+    // and old-body shapes, markers) are covered by the fallback matrices in "unsupported
+    // paragraph bridges" and "following-retain and old-body variants". The assertion is
+    // on compose calls: without the guard the helper stops reproducing the native fold.
+    const { patched, constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
+    const composeCalls = (source: string, states: State[], key: 'redoState' | 'undoState') => {
+      const calls: JSONXActions[] = [];
+      const json = {
+        compose(left: JSONXActions, right: JSONXActions) {
+          calls.push(right);
+          return core.JSONX.compose(left, right);
+        },
+      };
+      const start = source.indexOf('const DEBOUNCE_DELAY = 300;');
+      const end = source.indexOf('const IDocStateChangeInterceptorService =', start);
+      const compose = runInNewContext(source.slice(start, end) + ';composeDocStateActions;', {
+        ...core,
+        JSONX: json,
+        _univerjs_core: { ...core, JSONX: json },
+        Object,
+        Array,
+      }) as (states: State[], key: string) => JSONXActions;
+      compose(states, key);
+      return calls;
+    };
+    const without = (source: string, text: string, replacement = '') => {
+      assert.ok(source.includes(text), `generated helper contains guard: ${text}`);
+      return source.replace(text, replacement);
+    };
+    const guards: {
+      name: string;
+      mutated: string;
+      key: 'redoState' | 'undoState';
+      states: () => State[];
+      admitted: () => State[];
+    }[] = [
+      {
+        name: 'redo-only key',
+        mutated: without(patched, 'key === "redoState" && '),
+        key: 'undoState',
+        // An undo cache that is otherwise a qualified single-Enter append tail.
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          for (const state of states) state.undoState.actions = state.redoState.actions;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'tail of more than four states',
+        mutated: without(patched, 'states.length - prefix > 4', 'states.length - prefix > 0'),
+        key: 'redoState',
+        states: () => paragraphSequence(28, 32).states,
+        admitted: () => paragraphSequence(27, 32).states,
+      },
+      {
+        // The plain-insert tail check and the offset check each reject what the
+        // other would (the prefix scan also walks offsets; a second Enter's three
+        // edits never match an append offset), so removing either alone changes
+        // nothing. Only the pair keeps exactly one Enter and a contiguous tail.
+        name: 'exactly one native Enter (plain-insert tail and offset checks together)',
+        mutated: without(
+          without(patched, 'if (docInsertPrefixLength(tail, key) !== tail.length) return false;'),
+          'if (currentOffset !== firstOffset + index) return false;',
+        ),
+        key: 'redoState',
+        states: () => {
+          // A second Enter whose offset is correct, so only this guard rejects it.
+          const states = paragraphSequence(3, 12).states;
+          states[8].redoState.actions = paragraphSequence(8, 12).states[8].redoState.actions;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'contiguous tail offsets (same overlapping pair)',
+        mutated: without(
+          without(patched, 'if (docInsertPrefixLength(tail, key) !== tail.length) return false;'),
+          'if (currentOffset !== firstOffset + index) return false;',
+        ),
+        key: 'redoState',
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          (states[4].redoState.actions as any)[1].e[0].len++;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'one unit and segment',
+        mutated: without(
+          patched,
+          'if (state.unitId !== states[0].unitId || state.segmentId !== states[0].segmentId) return false;',
+        ),
+        key: 'redoState',
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          states[7].unitId = 'different';
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+      {
+        name: 'native cover modes only',
+        mutated: without(patched, '(following.coverType !== 0 && following.coverType !== 1) || '),
+        key: 'redoState',
+        states: () => {
+          const states = paragraphSequence(3, 12).states;
+          (states[3].redoState.actions as any)[1].e[2].coverType = 3;
+          return states;
+        },
+        admitted: () => paragraphSequence(3, 12).states,
+      },
+    ];
+    for (const guard of guards) {
+      const rejected = guard.states();
+      const fallback = composeCalls(constantGuardPatched, rejected, guard.key);
+      assert.deepEqual(
+        composeCalls(patched, guard.states(), guard.key),
+        fallback,
+        `${guard.name}: the guard keeps the native fold`,
+      );
+      assert.notDeepEqual(
+        composeCalls(guard.mutated, guard.states(), guard.key),
+        fallback,
+        `${guard.name}: without the guard the scenario leaves the native fold`,
+      );
+      // The same guard still admits the qualified shape, so it is not a blanket reject.
+      assert.notDeepEqual(
+        composeCalls(patched, guard.admitted(), 'redoState'),
+        composeCalls(constantGuardPatched, guard.admitted(), 'redoState'),
+        `${guard.name}: a qualified shape takes the linear path`,
+      );
+    }
+  });
+
+  test(`${format}: admitted paragraph joins preserve absent, undefined and empty metadata`, async () => {
+    const { original, patched, constantGuardPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const cases: [string, (body: any, isEnter: boolean) => void][] = [
+      [
+        'marker absent',
+        (body) => {
+          delete body.__textXPreserveParagraphIds;
+        },
+      ],
+      [
+        'plain runs absent',
+        (body, enter) => {
+          if (!enter) delete body.textRuns;
+        },
+      ],
+      [
+        'plain runs undefined',
+        (body, enter) => {
+          if (!enter) body.textRuns = undefined;
+        },
+      ],
+      [
+        'plain runs empty',
+        (body, enter) => {
+          if (!enter) body.textRuns = [];
+        },
+      ],
+      [
+        'run style absent',
+        (body) => {
+          delete body.textRuns[0].ts;
+        },
+      ],
+      [
+        'run style undefined',
+        (body) => {
+          body.textRuns[0].ts = undefined;
+        },
+      ],
+      [
+        'run style empty',
+        (body) => {
+          body.textRuns[0].ts = {};
+        },
+      ],
+      [
+        'run identity undefined',
+        (body) => {
+          body.textRuns[0].sId = undefined;
+        },
+      ],
+      ...[
+        'paragraphs',
+        'customRanges',
+        'customDecorations',
+        'customBlocks',
+        'sectionBreaks',
+      ].flatMap((field) =>
+        (['absent', 'undefined', 'empty'] as const).map(
+          (mode): [string, (body: any, enter: boolean) => void] => [
+            `${field} ${mode}`,
+            (body, enter) => {
+              if (field === 'paragraphs' && enter) return;
+              if (mode === 'absent') delete body[field];
+              else body[field] = mode === 'undefined' ? undefined : [];
+            },
+          ],
+        ),
+      ),
+    ];
+    for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
+      for (const [name, decorate] of cases) {
+        const scenario = paragraphSequence(4, 16, cover, 5, decorate);
+        const current = measuredFlush(constantGuardPatched, scenario.states, scenario.states, true);
+        const candidate = measuredFlush(patched, scenario.states, scenario.states, true);
+        assertNativePreservation(
+          flush(original, scenario.states),
+          candidate.output,
+          scenario,
+          `${cover}/${name}`,
+        );
+        assert.deepEqual(
+          candidate.output,
+          current.output,
+          `${cover}/${name}: exact current raw metadata`,
+        );
+        assert.ok(
+          candidate.counts.allocations < current.counts.allocations,
+          `${cover}/${name}: admitted join reduces work`,
+        );
+      }
+  });
+
+  test(`${format}: following-retain and old-body variants preserve exact paragraph joins`, async () => {
+    const { original, patched, constantGuardPatched } = prepareDocsPatch(
+      await readBuild(format),
+      format,
+    );
+    const variants: [string, (body: any) => void][] = [
+      [
+        'style absent',
+        (body) => {
+          delete body.textRuns[0].ts;
+        },
+      ],
+      [
+        'style undefined',
+        (body) => {
+          body.textRuns[0].ts = undefined;
+        },
+      ],
+      [
+        'style empty',
+        (body) => {
+          body.textRuns[0].ts = {};
+        },
+      ],
+      [
+        'run identity undefined',
+        (body) => {
+          body.textRuns[0].sId = undefined;
+        },
+      ],
+      [
+        'marker present',
+        (body) => {
+          body.__textXPreserveParagraphIds = true;
+        },
+      ],
+      ...[
+        'paragraphs',
+        'customRanges',
+        'customDecorations',
+        'customBlocks',
+        'sectionBreaks',
+      ].flatMap((field) =>
+        (['absent', 'undefined', 'empty'] as const).map((mode): [string, (body: any) => void] => [
+          `${field} ${mode}`,
+          (body) => {
+            if (mode === 'absent') delete body[field];
+            else body[field] = mode === 'undefined' ? undefined : [];
+          },
+        ]),
+      ),
+    ];
+    for (const cover of [core.UpdateDocsAttributeType.COVER, core.UpdateDocsAttributeType.REPLACE])
+      for (const target of ['body', 'oldBody'])
+        for (const [name, mutate] of [
+          ...variants,
+          ...(target === 'oldBody'
+            ? [
+                [
+                  'old runs empty',
+                  (body: any) => {
+                    body.textRuns = [];
+                  },
+                ] as [string, (body: any) => void],
+              ]
+            : []),
+        ]) {
+          const scenario = paragraphSequence(4, 16, cover, 5);
+          mutate((scenario.states[4].redoState.actions as any)[1].e[2][target]);
+          const native = measuredFlush(original, scenario.states, scenario.states, true);
+          const before = measuredFlush(
+            constantGuardPatched,
+            scenario.states,
+            scenario.states,
+            true,
+          );
+          const after = measuredFlush(patched, scenario.states, scenario.states, true);
+          const context = `${cover}/${target}/${name}`;
+          assert.deepEqual(
+            after.output,
+            native.output,
+            `${context}: upstream raw bridge semantics`,
+          );
+          assert.deepEqual(after.output, before.output, `${context}: current raw bridge semantics`);
+          // These artificial old-body representations use native composition as
+          // the oracle; do not claim they came from an independently authored edit.
+          assert.deepEqual(
+            appliedSnapshots(after.output, scenario),
+            appliedSnapshots(before.output, scenario),
+            `${context}: complete applied snapshots`,
+          );
+          assert.ok(
+            after.counts.allocations < before.counts.allocations,
+            `${context}: admitted join`,
+          );
+        }
+  });
+
+  test(`${format}: diagnostic wrappers preserve actual manager output and native phase ownership`, async () => {
+    const { constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
+    const scenario = paragraphSequence(3);
+    const control = flush(constantGuardPatched, scenario.states);
+    const fixture = managerFixture(constantGuardPatched);
+    const compose = core.JSONX.compose;
+    const diagnostic = observeNativeDocComposition(
+      fixture.manager as unknown as DiagnosticManager,
+      core.JSONX,
+      unitId,
+    );
+    try {
+      fixture.manager.setStateCache(unitId, {
+        history: [...scenario.states],
+        collaboration: [...scenario.states],
+      });
+      fixture.manager.flushPendingChanges(unitId);
+      const report = diagnostic.finish();
+      assert.equal(report.restored, true);
+      assert.equal(report.dropped, 0);
+      assert.equal(report.states, 64);
+      assert.deepEqual(
+        report.captures.map((value) => value.phase),
+        ['history', 'collaboration'],
+      );
+      assert.deepEqual(
+        report.captures.map((value) => decodeCapture(value.cache)),
+        [scenario.states, scenario.states],
+      );
+      assert.ok(report.calls.length > 0);
+      assert.deepEqual(
+        { history: fixture.history, changes: fixture.changes, publication: fixture.publication },
+        control,
+      );
+      assert.equal(core.JSONX.compose, compose);
+    } finally {
+      diagnostic.finish();
+      fixture.close();
     }
   });
 
@@ -1530,6 +2454,10 @@ for (const format of ['es', 'cjs'] as const) {
       prefixPatched,
       completeDeletePatched,
       deletePrefixPatched,
+      constantGuardPatched,
+      paragraphTailPatched,
+      qualifiedRangesPatched,
+      linearTailPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
       es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
@@ -1554,6 +2482,24 @@ for (const format of ['es', 'cjs'] as const) {
       }[format],
     );
     assert.equal(prepareDocsPatch(deletePrefixPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(constantGuardPatched).digest('hex'),
+      {
+        es: '57ec2ee153792c73e466a753d2e5c9ed1cd19615bb45a04fbe72c9336a6ad2b8',
+        cjs: '941110089ab9110c90383b5d343c912d38770b416234e25dfa4b7c2a7bfd8ce5',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(constantGuardPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(paragraphTailPatched).digest('hex'),
+      {
+        es: '535ff692c3fd37ba10bdcc614720b8d848827c988f75fbbf9109ebf90d8d68c7',
+        cjs: 'bad73b55afd6b345dc20f78b5f60e799abf8b1a62585ef488bbb8d0c6b2033b7',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(paragraphTailPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(paragraphTailPatched + '\n// unknown edit', format));
+    assert.throws(() => prepareDocsPatch(constantGuardPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(deletePrefixPatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(completeDeletePatched + '\n// unknown edit', format));
     assert.throws(() => prepareDocsPatch(prefixPatched + '\n// unknown edit', format));
@@ -1567,6 +2513,27 @@ for (const format of ['es', 'cjs'] as const) {
     }[format];
     assert.equal(createHash('sha256').update(previousPatched).digest('hex'), previousHash);
     assert.equal(prepareDocsPatch(previousPatched, format).patched, patched);
+    assert.equal(
+      createHash('sha256').update(qualifiedRangesPatched).digest('hex'),
+      {
+        es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
+        cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+      }[format],
+    );
+    assert.equal(prepareDocsPatch(qualifiedRangesPatched, format).patched, patched);
+    assert.throws(() => prepareDocsPatch(qualifiedRangesPatched + '\n// unknown edit', format));
+    assert.throws(
+      () => prepareDocsPatch(linearTailPatched, format),
+      /Unrecognized/,
+      'Unpublished intermediate is not an accepted installed build',
+    );
+    assert.equal(
+      createHash('sha256').update(patched).digest('hex'),
+      {
+        es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
+        cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+      }[format],
+    );
     assert.equal(prepareDocsPatch(patched, format).patched, patched);
     assert.throws(() => prepareDocsPatch(original + '\n// unknown edit', format), /Unrecognized/);
     assert.throws(
@@ -1693,7 +2660,11 @@ test('Docs installer validates package identity and both complete builds before 
       await readFile(resolve(directory, 'lib', format, 'index.js'), 'utf8'),
       prepareDocsPatch(originals[format], format).patched,
     );
-  for (const previous of ['completeDeletePatched', 'deletePrefixPatched'] as const) {
+  for (const previous of [
+    'completeDeletePatched',
+    'deletePrefixPatched',
+    'paragraphTailPatched',
+  ] as const) {
     // Existing installs upgrade exact complete prior patches, atomically with
     // respect to validation of both formats, just like fresh upstream installs.
     for (const format of ['es', 'cjs'] as const)

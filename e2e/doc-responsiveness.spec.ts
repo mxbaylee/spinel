@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { arch, cpus, platform, release, totalmem } from 'node:os';
 import { expect, test } from '@playwright/test';
-import type { Page, TestInfo } from '@playwright/test';
+import type { CDPSession, Page, TestInfo } from '@playwright/test';
 import {
   compositionCpu,
   DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT,
@@ -33,6 +33,32 @@ import type {
 } from './doc-responsiveness.ts';
 import { registerDocResponsivenessBoundaries } from './doc-responsiveness-boundaries.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
+import { startNativeDiagnosticTrace } from './doc-responsiveness-native-trace.ts';
+import {
+  nativeWindowInput,
+  validateNativeWindowBoundary,
+} from './doc-responsiveness-native-window.ts';
+import { observeNativeWindowSources } from './doc-responsiveness-native-sources.ts';
+import {
+  callbackProgress,
+  runOwnedObservation,
+  persistCallbackManifest,
+  settleCallbackObservation,
+} from './doc-responsiveness-callback-progress.ts';
+import type { CallbackObservation } from './doc-responsiveness-callback-progress.ts';
+
+/**
+ * Mobile CPU throttle: 4 unless SPN146_AB_CPU_THROTTLE (the opt-in patch A/B only) asks for a
+ * heavier one, so the rare flush tail is easier to provoke on a fast runner. Required CI never sets it.
+ */
+const cpuThrottleRate = (mobile: boolean) => {
+  if (!mobile) return 1;
+  const raw = process.env.SPN146_AB_CPU_THROTTLE;
+  if (raw === undefined || raw === '') return 4;
+  const rate = Number(raw);
+  if (!Number.isFinite(rate) || rate < 1) throw new Error(`Invalid SPN146_AB_CPU_THROTTLE ${raw}.`);
+  return rate;
+};
 
 // Recorded before the production fix. These are responsiveness budgets for this
 // fixed workload/runtime, not physical-device, INP, or arbitrary-document claims.
@@ -46,10 +72,27 @@ const paragraphs = Array.from(
 const expectedText = paragraphs.join('\r') + '\r\n';
 const expectedInputCount = paragraphs.reduce((sum, paragraph) => sum + paragraph.length, 0) + 15;
 const baseline = process.env.SPN108_BASELINE === '1';
+const nativeDiagnostic = process.env.SPN146_DIAGNOSTIC === '1';
 // Every scheduled sample is retained. CPU profiling has its own samples so its
 // overhead never contaminates the primary frame-latency measurements.
 test.use({ trace: 'off', screenshot: 'only-on-failure' });
 test.describe.configure({ retries: 0, mode: 'default' });
+const diagnosticObservations = new Map<TestInfo, CallbackObservation>();
+// Separate teardown settlement runs even when Playwright interrupts the300s body.
+// oxlint-disable-next-line no-empty-pattern
+test.afterEach(async ({}, info) => {
+  const observation = diagnosticObservations.get(info);
+  if (!observation) return;
+  try {
+    if (info.status !== 'passed') info.setTimeout(30_000);
+    await settleCallbackObservation(observation, info.status ?? 'unknown');
+  } finally {
+    observation.detach();
+    diagnosticObservations.delete(info);
+  }
+  if (info.status === 'passed' && observation.progress.persistenceFailure)
+    throw new Error('Native diagnostic progress evidence could not be persisted.');
+});
 
 async function retainProfile(
   profile: CpuProfile,
@@ -322,437 +365,808 @@ for (const preset of ['desktop', 'mobile'] as const)
       // native stall. Preserve that workload and allow collection to finish;
       // candidate case limits and all responsiveness budgets stay unchanged.
       test.setTimeout(baseline ? 600_000 : 300_000);
-      const mobile = preset === 'mobile',
-        profiled = sample === 'profile';
-      const f = await fixture(browser, baseURL!, info, mobile);
-      const cdp = await f.page.context().newCDPSession(f.page);
-      let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
-      let profiling = false;
-      let profilerClock: ProfilerClockBracket | undefined;
-      let reloadObservers: ReloadObservers | undefined;
-      let clockOrigins: ClockOrigins | undefined;
-      const drainDiagnostics: DocDrainDiagnostics = {
-        nodeTimeOrigin: performance.timeOrigin,
-        polls: [],
-        firstEmpty: null,
+      const controller = new AbortController();
+      const progress = nativeDiagnostic
+        ? callbackProgress(info.outputPath('spn146-progress.json'))
+        : undefined;
+      let ownedFixture: Awaited<ReturnType<typeof fixture>> | undefined,
+        ownedSession: CDPSession | undefined;
+      let primaryDiagnosticFailure: unknown;
+      let detached: Promise<void> | undefined, closed: Promise<void> | undefined;
+      const detachSession = () => {
+        if (!ownedSession) return Promise.resolve();
+        return (detached ??= Promise.resolve().then(() => {
+          progress?.phase('cdp-detach');
+          return ownedSession!.detach();
+        }));
       };
-      const evidence: Record<string, unknown> = {
-        schema: DOC_RESPONSIVENESS_SCHEMA,
-        role: baseline ? 'baseline-observation' : 'candidate',
-        budgetEnforced: !baseline && !profiled,
-        preset,
-        sample,
-        attempt: info.retry,
-        caseObservationTimeoutMs: baseline ? 600_000 : 300_000,
-        nativeDrainObservationTimeoutMs: baseline ? 120_000 : 30_000,
-        drainDiagnostics,
-        source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
-        dirtyPaths: execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
-        harnessSha256: Object.fromEntries(
-          await Promise.all(
-            [
-              'e2e/doc-responsiveness.ts',
-              'e2e/doc-responsiveness.spec.ts',
-              'e2e/doc-responsiveness-fixture.ts',
-              'e2e/doc-responsiveness-boundaries.ts',
-              'web/docResponsivenessEvidence.ts',
-              'src/ui/docIdleEpisode.ts',
-              'src/ui/nativeDocFlush.ts',
-              'playwright.config.ts',
-              'package-lock.json',
-            ].map(async (path) => [
-              path,
-              createHash('sha256')
-                .update(await readFile(path))
-                .digest('hex'),
-            ]),
-          ),
-        ),
-        browser: browser.version(),
-        playwright: JSON.parse(await readFile('node_modules/@playwright/test/package.json', 'utf8'))
-          .version,
-        runtime: process.version,
-        system: {
-          platform: platform(),
-          architecture: arch(),
-          release: release(),
-          cpu: cpus()[0]?.model,
-          cpus: cpus().length,
-          totalmem: totalmem(),
-        },
-        runner: {
-          name: process.env.RUNNER_NAME ?? 'local',
-          os: process.env.RUNNER_OS ?? platform(),
-          arch: process.env.RUNNER_ARCH ?? arch(),
-          run: process.env.GITHUB_RUN_ID ?? null,
-          attempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
-        },
-        fixture: {
-          paragraphs: 16,
-          typedCharacters: paragraphs.reduce((sum, paragraph) => sum + paragraph.length, 0),
-          enterKeys: 15,
-          nativeTextLength: expectedText.length,
-          sha256: createHash('sha256').update(expectedText).digest('hex'),
-          input: 'keyboard.type, zero requested delay; Enter between all sixteen paragraphs',
-        },
-        instrumentation: {
-          profiler: profiled,
-          cpuThrottle: mobile ? 4 : 1,
-          longTaskObserver: true,
-          perKeyRequestAnimationFrame: true,
-          playwrightTrace: false,
-          perMutationSnapshot: false,
-          physicalDevice: false,
-          nativeDrainWitness: 'browser-local-events-microtask',
-        },
-        budgets: budgets[preset],
+      const closeFixture = () => {
+        if (!ownedFixture) return Promise.resolve();
+        return (closed ??= Promise.resolve()
+          .then(() => {
+            progress?.cleanup();
+            return ownedFixture!.close();
+          })
+          .then(() => {
+            progress?.phase('fixture-cleanup-complete');
+          }));
       };
-      try {
-        evidence.cgroupLimit = (
-          await readFile('/sys/fs/cgroup/memory.max', 'utf8').catch(() => 'unavailable')
-        ).trim();
-        await Promise.all([
-          f.page.goto(`/?item=${f.item.id}`),
-          f.other.goto(`/?item=${f.item.id}`),
-        ]);
-        const [senderReloads, peerReloads] = await Promise.all([
-          observeDocReloads(f.page),
-          observeDocReloads(f.other),
-        ]);
-        reloadObservers = { sender: senderReloads, peer: peerReloads };
-        const installed = await readReloads(reloadObservers);
-        completeReloadObservation(installed);
-        expect(installed.reloads).toEqual([]);
-        evidence.reloadObservers = installed.status;
-        clockOrigins = installed.origins;
-        await Promise.all([saved(f.page), saved(f.other), online(f.page), online(f.other)]);
-        await focusEmptyDoc(f.other, mobile);
-        await f.page.bringToFront();
-        await focusEmptyDoc(f.page, mobile);
-        const initialNative = (await readDocResponsiveness(f.page))!;
-        expect(initialNative.mobile).toBe(mobile);
-        expect(
-          await f.page.evaluate(
-            () => matchMedia('(pointer: coarse) and (max-width: 900px)').matches,
+      const observation: CallbackObservation | undefined = progress
+        ? {
+            progress,
+            detach: () => {},
+            abort: () =>
+              controller.abort(new Error(`Native diagnostic ${info.status ?? 'interrupted'}.`)),
+            interrupt: () => Promise.allSettled([detachSession(), closeFixture()]),
+          }
+        : undefined;
+      if (observation) diagnosticObservations.set(info, observation);
+      const execute = async () => {
+        const mobile = preset === 'mobile',
+          profiled = sample === 'profile';
+        if (nativeDiagnostic && (!mobile || !profiled || baseline))
+          throw new Error('Native diagnostic requires exactly the mobile profile case.');
+        const f = await fixture(
+          browser,
+          baseURL!,
+          info,
+          mobile,
+          nativeDiagnostic ? controller.signal : undefined,
+        );
+        ownedFixture = f;
+        if (observation) {
+          const crash = () => progress!.lifecycle('page-crash');
+          const pageClose = () => progress!.lifecycle('page-close');
+          const contextClose = () => progress!.lifecycle('context-close');
+          const disconnected = () => progress!.lifecycle('browser-disconnected');
+          for (const page of [f.page, f.other]) {
+            page.on('crash', crash);
+            page.on('close', pageClose);
+          }
+          for (const context of [f.first, f.second]) context.on('close', contextClose);
+          browser.on('disconnected', disconnected);
+          observation.detach = () => {
+            for (const page of [f.page, f.other]) {
+              page.off('crash', crash);
+              page.off('close', pageClose);
+            }
+            for (const context of [f.first, f.second]) context.off('close', contextClose);
+            browser.off('disconnected', disconnected);
+          };
+        }
+        const cdp = await f.page.context().newCDPSession(f.page);
+        ownedSession = cdp;
+        controller.signal.throwIfAborted();
+        let finishInput: Awaited<ReturnType<typeof observeInput>> | undefined;
+        let profiling = false;
+        let profilerClock: ProfilerClockBracket | undefined;
+        let diagnosticTrace: Awaited<ReturnType<typeof startNativeDiagnosticTrace>> | undefined;
+        let diagnosticFinished = false;
+        let diagnosticCleanupFailure: unknown;
+        const nativeCapture = (action: 'start' | 'snapshot' | 'finish') =>
+          f.page.evaluate((action) => {
+            let value: any = null;
+            const listener = (event: Event) => {
+              value = (event as CustomEvent).detail;
+            };
+            window.addEventListener('spinel-doc-native-diagnostic-evidence', listener);
+            try {
+              window.dispatchEvent(
+                new CustomEvent('spinel-doc-native-diagnostic', { detail: { action } }),
+              );
+            } finally {
+              window.removeEventListener('spinel-doc-native-diagnostic-evidence', listener);
+            }
+            return value;
+          }, action);
+        let reloadObservers: ReloadObservers | undefined;
+        let loadedSources: Awaited<ReturnType<typeof observeNativeWindowSources>> | undefined;
+        let compositionObserver: Awaited<ReturnType<Page['evaluateHandle']>> | undefined;
+        let clockOrigins: ClockOrigins | undefined;
+        const drainDiagnostics: DocDrainDiagnostics = {
+          nodeTimeOrigin: performance.timeOrigin,
+          polls: [],
+          firstEmpty: null,
+        };
+        const evidence: Record<string, unknown> = {
+          schema: DOC_RESPONSIVENESS_SCHEMA,
+          role: nativeDiagnostic
+            ? 'diagnostic-prior-native'
+            : baseline
+              ? 'baseline-observation'
+              : 'candidate',
+          budgetEnforced: !baseline && !profiled,
+          preset,
+          sample,
+          attempt: info.retry,
+          caseObservationTimeoutMs: baseline ? 600_000 : 300_000,
+          nativeDrainObservationTimeoutMs: baseline ? 120_000 : 30_000,
+          drainDiagnostics,
+          source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+          dirtyPaths: execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(),
+          harnessSha256: Object.fromEntries(
+            await Promise.all(
+              [
+                'e2e/doc-responsiveness.ts',
+                'e2e/doc-responsiveness.spec.ts',
+                'e2e/doc-responsiveness-fixture.ts',
+                'e2e/doc-responsiveness-boundaries.ts',
+                'e2e/doc-responsiveness-native-trace.ts',
+                'e2e/doc-responsiveness-native-window.ts',
+                'e2e/doc-responsiveness-native-sources.ts',
+                'e2e/doc-responsiveness-callback-trace.ts',
+                'e2e/doc-responsiveness-callback-progress.ts',
+                'web/docResponsivenessEvidence.ts',
+                'src/ui/docIdleEpisode.ts',
+                'src/ui/nativeDocFlush.ts',
+                'src/ui/nativeDocFlushDiagnostic.ts',
+                'playwright.config.ts',
+                'package-lock.json',
+              ].map(async (path) => [
+                path,
+                createHash('sha256')
+                  .update(await readFile(path))
+                  .digest('hex'),
+              ]),
+            ),
           ),
-        ).toBe(mobile);
-        evidence.browserEnvironment = {
-          configured: {
-            viewport: f.page.viewportSize(),
-            isMobile: mobile,
-            hasTouch: mobile,
-            deviceScaleFactor: 1,
+          browser: browser.version(),
+          playwright: JSON.parse(
+            await readFile('node_modules/@playwright/test/package.json', 'utf8'),
+          ).version,
+          runtime: process.version,
+          system: {
+            platform: platform(),
+            architecture: arch(),
+            release: release(),
+            cpu: cpus()[0]?.model,
+            cpus: cpus().length,
+            totalmem: totalmem(),
           },
-          observed: await f.page.evaluate(() => ({
-            viewport: { width: innerWidth, height: innerHeight },
-            screen: { width: screen.width, height: screen.height },
-            devicePixelRatio,
-            coarsePointer: matchMedia('(pointer: coarse)').matches,
-            touchEvent: 'ontouchstart' in window,
-            maxTouchPoints: navigator.maxTouchPoints,
-            userAgent: navigator.userAgent,
-          })),
+          runner: {
+            name: process.env.RUNNER_NAME ?? 'local',
+            os: process.env.RUNNER_OS ?? platform(),
+            arch: process.env.RUNNER_ARCH ?? arch(),
+            run: process.env.GITHUB_RUN_ID ?? null,
+            attempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
+          },
+          fixture: {
+            paragraphs: 16,
+            typedCharacters: paragraphs.reduce((sum, paragraph) => sum + paragraph.length, 0),
+            enterKeys: 15,
+            nativeTextLength: expectedText.length,
+            sha256: createHash('sha256').update(expectedText).digest('hex'),
+            input: 'keyboard.type, zero requested delay; Enter between all sixteen paragraphs',
+          },
+          instrumentation: {
+            profiler: profiled,
+            cpuThrottle: cpuThrottleRate(mobile),
+            longTaskObserver: true,
+            perKeyRequestAnimationFrame: true,
+            playwrightTrace: false,
+            perMutationSnapshot: false,
+            physicalDevice: false,
+            nativeDrainWitness: 'browser-local-events-microtask',
+          },
+          budgets: budgets[preset],
         };
-        await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
-        evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
-        if (profiled) {
-          await cdp.send('Profiler.enable');
-          await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
-          const beforeMs = await f.page.evaluate(() => performance.now());
-          await cdp.send('Profiler.start');
-          profiling = true;
-          const afterMs = await f.page.evaluate(() => performance.now());
-          profilerClock = { beforeMs, afterMs };
-          evidence.profilerStartBracket = profilerClock;
-        }
-        const armedNative = await readDocResponsiveness(f.page, false, {
-          action: 'arm',
-          epoch: randomUUID(),
-          unitId: initialNative.unitId,
-          timeOrigin: clockOrigins.sender,
-          expectedCompletedStates: expectedInputCount,
-        });
-        const drainArm = armedNative?.drainWitness;
-        evidence.drainArm = drainArm;
-        expect(drainArm).toBeTruthy();
-        expect(drainArm!.invalidated).toBe(false);
-        expect(drainArm!.invalidations).toEqual([]);
-        expect(drainArm!.completedStates).toBe(0);
-        expect(drainArm!.initial.pending).toEqual({ history: 0, collaboration: 0 });
-        expect(drainArm!.initial.history).toEqual({ undos: 0, redos: 0 });
-        expect(drainArm!.firstEmpty).toBeNull();
-        finishInput = await observeInput(f.page);
-        const typingStarted = performance.now();
-        for (const [index, paragraph] of paragraphs.entries()) {
-          if (index > 0) await f.page.keyboard.press('Enter');
-          // This is the retained SPN-072 reproducer. Never use insertText here.
-          await f.page.keyboard.type(paragraph);
-        }
-        evidence.typingWallMs = performance.now() - typingStarted;
-        const drainStarted = performance.now();
-        await expect
-          .poll(
-            async () => {
-              const requestAt = performance.now();
-              let snapshot: DocResponsivenessEvidence | null = null;
-              try {
-                snapshot = await readDocResponsiveness(f.page);
-                return snapshot?.pending;
-              } finally {
-                const poll = {
-                  index: drainDiagnostics.polls.length,
-                  requestAt,
-                  returnedAt: performance.now(),
-                  snapshot: snapshot
-                    ? {
-                        unitId: snapshot.unitId,
-                        observedAt: snapshot.observedAt,
-                        pending: snapshot.pending,
-                        highWater: snapshot.highWater,
-                        history: snapshot.history,
-                      }
-                    : null,
-                };
-                drainDiagnostics.polls.push(poll);
-                if (
-                  !drainDiagnostics.firstEmpty &&
-                  snapshot?.pending.history === 0 &&
-                  snapshot.pending.collaboration === 0
-                )
-                  drainDiagnostics.firstEmpty = poll;
+        if (observation)
+          observation.rejectManifest = async () => {
+            evidence.completed = false;
+            evidence.nativeDiagnosticInterrupted = String(controller.signal.reason);
+            await persistCallbackManifest(
+              info.outputPath('spn108-metrics.json'),
+              evidence,
+              evidence.primaryFailure,
+            );
+            if (evidence.manifestPersistenceError) progress!.failed('manifest-persistence');
+          };
+        try {
+          evidence.cgroupLimit = (
+            await readFile('/sys/fs/cgroup/memory.max', 'utf8').catch(() => 'unavailable')
+          ).trim();
+          if (nativeDiagnostic)
+            loadedSources = await observeNativeWindowSources(cdp, new URL(baseURL!).origin);
+          await Promise.all([
+            f.page.goto(`/?item=${f.item.id}`),
+            f.other.goto(`/?item=${f.item.id}`),
+          ]);
+          const [senderReloads, peerReloads] = await Promise.all([
+            observeDocReloads(f.page),
+            observeDocReloads(f.other),
+          ]);
+          reloadObservers = { sender: senderReloads, peer: peerReloads };
+          const installed = await readReloads(reloadObservers);
+          completeReloadObservation(installed);
+          expect(installed.reloads).toEqual([]);
+          evidence.reloadObservers = installed.status;
+          clockOrigins = installed.origins;
+          await Promise.all([saved(f.page), saved(f.other), online(f.page), online(f.other)]);
+          await focusEmptyDoc(f.other, mobile);
+          await f.page.bringToFront();
+          await focusEmptyDoc(f.page, mobile);
+          const initialNative = (await readDocResponsiveness(f.page))!;
+          expect(initialNative.mobile).toBe(mobile);
+          expect(
+            await f.page.evaluate(
+              () => matchMedia('(pointer: coarse) and (max-width: 900px)').matches,
+            ),
+          ).toBe(mobile);
+          evidence.browserEnvironment = {
+            configured: {
+              viewport: f.page.viewportSize(),
+              isMobile: mobile,
+              hasTouch: mobile,
+              deviceScaleFactor: 1,
+            },
+            observed: await f.page.evaluate(() => ({
+              viewport: { width: innerWidth, height: innerHeight },
+              screen: { width: screen.width, height: screen.height },
+              devicePixelRatio,
+              coarsePointer: matchMedia('(pointer: coarse)').matches,
+              touchEvent: 'ontouchstart' in window,
+              maxTouchPoints: navigator.maxTouchPoints,
+              userAgent: navigator.userAgent,
+            })),
+          };
+          await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottleRate(mobile) });
+          evidence.heapBefore = await cdp.send('Runtime.getHeapUsage');
+          if (nativeDiagnostic) {
+            evidence.nativeDiagnosticBuild = JSON.parse(
+              await readFile('spn146-diagnostic-build.json', 'utf8'),
+            );
+            const build = evidence.nativeDiagnosticBuild as any;
+            expect(build.role).toBe('prior-native');
+            expect(build.source).toBe(evidence.source);
+            const sourcePreparation = JSON.parse(
+              await readFile('spn146-source-preparation.json', 'utf8'),
+            );
+            expect(sourcePreparation.source).toBe(build.source);
+            expect(sourcePreparation.tree).toBe(build.tree);
+            expect(sourcePreparation.eventBefore).toBe(build.eventBefore);
+            evidence.nativeSourcePreparation = sourcePreparation;
+            progress!.phase('loaded-source-retention');
+            evidence.nativeLoadedSources = await loadedSources!.retain(
+              info.outputPath('spn146-loaded-sources'),
+              {
+                'node_modules/@univerjs/docs/lib/es/index.js': build.builds.find(
+                  (x: any) => x.format === 'es',
+                ).priorSha256,
+                'node_modules/@univerjs/core/lib/es/index.js':
+                  build.sources['node_modules/@univerjs/core/lib/es/index.js'],
+              },
+              sourcePreparation,
+            );
+            await loadedSources!.dispose();
+            loadedSources = undefined;
+            evidence.nativeDiagnosticStart = await nativeCapture('start');
+            expect((evidence.nativeDiagnosticStart as any)?.started).toBe(true);
+            compositionObserver = await f.page.evaluateHandle(() => {
+              let active = false,
+                starts = 0,
+                ends = 0;
+              const start = () => {
+                active = true;
+                starts++;
+              };
+              const end = () => {
+                active = false;
+                ends++;
+              };
+              window.addEventListener('compositionstart', start, true);
+              window.addEventListener('compositionend', end, true);
+              return {
+                read: () => ({ active, starts, ends }),
+                dispose() {
+                  window.removeEventListener('compositionstart', start, true);
+                  window.removeEventListener('compositionend', end, true);
+                },
+              };
+            });
+          }
+          const startProfiler = async () => {
+            await cdp.send('Profiler.enable');
+            await cdp.send('Profiler.setSamplingInterval', { interval: 1000 });
+            const beforeMs = await f.page.evaluate(() => performance.now());
+            await cdp.send('Profiler.start');
+            profiling = true;
+            const afterMs = await f.page.evaluate(() => performance.now());
+            profilerClock = { beforeMs, afterMs };
+            evidence.profilerStartBracket = profilerClock;
+          };
+          if (profiled && !nativeDiagnostic) await startProfiler();
+          const armedNative = await readDocResponsiveness(f.page, false, {
+            action: 'arm',
+            epoch: randomUUID(),
+            unitId: initialNative.unitId,
+            timeOrigin: clockOrigins.sender,
+            expectedCompletedStates: expectedInputCount,
+          });
+          const drainArm = armedNative?.drainWitness;
+          evidence.drainArm = drainArm;
+          expect(drainArm).toBeTruthy();
+          expect(drainArm!.invalidated).toBe(false);
+          expect(drainArm!.invalidations).toEqual([]);
+          expect(drainArm!.completedStates).toBe(0);
+          expect(drainArm!.initial.pending).toEqual({ history: 0, collaboration: 0 });
+          expect(drainArm!.initial.history).toEqual({ undos: 0, redos: 0 });
+          expect(drainArm!.firstEmpty).toBeNull();
+          finishInput = await observeInput(f.page);
+          progress?.phase('typing');
+          const typingStarted = performance.now();
+          if (nativeDiagnostic) {
+            const window: any = {
+              complete: false,
+              start: 384,
+              end: 448,
+              boundaries: [],
+              marks: [],
+              source: evidence.source,
+              timingAcceptance: false,
+              continuationPerturbedByGC: true,
+            };
+            evidence.nativeWindow = window;
+            const persistWindow = async () => {
+              const failure = await persistCallbackManifest(
+                info.outputPath('spn146-window.json'),
+                window,
+                primaryDiagnosticFailure,
+              );
+              if (failure) throw failure;
+            };
+            const boundary = async (completed: 384 | 448, phase: string) => {
+              progress!.phase(phase);
+              const native = await readDocResponsiveness(f.page);
+              const capture = await nativeCapture('snapshot');
+              const composition = await compositionObserver!.evaluate((value: any) => value.read());
+              window.boundaries.push({ phase, completed, native, capture, composition });
+              await persistWindow();
+              expect(native).not.toBeNull();
+              validateNativeWindowBoundary(native!, capture, drainArm!, completed, composition);
+            };
+            const mark = async (name: string) => {
+              const value = await f.page.evaluate(
+                (name) => ({
+                  name,
+                  time: performance.mark(name).startTime,
+                  timeOrigin: performance.timeOrigin,
+                }),
+                name,
+              );
+              window.marks.push(value);
+              return value;
+            };
+            window.input = nativeWindowInput(paragraphs);
+            await persistWindow();
+            for (const entry of window.input) {
+              controller.signal.throwIfAborted();
+              if (entry.action === 'enter') await f.page.keyboard.press('Enter');
+              else await f.page.keyboard.type(entry.text);
+              if (entry.completed === 384) {
+                await boundary(384, 'window-before-start');
+                progress!.phase('window-trace-start');
+                diagnosticTrace = await startNativeDiagnosticTrace(
+                  cdp,
+                  info.outputPath('spn146-runtime-trace.pftrace.gz'),
+                  progress!,
+                  { signal: controller.signal, interrupt: detachSession },
+                );
+                progress!.phase('window-profile-start');
+                await startProfiler();
+                await boundary(384, 'window-after-start');
+                await mark('spn146-window-start');
+              } else if (entry.completed === 448) {
+                await boundary(448, 'window-before-stop');
+                await mark('spn146-window-end');
+                progress!.phase('window-profile-stop');
+                const beforeMs = await now(f.page);
+                const { profile } = await cdp.send('Profiler.stop');
+                profiling = false;
+                window.profilerStopBracket = { beforeMs, afterMs: await now(f.page) };
+                evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
+                window.profileSha256 = evidence.profileSha256;
+                window.profilerStartBracket = profilerClock;
+                await boundary(448, 'window-before-gc');
+                progress!.phase('window-gc-control');
+                await mark('spn146-window-gc-start');
+                await cdp.send('HeapProfiler.collectGarbage');
+                await mark('spn146-window-gc-end');
+                await boundary(448, 'window-after-gc');
+                await persistWindow();
+                progress!.phase('window-trace-finish');
+                evidence.nativeDiagnosticTrace = await diagnosticTrace!.finish();
+                window.traceComplete = true;
+                await persistWindow();
+                progress!.phase('window-continuation');
               }
-            },
-            {
-              // A 4×-throttled observation of the existing 14.857 s pair may
-              // exceed 30 s. Only baseline collection has this wider window;
-              // candidate acceptance remains the separate <=1,000 ms drain gate.
-              timeout: baseline ? 120_000 : 30_000,
-              intervals: [25],
-            },
-          )
-          .toEqual({ history: 0, collaboration: 0 });
-        evidence.drainObservationMs = performance.now() - drainStarted;
-        const finishInputRequestedAt = performance.now();
-        const input = await finishInput();
-        drainDiagnostics.finishInputNodeBracket = {
-          requestAt: finishInputRequestedAt,
-          returnedAt: performance.now(),
-        };
-        finishInput = undefined;
-        const finalNativeRequestedAt = performance.now();
-        const native = (await readDocResponsiveness(f.page))!;
-        drainDiagnostics.finalNativeNodeBracket = {
-          requestAt: finalNativeRequestedAt,
-          returnedAt: performance.now(),
-        };
-        evidence.native = native;
-        evidence.input = input;
-        const frame = distribution(input.keyToFrameMs);
-        const gaps = input.keydownAt.slice(1).map((at, index) => at - input.keydownAt[index]!);
-        const longTasks = distribution(input.longTasks.map((task) => task.durationMs));
-        const capacityFlushes = native.flushes.filter((entry) => entry.reason === 'capacity');
-        const idleDurations = baseline ? [] : docIdleDurations(native);
-        const capacityFlush = capacityFlushes.length
-          ? distribution(capacityFlushes.map((entry) => entry.durationMs))
-          : null;
-        const idleFlush = idleDurations.length ? distribution(idleDurations) : null;
-        const flushMaximum = native.flushes.length
-          ? Math.max(...native.flushes.map((entry) => entry.durationMs), ...idleDurations)
-          : null;
-        const drainUpperBoundMs = native.observedAt - input.keydownAt.at(-1)!;
-        const localDrainMs = native.drainWitness?.firstEmpty
-          ? native.drainWitness.firstEmpty.observedAt - input.keydownAt.at(-1)!
-          : null;
-        evidence.summary = {
-          frameOpportunityMs: frame,
-          interKeyGapMs: distribution(gaps),
-          debounceBreakingGaps: gaps.filter((gap) => gap >= 300).length,
-          longTaskMs: longTasks,
-          totalBlockingMs: input.longTasks.reduce(
-            (sum, task) => sum + Math.max(0, task.durationMs - 50),
-            0,
-          ),
-          capacityFlushPairMs: capacityFlush,
-          idleFlushPairMs: idleFlush,
-          pairedFlushMaximumMs: flushMaximum,
-          postFinalKeyDrainUpperBoundMs: drainUpperBoundMs,
-          firstVerifiedBrowserLocalDrainMs: localDrainMs,
-          lateReadMinusLocalWitnessMs:
-            localDrainMs === null ? null : drainUpperBoundMs - localDrainMs,
-          drainAcceptanceMetric: 'first-verified-browser-local-empty',
-        };
-        evidence.budgetResults = {
-          inputP95: frame.p95 <= budgets[preset].inputP95Ms,
-          longestTask: longTasks.max <= budgets[preset].longTaskMaxMs,
-          capacityFlushP95: capacityFlush ? capacityFlush.p95 <= budgets[preset].flushP95Ms : null,
-          idleFlushP95: idleFlush ? idleFlush.p95 <= budgets[preset].flushP95Ms : null,
-          flushMaximum: flushMaximum === null ? null : flushMaximum <= budgets[preset].flushMaxMs,
-          boundedHistory: native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT,
-          boundedCollaboration: native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT,
-          observedCapacityFlushes: capacityFlushes.length > 0,
-          browserLocalDrainedWithinOneSecond: localDrainMs === null ? null : localDrainMs <= 1000,
-        };
-        evidence.lateReadDiagnostic = {
-          withinOneSecond: drainUpperBoundMs <= 1000,
-          acceptanceGate: false,
-        };
-        evidence.heapAfter = await cdp.send('Runtime.getHeapUsage');
-        if (profiling) {
-          const { profile } = await cdp.send('Profiler.stop');
-          profiling = false;
-          evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
-          evidence.compositionCpu = compositionCpu(profile, profilerClock!, input.longTasks);
-        }
-        evidence.timingCompleteAt = await now(f.page);
-        evidence.timingComplete = true;
-        const savedStarted = performance.now();
-        await saved(f.page);
-        evidence.postFinalKeySavedUpperBoundMs =
-          (await f.page.evaluate(() => performance.now())) - input.keydownAt.at(-1)!;
-        await exactText(f.page, expectedText);
-        await exactText(f.other, expectedText);
-        evidence.postFinalKeyPeerUpperBoundMs =
-          (await f.page.evaluate(() => performance.now())) - input.keydownAt.at(-1)!;
-        await expect
-          .poll(async () => (await f.read()).body!.dataStream, { timeout: 30_000 })
-          .toBe(expectedText);
-        evidence.convergenceObservationMs = performance.now() - savedStarted;
-        expect(native.selection).toMatchObject({
-          start: expectedInputCount,
-          end: expectedInputCount,
-        });
-        expect((await readDocResponsiveness(f.other))?.selection).toMatchObject({
-          start: 0,
-          end: 0,
-        });
-        const initial = await integrity(f, clockOrigins);
-        exactIntegrity(initial, expectedText, expectedInputCount);
-        expect(initial.sender.history).toEqual(native.history);
-        const initialReloads = await readReloads(reloadObservers);
-        completeReloadObservation(initialReloads);
-        expect(initialReloads.reloads).toEqual([]);
-        const preUndoIntegrity: DocPreUndoIntegrity = {
-          ...initial,
-          passed: true,
-          reloads: initialReloads.reloads,
-        };
-        evidence.preUndoIntegrity = preUndoIntegrity;
-        const sealedNative = await readDocResponsiveness(f.page, false, {
-          action: 'seal',
-          epoch: drainArm!.epoch,
-          generation: drainArm!.generation,
-          unitId: drainArm!.unitId,
-          timeOrigin: drainArm!.timeOrigin,
-        });
-        const drainWitness = sealedNative?.drainWitness as DocDrainWitness | null | undefined;
-        evidence.drainWitness = drainWitness;
-        expect(drainWitness).toBeTruthy();
-        expect(drainWitness!.invalidated).toBe(false);
-        expect(drainWitness!.invalidations).toEqual([]);
-        expect(drainWitness!.epoch).toBe(drainArm!.epoch);
-        expect(drainWitness!.generation).toBe(drainArm!.generation);
-        expect(drainWitness!.unitId).toBe(native.unitId);
-        expect(drainWitness!.timeOrigin).toBe(input.timeOrigin);
-        expect(drainWitness!.expectedCompletedStates).toBe(expectedInputCount);
-        expect(drainWitness!.completedStates).toBe(expectedInputCount);
-        expect(drainWitness!.lastCompletedStateAt!).toBeGreaterThanOrEqual(input.keydownAt.at(-1)!);
-        expect(drainWitness!.firstEmpty).toBeTruthy();
-        expect(drainWitness!.firstEmpty).toEqual(native.drainWitness?.firstEmpty);
-        expect(drainWitness!.firstEmpty!.observedAt).toBeGreaterThanOrEqual(
-          drainWitness!.lastCompletedStateAt!,
-        );
-        expect(drainWitness!.firstEmpty!.pending).toEqual({ history: 0, collaboration: 0 });
-        expect(drainWitness!.firstEmpty!.history).toEqual(native.history);
-        expect(drainWitness!.firstEmpty!.highWater).toEqual(native.highWater);
-        expect(drainWitness!.sealedAt!).toBeGreaterThanOrEqual(preUndoIntegrity.observedAt);
-        const historyProgress: Record<string, unknown> = { phase: 'not-started' };
-        evidence.undoRedoObservation = historyProgress;
-        const undoRedo = await verifyUndoRedo(
-          f,
-          preUndoIntegrity,
-          sample === 'plain-1',
-          reloadObservers,
-          clockOrigins,
-          historyProgress,
-        );
-        evidence.undoRedo = undoRedo;
-        expect(drainWitness!.sealedAt!).toBeLessThanOrEqual(undoRedo.beforeUndoAt);
-        await expect
-          .poll(async () => (await f.read()).body!.dataStream)
-          .toBe(undoRedo.outcome === 'passed' ? expectedText : '\r\n');
-        await Promise.all([online(f.page), online(f.other)]);
-        expect(f.errors).toEqual([]);
-        expect(input.keydownAt).toHaveLength(expectedInputCount);
-        expect(input.keyToFrameMs).toHaveLength(expectedInputCount);
-        evidence.correctness =
-          undoRedo.outcome === 'passed'
-            ? 'exact saved/live peer text, sender/peer selections, undo/redo and Online passed'
-            : 'baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state';
-        // Schema 5 retains the strict baseline history outcome and separately
-        // observes capacity/idle work. Drain acceptance now uses the preregistered
-        // browser-local witness; the unchanged late-read scalar remains descriptive.
-        if (!baseline) {
-          expect(native.highWater.history).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
-          expect(native.highWater.collaboration).toBeLessThanOrEqual(
-            DOC_RESPONSIVENESS_GROUP_LIMIT,
+            }
+            window.complete = true;
+            await persistWindow();
+          } else {
+            for (const [index, paragraph] of paragraphs.entries()) {
+              if (index > 0) await f.page.keyboard.press('Enter');
+              // This is the retained SPN-072 reproducer. Never use insertText here.
+              await f.page.keyboard.type(paragraph);
+            }
+          }
+          progress?.phase('native-drain');
+          evidence.typingWallMs = performance.now() - typingStarted;
+          const drainStarted = performance.now();
+          await expect
+            .poll(
+              async () => {
+                const requestAt = performance.now();
+                let snapshot: DocResponsivenessEvidence | null = null;
+                try {
+                  snapshot = await readDocResponsiveness(f.page);
+                  return snapshot?.pending;
+                } finally {
+                  const poll = {
+                    index: drainDiagnostics.polls.length,
+                    requestAt,
+                    returnedAt: performance.now(),
+                    snapshot: snapshot
+                      ? {
+                          unitId: snapshot.unitId,
+                          observedAt: snapshot.observedAt,
+                          pending: snapshot.pending,
+                          highWater: snapshot.highWater,
+                          history: snapshot.history,
+                        }
+                      : null,
+                  };
+                  drainDiagnostics.polls.push(poll);
+                  if (
+                    !drainDiagnostics.firstEmpty &&
+                    snapshot?.pending.history === 0 &&
+                    snapshot.pending.collaboration === 0
+                  )
+                    drainDiagnostics.firstEmpty = poll;
+                }
+              },
+              {
+                // A 4×-throttled observation of the existing 14.857 s pair may
+                // exceed 30 s. Only baseline collection has this wider window;
+                // candidate acceptance remains the separate <=1,000 ms drain gate.
+                timeout: baseline ? 120_000 : 30_000,
+                intervals: [25],
+              },
+            )
+            .toEqual({ history: 0, collaboration: 0 });
+          evidence.drainObservationMs = performance.now() - drainStarted;
+          const finishInputRequestedAt = performance.now();
+          const input = await finishInput();
+          drainDiagnostics.finishInputNodeBracket = {
+            requestAt: finishInputRequestedAt,
+            returnedAt: performance.now(),
+          };
+          finishInput = undefined;
+          const finalNativeRequestedAt = performance.now();
+          const native = (await readDocResponsiveness(f.page))!;
+          drainDiagnostics.finalNativeNodeBracket = {
+            requestAt: finalNativeRequestedAt,
+            returnedAt: performance.now(),
+          };
+          evidence.native = native;
+          evidence.input = input;
+          const frame = distribution(input.keyToFrameMs);
+          const gaps = input.keydownAt.slice(1).map((at, index) => at - input.keydownAt[index]!);
+          const longTasks = distribution(input.longTasks.map((task) => task.durationMs));
+          const capacityFlushes = native.flushes.filter((entry) => entry.reason === 'capacity');
+          const idleDurations = baseline ? [] : docIdleDurations(native);
+          const capacityFlush = capacityFlushes.length
+            ? distribution(capacityFlushes.map((entry) => entry.durationMs))
+            : null;
+          const idleFlush = idleDurations.length ? distribution(idleDurations) : null;
+          const flushMaximum = native.flushes.length
+            ? Math.max(...native.flushes.map((entry) => entry.durationMs), ...idleDurations)
+            : null;
+          const drainUpperBoundMs = native.observedAt - input.keydownAt.at(-1)!;
+          const localDrainMs = native.drainWitness?.firstEmpty
+            ? native.drainWitness.firstEmpty.observedAt - input.keydownAt.at(-1)!
+            : null;
+          evidence.summary = {
+            frameOpportunityMs: frame,
+            interKeyGapMs: distribution(gaps),
+            debounceBreakingGaps: gaps.filter((gap) => gap >= 300).length,
+            longTaskMs: longTasks,
+            totalBlockingMs: input.longTasks.reduce(
+              (sum, task) => sum + Math.max(0, task.durationMs - 50),
+              0,
+            ),
+            capacityFlushPairMs: capacityFlush,
+            idleFlushPairMs: idleFlush,
+            pairedFlushMaximumMs: flushMaximum,
+            postFinalKeyDrainUpperBoundMs: drainUpperBoundMs,
+            firstVerifiedBrowserLocalDrainMs: localDrainMs,
+            lateReadMinusLocalWitnessMs:
+              localDrainMs === null ? null : drainUpperBoundMs - localDrainMs,
+            drainAcceptanceMetric: 'first-verified-browser-local-empty',
+          };
+          evidence.budgetResults = {
+            inputP95: frame.p95 <= budgets[preset].inputP95Ms,
+            longestTask: longTasks.max <= budgets[preset].longTaskMaxMs,
+            capacityFlushP95: capacityFlush
+              ? capacityFlush.p95 <= budgets[preset].flushP95Ms
+              : null,
+            idleFlushP95: idleFlush ? idleFlush.p95 <= budgets[preset].flushP95Ms : null,
+            flushMaximum: flushMaximum === null ? null : flushMaximum <= budgets[preset].flushMaxMs,
+            boundedHistory: native.highWater.history <= DOC_RESPONSIVENESS_GROUP_LIMIT,
+            boundedCollaboration: native.highWater.collaboration <= DOC_RESPONSIVENESS_GROUP_LIMIT,
+            observedCapacityFlushes: capacityFlushes.length > 0,
+            browserLocalDrainedWithinOneSecond: localDrainMs === null ? null : localDrainMs <= 1000,
+          };
+          evidence.lateReadDiagnostic = {
+            withinOneSecond: drainUpperBoundMs <= 1000,
+            acceptanceGate: false,
+          };
+          evidence.heapAfter = await cdp.send('Runtime.getHeapUsage');
+          if (profiling) {
+            const { profile } = await cdp.send('Profiler.stop');
+            profiling = false;
+            evidence.profileSha256 = await retainProfile(profile, profilerClock, info);
+            evidence.compositionCpu = compositionCpu(profile, profilerClock!, input.longTasks);
+          }
+          evidence.timingCompleteAt = await now(f.page);
+          evidence.timingComplete = true;
+          if (nativeDiagnostic) {
+            const capture = await nativeCapture('finish');
+            diagnosticFinished = true;
+            evidence.nativeDiagnosticObserver = {
+              restored: capture?.restored,
+              dropped: capture?.dropped,
+              errors: capture?.errors,
+            };
+            await writeFile(info.outputPath('spn146-native-caches.json'), JSON.stringify(capture));
+            expect(capture?.restored).toBe(true);
+            expect(capture?.dropped).toBe(0);
+            expect(capture?.errors).toEqual([]);
+            expect(capture?.states).toBe(expectedInputCount * 2);
+            expect(capture?.captures.length).toBe(132);
+            expect((evidence.nativeWindow as any)?.traceComplete).toBe(true);
+          }
+          const savedStarted = performance.now();
+          await saved(f.page);
+          evidence.postFinalKeySavedUpperBoundMs =
+            (await f.page.evaluate(() => performance.now())) - input.keydownAt.at(-1)!;
+          await exactText(f.page, expectedText);
+          await exactText(f.other, expectedText);
+          evidence.postFinalKeyPeerUpperBoundMs =
+            (await f.page.evaluate(() => performance.now())) - input.keydownAt.at(-1)!;
+          await expect
+            .poll(async () => (await f.read()).body!.dataStream, { timeout: 30_000 })
+            .toBe(expectedText);
+          evidence.convergenceObservationMs = performance.now() - savedStarted;
+          expect(native.selection).toMatchObject({
+            start: expectedInputCount,
+            end: expectedInputCount,
+          });
+          expect((await readDocResponsiveness(f.other))?.selection).toMatchObject({
+            start: 0,
+            end: 0,
+          });
+          const initial = await integrity(f, clockOrigins);
+          exactIntegrity(initial, expectedText, expectedInputCount);
+          expect(initial.sender.history).toEqual(native.history);
+          const initialReloads = await readReloads(reloadObservers);
+          completeReloadObservation(initialReloads);
+          expect(initialReloads.reloads).toEqual([]);
+          const preUndoIntegrity: DocPreUndoIntegrity = {
+            ...initial,
+            passed: true,
+            reloads: initialReloads.reloads,
+          };
+          evidence.preUndoIntegrity = preUndoIntegrity;
+          const sealedNative = await readDocResponsiveness(f.page, false, {
+            action: 'seal',
+            epoch: drainArm!.epoch,
+            generation: drainArm!.generation,
+            unitId: drainArm!.unitId,
+            timeOrigin: drainArm!.timeOrigin,
+          });
+          const drainWitness = sealedNative?.drainWitness as DocDrainWitness | null | undefined;
+          evidence.drainWitness = drainWitness;
+          expect(drainWitness).toBeTruthy();
+          expect(drainWitness!.invalidated).toBe(false);
+          expect(drainWitness!.invalidations).toEqual([]);
+          expect(drainWitness!.epoch).toBe(drainArm!.epoch);
+          expect(drainWitness!.generation).toBe(drainArm!.generation);
+          expect(drainWitness!.unitId).toBe(native.unitId);
+          expect(drainWitness!.timeOrigin).toBe(input.timeOrigin);
+          expect(drainWitness!.expectedCompletedStates).toBe(expectedInputCount);
+          expect(drainWitness!.completedStates).toBe(expectedInputCount);
+          expect(drainWitness!.lastCompletedStateAt!).toBeGreaterThanOrEqual(
+            input.keydownAt.at(-1)!,
           );
-          expect(capacityFlushes.length).toBeGreaterThan(0);
-          for (const entry of native.flushes) {
-            expect(['capacity', 'idle']).toContain(entry.reason);
-            expect(Number.isInteger(entry.history) && entry.history >= 0).toBe(true);
-            expect(Number.isInteger(entry.collaboration) && entry.collaboration >= 0).toBe(true);
-            const pending = Math.max(entry.history, entry.collaboration);
-            expect(pending).toBeGreaterThan(0);
-            expect(pending).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
-            if (entry.reason === 'capacity') expect(pending).toBe(DOC_RESPONSIVENESS_GROUP_LIMIT);
-            if (entry.reason === 'idle') {
-              expect(Number.isFinite(entry.quietForMs)).toBe(true);
-              expect(entry.quietForMs!).toBeGreaterThanOrEqual(300);
+          expect(drainWitness!.firstEmpty).toBeTruthy();
+          expect(drainWitness!.firstEmpty).toEqual(native.drainWitness?.firstEmpty);
+          expect(drainWitness!.firstEmpty!.observedAt).toBeGreaterThanOrEqual(
+            drainWitness!.lastCompletedStateAt!,
+          );
+          expect(drainWitness!.firstEmpty!.pending).toEqual({ history: 0, collaboration: 0 });
+          expect(drainWitness!.firstEmpty!.history).toEqual(native.history);
+          expect(drainWitness!.firstEmpty!.highWater).toEqual(native.highWater);
+          expect(drainWitness!.sealedAt!).toBeGreaterThanOrEqual(preUndoIntegrity.observedAt);
+          const historyProgress: Record<string, unknown> = { phase: 'not-started' };
+          evidence.undoRedoObservation = historyProgress;
+          const undoRedo = await verifyUndoRedo(
+            f,
+            preUndoIntegrity,
+            sample === 'plain-1',
+            reloadObservers,
+            clockOrigins,
+            historyProgress,
+          );
+          evidence.undoRedo = undoRedo;
+          expect(drainWitness!.sealedAt!).toBeLessThanOrEqual(undoRedo.beforeUndoAt);
+          await expect
+            .poll(async () => (await f.read()).body!.dataStream)
+            .toBe(undoRedo.outcome === 'passed' ? expectedText : '\r\n');
+          await Promise.all([online(f.page), online(f.other)]);
+          expect(f.errors).toEqual([]);
+          expect(input.keydownAt).toHaveLength(expectedInputCount);
+          expect(input.keyToFrameMs).toHaveLength(expectedInputCount);
+          evidence.correctness =
+            undoRedo.outcome === 'passed'
+              ? 'exact saved/live peer text, sender/peer selections, undo/redo and Online passed'
+              : 'baseline redo refused at capacity; exact prior typing and Undo verified; recovered saved empty state';
+          // Schema 5 retains the strict baseline history outcome and separately
+          // observes capacity/idle work. Drain acceptance now uses the preregistered
+          // browser-local witness; the unchanged late-read scalar remains descriptive.
+          if (!baseline) {
+            expect(native.highWater.history).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
+            expect(native.highWater.collaboration).toBeLessThanOrEqual(
+              DOC_RESPONSIVENESS_GROUP_LIMIT,
+            );
+            expect(capacityFlushes.length).toBeGreaterThan(0);
+            for (const entry of native.flushes) {
+              expect(['capacity', 'idle']).toContain(entry.reason);
+              expect(Number.isInteger(entry.history) && entry.history >= 0).toBe(true);
+              expect(Number.isInteger(entry.collaboration) && entry.collaboration >= 0).toBe(true);
+              const pending = Math.max(entry.history, entry.collaboration);
+              expect(pending).toBeGreaterThan(0);
+              expect(pending).toBeLessThanOrEqual(DOC_RESPONSIVENESS_GROUP_LIMIT);
+              if (entry.reason === 'capacity') expect(pending).toBe(DOC_RESPONSIVENESS_GROUP_LIMIT);
+              if (entry.reason === 'idle') {
+                expect(Number.isFinite(entry.quietForMs)).toBe(true);
+                expect(entry.quietForMs!).toBeGreaterThanOrEqual(300);
+              }
+            }
+            if (!profiled) {
+              expect(frame.p95).toBeLessThanOrEqual(budgets[preset].inputP95Ms);
+              expect(longTasks.max).toBeLessThanOrEqual(budgets[preset].longTaskMaxMs);
+              // Idle samples must never dilute the registered capacity distribution.
+              expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+              expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+              expect(idleFlush).not.toBeNull();
+              {
+                expect(idleFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+                expect(idleFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+              }
+              expect(flushMaximum!).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+              expect(localDrainMs).not.toBeNull();
+              expect(localDrainMs!).toBeLessThanOrEqual(1000);
             }
           }
-          if (!profiled) {
-            expect(frame.p95).toBeLessThanOrEqual(budgets[preset].inputP95Ms);
-            expect(longTasks.max).toBeLessThanOrEqual(budgets[preset].longTaskMaxMs);
-            // Idle samples must never dilute the registered capacity distribution.
-            expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
-            expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
-            expect(idleFlush).not.toBeNull();
-            {
-              expect(idleFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
-              expect(idleFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+          const finalReloads = await readReloads(reloadObservers);
+          completeReloadObservation(finalReloads);
+          expect(finalReloads.reloads).toEqual(undoRedo.reloads);
+          evidence.reloadObservers = finalReloads.status;
+          evidence.completed = true;
+        } catch (error) {
+          evidence.primaryFailure = String(error);
+          if (nativeDiagnostic) {
+            primaryDiagnosticFailure = error;
+            progress!.failed('operation');
+          }
+          throw error;
+        } finally {
+          if (nativeDiagnostic) {
+            if (loadedSources)
+              await loadedSources.dispose().catch((error) => {
+                evidence.nativeSourceCleanupFailure = String(error);
+                primaryDiagnosticFailure ??= error;
+              });
+            if (compositionObserver) {
+              await compositionObserver.evaluate((value: any) => value.dispose()).catch(() => {});
+              await compositionObserver.dispose().catch(() => {});
             }
-            expect(flushMaximum!).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
-            expect(localDrainMs).not.toBeNull();
-            expect(localDrainMs!).toBeLessThanOrEqual(1000);
+            if (!diagnosticFinished) {
+              const partial = await nativeCapture('finish').catch((error) => ({
+                error: String(error),
+              }));
+              evidence.nativeDiagnosticObserver = partial && {
+                restored: partial.restored,
+                dropped: partial.dropped,
+                errors: partial.errors,
+                error: partial.error,
+              };
+              await writeFile(
+                info.outputPath('spn146-native-caches.json'),
+                JSON.stringify(partial),
+              ).catch((error) => {
+                evidence.nativeDiagnosticCaptureFailure = String(error);
+              });
+            }
+            if (diagnosticTrace)
+              await diagnosticTrace.finish().catch((error) => {
+                evidence.nativeDiagnosticTraceFailure = String(error);
+              });
+          }
+          if (finishInput)
+            evidence.partialInput = await finishInput().catch((error) => ({
+              error: String(error),
+            }));
+          if (profiling) {
+            const result = await cdp.send('Profiler.stop').catch(() => null);
+            if (result)
+              evidence.profileSha256 = await retainProfile(result.profile, profilerClock, info);
+          }
+          evidence.errors = f.errors;
+          evidence.finalNative = await readDocResponsiveness(f.page).catch(() => null);
+          if (reloadObservers) {
+            const finalReloads = await readReloads(reloadObservers).catch(() => null);
+            if (finalReloads) {
+              evidence.reloadObservers = finalReloads.status;
+              evidence.finalReloads = finalReloads.reloads;
+            }
+            await Promise.all([reloadObservers.sender.dispose(), reloadObservers.peer.dispose()]);
+          }
+          let diagnosticPersistenceFailure: unknown;
+          const persisted = writeFile(
+            info.outputPath('spn108-metrics.json'),
+            JSON.stringify(evidence, null, 2),
+          );
+          if (nativeDiagnostic)
+            await persisted.catch((error) => {
+              diagnosticPersistenceFailure = error;
+              evidence.nativeDiagnosticPersistenceFailure = String(error);
+            });
+          else await persisted;
+          if (nativeDiagnostic) {
+            const cleanup: Record<string, unknown> = { startedAt: performance.now() };
+            let cleanupFailure: unknown = primaryDiagnosticFailure ?? diagnosticPersistenceFailure;
+            try {
+              await detachSession();
+              cleanup.cdp = 'detached';
+            } catch (error) {
+              cleanup.cdp = String(error);
+              cleanupFailure ??= error;
+            }
+            try {
+              await closeFixture();
+              cleanup.fixture = 'closed';
+            } catch (error) {
+              cleanup.fixture = String(error);
+              cleanupFailure ??= error;
+            }
+            cleanup.finishedAt = performance.now();
+            cleanup.complete = !cleanupFailure;
+            evidence.nativeDiagnosticCleanup = cleanup;
+            await writeFile(
+              info.outputPath('spn108-metrics.json'),
+              JSON.stringify(evidence, null, 2),
+            ).catch((error) => {
+              cleanupFailure ??= error;
+            });
+            diagnosticCleanupFailure = cleanupFailure;
+          } else {
+            await cdp.detach().catch(() => {});
+            await f.close();
           }
         }
-        const finalReloads = await readReloads(reloadObservers);
-        completeReloadObservation(finalReloads);
-        expect(finalReloads.reloads).toEqual(undoRedo.reloads);
-        evidence.reloadObservers = finalReloads.status;
-        evidence.completed = true;
-      } finally {
-        if (finishInput)
-          evidence.partialInput = await finishInput().catch((error) => ({ error: String(error) }));
-        if (profiling) {
-          const result = await cdp.send('Profiler.stop').catch(() => null);
-          if (result)
-            evidence.profileSha256 = await retainProfile(result.profile, profilerClock, info);
-        }
-        evidence.errors = f.errors;
-        evidence.finalNative = await readDocResponsiveness(f.page).catch(() => null);
-        if (reloadObservers) {
-          const finalReloads = await readReloads(reloadObservers).catch(() => null);
-          if (finalReloads) {
-            evidence.reloadObservers = finalReloads.status;
-            evidence.finalReloads = finalReloads.reloads;
-          }
-          await Promise.all([reloadObservers.sender.dispose(), reloadObservers.peer.dispose()]);
-        }
-        await writeFile(info.outputPath('spn108-metrics.json'), JSON.stringify(evidence, null, 2));
-        await cdp.detach().catch(() => {});
-        await f.close();
-      }
+        if (diagnosticCleanupFailure) throw diagnosticCleanupFailure;
+      };
+      const running = nativeDiagnostic
+        ? runOwnedObservation(execute, {
+            progress: progress!,
+            primaryFailure: () => primaryDiagnosticFailure,
+            detach: detachSession,
+            close: closeFixture,
+          })
+        : execute();
+      if (observation) observation.done = running;
+      await running;
     });
 
 /** Only the separate continuation case reads native state at its final key's first frame. */
@@ -867,7 +1281,7 @@ for (const preset of ['desktop', 'mobile'] as const)
         attempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
       },
       instrumentation: {
-        cpuThrottle: mobile ? 4 : 1,
+        cpuThrottle: cpuThrottleRate(mobile),
         profiler: false,
         playwrightTrace: false,
         physicalDevice: false,
@@ -937,7 +1351,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           hasFocus: document.hasFocus(),
         })),
       };
-      await cdp.send('Emulation.setCPUThrottlingRate', { rate: mobile ? 4 : 1 });
+      await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuThrottleRate(mobile) });
       const initialNative = (await readDocResponsiveness(f.page))!;
       expect(initialNative.mobile).toBe(mobile);
       finishInput = await observeInput(f.page);
