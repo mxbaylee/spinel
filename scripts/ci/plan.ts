@@ -9,7 +9,7 @@ export function needsRestoreTiming(paths: readonly string[]): boolean {
         /^(?:server|src\/server|src\/shared|src\/ui|lib|web)\//.test(path) ||
         /^e2e\/(?:restore-|supervised-restore)/.test(path) ||
         /^e2e\/(?:doc-touch|native-sheet-value)\./.test(path) ||
-        /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|pid-namespace)/.test(
+        /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|restore-headroom|pid-namespace)/.test(
           path,
         ) ||
         path.startsWith('scripts/dependencies/') ||
