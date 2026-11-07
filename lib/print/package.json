@@ -9,7 +9,7 @@
     "node": ">=24"
   },
   "dependencies": {
-    "@napi-rs/canvas": "1.1.0",
+    "@napi-rs/canvas": "1.0.11",
     "@univerjs/core": "1.1.0",
     "@univerjs/engine-render": "1.1.0",
     "@univerjs/sheets-filter": "1.1.0",
