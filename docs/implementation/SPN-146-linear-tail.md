@@ -14,7 +14,7 @@ distinct lower-layer semantic/work question, not their retry.
 | Question | Answer | Where |
 | --- | --- | --- |
 | Does the head meet the mobile flush budget? | Five first-attempt hosted passes (the fifth on `c4be221c`, [run 42309178728](#-fifth-hosted-pass-on-c4be221c-the-head-with-the-ab-workflow)); code since then differs only in the opt-in A/B files, the CI-plan exclusion for them, and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
-| Is the cause of the original tail proven? | No. Hosted A/B: previous build 1 of 4 pairs over budget (108.6 ms), patched 0 of 4 (max 32.2 ms); p = 0.5 | [A/B result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06) |
+| Is the cause of the original tail proven? | No. Hosted A/B over 12 pairs (two runs): previous build 1 over budget (108.6 ms), patched 0; one-sided p = 0.5. The second run (8 pairs, rebased head) did not reproduce the tail on either build | [A/B result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06) |
 | Why is the diagnostic tooling still here? | Operator needs it to investigate a recurrence | [disposition](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
 | Exceptions on record | PR size (owner); four one-time push exceptions to date below the 95 bar; no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
 | What remains before merge | Seven current-head CI gates on the final head and two independent reviews above 95 | `AGENTS.md`, "Review locally before pushing" |
@@ -620,6 +620,27 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
 - **Disposition.** The mitigation stands with an attribution observation, not a proof. The harness behaved
   (installed hashes matched for all eight runs; the table is in the artifact). Treat the next review as
   grading this added evidence, not as a waiver. The workflow and scripts remain removable.
+
+**Second result (run 42320780806 on `53fad9fe`, 2026-11-06, completed, 8 pairs, rebased onto the Node 26.13 `main`):**
+
+| Variant                         | Pairs passing budget | Flush p95  | Paired flush max          | Longest task | Input p95    |
+| ------------------------------- | -------------------- | ---------- | ------------------------- | ------------ | ------------ |
+| `previous` (sha `110890e889ac`) | 8 of 8               | 7.5–9.9 ms | 18.5–36.2 ms              | 147–201 ms   | 83.1–94.6 ms |
+| `patched` (sha `4b30f509d742`)  | 8 of 8               | 7.3–9.8 ms | 18.3–43.4 ms              | 138–209 ms   | 85.7–105.5 ms |
+
+- **What it shows.** Neither build exceeded either budget in eight pairs; installed hashes matched
+  for all sixteen runs. Pooled with the first run, the previous build is over budget in 1 of 12 pairs
+  and the patched build in 0 of 12 (Fisher exact, one-sided p = 0.5).
+- **What it does not show.** The original tail did not reproduce, so this run neither supports nor
+  contradicts attribution. The patched paired flush maximum was higher than the previous in 4 of 8
+  pairs (as much as 43.4 against 36.2 ms), and the flush p95 is about 8 ms on both builds here against
+  about 21 ms in the first run: a different runner state or the Node bump moved the whole
+  distribution, so numbers are comparable only within a run.
+- **Disposition.** Attribution stays "consistent with, not proven": the tail appeared once in twelve
+  previous-build pairs and never in twelve patched-build pairs, and it does not occur often enough on
+  these runs to separate them without many more pairs (at a rate near 1 in 12, roughly 40 pairs per
+  arm to expect even two events). The mitigation disposition stands; the measurement is recorded as an
+  evidence-supported disposition for SPN-089's Verify clause rather than a causal repair.
 
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
