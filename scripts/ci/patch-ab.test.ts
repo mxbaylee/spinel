@@ -124,15 +124,24 @@ test('summary tallies over-budget runs, records run order and requires every exp
   const result = summarize(runs, 2);
   assert.deepEqual(result.problems, []);
   assert.deepEqual(result.tally, {
-    previous: { runs: 2, measured: 2, overBudget: 1 },
-    patched: { runs: 2, measured: 2, overBudget: 0 },
+    previous: { runs: 2, measured: 2, overBudget: 1, nonZeroExit: 0 },
+    patched: { runs: 2, measured: 2, overBudget: 0, nonZeroExit: 0 },
   });
+  // A run that exits non-zero with every flush budget passing is counted apart from a flush breach.
+  const timedOut = summarize(
+    runs.map((r) => (r.variant === 'patched' && r.pair === 1 ? { ...r, exitCode: 1 } : r)),
+    2,
+  );
+  assert.deepEqual(timedOut.tally.patched, { runs: 2, measured: 2, overBudget: 0, nonZeroExit: 1 });
   assert.deepEqual(
     result.rows.map((row) => `${row.pair}-${row.variant}-${row.order}`),
     ['1-previous-first', '1-patched-second', '2-patched-first', '2-previous-second'],
   );
   const table = renderTable(result);
-  assert.match(table, /previous 1 of 2, patched 0 of 2/);
+  assert.match(
+    table,
+    /previous 1 of 2 \(flush budgets\), 0 of 2 non-zero exits, patched 0 of 2 \(flush budgets\), 0 of 2 non-zero exits/,
+  );
   assert.match(table, /Do not pool/);
   // A half-empty run is a harness problem, not a quiet gap.
   const short = summarize([...runs.slice(0, 3), seq(run(2, 'previous', null), 4)], 2);

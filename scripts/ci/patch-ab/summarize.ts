@@ -87,12 +87,22 @@ export function summarize(runs: Run[], expectedPairs?: number) {
     problems.push('previous and patched installed the same build');
   // Per-variant tally. A variant that did not produce metrics for every expected pair
   // is a harness problem, not a quiet gap in the sample.
-  const tally: Record<string, { runs: number; measured: number; overBudget: number }> = {};
+  const tally: Record<
+    string,
+    { runs: number; measured: number; overBudget: number; nonZeroExit: number }
+  > = {};
   for (const row of rows) {
-    const entry = (tally[row.variant] ??= { runs: 0, measured: 0, overBudget: 0 });
+    const entry = (tally[row.variant] ??= {
+      runs: 0,
+      measured: 0,
+      overBudget: 0,
+      nonZeroExit: 0,
+    });
     entry.runs += 1;
     if (row.budget !== 'n/a') entry.measured += 1;
     if (row.budget === 'fail') entry.overBudget += 1;
+    // A run can exit non-zero (a timeout, an input or long-task budget) with every flush budget passing.
+    if (row.exitCode !== 0) entry.nonZeroExit += 1;
   }
   if (expectedPairs !== undefined)
     for (const variant of ['previous', 'patched'])
@@ -137,7 +147,10 @@ export function renderTable({
     '',
     '**Over budget per variant:** ' +
       (Object.entries(tally)
-        .map(([variant, t]) => `${variant} ${t.overBudget} of ${t.measured}`)
+        .map(
+          ([variant, t]) =>
+            `${variant} ${t.overBudget} of ${t.measured} (flush budgets), ${t.nonZeroExit} of ${t.runs} non-zero exits`,
+        )
         .join(', ') || 'no runs') +
       '. Do not pool these counts with another run or another runner without saying so; the rate is about 1 in 12 and a single run cannot separate the builds.',
   );

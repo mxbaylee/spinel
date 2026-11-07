@@ -700,6 +700,41 @@ patched build was 14–15 ms in 6 of 8 (24 and 35 ms in pairs 7 and 8); that is 
 evidence. The cause stays unproven by hosted evidence; the throttle dose response (`ci-patch-ab-6x`,
 `ci-patch-ab-8x`) remains the planned causal test and needs the workflow change pushed first.
 
+**Throttle dose response, 6x (run 42348189799 on `cde5a7b7`, completed, 8 pairs, `ci-patch-ab-6x`; not pooled with the 4x runs):**
+Neither build exceeded either budget (previous 0 of 8, patched 0 of 8), and hashes matched on all sixteen runs.
+Descriptively, the previous build's flush p95 was higher than the patched build's in 7 of 8 pairs (previous
+12.1–16.8 ms, patched 11.0–13.6 ms). That is a post-hoc secondary metric, not a budget, so it is recorded as
+an observation (an exact sign test on 7 of 8 gives one-sided p about 0.035, with no correction for having
+looked at several metrics) and not as proof. Paired flush maxima were 28–82 ms for the previous build and
+28–74 ms for the patched build, both under 100 ms. The 6x load did not produce a breach in either arm, so the
+8x run is the next point on the dose response.
+
+**Throttle dose response, 8x (run 42353649355 on `cde5a7b7`, completed, 8 pairs, `ci-patch-ab-8x`; not pooled with 4x or 6x):**
+Hashes matched on all sixteen runs. The summary's flush-budget tally reads previous 1 of 8, patched 0 of 8, but
+that tally counts only the flush budgets, and the patched build had two other failing runs, so the honest
+per-run record is:
+
+| Run              | Exit | What failed                                                                                                            |
+| ---------------- | ---- | ---------------------------------------------------------------------------------------------------------------------- |
+| previous, pair 3 | 1    | paired flush max 118.1 ms against the 100 ms budget (the tail this ticket targets; flush p95 16.7 ms)                  |
+| patched, pair 1  | 1    | input p95 205 ms against the 200 ms budget, and the test hit its 300 s timeout; the flush budgets passed (max 42.6 ms) |
+| patched, pair 3  | 1    | `keyboard.press: Test ended` after the test hit its timeout; every recorded budget passed (flush max 76.2 ms)          |
+
+- **What it shows.** The tail reproduced on the previous build at 8x (1 of 8), the first flush-budget breach
+  since the original run, and it did so on a runner whose flush p95 was 10–17 ms (not a slow-runner state). The
+  patched build had no flush breach in eight pairs. That is the direction attribution predicts, on one event.
+- **What it does not show.** The patched build is not clean at 8x: two of its eight runs failed for other
+  reasons (an input p95 miss and two test-timeout runs, one of which also carried that input miss). Those are
+  not flush failures and no flush metric is implicated, but at 8x the patched build did not pass the whole
+  spec in 2 of 8 runs, against 1 of 8 for the previous build, which failed only on flush. One run each cannot
+  separate these; the timeout and input misses are most likely 8x runner load (the previous build's longest tasks
+  reached 378 ms and its input p95 up to 168 ms in the same run), not a patched-build defect, but that is a
+  reading, not a result. At 8x the whole-spec failure count is therefore previous 1 of 8, patched 2 of 8.
+- **Dose response so far.** Flush breaches by throttle (never pooled): 4x previous 1 of 28 (pooled over the four
+  4x runs), patched 0 of 28; 6x previous 0 of 8, patched 0 of 8; 8x previous 1 of 8, patched 0 of 8. The
+  previous build's flush breaches (2 in 44 pairs) occurred only in the slowest regimes seen, but two events do
+  not establish a dose response, and the cause remains unproven by hosted evidence.
+
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this

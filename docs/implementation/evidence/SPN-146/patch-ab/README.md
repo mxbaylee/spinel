@@ -27,6 +27,8 @@ Retained here because workflow artifacts expire after 7 days. Each folder holds 
 - `run-42320780806-8-pairs/`: head `53fad9fe`, 8 of 8 pairs within budget on both builds.
 - `run-42336853126-8-pairs/`: head `c7c96714`, 8 of 8 pairs within budget on both builds (fast runner).
 - `run-42340182231-8-pairs/`: head `c7c96714`, 4x throttle, 8 of 8 pairs within budget on both builds (fast runner).
+- `run-42348189799-6x-8-pairs/`: head `cde5a7b7`, 6x throttle (`ci-patch-ab-6x`), 8 of 8 pairs within budget on both builds. Do not pool with the 4x runs.
+- `run-42353649355-8x-8-pairs/`: head `cde5a7b7`, 8x throttle (`ci-patch-ab-8x`). Previous: 1 flush-budget breach (pair 3, 118.1 ms). Patched: no flush breach, but pairs 1 and 3 exited 1 (input p95 205 ms plus a 300 s timeout; a timeout after which every recorded budget passed). The summary's "over budget" tally counts flush budgets only. Do not pool with other throttle levels.
 
 Rerun: remove, then re-add, the `ci-patch-ab` label on the PR (`gh pr edit <n> --remove-label ci-patch-ab`,
 then `--add-label ci-patch-ab`); each cycle adds `PAIRS` pairs. The labels `ci-patch-ab-6x` and
