@@ -3,8 +3,10 @@
 Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
 candidate and the hosted result. Status: the candidate passed four first-hosted-mobile attempts
 ([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second and third](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
-failures is still undiagnosed, so the disposition is a mitigation with four passing first attempts. The
-fixed-window and retained-profile avenues remain closed with their original failures. This is a
+failures is not proven, so the disposition is a mitigation with four passing first attempts. A hosted
+A/B on one runner ([result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06))
+saw the previous build exceed the budget once in four pairs (108.6 ms) and the patched build never
+exceed 32.2 ms: consistent with the patch, too small to prove it. The fixed-window and retained-profile avenues remain closed with their original failures. This is a
 distinct lower-layer semantic/work question, not their retry.
 
 ## 🔎 Concrete source mechanism
@@ -472,8 +474,8 @@ gate, passed.
 when the second push arrived, so `9ea505a7` is the head that carries the hosted evidence.
 
 **Status after four hosted passes:** four first-attempt mobile passes on three runner speeds, the latest
-on the restructured `patch-univer-docs.ts`, and a full green run on the current code (after one rerun of a flaky unrelated smoke test). The cause of the original 102–129 ms tail is still undiagnosed, so this remains a
-mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
+on the restructured `patch-univer-docs.ts`, and a full green run on the current code (after one rerun of a flaky unrelated smoke test). The cause of the original 102–129 ms tail is not proven (the later hosted A/B is consistent with the
+patch but only four pairs), so this remains a mitigation, not a root-cause fix. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed from CI evidence.
 
 ## ⚖️ Disposition: mitigation kept with its diagnostics (owner, chat 2026-11-05)
@@ -489,7 +491,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
   proven by four first-attempt hosted passes; trimming would not improve it.
 
-The PR size, about 16k changed lines across 638 files, is accepted for the same reason: the diff is mostly
+The PR size, about 16.5k changed lines across about 644 files, is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
 has stayed absent over further runs, is a later owner decision; nothing is deleted here.
 
@@ -526,9 +528,12 @@ nor refutes an effect on the hosted tail.
 **Not shown:** that the 102–129 ms flush maxima seen on earlier candidate heads came from this
 mechanism, or that this patch is what brought them under budget. The baseline stall and the allocation
 drop show the repeated copying exists and is removed; the A/B shows the previous build does not
-reproduce the hosted tail locally. Only a hosted run with the same toggle (previous build against this
-build on the same runner) could attribute it, and none exists. The four hosted passes are therefore
-evidence that the current head meets the budget, not evidence of what fixed it. The disposition stays a
+reproduce the hosted tail locally. A hosted run with the same toggle (previous build against this
+build on the same runner) was added afterwards and is recorded [below](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06):
+it reproduced a 108.6 ms tail once in four previous-build pairs and none in four patched pairs, which is
+consistent with the patch but not statistically separable. The four hosted passes are therefore
+evidence that the current head meets the budget, and the A/B is suggestive, not conclusive, evidence of
+what fixed it. The disposition stays a
 mitigation, and the diagnostics stay so a recurrence can be attributed from CI evidence.
 
 ## 🚀 Third push exception: hosted run of the restructured patch file (owner, chat 2026-11-06)
@@ -574,7 +579,7 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
 - **What it shows.** The previous build produced one flush maximum of 108.6 ms, over the 100 ms budget and
   inside the 102–129 ms range of the original failures, on the same runner, sample and budgets where the
   patched build stayed at or below 32.2 ms in all four pairs. The patched flush p95 was lower than the
-  previous one in every pair (about 1.5–4 ms). This is the first hosted observation of the original tail
+  previous one in every pair (by 5.6, 1.0, 2.5 and 4.1 ms). This is the first hosted observation of the original tail
   with the patch toggled, and it points the right way.
 - **What it does not show.** One tail in four previous runs against none in four patched runs is not
   statistically separable (Fisher exact, one-sided p = 0.5), and four pairs are far too few to estimate a
@@ -589,9 +594,10 @@ mitigation unattributed, so the PR adds an opt-in hosted A/B:
 ## 📏 PR-size exception (owner, chat 2026-11-05)
 
 The owner withdrew the proposed exception to the 95 bar: the review findings are fixed or answered in this
-PR and the final head is graded again, not waived. The one recorded exception is size.
+PR and the final head is graded again, not waived. The recorded exception to the merge requirements is
+size; the separate one-time push exceptions are recorded in their own sections below.
 
-The PR is about 16k changed lines across 638 files (`git diff --shortstat` drifts with every docs commit), past the 10k soft limit (a checker warning; the
+The PR is about 16.5k changed lines across about 644 files (GitHub shows +16,500 −598; the count drifts with every docs commit), past the 10k soft limit (a checker warning; the
 100k hard limit is not reached). The production change is `scripts/dependencies/patch-univer-docs.ts`
 (+238/−50 lines, including the restructure into `helperGenerations()`); the rest is tests, retained diagnostics, evidence and docs.
 The owner accepts landing it whole instead of splitting it, because splitting would drop the diagnostics

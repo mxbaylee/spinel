@@ -125,3 +125,7 @@ test('runs are read in alternating order and tolerate missing files', () => {
     rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('a missing runs directory reads as no runs instead of throwing', () => {
+  assert.deepEqual(readRuns(join(tmpdir(), 'patch-ab-does-not-exist')), []);
+});
