@@ -24,6 +24,23 @@ export function variantName(value: string | undefined): Variant {
 
 export const sha256 = (text: string) => createHash('sha256').update(text).digest('hex');
 
+/**
+ * Complete-module sha256 each variant must produce from the pinned @univerjs/docs
+ * 1.1.0 bundles. They are the same pins patch-univer-docs.test.ts asserts, repeated
+ * here so a toggle that wrote the wrong build, or a drifted generator, fails the
+ * job instead of only proving that a write round-trips.
+ */
+export const pinnedInstalled: Record<Variant, Installed> = {
+  previous: {
+    es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
+    cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+  },
+  patched: {
+    es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
+    cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+  },
+};
+
 /** Throws unless every installed hash is the one this variant should produce. */
 export function assertInstalled(variant: Variant, expected: Installed, actual: Installed) {
   for (const format of formats)
@@ -34,16 +51,14 @@ export function assertInstalled(variant: Variant, expected: Installed, actual: I
 }
 
 export async function toggle(root: string, variant: Variant) {
-  const expected = {} as Installed;
   const actual = {} as Installed;
   for (const format of formats) {
     const path = resolve(root, 'node_modules/@univerjs/docs/lib', format, 'index.js');
     const next = prepareDocsPatch(await readFile(path, 'utf8'), format)[variants[variant]];
     await writeFile(path, next);
-    expected[format] = sha256(next);
     actual[format] = sha256(await readFile(path, 'utf8'));
   }
-  assertInstalled(variant, expected, actual);
+  assertInstalled(variant, pinnedInstalled[variant], actual);
   return { variant, ...actual };
 }
 

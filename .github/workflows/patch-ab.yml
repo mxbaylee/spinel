@@ -2,7 +2,14 @@
 # once the mobile Doc typing flush-tail question is answered. On one hosted
 # runner it alternates the previously installed Docs build (previous) with this
 # PR's build (patched), everything else identical, and tabulates the flush tail.
-# Rerun: remove, then re-add, the ci-patch-ab label (each cycle adds PAIRS pairs).
+# Rerun: remove, then re-add, the ci-patch-ab label (each cycle adds PAIRS pairs). Each label event also
+# starts a full ci.yml run (its types include labeled and unlabeled), so a cycle costs two extra CI runs.
+# Runtime: about 3 minutes per variant run (build and test), so PAIRS=8 (16 runs) took about 47 minutes in
+# run 42320780806; the 120-minute step timeout and 130-minute job timeout leave room for slow runners.
+# Cycles queue (no cancel-in-progress).
+# Stress levels: label ci-patch-ab runs the normal 4x mobile CPU throttle; ci-patch-ab-6x and
+# ci-patch-ab-8x run 6x and 8x (SPN146_AB_CPU_THROTTLE), to check whether the old build's tail grows with
+# the load while the patched build's does not. Never pool results across throttle levels.
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
 name: 🔬 SPN-146 Docs patch A/B
@@ -27,7 +34,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'ci-patch-ab' &&
+      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x"]'), github.event.label.name) &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 130
@@ -46,6 +53,16 @@ jobs:
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
+      - name: Choose CPU throttle from the label
+        env:
+          LABEL: ${{ github.event.label.name }}
+        run: |
+          case "$LABEL" in
+            ci-patch-ab-6x) rate=6 ;;
+            ci-patch-ab-8x) rate=8 ;;
+            *) rate=4 ;;
+          esac
+          echo "SPN146_AB_CPU_THROTTLE=$rate" >> "$GITHUB_ENV"
       - name: Install candidate
         run: npm ci
       - name: Install Chromium
@@ -57,12 +74,15 @@ jobs:
       - name: Alternate previous and patched
         timeout-minutes: 120
         run: |
+          seq=0
           for pair in $(seq 1 "$PAIRS"); do
             # Swap the order every other pair so neither build always runs first.
             if (( pair % 2 == 0 )); then variants="patched previous"; else variants="previous patched"; fi
             for variant in $variants; do
               run="patch-ab/runs/pair-$pair-$variant"
               mkdir -p "$run"
+              seq=$((seq + 1))
+              echo "$seq" > "$run/seq"
               node scripts/ci/patch-ab/toggle.ts "$variant" "$run/installed.json"
               npm run build
               rm -rf test-results
@@ -76,7 +96,7 @@ jobs:
           done
       - name: Summarize
         if: always()
-        run: node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
+        run: PAIRS="$PAIRS" node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
       - name: Publish summary
         if: always()
         run: |
