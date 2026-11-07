@@ -373,3 +373,20 @@ requests, documentation-only handling, desktop ownership and rejected incomplete
 results. The grooming PR must verify both labelled and unlabelled CI behavior,
 inspect manifests/artifacts for honest capture counts and record comparable
 timings. Source changes alone do not claim those checks passed.
+
+## Review–repair loop before a validation push
+
+Owner, chat 2026-11-06 (SPN-146). Before a validation or repair push intended to run CI,
+the implementing agent runs a loop: commit the complete candidate, obtain two fresh
+independent reviews of that exact SHA, require every reviewer who withholds points to list
+every actionable step to 100/100 (points at stake, exact file and line or command, change,
+and whether it is local, hosted-only or an owner decision, including one-point and
+impossible steps), repair every local step, recommit and review again. Push only when both
+reviews exceed 95; if every remaining deduction is hosted-only or an owner decision, stop and
+ask for a recorded one-time push exception.
+
+**Why.** Fixes that each earned a few points did not converge when reviewers listed only enough
+steps to clear 95, and hosted-only deductions looked like unfinished local work. Weighed across
+the personas: the Operator gets a visible path to a perfect score and an explicit stopping
+rule; the Owner can see which gaps need a decision; Collaborators and Guests are unaffected.
+The procedure is in [run-backlog](../run-backlog.md#-reviewrepair-loop-before-a-validation-push).

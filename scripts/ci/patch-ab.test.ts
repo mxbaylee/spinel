@@ -140,5 +140,9 @@ test('the opt-in workflow stays label-gated, same-repository and read-only', () 
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /persist-credentials: false/);
   assert.doesNotMatch(workflow, /pull_request_target/);
-  assert.match(workflow, /name: Summarize\n\s+if: always\(\)/);
+  const steps = workflow.split(/\n {6}- /);
+  const summarize = steps.find((step) => step.startsWith('name: Summarize'));
+  assert.ok(summarize, 'a Summarize step exists');
+  assert.match(summarize, /^\s+if: always\(\)$/m);
+  assert.match(summarize, /summarize\.ts/);
 });

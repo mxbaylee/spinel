@@ -13,7 +13,7 @@ distinct lower-layer semantic/work question, not their retry.
 
 | Question | Answer | Where |
 | --- | --- | --- |
-| Does the head meet the mobile flush budget? | Four first-attempt hosted passes on earlier heads; code since then differs only in the opt-in A/B files and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
+| Does the head meet the mobile flush budget? | Four first-attempt hosted passes on earlier heads; code since then differs only in the opt-in A/B files, the CI-plan exclusion for them, and docs | [passes](#-first-attempt-hosted-mobile-result-on-dde23e1), [restructure pass](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
 | Is the cause of the original tail proven? | No. Hosted A/B: previous build 1 of 4 pairs over budget (108.6 ms), patched 0 of 4 (max 32.2 ms); p = 0.5 | [A/B result](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06) |
 | Why is the diagnostic tooling still here? | Operator needs it to investigate a recurrence | [disposition](#-disposition-mitigation-kept-with-its-diagnostics-owner-chat-2026-11-05) |
 | Exceptions on record | PR size (owner); four one-time push exceptions below the 95 bar; no merge-below-95 exception | [size](#-pr-size-exception-owner-chat-2026-11-05) |
@@ -501,7 +501,7 @@ deliberate, not leftover scaffolding. Weighed across the personas:
 - **Collaborator and Guest:** the user-visible outcome, mobile Doc typing within the flush budget, is
   proven by four first-attempt hosted passes; trimming would not improve it.
 
-The PR size, about 16.5k changed lines across about 644 files, is accepted for the same reason: the diff is mostly
+The PR size (see the PR header for the current count; about 16.5k changed lines), is accepted for the same reason: the diff is mostly
 retained evidence and diagnostics. A root-cause diagnosis, or removal of the diagnostics once the tail
 has stayed absent over further runs, is a later owner decision; nothing is deleted here.
 
@@ -607,7 +607,7 @@ The owner withdrew the proposed exception to the 95 bar: the review findings are
 PR and the final head is graded again, not waived. The recorded exception to the merge requirements is
 size; the separate one-time push exceptions are recorded in their own sections above.
 
-The PR is about 16.5k changed lines across about 644 files (GitHub shows +16,500 −598; the count drifts with every docs commit), past the 10k soft limit (a checker warning; the
+The PR is about 16.5k changed lines (see the PR header for the exact count; it drifts with every commit), past the 10k soft limit (a checker warning; the
 100k hard limit is not reached). The production change is `scripts/dependencies/patch-univer-docs.ts`
 (+238/−50 lines, including the restructure into `helperGenerations()`); the rest is tests, retained diagnostics, evidence and docs.
 The owner accepts landing it whole instead of splitting it, because splitting would drop the diagnostics

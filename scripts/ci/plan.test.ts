@@ -90,6 +90,13 @@ test('the opt-in SPN-146 A/B stays tested without widening to full or performanc
     'phone-compatibility',
   ] as const)
     assert.equal(plan.suites[id].selected, false, id);
+  // Each experiment path alone, including the workflow file, still runs the script tests, lint and typecheck.
+  for (const path of experiment) {
+    const alone = coveragePlan('pull_request', pr(), [path], head);
+    assert.equal(alone.mode, 'targeted', path);
+    for (const id of ['unit-tests', 'lint', 'typecheck'] as const)
+      assert.equal(alone.suites[id].selected, true, `${path} ${id}`);
+  }
   // Neighbouring workflow and CI script paths keep their full-coverage rule.
   for (const path of ['.github/workflows/browserstack.yml', 'scripts/ci/patch-ab-other.ts'])
     assert.equal(coveragePlan('pull_request', pr(), [path], head).mode, 'full', path);

@@ -185,7 +185,7 @@ original source identity. Do not inflate a score to get access to CI.
 
 ### 🔁 Review–repair loop before a validation push
 
-Owner, chat 2026-11-06. Repeat this loop until both reviewers clear the gate; do not
+Owner, chat 2026-11-06; [decision](implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push). Repeat this loop until both reviewers clear the gate; do not
 push to see whether CI passes in the meantime.
 
 1. **Commit** the complete candidate and record its SHA.
