@@ -10,6 +10,8 @@
 # Stress levels: label ci-patch-ab runs the normal 4x mobile CPU throttle; ci-patch-ab-6x and
 # ci-patch-ab-8x run 6x and 8x (SPN146_AB_CPU_THROTTLE), to check whether the old build's tail grows with
 # the load while the patched build's does not. Never pool results across throttle levels.
+# ci-patch-ab-stress keeps the 4x throttle and runs one busy-loop process per CPU beside the test, which
+# pushes the runner into its slow regime on demand (the regime of the only observed breaches).
 # The 8x level is best effort: a cycle can time out on every run (it stops after four in a row).
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
@@ -35,7 +37,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x"]'), github.event.label.name) &&
+      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress"]'), github.event.label.name) &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 130
@@ -64,6 +66,7 @@ jobs:
             *) rate=4 ;;
           esac
           echo "SPN146_AB_CPU_THROTTLE=$rate" >> "$GITHUB_ENV"
+          if [ "$LABEL" = ci-patch-ab-stress ]; then echo "STRESS_PROCESSES=$(nproc)" >> "$GITHUB_ENV"; fi
       - name: Install candidate
         run: npm ci
       - name: Install Chromium
@@ -87,9 +90,14 @@ jobs:
               node scripts/ci/patch-ab/toggle.ts "$variant" "$run/installed.json"
               npm run build
               rm -rf test-results
+              stress_pids=()
+              for _ in $(seq 1 "${STRESS_PROCESSES:-0}"); do
+                (while :; do :; done) & stress_pids+=($!)
+              done
               code=0
               npx playwright test --project=doc-responsiveness \
                 --grep "mobile sustained native typing plain-1" || code=$?
+              for pid in "${stress_pids[@]}"; do kill "$pid" 2>/dev/null || true; done
               echo "$code" > "$run/exit-code"
               metrics=$(find test-results -name spn108-metrics.json | head -n 1)
               if [ -n "$metrics" ]; then
@@ -104,7 +112,7 @@ jobs:
           done
       - name: Summarize
         if: always()
-        run: PAIRS="$PAIRS" node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
+        run: PAIRS="$PAIRS" STRESS_PROCESSES="${STRESS_PROCESSES:-0}" node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
       - name: Publish summary
         if: always()
         run: |

@@ -40,3 +40,5 @@ then `--add-label ci-patch-ab`); each cycle adds `PAIRS` pairs. The labels `ci-p
 `ci-patch-ab-8x` run the same pairs at a 6x and 8x mobile CPU throttle (default 4x); do not pool across levels.
 
 The two 8x folders also hold `failures.json`: per-run exit codes, first-failure messages and failed budget results, extracted from the run artifact because the raw logs were not retained. The `summary.md` files of the earlier runs were written by the summarizer as it was then (flush budgets only in the over-budget tally); the current summarizer also fails a run over the input p95 or longest-task budget and counts non-zero exits.
+
+The label `ci-patch-ab-stress` (4x throttle plus one busy-loop process per CPU beside each run) forces the slow runner regime; its decision rule is in the implementation doc. Do not pool it with unstressed runs.

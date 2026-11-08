@@ -257,7 +257,7 @@ test('summarize fails a run over the input p95 or longest-task budget even when 
 
 // Runs the workflow's real "Alternate previous and patched" script with stubbed tools. `measured`
 // says which run numbers (1-based) leave a metrics file behind.
-const runAlternation = (pairs: number, measured: (n: number) => boolean) => {
+const runAlternation = (pairs: number, measured: (n: number) => boolean, stress = 0) => {
   const workflow = readFileSync(
     new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
     'utf8',
@@ -291,7 +291,12 @@ exit 1
     for (const tool of ['node', 'npm', 'npx']) chmodSync(join(bin, tool), 0o755);
     const result = spawnSync('bash', ['-e', '-c', script], {
       cwd: root,
-      env: { ...process.env, PATH: `${bin}:${process.env.PATH}`, PAIRS: String(pairs) },
+      env: {
+        ...process.env,
+        PATH: `${bin}:${process.env.PATH}`,
+        PAIRS: String(pairs),
+        STRESS_PROCESSES: String(stress),
+      },
       encoding: 'utf8',
     });
     const runs = Number(existsSync(count) ? readFileSync(count, 'utf8') : 0);
@@ -319,4 +324,28 @@ test('the alternation stops after four consecutive runs with no metrics and neve
     8,
     'the count restarts after run 4, so runs 5 to 8 are the four that stop it',
   );
+});
+
+test('stress mode starts competing busy loops and ends them with every run', () => {
+  // If a loop outlived its run, the script's stdout pipe would stay open and spawnSync would never return.
+  const stressed = runAlternation(1, () => true, 2);
+  assert.equal(stressed.status, 0);
+  assert.equal(stressed.runs, 2);
+  const summary = summarize(
+    [run(1, 'previous', metrics(1, 1)), run(1, 'patched', metrics(1, 1))],
+    1,
+    4,
+  );
+  assert.equal(summary.stressProcesses, 4);
+  assert.match(renderTable(summary), /Competing load: 4 busy-loop processes/);
+  assert.doesNotMatch(
+    renderTable(summarize([run(1, 'previous', metrics(1, 1))], undefined, 0)),
+    /Competing load/,
+  );
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  assert.match(workflow, /"ci-patch-ab-stress"/);
+  assert.match(workflow, /STRESS_PROCESSES=\$\(nproc\)/);
 });

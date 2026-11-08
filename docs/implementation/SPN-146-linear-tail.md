@@ -936,6 +936,27 @@ suggestions were not taken: extracting a shared linear-assembly helper or droppi
 generation in `patch-univer-docs.ts` (both change production bytes and would invalidate the hosted
 evidence), and a YAML-parser test for the workflow (no parser is installed; the string checks stay).
 
+## 🧪 Stress A/B: forcing the slow regime (owner, chat 2026-11-07)
+
+Why: the hosted tail appears only when the runner is slow, 1 of 28 at 4x and 1 of 8 at 8x, and a higher
+throttle did not reliably raise it (8x run 2 timed out on every run). A slow runner lets keystrokes queue
+behind a frame, which is what makes flushes larger, so the experiment makes the runner slow on demand
+instead of waiting for it. Label `ci-patch-ab-stress` keeps the 4x throttle and starts one busy-loop process
+per CPU (`nproc`) beside each test run, ends them after it, and records the count in `summary.json` and
+`summary.md` ("Competing load"). Never pool it with an unstressed run.
+
+Decision rule, fixed before the run so it cannot be chosen after it:
+
+- If the previous build breaches a flush budget in at least 3 of 8 pairs and the patched build in at most 1,
+  the stress cycle separates the builds (one-sided Fisher exact p is about 0.1 at 3 of 8 against 0 of 8, so
+  repeat the cycle until the two cycles together reach p below 0.05 or the pattern fails).
+- If both builds breach at similar rates, the slow regime itself causes the tail and this patch does not
+  address it; the doc then says so and the ticket's cause stays open with that finding.
+- If neither breaches, or most runs time out (the cycle stops after four runs with no metrics), the experiment
+  is inconclusive and counts as such.
+
+Results are added below as they arrive.
+
 ## 🚀 Sixth push exception (owner, chat 2026-11-07)
 
 Round 4 graded 88 and 72. Every remaining deduction is hosted-evidence (the unproven hosted cause, the two patched 8x exits) or the owner's ruling not to amend the ticket acceptance, so the loop's stop rule applied. The owner approved a one-time exception to push this head and run CI. It is not a merge-below-95 exception.

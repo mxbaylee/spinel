@@ -39,7 +39,7 @@ export interface Row {
 
 const number = (value: unknown) => (typeof value === 'number' ? value : null);
 
-export function summarize(runs: Run[], expectedPairs?: number) {
+export function summarize(runs: Run[], expectedPairs?: number, stressProcesses = 0) {
   const problems: string[] = [];
   const firstSeq = new Map<number, number>();
   for (const run of runs)
@@ -132,6 +132,7 @@ export function summarize(runs: Run[], expectedPairs?: number) {
     problems,
     tally,
     cpuThrottles,
+    stressProcesses,
   };
 }
 
@@ -143,11 +144,12 @@ export function renderTable({
   problems,
   tally,
   cpuThrottles,
+  stressProcesses,
 }: ReturnType<typeof summarize>) {
   const lines = [
     '## SPN-146 hosted Docs A/B (mobile plain-1)',
     '',
-    `Budget: capacity flush p95 <= ${budgets.flushP95Ms} ms, paired flush max <= ${budgets.flushMaxMs} ms, input p95 <= ${budgets.inputP95Ms} ms, longest task <= ${budgets.longTaskMaxMs} ms. Times in ms. CPU throttle (from the metrics): ${cpuThrottles.length ? cpuThrottles.map((rate) => `${rate}x`).join(', ') : 'unrecorded'}.`,
+    `Budget: capacity flush p95 <= ${budgets.flushP95Ms} ms, paired flush max <= ${budgets.flushMaxMs} ms, input p95 <= ${budgets.inputP95Ms} ms, longest task <= ${budgets.longTaskMaxMs} ms. Times in ms. CPU throttle (from the metrics): ${cpuThrottles.length ? cpuThrottles.map((rate) => `${rate}x`).join(', ') : 'unrecorded'}.${stressProcesses ? ` Competing load: ${stressProcesses} busy-loop processes on the runner during every run; never pool with an unstressed run.` : ''}`,
     '',
     '| variant | pair | order | flush p95 | flush max | paired flush max | longest task | input p95 | sha | exit | budget |',
     '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |',
@@ -205,7 +207,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const [directory, json, markdown] = process.argv.slice(2);
   if (!directory || !json || !markdown) throw new Error('Usage: summarize.ts <runs> <json> <md>');
   const expectedPairs = process.env.PAIRS ? Number(process.env.PAIRS) : undefined;
-  const result = summarize(readRuns(directory), expectedPairs);
+  const stress = Number(process.env.STRESS_PROCESSES || 0);
+  const result = summarize(readRuns(directory), expectedPairs, stress);
   if (!result.rows.length) result.problems.push('no runs found');
   writeFileSync(json, `${JSON.stringify(result, null, 2)}\n`);
   writeFileSync(markdown, renderTable(result));
