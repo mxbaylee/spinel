@@ -34,6 +34,7 @@ import type {
 import { registerDocResponsivenessBoundaries } from './doc-responsiveness-boundaries.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
 import { startGcTrace } from './doc-responsiveness-gc-trace.ts';
+import { heapSampleMode, startHeapSample } from './doc-responsiveness-heap-sample.ts';
 import { startNativeDiagnosticTrace } from './doc-responsiveness-native-trace.ts';
 import {
   nativeWindowInput,
@@ -75,6 +76,8 @@ const expectedInputCount = paragraphs.reduce((sum, paragraph) => sum + paragraph
 const baseline = process.env.SPN108_BASELINE === '1';
 const nativeDiagnostic = process.env.SPN146_DIAGNOSTIC === '1';
 // SPN-146 attribution only: a light V8 GC trace matched to each flush. Required CI never sets it.
+// SPN-146 attribution only: V8 allocation sampling (all|live) over the typing run. Required CI never sets it.
+const heapSampling = nativeDiagnostic ? null : heapSampleMode(process.env.SPN146_HEAP_SAMPLE);
 const gcTraceEnabled = process.env.SPN146_GC_TRACE === '1' && !nativeDiagnostic;
 // Every scheduled sample is retained. CPU profiling has its own samples so its
 // overhead never contaminates the primary frame-latency measurements.
@@ -695,6 +698,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           expect(drainArm!.initial.history).toEqual({ undos: 0, redos: 0 });
           expect(drainArm!.firstEmpty).toBeNull();
           const gcTrace = gcTraceEnabled ? await startGcTrace(cdp, f.page) : undefined;
+          const heapSample = heapSampling ? await startHeapSample(cdp, heapSampling) : undefined;
           finishInput = await observeInput(f.page);
           progress?.phase('typing');
           const typingStarted = performance.now();
@@ -853,6 +857,11 @@ for (const preset of ['desktop', 'mobile'] as const)
           };
           evidence.native = native;
           evidence.input = input;
+          if (heapSample) {
+            const { raw, ...summary } = await heapSample.finish();
+            evidence.heapSample = summary;
+            await writeFile(info.outputPath('spn146-heap-sampling.json'), JSON.stringify(raw));
+          }
           if (gcTrace)
             evidence.gcTrace = await gcTrace
               .finish(native.flushes)

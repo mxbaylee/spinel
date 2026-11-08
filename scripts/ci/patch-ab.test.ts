@@ -372,6 +372,17 @@ test('the gc label keeps plain-1 under stress and turns on the GC trace', () => 
   assert.match(workflow, /\[ "\$LABEL" = ci-patch-ab-gc \]; then echo "SPN146_GC_TRACE=1"/);
   assert.match(
     workflow,
-    /ci-patch-ab-profile \] \|\| \[ "\$LABEL" = ci-patch-ab-gc \]; then echo "STRESS_PROCESSES/,
+    /ci-patch-ab-gc \] \|\| \[ "\$LABEL" = ci-patch-ab-heap \]; then echo "STRESS_PROCESSES/,
   );
+});
+
+test('the heap label samples allocations by pair parity and keeps the raw sampling profile', () => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  assert.match(workflow, /"ci-patch-ab-heap"/);
+  assert.match(workflow, /SPN146_HEAP_SAMPLE=all/);
+  assert.match(workflow, /SPN146_HEAP_SAMPLE=live/);
+  assert.match(workflow, /spn146-heap-sampling\.json/);
 });

@@ -1023,17 +1023,18 @@ here as the reviewers wrote them.
 
 ## 🔍 Attribution run: profile under stress
 
-Stress cycle 2 showed the tail on both builds, so the next question is where a slow flush spends its time. The workflow label `ci-patch-ab-profile` runs the same half-CPU stress with the spec's CPU-profile sample and retains each run's profile. Reading rule, set before the run: if breaching flushes on the previous build show time inside the Docs `redoState` fold and the patched build's do not, that supports the patch; if both show GC, idle or starved main thread, the hosted tail is not this mechanism. 
+Stress cycle 2 showed the tail on both builds, so the next question is where a slow flush spends its time. The workflow label `ci-patch-ab-profile` runs the same half-CPU stress with the spec's CPU-profile sample and retains each run's profile. Reading rule, set before the run: if breaching flushes on the previous build show time inside the Docs `redoState` fold and the patched build's do not, that supports the patch; if both show GC, idle or starved main thread, the hosted tail is not this mechanism.
+
 ### Result (run 42500754153, head `ac9ebc22`)
 
 No flush breached the 100 ms budget on either build (previous worst 84.8 ms, patched worst 60.6 ms, no non-zero exits), so this cycle did not reproduce a hosted breach; the profiler overhead and the lighter regime may be why. The three slowest flushes were analysed from the CPU profiles by stitching consecutive samples inside `_spinelObservedFlush`, allowing garbage-collector and program samples between them:
 
-| run | paired flush | stretch in profile | GC inside it | flush JavaScript |
-| --- | --- | --- | --- | --- |
-| previous pair 1 | 84.8 ms | 84.2 ms | 56.8 ms | 28.3 ms |
-| previous pair 8 | 60.5 ms | 56.8 ms | 43.4 ms | 15.5 ms |
-| patched pair 3 | 35.8 ms | 33.7 ms | 20.2 ms | 14.8 ms |
-| patched pair 5 | 60.6 ms | not found (longest stretch 21.9 ms) | 0 | 22.8 |
+| run             | paired flush | stretch in profile                  | GC inside it | flush JavaScript |
+| --------------- | ------------ | ----------------------------------- | ------------ | ---------------- |
+| previous pair 1 | 84.8 ms      | 84.2 ms                             | 56.8 ms      | 28.3 ms          |
+| previous pair 8 | 60.5 ms      | 56.8 ms                             | 43.4 ms      | 15.5 ms          |
+| patched pair 3  | 35.8 ms      | 33.7 ms                             | 20.2 ms      | 14.8 ms          |
+| patched pair 5  | 60.6 ms      | not found (longest stretch 21.9 ms) | 0            | 22.8             |
 
 Across all 966 flushes per build the flush JavaScript totals 5165 ms (previous) and 5033 ms (patched), and garbage collection inside flushes 272 ms and 171 ms.
 
@@ -1041,18 +1042,19 @@ Reading against the rule set beforehand: the slow flushes on the previous build 
 
 ## 🧪 GC attribution run
 
-The profile run explained its slow flushes as GC pauses but did not breach, and the profiler may change the regime. The label `ci-patch-ab-gc` keeps the unprofiled `plain-1` sample under the same half-CPU stress and adds a light V8 GC trace (`SPN146_GC_TRACE=1`, categories `v8.gc` and user timing). The spec aligns main-thread GC events to each flush on the page clock through a sync mark, and records per flush the GC time inside it (`gcTrace` in each run's metrics). Rule set beforehand: if, on both builds, every flush over 60 ms has at least half its duration in GC, the tail is GC pressure and not the fold; if the previous build's slow flushes show mostly JavaScript and the patched build's do not, that supports the patch. The helper is covered by a unit test that aligns a synthetic trace and counts nested phases once. 
+The profile run explained its slow flushes as GC pauses but did not breach, and the profiler may change the regime. The label `ci-patch-ab-gc` keeps the unprofiled `plain-1` sample under the same half-CPU stress and adds a light V8 GC trace (`SPN146_GC_TRACE=1`, categories `v8.gc` and user timing). The spec aligns main-thread GC events to each flush on the page clock through a sync mark, and records per flush the GC time inside it (`gcTrace` in each run's metrics). Rule set beforehand: if, on both builds, every flush over 60 ms has at least half its duration in GC, the tail is GC pressure and not the fold; if the previous build's slow flushes show mostly JavaScript and the patched build's do not, that supports the patch. The helper is covered by a unit test that aligns a synthetic trace and counts nested phases once.
+
 ### Result (run 42509105617, head `74b4c499`)
 
 The GC trace aligned in all 16 runs. No flush breached 100 ms on either build (previous worst 36.9 ms, patched worst 88.1 ms) and no run exited non-zero.
 
-| flush | build | duration | GC inside it |
-| --- | --- | --- | --- |
-| pair 3 | patched | 88.1 ms | 64.5 ms |
-| pair 7 | patched | 61.9 ms | 54.3 ms |
-| pair 7 | patched | 60.1 ms | 52.3 ms |
-| pair 8 | previous | 36.9 ms | 33.8 ms |
-| pair 8 | patched | 36.1 ms | 29.9 ms |
+| flush  | build    | duration | GC inside it |
+| ------ | -------- | -------- | ------------ |
+| pair 3 | patched  | 88.1 ms  | 64.5 ms      |
+| pair 7 | patched  | 61.9 ms  | 54.3 ms      |
+| pair 7 | patched  | 60.1 ms  | 52.3 ms      |
+| pair 8 | previous | 36.9 ms  | 33.8 ms      |
+| pair 8 | patched  | 36.1 ms  | 29.9 ms      |
 
 Every flush over 35 ms had at least 80% of its time in main-thread GC. The slowest flushes without GC were 24–32 ms, the ordinary flush cost. Over 8 runs per build: previous 231 ms of GC inside 1052 flushes (7072 ms of flush time), patched 364 ms inside 1049 flushes (6580 ms). The three flushes over 60 ms were all on the patched build, in two runs.
 
@@ -1062,11 +1064,15 @@ Reading against the rule set beforehand: every flush over 60 ms was mostly GC, s
 
 Every GC that landed in a slow flush was a full mark-compact (30–125 ms for the flushes above). Counting them over all 16 runs, regardless of where they fall:
 
-| build | major GCs | median | p90 | max | 80 ms or longer | flush share of typing time |
-| --- | --- | --- | --- | --- | --- | --- |
-| previous | 196 in 8 runs (about 24 per run) | 45 ms | 73 ms | 212 ms | 17 (2.1 per run) | 0.48% |
-| patched | 190 in 8 runs (about 24 per run) | 43 ms | 73 ms | 274 ms | 16 (2.0 per run) | 0.49% |
+| build    | major GCs                        | median | p90   | max    | 80 ms or longer  | flush share of typing time |
+| -------- | -------------------------------- | ------ | ----- | ------ | ---------------- | -------------------------- |
+| previous | 196 in 8 runs (about 24 per run) | 45 ms  | 73 ms | 212 ms | 17 (2.1 per run) | 0.48%                      |
+| patched  | 190 in 8 runs (about 24 per run) | 43 ms  | 73 ms | 274 ms | 16 (2.0 per run) | 0.49%                      |
 
 The used heap grows by about 24 MB per run (about 40 MB to 65–78 MB) and total size doubles to about 120 MB. A flush is about 0.5% of the typing time, so a 100 ms flush needs one of the roughly two long major GCs per run to land inside it: an expected rate near 1% of runs for each build, the same order as the observed breaches (1 of 124 unstressed pairs; 3 of 16 stressed runs). Both builds have the same major-GC count and length. The patch does not touch that rate, so it cannot remove the tail. The flush is not special either: the same pauses fall into key handling (longest tasks of 200–390 ms in these runs).
 
 What this changes: the open cause of the hosted tail is the major-GC load of this workload (heap growth during typing), not the fold. Reducing the tail would mean cutting the allocation or retention that triggers about 24 major GCs per 170 s of typing. That has not been investigated: no allocation profile has been taken, so which allocations and retained structures drive the growth is unknown.
+
+## 🧬 Allocation attribution run
+
+The next question is what drives about 24 major GCs per run: allocation churn (garbage that fills the young and old generations) or retention (live data that grows the heap from about 40 MB to 65–78 MB). The label `ci-patch-ab-heap` keeps the half-CPU stress and samples V8 allocations over the typing run (`SPN146_HEAP_SAMPLE`, 16 KB interval): odd pairs sample every allocation including collected objects (churn), even pairs only what is still live when sampling stops (retention), each with both builds. Each run's metrics hold the top 30 sites by sampled bytes with their heaviest caller chain, and the raw sampling profile is kept gzipped. Reading rule, set beforehand: a site or script that accounts for at least 30% of the sampled bytes in the churn or retention view is named as the lever; if no site reaches 30%, the growth is diffuse and no single fix exists. The same sites on both builds confirm the patch plays no part. Helper and summary are unit-tested, and sampling was checked against a real Chromium (the `all` mode reported 24.6 MB for a churn loop that left 0.3 MB live, which `live` mode reported). Results are not in yet.
