@@ -15,6 +15,7 @@
 # ci-patch-ab-profile is the stress load plus the spec's CPU-profile sample, for attributing a slow flush.
 # ci-patch-ab-gc is the stress load with a light V8 GC trace (no profiler) matched to each flush.
 # ci-patch-ab-heap is the stress load with V8 allocation sampling (odd pairs: all allocations; even: live only).
+# ci-patch-ab-semispace is the stress load with the GC trace; odd pairs run with a 64 MB young generation.
 # The 8x level is best effort: a cycle can time out on every run (it stops after four in a row).
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
@@ -40,7 +41,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress","ci-patch-ab-profile","ci-patch-ab-gc","ci-patch-ab-heap"]'), github.event.label.name) &&
+      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress","ci-patch-ab-profile","ci-patch-ab-gc","ci-patch-ab-heap","ci-patch-ab-semispace"]'), github.event.label.name) &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 130
@@ -69,7 +70,7 @@ jobs:
             *) rate=4 ;;
           esac
           echo "SPN146_AB_CPU_THROTTLE=$rate" >> "$GITHUB_ENV"
-          if [ "$LABEL" = ci-patch-ab-stress ] || [ "$LABEL" = ci-patch-ab-profile ] || [ "$LABEL" = ci-patch-ab-gc ] || [ "$LABEL" = ci-patch-ab-heap ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
+          if [ "$LABEL" = ci-patch-ab-stress ] || [ "$LABEL" = ci-patch-ab-profile ] || [ "$LABEL" = ci-patch-ab-gc ] || [ "$LABEL" = ci-patch-ab-heap ] || [ "$LABEL" = ci-patch-ab-semispace ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
           # The profile label runs the spec's own CPU-profile sample (1 ms sampling, budgets not enforced) so a
           # slow flush can be attributed; its profiles are kept beside each run. Never pool it with plain-1 runs.
           if [ "$LABEL" = ci-patch-ab-profile ]; then echo "SAMPLE=profile" >> "$GITHUB_ENV"; fi
@@ -79,6 +80,9 @@ jobs:
           # The heap label samples V8 allocations over the typing run: odd pairs sample every allocation (churn),
           # even pairs only what is still live at the end (retention), each with both builds.
           if [ "$LABEL" = ci-patch-ab-heap ]; then echo "HEAP_AB=1" >> "$GITHUB_ENV"; fi
+          # The semispace label records the GC trace and gives odd pairs a 64 MB young generation (V8 flags),
+          # even pairs the default, so the effect is compared inside one run, with both builds in each.
+          if [ "$LABEL" = ci-patch-ab-semispace ]; then echo "SEMISPACE_AB=1" >> "$GITHUB_ENV"; echo "SPN146_GC_TRACE=1" >> "$GITHUB_ENV"; fi
       - name: Install candidate
         run: npm ci
       - name: Install Chromium
@@ -109,6 +113,9 @@ jobs:
               code=0
               if [ -n "${HEAP_AB:-}" ]; then
                 if (( pair % 2 == 1 )); then export SPN146_HEAP_SAMPLE=all; else export SPN146_HEAP_SAMPLE=live; fi
+              fi
+              if [ -n "${SEMISPACE_AB:-}" ]; then
+                if (( pair % 2 == 1 )); then export SPN146_AB_V8_FLAGS="--min-semi-space-size=64 --max-semi-space-size=64"; else unset SPN146_AB_V8_FLAGS; fi
               fi
               npx playwright test --project=doc-responsiveness \
                 --grep "mobile sustained native typing ${SAMPLE:-plain-1}" || code=$?
