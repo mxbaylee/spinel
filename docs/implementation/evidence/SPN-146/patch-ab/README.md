@@ -57,3 +57,5 @@ The label `ci-patch-ab-gc` (added after the profile run) keeps the unprofiled pl
 `run-42509105617-gc-8-pairs/gc-summary.json` holds the per-run major-GC counts and durations, flush totals and heap sizes for all 16 runs, derived from each run's `gcTrace` (the artifact expires).
 
 The label `ci-patch-ab-heap` (added after the GC run) keeps the half-CPU stress and samples V8 allocations (`heapSample` in `metrics.json`, raw `spn146-heap-sampling.json.gz` per run): odd pairs include collected objects (churn), even pairs only live ones (retention). Never pool it with plain-1 runs.
+
+- `run-42515290552-heap-8-pairs/`: head `87b9df9b`, `ci-patch-ab-heap` (two busy loops, 4x, allocation sampling: odd pairs all allocations, even pairs live only). Not an A/B: sampling overhead pushed 11 of 16 runs to non-zero exits; no flush reached 100 ms. Kept: summary, derived `heap-summary.json`, metrics of two runs per mode and the raw sampling profile of two runs.
