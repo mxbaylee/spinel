@@ -44,3 +44,6 @@ The two 8x folders also hold `failures.json`: per-run exit codes, first-failure 
 The label `ci-patch-ab-stress` (4x throttle plus busy-loop processes beside each run: one per CPU in cycle 1, half the CPUs from cycle 2) forces the slow runner regime; its decision rule is in the implementation doc. Do not pool it with unstressed runs.
 
 - `run-42448149074-stress-8-pairs/`: head `c9bb3fe3`, stress cycle 1 (four loops on four CPUs). No usable data: all 16 runs timed out (`failures.json`). Not counted. It exposed a workflow bug in the early stop (a partial metrics file counted as measured), fixed afterwards.
+- `run-42476558232-stress-half-8-pairs/`: head `91400232`, stress cycle 2 (two busy loops on four CPUs, 4x throttle). Previous 2 of 8 flush breaches (130.4, 130.0 ms), patched 1 of 8 (205.6 ms); non-zero exits 3 and 3. Does not separate the builds. Never pool with unstressed runs.
+
+The label `ci-patch-ab-profile` (added after stress cycle 2) uses the same half-CPU busy-loop load but runs the spec's `profile` sample (CPU profile at 1 ms sampling, budgets not enforced, exit 0) and keeps each run's `spn108-profile.cpuprofile.gz` and clock bracket beside its metrics, so a slow flush on either build can be attributed to JavaScript work, GC or starvation. Profiling overhead applies to both builds; never pool with plain-1 runs.

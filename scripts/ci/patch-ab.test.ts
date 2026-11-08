@@ -351,3 +351,14 @@ test('stress mode starts competing busy loops and ends them with every run', () 
   assert.match(workflow, /"ci-patch-ab-stress"/);
   assert.match(workflow, /STRESS_PROCESSES=\$\(\( \(\$\(nproc\) \+ 1\) \/ 2 \)\)/);
 });
+
+test('the profile label runs the profile sample under stress and keeps its profiles', () => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  assert.match(workflow, /"ci-patch-ab-profile"/);
+  assert.match(workflow, /\[ "\$LABEL" = ci-patch-ab-profile \]; then echo "SAMPLE=profile"/);
+  assert.match(workflow, /typing \$\{SAMPLE:-plain-1\}/);
+  assert.match(workflow, /spn108-profile\*/);
+});

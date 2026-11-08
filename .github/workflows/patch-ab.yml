@@ -12,6 +12,7 @@
 # the load while the patched build's does not. Never pool results across throttle levels.
 # ci-patch-ab-stress keeps the 4x throttle and runs half the CPUs' worth of busy-loop processes beside the test, which
 # pushes the runner into its slow regime on demand (the regime of the only observed breaches).
+# ci-patch-ab-profile is the stress load plus the spec's CPU-profile sample, for attributing a slow flush.
 # The 8x level is best effort: a cycle can time out on every run (it stops after four in a row).
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
@@ -37,7 +38,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress"]'), github.event.label.name) &&
+      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress","ci-patch-ab-profile"]'), github.event.label.name) &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 130
@@ -66,7 +67,10 @@ jobs:
             *) rate=4 ;;
           esac
           echo "SPN146_AB_CPU_THROTTLE=$rate" >> "$GITHUB_ENV"
-          if [ "$LABEL" = ci-patch-ab-stress ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
+          if [ "$LABEL" = ci-patch-ab-stress ] || [ "$LABEL" = ci-patch-ab-profile ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
+          # The profile label runs the spec's own CPU-profile sample (1 ms sampling, budgets not enforced) so a
+          # slow flush can be attributed; its profiles are kept beside each run. Never pool it with plain-1 runs.
+          if [ "$LABEL" = ci-patch-ab-profile ]; then echo "SAMPLE=profile" >> "$GITHUB_ENV"; fi
       - name: Install candidate
         run: npm ci
       - name: Install Chromium
@@ -96,9 +100,11 @@ jobs:
               done
               code=0
               npx playwright test --project=doc-responsiveness \
-                --grep "mobile sustained native typing plain-1" || code=$?
+                --grep "mobile sustained native typing ${SAMPLE:-plain-1}" || code=$?
               for pid in "${stress_pids[@]}"; do kill "$pid" 2>/dev/null || true; done
               echo "$code" > "$run/exit-code"
+              # Profile samples leave a CPU profile and its clock bracket; keep them compressed with the run.
+              find test-results -name 'spn108-profile*' | while read -r f; do gzip -c "$f" > "$run/$(basename "$f").gz"; done
               metrics=$(find test-results -name spn108-metrics.json | head -n 1)
               # A run that timed out leaves a partial metrics file with no summary; it counts as unmeasured.
               if [ -n "$metrics" ] && jq -e '.summary' "$metrics" >/dev/null 2>&1; then
