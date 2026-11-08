@@ -1057,3 +1057,16 @@ The GC trace aligned in all 16 runs. No flush breached 100 ms on either build (p
 Every flush over 35 ms had at least 80% of its time in main-thread GC. The slowest flushes without GC were 24–32 ms, the ordinary flush cost. Over 8 runs per build: previous 231 ms of GC inside 1052 flushes (7072 ms of flush time), patched 364 ms inside 1049 flushes (6580 ms). The three flushes over 60 ms were all on the patched build, in two runs.
 
 Reading against the rule set beforehand: every flush over 60 ms was mostly GC, so the first branch holds: the tail is GC pauses landing inside a flush, not the fold. Together with the profile run (previous 84.8 and 60.5 ms flushes were GC, a patched 35.8 ms flush was GC) neither build escapes it. This run gives no support for the patch removing the tail and a small amount against: patched GC time inside flushes was higher here, but three events in two runs cannot separate the builds, and the profile run showed the opposite split. Still unexplained: why a major GC lands inside a flush (heap growth from retained history or other allocation); no breach was reproduced, so this attributes slow flushes below the budget, not the original 102–205 ms ones.
+
+### Where the major GCs come from (derived from run 42509105617; `gc-summary.json`)
+
+Every GC that landed in a slow flush was a full mark-compact (30–125 ms for the flushes above). Counting them over all 16 runs, regardless of where they fall:
+
+| build | major GCs | median | p90 | max | 80 ms or longer | flush share of typing time |
+| --- | --- | --- | --- | --- | --- | --- |
+| previous | 196 in 8 runs (about 24 per run) | 45 ms | 73 ms | 212 ms | 17 (2.1 per run) | 0.48% |
+| patched | 190 in 8 runs (about 24 per run) | 43 ms | 73 ms | 274 ms | 16 (2.0 per run) | 0.49% |
+
+The used heap grows by about 24 MB per run (about 40 MB to 65–78 MB) and total size doubles to about 120 MB. A flush is about 0.5% of the typing time, so a 100 ms flush needs one of the roughly two long major GCs per run to land inside it: an expected rate near 1% of runs for each build, the same order as the observed breaches (1 of 124 unstressed pairs; 3 of 16 stressed runs). Both builds have the same major-GC count and length. The patch does not touch that rate, so it cannot remove the tail. The flush is not special either: the same pauses fall into key handling (longest tasks of 200–390 ms in these runs).
+
+What this changes: the open cause of the hosted tail is the major-GC load of this workload (heap growth during typing), not the fold. Reducing the tail would mean cutting the allocation or retention that triggers about 24 major GCs per 170 s of typing. That has not been investigated: no allocation profile has been taken, so which allocations and retained structures drive the growth is unknown.

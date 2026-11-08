@@ -53,3 +53,5 @@ The label `ci-patch-ab-profile` (added after stress cycle 2) uses the same half-
 The label `ci-patch-ab-gc` (added after the profile run) keeps the unprofiled plain-1 sample under the half-CPU stress and records, per flush, the main-thread GC time inside it (`gcTrace` in `metrics.json`); see the implementation doc. Never pool it with plain-1 runs without the trace.
 
 - `run-42509105617-gc-8-pairs/`: head `74b4c499`, `ci-patch-ab-gc` (two busy loops, 4x, plain-1, light GC trace). No breach on either build (worst paired flush: previous 36.9 ms, patched 88.1 ms), no non-zero exits. Kept: summary, plus metrics (with `gcTrace`) for the two patched runs with flushes over 60 ms, one slow previous run and one typical run per build. Every flush over 35 ms was mostly GC.
+
+`run-42509105617-gc-8-pairs/gc-summary.json` holds the per-run major-GC counts and durations, flush totals and heap sizes for all 16 runs, derived from each run's `gcTrace` (the artifact expires).
