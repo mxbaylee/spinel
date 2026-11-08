@@ -1023,4 +1023,18 @@ here as the reviewers wrote them.
 
 ## 🔍 Attribution run: profile under stress
 
-Stress cycle 2 showed the tail on both builds, so the next question is where a slow flush spends its time. The workflow label `ci-patch-ab-profile` runs the same half-CPU stress with the spec's CPU-profile sample and retains each run's profile. Reading rule, set before the run: if breaching flushes on the previous build show time inside the Docs `redoState` fold and the patched build's do not, that supports the patch; if both show GC, idle or starved main thread, the hosted tail is not this mechanism. Results are not in yet.
+Stress cycle 2 showed the tail on both builds, so the next question is where a slow flush spends its time. The workflow label `ci-patch-ab-profile` runs the same half-CPU stress with the spec's CPU-profile sample and retains each run's profile. Reading rule, set before the run: if breaching flushes on the previous build show time inside the Docs `redoState` fold and the patched build's do not, that supports the patch; if both show GC, idle or starved main thread, the hosted tail is not this mechanism. 
+### Result (run 42500754153, head `ac9ebc22`)
+
+No flush breached the 100 ms budget on either build (previous worst 84.8 ms, patched worst 60.6 ms, no non-zero exits), so this cycle did not reproduce a hosted breach; the profiler overhead and the lighter regime may be why. The three slowest flushes were analysed from the CPU profiles by stitching consecutive samples inside `_spinelObservedFlush`, allowing garbage-collector and program samples between them:
+
+| run | paired flush | stretch in profile | GC inside it | flush JavaScript |
+| --- | --- | --- | --- | --- |
+| previous pair 1 | 84.8 ms | 84.2 ms | 56.8 ms | 28.3 ms |
+| previous pair 8 | 60.5 ms | 56.8 ms | 43.4 ms | 15.5 ms |
+| patched pair 3 | 35.8 ms | 33.7 ms | 20.2 ms | 14.8 ms |
+| patched pair 5 | 60.6 ms | not found (longest stretch 21.9 ms) | 0 | 22.8 |
+
+Across all 966 flushes per build the flush JavaScript totals 5165 ms (previous) and 5033 ms (patched), and garbage collection inside flushes 272 ms and 171 ms.
+
+Reading against the rule set beforehand: the slow flushes on the previous build are garbage-collector pauses landing inside an ordinary 15–28 ms flush, not time in the fold, and a patched flush shows the same pattern. At 32 states the patch does not change the flush's JavaScript time. This supports the second branch, that the hosted tail is not this mechanism. Limits: three slow flushes, one patched slow flush (60.6 ms) unexplained by the profile, no breach in this cycle, profiling overhead on every run, and one cycle. The cause of the hosted 102–205 ms flushes is therefore most likely GC pauses under load, still not proven for the unprofiled runs.
