@@ -1041,4 +1041,19 @@ Reading against the rule set beforehand: the slow flushes on the previous build 
 
 ## 🧪 GC attribution run
 
-The profile run explained its slow flushes as GC pauses but did not breach, and the profiler may change the regime. The label `ci-patch-ab-gc` keeps the unprofiled `plain-1` sample under the same half-CPU stress and adds a light V8 GC trace (`SPN146_GC_TRACE=1`, categories `v8.gc` and user timing). The spec aligns main-thread GC events to each flush on the page clock through a sync mark, and records per flush the GC time inside it (`gcTrace` in each run's metrics). Rule set beforehand: if, on both builds, every flush over 60 ms has at least half its duration in GC, the tail is GC pressure and not the fold; if the previous build's slow flushes show mostly JavaScript and the patched build's do not, that supports the patch. The helper is covered by a unit test that aligns a synthetic trace and counts nested phases once. Results are not in yet.
+The profile run explained its slow flushes as GC pauses but did not breach, and the profiler may change the regime. The label `ci-patch-ab-gc` keeps the unprofiled `plain-1` sample under the same half-CPU stress and adds a light V8 GC trace (`SPN146_GC_TRACE=1`, categories `v8.gc` and user timing). The spec aligns main-thread GC events to each flush on the page clock through a sync mark, and records per flush the GC time inside it (`gcTrace` in each run's metrics). Rule set beforehand: if, on both builds, every flush over 60 ms has at least half its duration in GC, the tail is GC pressure and not the fold; if the previous build's slow flushes show mostly JavaScript and the patched build's do not, that supports the patch. The helper is covered by a unit test that aligns a synthetic trace and counts nested phases once. 
+### Result (run 42509105617, head `74b4c499`)
+
+The GC trace aligned in all 16 runs. No flush breached 100 ms on either build (previous worst 36.9 ms, patched worst 88.1 ms) and no run exited non-zero.
+
+| flush | build | duration | GC inside it |
+| --- | --- | --- | --- |
+| pair 3 | patched | 88.1 ms | 64.5 ms |
+| pair 7 | patched | 61.9 ms | 54.3 ms |
+| pair 7 | patched | 60.1 ms | 52.3 ms |
+| pair 8 | previous | 36.9 ms | 33.8 ms |
+| pair 8 | patched | 36.1 ms | 29.9 ms |
+
+Every flush over 35 ms had at least 80% of its time in main-thread GC. The slowest flushes without GC were 24–32 ms, the ordinary flush cost. Over 8 runs per build: previous 231 ms of GC inside 1052 flushes (7072 ms of flush time), patched 364 ms inside 1049 flushes (6580 ms). The three flushes over 60 ms were all on the patched build, in two runs.
+
+Reading against the rule set beforehand: every flush over 60 ms was mostly GC, so the first branch holds: the tail is GC pauses landing inside a flush, not the fold. Together with the profile run (previous 84.8 and 60.5 ms flushes were GC, a patched 35.8 ms flush was GC) neither build escapes it. This run gives no support for the patch removing the tail and a small amount against: patched GC time inside flushes was higher here, but three events in two runs cannot separate the builds, and the profile run showed the opposite split. Still unexplained: why a major GC lands inside a flush (heap growth from retained history or other allocation); no breach was reproduced, so this attributes slow flushes below the budget, not the original 102–205 ms ones.
