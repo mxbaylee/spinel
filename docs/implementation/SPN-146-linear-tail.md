@@ -941,8 +941,8 @@ evidence), and a YAML-parser test for the workflow (no parser is installed; the 
 Why: the hosted tail appears only when the runner is slow, 1 of 28 at 4x and 1 of 8 at 8x, and a higher
 throttle did not reliably raise it (8x run 2 timed out on every run). A slow runner lets keystrokes queue
 behind a frame, which is what makes flushes larger, so the experiment makes the runner slow on demand
-instead of waiting for it. Label `ci-patch-ab-stress` keeps the 4x throttle and starts one busy-loop process
-per CPU (`nproc`) beside each test run, ends them after it, and records the count in `summary.json` and
+instead of waiting for it. Label `ci-patch-ab-stress` keeps the 4x throttle and starts busy-loop processes
+beside each test run (first cycle: one per CPU; second cycle onward: half the CPUs, rounded up), ends them after it, and records the count in `summary.json` and
 `summary.md` ("Competing load"). Never pool it with an unstressed run.
 
 Decision rule, fixed before the run so it cannot be chosen after it:
@@ -955,7 +955,18 @@ Decision rule, fixed before the run so it cannot be chosen after it:
 - If neither breaches, or most runs time out (the cycle stops after four runs with no metrics), the experiment
   is inconclusive and counts as such.
 
-Results are added below as they arrive.
+Results:
+
+- **Cycle 1 (run 42448149074, head `c9bb3fe3`, four busy loops on four CPUs): inconclusive, no data.** All 16
+  runs (both builds) hit the 300 s test timeout (`keyboard.type: Test ended`) and left only a partial metrics
+  file with no summary; the summarizer reported "0 of 8 expected pairs produced metrics" for both builds. One
+  loop per CPU is too much load for this workload to finish at all, so it measures nothing about the builds
+  (retained in `run-42448149074-stress-8-pairs/`). It also exposed a workflow bug: the early stop counted any
+  metrics file as a measured run, and a timed-out run leaves a partial one, so the stop never fired and the
+  cycle spent its full 1 h 20 min. The stop now requires a `summary` in the metrics file, and the behavioral
+  test's stub writes a partial file for unmeasured runs, so that case is covered.
+- **Cycle 2: half the CPUs' worth of loops** (two loops on four CPUs), to land between "no extra load" (breaches
+  rare) and "too much load" (nothing finishes). Result below when it arrives.
 
 ## 🚀 Sixth push exception (owner, chat 2026-11-07)
 

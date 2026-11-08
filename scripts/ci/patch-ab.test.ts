@@ -282,7 +282,9 @@ const runAlternation = (pairs: number, measured: (n: number) => boolean, stress 
       `#!/bin/bash
 mkdir -p test-results
 n=$(( $(cat "${count}" 2>/dev/null || echo 0) + 1 )); echo $n > "${count}"
-if [ -f "${root}/measured-$n" ]; then mkdir -p test-results/x; echo '{}' > test-results/x/spn108-metrics.json; fi
+mkdir -p test-results/x
+# A timed-out run still leaves a partial metrics file, without a summary.
+if [ -f "${root}/measured-$n" ]; then echo '{"summary":{}}' > test-results/x/spn108-metrics.json; else echo '{"primaryFailure":"timeout"}' > test-results/x/spn108-metrics.json; fi
 exit 1
 `,
     );
@@ -347,5 +349,5 @@ test('stress mode starts competing busy loops and ends them with every run', () 
     'utf8',
   );
   assert.match(workflow, /"ci-patch-ab-stress"/);
-  assert.match(workflow, /STRESS_PROCESSES=\$\(nproc\)/);
+  assert.match(workflow, /STRESS_PROCESSES=\$\(\( \(\$\(nproc\) \+ 1\) \/ 2 \)\)/);
 });

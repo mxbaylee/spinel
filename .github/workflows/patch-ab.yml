@@ -10,7 +10,7 @@
 # Stress levels: label ci-patch-ab runs the normal 4x mobile CPU throttle; ci-patch-ab-6x and
 # ci-patch-ab-8x run 6x and 8x (SPN146_AB_CPU_THROTTLE), to check whether the old build's tail grows with
 # the load while the patched build's does not. Never pool results across throttle levels.
-# ci-patch-ab-stress keeps the 4x throttle and runs one busy-loop process per CPU beside the test, which
+# ci-patch-ab-stress keeps the 4x throttle and runs half the CPUs' worth of busy-loop processes beside the test, which
 # pushes the runner into its slow regime on demand (the regime of the only observed breaches).
 # The 8x level is best effort: a cycle can time out on every run (it stops after four in a row).
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
@@ -66,7 +66,7 @@ jobs:
             *) rate=4 ;;
           esac
           echo "SPN146_AB_CPU_THROTTLE=$rate" >> "$GITHUB_ENV"
-          if [ "$LABEL" = ci-patch-ab-stress ]; then echo "STRESS_PROCESSES=$(nproc)" >> "$GITHUB_ENV"; fi
+          if [ "$LABEL" = ci-patch-ab-stress ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
       - name: Install candidate
         run: npm ci
       - name: Install Chromium
@@ -100,7 +100,8 @@ jobs:
               for pid in "${stress_pids[@]}"; do kill "$pid" 2>/dev/null || true; done
               echo "$code" > "$run/exit-code"
               metrics=$(find test-results -name spn108-metrics.json | head -n 1)
-              if [ -n "$metrics" ]; then
+              # A run that timed out leaves a partial metrics file with no summary; it counts as unmeasured.
+              if [ -n "$metrics" ] && jq -e '.summary' "$metrics" >/dev/null 2>&1; then
                 cp "$metrics" "$run/metrics.json"; unmeasured=0
               else
                 unmeasured=$((unmeasured + 1))
