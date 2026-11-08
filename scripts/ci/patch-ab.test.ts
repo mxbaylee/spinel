@@ -362,3 +362,16 @@ test('the profile label runs the profile sample under stress and keeps its profi
   assert.match(workflow, /typing \$\{SAMPLE:-plain-1\}/);
   assert.match(workflow, /spn108-profile\*/);
 });
+
+test('the gc label keeps plain-1 under stress and turns on the GC trace', () => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  assert.match(workflow, /"ci-patch-ab-gc"/);
+  assert.match(workflow, /\[ "\$LABEL" = ci-patch-ab-gc \]; then echo "SPN146_GC_TRACE=1"/);
+  assert.match(
+    workflow,
+    /ci-patch-ab-profile \] \|\| \[ "\$LABEL" = ci-patch-ab-gc \]; then echo "STRESS_PROCESSES/,
+  );
+});

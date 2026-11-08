@@ -33,6 +33,7 @@ import type {
 } from './doc-responsiveness.ts';
 import { registerDocResponsivenessBoundaries } from './doc-responsiveness-boundaries.ts';
 import { fixture, focusEmptyDoc, exactText, saved, online } from './doc-responsiveness-fixture.ts';
+import { startGcTrace } from './doc-responsiveness-gc-trace.ts';
 import { startNativeDiagnosticTrace } from './doc-responsiveness-native-trace.ts';
 import {
   nativeWindowInput,
@@ -73,6 +74,8 @@ const expectedText = paragraphs.join('\r') + '\r\n';
 const expectedInputCount = paragraphs.reduce((sum, paragraph) => sum + paragraph.length, 0) + 15;
 const baseline = process.env.SPN108_BASELINE === '1';
 const nativeDiagnostic = process.env.SPN146_DIAGNOSTIC === '1';
+// SPN-146 attribution only: a light V8 GC trace matched to each flush. Required CI never sets it.
+const gcTraceEnabled = process.env.SPN146_GC_TRACE === '1' && !nativeDiagnostic;
 // Every scheduled sample is retained. CPU profiling has its own samples so its
 // overhead never contaminates the primary frame-latency measurements.
 test.use({ trace: 'off', screenshot: 'only-on-failure' });
@@ -691,6 +694,7 @@ for (const preset of ['desktop', 'mobile'] as const)
           expect(drainArm!.initial.pending).toEqual({ history: 0, collaboration: 0 });
           expect(drainArm!.initial.history).toEqual({ undos: 0, redos: 0 });
           expect(drainArm!.firstEmpty).toBeNull();
+          const gcTrace = gcTraceEnabled ? await startGcTrace(cdp, f.page) : undefined;
           finishInput = await observeInput(f.page);
           progress?.phase('typing');
           const typingStarted = performance.now();
@@ -849,6 +853,10 @@ for (const preset of ['desktop', 'mobile'] as const)
           };
           evidence.native = native;
           evidence.input = input;
+          if (gcTrace)
+            evidence.gcTrace = await gcTrace
+              .finish(native.flushes)
+              .catch((error) => ({ aligned: false, reason: String(error) }));
           const frame = distribution(input.keyToFrameMs);
           const gaps = input.keydownAt.slice(1).map((at, index) => at - input.keydownAt[index]!);
           const longTasks = distribution(input.longTasks.map((task) => task.durationMs));
