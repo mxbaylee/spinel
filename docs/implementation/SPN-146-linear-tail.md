@@ -1230,3 +1230,11 @@ The three longest `patched` events are not marking work. From each run's GC even
 - **Scavenges did not change** (about 200 and 1.3 s per run in both builds): the young-generation churn that remains is Univer painting, 2 of 4.7 GB.
 
 Reading: the sync fix removed the avoidable major collections; what is left is a per-collection cost of the browser's heap plus young-generation churn from painting. Shortening the rare long pause means allocating less in the paint path or making collections rarer still (fewer, larger young generations were tried and did not shorten the tail), not more sync work. No further Spinel change is indicated by this run; the open lever is Univer's paint allocation (patching Univer's render path), which is a separate decision.
+
+### 🎨 Would patching Univer's paint path help the tail? Evidence says no
+
+Univer's Docs paint (`_drawGlyphGroup`, `_paintGlyph`, `_drawGlyphGroupBackgrounds`) allocates per glyph per frame: several `Vector2` objects, an offset object and, when a paint sink is set, a closure and cloned offsets. One paint per key over about 1,000 visible glyphs on average accounts for the roughly 180 bytes per glyph-draw in the allocation profile. It is bounded by the visible page, not by the number of edits queued.
+
+That garbage dies young, and the hosted run shows young collections are not the tail: of 3,233 scavenges in the 16 runs, the longest was 23.7 ms (previous) and 19.5 ms (patched), p99 14.4 and 11.0 ms, and none reached 50 ms. A 100 ms flush needs a major collection or sweeping debt (previous section), which paint garbage does not trigger. Cutting paint allocation would lower scavenge counts (about 1.3 s per run), not the long pauses, and would mean patching Univer's render path (a second patch beside the Docs patch) for no measured change to the tail. **Decision: do not patch the paint path for SPN-146.**
+
+Still unexplained, and the remaining candidate for what triggers the five major GCs per run: browser-side memory that V8 counts as external (canvas backing stores, DOM wrappers; the embedder tracing phase above) rather than JavaScript heap growth. That has not been measured; the next evidence would be the heap and external-memory series around each major GC, from the existing GC trace plus `performance.memory`/`process` sampling, not another A/B.
