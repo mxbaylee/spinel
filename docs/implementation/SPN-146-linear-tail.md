@@ -1336,3 +1336,26 @@ Temporary page-side counters (wrapped globals, not kept) over one `plain-1` typi
   large majors (pause over 20 ms) are fewer or shorter than previous's in at least 6 of 8 pairs, and no patched
   run exceeds the 100 ms paired flush budget. A pass supports, but does not prove, that the channel churn drives the
   hosted tail; a fail means it does not.
+
+### ✅ Hosted result: `ci-patch-ab-channel` (run 42710690905, head `13d450f4`)
+
+Half-CPU stress, 4x, GC trace, same Docs patch both sides. The toggle read back the intended core build in every run
+(`installed-core.json`: previous `pooled=false`, patched `pooled=true`, hashes equal to the local ones).
+
+- **The tail reproduced on the old helper and not on the fix.** Previous: paired flush max 105.1 ms (pair 5) and
+  124.5 ms (pair 7), both exit 1; pair 6 produced no metrics (exit 1). Patched: 8 of 8 measured, flush max
+  19.7-30.4 ms, flush p95 9.7-11.1 ms, longest task 107-256 ms, all budgets met, no non-zero exits.
+- **Pre-registered rule: passed.** Large majors (pause over 20 ms): patched had less total large-major time in
+  7 of 7 pairs that have both sides (pair 6 has no previous metrics), so at least 6 of 8; no patched run
+  exceeded 100 ms. Total large-major time over the run: 1,282 ms patched against 3,933 ms previous; worst single
+  major 62 ms patched against 250 ms previous (patched 3-7 per run, previous 4-6; the count is not the lever).
+- **Why it counts as support, not proof.** The breach tally alone (2 of 7 previous against 0 of 8 patched) is
+  not significant (one-sided exact p = 0.2 for two breaches landing in the previous half), and one run is one
+  runner state. The mechanism is the strong part: every pair shows the major pauses shrinking about 3-4x, as in
+  the local probe, and the pauses that overlapped the breaching flushes were the long ones.
+- Summarize failed by design (pair 6 previous unmeasured); the job's other steps passed.
+- Evidence: `docs/implementation/evidence/SPN-146/patch-ab/run-42710690905-channel-8-pairs/` (summary, derived
+  `gc-summary.json`, metrics of both previous breaches and the worst and a typical patched run).
+- Still open: the roughly 75 MB per cycle of non-old memory that triggers each major is unattributed, and a
+  second hosted cycle would tighten the tail evidence; neither blocks keeping the patch, which is correct,
+  tested and a direct reduction in browser-heap garbage.
