@@ -518,7 +518,7 @@ The gated values are the paired flush maximum (budget 100 ms) and capacity flush
 p95 (200 ms) and longest task (500 ms) have their own looser budgets that the spec also enforces. The artifact is `doc-responsiveness-mobile`.
 
 **Status after five hosted passes:** five first-attempt mobile passes on four runner speeds, the latest
-on the restructured `patch-univer-docs.ts`, and, for the fifth, a run with no rerun (the second pass's run needed one rerun of an unrelated flaky smoke test). The cause of the original 102–129 ms tail is not proven (the later hosted A/B is consistent with the
+on the restructured `patch-univer-docs.ts`, and, for the fifth, a run with no rerun (the second pass's run needed one rerun of an unrelated flaky smoke test). **Superseded by [the hosted channel A/B](#-hosted-result-ci-patch-ab-channel-run-42710690905-head-13d450f4) and the later causes found after this paragraph was written (see the sections from "The batch timer lags typing" on).** The cause of the original 102–129 ms tail was not proven at the time (the later hosted A/B is consistent with the
 patch but 1 of 28 previous-build pairs at 4x and 1 of 8 at 8x, reported per level), so the hosted evidence is a mitigation disposition; the lowest-layer work-scaling test shows the mechanism, and the hosted cause is not proven. The retained diagnostics (`scripts/ci/doc-native-runtime/*`,
 `nativeDocFlushDiagnostic.ts`) stay so a recurrence can be diagnosed. `nativeDocFlushDiagnostic.ts` is live in the hosted
 responsiveness evidence; `scripts/ci/doc-native-runtime/*` is a hand-run tool (`SPN146_RUNTIME_OUTPUT`
@@ -1359,3 +1359,22 @@ Half-CPU stress, 4x, GC trace, same Docs patch both sides. The toggle read back 
 - Still open: the roughly 75 MB per cycle of non-old memory that triggers each major is unattributed, and a
   second hosted cycle would tighten the tail evidence; neither blocks keeping the patch, which is correct,
   tested and a direct reduction in browser-heap garbage.
+
+## 🧭 Decisions after the channel A/B (agent, owner-delegated; chat 2026-11-09)
+
+- **Cause, as far as the evidence goes.** The hosted tail comes from long major GCs inside flushes. Two avoidable
+  sources of main-thread and browser-heap churn were found and fixed in this PR: the sync client re-encoded the
+  whole pending buffer on every edit (quadratic; 5x fewer majors on the hosted runner, run 42644030946), and
+  Univer core created one `MessageChannel` per scheduled macrotask (about 47,000 per run; the old helper reproduced
+  the 105 and 124 ms flushes and the shared channel had none, large-major time 3,933 ms to 1,282 ms, run
+  42710690905). This answers the owner's "why is the cause not proven" with a reproduced old-vs-new result and a
+  causal local test, not only a mechanism count. It stays one hosted cycle and a rare tail (2 of 7 previous
+  breaches, p about 0.2 by that count alone), so a second `ci-patch-ab-channel` cycle is the way to tighten it.
+- **The layout Worker is not shipped.** It was a throughput experiment (about 20% faster typing and fewer long
+  tasks locally), it does not remove the tail or the majors (its majors were about 30% longer), and its offline
+  cold load and phone view were never verified. The experiment code (`web/docLayoutWorker.ts`, the
+  `VITE_DOC_LAYOUT_WORKER` toggle in `web/docPreset.ts`) and the `ci-patch-ab-worker` label are removed, so the
+  product tree has no dead flag. Its results stay in the Worker sections above, and in the evidence README.
+  Revisit as its own ticket if typing throughput matters.
+- **Diagnostics stay until a second hosted cycle repeats the channel result** ("after the fix is proven"). The
+  hand-run `scripts/ci/doc-native-runtime/*` and the flush diagnostic then move out, as ruled on 2026-11-07.

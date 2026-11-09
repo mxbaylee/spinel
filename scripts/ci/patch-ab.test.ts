@@ -395,25 +395,6 @@ test('the semispace label compares a larger young generation inside one run', ()
   assert.match(workflow, /SEMISPACE_AB=1" >> "\$GITHUB_ENV"; echo "SPN146_GC_TRACE=1"/);
 });
 
-test('the worker label builds both variants with the same Docs patch and toggles only the layout Worker', () => {
-  const workflow = readFileSync(
-    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
-    'utf8',
-  );
-  assert.match(workflow, /"ci-patch-ab-worker"/);
-  assert.match(
-    workflow,
-    /ci-patch-ab-worker \] \|\| \[ "\$LABEL" = ci-patch-ab-sync \] \|\| \[ "\$LABEL" = ci-patch-ab-channel \]; then echo "STRESS_PROCESSES/,
-  );
-  assert.match(workflow, /WORKER_AB=1" >> "\$GITHUB_ENV"; echo "SPN146_GC_TRACE=1"/);
-  assert.match(workflow, /toggle\.ts patched "\$run\/installed\.json"/);
-  assert.match(workflow, /export VITE_DOC_LAYOUT_WORKER=1; else export VITE_DOC_LAYOUT_WORKER=0/);
-  assert.match(
-    workflow,
-    /AB_SAME_BUILD="\$\{WORKER_AB:\+1\}\$\{SYNC_AB:\+1\}\$\{CHANNEL_AB:\+1\}"/,
-  );
-});
-
 test('the sync label reverts only the sync client for the previous build and restores it after the build', () => {
   const workflow = readFileSync(
     new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
@@ -427,10 +408,7 @@ test('the sync label reverts only the sync client for the previous build and res
     /"\$variant" = previous \]; then git apply scripts\/ci\/patch-ab\/quadratic-enqueue\.patch; reverted=1/,
   );
   assert.match(workflow, /git apply -R scripts\/ci\/patch-ab\/quadratic-enqueue\.patch/);
-  assert.match(
-    workflow,
-    /AB_SAME_BUILD="\$\{WORKER_AB:\+1\}\$\{SYNC_AB:\+1\}\$\{CHANNEL_AB:\+1\}"/,
-  );
+  assert.match(workflow, /AB_SAME_BUILD="\$\{SYNC_AB:\+1\}\$\{CHANNEL_AB:\+1\}"/);
 });
 
 test("the channel label toggles only core's macrotask helper and runs in same-build mode", () => {
@@ -443,10 +421,7 @@ test("the channel label toggles only core's macrotask helper and runs in same-bu
   assert.match(workflow, /CHANNEL_AB=1" >> "\$GITHUB_ENV"; echo "SPN146_GC_TRACE=1"/);
   assert.match(workflow, /core-channel\.ts "\$variant" "\$run\/installed-core\.json"/);
   assert.match(workflow, /toggle\.ts patched "\$run\/installed\.json"/);
-  assert.match(
-    workflow,
-    /AB_SAME_BUILD="\$\{WORKER_AB:\+1\}\$\{SYNC_AB:\+1\}\$\{CHANNEL_AB:\+1\}"/,
-  );
+  assert.match(workflow, /AB_SAME_BUILD="\$\{SYNC_AB:\+1\}\$\{CHANNEL_AB:\+1\}"/);
 });
 
 test('same-build mode accepts one shared build and still rejects two different ones', () => {
