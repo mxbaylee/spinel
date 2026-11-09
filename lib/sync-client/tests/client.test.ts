@@ -339,6 +339,32 @@ test('inbox growth is bounded while an acknowledgment is missing', async () => {
   }
 });
 
+test('a lagging batch timer queues edits up to the exact pending byte limit', () => {
+  const f = fixture();
+  const a = f.client();
+  try {
+    // Never connected: nothing drains, as when typing outruns the batch timer.
+    const limit = 10 * 1024 * 1024;
+    a.sync.enqueue([write({ v: 'x'.repeat(30_000) })]);
+    const base = JSON.stringify(a.sync.checkpoint().buffer[0]).length;
+    // The buffer is a JSON array of groups: brackets, each group, one comma between.
+    // Pick the payload whose count leaves the least room, so a one-byte error changes the count.
+    const slack = (extra: number) => (limit - 1) % (base + extra + 1);
+    let extra = 0;
+    for (let size = 0; size < 400; size++) if (slack(size) > slack(extra)) extra = size;
+    const edit = () => write({ v: 'x'.repeat(30_000 + extra) });
+    const b = f.client();
+    const fits = Math.floor((limit - 1) / (base + extra + 1));
+    for (let index = 0; index < fits; index++) b.sync.enqueue([edit()]);
+    expect(b.failures).toEqual([]);
+    expect(JSON.stringify(b.sync.checkpoint().buffer).length).toBeLessThanOrEqual(limit);
+    b.sync.enqueue([edit()]);
+    expect(b.failures).toEqual(['capacity']);
+  } finally {
+    f.close();
+  }
+});
+
 test('unknown mutations and oversized atomic edits are refused locally', () => {
   const f = fixture();
   const a = f.client();

@@ -1153,3 +1153,32 @@ Before any hosted run, the same sample ran four times on this Mac with eight bus
 | main   | 2    | 79.9 s      | 33.3 / 50.6 ms  | 69         | 265 ms         | 28                            | 46 ms            |
 
 The Worker clearly helps the work it takes over: typing is about 20% faster, long tasks fall from about 68 to 6–10 and blocking time roughly halves. It does not change the thing the tail is made of: the number of main-thread major GCs is the same (25–29 against 28–30) and the longest ones are no shorter. So the main thread still allocates enough (painting, the layout results the Worker returns, the sync client) to keep triggering full collections. Against the rule set above this predicts no confirmation (major GCs not halved); the hosted run still decides, because only the hosted runner produces the tail. The Worker is therefore a throughput fix, and the tail needs the remaining main-thread churn cut as well.
+
+### Compatibility check with the Worker on (this Mac)
+
+With `VITE_DOC_LAYOUT_WORKER=1` compiled into the production build (the bundle holds the `new Worker(...)` factory unconditionally), `e2e/doc-mobile.spec.ts`, `e2e/documents.spec.ts` and `e2e/doc-phone-navigation.spec.ts` ran under the `production` project: 14 passed, 3 skipped, 0 failed. That covers the phone view, viewer upgrades, read-only and guest Docs, queued and native composition, rich text with images, and offline recovery. Not yet checked: fonts inside the Worker against a document with non-default fonts, and the offline cache serving the Worker chunk with the network cut after a cold load.
+
+### 🔁 The batch timer lags typing, so every edit re-encoded the whole pending buffer
+
+Correction to the earlier churn table: Spinel's `enqueue` was not about 10% and bounded by the 25 ms batch delay. With the layout Worker on, which removes the Univer relayout, it was the single largest allocation site on the main thread (1.10 GB of 5.70 GB), and the same 1.1 GB with Worker off.
+
+A temporary probe in `SyncClient.enqueue` and `pump` during the plain-1 sample (about 2,090 edits, 6x throttle) showed:
+
+- `pump` ran at 0.9 s, then not again until 52.1 s, after typing ended. The 25 ms timer did not fire while keys kept arriving every 24 ms.
+- So `inflight` stayed empty and the buffer grew from 0 to 2,085 groups, 1.0 MB of JSON (each edit about 480 bytes).
+- Each `enqueue` ran `encodedBytes([...this.buffer, copied])`: stringify and encode the whole buffer, so about 500 KB on average per edit. 2,086 edits × ~0.5 MB is the 1.1 GB, and the cost grows with the square of the edits queued.
+
+Fix (`lib/sync-client/src/client.ts`): the buffer's JSON size is measured once and then kept incrementally (adding the new group and one comma); any reassignment or `pump` drains resets it. The admission limit is unchanged. A new test fills the buffer to the exact `MAX_PENDING_BYTES` boundary with a payload chosen so one byte of error changes the count; it fails when the comma term is removed. `pump` already stops at the 64 KB wire limit, so it was not quadratic.
+
+Local, same sample, 8 busy loops, 6x throttle, GC trace on, single runs (not hosted):
+
+| build          | typing wall | frame p95 | long tasks | total blocking | major GCs (≥5 ms) | longest major GC |
+| -------------- | ----------- | --------- | ---------- | -------------- | ----------------- | ---------------- |
+| main, before   | 82.2 s      | 50.7 ms   | 68         | 295 ms         | 30                | 46 ms            |
+| main, fix      | 74.9 s      | 41.0 ms   | 11         | 220 ms         | 6                 | 70 ms            |
+| Worker, before | 64.3 s      | 37.4 ms   | 10         | 142 ms         | 25                | 59 ms            |
+| Worker, fix    | 60.7 s      | 30.3 ms   | 10         | 295 ms         | 6                 | 94 ms            |
+
+Allocation sampling: `enqueue` fell from 1.10 to 0.04 GB (Worker) and 1.11 to 0.00 GB (main); total main-thread churn fell from 5.70 to 4.67 GB (Worker) and 10.11 to 9.03 GB (main). Major GCs fell about fivefold in both layouts, which meets the rule set above (at least halved) locally. The longest major GC did not get shorter, so fewer collections is not yet shorter pauses; and this Mac shows no flush tail either way (flush max 12 to 13 ms), so only a hosted run can say whether the tail goes.
+
+Hosted test (label `ci-patch-ab-sync`, same stress and GC trace as `-worker`, layout on the main thread in both variants, same Docs patch): `previous` applies `scripts/ci/patch-ab/quadratic-enqueue.patch` (the old `enqueue`) for its build only and reverts it before the run; `patched` is this PR's client. Rule fixed before the run: the fix explains the tail if `previous` repeats its breach rate (flush over 100 ms, about 3 of 16 runs in the semispace run) while `patched` has none in 8 pairs, with `patched` major GCs at most half of `previous`. If major GCs fall but flushes over 100 ms remain, the tail has another source and this is a throughput and memory fix only. If neither moves, this was not the tail.

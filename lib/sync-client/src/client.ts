@@ -52,7 +52,16 @@ export class SyncClient {
   private awaitingResume = true;
   private sent: SubmitFrame | null = null;
   private inflight: Mutation[] = [];
-  private buffer: Mutation[][] = [];
+  private bufferGroups: Mutation[][] = [];
+  /** JSON byte size of `buffer`, or undefined until measured; kept in step by enqueue and pump. */
+  private bufferSize?: number;
+  private get buffer(): Mutation[][] {
+    return this.bufferGroups;
+  }
+  private set buffer(groups: Mutation[][]) {
+    this.bufferGroups = groups;
+    this.bufferSize = undefined;
+  }
   private readonly inbox = new Map<number, WireRevision>();
   private incomingBytes = 0;
   private lastEdit?: WireRevision;
@@ -131,11 +140,14 @@ export class SyncClient {
       const cells = cellsAfter(this.options.confirmed.cells(), pending, byteBudget());
       // Strict admission, including when there is no concurrent edit.
       transform(copied, [], 'right', { cells });
-      if (encodedBytes([...this.buffer, copied]) > MAX_PENDING_BYTES)
-        throw new ClientError('capacity');
+      // Measuring the whole buffer per edit is quadratic when batching lags behind typing.
+      const bufferBytes = (this.bufferSize ??= encodedBytes(this.buffer));
+      const queuedBytes = bufferBytes + encodedBytes(copied) + (this.buffer.length ? 1 : 0);
+      if (queuedBytes > MAX_PENDING_BYTES) throw new ClientError('capacity');
       // One group is never cut in two, including an absolute write and its tail.
       if (envelopeBytes(copied) > MAX_WIRE_BYTES) throw new ClientError('capacity');
       this.buffer.push(copied);
+      this.bufferSize = queuedBytes;
       void this.changed();
       this.schedule();
     } catch (error) {
@@ -360,6 +372,7 @@ export class SyncClient {
       return;
     }
     this.buffer.splice(0, groups);
+    this.bufferSize = undefined;
     const request: SubmitFrame = {
       type: 'submit',
       mutationId: this.options.mutationId?.() ?? crypto.randomUUID(),
