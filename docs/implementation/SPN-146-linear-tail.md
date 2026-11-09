@@ -1099,4 +1099,27 @@ What this adds to the ticket: the hosted tail comes from about 10 GB of allocati
 
 ## 🧪 Young-generation run
 
-The allocation run points at churn: about 10 GB per run, mostly short-lived layout and paint data, which fills the young generation and promotes survivors into the old generation, where full GCs follow. The label `ci-patch-ab-semispace` tests that chain directly: with the half-CPU stress and the GC trace, odd pairs run Chromium with a 64 MB young generation (`SPN146_AB_V8_FLAGS`, `--min-semi-space-size=64 --max-semi-space-size=64`) and even pairs with the default, both builds in each, so the effect is compared inside one run. Even pair 2 and odd pair 1 are not the same runner moment, so only the whole-run totals are read. Rule set beforehand: if the flagged pairs have at least half as many major GCs per run and fewer flushes with 35 ms or more of GC on both builds, the tail is promotion of short-lived churn into the old generation; if the major-GC count does not move, the old generation is growing for another reason. This is a diagnosis, not a fix: Spinel cannot set a user's V8 flags, so a shippable change would have to cut the churn or promotion instead. Results are not in yet.
+The allocation run points at churn: about 10 GB per run, mostly short-lived layout and paint data, which fills the young generation and promotes survivors into the old generation, where full GCs follow. The label `ci-patch-ab-semispace` tests that chain directly: with the half-CPU stress and the GC trace, odd pairs run Chromium with a 64 MB young generation (`SPN146_AB_V8_FLAGS`, `--min-semi-space-size=64 --max-semi-space-size=64`) and even pairs with the default, both builds in each, so the effect is compared inside one run. Even pair 2 and odd pair 1 are not the same runner moment, so only the whole-run totals are read. Rule set beforehand: if the flagged pairs have at least half as many major GCs per run and fewer flushes with 35 ms or more of GC on both builds, the tail is promotion of short-lived churn into the old generation; if the major-GC count does not move, the old generation is growing for another reason. This is a diagnosis, not a fix: Spinel cannot set a user's V8 flags, so a shippable change would have to cut the churn or promotion instead.
+
+### Result (run 42525930367, head `931e2981`)
+
+This run reproduced the hosted tail, with the GC trace attached, so the breaching flushes themselves are measured for the first time. Odd pairs ran with a 64 MB young generation, even pairs with the default; pair 2's previous run produced no metrics (timeout), so the default previous group has 3 runs.
+
+| flush over 100 ms | build    | mode    | duration | GC inside it | GC detail                                                |
+| ----------------- | -------- | ------- | -------- | ------------ | -------------------------------------------------------- |
+| pair 3            | patched  | flagged | 127.3 ms | 95 ms        | full mark-compact 87 ms, embedder tracing epilogue 53 ms |
+| pair 4            | previous | default | 151.0 ms | 117 ms       | sweeping completion 58 ms, incremental marking steps     |
+| pair 5            | patched  | flagged | 158.7 ms | 130 ms       | sweeping completion 102 ms                               |
+
+Every flush over 100 ms is 75–82% garbage collection: full mark-compact, marking and the wait for sweeping to finish. The near misses show the same (previous 89.3 ms, 74 ms of it GC; patched 98.1 ms, 88 ms GC; patched 79.3 ms, 72 ms GC). Breach counts: previous 1 of 7 measured pairs, patched 2 of 8, no separation.
+
+| mode, build       | runs | major GCs per run | major GC time per run | GC inside flushes | flush max over 100 ms | worst flush | total heap at end |
+| ----------------- | ---- | ----------------- | --------------------- | ----------------- | --------------------- | ----------- | ----------------- |
+| default, previous | 3    | 22.7              | 1307 ms               | 273 ms            | 1                     | 151.0 ms    | 124 MB            |
+| default, patched  | 4    | 25.3              | 1356 ms               | 330 ms            | 0                     | 98.1 ms     | 123 MB            |
+| flagged, previous | 4    | 14.3              | 1015 ms               | 210 ms            | 0                     | 89.3 ms     | 191 MB            |
+| flagged, patched  | 4    | 14.3              | 1010 ms               | 324 ms            | 2                     | 158.7 ms    | 191 MB            |
+
+The flag took effect (the total heap rose from about 123 MB to 191 MB). Against the rule set beforehand (flagged pairs with at least half as many major GCs per run and fewer flushes with 35 ms or more of GC): major GCs fell 41% (14.3 against 24.4 per run), short of half, and the tail did not shrink: both flagged breaches are on the flagged side, and each individual major GC was no shorter (longest 175 ms flagged, 159 ms default). The rule's confirmation is therefore not met.
+
+What this establishes: the hosted flush tail of 100 ms and more is, in each breach seen, 75% or more garbage collection inside the flush, on both builds. A larger young generation cuts how often major GCs happen but not how long the long ones are, so it does not remove the breaches. The patch plays no part: it changes neither the GC count nor the breach rate. The remaining lever is allocation churn itself (the Univer layout and paint path and one Spinel-owned queue site), not V8 tuning, which Spinel cannot set in a user's browser anyway. Limits: 15 runs with metrics, three breaches, the GC trace and stress on every run.
