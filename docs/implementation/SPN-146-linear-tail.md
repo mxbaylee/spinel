@@ -1238,3 +1238,18 @@ Univer's Docs paint (`_drawGlyphGroup`, `_paintGlyph`, `_drawGlyphGroupBackgroun
 That garbage dies young, and the hosted run shows young collections are not the tail: of 3,233 scavenges in the 16 runs, the longest was 23.7 ms (previous) and 19.5 ms (patched), p99 14.4 and 11.0 ms, and none reached 50 ms. A 100 ms flush needs a major collection or sweeping debt (previous section), which paint garbage does not trigger. Cutting paint allocation would lower scavenge counts (about 1.3 s per run), not the long pauses, and would mean patching Univer's render path (a second patch beside the Docs patch) for no measured change to the tail. **Decision: do not patch the paint path for SPN-146.**
 
 Still unexplained, and the remaining candidate for what triggers the five major GCs per run: browser-side memory that V8 counts as external (canvas backing stores, DOM wrappers; the embedder tracing phase above) rather than JavaScript heap growth. That has not been measured; the next evidence would be the heap and external-memory series around each major GC, from the existing GC trace plus `performance.memory`/`process` sampling, not another A/B.
+
+## 🔬 What triggers the major GCs (this Mac, sync fix in, Worker off)
+
+One local `plain-1` run (4x throttle, GC trace) with the JS heap polled every 100 ms over CDP
+(`Runtime.getHeapUsage`, `Performance.getMetrics`; temporary helper, not kept).
+
+- Five majors in the 55 s typing window, about 10 s apart (13.1, 24.6, 34.4, 44.2, 51.0 s), 47 to 22 ms each.
+- Each fired with the JS heap at 69-82 MB used of a plateaued 128 MB total, and freed only 2-20 MB
+  (the sawtooth runs between about 57 and 82 MB). DOM nodes (1.4-1.7k) and documents (1) stayed flat.
+- So the trigger is JS old-generation growth, not external memory: the hypothesis "canvas backing stores or
+  DOM wrappers" is **not supported** here. What grows old space between majors is promoted garbage, objects
+  that survive two scavenges, not leaked retention (used falls back after each major).
+- Limits: one local run, 1 sample, no stress, and no external-memory number (V8 does not expose it over
+  CDP). Hosted majors were 4-5x longer, which this run cannot explain; the embedder-tracing cost in those
+  collections stays attributed but untested.
