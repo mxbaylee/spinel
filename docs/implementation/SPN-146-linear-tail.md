@@ -1247,8 +1247,9 @@ One local `plain-1` run (4x throttle, GC trace) with the JS heap polled every 10
 - Five majors in the 55 s typing window, about 10 s apart (13.1, 24.6, 34.4, 44.2, 51.0 s), 47 to 22 ms each.
 - Each fired with the JS heap at 69-82 MB used of a plateaued 128 MB total, and freed only 2-20 MB
   (the sawtooth runs between about 57 and 82 MB). DOM nodes (1.4-1.7k) and documents (1) stayed flat.
-- So the trigger is JS old-generation growth, not external memory: the hypothesis "canvas backing stores or
-  DOM wrappers" is **not supported** here. What grows old space between majors is promoted garbage, objects
+- **Correction (see the next section):** this reading was wrong. The trigger is V8's _global_ limit, which counts
+  non-old memory too; the "canvas backing stores or DOM wrappers" hypothesis is alive.
+- Original (superseded) text: the trigger is JS old-generation growth, not external memory. What grows old space between majors is promoted garbage, objects
   that survive two scavenges, not leaked retention (used falls back after each major).
 - Limits: one local run, 1 sample, no stress, and no external-memory number (V8 does not expose it over
   CDP). Hosted majors were 4-5x longer, which this run cannot explain; the embedder-tracing cost in those
@@ -1263,3 +1264,19 @@ One local `plain-1` run (4x throttle, GC trace) with the JS heap polled every 10
 - Reading: the trigger is the fixed old-space growth limit, hit about every 1/5 of the run. Whatever promotes
   objects into old space is the lever for fewer majors; what lengthens a major on the hosted runner is a separate
   question that local runs cannot reach (hosted majors are 4-5x longer).
+
+### 🔧 Correction: the global limit triggers the majors, not old space (this Mac)
+
+The GC trace's `V8.GCTraceGCNVP` events carry each GC's reason and sizes. One local `plain-1` run, Worker off:
+
+- All 10 majors say "GC in old space requested" via incremental-marking finalize, but old space was 53-62 MB
+  against an old-gen limit of 87-140 MB. The **global** consumed size (old plus external/embedder memory) was
+  126-176 MB against a global limit of 126-176 MB: the global limit is what was hit.
+- Non-old memory (global minus old) climbs from about 35 MB to 70-115 MB between majors and drops back to
+  about 35 MB after each. Old space itself barely moves (mean 0.15 MB per scavenge, 2 of 330 scavenges over
+  1 MB), so promoted garbage is not the driver.
+- Not the sync client's `TextEncoder`: replacing `encodedBytes` with an allocation-free UTF-8 length left the
+  majors unchanged (10 -> 9, large ones 6 -> 5, max non-old 114 MB both).
+- Still unattributed: what the roughly 4 MB/s of non-old memory is (canvas or image data, Blink wrappers,
+  array buffers). Next probe: allocation sites of ArrayBuffer/ImageData/canvas in the paint path, or Chromium's
+  `memory-infra` trace category.
