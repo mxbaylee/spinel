@@ -8,6 +8,7 @@ import {
   UniverMobileUIPlugin,
 } from '@univerjs/preset-docs-core';
 import type { IUniverDocsCorePresetConfig } from '@univerjs/preset-docs-core';
+import { UniverDocsLayoutWorkerPlugin } from '@univerjs/docs';
 import {
   UniverDrawingUIPlugin,
   UniverDrawingMobileUIPlugin,
@@ -81,6 +82,19 @@ export function docPreset(
           ];
         }),
         ...(mobile ? [DocPhoneViewPlugin] : []),
+        ...(import.meta.env.VITE_DOC_LAYOUT_WORKER === '1'
+          ? [
+              [
+                UniverDocsLayoutWorkerPlugin,
+                {
+                  workerFactory: () =>
+                    new Worker(new URL('./docLayoutWorker.ts', import.meta.url), {
+                      type: 'module',
+                    }),
+                },
+              ] as IPreset['plugins'][number],
+            ]
+          : []),
       ],
     },
     mobile,

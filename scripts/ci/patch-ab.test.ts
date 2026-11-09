@@ -394,3 +394,33 @@ test('the semispace label compares a larger young generation inside one run', ()
   assert.match(workflow, /unset SPN146_AB_V8_FLAGS/);
   assert.match(workflow, /SEMISPACE_AB=1" >> "\$GITHUB_ENV"; echo "SPN146_GC_TRACE=1"/);
 });
+
+test('the worker label builds both variants with the same Docs patch and toggles only the layout Worker', () => {
+  const workflow = readFileSync(
+    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
+    'utf8',
+  );
+  assert.match(workflow, /"ci-patch-ab-worker"/);
+  assert.match(workflow, /ci-patch-ab-worker \]; then echo "STRESS_PROCESSES/);
+  assert.match(workflow, /WORKER_AB=1" >> "\$GITHUB_ENV"; echo "SPN146_GC_TRACE=1"/);
+  assert.match(workflow, /toggle\.ts patched "\$run\/installed\.json"/);
+  assert.match(workflow, /export VITE_DOC_LAYOUT_WORKER=1; else export VITE_DOC_LAYOUT_WORKER=0/);
+  assert.match(workflow, /AB_SAME_BUILD="\$\{WORKER_AB:\+1\}"/);
+});
+
+test('same-build mode accepts one shared build and still rejects two different ones', () => {
+  const same = summarize(
+    [run(1, 'previous', metrics(1, 1), 'x'), run(1, 'patched', metrics(1, 1), 'x')],
+    undefined,
+    0,
+    true,
+  );
+  assert.deepEqual(same.problems, []);
+  const different = summarize(
+    [run(1, 'previous', metrics(1, 1), 'x'), run(1, 'patched', metrics(1, 1), 'y')],
+    undefined,
+    0,
+    true,
+  );
+  assert.deepEqual(different.problems, ['previous and patched installed different builds']);
+});

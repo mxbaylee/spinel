@@ -39,7 +39,16 @@ export interface Row {
 
 const number = (value: unknown) => (typeof value === 'number' ? value : null);
 
-export function summarize(runs: Run[], expectedPairs?: number, stressProcesses = 0) {
+/**
+ * `sameBuild` is for an A/B where only something other than the Docs build differs between the two
+ * variants (the layout Worker label): both variants must then install one and the same build.
+ */
+export function summarize(
+  runs: Run[],
+  expectedPairs?: number,
+  stressProcesses = 0,
+  sameBuild = false,
+) {
   const problems: string[] = [];
   const firstSeq = new Map<number, number>();
   for (const run of runs)
@@ -90,8 +99,10 @@ export function summarize(runs: Run[], expectedPairs?: number, stressProcesses =
   for (const [variant, shas] of byVariant)
     if (shas.size !== 1) problems.push(`${variant}: ${shas.size} different installed builds`);
   const [first, second] = [...byVariant.values()];
-  if (byVariant.size === 2 && [...first!][0] === [...second!][0])
+  if (byVariant.size === 2 && [...first!][0] === [...second!][0] && !sameBuild)
     problems.push('previous and patched installed the same build');
+  if (sameBuild && byVariant.size === 2 && [...first!][0] !== [...second!][0])
+    problems.push('previous and patched installed different builds');
   // Per-variant tally. A variant that did not produce metrics for every expected pair
   // is a harness problem, not a quiet gap in the sample.
   const tally: Record<
@@ -208,7 +219,12 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (!directory || !json || !markdown) throw new Error('Usage: summarize.ts <runs> <json> <md>');
   const expectedPairs = process.env.PAIRS ? Number(process.env.PAIRS) : undefined;
   const stress = Number(process.env.STRESS_PROCESSES || 0);
-  const result = summarize(readRuns(directory), expectedPairs, stress);
+  const result = summarize(
+    readRuns(directory),
+    expectedPairs,
+    stress,
+    process.env.AB_SAME_BUILD === '1',
+  );
   if (!result.rows.length) result.problems.push('no runs found');
   writeFileSync(json, `${JSON.stringify(result, null, 2)}\n`);
   writeFileSync(markdown, renderTable(result));
