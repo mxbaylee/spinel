@@ -1280,3 +1280,33 @@ The GC trace's `V8.GCTraceGCNVP` events carry each GC's reason and sizes. One lo
 - Still unattributed: what the roughly 4 MB/s of non-old memory is (canvas or image data, Blink wrappers,
   array buffers). Next probe: allocation sites of ArrayBuffer/ImageData/canvas in the paint path, or Chromium's
   `memory-infra` trace category.
+
+### 🎯 Probe: what the non-old memory is, and what lengthens the majors (this Mac, Worker off)
+
+Temporary page-side counters (wrapped globals, not kept) over one `plain-1` typing run:
+
+- **Not buffers or canvas sizing:** 872 KB through `TextEncoder`, 166 KB through `Uint8Array`, no canvas
+  `width`/`height` resizes, no `getImageData`, 37 `measureText`. About 2,000 key events.
+- **Heavy call counts:** 1.81 M `ctx.fillText` (about 870 per key: the whole page repaints), 69 k `ctx.save` and
+  `restore`, 17 k `getBoundingClientRect`, 13 k `requestAnimationFrame`.
+- **47,000 `new MessageChannel()` in one run (about 22 per key).** All come from Univer's renderer
+  `makeDirtyWithDebounce` (22.4 k via `_makeDirtyMix`, 20.5 k via `setProps`, 4.2 k via a second renderer
+  instance). The helper (`Mv` in the built `univer-renderer` chunk) creates a channel per call to schedule
+  one macrotask, then closes both ports. Every channel is Blink (Oilpan) objects plus a pipe.
+- **Causal test:** a shim that keeps one real `MessageChannel`, queues the callbacks FIFO and honours `close()`
+  (same macrotask semantics; plain-1 still passes). Two runs each:
+
+  |                    | Majors | Major pauses (ms)                                | Max non-old |
+  | ------------------ | ------ | ------------------------------------------------ | ----------- |
+  | Real channels      | 7, 9   | 48, 50, 37 / 50, 28, 29, 26, 24 (the large ones) | 115, 114 MB |
+  | One shared channel | 8, 8   | 10, 8, 10 / 11, 9, 8, 10                         | 110, 110 MB |
+
+  Large majors fall from 25-50 ms to about 10 ms, matching the hosted finding that the embedder-tracing phase
+  dominates the long collections. The **number** of majors and the non-old peak do not change, so channel
+  churn lengthens each major but is not what fills the global limit.
+
+- An earlier crude stub (a `setTimeout` per call) was invalid: it made things worse (29 majors, 375 MB, a
+  failing run). Only the faithful shim counts.
+- Open: what else fills the roughly 75 MB of non-old memory per cycle (still unattributed); and whether the
+  shorter majors remove the hosted 100 ms tail (needs a hosted A/B, `patched` = the shim as a Univer
+  renderer patch, which adds a second patched Univer package).
