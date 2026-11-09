@@ -1212,3 +1212,21 @@ What the run does show:
 - The one `patched` flush near the limit (pair 6, 88.1 ms) was mostly GC (106 ms of GC in its flushes), as in the earlier runs; `previous` pair 6 (72.2 ms) was the same.
 
 So this removes the cause of the churn but not yet the cause of the rare 100 ms flush, and it introduced fewer-but-longer collections. A next experiment would target the long collections: the heap that survives to them (retention, `-heap` with live-only pairs) and whether a larger young generation or an earlier drain of the buffer shortens them.
+
+### 🔬 Why the remaining collections are long (same run, GC phases)
+
+The three longest `patched` events are not marking work. From each run's GC events (`gc-phase-summary.json`, per-run means over eight runs, total ms and count):
+
+| phase                        | previous     | patched     |
+| ---------------------------- | ------------ | ----------- |
+| scavenges (young generation) | 1,429 / 205  | 1,307 / 199 |
+| major GCs                    | 1,294 / 25.9 | 678 / 5.1   |
+| `EMBEDDER_TRACING_EPILOGUE`  | 482 / 22.3   | 450 / 5.1   |
+| `ENSURE_SWEEPING_COMPLETED`  | 1,047 / 24.0 | 196 / 3.8   |
+| `MC_EVACUATE`                | 434 / 25.9   | 86 / 5.1    |
+
+- **Per major GC, the embedder tracing epilogue costs about 4 times more in `patched`** (88 ms against 22 ms): total time barely moved while the count fell fivefold. In the worst `patched` run (pair 3), 261 of a 338 ms major GC was that phase. It is the browser's own heap (DOM wrappers, canvas), not Spinel or Univer JavaScript, and a fixed cost per collection.
+- **`ENSURE_SWEEPING_COMPLETED`**, the main thread finishing sweeping that background threads did not, fell with the collection count (1,047 to 196 ms) but still produced 140–168 ms events in `patched` pair 3. Under two busy loops on four CPUs the sweeper threads compete for CPU, which fits the tail appearing only under load and being 75–82% GC.
+- **Scavenges did not change** (about 200 and 1.3 s per run in both builds): the young-generation churn that remains is Univer painting, 2 of 4.7 GB.
+
+Reading: the sync fix removed the avoidable major collections; what is left is a per-collection cost of the browser's heap plus young-generation churn from painting. Shortening the rare long pause means allocating less in the paint path or making collections rarer still (fewer, larger young generations were tried and did not shorten the tail), not more sync work. No further Spinel change is indicated by this run; the open lever is Univer's paint allocation (patching Univer's render path), which is a separate decision.
