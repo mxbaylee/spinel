@@ -1189,3 +1189,26 @@ Hosted test (label `ci-patch-ab-sync`, same stress and GC trace as `-worker`, la
 - **Fonts:** the app declares no `@font-face` or `FontFace`; `src/ui/theme.css` uses `system-ui`, so the page and the Worker resolve the same system fonts for measurement. Line breaks were not compared between the two layouts glyph by glyph.
 - **Still open:** the offline cache serving the Worker chunk after a cold load with the network cut. A scratch spec with Playwright's offline switch could not test it: a reload while offline showed the "You're offline" page with the Worker on and off alike, so the check belongs to the `offline-upgrade` project (hosted CI, with the Worker enabled). The Worker chunk is in the service worker's precache manifest in both builds, and the page did start the Worker online (`docLayoutWorker-*.js`).
 - **Remaining main-thread churn (Worker on):** after the `enqueue` fix the top sites are all Univer painting (`_drawGlyphGroup`, `_paintGlyph`, `draw`, text measurement in `_d`), about 2 GB of 4.7 GB, bounded by the visible page rather than growing with the edits queued. Cutting it would mean patching Univer's paint path; no evidence yet that it matters for the tail.
+
+### 📊 Hosted result: `ci-patch-ab-sync` (run 42644030946, head `88422ea5`)
+
+Evidence: `docs/implementation/evidence/SPN-146/patch-ab/run-42644030946-sync-8-pairs/` (summary, `gc-summary.json` for all 16 runs, `failures.json`, metrics of the three runs discussed). All 16 runs measured; Summarize passed. 4x throttle, two busy loops, GC trace. `previous` = old `enqueue`, `patched` = this PR's; same Docs patch and hash in all 16.
+
+| per run, medians (range) | previous (old `enqueue`) | patched (fix) |
+| ------------------------ | ------------------------ | ------------- |
+| major GCs (≥5 ms)        | 26 (23–28)               | 5 (3–7)       |
+| typing wall              | 221 s                    | 189 s         |
+| frame p95                | 168 ms                   | 120 ms        |
+| long tasks               | 1,689                    | 1,487         |
+| paired flush max, worst  | 72.2 ms                  | 88.1 ms       |
+| longest major GC, worst  | 182 ms                   | 354 ms        |
+
+Against the rule set above: major GCs fell about fivefold in every pair (207 against 41 in total; the rule asked for at most half), but **the rule cannot confirm or refute the tail**. Its first condition, that `previous` repeats its breach rate, failed to occur: no flush reached 100 ms in either build (worst 72.2 ms previous, 88.1 ms patched), so there was no tail to remove. The hosted tail is rare (3 of 16 in the semispace run, 0 of 16 here); one 8-pair cycle cannot separate the builds on it.
+
+What the run does show:
+
+- The fix removes about 80% of main-thread major GCs under the hosted stress and lowers frame p95 by about 30%. That is the quadratic buffer, confirmed on the hosted runner and not only on this Mac.
+- It did **not** shorten the worst pauses: the longest major GC is longer in `patched` (up to 354 ms against 182 ms), consistent with fewer collections each finding more to do. One `patched` run (pair 3) failed the 500 ms longest-task budget on a 338 ms major GC (exit 1). Two `previous` runs also exited 1 with every recorded budget passing (messages not retained).
+- The one `patched` flush near the limit (pair 6, 88.1 ms) was mostly GC (106 ms of GC in its flushes), as in the earlier runs; `previous` pair 6 (72.2 ms) was the same.
+
+So this removes the cause of the churn but not yet the cause of the rare 100 ms flush, and it introduced fewer-but-longer collections. A next experiment would target the long collections: the heap that survives to them (retention, `-heap` with live-only pairs) and whether a larger young generation or an earlier drain of the buffer shortens them.
