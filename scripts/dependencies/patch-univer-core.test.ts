@@ -10,7 +10,7 @@ import {
   composeBody,
 } from '@univerjs/core';
 import type { IDocumentBody, IParagraph } from '@univerjs/core';
-import { patchCore } from './patch-univer-core.ts';
+import { patchCore, pooledMacroTask } from './patch-univer-core.ts';
 
 // Retain updates on the wire may omit identity; the snapshot interface requires it.
 // These deliberate legacy/update fixtures exercise the documented runtime fallback.
@@ -232,4 +232,48 @@ test('adding a link across a paragraph that an existing link spans emits no nega
       assert.deepEqual(rangesOf(core.TextX.apply(body, actions)), expected, name);
     }
   }
+});
+
+test('the pooled macrotask scheduler keeps order, cancellation and one channel (SPN-146)', async () => {
+  for (const format of ['es', 'cjs'] as const) {
+    const source = await readFile(
+      new URL(`../../node_modules/@univerjs/core/lib/${format}/index.js`, import.meta.url),
+      'utf8',
+    );
+    // The installed build uses the pooled function, and the A/B's previous build the upstream one.
+    assert.ok(patchCore(source, format).includes(pooledMacroTask));
+    const upstream = patchCore(source, format, { pooledChannel: false });
+    assert.ok(!upstream.includes('pendingMacroTasks'));
+    assert.match(upstream, /const channel = new MessageChannel\(\);/);
+  }
+  let channels = 0;
+  class Counting extends MessageChannel {
+    constructor() {
+      super();
+      channels++;
+    }
+  }
+  const request = new Function(
+    'MessageChannel',
+    `${pooledMacroTask}\nreturn requestImmediateMacroTask;`,
+  )(Counting) as (callback: () => void) => () => void;
+  const order: string[] = [];
+  const done = new Promise<void>((resolve) => {
+    request(() => order.push('a'));
+    const cancelB = request(() => order.push('b'));
+    request(() => order.push('c'));
+    cancelB();
+    request(() => {
+      order.push('d');
+      // A task scheduled from a task still runs after it, in a later macrotask.
+      request(() => {
+        order.push('e');
+        resolve();
+      });
+      order.push('d-after');
+    });
+  });
+  await done;
+  assert.deepEqual(order, ['a', 'c', 'd', 'd-after', 'e']);
+  assert.equal(channels, 1);
 });

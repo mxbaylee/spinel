@@ -20,6 +20,8 @@
 # Univer's document layout Worker (patched, VITE_DOC_LAYOUT_WORKER=1), both with this PR's Docs patch.
 # ci-patch-ab-sync is the same load and trace; previous applies scripts/ci/patch-ab/quadratic-enqueue.patch (the old
 # enqueue that re-encoded the whole pending buffer per edit) for its build only, patched is this PR's sync client.
+# ci-patch-ab-channel is the same load and trace; previous restores upstream's one-MessageChannel-per-call macrotask helper
+# in @univerjs/core (scripts/ci/patch-ab/core-channel.ts), patched keeps this PR's shared channel.
 # The 8x level is best effort: a cycle can time out on every run (it stops after four in a row).
 # Within each pair the order swaps every other pair (odd: previous first; even: patched first).
 # `previous` is generation qualifiedRangesPatched in scripts/ci/patch-ab/toggle.ts.
@@ -45,7 +47,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&
-      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress","ci-patch-ab-profile","ci-patch-ab-gc","ci-patch-ab-heap","ci-patch-ab-semispace","ci-patch-ab-worker","ci-patch-ab-sync"]'), github.event.label.name) &&
+      contains(fromJSON('["ci-patch-ab","ci-patch-ab-6x","ci-patch-ab-8x","ci-patch-ab-stress","ci-patch-ab-profile","ci-patch-ab-gc","ci-patch-ab-heap","ci-patch-ab-semispace","ci-patch-ab-worker","ci-patch-ab-sync","ci-patch-ab-channel"]'), github.event.label.name) &&
       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 130
@@ -74,7 +76,7 @@ jobs:
             *) rate=4 ;;
           esac
           echo "SPN146_AB_CPU_THROTTLE=$rate" >> "$GITHUB_ENV"
-          if [ "$LABEL" = ci-patch-ab-stress ] || [ "$LABEL" = ci-patch-ab-profile ] || [ "$LABEL" = ci-patch-ab-gc ] || [ "$LABEL" = ci-patch-ab-heap ] || [ "$LABEL" = ci-patch-ab-semispace ] || [ "$LABEL" = ci-patch-ab-worker ] || [ "$LABEL" = ci-patch-ab-sync ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
+          if [ "$LABEL" = ci-patch-ab-stress ] || [ "$LABEL" = ci-patch-ab-profile ] || [ "$LABEL" = ci-patch-ab-gc ] || [ "$LABEL" = ci-patch-ab-heap ] || [ "$LABEL" = ci-patch-ab-semispace ] || [ "$LABEL" = ci-patch-ab-worker ] || [ "$LABEL" = ci-patch-ab-sync ] || [ "$LABEL" = ci-patch-ab-channel ]; then echo "STRESS_PROCESSES=$(( ($(nproc) + 1) / 2 ))" >> "$GITHUB_ENV"; fi
           # The profile label runs the spec's own CPU-profile sample (1 ms sampling, budgets not enforced) so a
           # slow flush can be attributed; its profiles are kept beside each run. Never pool it with plain-1 runs.
           if [ "$LABEL" = ci-patch-ab-profile ]; then echo "SAMPLE=profile" >> "$GITHUB_ENV"; fi
@@ -93,6 +95,9 @@ jobs:
           # The sync label compares the sync client's enqueue before (previous) and after (patched) it stopped
           # re-encoding the whole pending buffer on every edit; layout stays on the main thread in both.
           if [ "$LABEL" = ci-patch-ab-sync ]; then echo "SYNC_AB=1" >> "$GITHUB_ENV"; echo "SPN146_GC_TRACE=1" >> "$GITHUB_ENV"; fi
+          # The channel label compares Univer core's macrotask helper before (previous: one MessageChannel per call)
+          # and after (patched: one shared channel); everything else, Docs patch included, is the same build.
+          if [ "$LABEL" = ci-patch-ab-channel ]; then echo "CHANNEL_AB=1" >> "$GITHUB_ENV"; echo "SPN146_GC_TRACE=1" >> "$GITHUB_ENV"; fi
       - name: Install candidate
         run: npm ci
       - name: Install Chromium
@@ -114,9 +119,12 @@ jobs:
               seq=$((seq + 1))
               echo "$seq" > "$run/seq"
               reverted=
-              if [ -n "${WORKER_AB:-}" ] || [ -n "${SYNC_AB:-}" ]; then
+              if [ -n "${WORKER_AB:-}" ] || [ -n "${SYNC_AB:-}" ] || [ -n "${CHANNEL_AB:-}" ]; then
                 node scripts/ci/patch-ab/toggle.ts patched "$run/installed.json"
-                if [ -n "${WORKER_AB:-}" ]; then
+                if [ -n "${CHANNEL_AB:-}" ]; then
+                  export VITE_DOC_LAYOUT_WORKER=0
+                  node scripts/ci/patch-ab/core-channel.ts "$variant" "$run/installed-core.json"
+                elif [ -n "${WORKER_AB:-}" ]; then
                   if [ "$variant" = patched ]; then export VITE_DOC_LAYOUT_WORKER=1; else export VITE_DOC_LAYOUT_WORKER=0; fi
                 else
                   export VITE_DOC_LAYOUT_WORKER=0
@@ -159,7 +167,7 @@ jobs:
           done
       - name: Summarize
         if: always()
-        run: PAIRS="$PAIRS" STRESS_PROCESSES="${STRESS_PROCESSES:-0}" AB_SAME_BUILD="${WORKER_AB:+1}${SYNC_AB:+1}" node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
+        run: PAIRS="$PAIRS" STRESS_PROCESSES="${STRESS_PROCESSES:-0}" AB_SAME_BUILD="${WORKER_AB:+1}${SYNC_AB:+1}${CHANNEL_AB:+1}" node scripts/ci/patch-ab/summarize.ts patch-ab/runs patch-ab/summary.json patch-ab/summary.md
       - name: Publish summary
         if: always()
         run: |

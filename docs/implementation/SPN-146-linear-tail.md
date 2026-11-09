@@ -1310,3 +1310,29 @@ Temporary page-side counters (wrapped globals, not kept) over one `plain-1` typi
 - Open: what else fills the roughly 75 MB of non-old memory per cycle (still unattributed); and whether the
   shorter majors remove the hosted 100 ms tail (needs a hosted A/B, `patched` = the shim as a Univer
   renderer patch, which adds a second patched Univer package).
+
+### 🛠️ The fix: one shared MessageChannel in `@univerjs/core` (built, A/B pending)
+
+- `scripts/dependencies/patch-univer-core.ts` now also replaces core's `requestImmediateMacroTask` (the `Mv` helper
+  in the renderer chunk) with one lazily created channel and an in-order queue. Same contract: one later macrotask
+  per call, FIFO, cancel before it runs means it never runs. In Node the port is referenced only while a task is
+  pending. Both bundles are covered; the upstream function is matched byte for byte, so a changed build fails the
+  install. `patchCore(source, format, { pooledChannel: false })` restores upstream for the A/B only.
+- Tests (`patch-univer-core.test.ts`): both formats carry the pooled function, upstream is restorable, and the
+  scheduler constructs exactly one channel and keeps order, cancellation and nested scheduling (popping instead of
+  shifting makes it fail).
+- Local real-patch A/B on this Mac (not the shim; Worker off, 4x throttle, two pairs, order patched/previous):
+
+  |                             | Majors | Large major pauses (ms)                 |
+  | --------------------------- | ------ | --------------------------------------- |
+  | previous (channel per call) | 10, 9  | 51, 28, 26, 27, 28 / 49, 27, 29, 28, 28 |
+  | patched (shared channel)    | 6, 9   | 12, 11 / 11, 8, 8, 10                   |
+
+  The large pauses fall by about 60-75%; the count of majors is unchanged within noise.
+
+- Hosted A/B: label `ci-patch-ab-channel` (stress load, GC trace; same Docs patch both sides, so the summarizer
+  runs in same-build mode; `previous` runs `scripts/ci/patch-ab/core-channel.ts previous`, which reads the
+  installed bytes back and fails if the wrong build was written). Decision rule, set before the run: patched's
+  large majors (pause over 20 ms) are fewer or shorter than previous's in at least 6 of 8 pairs, and no patched
+  run exceeds the 100 ms paired flush budget. A pass supports, but does not prove, that the channel churn drives the
+  hosted tail; a fail means it does not.
