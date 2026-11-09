@@ -1253,3 +1253,13 @@ One local `plain-1` run (4x throttle, GC trace) with the JS heap polled every 10
 - Limits: one local run, 1 sample, no stress, and no external-memory number (V8 does not expose it over
   CDP). Hosted majors were 4-5x longer, which this run cannot explain; the embedder-tracing cost in those
   collections stays attributed but untested.
+
+### Worker on against off (this Mac, same probe, two runs each)
+
+- Majors per run stay at five either way. Worker on: typing window about 40 s, majors 36-65 ms (first about 65, then
+  about 38). Worker off: about 50 s, majors 27-52 ms (first about 52, then about 29).
+- So the major count follows total work, not time, and the Worker does not remove them; its majors are about 30%
+  longer (more browser-heap tracing is the candidate, untested). Heap total plateaus at 127-132 MB in both.
+- Reading: the trigger is the fixed old-space growth limit, hit about every 1/5 of the run. Whatever promotes
+  objects into old space is the lever for fewer majors; what lengthens a major on the hosted runner is a separate
+  question that local runs cannot reach (hosted majors are 4-5x longer).
