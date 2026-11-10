@@ -337,6 +337,11 @@ test('a burst of layout events redraws remote carets once per interval, not once
   const f = await fixture();
   await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   vi.mocked(drawPresence).mockClear();
+  const drawTimes: number[] = [];
+  vi.mocked(drawPresence).mockImplementation(() => {
+    drawTimes.push(Date.now());
+    return { dispose: vi.fn() } as never;
+  });
   // One layout event per 4 ms for 600 ms, like keys landing during sustained typing.
   for (let elapsed = 0; elapsed < 600; elapsed += 4) {
     f.dirty.next(true);
@@ -344,12 +349,42 @@ test('a burst of layout events redraws remote carets once per interval, not once
   }
   await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   const draws = vi.mocked(drawPresence).mock.calls.length;
-  // 150 events would have been 150 draws before; the interval allows about one per 150 ms.
-  expect(draws).toBeGreaterThanOrEqual(3);
-  expect(draws).toBeLessThanOrEqual(6);
+  // 150 events would have been 150 draws before; the interval allows one per 150 ms, so 600 ms of events
+  // plus the final trailing draw is 4 or 5 draws, and no two draws sit closer than the interval.
+  expect(draws).toBeGreaterThanOrEqual(4);
+  expect(draws).toBeLessThanOrEqual(5);
+  for (let i = 1; i < drawTimes.length; i++) {
+    expect(drawTimes[i]! - drawTimes[i - 1]!).toBeGreaterThanOrEqual(REDRAW_MS);
+  }
   // The latest request is never lost: a change after the burst still draws.
   vi.mocked(drawPresence).mockClear();
   f.dirty.next(true);
   await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(drawPresence).toHaveBeenCalledOnce();
+});
+
+test('a theme change redraws remote carets at once, even inside the redraw interval (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20); // the draw lands; the interval is now closed to further draws
+  const drawn = vi.mocked(drawPresence).mock.results.at(-1)!.value!;
+  vi.mocked(drawPresence).mockClear();
+  window.dispatchEvent(new Event('spinel-theme'));
+  // No timers advanced: a throttled redraw would leave the old theme's label up for the interval.
+  expect(drawn.dispose).toHaveBeenCalledOnce();
+  expect(drawPresence).toHaveBeenCalled();
+});
+
+test('disposing drops a pending trailing redraw and ignores later theme changes (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20);
+  f.dirty.next(true); // pending inside the interval
+  f.stop();
+  vi.mocked(drawPresence).mockClear();
+  window.dispatchEvent(new Event('spinel-theme'));
+  await vi.advanceTimersByTimeAsync(REDRAW_MS * 3);
+  expect(drawPresence).not.toHaveBeenCalled();
 });

@@ -6,6 +6,8 @@ counts as of those dates. Older sections that say the cause was not proven are s
 
 ## 📍 Current state (2026-11-09)
 
+Describes the branch from commit d890587c on; later commits only add review repairs to tests and this document.
+
 **Cause chain, with where each link is measured.** Three Spinel-owned costs were found and fixed; the rest is
 Univer's and Chromium's own per-key work.
 
@@ -17,6 +19,11 @@ Univer's and Chromium's own per-key work.
 | Stock Univer Doc allocates about 79 KB of non-old memory per key (bare `contenteditable`: about 13 KB) | `evidence/SPN-146/oilpan-control/summary.json`, 3 runs each                                                                                                      | Not Spinel's to remove   |
 | Spinel Doc residual above stock Univer                                                                 | 88.2 against 79.1 KB per key; the stock page uses the desktop UI, so mobile UI is inside this gap                                                                | About 9 KB, unattributed |
 
+**Presence redraw exceptions.** A theme change, a disconnect and deactivation redraw immediately instead of waiting
+for the interval. With the theme change throttled, the presence e2e (`e2e/presence-prototype.spec.ts:10`) left a
+caret label in the old theme and failed 2 of 3 local runs; with the immediate redraw it passed 6 of 6, and the
+pre-throttle code passed 5 of 5. A unit test pins it (`syncPresence.test.ts`, theme at once inside the interval).
+
 **What is and is not proven.** The two earlier fixes are proven by hosted A/B on the pause length of each major.
 Neither removed every 100 ms breach (cycle 2: patched 1 of 8, 106.1 ms, 79.4 ms of it GC inside the flush), and the
 presence fix has no hosted A/B yet, so **the claim that the tail is gone is not made**. The remaining majors are
@@ -26,6 +33,8 @@ rather than assumed: _met_ for "the Spinel-owned causes of the tail are found an
 breach under hosted stress", which stays an owner decision (the ticket text was not amended).
 
 ## 📌 Final status (2026-11-06)
+
+> 🗂️ **Superseded by the current state above where counts differ.** Kept as the dated record.
 
 Updated 2026-11-07 with the throttle sweep, the lowest-layer work-scaling test and the review rounds; the older sections below are the dated record and keep their counts as of their dates.
 
@@ -1470,7 +1479,8 @@ The idle bare page had 0 GCs, so the growth is driven by typing.
   event, and each redraw rebuilt a canvas range and a popup per remote caret (`attachPopupToRange` 1,962 times in a
   2,086-key run; layouts per run 12,453). The redraw is now at most one per 150 ms (the cursor transport's own
   granularity): attaches fell to 5, layouts to 8,335 and allocation to 88.2 KB per key. The scheduler is
-  `src/ui/redrawScheduler.ts` with unit tests (a burst of 100 events draws once at the interval; mutation-checked).
+  `src/ui/redrawScheduler.ts` with unit tests (a burst of 100 events draws once at the interval). Mutants run against the tests on 2026-11-09: a theme handler
+  that throttles instead of redrawing at once fails the theme test; a 100 ms interval fails the burst test.
 - **A residual of about 9 KB per key (88.2 against 79.1) is unattributed.** The stock page uses the desktop UI and
   has no sync, phone view or evidence hooks, so mobile UI and Spinel's layers share this gap.
 - **Message volume is not the lever.** Draining the shared channel's queue in one message cut `postMessage` from about

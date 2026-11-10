@@ -24,14 +24,14 @@ export function redrawScheduler(
   intervalMs: number,
   clock: RedrawClock = browserRedrawClock,
 ) {
-  let frame = 0;
-  let timer = 0;
+  let frame: number | null = null;
+  let timer: number | null = null;
   let last = -Infinity;
   const cancel = () => {
-    clock.cancelFrame(frame);
-    clock.clearTimer(timer);
-    frame = 0;
-    timer = 0;
+    if (frame !== null) clock.cancelFrame(frame);
+    if (timer !== null) clock.clearTimer(timer);
+    frame = null;
+    timer = null;
   };
   const run = () => {
     cancel();
@@ -41,7 +41,7 @@ export function redrawScheduler(
   return {
     /** Request a redraw; does nothing while one is already pending. */
     schedule() {
-      if (frame || timer) return;
+      if (frame !== null || timer !== null) return;
       const wait = last + intervalMs - clock.now();
       if (wait > 0) timer = clock.setTimer(run, wait);
       else frame = clock.requestFrame(run);

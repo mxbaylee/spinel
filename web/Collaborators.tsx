@@ -324,7 +324,11 @@ function watchSyncPresence(
       else schedule();
     }),
   );
-  cleanups.push(watchTheme(() => { if (!disposed) redraw.runNow(); }));
+  cleanups.push(
+    watchTheme(() => {
+      if (!disposed) redraw.runNow();
+    }),
+  );
   window.addEventListener('resize', schedule);
   cleanups.push(() => window.removeEventListener('resize', schedule));
   const scrolling = api.addEvent(api.Event.Scroll, ({ workbook }) => {

@@ -2,9 +2,9 @@ import { expect, test } from 'vitest';
 import { redrawScheduler } from './redrawScheduler.ts';
 import type { RedrawClock } from './redrawScheduler.ts';
 
-function fakeClock() {
+function fakeClock(firstHandle = 1) {
   let time = 0;
-  let next = 1;
+  let next = firstHandle;
   const frames = new Map<number, () => void>();
   const timers = new Map<number, { at: number; callback: () => void }>();
   const clock: RedrawClock = {
@@ -19,7 +19,7 @@ function fakeClock() {
     pending: () => frames.size + timers.size,
     frame() {
       const [handle, callback] = frames.entries().next().value ?? [];
-      if (handle) frames.delete(handle);
+      if (handle !== undefined) frames.delete(handle);
       callback?.();
     },
     advance(ms: number) {
@@ -83,5 +83,43 @@ test('runNow supersedes a pending request and restarts the interval', () => {
   env.advance(100);
   expect(draws).toBe(1);
   env.advance(50);
+  expect(draws).toBe(2);
+});
+
+test('a draw that requests another redraw gets it after the interval, not never or at once', () => {
+  const env = fakeClock();
+  let draws = 0;
+  const scheduler = redrawScheduler(
+    () => {
+      if (draws++ === 0) scheduler.schedule();
+    },
+    150,
+    env.clock,
+  );
+  scheduler.schedule();
+  env.frame();
+  expect(draws).toBe(1);
+  expect(env.pending()).toBe(1);
+  env.advance(149);
+  expect(draws).toBe(1);
+  env.advance(1);
+  expect(draws).toBe(2);
+});
+
+test('a pending frame blocks a second request, and a clock whose handles start at 0 still works', () => {
+  const env = fakeClock(0);
+  let draws = 0;
+  const scheduler = redrawScheduler(() => draws++, 150, env.clock);
+  scheduler.schedule();
+  env.advance(1000); // the frame has not fired yet; time passing must not add a timer
+  scheduler.schedule();
+  expect(env.pending()).toBe(1);
+  env.frame();
+  expect(draws).toBe(1);
+  scheduler.schedule();
+  expect(env.pending()).toBe(1); // handle 0 timer counts as pending
+  scheduler.schedule();
+  expect(env.pending()).toBe(1);
+  env.advance(150);
   expect(draws).toBe(2);
 });
