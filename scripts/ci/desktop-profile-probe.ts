@@ -4,6 +4,7 @@ import {
   requestSafari,
   waitForSafariValue as until,
   observeSafariTitle,
+  waitForSafariConsentTitle,
   readSafariBaseline,
   type SafariTarget,
 } from './desktop-safari-identity.ts';
@@ -204,53 +205,52 @@ async function allowHostedSafariAutomation() {
       entry.finishedAt = new Date().toISOString();
     }
   }
-  let request = titleRequest();
   let approved = false;
   let captures = 0;
-  try {
-    while (Date.now() < deadline) {
-      // A successful title proves consent is already available, with no extra UI action.
-      if (request.value() === 'Spinel desktop profile probe') {
-        report.automationReadyTitleRequest = request.entry.attempt;
-        return;
+  async function consentStep() {
+    const observed = await inspect('inspect');
+    if (!approved && observed) report.automationPrompt = observed;
+    if (observed.startsWith('Recognized hosted-compute-agent control of Safari: ')) {
+      const path = resolve(output, `safari-automation-prompt-${++captures}.png`);
+      const capture: Record<string, unknown> = {
+        mode: 'capture',
+        path,
+        startedAt: new Date().toISOString(),
+      };
+      checks.push(capture);
+      try {
+        await command('/usr/sbin/screencapture', ['-x', path], budget(5000));
+        capture.value = 'captured';
+      } catch (error) {
+        capture.error = describe(error);
+      } finally {
+        capture.finishedAt = new Date().toISOString();
       }
-      if (request.entry.finishedAt) request = titleRequest();
-      const observed = await inspect('inspect');
-      if (!approved && observed) report.automationPrompt = observed;
-      if (observed.startsWith('Recognized hosted-compute-agent control of Safari: ')) {
-        const path = resolve(output, `safari-automation-prompt-${++captures}.png`);
-        const capture: Record<string, unknown> = {
-          mode: 'capture',
-          path,
-          startedAt: new Date().toISOString(),
-        };
-        checks.push(capture);
-        try {
-          await command('/usr/sbin/screencapture', ['-x', path], budget(5000));
-          capture.value = 'captured';
-        } catch (error) {
-          capture.error = describe(error);
-        } finally {
-          capture.finishedAt = new Date().toISOString();
-        }
-        if (Date.now() >= deadline) break;
-        // Re-read the exact recognized dialog after the screenshot before approval.
-        const decision = await inspect('approve');
-        if (decision.startsWith('Approved hosted-compute-agent control of Safari ')) {
-          approved = true;
-          report.automationPrompt = decision;
-          if (capture.value === 'captured') report.automationPromptScreenshot = path;
-        }
+      if (Date.now() >= deadline) return false;
+      // Re-read the exact recognized dialog after the screenshot before approval.
+      const decision = await inspect('approve');
+      if (decision.startsWith('Approved hosted-compute-agent control of Safari ')) {
+        approved = true;
+        report.automationPrompt = decision;
+        if (capture.value === 'captured') report.automationPromptScreenshot = path;
       }
-      await new Promise((resolve) => setTimeout(resolve, budget(250)));
     }
-    request.value(); // Retain a completed request failure instead of a generic deadline error.
-    throw new Error(
-      'Safari automation consent did not become usable within 90 seconds; all native observations are retained in automationPromptChecks and automationTitleRequests.',
-    );
+  }
+  try {
+    // A successful title proves consent is already available, with no extra UI action.
+    const ready = await waitForSafariConsentTitle({
+      expected: 'Spinel desktop profile probe',
+      deadline,
+      start: titleRequest,
+      step: consentStep,
+      pause: () => new Promise((resolve) => setTimeout(resolve, budget(250))),
+      deadlineError: () =>
+        new Error(
+          'Safari automation consent did not become usable within 90 seconds; all native observations are retained in automationPromptChecks and automationTitleRequests.',
+        ),
+    });
+    report.automationReadyTitleRequest = ready.entry.attempt;
   } finally {
-    // Every owned request has its own remaining-deadline timeout; leave none running.
-    await request.promise;
     report.automationFinishedAt = new Date().toISOString();
     report.firstTitleRequest = titleRequests[0];
   }

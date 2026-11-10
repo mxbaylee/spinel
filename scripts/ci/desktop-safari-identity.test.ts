@@ -8,6 +8,7 @@ import {
   waitForSafariValue,
   observeSafariTitle,
   readSafariBaseline,
+  waitForSafariConsentTitle,
 } from './desktop-safari-identity.ts';
 
 type LoaderFailure =
@@ -355,6 +356,85 @@ test('the consent-loop observation throws the original failed request before it 
   );
   assert.equal(invocations, 1);
   assert.equal((entry.error as { stderr: string }).stderr, failure.stderr);
+});
+
+function consentLoop(
+  observe: (attempt: number) => { value: () => unknown; finished?: boolean },
+  stepResult: (attempt: number) => boolean | void = () => {},
+  expected = 'ready',
+) {
+  const events: string[] = [];
+  let attempts = 0;
+  let now = 0;
+  const run = waitForSafariConsentTitle({
+    expected,
+    deadline: 3,
+    now: () => now++,
+    start: () => {
+      attempts++;
+      events.push(`start${attempts}`);
+      const attempt = attempts;
+      const view = observe(attempt);
+      return {
+        entry: { attempt, finishedAt: view.finished ? 'done' : undefined },
+        promise: Promise.resolve().then(() => events.push(`settled${attempt}`)),
+        value: view.value,
+      };
+    },
+    step: async () => {
+      events.push('step');
+      return stepResult(attempts);
+    },
+    pause: async () => {
+      events.push('pause');
+    },
+    deadlineError: () => new Error('generic deadline'),
+  });
+  return { run, events };
+}
+
+test('the consent loop returns the ready title request after awaiting its work', async () => {
+  const f = consentLoop(() => ({ value: () => 'ready' }));
+  const request = await f.run;
+  assert.equal(request.entry.attempt, 1);
+  assert.deepEqual(f.events, ['start1', 'settled1']);
+});
+
+test('the consent loop rethrows a completed title failure before any UI step or renewal', async () => {
+  const failure = new Error('denied after dispatch');
+  const f = consentLoop(() => ({
+    value: () => {
+      throw failure;
+    },
+    finished: true,
+  }));
+  await assert.rejects(f.run, (error) => error === failure);
+  assert.deepEqual(f.events, ['start1', 'settled1']);
+});
+
+test('the consent loop prefers a failure completed during the step over the generic deadline error', async () => {
+  const failure = new Error('failed while consent was serviced');
+  let failed = false;
+  const f = consentLoop(
+    () => ({
+      value: () => {
+        if (failed) throw failure;
+      },
+    }),
+    () => {
+      failed = true;
+      return false;
+    },
+  );
+  await assert.rejects(f.run, (error) => error === failure);
+  assert.deepEqual(f.events, ['start1', 'step', 'settled1']);
+});
+
+test('the consent loop renews only a finished successful title and then reports the generic deadline', async () => {
+  const f = consentLoop((attempt) => ({ value: () => undefined, finished: attempt === 1 }));
+  await assert.rejects(f.run, /generic deadline/);
+  assert.equal(f.events.filter((event) => event.startsWith('start')).length, 2);
+  assert.ok(f.events.includes('settled2'));
 });
 
 test('a valid required baseline is retained before optional capture diagnostics', async () => {

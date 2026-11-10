@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "head": "98eabb35303f7b5ff728e9af7b466af895d0d035 (merge of main) plus the consent-loop extraction commit that records this file",
+  "main": "7858b26a5b4a0037340c66d6a98f4072461181d6",
+  "sourceSha256": {
+    "scripts/ci/desktop-safari-identity.ts": "ebd853880ad2477a42ecf066f4c393b7a746d4eff9aa50d9f7aeae3881d7c80b",
+    "scripts/ci/desktop-profile-probe.ts": "5c168e04e5a69ebb1460ea711d0e1a1b07976a22a1c9b5cf0a48b9f91717b1f7",
+    "scripts/ci/desktop-safari-identity.test.ts": "35fcdbac98850140ab82f54d2e92402b0b89e2cf9824231f3178136a84da2468"
+  },
+  "local": {
+    "environment": "macOS, node v26.13.0",
+    "safariIdentityControls": "61 tests, 61 pass, 0 fail",
+    "typecheck": "tsc -p . clean",
+    "oxlintScriptsCi": "clean (--deny-warnings)",
+    "prettier": "scripts/ci, docs/todo/backlog.json, docs/implementation/SPN-140.md clean",
+    "backlogCheck": "backlog ok: 21 open tickets (size and grooming warnings only)",
+    "ciScriptSuite": "481 tests, 479 pass, 2 fail",
+    "knownFailures": "offline-upgrade-dependencies.test.ts compares /var to /private/var on macOS; the same 2 fail on main 7858b26a (7 pass, 2 fail in that file)"
+  },
+  "notClaimed": "No native workflow, hosted CI or exact-head review result is recorded here.",
+  "reviewedSourceStatus": "superseded: sources differ from 3c3fc7d8751da18beb401c59e1cf89a40ff86aa3 by the waitForSafariConsentTitle extraction"
+}

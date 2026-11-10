@@ -175,6 +175,44 @@ export function observeSafariTitle(work: Promise<string>, entry: Record<string, 
   };
 }
 
+export type SafariTitleObservation = {
+  entry: { attempt?: unknown; finishedAt?: string };
+  promise: Promise<unknown>;
+  value(): unknown;
+};
+
+/**
+ * The consent loop's control flow. A completed title failure is fatal before any
+ * replacement request exists and beats the generic deadline error; only a
+ * finished but not-yet-ready title may be renewed. The UI step stays with the
+ * caller and may return false to stop early.
+ */
+export async function waitForSafariConsentTitle<T extends SafariTitleObservation>(options: {
+  expected: string;
+  deadline: number;
+  start: () => T;
+  step: () => Promise<boolean | void>;
+  pause: () => Promise<void>;
+  deadlineError: () => Error;
+  now?: () => number;
+}): Promise<T> {
+  const now = options.now ?? Date.now;
+  let request = options.start();
+  try {
+    while (now() < options.deadline) {
+      if (request.value() === options.expected) return request;
+      if (request.entry.finishedAt) request = options.start();
+      if ((await options.step()) === false) break;
+      await options.pause();
+    }
+    request.value(); // Retain a completed request failure instead of a generic deadline error.
+    throw options.deadlineError();
+  } finally {
+    // Every owned request has its own remaining-deadline timeout; leave none running.
+    await request.promise;
+  }
+}
+
 /** The required native helper is distinct from optional screenshot/readback diagnostics. */
 export async function readSafariBaseline(
   read: () => Promise<string>,
