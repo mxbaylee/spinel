@@ -52,6 +52,48 @@ export async function startGcTrace(cdp: CDPSession, page: Page) {
   };
 }
 
+/**
+ * Memory that V8's global limit counts beyond the old generation (Blink's Oilpan heap, external memory). It
+ * is the memory whose growth triggers the majors in this app, so its allocation rate is what a bare-page
+ * control and the Doc are compared on. Growth is summed between collections: each GC's start figure minus the
+ * previous GC's end figure, so collections that free it do not hide the allocation.
+ */
+export interface NonOldGrowth {
+  gcs: number;
+  spanSeconds: number;
+  allocatedMB: number;
+  allocatedMBPerSecond: number;
+  peakMB: number;
+}
+
+export function nonOldGrowth(
+  samples: { tsMs: number; value: Record<string, number> }[],
+): NonOldGrowth | null {
+  const sorted = [...samples].sort((a, b) => a.tsMs - b.tsMs);
+  if (sorted.length < 2) return null;
+  const nonOld = (v: Record<string, number>, edge: 'start' | 'end') =>
+    (v[`${edge}_global_consumed_size`] ?? 0) - (v[`${edge}_old_gen_consumed_size`] ?? 0);
+  let grown = 0;
+  for (let i = 1; i < sorted.length; i++) {
+    grown += Math.max(0, nonOld(sorted[i]!.value, 'start') - nonOld(sorted[i - 1]!.value, 'end'));
+  }
+  const spanSeconds = (sorted.at(-1)!.tsMs - sorted[0]!.tsMs) / 1000;
+  const round = (n: number) => Math.round(n * 10) / 10;
+  return {
+    gcs: sorted.length,
+    spanSeconds: round(spanSeconds),
+    allocatedMB: round(grown / 1e6),
+    allocatedMBPerSecond: round(grown / 1e6 / spanSeconds),
+    peakMB: Math.round(Math.max(...sorted.map((x) => nonOld(x.value, 'start'))) / 1e6),
+  };
+}
+
+export function gcTraceNonOldSamples(events: any[], pid: number, offsetMs = 0) {
+  return events
+    .filter((event) => event.name === 'V8.GCTraceGCNVP' && event.pid === pid && event.args?.value)
+    .map((event) => ({ tsMs: event.ts / 1000 - offsetMs, value: JSON.parse(event.args.value) }));
+}
+
 export function analyzeGcTrace(
   traceJson: string,
   syncPageMs: number,
@@ -114,5 +156,6 @@ export function analyzeGcTrace(
     totalGcInFlushMs: overlaps.reduce((sum, o) => sum + o.gcMs, 0),
     flushesWithGc: overlaps.filter((o) => o.gcMs > 0).length,
     flushes: overlaps.length,
+    nonOldGrowth: nonOldGrowth(gcTraceNonOldSamples(events, sync.pid, offsetMs)),
   };
 }

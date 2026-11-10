@@ -33,11 +33,16 @@ vi.mock('@spinel/presence-ui', async () => ({
 vi.mock('../profile/ProfileIcon.tsx', () => ({ ProfileIcon: () => null }));
 vi.mock('./redesign/Controls.tsx', () => ({ Modal: () => null }));
 
+// Remote carets redraw at most this often while the document keeps changing (SPN-146).
+const REDRAW_MS = 150;
 const stops: (() => void)[] = [];
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
-  const events = Object.assign(new EventTarget(), { setInterval: globalThis.setInterval });
+  const events = Object.assign(new EventTarget(), {
+    setInterval: globalThis.setInterval,
+    setTimeout: globalThis.setTimeout,
+  });
   vi.stubGlobal('window', events);
   vi.stubGlobal('requestAnimationFrame', (callback: (time: number) => void) =>
     setTimeout(() => callback(0), 16),
@@ -265,13 +270,13 @@ test('disconnect, layout, theme, navigation and disposal retire old remote range
   const f = await fixture();
   const initial = vi.mocked(drawPresence).mock.results[0]!.value!;
   f.dirty.next(true);
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(initial.dispose).toHaveBeenCalledOnce();
   const afterLayout = vi.mocked(drawPresence).mock.results.at(-1)!.value!;
   window.dispatchEvent(new Event('spinel-theme'));
   f.scrolling.next();
   f.transforms.next();
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(afterLayout.dispose).toHaveBeenCalledOnce();
   f.emit({ connected: false });
   expect(f.people()).toEqual([]);
@@ -304,13 +309,13 @@ test('guest identity stays generic, invalid cursors do not draw and removed memb
       { id: 'guest2', name: 'Guest', avatar: '/other/account.png', selection: '1:9999:1:TEXT::-1' },
     ],
   });
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(f.people().map((person) => person.name)).toEqual(['Collaborator', 'Guest', 'Guest']);
   expect(f.people().every((person) => person.icon === 'lucide:user-round')).toBe(true);
   expect(drawPresence).toHaveBeenCalledOnce();
   expect(f.people()[2]!.jump).toBeUndefined();
   f.emit({ members: [{ id: 'self', name: 'Collaborator', avatar: '' }] });
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(f.people()).toHaveLength(1);
 });
 
@@ -326,4 +331,25 @@ test('Sheet header selections are bounded and overlong IDs clear instead of floo
   const calls = f.setCursor.mock.calls.length;
   await vi.advanceTimersByTimeAsync(1000);
   expect(f.setCursor).toHaveBeenCalledTimes(calls);
+});
+
+test('a burst of layout events redraws remote carets once per interval, not once per event (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  // One layout event per 4 ms for 600 ms, like keys landing during sustained typing.
+  for (let elapsed = 0; elapsed < 600; elapsed += 4) {
+    f.dirty.next(true);
+    await vi.advanceTimersByTimeAsync(4);
+  }
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  const draws = vi.mocked(drawPresence).mock.calls.length;
+  // 150 events would have been 150 draws before; the interval allows about one per 150 ms.
+  expect(draws).toBeGreaterThanOrEqual(3);
+  expect(draws).toBeLessThanOrEqual(6);
+  // The latest request is never lost: a change after the burst still draws.
+  vi.mocked(drawPresence).mockClear();
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  expect(drawPresence).toHaveBeenCalledOnce();
 });

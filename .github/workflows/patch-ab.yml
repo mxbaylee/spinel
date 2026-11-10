@@ -2,6 +2,9 @@
 # once the mobile Doc typing flush-tail question is answered. On one hosted
 # runner it alternates the previously installed Docs build (previous) with this
 # PR's build (patched), everything else identical, and tabulates the flush tail.
+# It starts two ways only. A pull_request `labeled` event is gated: the label must be one of the
+# ci-patch-ab names below and the PR must come from this repository. A manual workflow_dispatch is NOT
+# gated by a label (anyone who can dispatch can run it); it has no label, so it runs the 4x throttle, no stress.
 # Rerun: remove, then re-add, the ci-patch-ab label (each cycle adds PAIRS pairs). Each label event also
 # starts a full ci.yml run (its types include labeled and unlabeled), so a cycle costs two extra CI runs.
 # Runtime: about 3 minutes per variant run (build and test), so PAIRS=8 (16 runs) took about 47 minutes in

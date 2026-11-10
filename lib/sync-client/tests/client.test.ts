@@ -3,6 +3,7 @@ import { JSONX, TextX } from '@univerjs/core';
 import type { Mutation } from '@spinel/sync-transform';
 import { canonical } from '@spinel/sync-transform';
 import type { ClientCheckpoint, WireRevision } from '../index.ts';
+import { encodedBytes } from '../src/budget.ts';
 import { book, comparable, doc, fixture, turns, wire, write } from './fixture.ts';
 
 const acknowledge = (mutationId: string, edit: WireRevision, duplicate = false) => ({
@@ -360,6 +361,108 @@ test('a lagging batch timer queues edits up to the exact pending byte limit', ()
     expect(JSON.stringify(b.sync.checkpoint().buffer).length).toBeLessThanOrEqual(limit);
     b.sync.enqueue([edit()]);
     expect(b.failures).toEqual(['capacity']);
+  } finally {
+    f.close();
+  }
+});
+
+const PENDING_LIMIT = 10 * 1024 * 1024;
+
+test('the queued-byte limit tracks the buffer after a partial pump and a remote rebase', async () => {
+  const big = (row: number, size: number) => [write({ v: '😀漢x'.repeat(size / 8) }, row)];
+  // Pick the group size (~30 KB, so one pump request takes one or two) that leaves the
+  // least slack under the limit, so the room measured later is about two groups.
+  let size = 30_000;
+  const slack = (n: number) => (PENDING_LIMIT - 1) % (encodedBytes(big(0, n)) + 1);
+  for (let n = 30_000; n < 31_000; n += 8) if (slack(n) < slack(size)) size = n;
+  const run = async (probeExtra: number) => {
+    const f = fixture();
+    const a = f.client();
+    try {
+      a.resume();
+      await turns();
+      // Leave one group's room, so the budget for expanded cells is not what trips first.
+      const count = Math.floor((PENDING_LIMIT - 1) / (encodedBytes(big(0, size)) + 1)) - 1;
+      for (let row = 0; row < count; row++) a.sync.enqueue(big(row, size));
+      expect(a.failures).toEqual([]);
+      const before = a.sync.checkpoint().buffer.length;
+      a.sync.retry();
+      await turns();
+      expect(a.submits()).toHaveLength(1);
+      const remaining = a.sync.checkpoint().buffer.length;
+      expect(remaining).toBeLessThan(before);
+      expect(remaining).toBeGreaterThan(0);
+      // A remote revision touching the first still-buffered cell rebases and replaces the buffer.
+      const row = before - remaining;
+      a.sync.receive({
+        type: 'edit',
+        revision: a.sync.confirmedRevision + 1,
+        mutations: [write({ v: 'peer' }, row, 0)],
+        touched: { kind: 'sheet', cells: [{ sheetId: 'one', row, column: 0 }] },
+        hash: 'a'.repeat(64),
+      });
+      await turns();
+      expect(a.failures).toEqual([]);
+      // Room left by a full re-encode. Spend most of it on ordinary groups, then queue a group
+      // sized to take exactly the rest (+ probeExtra): one request-sized group at the limit.
+      const roomNow = () => PENDING_LIMIT - encodedBytes(a.sync.checkpoint().buffer) - 1;
+      const probe = (pad: number) => [write({ v: 'y'.repeat(pad) }, 400)];
+      let filler = 0;
+      while (roomNow() > 40_000) {
+        a.sync.enqueue(big(500 + filler++, 20_000));
+        expect(a.sync.state.failure).toBeUndefined();
+      }
+      expect(filler).toBeGreaterThan(0);
+      const room = roomNow();
+      const pad = room - encodedBytes(probe(0));
+      expect(encodedBytes(probe(pad))).toBe(room);
+      a.sync.enqueue(probe(pad + probeExtra));
+      return a.sync.state.failure;
+    } finally {
+      f.close();
+    }
+  };
+  // Exactly the free room fits; one byte more is over the limit.
+  expect(await run(0)).toBeUndefined();
+  expect(await run(1)).toBe('capacity');
+});
+
+test('queuing N small groups encodes O(N) bytes, not the whole buffer each time', () => {
+  const measure = (groups: number) => {
+    const f = fixture();
+    const a = f.client();
+    const encode = vi.spyOn(TextEncoder.prototype, 'encode');
+    try {
+      for (let row = 0; row < groups; row++)
+        a.sync.enqueue([write({ v: `c${row}` }, row % 400, row)]);
+      expect(a.failures).toEqual([]);
+      expect(a.sync.checkpoint().buffer).toHaveLength(groups);
+      return encode.mock.calls.reduce((sum, [text]) => sum + (text?.length ?? 0), 0);
+    } finally {
+      encode.mockRestore();
+      f.close();
+    }
+  };
+  const small = measure(500);
+  const large = measure(2000);
+  // 4x the groups: linear work is ~4x, a full re-encode per enqueue would be ~16x.
+  expect(large / small).toBeLessThan(6);
+  // And no enqueue re-measures the buffer: 2000 groups of ~150 bytes is ~300 KB, ~10 MB if re-encoded.
+  expect(large).toBeLessThan(2000 * 2000);
+});
+
+test('a group that cannot be sized is refused without a half-queued group', () => {
+  const f = fixture();
+  const a = f.client();
+  try {
+    a.sync.enqueue([write({ v: '漢字😀' })]);
+    expect(a.sync.state.pendingMutations).toBe(1);
+    // JSON cannot encode a bigint, so sizing the cloned group throws mid-enqueue.
+    a.sync.enqueue([write({ v: 1n as unknown as number }, 1)]);
+    expect(a.sync.state.failure).toBeDefined();
+    // Refusal discards the buffer wholesale; nothing from the failed group is left behind.
+    expect(a.sync.checkpoint().buffer).toEqual([]);
+    expect(a.sync.state.pendingMutations).toBe(0);
   } finally {
     f.close();
   }

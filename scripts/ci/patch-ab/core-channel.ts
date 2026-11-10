@@ -13,6 +13,14 @@ import type { Variant } from './toggle.ts';
 
 const formats = ['es', 'cjs'] as const;
 
+/** Read back: a toggle that wrote the other build must fail the job, not only round-trip. */
+export function assertPooled(written: string, format: string, variant: Variant) {
+  const pooled = written.includes('const pendingMacroTasks = [];');
+  if (pooled !== (variant === 'patched'))
+    throw new Error(`Installed core ${format} for ${variant} has pooled=${pooled}.`);
+  return pooled;
+}
+
 export async function toggleChannel(root: string, variant: Variant) {
   const record: Record<string, string | boolean> = { variant };
   for (const format of formats) {
@@ -22,10 +30,7 @@ export async function toggleChannel(root: string, variant: Variant) {
     });
     await writeFile(path, next);
     const written = await readFile(path, 'utf8');
-    const pooled = written.includes('const pendingMacroTasks = [];');
-    // Read back: a toggle that wrote the other build must fail the job, not only round-trip.
-    if (pooled !== (variant === 'patched'))
-      throw new Error(`Installed core ${format} for ${variant} has pooled=${pooled}.`);
+    const pooled = assertPooled(written, format, variant);
     record[format] = createHash('sha256').update(written).digest('hex');
     record[`${format}Pooled`] = pooled;
   }

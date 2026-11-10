@@ -20,6 +20,7 @@ import {
   toggle,
   variantName,
 } from './patch-ab/toggle.ts';
+import { assertPooled, toggleChannel } from './patch-ab/core-channel.ts';
 import { readRuns, renderTable, summarize, type Run } from './patch-ab/summarize.ts';
 
 const installed = (es: string) => ({ es, cjs: `${es}-cjs` });
@@ -214,7 +215,7 @@ test('a missing runs directory reads as no runs instead of throwing', () => {
   assert.deepEqual(readRuns(join(tmpdir(), 'patch-ab-does-not-exist')), []);
 });
 
-test('the opt-in workflow stays label-gated, same-repository and read-only', () => {
+test('the opt-in workflow gates pull_request runs by label and repository, allows dispatch, and is read-only', () => {
   const workflow = readFileSync(
     new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
     'utf8',
@@ -227,6 +228,40 @@ test('the opt-in workflow stays label-gated, same-repository and read-only', () 
   assert.match(workflow, /ci-patch-ab-8x\) rate=8 ;;/);
   assert.match(workflow, /\*\) rate=4 ;;/);
   assert.match(workflow, /head\.repo\.full_name == github\.repository/);
+  // Triggers: manual dispatch and PR label events, nothing else.
+  const triggers = workflow.match(/^on:\n((?: {2}.*\n| *\n)+)/m)?.[1] ?? '';
+  assert.deepEqual(
+    triggers
+      .split('\n')
+      .filter((line) => /^ {2}\S/.test(line))
+      .map((line) => line.trim()),
+    ['workflow_dispatch:', 'pull_request:'],
+  );
+  assert.match(triggers, /types: \[labeled\]/);
+  // The job condition is an OR: dispatch runs ungated, and only the pull_request branch carries the gate.
+  const condition = workflow
+    .match(/^ {4}if: >-\n((?: {6}.*\n)+)/m)?.[1]
+    .replace(/\s+/g, ' ')
+    .trim();
+  assert.ok(condition, 'the job has an if condition');
+  const [dispatch, pullRequest, ...extra] = condition.split(' || ');
+  assert.equal(extra.length, 0);
+  assert.equal(
+    dispatch,
+    "github.event_name == 'workflow_dispatch'",
+    'dispatch is ungated by label',
+  );
+  assert.match(pullRequest, /^\(github\.event_name == 'pull_request' &&/);
+  assert.match(pullRequest, /github\.event\.action == 'labeled'/);
+  assert.match(
+    pullRequest,
+    /contains\(fromJSON\('\["ci-patch-ab",.*"ci-patch-ab-channel"\]'\), github\.event\.label\.name\)/,
+  );
+  assert.match(
+    pullRequest,
+    /github\.event\.pull_request\.head\.repo\.full_name == github\.repository\)$/,
+  );
+  assert.doesNotMatch(dispatch, /label|repo/);
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /persist-credentials: false/);
   assert.doesNotMatch(workflow, /pull_request_target/);
@@ -439,4 +474,57 @@ test('same-build mode accepts one shared build and still rejects two different o
     true,
   );
   assert.deepEqual(different.problems, ['previous and patched installed different builds']);
+});
+
+test("toggleChannel flips core's macrotask helper both ways, repeatably, and its read-back rejects the wrong build", async () => {
+  const root = mkdtempSync(join(tmpdir(), 'patch-ab-core-'));
+  try {
+    for (const format of ['es', 'cjs']) {
+      mkdirSync(join(root, 'node_modules/@univerjs/core/lib', format), { recursive: true });
+      cpSync(
+        `node_modules/@univerjs/core/lib/${format}/index.js`,
+        join(root, 'node_modules/@univerjs/core/lib', format, 'index.js'),
+      );
+    }
+    const disk = (format: string) =>
+      readFileSync(join(root, 'node_modules/@univerjs/core/lib', format, 'index.js'), 'utf8');
+    const previous = await toggleChannel(root, 'previous');
+    assert.equal(previous.variant, 'previous');
+    assert.equal(previous.esPooled, false);
+    assert.equal(previous.cjsPooled, false);
+    const patched = await toggleChannel(root, 'patched');
+    assert.equal(patched.esPooled, true);
+    assert.equal(patched.cjsPooled, true);
+    assert.notEqual(previous.es, patched.es);
+    assert.notEqual(previous.cjs, patched.cjs);
+    // Recorded hashes are the bytes on disk, and differ per format.
+    assert.equal(patched.es, sha256(disk('es')));
+    assert.equal(patched.cjs, sha256(disk('cjs')));
+    assert.match(String(patched.es), /^[0-9a-f]{64}$/);
+    // Repeating a toggle is idempotent, and going back restores the previous bytes exactly.
+    assert.deepEqual(await toggleChannel(root, 'patched'), patched);
+    assert.deepEqual(await toggleChannel(root, 'previous'), previous);
+    assert.deepEqual(await toggleChannel(root, 'previous'), previous);
+    assert.deepEqual(await toggleChannel(root, 'patched'), patched);
+    assert.ok(disk('es').includes('const pendingMacroTasks = [];'));
+    assert.ok(disk('cjs').includes('const pendingMacroTasks = [];'));
+    await toggleChannel(root, 'previous');
+    assert.ok(
+      !disk('es').includes('pendingMacroTasks') && !disk('cjs').includes('pendingMacroTasks'),
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+  // A read-back that finds the other build fails the job instead of recording it.
+  const pooled = 'const pendingMacroTasks = [];';
+  assert.equal(assertPooled(pooled, 'es', 'patched'), true);
+  assert.equal(assertPooled('function requestImmediateMacroTask() {}', 'es', 'previous'), false);
+  assert.throws(
+    () => assertPooled(pooled, 'es', 'previous'),
+    /core es for previous has pooled=true/,
+  );
+  assert.throws(
+    () => assertPooled('function requestImmediateMacroTask() {}', 'cjs', 'patched'),
+    /core cjs for patched has pooled=false/,
+  );
 });

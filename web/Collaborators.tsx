@@ -17,6 +17,7 @@ import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { palettes, presenceFallbackColors } from '../src/ui/palette.ts';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
+import { redrawScheduler } from '../src/ui/redrawScheduler.ts';
 import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
 import { presenceRenderColors } from './presenceColors.ts';
 import { useState } from 'react';
@@ -107,6 +108,9 @@ export function collaboratorColor(id: string) {
   return presenceFallbackColors[hash % presenceFallbackColors.length];
 }
 
+/** Shortest gap between remote-caret redraws while the document is changing (SPN-146). */
+const REDRAW_INTERVAL_MS = 150;
+
 export async function watchPresence(
   univer: Univer,
   api: FUniver,
@@ -129,7 +133,6 @@ function watchSyncPresence(
   let state: SyncPresenceState = { selfId: '', members: [], connected: false };
   let disposed = false;
   let active = true;
-  let frame = 0;
   let previous = '';
   let activeSheet = '';
   const popups: IDisposable[] = [];
@@ -158,8 +161,6 @@ function watchSyncPresence(
       setLocalDocSelectionColor(univer, id, color, colors);
   };
   const update = () => {
-    cancelAnimationFrame(frame);
-    frame = 0;
     if (disposed) return;
     clearPopups();
     if (!active || !state.connected) {
@@ -245,8 +246,13 @@ function watchSyncPresence(
     localColor();
     publish(people);
   };
+  // Every document layout step asks for a redraw, and each redraw rebuilds a canvas range and popup per
+  // remote caret, which reads layout several times. During typing that was one rebuild per key (about 6
+  // layouts and 100 KB of Blink objects per key, SPN-146). The cursor transport already coalesces to 150 ms,
+  // so carets redraw at most that often: the first request draws at once, later ones share one trailing draw.
+  const redraw = redrawScheduler(() => update(), REDRAW_INTERVAL_MS);
   const schedule = () => {
-    if (!disposed && !frame) frame = requestAnimationFrame(update);
+    if (!disposed) redraw.schedule();
   };
   const sendCursor = () => {
     if (disposed || !state.connected || !state.selfId || !active) {
@@ -314,7 +320,7 @@ function watchSyncPresence(
       if (!next.connected || next.selfId !== state.selfId) previous = '';
       state = next;
       // Disconnect cleanup is immediate: stale labels never imply a live peer.
-      if (!state.connected) update();
+      if (!state.connected) redraw.runNow();
       else schedule();
     }),
   );
@@ -328,7 +334,7 @@ function watchSyncPresence(
   if (render) {
     const activation = render.activated$.subscribe((value) => {
       active = value;
-      if (!value) update();
+      if (!value) redraw.runNow();
       else schedule();
     });
     cleanups.push(() => activation.unsubscribe());
@@ -377,7 +383,7 @@ function watchSyncPresence(
     if (disposed) return;
     disposed = true;
     clearInterval(timer);
-    cancelAnimationFrame(frame);
+    redraw.cancel();
     cleanups.reverse().forEach((close) => close());
     clearPopups();
     publish([]);

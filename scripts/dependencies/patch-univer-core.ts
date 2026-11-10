@@ -21,6 +21,8 @@
  * It also schedules Univer's immediate macrotasks on one shared MessageChannel
  * instead of constructing a channel per call (SPN-146: about 47,000 per typing
  * run, and each one is browser-heap garbage that lengthens every major GC).
+ * Known difference: a cancelled task stays queued (closure included) until its
+ * message is delivered one macrotask later, and keeps a Node loop alive until then.
  * Temporary: SPN-099 removes this once upstream ships the fixes. The custom
  * range fixes are https://github.com/dream-num/univer/pull/7938; if upstream
  * takes another direction, follow it rather than keep this patch.
@@ -73,7 +75,11 @@ const upstreamMacroTask = `function requestImmediateMacroTask(callback) {
  * Modified for Spinel (SPN-146): one channel for every call. Each post still yields one later macrotask and
  * messages arrive in order, so a call runs after the ones before it, as before. Cancelling marks the entry;
  * its message is consumed and skipped. In Node the port is kept referenced only while a task is pending, so a
- * pending task still keeps the process alive and an idle one does not.
+ * pending task still keeps the process alive and an idle one does not. A cancelled entry is not removed: it
+ * (and its callback's closure) stays queued and keeps the Node loop alive until its own message is delivered,
+ * which happens in the next macrotask, so the delay is bounded to one turn. The upstream helper closed its
+ * channel on cancel instead. This text is hashed and patched in verbatim, so the function body is left as is
+ * and this behaviour is covered in patch-univer-core.test.ts rather than changed here.
  */
 export const pooledMacroTask = `// Modified for Spinel: one shared MessageChannel instead of one per call (SPN-146).
 const pendingMacroTasks = [];

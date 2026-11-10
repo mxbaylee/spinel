@@ -1,17 +1,29 @@
 # ⚡ SPN-146 linear native tail assembly question
 
-Proposal of November 5, 2026; the checkpoints below record its execution, the changed production
-candidate and the hosted result. Status: the candidate passed five first-hosted-mobile attempts
-([first](#-first-attempt-hosted-mobile-result-on-dde23e1), [second and third](#-second-hosted-attempt-on-6ef3b79-docs-only-delta-from-dde23e1)); the cause of the original 102–129 ms
-failures is not proven, so the disposition is a mitigation with five passing first attempts. The lowest-layer work-scaling test shows the mechanism (native work quadratic in the number of states,
-superlinear before this patch, linear after; [section](#-lowest-layer-work-scaling-demonstration)). Hosted A/B
-([results](#-hosted-patch-ab-opt-in-and-fourth-push-exception-owner-chat-2026-11-06)), never pooled across
-throttle levels: at 4x the previous build exceeded the budget in 1 of 28 pairs and the patched build in 0 of 28;
-at 6x neither in 8; at 8x the previous build in 1 of 8 and the patched build in none (but two of its eight
-runs exited non-zero on timeout and input p95, against one for the previous build); a second 8x run timed
-out on every run and gives no data. That is consistent with the patch and too small to prove it by hosted
-evidence alone. The fixed-window and retained-profile avenues remain closed with their original failures. This is a
-distinct lower-layer semantic/work question, not their retry.
+Proposal of November 5, 2026; the checkpoints below record its execution and are dated. **The current state is
+the next section**; the intro and the "Final status" table further down describe 2026-11-06/07 and keep their
+counts as of those dates. Older sections that say the cause was not proven are superseded where marked.
+
+## 📍 Current state (2026-11-09)
+
+**Cause chain, with where each link is measured.** Three Spinel-owned costs were found and fixed; the rest is
+Univer's and Chromium's own per-key work.
+
+| Link                                                                                                   | Evidence                                                                                                                                                         | Status                   |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Sync `enqueue` re-encoded the whole pending buffer on every edit (quadratic)                           | Hosted `ci-patch-ab-sync`: majors 207 → 41; lowest-layer work-scaling test; `PendingBuffer` differential and work-scaling tests                                  | Fixed                    |
+| Univer `requestImmediateMacroTask` created one `MessageChannel` per call (about 47,000 per run)        | Hosted `ci-patch-ab-channel`, two cycles: large-major time 3,933 → 1,282 ms and 4,288 → 1,214 ms, patched less in 14 of 14 pairs; worst major 250 → 46 ms        | Fixed                    |
+| Remote-caret presence redrew on every layout event: one canvas range and popup per caret per key       | Stacks: 1,962 `attachPopupToRange` per 2,086 keys; layouts 12,453 → 8,335 and non-old allocation 110.8 → 88.2 KB per key after a 150 ms throttle (local, 2 runs) | Fixed, hosted pending    |
+| Stock Univer Doc allocates about 79 KB of non-old memory per key (bare `contenteditable`: about 13 KB) | `evidence/SPN-146/oilpan-control/summary.json`, 3 runs each                                                                                                      | Not Spinel's to remove   |
+| Spinel Doc residual above stock Univer                                                                 | 88.2 against 79.1 KB per key; the stock page uses the desktop UI, so mobile UI is inside this gap                                                                | About 9 KB, unattributed |
+
+**What is and is not proven.** The two earlier fixes are proven by hosted A/B on the pause length of each major.
+Neither removed every 100 ms breach (cycle 2: patched 1 of 8, 106.1 ms, 79.4 ms of it GC inside the flush), and the
+presence fix has no hosted A/B yet, so **the claim that the tail is gone is not made**. The remaining majors are
+triggered by memory Univer and Chromium allocate per key in a sustained 36-key/s run, so a hosted breach under
+stress can still come from a major that lands inside a flush. Acceptance is therefore stated for the owner
+rather than assumed: _met_ for "the Spinel-owned causes of the tail are found and fixed", _not met_ for "no flush
+breach under hosted stress", which stays an owner decision (the ticket text was not amended).
 
 ## 📌 Final status (2026-11-06)
 
@@ -1367,7 +1379,7 @@ Half-CPU stress, 4x, GC trace, same Docs patch both sides. The toggle read back 
   whole pending buffer on every edit (quadratic; 5x fewer majors on the hosted runner, run 42644030946), and
   Univer core created one `MessageChannel` per scheduled macrotask (about 47,000 per run; the old helper reproduced
   the 105 and 124 ms flushes and the shared channel had none, large-major time 3,933 ms to 1,282 ms, run
-  42710690905). This answers the owner's "why is the cause not proven" with a reproduced old-vs-new result and a
+  42710690905). This (WITHDRAWN by the second cycle below: the old-vs-new result did not repeat as a breach reduction) answers the owner's "why is the cause not proven" with a reproduced old-vs-new result and a
   causal local test, not only a mechanism count. It stays one hosted cycle and a rare tail (2 of 7 previous
   breaches, p about 0.2 by that count alone), so a second `ci-patch-ab-channel` cycle was run to tighten it; its result is below and it did **not** repeat the clean patched run.
 - **The layout Worker is not shipped.** It was a throughput experiment (about 20% faster typing and fewer long
@@ -1433,30 +1445,41 @@ typing renderer (the pid of the sync mark):
   and see where the 5-6 MB/s appears. Whatever it is would also shrink the GC left inside flushes after the
   channel fix.
 
-### 🎯 Bisect result: the Oilpan growth is Chromium's own cost of rapid typing, not a Spinel layer (this Mac)
+### 🎯 Bisect result: mostly Univer's own per-key cost, plus one Spinel cause (presence redraw) (this Mac)
 
-The planned bisect started from the other end: a bare page.
+An earlier version of this section concluded that no Spinel layer contributes. **That was wrong**; it compared peaks
+(both runs reach the limit that triggers a major) instead of the allocation rate per key, and it typed 44,800
+characters in the control against the Doc's 2,086. Corrected, in the same units for all runs: memory V8 counts beyond
+the old generation (the Oilpan heap), summed between collections, per typed key (`nonOldGrowth` in
+`e2e/doc-responsiveness-gc-trace.ts`; 2,086 keys, 4x throttle). Data: `evidence/SPN-146/oilpan-control/summary.json`.
 
-- **Control, no Univer and no Spinel.** A page with one `contenteditable` div, Playwright `keyboard.type` at zero
-  delay (the same 16 paragraphs of about 350 characters), 4x CPU throttle, the same `v8.gc` trace. Result: 187
-  GCs, max non-old memory **102-110 MB**, every pause under 5 ms (the heap is tiny). The Spinel Doc run peaks at
-  about 110 MB too. An idle control (same page, same throttle, 43 s, no typing) had **0 GCs**, so the growth is
-  driven by typing input, not by the page's own timers or the trace.
-- **What this means.** The 5-6 MB/s Oilpan growth that fills V8's global limit exists with no Spinel code
-  present. It is per-key work inside Chromium (input events, selection and layout objects) that the test
-  produces at about 150 keys/s. A person types at roughly 5 keys/s, so at the same cost per key the limit would
-  be reached about 30x less often. The sustained-typing test therefore overstates how often majors happen in
-  use, and no Spinel layer is the source to remove.
-- **What Spinel does own is the cost of each major.** Per-major time is set by what the page retains and traces.
-  Both Spinel-side costs found here are fixed: the quadratic `enqueue` re-encode (majors 207 → 41 hosted) and the
-  per-call `MessageChannel` (large-major time 3,933 → 1,282 ms and 4,288 → 1,214 ms, worst major 250 → 46 ms).
-- **Message volume is not the lever.** Draining the shared channel's queue in one message cut `postMessage`
-  from about 45,800 to 15 per run and left the major count unchanged (4-5 majors of at least 5 ms in three
-  coalesced runs and three pooled runs, 7-12 ms each). The committed pooled channel stays; the coalescing
-  variant was a probe only and is not kept.
-- **Other call counts per run** (one probe run, no causal test): `getBoundingClientRect` about 16,700,
-  `TextEncoder.encode` about 13,400, `drawImage` about 2,300, `measureText` 37. `measureText` is not a hot path.
-- **Reading for the ticket.** The remaining flush tail comes from major GCs triggered by Chromium's own
-  Oilpan garbage under rapid synthetic input, each major now costing far less. It is not removable inside
-  Spinel, which means the acceptance can only be judged as bounded GC cost per major (done) and hosted flush
-  budgets, not as zero GC inside a flush.
+| Page                                                                      | KB per key       | Keys per second |
+| ------------------------------------------------------------------------- | ---------------- | --------------- |
+| Bare `contenteditable` (`scripts/ci/patch-ab/oilpan-control.ts`)          | 13.8, 13.5, 11.1 | 1,040-1,300     |
+| Stock Univer Doc, desktop UI (`scripts/ci/patch-ab/stock-univer/type.ts`) | 79.5, 76.5, 81.4 | 36              |
+| Spinel Doc, before the presence fix                                       | 108.7, 112.8     | 38              |
+| Spinel Doc, after the presence fix                                        | 87.9, 88.5       | 52              |
+
+The idle bare page had 0 GCs, so the growth is driven by typing.
+
+- **Chromium alone costs about 13 KB per key; stock Univer about 79.** The jump is Univer's canvas Doc: per key it
+  rewrites the hidden editor, writes four inline styles on its selection container (`_positionInput`: `position`,
+  `left`, `top`, `zIndex`, with `offsetParent` and `getBoundingClientRect` reads between them) and runs about four
+  layouts. This is stock Univer code and not patched here.
+- **Spinel added about 30 KB per key through presence.** `watchPresence` scheduled a redraw on every document layout
+  event, and each redraw rebuilt a canvas range and a popup per remote caret (`attachPopupToRange` 1,962 times in a
+  2,086-key run; layouts per run 12,453). The redraw is now at most one per 150 ms (the cursor transport's own
+  granularity): attaches fell to 5, layouts to 8,335 and allocation to 88.2 KB per key. The scheduler is
+  `src/ui/redrawScheduler.ts` with unit tests (a burst of 100 events draws once at the interval; mutation-checked).
+- **A residual of about 9 KB per key (88.2 against 79.1) is unattributed.** The stock page uses the desktop UI and
+  has no sync, phone view or evidence hooks, so mobile UI and Spinel's layers share this gap.
+- **Message volume is not the lever.** Draining the shared channel's queue in one message cut `postMessage` from about
+  45,800 to 15 per run and left the major count unchanged (3-5 majors of at least 5 ms in six runs of each variant).
+  The coalescing variant was a probe only.
+- **Call counts per run** (one probe run, not causal): `getBoundingClientRect` about 16,700, `TextEncoder.encode` about
+  13,400, `drawImage` about 2,300, `measureText` 37.
+- **Effect on majors, local:** 3-4 majors of at least 5 ms per run after the presence fix against 4-5 before (two
+  runs each; not separable at this sample size). The pause-length result is the hosted channel A/B above.
+- **Not yet measured:** a hosted A/B of the presence fix, and a stock mobile-UI page to split the 9 KB residual.
+  The presence throttle changes how fast a remote caret follows local typing (up to 150 ms of lag while a burst
+  continues; the first change after a pause still draws on the next frame).
