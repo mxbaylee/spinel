@@ -252,7 +252,7 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    again until both exceed 95, then push; if every remaining deduction is hosted-only or an owner
    decision, ask for a recorded one-time push exception instead (owner, chat 2026-11-06,
    [decision](../implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push)).
-6. **Prepare to land.** Unless the owner defers landing (as for SPN-146, whose bookkeeping waits for the owner's decision), in the same PR:
+6. **Prepare to land.** Unless the owner defers landing until a recorded decision (SPN-146 did, until 2026-11-10), in the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
      where the next reader will look. Add a short "why" comment to any test
