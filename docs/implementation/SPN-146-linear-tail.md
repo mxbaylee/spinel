@@ -14,7 +14,7 @@ counts as of those dates. Older sections that say the cause was not proven are s
 
 **Double draw.** A pending Sheet `follow` frame survives `redraw.runNow()`, so a theme change and a Sheet scroll in the same frame draw twice. This is accepted: both draws are cheap and idempotent.
 
-**Landing status (owner, chat 2026-11-10):** option 1, land with the hosted-breach criterion recorded as unmet. The ticket file is deleted, SPN-146 is in `completed_since`, and SPN-089's `depends_on` is cleared; SPN-089 now carries the hosted performance gate. The PR size is approved as is (+26.7k).
+**Landing status (owner, chat 2026-11-10):** option 1, land with the hosted-breach criterion recorded as unmet. This PR deletes the ticket file, adds SPN-146 to `completed_since`, and clears SPN-089's `depends_on`; SPN-089 now carries the hosted performance gate. The PR size is approved as is (+26.7k).
 
 Describes the branch from commit d890587c on. Later commits changed `web/Collaborators.tsx` and `src/ui/redrawScheduler.ts` (theme redraw at once, Sheet scroll/zoom on the frame path) and added tests and documentation; the Doc-side measurements below predate the Sheet routing change and are unaffected by it, since Docs keep the interval.
 
@@ -419,7 +419,7 @@ the raw-equality tests in `patch-univer-docs.test.ts` cover both states and show
 `doc-native-diagnostic.yml` (pinned to a long-superseded base commit) can no longer fire, so
 both and their file-reading assertions are deleted. Their results remain recorded here and in
 the earlier sections. The runner, converter and watchdog sources are kept for now because the
-next question may reuse them; move or remove them once the ticket's verdict is in.
+next question may reuse them; move or remove them once the ticket's verdict is in (superseded 2026-11-10: SPN-089's gate removes them).
 
 **Landing bookkeeping is not acceptance (deferred until 2026-11-10, now applied).** The process prepares the landing bookkeeping (ticket
 file deleted, `completed_since`, SPN-089's dependency dropped) before grading
