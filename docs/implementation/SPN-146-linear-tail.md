@@ -1407,3 +1407,28 @@ Same method and rule as run 42710690905, scored per cycle and not pooled silentl
   sources are incremental-marking steps, mark-compact finalize and sweeping completion under a loaded main
   thread, driven by the unattributed ~75 MB per cycle of non-old memory. Evidence:
   `docs/implementation/evidence/SPN-146/patch-ab/run-42720456662-channel-8-pairs/`.
+
+### 🔎 Probe: the non-old memory is Blink's own (Oilpan) heap; its source is still open (this Mac)
+
+One local `plain-1` run with Chromium's `disabled-by-default-memory-infra` dumps every 1.5 s (light), read for the
+typing renderer (the pid of the sync mark):
+
+- **`blink_gc/main/heap` is the growing memory.** It rises from 5.6 MB to about 90 MB in the first 17 s (roughly
+  5-6 MB/s) and then holds at 90-96 MB while V8's majors cut the non-old figure back. This makes "non-old memory"
+  concrete: it is Oilpan garbage, which V8's unified heap counts toward the global limit, so it triggers the
+  majors, and tracing it is the "embedder tracing" cost seen on the hosted runner. (Only the totals were read;
+  the `v8`, `partition_alloc` and `malloc` allocators were not tabulated.)
+- **Not these (each a local causal test, one or two runs, 4x throttle; majors per run 8-9 and peak non-old about
+  110 MB are the baseline):**
+  - Redundant canvas state: skipping 1.78 M of 1.79 M `fillStyle` sets changed nothing (majors 6-8, peak 113-183
+    MB in two runs, so no reduction).
+  - Canvas call volume: no-op `fillText` (8 majors, 113 MB), the path and clip family (8, 113 MB),
+    `save`/`restore` (6 majors, 105 MB) and `clearRect`/`drawImage` (10 majors, 82 MB), one run each. The
+    `save`/`restore` and `clearRect`/`drawImage` runs moved the peak a little, within what two baseline runs can
+    differ by, so I read none as the source.
+  - The performance timeline (3 marks, 25 long-animation-frame entries, no event entries), buffers and canvas
+    resizing, and `MessageChannel` (it changed pause length, not the trigger).
+- **Next, if pursued:** bisect the app, not the API. Type the same sample in a stock Univer Doc (no Spinel
+  layers), then add the Spinel layers back one at a time (phone view, selection overlay, sync, evidence hooks),
+  and see where the 5-6 MB/s appears. Whatever it is would also shrink the GC left inside flushes after the
+  channel fix.
