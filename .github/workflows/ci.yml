@@ -575,7 +575,7 @@ jobs:
         if: needs.changes.outputs.responsiveness_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 2c84a18449c7dae09e2817989fac6236be96ef98
+          ref: 6ee50161c9eeeb7296ffb282d7ae52abd9e61d1b
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
@@ -583,7 +583,7 @@ jobs:
         run: |
           cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
           cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
-          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts baseline-doc-source/src/ui/
+          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-doc-source/src/ui/
           cp playwright.config.ts baseline-doc-source/playwright.config.ts
           cp package-lock.json baseline-doc-source/package-lock.json
       - name: Install and build baseline
@@ -663,6 +663,10 @@ jobs:
           package-manager-cache: false
       - name: Install candidate
         run: npm ci
+      - name: Prepare pinned callback trace converter
+        run: |
+          node scripts/ci/doc-trace-processor.ts "$RUNNER_TEMP/spinel-trace-processor"
+          echo "SPINEL_TRACE_PROCESSOR=$RUNNER_TEMP/spinel-trace-processor" >> "$GITHUB_ENV"
       - name: Install Chromium
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
@@ -671,16 +675,16 @@ jobs:
         if: needs.changes.outputs.callback_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+          ref: 48dc8d4698129d5c7748ff2dac3b5d18cb0bcd6b
           path: baseline-callback-source
           persist-credentials: false
       - name: Match callback workload and read-only observations
         if: needs.changes.outputs.callback_baseline == 'true'
         run: |
-          cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
-          cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
+          cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-proto.ts e2e/doc-responsiveness-callback-converter.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
+          cp scripts/ci/doc-callback-lifetimes.ts scripts/ci/doc-trace-processor.ts baseline-callback-source/scripts/ci/
           cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
-          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts baseline-callback-source/src/ui/
+          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-callback-source/src/ui/
           cp playwright.config.ts baseline-callback-source/playwright.config.ts
           cp package-lock.json baseline-callback-source/package-lock.json
       - name: Install and build baseline with source maps

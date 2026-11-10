@@ -7,6 +7,7 @@ type Failure =
   | 'operation'
   | 'input-observation'
   | 'trace'
+  | 'trace-output-cleanup'
   | 'detach'
   | 'fixture-cleanup'
   | 'manifest-persistence';
@@ -26,6 +27,60 @@ export async function persistCallbackManifest(
     return primary ?? new Error('Callback acceptance manifest could not be persisted.');
   }
   return primary;
+}
+
+export interface CallbackObservation {
+  progress: ReturnType<typeof callbackProgress>;
+  detach: () => void;
+  abort: () => void;
+  interrupt: () => Promise<unknown>;
+  done?: Promise<void>;
+  rejectManifest?: () => Promise<void>;
+}
+
+/** Own partial setup and evidence failures outside the timed observation body. */
+export async function runOwnedObservation(
+  work: () => Promise<void>,
+  ownership: {
+    progress: ReturnType<typeof callbackProgress>;
+    primaryFailure: () => unknown;
+    detach: () => Promise<void>;
+    close: () => Promise<void>;
+  },
+) {
+  let failure: unknown;
+  try {
+    await work();
+  } catch (error) {
+    failure = ownership.primaryFailure() ?? error;
+    ownership.progress.failed('operation');
+  }
+  const cleanup = await Promise.allSettled([
+    Promise.resolve().then(ownership.detach),
+    Promise.resolve().then(ownership.close),
+  ]);
+  for (const [index, result] of cleanup.entries())
+    if (result.status === 'rejected') {
+      failure ??= result.reason;
+      ownership.progress.failed(index === 0 ? 'detach' : 'fixture-cleanup');
+    }
+  if (ownership.progress.persistenceFailure)
+    failure ??= new Error('Observation progress persistence failed.');
+  if (ownership.progress.firstFailure)
+    failure ??= new Error(`Observation lifecycle failed: ${ownership.progress.firstFailure.kind}`);
+  if (failure) throw failure;
+}
+
+/** A timeout remains durable even if owned teardown cannot finish. */
+export async function settleCallbackObservation(observation: CallbackObservation, status: string) {
+  observation.progress.terminal(status);
+  if (status !== 'passed') {
+    observation.abort();
+    await observation.interrupt();
+    await observation.done?.catch(() => {});
+    await observation.rejectManifest?.();
+    observation.progress.terminal(status);
+  }
 }
 
 /** Node-side observations survive a test-body timeout without querying the renderer.

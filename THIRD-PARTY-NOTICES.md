@@ -11,7 +11,22 @@ The version- and hash-checked ES/CJS patch balances qualifying single-character
 leading insert sequences within the existing history/collaboration composition
 folds; the first unsupported state and every following state retain the original
 sequential reducer (SPN-133). SPN-135 also aggregates fully qualified descending
-single-character deletes, retaining the lowest-offset native deleted body, and
+single-character deletes, retaining the lowest-offset native deleted body; SPN-142
+extends this to qualified leading delete prefixes with the original sequential
+tail, preserving every unsupported action's call order. SPN-142 reuses private
+fixed qualification lists without changing their contents or iteration order.
+🔎 SPN-146 additionally recognizes one native Enter between contiguous plain
+append inserts. The fully qualified plain tail and prefixes of at least four
+inserts use one public native full-body normalization and push per leaf, avoiding
+repeated tree-level copies. Smaller heads keep their original null fold. It keeps
+the prefix/Enter join, its style retain and the final head/tail join in order. Other structural/metadata shapes retain the existing fold. Tests preserve
+the exact earlier build as a work negative and compare raw publications,
+metadata, accumulator ownership and complete applied snapshots.
+The SPN-146 component diagnostic in `scripts/ci/doc-native-runtime/` reuses
+that licensed actual-manager fixture with controlled publication sinks and an
+inspectable browser journal. Generated diagnostic source retains its original
+Apache-2.0 header; archived native/bundle bytes are diagnostic evidence.
+SPN-135 also
 adds opt-in scalar flush observations covering native timer and public entry paths.
 It preserves native operation
 order, metadata, cache lifetimes and publication. Tests retain the verified

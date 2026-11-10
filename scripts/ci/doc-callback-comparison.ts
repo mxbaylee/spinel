@@ -9,13 +9,20 @@ import { analyzeDocCallbackLifetimes } from './doc-callback-lifetimes.ts';
 import type { DocCallbackCallsite } from './doc-callback-lifetimes.ts';
 import {
   DOC_CALLBACK_TRACE_SETTINGS,
+  DOC_CALLBACK_TRACE_STORAGE,
   readDocCallbackTrace,
 } from '../../e2e/doc-responsiveness-callback-trace.ts';
 import type { DocCallbackTraceSummary } from '../../e2e/doc-responsiveness-callback-trace.ts';
+import { readDocCallbackProto } from '../../e2e/doc-responsiveness-callback-proto.ts';
+import {
+  DOC_CALLBACK_CLEAN_STATS,
+  DOC_CALLBACK_STATS_SQL,
+} from '../../e2e/doc-responsiveness-callback-converter.ts';
+import { docTraceProcessorAuthority } from './doc-trace-processor.ts';
 
 type Preset = 'desktop' | 'mobile';
 type Analysis = ReturnType<typeof analyzeDocCallbackLifetimes>;
-export const DOC_CALLBACK_BASELINE = '0e1df4725d9eccb77574d25e3eecdf678fe6ff44';
+export const DOC_CALLBACK_BASELINE = '48dc8d4698129d5c7748ff2dac3b5d18cb0bcd6b';
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
 const validHash = (value: unknown): value is string =>
   typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
@@ -30,6 +37,9 @@ const harnessPaths = [
   'e2e/doc-responsiveness-callbacks.spec.ts',
   'e2e/doc-responsiveness-callback-sources.ts',
   'e2e/doc-responsiveness-callback-trace.ts',
+  'e2e/doc-responsiveness-callback-proto.ts',
+  'e2e/doc-responsiveness-callback-converter.ts',
+  'scripts/ci/doc-trace-processor.ts',
   'e2e/doc-responsiveness-callback-progress.ts',
   'e2e/doc-responsiveness-fixture.ts',
   'e2e/doc-responsiveness.ts',
@@ -37,6 +47,7 @@ const harnessPaths = [
   'web/docResponsivenessEvidence.ts',
   'src/ui/docIdleEpisode.ts',
   'src/ui/nativeDocFlush.ts',
+  'src/ui/nativeDocFlushDiagnostic.ts',
   'playwright.config.ts',
   'package-lock.json',
 ];
@@ -70,8 +81,15 @@ export interface DocCallbackManifest {
   frameId: string;
   trace: DocCallbackArtifactFile & {
     completion: { dataLossOccurred: boolean; traceFormat?: string; streamCompression?: string };
+    storage: typeof DOC_CALLBACK_TRACE_STORAGE;
+    transport: { bytes: number; sha256: string };
   };
   traceRead?: DocCallbackTraceSummary;
+  convertedTrace: DocCallbackArtifactFile & {
+    storage: typeof DOC_CALLBACK_TRACE_STORAGE;
+    decoded: { bytes: number; sha256: string };
+  };
+  conversionReceipt: DocCallbackArtifactFile;
   attribution: {
     callsites: DocCallbackCallsite[];
     unmapped: unknown[];
@@ -79,6 +97,7 @@ export interface DocCallbackManifest {
   };
   analysis: Analysis;
   errors: unknown[];
+  cleanup: { sessionDetached: boolean; fixtureClosed: boolean };
   input: { keydownAt: number[]; keyToFrameMs: number[] };
   nativeAfterTyping: {
     text: string;
@@ -135,7 +154,26 @@ export async function loadDocCallbackEvidence(
   const failures: string[] = [];
   let analysis: Analysis | null = null;
   try {
-    const files = [manifest.trace, ...(manifest.attribution?.artifacts ?? [])];
+    const progress = JSON.parse(
+      await readFile(resolve(dirname(path), 'spn134-progress.json'), 'utf8'),
+    );
+    if (
+      progress.schema !== 1 ||
+      progress.terminal !== 'passed' ||
+      progress.firstFailure !== null ||
+      progress.persistenceFailure !== null ||
+      !Array.isArray(progress.events) ||
+      !progress.events.some(
+        (event: { phase?: string }) => event.phase === 'fixture-cleanup-complete',
+      )
+    )
+      failures.push('Terminal callback progress does not confirm successful owned cleanup.');
+    const files = [
+      manifest.trace,
+      manifest.convertedTrace,
+      manifest.conversionReceipt,
+      ...(manifest.attribution?.artifacts ?? []),
+    ];
     if (!manifest.attribution?.artifacts?.length)
       throw new Error('Retained source attribution artifacts are missing.');
     const kinds = new Set(manifest.attribution.artifacts.map((artifact) => artifact.kind));
@@ -150,12 +188,73 @@ export async function loadDocCallbackEvidence(
       names.add(file.file);
       await verifyDocCallbackFile(dirname(path), file);
     }
-    const compression = manifest.trace.completion.streamCompression ?? 'none';
-    if (compression !== 'gzip' && compression !== 'none')
-      throw new Error('Unknown retained trace compression.');
-    const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.trace.file), {
-      compression,
+    if (!isDeepStrictEqual(manifest.trace.storage, DOC_CALLBACK_TRACE_STORAGE))
+      throw new Error(
+        'Retained trace storage provenance differs from the registered lossless method.',
+      );
+    if (manifest.trace.completion.streamCompression !== 'none')
+      throw new Error('Retained trace transport is not uncompressed.');
+    const framing = await readDocCallbackProto(
+      resolve(dirname(path), manifest.trace.file),
+      manifest.trace.transport,
+    );
+    const conversion = JSON.parse(
+      await readFile(resolve(dirname(path), manifest.conversionReceipt.file), 'utf8'),
+    );
+    const [platform, arch] = String(conversion.authority?.platform).split('-');
+    if (
+      !isDeepStrictEqual(conversion.authority, docTraceProcessorAuthority(platform, arch)) ||
+      !isDeepStrictEqual(conversion.authority, manifest.instrumentation?.converterAuthority) ||
+      conversion.passed !== true ||
+      conversion.temporaryRemoved !== true ||
+      Object.hasOwn(conversion, 'failure') ||
+      Object.hasOwn(conversion, 'cleanupFailure') ||
+      Object.hasOwn(conversion, 'inputCloseFailure') ||
+      !isDeepStrictEqual(conversion.input, manifest.trace.transport) ||
+      !isDeepStrictEqual(conversion.framing, framing) ||
+      !isDeepStrictEqual(conversion.output, manifest.convertedTrace)
+    )
+      throw new Error(
+        'Converter authority, input/output binding, framing or cleanup is incomplete.',
+      );
+    const workingInput = conversion.conversion?.args?.[2];
+    if (typeof workingInput !== 'string' || !workingInput.endsWith('/input.pftrace'))
+      throw new Error('Converter working input identity is missing.');
+    for (const [command, args] of [
+      [conversion.conversion, ['convert', 'json', workingInput]],
+      [conversion.statistics, ['query', '--format', 'csv', workingInput, DOC_CALLBACK_STATS_SQL]],
+    ] as const) {
+      if (
+        !command ||
+        command.code !== 0 ||
+        command.signal !== null ||
+        command.childClosed !== true ||
+        command.outputRemoved !== false ||
+        command.outputCloseFailure !== null ||
+        command.diagnosticsTruncated !== false ||
+        typeof command.stderr !== 'string' ||
+        Buffer.byteLength(command.stderr) > 256 * 1024 ||
+        !Number.isFinite(command.elapsedMs) ||
+        command.elapsedMs < 0 ||
+        !isDeepStrictEqual(command.args, args)
+      )
+        throw new Error('Converter command did not complete with bound arguments and diagnostics.');
+    }
+    if (
+      conversion.statistics.stdout !== DOC_CALLBACK_CLEAN_STATS ||
+      conversion.conversion.stdout !== ''
+    )
+      throw new Error('Retained converter statistics are incomplete or report errors/data loss.');
+    if (!isDeepStrictEqual(manifest.convertedTrace.storage, DOC_CALLBACK_TRACE_STORAGE))
+      throw new Error('Derived trace storage differs from the registered lossless method.');
+    const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.convertedTrace.file), {
+      compression: manifest.convertedTrace.storage.compression,
     });
+    if (
+      raw.summary.uncompressedBytes !== manifest.convertedTrace.decoded?.bytes ||
+      raw.summary.uncompressedSha256 !== manifest.convertedTrace.decoded?.sha256
+    )
+      failures.push('Retained derived bytes differ from the converter output hash/length.');
     if (manifest.traceRead && !isDeepStrictEqual(raw.summary, manifest.traceRead))
       failures.push('Stored trace read summary differs from retained raw evidence.');
     analysis = analyzeDocCallbackLifetimes({
@@ -197,7 +296,7 @@ export function compareDocCallbackEvidence(
     failures.push(...evidence.failures.map((failure) => `${label}: ${failure}`));
     const value = evidence.manifest;
     check(
-      value.schema === 1 && value.role === role && value.preset === preset && value.attempt === 0,
+      value.schema === 2 && value.role === role && value.preset === preset && value.attempt === 0,
       `${label}: wrong schema, role, preset, or first-attempt identity.`,
     );
     check(
@@ -209,6 +308,10 @@ export function compareDocCallbackEvidence(
       `${label}: callback collection or native behavior did not complete successfully.`,
     );
     check(
+      value.cleanup?.sessionDetached === true && value.cleanup.fixtureClosed === true,
+      `${label}: owned session/fixture cleanup is unconfirmed.`,
+    );
+    check(
       Array.isArray(value.errors) && value.errors.length === 0,
       `${label}: browser errors remain.`,
     );
@@ -217,9 +320,23 @@ export function compareDocCallbackEvidence(
       `${label}: trace completion reports missing/lost data.`,
     );
     check(
-      value.trace?.completion?.traceFormat === 'json' &&
-        value.trace.completion.streamCompression === 'gzip',
-      `${label}: trace completion did not confirm gzip JSON.`,
+      value.trace?.completion?.traceFormat === 'proto' &&
+        value.trace.completion.streamCompression === 'none' &&
+        isDeepStrictEqual(value.trace.storage, DOC_CALLBACK_TRACE_STORAGE) &&
+        Number.isSafeInteger(value.trace.transport?.bytes) &&
+        value.trace.transport.bytes > 0 &&
+        validHash(value.trace.transport?.sha256),
+      `${label}: trace completion/storage/transport provenance is incomplete or changed.`,
+    );
+    check(
+      validHash(value.conversionReceipt?.sha256) &&
+        value.conversionReceipt.bytes > 0 &&
+        validHash(value.convertedTrace?.sha256) &&
+        value.convertedTrace.bytes > 0 &&
+        validHash(value.convertedTrace?.decoded?.sha256) &&
+        value.convertedTrace.decoded.bytes > 0 &&
+        isDeepStrictEqual(value.convertedTrace.storage, DOC_CALLBACK_TRACE_STORAGE),
+      `${label}: derived trace or converter receipt is missing.`,
     );
     // The mapper also records arbitrary FunctionCall positions. Only unknown
     // measured timer ownership blocks completeness in the recomputed analyzer;
@@ -288,6 +405,16 @@ export function compareDocCallbackEvidence(
         value.instrumentation.playwrightTrace === false &&
         value.instrumentation.latencyBudgetsEnforced === false,
       `${label}: the registered traced browser preset changed.`,
+    );
+    check(
+      isDeepStrictEqual(value.instrumentation?.storage, DOC_CALLBACK_TRACE_STORAGE),
+      `${label}: registered local trace storage changed.`,
+    );
+    check(
+      validHash(
+        (value.instrumentation?.converterAuthority as { sha256?: unknown } | undefined)?.sha256,
+      ),
+      `${label}: converter authority is missing from the paired instrumentation.`,
     );
     for (const [key, expected] of Object.entries(DOC_CALLBACK_TRACE_SETTINGS))
       check(

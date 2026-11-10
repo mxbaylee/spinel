@@ -15,8 +15,11 @@
  *
  * Modified for Spinel: compose contiguous, single-character root-body inserts
  * in an order-preserving balanced tree up to the first unsupported state. The
- * remaining actions keep their original fold. SPN-135 aggregates only fully
- * qualified descending single-character deletes and observes native flushes
+ * remaining actions keep their original fold, except SPN-146's strictly qualified
+ * single-Enter boundary followed by a contiguous plain append run, assembled
+ * with one native normalization per admitted plain insert. SPN-135 aggregates only fully
+ * qualified descending single-character deletes; SPN-142 also aggregates their
+ * qualified leading prefixes before the unchanged sequential tail. It observes native flushes
  * through an opt-in scalar API. Native grouping, metadata,
  * cache ownership, publication order and timers remain in the pinned SDK service.
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
@@ -35,13 +38,46 @@ const formats = {
   cjs: '8a3191dee7f9f21c2a2cbb7bb0a7c93af624ef58f2fb8a96af71b27f6cbf5642',
 } as const;
 
-export function prepareDocsPatch(source: string, format: keyof typeof formats) {
-  const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
-  const anchor = 'const DEBOUNCE_DELAY = 300;';
-  const markerField = ', "__textXPreserveParagraphIds"';
-  const markerGuard = `
+const originalImport = 'import { AlignTypeH, BooleanNumber,';
+const iteratorImport = 'import { ActionIterator, AlignTypeH, BooleanNumber,';
+const anchor = 'const DEBOUNCE_DELAY = 300;';
+const markerField = ', "__textXPreserveParagraphIds"';
+const markerGuard = `
 \t\t// Sync capture marks every insert before native apply; keep the marker intact.
 \t\tif (Object.hasOwn(body, "__textXPreserveParagraphIds") && body.__textXPreserveParagraphIds !== true) return false;`;
+
+/** Rewrites a `canX` boolean qualifier into one returning its leading valid prefix length. */
+function toPrefixLength(text: string) {
+  return text
+    .replace('if (states.length < 2) return false;', 'if (states.length < 2) return 0;')
+    .replace(
+      'for (const state of states) {',
+      'for (let index = 0; index < states.length; index++) {\n\t\tconst state = states[index];',
+    )
+    .replaceAll('return false;', 'return index;')
+    .replace('return true;', 'return states.length;');
+}
+
+/**
+ * Every helper generation this repository has ever installed (or tested), as
+ * text spliced over `anchor`. Each is derived from the previous one by named
+ * textual edits so the exact historical bytes stay reproducible and hash-checked.
+ *
+ * Oldest to newest:
+ *  1. previous      SPN-121/132 first helper, no preserve-marker guard.
+ *  2. marker        + `__textXPreserveParagraphIds` guard.      (upgrade source)
+ *  3. prefix        SPN-133 leading-prefix balancing.            (upgrade source)
+ *  4. completeDelete SPN-135 complete descending deletes.        (upgrade source)
+ *  5. deletePrefix  SPN-142 qualified delete prefixes.           (upgrade source)
+ *  6. constantGuard SPN-142 hoisted guard lists; also the diagnostic's prior.  (upgrade source)
+ *  7. paragraphTail SPN-146 single-Enter append tail.            (upgrade source)
+ *  8. qualifiedRanges SPN-146 reuses the qualified ranges.       (upgrade source)
+ *  9. linearTail    SPN-146 linear tail only. NEVER INSTALLED: the isolating
+ *                   work-count control in the tests; rejected as a source.
+ * 10. current       linearTail + linear prefix: what `patched` installs.
+ */
+function helperGenerations(format: keyof typeof formats) {
+  const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
   const markerHelper = `${anchor}
 // Modified for Spinel: only plain single-character insert groups have the
 // qualified native action shape. Mixed composition can change own undefined
@@ -107,19 +143,12 @@ function composeDocStateActions(states, key) {
 }`;
   // Keep the exact SPN-132 bytes for install upgrades and regression controls.
   // Qualification is unchanged; return the length of its leading valid prefix.
-  const prefixHelper = markerHelper
+  const prefixHelper = toPrefixLength(markerHelper)
     .replace(
       '// Modified for Spinel: only plain single-character insert groups have the\n// qualified native action shape. Mixed composition can change own undefined\n// body fields, so an ineligible state keeps the entire original cache fold.',
       '// Modified for Spinel: balance only the qualified leading insert prefix.\n// Its raw result equals the original fold; keep every remaining call in order.\n// Never balance later islands or reassociate an unsupported native action.',
     )
     .replace('canBalanceDocInserts', 'docInsertPrefixLength')
-    .replace('if (states.length < 2) return false;', 'if (states.length < 2) return 0;')
-    .replace(
-      'for (const state of states) {',
-      'for (let index = 0; index < states.length; index++) {\n\t\tconst state = states[index];',
-    )
-    .replaceAll('return false;', 'return index;')
-    .replace('return true;', 'return states.length;')
     .replace(
       'if (!canBalanceDocInserts(states, key))',
       'const prefix = docInsertPrefixLength(states, key);\n\t// Tiny partial trees do not reduce work; preserve their original fold.\n\tif (prefix < 2 || (prefix < 4 && prefix < states.length))',
@@ -158,7 +187,7 @@ function isPlainDocDeleteData(value, depth = 0) {
       '// Modified for Spinel: aggregate only complete descending single-character\n// delete groups; native merging retains the lowest-offset deleted body.\nfunction canCombineDocDeletes',
     );
   const clone = format === 'cjs' ? '_univerjs_core.Tools.deepClone' : 'Tools.deepClone';
-  const helper = prefixHelper.replace(
+  const completeDeleteHelper = prefixHelper.replace(
     'function composeDocStateActions(states, key) {',
     `${deleteShapeGuard}${deleteGuard}function composeDocStateActions(states, key) {
 \tif (canCombineDocDeletes(states, key)) {
@@ -168,6 +197,197 @@ function isPlainDocDeleteData(value, depth = 0) {
 \t\treturn result;
 \t}`,
   );
+  // Keep the exact SPN-135 helper for hash-verified install upgrades and controls.
+  // A qualified prefix is itself a previously admitted complete delete group.
+  // Its equal accumulator leaves every unsupported/later compose call unchanged.
+  const deletePrefixGuard = toPrefixLength(deleteGuard)
+    .replace('canCombineDocDeletes', 'docDeletePrefixLength')
+    .replace(
+      'aggregate only complete descending single-character',
+      'aggregate only leading qualified descending single-character',
+    );
+  const deletePrefixHelper = completeDeleteHelper
+    .replace(deleteGuard, deletePrefixGuard)
+    .replace(
+      'if (canCombineDocDeletes(states, key)) {',
+      'const deletePrefix = docDeletePrefixLength(states, key);\n\tif (deletePrefix >= 2) {',
+    )
+    .replace(
+      `const result = ${clone}(states[states.length - 1][key].actions);`,
+      `let result = ${clone}(states[deletePrefix - 1][key].actions);`,
+    )
+    .replace(
+      'edits[edits.length - 1].len = states.length;',
+      `edits[edits.length - 1].len = deletePrefix;\n\t\tfor (let index = deletePrefix; index < states.length; index++) result = ${json}.compose(result, states[index][key].actions);`,
+    );
+  // Retain the exact first SPN-142 candidate for install upgrades and controls.
+  // These private read-only lists are module constants: qualification preserves
+  // the same includes/iteration order without rebuilding them for every state.
+  const guardLists = [
+    ['docActionKeys', '["0", "1", "length"]'],
+    ['docComponentKeys', '["et", "e"]'],
+    ['docRetainKeys', '["t", "len"]'],
+    ['docEditKeys', '["t", "len", "body", "valueRangeId"]'],
+    [
+      'docBodyKeys',
+      '["dataStream", "textRuns", "paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks", "__textXPreserveParagraphIds"]',
+    ],
+    [
+      'docEmptyBodyFields',
+      '["paragraphs", "customRanges", "customDecorations", "customBlocks", "sectionBreaks"]',
+    ],
+    ['docEmptyArrayKeys', '["length"]'],
+    ['docRunArrayKeys', '["0", "length"]'],
+    ['docRunKeys', '["st", "ed", "ts", "sId"]'],
+  ];
+  const constantGuardHelper = guardLists
+    .reduce((text, [name, literal]) => text.replaceAll(literal, name), deletePrefixHelper)
+    .replace(
+      anchor,
+      anchor + '\n' + guardLists.map(([name, literal]) => `const ${name} = ${literal};`).join('\n'),
+    );
+  // Keep SPN-142's exact bytes as an upgrade source and a work negative.
+  // Only one native Enter between append-contiguous plain inserts is admitted.
+  // Its style retain stays in the head; compose the qualified final run once.
+  const paragraphTailGuard = `
+const docParagraphKeys = ["startIndex", "paragraphId", "paragraphStyle"];
+const docParagraphRetainKeys = ["t", "len", "body", "coverType", "oldBody"];
+const docParagraphEditsKeys = ["0", "1", "2", "length"];
+function isDocParagraphBody(body, kind) {
+\tif (!hasOnlyDocInsertKeys(body, docBodyKeys) || body.dataStream !== (kind === "insert" ? "\\r" : "")) return false;
+\tif (Object.hasOwn(body, "__textXPreserveParagraphIds") && body.__textXPreserveParagraphIds !== true) return false;
+\tfor (const field of docEmptyBodyFields) {
+\t\tif (field === "paragraphs" && kind === "insert") continue;
+\t\tconst value = body[field];
+\t\tif (value !== void 0 && (!Array.isArray(value) || value.length !== 0 || !hasOnlyDocInsertKeys(value, docEmptyArrayKeys))) return false;
+\t}
+\tconst runs = body.textRuns;
+\tif (!Array.isArray(runs) || runs.length > 1 || !hasOnlyDocInsertKeys(runs, docRunArrayKeys) || (kind !== "old" && runs.length !== 1)) return false;
+\tif (runs.length) {
+\t\tconst run = runs[0];
+\t\tif (!hasOnlyDocInsertKeys(run, docRunKeys) || run.st !== 0 || run.ed !== 1 || run.sId !== void 0 || (run.ts !== void 0 && (run.ts === null || typeof run.ts !== "object" || Array.isArray(run.ts)))) return false;
+\t}
+\tif (kind !== "insert") return true;
+\tconst paragraphs = body.paragraphs;
+\tif (!Array.isArray(paragraphs) || paragraphs.length !== 1 || !hasOnlyDocInsertKeys(paragraphs, docRunArrayKeys)) return false;
+\tconst paragraph = paragraphs[0];
+\treturn hasOnlyDocInsertKeys(paragraph, docParagraphKeys) && paragraph.startIndex === 0 && typeof paragraph.paragraphId === "string" && paragraph.paragraphId.startsWith("para_") && paragraph.paragraphStyle != null && typeof paragraph.paragraphStyle === "object" && !Array.isArray(paragraph.paragraphStyle) && Reflect.ownKeys(paragraph.paragraphStyle).length === 0;
+}
+function canComposeDocParagraphTail(states, key, prefix) {
+\t// Descriptor inspection rejects accessors before reading a new field. The old
+\t// helper remains the fallback, including its original operand/read order.
+\tif (!isPlainDocDeleteData(states)) return false;
+\tconst actions = states[prefix][key].actions;
+\tif (!Array.isArray(actions) || actions.length !== 2 || !hasOnlyDocInsertKeys(actions, docActionKeys) || actions[0] !== "body") return false;
+\tconst component = actions[1];
+\tif (!hasOnlyDocInsertKeys(component, docComponentKeys) || component.et !== "text-x") return false;
+\tconst edits = component.e;
+\tif (!Array.isArray(edits) || (edits.length !== 2 && edits.length !== 3) || !hasOnlyDocInsertKeys(edits, docParagraphEditsKeys)) return false;
+\tlet offset = 0;
+\tif (edits.length === 3) {
+\t\tconst retain = edits[0];
+\t\tif (!hasOnlyDocInsertKeys(retain, docRetainKeys) || retain.t !== "r" || !Number.isSafeInteger(retain.len) || retain.len <= 0) return false;
+\t\toffset = retain.len;
+\t}
+\tconst insert = edits[edits.length - 2];
+\tconst following = edits[edits.length - 1];
+\tif (!hasOnlyDocInsertKeys(insert, docEditKeys) || insert.t !== "i" || insert.len !== 1 || insert.valueRangeId !== void 0 || !isDocParagraphBody(insert.body, "insert")) return false;
+\tif (!hasOnlyDocInsertKeys(following, docParagraphRetainKeys) || following.t !== "r" || following.len !== 1 || (following.coverType !== 0 && following.coverType !== 1) || !isDocParagraphBody(following.body, "retain") || !isDocParagraphBody(following.oldBody, "old")) return false;
+\tconst tail = states.slice(prefix + 1);
+\tif (docInsertPrefixLength(tail, key) !== tail.length) return false;
+\tconst firstOffset = offset - prefix;
+\tif (firstOffset < 0) return false;
+\tfor (let index = 0; index < states.length; index++) {
+\t\tconst state = states[index];
+\t\tif (state.unitId !== states[0].unitId || state.segmentId !== states[0].segmentId) return false;
+\t\tif (index === prefix) continue;
+\t\tconst current = state[key].actions[1].e;
+\t\tconst currentOffset = current.length === 2 ? current[0].len : 0;
+\t\tif (currentOffset !== firstOffset + index) return false;
+\t}
+\treturn true;
+}
+`;
+  const paragraphTailHelper = constantGuardHelper
+    .replace(
+      '// Never balance later islands or reassociate an unsupported native action.',
+      '// Only the separately qualified single-Enter append tail below may join\n// its non-null head once. All other unsupported tails retain their native fold.',
+    )
+    .replace(
+      'function composeDocStateActions(states, key) {',
+      paragraphTailGuard + 'function composeDocStateActions(states, key) {',
+    )
+    .replace(
+      'const prefix = docInsertPrefixLength(states, key);',
+      `const prefix = docInsertPrefixLength(states, key);
+\tif (key === "redoState" && states.length - prefix > 4 && canComposeDocParagraphTail(states, key, prefix)) {
+\t\tconst head = composeDocStateActions(states.slice(0, prefix + 1), key);
+\t\tconst tail = composeDocStateActions(states.slice(prefix + 1), key);
+\t\treturn ${json}.compose(head, tail);
+\t}`,
+    );
+  // The full predicate already qualified these exact ranges. Re-entering the
+  // generic composer repeats delete/prefix scans without changing its tree.
+  // Keep the original null fold for a tiny head and every fallback unchanged.
+  const qualifiedRangesHelper = paragraphTailHelper.replace(
+    `\t\tconst head = composeDocStateActions(states.slice(0, prefix + 1), key);
+\t\tconst tail = composeDocStateActions(states.slice(prefix + 1), key);
+\t\treturn ${json}.compose(head, tail);`,
+    `\t\tlet head;
+\t\tif (prefix < 4) {
+\t\t\thead = null;
+\t\t\tfor (let index = 0; index <= prefix; index++) head = ${json}.compose(head, states[index][key].actions);
+\t\t} else head = ${json}.compose(composeRange(0, prefix), states[prefix][key].actions);
+\t\treturn ${json}.compose(head, composeRange(prefix + 1, states.length));`,
+  );
+  const native = format === 'cjs' ? '_univerjs_core.' : '';
+  // Full-body slicing supplies native own-undefined fields; direct concatenation
+  // or raw leaf copying would change metadata. Push keeps native merge/ownership.
+  const linearTailHelper = qualifiedRangesHelper.replace(
+    `\t\treturn ${json}.compose(head, composeRange(prefix + 1, states.length));`,
+    `\t\tconst tail = new ${native}TextX();
+\t\tconst firstEdits = states[prefix + 1][key].actions[1].e;
+\t\tif (firstEdits.length === 2) tail.push(firstEdits[0]);
+\t\tfor (let index = prefix + 1; index < states.length; index++) {
+\t\t\tconst edits = states[index][key].actions[1].e;
+\t\t\tconst leaf = edits[edits.length - 1];
+\t\t\ttail.push(new ${native}ActionIterator([leaf]).next(1));
+\t\t}
+\t\treturn ${json}.compose(head, ["body", { et: "text-x", e: tail.serialize() }]);`,
+  );
+  const helper = linearTailHelper.replace(
+    `\t\t} else head = ${json}.compose(composeRange(0, prefix), states[prefix][key].actions);`,
+    `\t\t} else {
+\t\t\tconst nativePrefix = new ${native}TextX();
+\t\t\tconst firstEdits = states[0][key].actions[1].e;
+\t\t\tif (firstEdits.length === 2) nativePrefix.push(firstEdits[0]);
+\t\t\tfor (let index = 0; index < prefix; index++) {
+\t\t\t\tconst edits = states[index][key].actions[1].e;
+\t\t\t\tnativePrefix.push(new ${native}ActionIterator([edits[edits.length - 1]]).next(1));
+\t\t\t}
+\t\t\thead = ${json}.compose(["body", { et: "text-x", e: nativePrefix.serialize() }], states[prefix][key].actions);
+\t\t}`,
+  );
+  // The very first helper: the marker helper without its preserve-marker guard.
+  const previousHelper = markerHelper.replace(markerField, '').replace(markerGuard, '');
+  return {
+    previous: previousHelper,
+    marker: markerHelper,
+    prefix: prefixHelper,
+    completeDelete: completeDeleteHelper,
+    deletePrefix: deletePrefixHelper,
+    constantGuard: constantGuardHelper,
+    paragraphTail: paragraphTailHelper,
+    qualifiedRanges: qualifiedRangesHelper,
+    linearTail: linearTailHelper,
+    current: helper,
+  };
+}
+
+export function prepareDocsPatch(source: string, format: keyof typeof formats) {
+  const json = format === 'cjs' ? '_univerjs_core.JSONX' : 'JSONX';
+  const generations = helperGenerations(format);
+  const helper = generations.current;
   const replacements = [
     { before: anchor, after: helper, count: 1 },
     {
@@ -181,17 +401,26 @@ function isPlainDocDeleteData(value, depth = 0) {
       count: 2,
     },
   ];
-  // Permit upgrading the exact previous patch during npm install as well as a
-  // fresh npm ci. Both recoveries still verify the complete upstream file.
-  const previousHelper = markerHelper.replace(markerField, '').replace(markerGuard, '');
-  // The recovered original also supplies an executable negative control.
+  // Recover the pinned original from the current patch or any retained upgrade
+  // source (newest first, so a newer helper is never half-matched by an older
+  // one). Both npm ci and an npm install upgrade still verify the whole file.
+  const upgradeSources = [
+    generations.qualifiedRanges,
+    generations.paragraphTail,
+    generations.constantGuard,
+    generations.deletePrefix,
+    generations.completeDelete,
+    generations.previous,
+    generations.marker,
+    generations.prefix,
+  ];
+  const unobserved = docFlushObservationReplacements.reduce(
+    (text, { before, after }) => text.replaceAll(after, before),
+    format === 'es' ? source.replaceAll(iteratorImport, originalImport) : source,
+  );
   const original = replacements.reduce(
     (text, { before, after }) => text.replaceAll(after, before),
-    docFlushObservationReplacements
-      .reduce((text, { before, after }) => text.replaceAll(after, before), source)
-      .replaceAll(previousHelper, anchor)
-      .replaceAll(markerHelper, anchor)
-      .replaceAll(prefixHelper, anchor),
+    upgradeSources.reduce((text, old) => text.replaceAll(old, anchor), unobserved),
   );
   if (createHash('sha256').update(original).digest('hex') !== formats[format])
     throw new Error(`Unrecognized @univerjs/docs ${format} build; review native composition.`);
@@ -200,25 +429,55 @@ function isPlainDocDeleteData(value, depth = 0) {
       throw new Error('Docs composition patch target count changed.');
     return text.replaceAll(before, after);
   }, original);
-  const previousPatched = composed.replace(helper, previousHelper);
-  const markerPatched = composed.replace(helper, markerHelper);
-  const prefixPatched = composed.replace(helper, prefixHelper);
-  const patched = docFlushObservationReplacements.reduce((text, { before, after, count }) => {
+  // The three oldest generations predate flush observation and its import.
+  const previousPatched = composed.replace(helper, generations.previous);
+  const markerPatched = composed.replace(helper, generations.marker);
+  const prefixPatched = composed.replace(helper, generations.prefix);
+  const observed = docFlushObservationReplacements.reduce((text, { before, after, count }) => {
     if (text.split(before).length !== count + 1)
       throw new Error('Docs observation patch target count changed.');
     return text.replaceAll(before, after);
   }, composed);
-  if (
-    source !== original &&
-    source !== patched &&
-    source !== previousPatched &&
-    source !== markerPatched &&
-    source !== prefixPatched
-  )
+  if (format === 'es' && observed.split(originalImport).length !== 2)
+    throw new Error('Docs native iterator import target count changed.');
+  const patched = format === 'es' ? observed.replace(originalImport, iteratorImport) : observed;
+  // Newer historical controls retain their exact complete-module imports and hashes.
+  const completeDeletePatched = observed.replace(helper, generations.completeDelete);
+  const deletePrefixPatched = observed.replace(helper, generations.deletePrefix);
+  const constantGuardPatched = observed.replace(helper, generations.constantGuard);
+  const paragraphTailPatched = observed.replace(helper, generations.paragraphTail);
+  const qualifiedRangesPatched = observed.replace(helper, generations.qualifiedRanges);
+  // Isolated semantic/work control only: this intermediate was never installed.
+  const linearTailPatched = observed.replace(helper, generations.linearTail);
+  const accepted = [
+    original,
+    patched,
+    previousPatched,
+    markerPatched,
+    prefixPatched,
+    completeDeletePatched,
+    deletePrefixPatched,
+    constantGuardPatched,
+    paragraphTailPatched,
+    qualifiedRangesPatched,
+  ];
+  if (!accepted.includes(source))
     throw new Error(
       `Partially modified @univerjs/docs ${format} build; restore the pinned package.`,
     );
-  return { original, patched, previousPatched, markerPatched, prefixPatched };
+  return {
+    original,
+    patched,
+    previousPatched,
+    markerPatched,
+    prefixPatched,
+    completeDeletePatched,
+    deletePrefixPatched,
+    constantGuardPatched,
+    paragraphTailPatched,
+    qualifiedRangesPatched,
+    linearTailPatched,
+  };
 }
 
 export async function patchInstalledDocs(root: string) {

@@ -247,9 +247,15 @@ function fixture() {
             'e2e/doc-responsiveness.spec.ts',
             'e2e/doc-responsiveness-fixture.ts',
             'e2e/doc-responsiveness-boundaries.ts',
+            'e2e/doc-responsiveness-native-trace.ts',
+            'e2e/doc-responsiveness-native-window.ts',
+            'e2e/doc-responsiveness-native-sources.ts',
+            'e2e/doc-responsiveness-callback-trace.ts',
+            'e2e/doc-responsiveness-callback-progress.ts',
             'web/docResponsivenessEvidence.ts',
             'src/ui/docIdleEpisode.ts',
             'src/ui/nativeDocFlush.ts',
+            'src/ui/nativeDocFlushDiagnostic.ts',
             'playwright.config.ts',
             'package-lock.json',
           ].map((path) => [path, 'd'.repeat(64)]),
@@ -323,7 +329,7 @@ function fixture() {
                   collaboration: DOC_RESPONSIVENESS_GROUP_LIMIT,
                 },
               ],
-          history: { undos: before ? 1 : 66, redos: 0 },
+          history: { undos: before ? 1 : 131, redos: 0 },
           selection: { start: 2086, end: 2086 },
         },
       };
@@ -478,18 +484,18 @@ test('paired proof uses the worst entire candidate task and each certain baselin
   assert.equal(result.improvement.collaboration!.baselineContainingTaskMs, 8000);
   assert.equal(result.improvement.history!.candidateEntireTaskUpperBoundMs, 80);
   assert.equal(result.improvement.history!.reductionPercent, 100 * (1 - 80 / 7000));
-  assert.equal(result.candidateGroupLimit, 32);
-  assert.equal(result.candidateHistoryLimit, 100);
+  assert.equal(result.candidateGroupLimit, 16);
+  assert.equal(result.candidateHistoryLimit, 200);
   assert.equal(result.baselineHistoryLimit, 50);
   assert.equal(
     result.summaries.find((value) => value.role === 'candidate' && value.sample === 'plain-1')!
       .undoRedoGroups,
-    66,
+    131,
   );
 });
 
 test('a superseded candidate capacity cannot pass on fast timing alone', () => {
-  for (const superseded of [44, 64]) {
+  for (const superseded of [32, 44, 64]) {
     const f = fixture();
     for (const { metrics } of f.candidate) {
       metrics.native.highWater = { history: superseded, collaboration: superseded };
@@ -1330,7 +1336,16 @@ test('history shortcuts follow the browser platform rather than the host OS', ()
 });
 
 test('acceptance helpers require exact harness identities and sealed native evidence', () => {
-  for (const path of ['src/ui/docIdleEpisode.ts', 'src/ui/nativeDocFlush.ts']) {
+  for (const path of [
+    'src/ui/docIdleEpisode.ts',
+    'src/ui/nativeDocFlush.ts',
+    'src/ui/nativeDocFlushDiagnostic.ts',
+    'e2e/doc-responsiveness-native-trace.ts',
+    'e2e/doc-responsiveness-native-window.ts',
+    'e2e/doc-responsiveness-native-sources.ts',
+    'e2e/doc-responsiveness-callback-trace.ts',
+    'e2e/doc-responsiveness-callback-progress.ts',
+  ]) {
     for (const missing of [false, true]) {
       const f = fixture();
       if (missing) delete f.candidate[0].metrics.harnessSha256[path];

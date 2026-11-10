@@ -12,11 +12,64 @@ updates:
       default-days: 7
     versioning-strategy: increase
     groups:
+      # Univer packages share a release line and must remain coordinated.
       univer:
+        applies-to: version-updates
         patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      univer-major:
+        applies-to: version-updates
+        patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['major']
+      # Preserve security fixes even when remediation requires a major release.
       univer-security:
         applies-to: security-updates
         patterns: ['@univerjs/*', '@univerjs-pro/*']
+      storybook:
+        applies-to: version-updates
+        patterns: ['storybook', '@storybook/*']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      vite-tooling:
+        applies-to: version-updates
+        patterns: ['vite', '@vitejs/*', 'vitest', '@vitest/*']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      react:
+        applies-to: version-updates
+        patterns: ['react', 'react-dom', '@types/react', '@types/react-dom']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      typescript-tooling:
+        applies-to: version-updates
+        patterns: ['typescript', 'typescript-api', '@types/node']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      lint-format:
+        applies-to: version-updates
+        patterns: ['oxlint', 'prettier']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      webauthn:
+        applies-to: version-updates
+        patterns: ['@simplewebauthn/*']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      server-transport:
+        applies-to: version-updates
+        patterns: ['express', '@types/express', 'ws', '@types/ws']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      archives:
+        applies-to: version-updates
+        patterns: ['yauzl', '@types/yauzl', 'yazl', '@types/yazl']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      print-rendering:
+        applies-to: version-updates
+        patterns: ['@napi-rs/canvas', 'sharp', 'pdfjs-dist']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
     # The trailing space prevents Dependabot adding a colon after "Bump".
     # Keep this literal prefix even if its generated description uses lowercase.
     commit-message:
@@ -49,5 +102,10 @@ updates:
       day: monday
       time: '09:00'
       timezone: America/Los_Angeles
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns: ['actions/*']
+        update-types: ['minor', 'patch']
     commit-message:
       prefix: '⬆️ Bump '

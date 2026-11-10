@@ -7,7 +7,7 @@ import { DocSelectionRenderService } from '@univerjs/docs-ui';
 import { IRenderManagerService } from '@univerjs/engine-render';
 import { serializeRange } from '@univerjs/engine-formula';
 import { drawPresence, setLocalDocSelectionColor } from '@spinel/presence-ui';
-import { watchPresence, type Collaborator } from '../../web/Collaborators.tsx';
+import { REDRAW_INTERVAL_MS, watchPresence, type Collaborator } from '../../web/Collaborators.tsx';
 import {
   getSyncPresence,
   setSyncPresence,
@@ -33,14 +33,22 @@ vi.mock('@spinel/presence-ui', async () => ({
 vi.mock('../profile/ProfileIcon.tsx', () => ({ ProfileIcon: () => null }));
 vi.mock('./redesign/Controls.tsx', () => ({ Modal: () => null }));
 
+// Remote carets redraw at most this often while the document keeps changing (SPN-146).
+const REDRAW_MS = 150;
+test('the shipped redraw interval is the 150 ms the tests assume', () => {
+  expect(REDRAW_INTERVAL_MS).toBe(REDRAW_MS);
+});
 const stops: (() => void)[] = [];
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
-  const events = Object.assign(new EventTarget(), { setInterval: globalThis.setInterval });
+  const events = Object.assign(new EventTarget(), {
+    setInterval: globalThis.setInterval,
+    setTimeout: globalThis.setTimeout,
+  });
   vi.stubGlobal('window', events);
   vi.stubGlobal('requestAnimationFrame', (callback: (time: number) => void) =>
-    setTimeout(() => callback(0), 16),
+    setTimeout(() => callback(0), 8),
   );
   vi.stubGlobal('cancelAnimationFrame', (id: ReturnType<typeof setTimeout>) => clearTimeout(id));
   vi.stubGlobal('matchMedia', () => ({ matches: false }));
@@ -75,13 +83,18 @@ test('registry is per Univer/unit and retiring cleanup preserves a replacement',
 async function fixture(kind: 'doc' | 'sheet' = 'doc') {
   const input = new Subject<ReturnType<typeof selection>>();
   const dirty = new Subject<boolean>();
+  const progress = new Subject<void>();
+  const materialized = new Subject<void>();
+  const mainTransforms = new Subject<void>();
   const skeletons = new BehaviorSubject({
     dirty$: dirty,
-    layoutProgress$: new Subject(),
-    layoutPageMaterialized$: new Subject(),
+    layoutProgress$: progress,
+    layoutPageMaterialized$: materialized,
   });
   const activated = new BehaviorSubject(true);
   const transforms = new Subject<void>();
+  const engineTransforms = new Subject<void>();
+  let apiScroll: (event: { workbook: { getId(): string } }) => void = () => {};
   const scrolling = new Subject<void>();
   const event = (subject: Subject<void>) => ({
     subscribeEvent: (callback: () => void) => subject.subscribe(callback),
@@ -95,7 +108,8 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
       onTransformChange$: event(transforms),
       getViewports: () => [{ onScrollAfter$: event(scrolling) }],
     },
-    engine: { onTransformChange$: event(transforms) },
+    engine: { onTransformChange$: event(engineTransforms) },
+    mainComponent: { onTransformChange$: event(mainTransforms) },
     with: (token: unknown) => {
       if (token === DocSkeletonManagerService) return { currentSkeleton$: skeletons };
       if (token === DocSelectionRenderService) return { focus, setSegment, setSegmentPage };
@@ -144,7 +158,10 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
         : undefined,
     getActiveWorkbook: () => (kind === 'sheet' ? book : undefined),
     Event: { Scroll: 'scroll' },
-    addEvent: () => ({ dispose: vi.fn() }),
+    addEvent: (_name: string, callback: typeof apiScroll) => {
+      apiScroll = callback;
+      return { dispose: vi.fn() };
+    },
   } as unknown as FUniver;
   let state: SyncPresenceState = {
     connected: true,
@@ -195,6 +212,11 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
     activated,
     scrolling,
     transforms,
+    engineTransforms,
+    progress,
+    materialized,
+    mainTransforms,
+    scrollApi: () => apiScroll({ workbook: { getId: () => 'unit' } }),
     setSelection,
     focus,
     setSegment,
@@ -265,13 +287,13 @@ test('disconnect, layout, theme, navigation and disposal retire old remote range
   const f = await fixture();
   const initial = vi.mocked(drawPresence).mock.results[0]!.value!;
   f.dirty.next(true);
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(initial.dispose).toHaveBeenCalledOnce();
   const afterLayout = vi.mocked(drawPresence).mock.results.at(-1)!.value!;
   window.dispatchEvent(new Event('spinel-theme'));
   f.scrolling.next();
   f.transforms.next();
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(afterLayout.dispose).toHaveBeenCalledOnce();
   f.emit({ connected: false });
   expect(f.people()).toEqual([]);
@@ -304,13 +326,13 @@ test('guest identity stays generic, invalid cursors do not draw and removed memb
       { id: 'guest2', name: 'Guest', avatar: '/other/account.png', selection: '1:9999:1:TEXT::-1' },
     ],
   });
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(f.people().map((person) => person.name)).toEqual(['Collaborator', 'Guest', 'Guest']);
   expect(f.people().every((person) => person.icon === 'lucide:user-round')).toBe(true);
   expect(drawPresence).toHaveBeenCalledOnce();
   expect(f.people()[2]!.jump).toBeUndefined();
   f.emit({ members: [{ id: 'self', name: 'Collaborator', avatar: '' }] });
-  await vi.advanceTimersByTimeAsync(20);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(f.people()).toHaveLength(1);
 });
 
@@ -326,4 +348,231 @@ test('Sheet header selections are bounded and overlong IDs clear instead of floo
   const calls = f.setCursor.mock.calls.length;
   await vi.advanceTimersByTimeAsync(1000);
   expect(f.setCursor).toHaveBeenCalledTimes(calls);
+});
+
+test('a burst of layout events redraws remote carets once per interval, not once per event (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  const drawTimes: number[] = [];
+  vi.mocked(drawPresence).mockImplementation(() => {
+    drawTimes.push(Date.now());
+    return { dispose: vi.fn() } as never;
+  });
+  // One layout event per 4 ms for 600 ms, like keys landing during sustained typing.
+  for (let elapsed = 0; elapsed < 600; elapsed += 4) {
+    f.dirty.next(true);
+    await vi.advanceTimersByTimeAsync(4);
+  }
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  const draws = vi.mocked(drawPresence).mock.calls.length;
+  // 150 events would have been 150 draws before; the interval allows one per 150 ms, so 600 ms of events
+  // plus the final trailing draw is 4 or 5 draws, and no two draws sit closer than the interval.
+  expect(draws).toBeGreaterThanOrEqual(4);
+  expect(draws).toBeLessThanOrEqual(5);
+  for (let i = 1; i < drawTimes.length; i++) {
+    expect(drawTimes[i]! - drawTimes[i - 1]!).toBeGreaterThanOrEqual(REDRAW_MS);
+  }
+  // The latest request is never lost: a change after the burst still draws.
+  vi.mocked(drawPresence).mockClear();
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  expect(drawPresence).toHaveBeenCalledOnce();
+});
+
+test('a theme change redraws remote carets at once, even inside the redraw interval (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20); // the draw lands; the interval is now closed to further draws
+  const drawn = vi.mocked(drawPresence).mock.results.at(-1)!.value!;
+  vi.mocked(drawPresence).mockClear();
+  window.dispatchEvent(new Event('spinel-theme'));
+  // No timers advanced: a throttled redraw would leave the old theme's label up for the interval.
+  expect(drawn.dispose).toHaveBeenCalledOnce();
+  expect(drawPresence).toHaveBeenCalled();
+});
+
+test('disposing drops a pending trailing redraw and ignores later theme changes (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20);
+  f.dirty.next(true); // pending inside the interval
+  f.stop();
+  vi.mocked(drawPresence).mockClear();
+  window.dispatchEvent(new Event('spinel-theme'));
+  await vi.advanceTimersByTimeAsync(REDRAW_MS * 3);
+  expect(drawPresence).not.toHaveBeenCalled();
+});
+
+test('scrolling and zooming a Sheet redraw on the next frame even inside the redraw interval (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20); // a layout draw has just run; the interval is closed
+  vi.mocked(drawPresence).mockClear();
+  f.scrolling.next();
+  await vi.advanceTimersByTimeAsync(20); // one frame, far less than the interval
+  expect(drawPresence).toHaveBeenCalled();
+  vi.mocked(drawPresence).mockClear();
+  f.transforms.next();
+  await vi.advanceTimersByTimeAsync(20);
+  expect(drawPresence).toHaveBeenCalled();
+});
+
+test('a Doc keeps scroll and transform events inside the redraw interval, since typing raises them (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20);
+  vi.mocked(drawPresence).mockClear();
+  f.scrolling.next();
+  f.transforms.next();
+  await vi.advanceTimersByTimeAsync(20);
+  expect(drawPresence).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS);
+  expect(drawPresence).toHaveBeenCalledOnce();
+});
+
+const wheelSources = {
+  'api scroll event': (f: Awaited<ReturnType<typeof fixture>>) => f.scrollApi(),
+  'viewport scroll': (f: Awaited<ReturnType<typeof fixture>>) => f.scrolling.next(),
+  'scene transform': (f: Awaited<ReturnType<typeof fixture>>) => f.transforms.next(),
+  'engine transform': (f: Awaited<ReturnType<typeof fixture>>) => f.engineTransforms.next(),
+  'window resize': () => window.dispatchEvent(new Event('resize')),
+};
+for (const [name, fire] of Object.entries(wheelSources)) {
+  test(`${name}: a Sheet redraws within a frame, a Doc waits for the interval (SPN-146)`, async () => {
+    for (const kind of ['sheet', 'doc'] as const) {
+      const f = await fixture(kind);
+      await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+      window.dispatchEvent(new Event('spinel-theme')); // draws at once, closing the interval
+      await vi.advanceTimersByTimeAsync(5);
+      vi.mocked(drawPresence).mockClear();
+      fire(f);
+      await vi.advanceTimersByTimeAsync(7); // one fake frame is 8 ms, shorter than any timer path
+      expect(drawPresence).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(1);
+      if (kind === 'sheet') expect(drawPresence).toHaveBeenCalled();
+      else expect(drawPresence).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(REDRAW_MS);
+      expect(drawPresence).toHaveBeenCalled();
+      f.stop();
+    }
+  });
+}
+
+test('disposing leaves no frame or timer pending for Doc or Sheet (SPN-146)', async () => {
+  const timersAfterStop = async (kind: 'doc' | 'sheet', pending: boolean) => {
+    const f = await fixture(kind);
+    await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+    window.dispatchEvent(new Event('spinel-theme')); // closes the interval
+    if (pending) {
+      f.dirty.next(true); // trailing timer (Doc layout) or nothing (Sheet)
+      f.scrollApi(); // Sheet frame, or merged into the Doc timer
+      f.transforms.next();
+    }
+    f.stop();
+    return vi.getTimerCount();
+  };
+  for (const kind of ['doc', 'sheet'] as const) {
+    const idle = await timersAfterStop(kind, false);
+    expect(await timersAfterStop(kind, true)).toBe(idle);
+  }
+});
+
+const docTriggers = {
+  'layout progress': (f: Awaited<ReturnType<typeof fixture>>) => f.progress.next(),
+  'page materialized': (f: Awaited<ReturnType<typeof fixture>>) => f.materialized.next(),
+  'document position': (f: Awaited<ReturnType<typeof fixture>>) => f.mainTransforms.next(),
+  'dirty layout': (f: Awaited<ReturnType<typeof fixture>>) => f.dirty.next(true),
+};
+for (const [name, fire] of Object.entries(docTriggers)) {
+  test(`${name} asks a Doc for a redraw at the end of the interval (SPN-146)`, async () => {
+    const f = await fixture();
+    await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+    window.dispatchEvent(new Event('spinel-theme'));
+    await vi.advanceTimersByTimeAsync(20);
+    vi.mocked(drawPresence).mockClear();
+    fire(f);
+    await vi.advanceTimersByTimeAsync(20);
+    expect(drawPresence).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(REDRAW_MS);
+    expect(drawPresence).toHaveBeenCalledOnce();
+  });
+}
+
+test('switching the active Sheet redraws remote carets (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  f.sheetId('other-sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS * 4);
+  expect(drawPresence).toHaveBeenCalled();
+});
+
+test('events that arrive after disposal arm nothing for Doc or Sheet (SPN-146)', async () => {
+  for (const kind of ['doc', 'sheet'] as const) {
+    const f = await fixture(kind);
+    await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+    window.dispatchEvent(new Event('spinel-theme')); // closes the interval so a late event would arm a timer
+    f.stop();
+    const idle = vi.getTimerCount();
+    f.scrollApi(); // the mocked Univer event source still holds the callback after dispose
+    expect(vi.getTimerCount()).toBe(idle);
+  }
+});
+
+test('back-to-back Sheet scrolls each redraw on their own next frame (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  for (let scroll = 1; scroll <= 3; scroll++) {
+    f.scrolling.next();
+    await vi.advanceTimersByTimeAsync(8); // one fake frame; an interval would hold the draw back
+    expect(drawPresence).toHaveBeenCalledTimes(scroll);
+  }
+});
+
+test('a Sheet member joining or moving redraws within one redraw interval (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  f.emit({
+    members: [
+      { id: 'self', name: 'Collaborator', avatar: '' },
+      { id: 'late', name: 'Late', avatar: '', selection: 'sheet!B2:B2' },
+    ],
+  });
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  expect(drawPresence).toHaveBeenCalled();
+});
+
+test('a Doc caret move restyles the local caret on the next frame, not at the interval end (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  window.dispatchEvent(new Event('spinel-theme')); // closes the interval, so a redraw would trail by 150 ms
+  await vi.advanceTimersByTimeAsync(20);
+  vi.mocked(setLocalDocSelectionColor).mockClear();
+  vi.mocked(drawPresence).mockClear();
+  f.input.next(selection(3, 3));
+  await vi.advanceTimersByTimeAsync(8); // one fake frame
+  expect(setLocalDocSelectionColor).toHaveBeenCalledOnce();
+  expect(drawPresence).not.toHaveBeenCalled(); // remote carets still wait for the interval
+  // A burst: the next move, one frame later and well inside the interval, restyles on its own frame too.
+  f.input.next(selection(4, 4));
+  await vi.advanceTimersByTimeAsync(8);
+  expect(setLocalDocSelectionColor).toHaveBeenCalledTimes(2);
+  f.stop();
+});
+
+test('a pending local restyle frame is cancelled on disposal (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(setLocalDocSelectionColor).mockClear();
+  f.input.next(selection(3, 3)); // arms the frame
+  f.stop(); // before the frame fires
+  await vi.advanceTimersByTimeAsync(REDRAW_MS);
+  expect(setLocalDocSelectionColor).not.toHaveBeenCalled();
 });

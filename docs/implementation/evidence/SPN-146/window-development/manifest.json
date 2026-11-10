@@ -1,0 +1,295 @@
+{
+  "schema": 1,
+  "priorHead": "02ef01a40fe8369b79477909673c76de6d2a4edf",
+  "status": "Local implementation checkpoint; no hosted execution, final grades or acceptance claimed",
+  "limitation": "The first broader test output was returned in the tool transcript; its watchdog is retained and five missing-gc-binding failures are recorded in SPN-146.md. Subsequent complete logs are retained.",
+  "payloads": [
+    {
+      "path": "window-source-review-a.md",
+      "bytes": 11165,
+      "sha256": "b58e0a695bdebca288677b6f90f330fbaf15101b7824a6d974c9a5eb7d284c8f"
+    },
+    {
+      "path": "window-evidence-proof-a.json",
+      "bytes": 8216,
+      "sha256": "2ea4bcd4e6e77d6ffe816677e3754dc99566db479d84bd28b9d634af66154429"
+    },
+    {
+      "path": "window-evidence-watchdog-a.json",
+      "bytes": 2177,
+      "sha256": "c7afd8e91f5e0efecb61addfc4f7a54efedbaa22d89fe592e8dd86b4189d0421"
+    },
+    {
+      "path": "retained-map-inventory.json",
+      "bytes": 6454,
+      "sha256": "2e61b51855c8a0dc4a3ebbe6b19b206a20c731524b5ca1f9a2e9bfa19bcc3a26"
+    },
+    {
+      "path": "retained-map-inventory-watchdog.json",
+      "bytes": 2191,
+      "sha256": "319502f6d1dc6ff8a3cd679210998db17002be026936e91d40756682a1292b5d"
+    },
+    {
+      "path": "retained-map-binding-watchdog.json",
+      "bytes": 2033,
+      "sha256": "312025b16055d7f073c091d3bcef11f3217157bd75898ed35f892df0c5825b0d"
+    },
+    {
+      "path": "window-retention-format-watchdog.json",
+      "bytes": 1895,
+      "sha256": "afc5156543749e686811fb08facd19bcca1368bca0010d99a863299b3a32b112"
+    },
+    {
+      "path": "window-retention-tests-watchdog.json",
+      "bytes": 1571,
+      "sha256": "0ef58b88c6b5b308e9752dd56e6f1644caa7521956dea92bd4e47b9544421f42"
+    },
+    {
+      "path": "window-retention-tests.log.gz",
+      "bytes": 629,
+      "sha256": "6d672edf85413ac5ae0243f7aa60e9beca5a7b19bff99c39c25b29356f834a5c"
+    },
+    {
+      "path": "window-retention-types-watchdog.json",
+      "bytes": 2982,
+      "sha256": "a68e20e5aa99bfea14da0c700bdcc404208641ee06faf544eb85428b13085c80"
+    },
+    {
+      "path": "window-retention-types.log.gz",
+      "bytes": 89,
+      "sha256": "d131b7a670684b2a7e03634a15f55fd13397af477d2ea382ea6ef3d7b727a52a"
+    },
+    {
+      "path": "window-retention-lint-watchdog.json",
+      "bytes": 1869,
+      "sha256": "16dd4601b446d000cee84ac47dc7b3b5998c40e23220317f22cb21e6ec999520"
+    },
+    {
+      "path": "window-retention-final-format-watchdog.json",
+      "bytes": 1751,
+      "sha256": "269284771d3cf40cd8c4a1b5965f008328ddb1b9d02525bd6dadb9a47d9f7a84"
+    },
+    {
+      "path": "window-retention-final-types-watchdog.json",
+      "bytes": 2782,
+      "sha256": "d1a67e08c0bf0202d52c45c7c52e3a1f2cb84070a9f49864d92dd09d2998580d"
+    },
+    {
+      "path": "window-retention-final-types.log.gz",
+      "bytes": 88,
+      "sha256": "6379a4a3f79c79a4bcba71b66fa9d84c90015319545fc38075cf4b1184f672a4"
+    },
+    {
+      "path": "fixed-window-proposal.md",
+      "bytes": 11717,
+      "sha256": "23e50957086956567d1bd45c684123954a0f547fbe98a7cc742070e3b937db2c"
+    },
+    {
+      "path": "fixed-window-review-a.md",
+      "bytes": 8940,
+      "sha256": "54efa0fafe52a90d7e38c56a90f657bc4f4c45f21cd51fb87e54c367a7ec5bf6"
+    },
+    {
+      "path": "fixed-window-review-b.md",
+      "bytes": 11209,
+      "sha256": "06c3f2c65055b07907d897853533bac4085f47c1c6223940e16ceaf301923c1d"
+    },
+    {
+      "path": "fixed-window-revision-review-a.md",
+      "bytes": 6158,
+      "sha256": "48393e9e0d1b4349cca07f3e51ef88a06f98fb28617ef4c21e7eb0363f5ace55"
+    },
+    {
+      "path": "fixed-window-revision-review-b.md",
+      "bytes": 7699,
+      "sha256": "7bd8e6aa20c1b8586ab02e2af760234513c53d5ecf232ae453268b4e94575762"
+    },
+    {
+      "path": "window-foundation-watchdog.json",
+      "bytes": 1731,
+      "sha256": "e35d0b16644c50d80da6e95d8a63a26c8bd4d5848cde26a557a6077cee4bcac2"
+    },
+    {
+      "path": "window-controls-watchdog.json",
+      "bytes": 3952,
+      "sha256": "65583d54bb77b678074cf22fe692552c94e04e216ee11525524ac32a6f46c139"
+    },
+    {
+      "path": "window-controls-repaired-watchdog.json",
+      "bytes": 5190,
+      "sha256": "0091f22bb82d34104ee898ae596708f5960e666a8795acacc45ee47054a9df96"
+    },
+    {
+      "path": "window-controls-repaired.log.gz",
+      "bytes": 4063,
+      "sha256": "92172fecc230aab893f0bee0643d566de2b448c929f9737c0cecb571136592bc"
+    },
+    {
+      "path": "window-controls-final-watchdog.json",
+      "bytes": 6639,
+      "sha256": "a56fc21247fabebeb1b5dc7ab98d7e17c8af3140f1b7c771cb211089ab853f3f"
+    },
+    {
+      "path": "window-controls-final.log.gz",
+      "bytes": 3474,
+      "sha256": "57e0eba483f776d19c8cb174b01663411b88c417caf2e8e80081b886b23cab10"
+    },
+    {
+      "path": "window-types-watchdog.json",
+      "bytes": 2824,
+      "sha256": "1ac81679453ea53213154e47c888df97c796c67601d05b622d08d2464ec1f924"
+    },
+    {
+      "path": "window-types.log.gz",
+      "bytes": 260,
+      "sha256": "b22fa13fda83dc61fc5aa0e81d7fca12c30f45884391f482234c73e49ffbbc6d"
+    },
+    {
+      "path": "window-types-repaired-watchdog.json",
+      "bytes": 2768,
+      "sha256": "96d20c1d9bef7cb02e6a3b3843a1cb06b169988210f8e2ab1792895a7da1084b"
+    },
+    {
+      "path": "window-types-repaired.log.gz",
+      "bytes": 88,
+      "sha256": "2626ddc875a9cf995fc15a3d6d1f7cdea59f8b5886daac6c618d045ba15e8c71"
+    },
+    {
+      "path": "window-lint-watchdog.json",
+      "bytes": 2491,
+      "sha256": "916946a57c78d54740400773a26e2fdb52bd053b7d7b6a2b7e1b24ec2c26e7dc"
+    },
+    {
+      "path": "window-lint.log.gz",
+      "bytes": 87,
+      "sha256": "ffaa9ef42a75bc7b845370b9ee73609d0fcab2a1b7499af2f20c505b938afef6"
+    },
+    {
+      "path": "window-format-watchdog.json",
+      "bytes": 4143,
+      "sha256": "7b67bb12386bbf0115c78750475418a3d2c763c7d90c5e3d2ff0136e702e74f6"
+    },
+    {
+      "path": "window-final-format-watchdog.json",
+      "bytes": 1805,
+      "sha256": "3b99ec6bc38c4c110e6e15e4cfca5d23ca1a0609797eccf4ce1a75e442a0e0fe"
+    },
+    {
+      "path": "window-actionlint-watchdog.json",
+      "bytes": 1619,
+      "sha256": "38497fd705e1714f0a23c05475dc3d37ff956ee9c8d2a7c6568c5f41a7e9ab1c"
+    },
+    {
+      "path": "window-backlog-watchdog.json",
+      "bytes": 1501,
+      "sha256": "57bbf88a16ed3cd5f10c7fb09a1eb9042d84321f6019a8b95d62ea5e6330cd7a"
+    },
+    {
+      "path": "window-title-watchdog.json",
+      "bytes": 3000,
+      "sha256": "1d6a77a6d71079b0fa93d55c24af0f9a5a65bcee4955b3f6c24afd3f6b1a82e2"
+    },
+    {
+      "path": "window-title-corrected-watchdog.json",
+      "bytes": 2630,
+      "sha256": "dd5aa9ad4eca5aad6caa281641dc9cad43af1f5d2b2377c74c738c1a6698e22c"
+    },
+    {
+      "path": "window-last-controls-watchdog.json",
+      "bytes": 5167,
+      "sha256": "d19757cea357f6c3eb2724eb88d90bfe24224651a542f7856c9b9c0b187a21df"
+    },
+    {
+      "path": "window-last-controls.log.gz",
+      "bytes": 1168,
+      "sha256": "a2e87deebfcbb66f60f4d407dc3d51658b083fc58dd388dc64cff3dbca610c3a"
+    },
+    {
+      "path": "tsconfig-window.json",
+      "bytes": 3007,
+      "sha256": "db4e46d3a76a97eccfd4443b4fb8211a2658e2fe03ec60ce4c30074e97080704"
+    }
+  ],
+  "sources": [
+    {
+      "path": ".github/workflows/doc-native-diagnostic.yml",
+      "bytes": 3179,
+      "sha256": "b84ce8f1c0bd8d11d04bdecd0a5f8fa70712c7396cead904b31e688069cfd2d2"
+    },
+    {
+      "path": "e2e/doc-responsiveness-native-sources.ts",
+      "bytes": 7440,
+      "sha256": "6a5d81c02707f26ebd0364f72493844e4403f4b14443ec2176dca0c40b5ae64b"
+    },
+    {
+      "path": "e2e/doc-responsiveness-native-window.ts",
+      "bytes": 4093,
+      "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b"
+    },
+    {
+      "path": "e2e/doc-responsiveness.spec.ts",
+      "bytes": 65077,
+      "sha256": "9351cb3070d1975556dc9476f20892f5abf7b7b25cbaf5d72474f8af7e39f95e"
+    },
+    {
+      "path": "scripts/ci/doc-native-flush-diagnostic.test.ts",
+      "bytes": 5256,
+      "sha256": "11e78397a22c6dfaa7343eb39f6ca3696750d5192d23baab707c9e0abbf08e7a"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime.test.ts",
+      "bytes": 11805,
+      "sha256": "5e0c4d1aacf54224defc024f03df675f72f9ab6e55d109fcbf7a03ae8ba9e4e6"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/analysis.ts",
+      "bytes": 10386,
+      "sha256": "eba106b50bcdd53c82cbc546e908b1f0af17869519571f8c529cc97e2b784509"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/watchdog.ts",
+      "bytes": 5976,
+      "sha256": "b3f8fa883f566bd4da0f76f1c94e1c09a7eb2273acb9e0b864b0b2ea8d2a3b07"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/window-analysis.ts",
+      "bytes": 6509,
+      "sha256": "9cac59c44ab38e7eab43c9aa01ae1eb5a8028ae189508934ba45d38c9c587dcf"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/window-convert.ts",
+      "bytes": 6279,
+      "sha256": "456f31d959370b8a07379a7a862013cf408a5459863978bc532f04c3e3859275"
+    },
+    {
+      "path": "scripts/ci/doc-native-window.test.ts",
+      "bytes": 15195,
+      "sha256": "89744e306d4168ab548e61072c57fa621a1be43c454b50ed00b195575c7292bf"
+    },
+    {
+      "path": "scripts/ci/doc-responsiveness.test.ts",
+      "bytes": 52596,
+      "sha256": "92fd104404b277ac1934250d223df6342d0f8b8dca76075702710146988e74b4"
+    },
+    {
+      "path": "scripts/ci/doc-responsiveness.ts",
+      "bytes": 42073,
+      "sha256": "8975217fce09c53460856dbebdcdcd7034d6d08bfe9892819d09e4196a57d55b"
+    },
+    {
+      "path": "scripts/ci/prepare-doc-native-diagnostic.ts",
+      "bytes": 3329,
+      "sha256": "da3b4154a9b5ff00900d0c21784e61298bb7db3e8736299df6dbdf1bb4a7e2d2"
+    },
+    {
+      "path": "src/ui/nativeDocFlushDiagnostic.ts",
+      "bytes": 6933,
+      "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111"
+    },
+    {
+      "path": "web/docResponsivenessEvidence.ts",
+      "bytes": 15812,
+      "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059"
+    }
+  ]
+}

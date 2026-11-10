@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
-import { clearDesktopStorage } from './desktop-storage.ts';
+import {
+  clearDesktopStorage,
+  unregisterDesktopStorageWorkers,
+  verifyDesktopStorageQuiescence,
+} from './desktop-storage.ts';
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -705,7 +709,31 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
-    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
+    // Unregistration leaves the current controller alive. Leave the app first,
+    // unregister from a script-free document, then replace every controlled
+    // document while the browser is alive. Witness the same-profile exit and
+    // restart too, before touching storage. Never race the app's shell refresh.
+    await browser.goto(f.storageLossURL);
+    stage('storage-loss-tabs-prepared', await browser.storageLossTabs(f.storageLossURL, 'prepare'));
+    const privateDatabase = `spinel-offline-${f.actor.id}`;
+    const preparation = await unregisterDesktopStorageWorkers(
+      browser,
+      privateDatabase,
+      f.storageLossURL,
+    );
+    stage('storage-loss-unregistration', { preparation });
+    assert.equal(preparation.status, 'passed', JSON.stringify(preparation));
+    // A distinct query avoids an ignored same-URL assignment. Each tab's lost
+    // page marker additionally proves this was a new document, not a URL edit.
+    const quiescentURL = f.storageLossURL + '?phase=uncontrolled';
+    stage('storage-loss-tabs-handed-off', await browser.storageLossTabs(quiescentURL, 'handoff'));
+    const quiescence = await verifyDesktopStorageQuiescence(browser, privateDatabase, quiescentURL);
+    stage('storage-loss-quiescence-before-stop', { quiescence });
+    assert.equal(quiescence.status, 'passed', JSON.stringify(quiescence));
+    stage('browser-stop-before-storage-loss', await browser.stop());
+    await launch(quiescentURL);
+    stage('storage-loss-tabs-restarted', await browser.storageLossTabs(quiescentURL, 'verify'));
+    const deletion = await clearDesktopStorage(browser, privateDatabase, quiescentURL);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
     await browser.goto(f.origin + '/');

@@ -1,0 +1,54 @@
+{
+  "root": 94793,
+  "started": 1793887703848,
+  "elapsedMs": 72,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90064,
+  "peakKiB": 90064,
+  "live": [
+    {
+      "pid": 94793,
+      "parent": 94766,
+      "group": 94793,
+      "rssKiB": 88544,
+      "started": "Thu Nov  5 06:08:23 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-workflow-watchdog.json /tmp/spn146-actionlint/actionlint .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 94826,
+      "parent": 94793,
+      "group": 94793,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 94793,
+      "parent": 94766,
+      "group": 94793,
+      "rssKiB": 88544,
+      "started": "Thu Nov  5 06:08:23 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-workflow-watchdog.json /tmp/spn146-actionlint/actionlint .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 94812,
+      "parent": 94793,
+      "group": 94793,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94826,
+      "parent": 94793,
+      "group": 94793,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

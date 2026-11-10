@@ -2,12 +2,14 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { EventEmitter } from 'node:events';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, open, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 import type { TestContext } from 'node:test';
-import { gzipSync } from 'node:zlib';
+import { gzipSync, gunzipSync } from 'node:zlib';
+import type { FileHandle } from 'node:fs/promises';
+import type { WriteStream } from 'node:fs';
 import type { CDPSession } from '@playwright/test';
 import {
   DOC_CALLBACK_TRACE_SETTINGS,
@@ -33,7 +35,8 @@ for (const scenario of [
     const progressPath = join(directory, 'progress.json');
     const progress = callbackProgress(progressPath);
     if (scenario === 'progress-write-fails') mkdirSync(`${progressPath}.tmp`);
-    const bytes = gzipSync('{"traceEvents":[]}');
+    const rawBytes = Buffer.from('{"traceEvents":[]}');
+    const bytes = gzipSync(rawBytes, { level: 1 });
     const readError = new Error('original stream read failed');
     const closeError = new Error('later close failed');
     const emitter = new EventEmitter();
@@ -45,15 +48,15 @@ for (const scenario of [
           emitter.emit('Tracing.tracingComplete', {
             stream: 'owned-stream',
             dataLossOccurred: false,
-            traceFormat: 'json',
-            streamCompression: 'gzip',
+            traceFormat: 'proto',
+            streamCompression: 'none',
           });
           return {};
         }
         if (command === 'IO.read') {
           if (scenario === 'read-and-close-fail' || scenario === 'progress-write-fails')
             throw readError;
-          return { data: bytes.toString('base64'), base64Encoded: true, eof: true };
+          return { data: rawBytes.toString('base64'), base64Encoded: true, eof: true };
         }
         if (command === 'IO.close' && scenario !== 'complete') throw closeError;
         return {};
@@ -64,16 +67,24 @@ for (const scenario of [
       ...(scenario === 'output-open-fails' ? ['missing', 'trace.json.gz'] : ['trace.json.gz']),
     );
     if (scenario === 'complete') {
-      const result = await retainDocCallbackTrace(cdp, path, progress);
+      const result = await retainDocCallbackTrace(cdp, path, progress, {
+        signal: new AbortController().signal,
+        interrupt: async () => {},
+      });
       assert.equal(result.sha256, hash(bytes));
       assert.equal(result.bytes, bytes.length);
       assert.deepEqual(await readFile(path), bytes);
       assert.equal(progress.firstFailure, null);
     } else {
-      await assert.rejects(retainDocCallbackTrace(cdp, path, progress), (error) =>
-        scenario === 'output-open-fails'
-          ? (error as NodeJS.ErrnoException).code === 'ENOENT'
-          : error === (scenario === 'close-fails' ? closeError : readError),
+      await assert.rejects(
+        retainDocCallbackTrace(cdp, path, progress, {
+          signal: new AbortController().signal,
+          interrupt: async () => {},
+        }),
+        (error) =>
+          scenario === 'output-open-fails'
+            ? (error as NodeJS.ErrnoException).code === 'ENOENT'
+            : error === (scenario === 'close-fails' ? closeError : readError),
       );
       assert.equal(
         progress.firstFailure?.phase,
@@ -84,12 +95,9 @@ for (const scenario of [
             : 'trace-stream-read',
       );
     }
-    assert.deepEqual(
-      calls,
-      scenario === 'output-open-fails'
-        ? ['Tracing.end', 'IO.close']
-        : ['Tracing.end', 'IO.read', 'IO.close'],
-    );
+    assert.equal(calls[0], 'Tracing.end');
+    assert.equal(calls.at(-1), 'IO.close');
+    assert.equal(calls.filter((call) => call === 'IO.close').length, 1);
     assert.equal(progress.persistenceFailure !== null, scenario === 'progress-write-fails');
     assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
   });
@@ -447,8 +455,346 @@ test('capture keeps all six categories and explicitly reserves a non-overwriting
       ],
     },
     transferMode: 'ReturnAsStream',
-    streamFormat: 'json',
-    streamCompression: 'gzip',
+    streamFormat: 'proto',
+    streamCompression: 'none',
     bufferUsageReportingInterval: 1000,
   });
+});
+
+for (const boundary of ['completion', 'end', 'read', 'late-handle'] as const)
+  test(`interruption at ${boundary} settles collection and owned resources without accepting late success`, async (t) => {
+    const directory = await mkdtemp(join(tmpdir(), 'spn143-abort-'));
+    t.after(() => rm(directory, { recursive: true, force: true }));
+    const progressPath = join(directory, 'progress.json');
+    const progress = callbackProgress(progressPath);
+    const controller = new AbortController();
+    const primary = new Error('original observation deadline');
+    const emitter = new EventEmitter();
+    const calls: string[] = [];
+    let pendingReject: ((error: Error) => void) | undefined;
+    let reached!: () => void;
+    const pending = new Promise<void>((resolve) => {
+      reached = resolve;
+    });
+    const completion = {
+      stream: 'owned',
+      dataLossOccurred: false,
+      traceFormat: 'proto',
+      streamCompression: 'none',
+    };
+    const cdp = Object.assign(emitter, {
+      async send(command: string) {
+        calls.push(command);
+        if (command === 'Tracing.end') {
+          if (boundary === 'read') emitter.emit('Tracing.tracingComplete', completion);
+          else reached();
+          if (boundary === 'end')
+            return new Promise((_resolve, reject) => {
+              pendingReject = reject;
+            });
+          return {};
+        }
+        if (command === 'IO.read') {
+          reached();
+          return new Promise((_resolve, reject) => {
+            pendingReject = reject;
+          });
+        }
+        return {};
+      },
+    }) as unknown as CDPSession;
+    let interruptions = 0;
+    const path = join(directory, 'trace.json.gz');
+    const running = retainDocCallbackTrace(cdp, path, progress, {
+      signal: controller.signal,
+      async interrupt() {
+        interruptions++;
+        if (boundary === 'late-handle') emitter.emit('Tracing.tracingComplete', completion);
+        pendingReject?.(new Error('session detached'));
+        emitter.emit('close');
+      },
+    });
+    await pending;
+    // This checkpoint must survive even if cleanup itself later cannot settle.
+    progress.terminal('timedOut');
+    controller.abort(primary);
+    await assert.rejects(running, (error) => error === primary);
+    assert.equal(interruptions, 1);
+    assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
+    assert.equal(emitter.listenerCount('close'), 0);
+    assert.equal(
+      calls.filter((command) => command === 'IO.close').length,
+      boundary === 'read' || boundary === 'late-handle' ? 1 : 0,
+    );
+    await assert.rejects(readFile(path), { code: 'ENOENT' });
+    const journal = JSON.parse(await readFile(progressPath, 'utf8'));
+    assert.equal(journal.terminal, 'timedOut');
+    assert.equal(journal.firstFailure.kind, 'timedOut');
+    emitter.emit('Tracing.tracingComplete', completion);
+    assert.equal(
+      calls.filter((command) => command === 'IO.close').length,
+      boundary === 'read' || boundary === 'late-handle' ? 1 : 0,
+    );
+  });
+
+test('session loss before completion rejects and removes listeners without waiting for an event', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn143-session-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const emitter = new EventEmitter();
+  const cdp = Object.assign(emitter, {
+    async send() {
+      emitter.emit('close');
+      return {};
+    },
+  }) as unknown as CDPSession;
+  await assert.rejects(
+    retainDocCallbackTrace(
+      cdp,
+      join(directory, 'trace.gz'),
+      callbackProgress(join(directory, 'progress.json')),
+      {
+        signal: new AbortController().signal,
+        interrupt: async () => {},
+      },
+    ),
+    /session closed/,
+  );
+  assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
+});
+
+test('raw Unicode bytes survive arbitrary protocol chunks with distinct stored provenance and bounded progress', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn143-lossless-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const emitter = new EventEmitter();
+  const raw = Buffer.from(
+    '{"traceEvents":[],"metadata":{"label":"📡 café 日本語"}}' + ' '.repeat(4096 * 600),
+  );
+  let offset = 0;
+  let closed = 0;
+  const cdp = Object.assign(emitter, {
+    async send(command: string) {
+      if (command === 'Tracing.end') {
+        emitter.emit('Tracing.tracingComplete', {
+          stream: 'raw',
+          dataLossOccurred: false,
+          traceFormat: 'proto',
+          streamCompression: 'none',
+        });
+        return {};
+      }
+      if (command === 'IO.read') {
+        const end = Math.min(offset + (offset < 80 ? 3 : 4096), raw.length);
+        const data = raw.subarray(offset, end).toString('base64');
+        offset = end;
+        return { data, base64Encoded: true, eof: offset === raw.length };
+      }
+      if (command === 'IO.close') closed++;
+      return {};
+    },
+  }) as unknown as CDPSession;
+  const path = join(directory, 'trace.gz');
+  const progressPath = join(directory, 'progress.json');
+  const progress = callbackProgress(progressPath);
+  progress.phase('behavior-complete');
+  const trace = await retainDocCallbackTrace(cdp, path, progress, {
+    signal: new AbortController().signal,
+    interrupt: async () => {},
+  });
+  const stored = await readFile(path);
+  assert.deepEqual(gunzipSync(stored), raw);
+  assert.deepEqual(trace.transport, { bytes: raw.length, sha256: hash(raw) });
+  assert.equal(trace.sha256, hash(stored));
+  assert.equal(trace.bytes, stored.length);
+  assert.deepEqual(trace.storage, { compression: 'gzip', producer: 'node:zlib', level: 1 });
+  assert.equal(closed, 1);
+  const journal = JSON.parse(await readFile(progressPath, 'utf8'));
+  assert.equal(journal.droppedEvents, 0);
+  assert.equal(
+    journal.events.some((event: { phase: string }) => event.phase === 'behavior-complete'),
+    true,
+  );
+  assert.ok(
+    journal.events.filter((event: { phase: string }) => event.phase === 'trace-stream-read')
+      .length < 10,
+  );
+});
+
+for (const scenario of [
+  'existing-output',
+  'gzip-transport',
+  'lost-data',
+  'no-stream',
+  'wrong-format',
+] as const)
+  test(`${scenario} cannot become accepted storage or delete preexisting bytes`, async (t) => {
+    const directory = await mkdtemp(join(tmpdir(), 'spn143-provenance-'));
+    t.after(() => rm(directory, { recursive: true, force: true }));
+    const path = join(directory, 'trace.gz');
+    if (scenario === 'existing-output') await writeFile(path, 'preexisting');
+    const emitter = new EventEmitter();
+    let closed = 0;
+    const cdp = Object.assign(emitter, {
+      async send(command: string) {
+        if (command === 'Tracing.end')
+          emitter.emit('Tracing.tracingComplete', {
+            stream: scenario === 'no-stream' ? undefined : 'owned',
+            dataLossOccurred: scenario === 'lost-data',
+            traceFormat: scenario === 'wrong-format' ? 'json' : 'proto',
+            streamCompression: scenario === 'gzip-transport' ? 'gzip' : 'none',
+          });
+        if (command === 'IO.close') closed++;
+        return {};
+      },
+    }) as unknown as CDPSession;
+    await assert.rejects(
+      retainDocCallbackTrace(cdp, path, callbackProgress(join(directory, 'progress.json')), {
+        signal: new AbortController().signal,
+        interrupt: async () => {},
+      }),
+    );
+    assert.equal(closed, scenario === 'no-stream' ? 0 : 1);
+    if (scenario === 'existing-output') assert.equal(await readFile(path, 'utf8'), 'preexisting');
+    else await assert.rejects(readFile(path), { code: 'ENOENT' });
+  });
+
+test('a rejected trace-end still owns a late stream until interruption settles', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn143-end-rejected-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const emitter = new EventEmitter();
+  const primary = new Error('Tracing.end rejected');
+  const calls: string[] = [];
+  const cdp = Object.assign(emitter, {
+    async send(command: string) {
+      calls.push(command);
+      if (command === 'Tracing.end') throw primary;
+      return {};
+    },
+  }) as unknown as CDPSession;
+  await assert.rejects(
+    retainDocCallbackTrace(
+      cdp,
+      join(directory, 'trace.gz'),
+      callbackProgress(join(directory, 'progress.json')),
+      {
+        signal: new AbortController().signal,
+        async interrupt() {
+          emitter.emit('Tracing.tracingComplete', {
+            stream: 'late',
+            dataLossOccurred: false,
+            traceFormat: 'proto',
+            streamCompression: 'none',
+          });
+          emitter.emit('close');
+        },
+      },
+    ),
+    (error) => error === primary,
+  );
+  assert.deepEqual(calls, ['Tracing.end', 'IO.close']);
+  assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
+});
+
+test('native text transport retains complete Unicode characters and exact decoded identity', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn143-text-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  // Pinned Chromium's non-binary stream trims requested blocks to a complete
+  // UTF-8 character boundary; it never sends artificial split surrogate halves.
+  const pieces = ['{"traceEvents":[],"metadata":{"label":"', '📡 café 日本語', '"}}'];
+  const raw = Buffer.from(pieces.join(''));
+  const emitter = new EventEmitter();
+  let index = 0;
+  const cdp = Object.assign(emitter, {
+    async send(command: string) {
+      if (command === 'Tracing.end')
+        emitter.emit('Tracing.tracingComplete', {
+          stream: 'text',
+          dataLossOccurred: false,
+          traceFormat: 'proto',
+          streamCompression: 'none',
+        });
+      if (command === 'IO.read')
+        return { data: pieces[index++], base64Encoded: false, eof: index === pieces.length };
+      return {};
+    },
+  }) as unknown as CDPSession;
+  const path = join(directory, 'trace.gz');
+  const trace = await retainDocCallbackTrace(
+    cdp,
+    path,
+    callbackProgress(join(directory, 'progress.json')),
+    {
+      signal: new AbortController().signal,
+      interrupt: async () => {},
+    },
+  );
+  assert.deepEqual(gunzipSync(await readFile(path)), raw);
+  const parsed = await readDocCallbackTrace(path, { compression: 'gzip' });
+  assert.equal(parsed.summary.uncompressedSha256, trace.transport.sha256);
+  assert.equal(parsed.summary.uncompressedBytes, trace.transport.bytes);
+});
+
+test('destination failure releases a pending read and close without replacing the original write error', async (t) => {
+  const directory = await mkdtemp(join(tmpdir(), 'spn143-write-failure-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const handle = await open(join(directory, 'prototype'), 'wx');
+  const prototype = Object.getPrototypeOf(handle);
+  const original: FileHandle['createWriteStream'] = prototype.createWriteStream;
+  await handle.close();
+  let destination: WriteStream | undefined;
+  t.mock.method(
+    prototype,
+    'createWriteStream',
+    function (this: FileHandle, ...args: Parameters<FileHandle['createWriteStream']>) {
+      destination = original.apply(this, args);
+      return destination;
+    },
+  );
+  const primary = new Error('destination write failed');
+  const emitter = new EventEmitter();
+  let rejectRead: ((error: Error) => void) | undefined;
+  let rejectClose: ((error: Error) => void) | undefined;
+  const calls: string[] = [];
+  let reads = 0;
+  const cdp = Object.assign(emitter, {
+    async send(command: string) {
+      calls.push(command);
+      if (command === 'Tracing.end')
+        emitter.emit('Tracing.tracingComplete', {
+          stream: 'owned',
+          dataLossOccurred: false,
+          traceFormat: 'proto',
+          streamCompression: 'none',
+        });
+      if (command === 'IO.read') {
+        if (++reads === 1) return { data: '{"traceEvents":[]}', base64Encoded: false, eof: false };
+        return new Promise((_resolve, reject) => {
+          rejectRead = reject;
+          destination!.destroy(primary);
+        });
+      }
+      if (command === 'IO.close')
+        return new Promise((_resolve, reject) => {
+          rejectClose = reject;
+        });
+      return {};
+    },
+  }) as unknown as CDPSession;
+  const path = join(directory, 'trace.gz');
+  await assert.rejects(
+    retainDocCallbackTrace(cdp, path, callbackProgress(join(directory, 'progress.json')), {
+      signal: new AbortController().signal,
+      async interrupt() {
+        calls.push('detach');
+        rejectRead?.(new Error('read released by detach'));
+        rejectClose?.(new Error('close released by detach'));
+        emitter.emit('close');
+      },
+    }),
+    (error) => error === primary,
+  );
+  assert.equal(calls.filter((command) => command === 'IO.close').length, 1);
+  assert.ok(calls.indexOf('IO.close') < calls.indexOf('detach'));
+  assert.equal(destination?.closed, true);
+  assert.equal(emitter.listenerCount('Tracing.tracingComplete'), 0);
+  await assert.rejects(readFile(path), { code: 'ENOENT' });
 });

@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-05",
+  "purpose": "Optional local container rehearsal; not an acceptance gate",
+  "runtime": {
+    "docker": "29.1.2",
+    "image": "node:26.12.1-bookworm",
+    "containerCpus": 4,
+    "memory": "6g",
+    "shmSize": "2g"
+  },
+  "runs": [
+    {
+      "image": "baseline source 2c84a18 plus current harness files",
+      "env": {
+        "SPN108_BASELINE": "1",
+        "PRESET": "mobile"
+      },
+      "grep": "mobile sustained native typing plain-1",
+      "observation": {
+        "role": "baseline-observation",
+        "sample": "plain-1",
+        "preset": "mobile",
+        "budgetEnforced": false,
+        "typingWallMs": 113858,
+        "inputFrameP95Ms": 80.4,
+        "inputFrameMaxMs": 124.8,
+        "longTaskMaxMs": 16764,
+        "pairedFlushMaximumMs": null,
+        "capacityFlushP95Ms": null
+      }
+    },
+    {
+      "image": "candidate dde23e1",
+      "env": {
+        "SPN108_BASELINE": "0",
+        "PRESET": "mobile"
+      },
+      "grep": "mobile sustained native typing plain-1",
+      "observation": {
+        "role": "candidate",
+        "sample": "plain-1",
+        "preset": "mobile",
+        "budgetEnforced": true,
+        "typingWallMs": 66170,
+        "inputFrameP95Ms": 41.7,
+        "inputFrameMaxMs": 69.1,
+        "longTaskMaxMs": 62,
+        "pairedFlushMaximumMs": 11.3,
+        "capacityFlushP95Ms": 8.3
+      }
+    }
+  ],
+  "note": "The observation `source` field inside the container was a throwaway repository commit and is omitted; image sources are named in `image`."
+}

@@ -1,10 +1,13 @@
 import { createHash } from 'node:crypto';
-import { appendFile, writeFile } from 'node:fs/promises';
+import { open, rm } from 'node:fs/promises';
+import type { FileHandle } from 'node:fs/promises';
 import { basename } from 'node:path';
 import type { CDPSession } from '@playwright/test';
 import type { callbackProgress } from './doc-responsiveness-callback-progress.ts';
 import { createReadStream } from 'node:fs';
-import { createGunzip } from 'node:zlib';
+import { Transform } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
+import { createGunzip, createGzip } from 'node:zlib';
 
 /** Identical, explicitly bounded capture for both sources; no category is removed. */
 export const DOC_CALLBACK_TRACE_SETTINGS = {
@@ -21,8 +24,8 @@ export const DOC_CALLBACK_TRACE_SETTINGS = {
     ],
   },
   transferMode: 'ReturnAsStream' as const,
-  streamFormat: 'json' as const,
-  streamCompression: 'gzip' as const,
+  streamFormat: 'proto' as const,
+  streamCompression: 'none' as const,
   bufferUsageReportingInterval: 1000,
 };
 
@@ -31,6 +34,7 @@ export interface DocCallbackTraceSummary {
   retainedEvents: number;
   callbackEvents: number;
   uncompressedBytes: number;
+  uncompressedSha256: string;
   maxEventBytes: number;
 }
 
@@ -86,7 +90,7 @@ function project(event: Record<string, unknown>) {
  */
 export async function readDocCallbackTrace(
   path: string,
-  options: { compression?: 'none' | 'gzip'; highWaterMark?: number } = {},
+  options: { compression?: 'none' | 'gzip'; highWaterMark?: number; signal?: AbortSignal } = {},
 ) {
   const compression = options.compression ?? 'none';
   if (compression !== 'none' && compression !== 'gzip')
@@ -94,7 +98,8 @@ export async function readDocCallbackTrace(
   const highWaterMark = options.highWaterMark ?? 64 * 1024;
   if (!Number.isSafeInteger(highWaterMark) || highWaterMark <= 0 || highWaterMark > 1024 * 1024)
     throw new Error('Invalid trace read chunk size.');
-  const source = createReadStream(path, { highWaterMark });
+  const source = createReadStream(path, { highWaterMark, signal: options.signal });
+  const rawHash = createHash('sha256');
   const input = compression === 'gzip' ? source.pipe(createGunzip()) : source;
   if (input !== source) source.once('error', (error) => input.destroy(error));
   const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -104,6 +109,7 @@ export async function readDocCallbackTrace(
     retainedEvents: 0,
     callbackEvents: 0,
     uncompressedBytes: 0,
+    uncompressedSha256: '',
     maxEventBytes: 0,
   };
   let state: 'header' | 'before-event' | 'event' | 'after-event' | 'tail' = 'header';
@@ -214,10 +220,13 @@ export async function readDocCallbackTrace(
 
   try {
     for await (const chunk of input) {
+      options.signal?.throwIfAborted();
+      rawHash.update(chunk);
       summary.uncompressedBytes += chunk.length;
       consume(decoder.decode(chunk, { stream: true }));
     }
     consume(decoder.decode());
+    summary.uncompressedSha256 = rawHash.digest('hex');
     return finish();
   } finally {
     input.destroy();
@@ -225,55 +234,204 @@ export async function readDocCallbackTrace(
   }
 }
 
+export const DOC_CALLBACK_TRACE_STORAGE = {
+  compression: 'gzip' as const,
+  producer: 'node:zlib' as const,
+  level: 1,
+};
+
+/** The caller owns session interruption, including pending protocol requests. */
 export async function retainDocCallbackTrace(
   cdp: CDPSession,
   path: string,
   progress: ReturnType<typeof callbackProgress>,
+  ownership: { signal: AbortSignal; interrupt: () => Promise<void>; maxBytes?: number },
 ) {
-  const completed = new Promise<{
+  // The native-flush diagnostic uses a smaller bound; callback acceptance keeps
+  // its registered 2 GiB ceiling. No caller may enlarge that ceiling.
+  const maxBytes = ownership.maxBytes ?? 2 * 1024 ** 3;
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || maxBytes > 2 * 1024 ** 3)
+    throw new Error('Invalid trace transport byte bound.');
+  type Completion = {
     stream?: string;
     dataLossOccurred?: boolean;
     traceFormat?: string;
     streamCompression?: string;
-  }>((resolve) => cdp.once('Tracing.tracingComplete', resolve));
-  progress.phase('trace-end-request');
-  await cdp.send('Tracing.end');
-  progress.phase('trace-completion');
-  const completion = await completed;
-  if (!completion.stream) throw new Error('Tracing completed without its raw stream.');
-  const checksum = createHash('sha256');
-  let bytes = 0;
-  let streamFailed = false;
-  let streamError: unknown;
-  try {
-    progress.phase('trace-stream-open');
-    await writeFile(path, '');
-    progress.phase('trace-stream-read', bytes);
-    for (;;) {
-      const chunk = await cdp.send('IO.read', { handle: completion.stream, size: 1024 * 1024 });
-      const value = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
-      checksum.update(value);
-      bytes += value.length;
-      await appendFile(path, value);
-      progress.phase('trace-stream-read', bytes);
-      if (chunk.eof) break;
-    }
-  } catch (error) {
-    streamFailed = true;
-    streamError = error;
+  };
+  const { signal } = ownership;
+  let completion: Completion | undefined;
+  let failure: unknown;
+  let failed = false;
+  let interruption: Promise<void> | undefined;
+  let close: Promise<void> | undefined;
+  const streamClose = { attempted: false, settled: false, error: null as string | null };
+  let ownsOutput = false;
+  let outputHandle: FileHandle | undefined;
+  let rawBytes = 0;
+  let storedBytes = 0;
+  const rawHash = createHash('sha256');
+  const storedHash = createHash('sha256');
+  let resolveCompletion!: (event: Completion) => void;
+  let rejectCompletion!: (error: unknown) => void;
+  const completed = new Promise<Completion>((resolve, reject) => {
+    resolveCompletion = resolve;
+    rejectCompletion = reject;
+  });
+  // An abort/close can arrive while Tracing.end is still outstanding.
+  void completed.catch(() => {});
+  const remember = (error: unknown) => {
+    if (!failed) failure = error;
+    failed = true;
     progress.failed('trace');
-  } finally {
-    progress.phase('trace-stream-close', bytes);
-    try {
-      await cdp.send('IO.close', { handle: completion.stream });
-    } catch (error) {
-      progress.failed('trace');
-      if (!streamFailed) {
-        streamFailed = true;
-        streamError = error;
+  };
+  const closeStream = () => {
+    if (!completion?.stream) return;
+    if (!close) {
+      progress.phase('trace-stream-close', rawBytes);
+      streamClose.attempted = true;
+      close = cdp.send('IO.close', { handle: completion.stream }).then(
+        () => {
+          streamClose.settled = true;
+        },
+        (error) => {
+          streamClose.settled = true;
+          streamClose.error = String(error);
+          remember(error);
+        },
+      );
+    }
+    return close;
+  };
+  const onComplete = (event: Completion) => {
+    completion = event;
+    if (signal.aborted || failed) void closeStream();
+    else resolveCompletion(event);
+  };
+  const onClose = () => rejectCompletion(new Error('CDP session closed before trace completion.'));
+  const interruptCollection = (error: unknown) => {
+    remember(error);
+    // Request known-handle close first, never await it ahead of detachment.
+    void closeStream();
+    interruption ??= Promise.resolve().then(ownership.interrupt).catch(remember);
+  };
+  const onAbort = () => {
+    rejectCompletion(signal.reason);
+    interruptCollection(signal.reason);
+  };
+  cdp.once('Tracing.tracingComplete', onComplete);
+  cdp.once('close', onClose);
+  signal.addEventListener('abort', onAbort, { once: true });
+  try {
+    if (signal.aborted) onAbort();
+    signal.throwIfAborted();
+    progress.phase('trace-end-request');
+    await cdp.send('Tracing.end');
+    progress.phase('trace-completion');
+    const event = await completed;
+    signal.throwIfAborted();
+    // Preserve the actual failed protocol contract without retaining a stream
+    // handle or mistaking omitted fields for false/default values.
+    const completionFailure = (message: string) =>
+      Object.assign(new Error(message), {
+        traceCompletion: {
+          streamPresent: typeof event.stream === 'string' && event.stream.length > 0,
+          streamClose,
+          fields: Object.fromEntries(
+            (['traceFormat', 'streamCompression', 'dataLossOccurred'] as const).map((key) => [
+              key,
+              {
+                present: Object.hasOwn(event, key),
+                type: typeof event[key],
+                value: event[key] ?? null,
+              },
+            ]),
+          ),
+        },
+      });
+    if (!event.stream) throw completionFailure('Tracing completed without its raw stream.');
+    if (
+      event.traceFormat !== 'proto' ||
+      event.streamCompression !== 'none' ||
+      event.dataLossOccurred !== false
+    )
+      throw completionFailure('Tracing did not confirm complete uncompressed protobuf transport.');
+    progress.phase('trace-stream-open');
+    outputHandle = await open(path, 'wx');
+    ownsOutput = true;
+    const destination = outputHandle.createWriteStream({ highWaterMark: 64 * 1024 });
+    let nextProgress = 1024 * 1024;
+    async function* chunks() {
+      progress.phase('trace-stream-read', 0);
+      for (;;) {
+        signal.throwIfAborted();
+        const chunk = await cdp.send('IO.read', { handle: event.stream!, size: 1024 * 1024 });
+        signal.throwIfAborted();
+        const value = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
+        rawHash.update(value);
+        rawBytes += value.length;
+        if (rawBytes > maxBytes)
+          throw new Error('Captured protobuf exceeds the registered transport byte bound.');
+        yield value;
+        // Logarithmic milestones keep the early phases in the 128-entry journal.
+        // Final exact bytes are always retained by stream-close and the manifest.
+        if (rawBytes >= nextProgress) {
+          progress.phase('trace-stream-read', rawBytes);
+          while (nextProgress <= rawBytes) nextProgress *= 2;
+        }
+        if (chunk.eof) break;
       }
     }
+    const retained = new Transform({
+      transform(chunk, _encoding, callback) {
+        storedHash.update(chunk);
+        storedBytes += chunk.length;
+        callback(null, chunk);
+      },
+    });
+    const compressor = createGzip({
+      level: DOC_CALLBACK_TRACE_STORAGE.level,
+      chunkSize: 64 * 1024,
+    });
+    const onPipelineError = (error: Error) => interruptCollection(error);
+    destination.once('error', onPipelineError);
+    compressor.once('error', onPipelineError);
+    retained.once('error', onPipelineError);
+    await pipeline(chunks(), compressor, retained, destination, { signal });
+  } catch (error) {
+    interruptCollection(error);
+  } finally {
+    // On interruption, keep the completion listener until the owned session has
+    // settled so a late acquired handle receives its one close attempt.
+    if (interruption) await interruption;
+    await closeStream();
+    if (failed && !interruption) interruptCollection(failure);
+    if (interruption) await interruption;
+    cdp.off('Tracing.tracingComplete', onComplete);
+    cdp.off('close', onClose);
+    signal.removeEventListener('abort', onAbort);
+    try {
+      await outputHandle?.close();
+    } catch (error) {
+      remember(error);
+    }
   }
-  if (streamFailed) throw streamError;
-  return { file: basename(path), completion, bytes, sha256: checksum.digest('hex') };
+  if (failed) {
+    if (ownsOutput) {
+      try {
+        await rm(path);
+      } catch {
+        progress.failed('trace-output-cleanup');
+      }
+    }
+    throw failure;
+  }
+  signal.throwIfAborted();
+  return {
+    file: basename(path),
+    completion: completion!,
+    bytes: storedBytes,
+    sha256: storedHash.digest('hex'),
+    storage: DOC_CALLBACK_TRACE_STORAGE,
+    transport: { bytes: rawBytes, sha256: rawHash.digest('hex') },
+  };
 }

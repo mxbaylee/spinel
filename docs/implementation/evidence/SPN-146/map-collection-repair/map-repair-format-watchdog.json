@@ -1,0 +1,70 @@
+{
+  "root": 94193,
+  "started": 1793887626851,
+  "elapsedMs": 382,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93056,
+  "peakKiB": 254912,
+  "live": [
+    {
+      "pid": 94193,
+      "parent": 94167,
+      "group": 94193,
+      "rssKiB": 91536,
+      "started": "Thu Nov  5 06:07:06 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write e2e/doc-responsiveness-native-sources.ts e2e/doc-responsiveness.spec.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-runtime/window-convert.ts .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 94259,
+      "parent": 94193,
+      "group": 94193,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 94193,
+      "parent": 94167,
+      "group": 94193,
+      "rssKiB": 91536,
+      "started": "Thu Nov  5 06:07:06 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write e2e/doc-responsiveness-native-sources.ts e2e/doc-responsiveness.spec.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-runtime/window-convert.ts .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 94212,
+      "parent": 94193,
+      "group": 94193,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:06 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94238,
+      "parent": 94193,
+      "group": 94193,
+      "rssKiB": 162144,
+      "started": "Thu Nov  5 06:07:06 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write e2e/doc-responsiveness-native-sources.ts e2e/doc-responsiveness.spec.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-runtime/window-convert.ts .github/workflows/doc-native-diagnostic.yml"
+    },
+    {
+      "pid": 94246,
+      "parent": 94193,
+      "group": 94193,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94259,
+      "parent": 94193,
+      "group": 94193,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

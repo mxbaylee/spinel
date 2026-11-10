@@ -1,0 +1,54 @@
+{
+  "root": 86427,
+  "started": 1793885337571,
+  "elapsedMs": 203,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 89920,
+  "peakKiB": 89920,
+  "live": [
+    {
+      "pid": 86427,
+      "parent": 86401,
+      "group": 86427,
+      "rssKiB": 88368,
+      "started": "Thu Nov  5 05:28:57 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-final-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-runtime/window-convert.ts"
+    },
+    {
+      "pid": 86478,
+      "parent": 86427,
+      "group": 86427,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:28:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 86427,
+      "parent": 86401,
+      "group": 86427,
+      "rssKiB": 88368,
+      "started": "Thu Nov  5 05:28:57 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-final-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-runtime/window-convert.ts"
+    },
+    {
+      "pid": 86446,
+      "parent": 86427,
+      "group": 86427,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:28:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86478,
+      "parent": 86427,
+      "group": 86427,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:28:57 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
