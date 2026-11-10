@@ -118,6 +118,8 @@ function fixture(fault?: string, rejection = false, preparation: boolean | 'veri
             if (rejection) request.onerror();
           } else {
             database = fault === 'retained';
+            // A producer that survives quiescence writes during deletion.
+            if (fault === 'live-writer') entries = 1;
             request.onsuccess();
           }
         });
@@ -191,6 +193,12 @@ test('a reported deletion success cannot conceal a retained database', async () 
   const report = await fixture('retained').promise;
   assert.equal(report.status, 'failed');
   assert.match(report.error!, /Storage remains after deletion/);
+});
+
+test('a surviving live writer still fails the strict empty-storage predicate', async () => {
+  const report = await fixture('live-writer').promise;
+  assert.equal(report.status, 'failed');
+  assert.match(report.error!, /Storage remains after deletion:.*"localStorageEntries":1/);
 });
 
 test('synchronous storage rejection is retained without continuing to database deletion', async () => {
