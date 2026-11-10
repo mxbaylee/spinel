@@ -59,7 +59,7 @@ The 9 KB per key residual is left as is: no action is taken in SPN-146, and a st
 
 **Diagnostics left in the product tree, and when they go.** `src/ui/nativeDocFlushDiagnostic.ts` (gated by
 `VITE_DOC_FLUSH_DIAGNOSTIC=1` in `web/docResponsivenessEvidence.ts`), `scripts/ci/doc-native-runtime/*` and the
-`SPN146_AB_V8_FLAGS` hook stay in the product tree after landing (owner decision 2026-11-10 accepted the unmet criterion without moving them): SPN-089 carries the hosted performance gate and revalidates with them, and whoever closes that gate removes them. No production build sets `VITE_DOC_FLUSH_DIAGNOSTIC`, and `SPN146_AB_V8_FLAGS` is set only by the opt-in `patch-ab` CI workflow, so the diagnostics are inert in production. The removal list and the grep that finds every importer are in SPN-089's first Rule; that is the single removal trigger, and older wording below that says otherwise is superseded.
+`SPN146_AB_V8_FLAGS` hook stay in the product tree after landing (owner decision 2026-11-10 accepted the unmet criterion without moving them): SPN-089 carries the hosted performance gate and revalidates with them, and whoever closes that gate removes them. No production build sets `VITE_DOC_FLUSH_DIAGNOSTIC`, and `SPN146_AB_V8_FLAGS` is set only by the opt-in `patch-ab` CI workflow, so the diagnostics are inert in production. The removal list and the grep that finds every importer are in SPN-089's second Rule; that is the single removal trigger, and older wording below that says otherwise is superseded.
 
 **Owner decision (made, chat 2026-11-10: accept and land, option 1).** Landing closes a ticket whose headline acceptance, no flush breach under
 hosted stress, is recorded as not met. The choices are: accept the three fixes and land with the criterion
@@ -426,7 +426,7 @@ file deleted, `completed_since`, SPN-089's dependency dropped) before grading
 ([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). With the hosted-breach criterion unmet and
 the owner decision then unmade, the PR kept `docs/todo/SPN-146.md`, the backlog counter and SPN-089's
 `depends_on: [SPN-146]` as on main until that decision (review round 7, 2026-11-09). The
-three edits were applied in the merge-preparation commit after the owner chose on 2026-11-10. The earlier text follows.
+three edits were applied in this PR's merge-preparation commit after the owner chose on 2026-11-10. The earlier text follows.
 (Historical; the criterion is recorded as unmet at landing. Status update: the hosted mobile gate has since passed once on
 `dde23e1`; the head's remaining checks are recorded in the hosted result below.)
 
