@@ -578,3 +578,16 @@ test('native mappings keep localized capture and restored edits out of canonical
   expect(JSON.stringify(restarted.saved.at(-1))).not.toContain('blob:visible-image');
   expect(restarted.sync.checkpoint().buffer).toHaveLength(2);
 });
+
+test('a preserved failure keeps the queued edits and still counts them (SPN-146)', () => {
+  const f = fixture(book(), 'sheet');
+  cleanup.push(() => f.close());
+  const source = f.client();
+  source.edit([write({ v: 'Queued' })]);
+  const restored = restore(source.sync.checkpoint());
+  expect(restored.sync.state.pendingMutations).toBe(1);
+  restored.sync.refuse('stale');
+  expect(restored.sync.state).toMatchObject({ failure: 'stale', pending: true });
+  expect(restored.sync.state.pendingMutations).toBe(1);
+  expect(restored.sync.checkpoint().buffer).toHaveLength(1);
+});

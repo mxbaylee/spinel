@@ -1,0 +1,232 @@
+{
+  "budgets": {
+    "flushP95Ms": 50,
+    "flushMaxMs": 100
+  },
+  "rows": [
+    {
+      "variant": "previous",
+      "pair": 1,
+      "exitCode": 0,
+      "flushP95": 15.5,
+      "flushMax": 33.60000000000582,
+      "pairedFlushMax": 33.60000000000582,
+      "longestTask": 243,
+      "inputP95": 157.29999999998836,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "patched",
+      "pair": 1,
+      "exitCode": 0,
+      "flushP95": 12.5,
+      "flushMax": 32.70000000001164,
+      "pairedFlushMax": 32.70000000001164,
+      "longestTask": 293,
+      "inputP95": 148.90000000002328,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "patched",
+      "pair": 2,
+      "exitCode": 0,
+      "flushP95": 12.79999999993015,
+      "flushMax": 71,
+      "pairedFlushMax": 71,
+      "longestTask": 310,
+      "inputP95": 136,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "previous",
+      "pair": 2,
+      "exitCode": 0,
+      "flushP95": 16.800000000046566,
+      "flushMax": 77.30000000004657,
+      "pairedFlushMax": 77.30000000004657,
+      "longestTask": 237,
+      "inputP95": 138.5999999998603,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "previous",
+      "pair": 3,
+      "exitCode": 0,
+      "flushP95": 13.599999999860302,
+      "flushMax": 82.0999999998603,
+      "pairedFlushMax": 82.0999999998603,
+      "longestTask": 264,
+      "inputP95": 138.80000000004657,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "patched",
+      "pair": 3,
+      "exitCode": 0,
+      "flushP95": 12.899999999906868,
+      "flushMax": 74.5,
+      "pairedFlushMax": 74.5,
+      "longestTask": 250,
+      "inputP95": 139.69999999995343,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "patched",
+      "pair": 4,
+      "exitCode": 0,
+      "flushP95": 11.400000000139698,
+      "flushMax": 27.9000000001397,
+      "pairedFlushMax": 27.9000000001397,
+      "longestTask": 219,
+      "inputP95": 141.29999999981374,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "previous",
+      "pair": 4,
+      "exitCode": 0,
+      "flushP95": 12.099999999860302,
+      "flushMax": 27.600000000093132,
+      "pairedFlushMax": 27.600000000093132,
+      "longestTask": 216,
+      "inputP95": 140.1999999997206,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "previous",
+      "pair": 5,
+      "exitCode": 0,
+      "flushP95": 13.399999999906868,
+      "flushMax": 29.5,
+      "pairedFlushMax": 29.5,
+      "longestTask": 281,
+      "inputP95": 146.60000000009313,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "patched",
+      "pair": 5,
+      "exitCode": 0,
+      "flushP95": 13.600000000093132,
+      "flushMax": 34,
+      "pairedFlushMax": 42,
+      "longestTask": 242,
+      "inputP95": 138.20000000018626,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "patched",
+      "pair": 6,
+      "exitCode": 0,
+      "flushP95": 12.200000000186265,
+      "flushMax": 29.700000000186265,
+      "pairedFlushMax": 29.700000000186265,
+      "longestTask": 284,
+      "inputP95": 150.3000000002794,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "previous",
+      "pair": 6,
+      "exitCode": 0,
+      "flushP95": 14.399999999906868,
+      "flushMax": 66.39999999990687,
+      "pairedFlushMax": 66.39999999990687,
+      "longestTask": 294,
+      "inputP95": 141.5,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "previous",
+      "pair": 7,
+      "exitCode": 0,
+      "flushP95": 14.600000000093132,
+      "flushMax": 60,
+      "pairedFlushMax": 60,
+      "longestTask": 233,
+      "inputP95": 143.8000000002794,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "patched",
+      "pair": 7,
+      "exitCode": 0,
+      "flushP95": 12,
+      "flushMax": 44.799999999813735,
+      "pairedFlushMax": 44.799999999813735,
+      "longestTask": 304,
+      "inputP95": 149.60000000009313,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "patched",
+      "pair": 8,
+      "exitCode": 0,
+      "flushP95": 11,
+      "flushMax": 62.60000000009313,
+      "pairedFlushMax": 62.60000000009313,
+      "longestTask": 266,
+      "inputP95": 147.09999999962747,
+      "sha": "4b30f509d742",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "previous",
+      "pair": 8,
+      "exitCode": 0,
+      "flushP95": 15.299999999813735,
+      "flushMax": 29.799999999813735,
+      "pairedFlushMax": 29.799999999813735,
+      "longestTask": 224,
+      "inputP95": 142.20000000018626,
+      "sha": "110890e889ac",
+      "budget": "pass",
+      "order": "second"
+    }
+  ],
+  "problems": [],
+  "tally": {
+    "previous": {
+      "runs": 8,
+      "measured": 8,
+      "overBudget": 0
+    },
+    "patched": {
+      "runs": 8,
+      "measured": 8,
+      "overBudget": 0
+    }
+  },
+  "cpuThrottles": [
+    6
+  ]
+}

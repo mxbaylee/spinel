@@ -1,0 +1,9 @@
+{
+  "kind": "bare-contenteditable-idle",
+  "throttle": 4,
+  "keys": 0,
+  "typingSeconds": 43,
+  "keysPerSecond": 0,
+  "growth": null,
+  "allocatedKBPerKey": null
+}
