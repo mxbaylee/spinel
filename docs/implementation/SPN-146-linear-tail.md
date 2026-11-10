@@ -74,16 +74,22 @@ stress can still come from a major that lands inside a flush. Acceptance is ther
 rather than assumed: _met_ for "the Spinel-owned causes of the tail are found and fixed", _not met_ for "no flush
 breach under hosted stress", which the owner decided on 2026-11-10 to accept and land as unmet (the ticket file is deleted by this PR, not amended). The budgets and acceptance numbers (p95 at most 50 ms, maximum at most 100 ms, zero retries, full workload) are kept in this record.
 
-**Hosted typing regression and its repair (2026-11-10).** Every full CI on this branch from `c925163a` to `a055692f` failed
-`e2e/collaboration.spec.ts` "two document editors merge text and navigate to a collaborator selection" (development 1/2, three
-attempts each): the second editor's typed letters came out reordered, for example "Collaborrato". The same head with the redraw
-interval set to 0 (run 42854349539) passed that job, so the cause was the throttle. The local caret's colour restyle
-(`setLocalDocSelectionColor`, which replaces the text range) ran only inside the throttled redraw, so it could land in the
-middle of a typing burst and reset the caret to a stale offset. It now runs on the next frame after each selection move, as it
-did before the throttle, while the remote-caret redraw keeps the 150 ms interval. A unit test pins that
-(`syncPresence.test.ts`, "a Doc caret move restyles the local caret on the next frame"; it fails without the fix). On a
-scratch branch carrying that change (run 42857622000) the same job passed. The test is also load-sensitive locally,
-about 3 of 10 runs under full CPU load with all three runtime changes reverted, so a local pass or fail alone does not attribute it.
+**Hosted typing regression and its repair (2026-11-10).** `e2e/collaboration.spec.ts` "two document editors merge text and navigate
+to a collaborator selection" (development 1/2, three attempts each) failed on every head of this branch whose full CI ran to
+completion after the throttle (`c925163a`, `83e7806e`, `3782c7a0`, `a055692f`; heads between them were cancelled by later pushes, and
+the completed heads before the throttle did not list that job among their failures). The second editor's typed letters came out
+reordered, for example "Collaborrato". The `a055692f` code with the redraw interval set to 0 (run 42854349539) passed that job, so
+the throttle is the cause. The likely mechanism, inferred from that and not reproduced deterministically: the local caret's colour
+restyle (`setLocalDocSelectionColor`, which replaces the text range) ran only inside the throttled redraw, so it could land in the
+middle of a typing burst and reset the caret to a stale offset. It now also runs on the next frame after each Doc selection move,
+which approximates the per-layout-frame timing before the throttle, while the remote-caret redraw keeps the 150 ms interval. Two
+unit tests pin it (`syncPresence.test.ts`: the next-frame restyle, including a second move inside the interval, and cancellation on
+disposal; each fails when its code is removed). On a scratch branch carrying the first version of that change (run 42857622000)
+the same job passed. Two caveats: if a guard in the restyle (pointer drag, IME, pending selection) skips the frame call, the
+throttled redraw still retries it and could land mid-burst; and the restyle can now run on each key-frame whenever the native
+ranges lack the colours. Its cost was not measured, and no hosted mobile result covers this change. The test is also
+load-sensitive locally, about 3 of 10 runs under full CPU load with the throttle, the pooled channel and the Docs patch
+generation all reverted, so a local pass or fail alone does not attribute it.
 
 ## 📌 Final status (2026-11-06)
 

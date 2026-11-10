@@ -560,9 +560,19 @@ test('a Doc caret move restyles the local caret on the next frame, not at the in
   await vi.advanceTimersByTimeAsync(8); // one fake frame
   expect(setLocalDocSelectionColor).toHaveBeenCalledOnce();
   expect(drawPresence).not.toHaveBeenCalled(); // remote carets still wait for the interval
-  f.stop();
-  vi.mocked(setLocalDocSelectionColor).mockClear();
+  // A burst: the next move, one frame later and well inside the interval, restyles on its own frame too.
   f.input.next(selection(4, 4));
+  await vi.advanceTimersByTimeAsync(8);
+  expect(setLocalDocSelectionColor).toHaveBeenCalledTimes(2);
+  f.stop();
+});
+
+test('a pending local restyle frame is cancelled on disposal (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(setLocalDocSelectionColor).mockClear();
+  f.input.next(selection(3, 3)); // arms the frame
+  f.stop(); // before the frame fires
   await vi.advanceTimersByTimeAsync(REDRAW_MS);
-  expect(setLocalDocSelectionColor).not.toHaveBeenCalled(); // nothing armed after disposal
+  expect(setLocalDocSelectionColor).not.toHaveBeenCalled();
 });

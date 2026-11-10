@@ -259,9 +259,11 @@ function watchSyncPresence(
   // objects per key when they skip the interval), so Docs keep the interval for them.
   const follow = redrawScheduler(() => update(), 0);
   // The local caret's own restyle must not wait for the trailing draw: it replaces the text range, so landing
-  // in the middle of a typing burst it reverts the caret to a stale offset and reorders the typed letters
-  // (hosted e2e/collaboration.spec.ts "two document editors merge text", every head with the interval).
-  // It runs on the next frame after the selection moves, as it did before the throttle.
+  // in the middle of a typing burst it can revert the caret to a stale offset and reorder the typed letters
+  // (hosted e2e/collaboration.spec.ts "two document editors merge text", every head whose CI ran to completion
+  // with the interval). It now runs on the next frame after each selection move, which approximates the
+  // per-layout-frame timing before the throttle. If a guard in the restyle skips that call (pointer drag, IME,
+  // pending selection), the throttled update() still retries it, so that residual path can land mid-burst.
   const localFrame = redrawScheduler(() => localColor(), 0);
   const scheduleFrame = () => {
     if (disposed) return;
