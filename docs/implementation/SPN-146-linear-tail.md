@@ -1432,3 +1432,31 @@ typing renderer (the pid of the sync mark):
   layers), then add the Spinel layers back one at a time (phone view, selection overlay, sync, evidence hooks),
   and see where the 5-6 MB/s appears. Whatever it is would also shrink the GC left inside flushes after the
   channel fix.
+
+### 🎯 Bisect result: the Oilpan growth is Chromium's own cost of rapid typing, not a Spinel layer (this Mac)
+
+The planned bisect started from the other end: a bare page.
+
+- **Control, no Univer and no Spinel.** A page with one `contenteditable` div, Playwright `keyboard.type` at zero
+  delay (the same 16 paragraphs of about 350 characters), 4x CPU throttle, the same `v8.gc` trace. Result: 187
+  GCs, max non-old memory **102-110 MB**, every pause under 5 ms (the heap is tiny). The Spinel Doc run peaks at
+  about 110 MB too. An idle control (same page, same throttle, 43 s, no typing) had **0 GCs**, so the growth is
+  driven by typing input, not by the page's own timers or the trace.
+- **What this means.** The 5-6 MB/s Oilpan growth that fills V8's global limit exists with no Spinel code
+  present. It is per-key work inside Chromium (input events, selection and layout objects) that the test
+  produces at about 150 keys/s. A person types at roughly 5 keys/s, so at the same cost per key the limit would
+  be reached about 30x less often. The sustained-typing test therefore overstates how often majors happen in
+  use, and no Spinel layer is the source to remove.
+- **What Spinel does own is the cost of each major.** Per-major time is set by what the page retains and traces.
+  Both Spinel-side costs found here are fixed: the quadratic `enqueue` re-encode (majors 207 → 41 hosted) and the
+  per-call `MessageChannel` (large-major time 3,933 → 1,282 ms and 4,288 → 1,214 ms, worst major 250 → 46 ms).
+- **Message volume is not the lever.** Draining the shared channel's queue in one message cut `postMessage`
+  from about 45,800 to 15 per run and left the major count unchanged (4-5 majors of at least 5 ms in three
+  coalesced runs and three pooled runs, 7-12 ms each). The committed pooled channel stays; the coalescing
+  variant was a probe only and is not kept.
+- **Other call counts per run** (one probe run, no causal test): `getBoundingClientRect` about 16,700,
+  `TextEncoder.encode` about 13,400, `drawImage` about 2,300, `measureText` 37. `measureText` is not a hot path.
+- **Reading for the ticket.** The remaining flush tail comes from major GCs triggered by Chromium's own
+  Oilpan garbage under rapid synthetic input, each major now costing far less. It is not removable inside
+  Spinel, which means the acceptance can only be judged as bounded GC cost per major (done) and hosted flush
+  budgets, not as zero GC inside a flush.
