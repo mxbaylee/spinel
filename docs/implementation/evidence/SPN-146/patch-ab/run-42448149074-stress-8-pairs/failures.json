@@ -1,0 +1,117 @@
+{
+  "note": "Per-run exit codes and first-failure messages from the run artifact (metrics.json is a partial file without a summary when a run times out).",
+  "runs": [
+    {
+      "pair": 1,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 1,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 2,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 2,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 3,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 3,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 4,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 4,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 5,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 5,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 6,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 6,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 7,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 7,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 8,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    },
+    {
+      "pair": 8,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "partialMetricsOnly": true
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "note": "per-run mean over 8 runs per variant, from each run's gcTrace.gcEvents: [total ms, event count]",
+  "previous": {
+    "V8.GC_SCAVENGER": [1429.2, 204.9],
+    "V8.GC_MARK_COMPACTOR": [1293.6, 25.9],
+    "V8.GC_MC_EVACUATE": [434.0, 25.9],
+    "V8.GC_HEAP_EMBEDDER_TRACING_EPILOGUE": [482.3, 22.2],
+    "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED": [1046.5, 24.0]
+  },
+  "patched": {
+    "V8.GC_SCAVENGER": [1306.8, 199.2],
+    "V8.GC_MARK_COMPACTOR": [678.4, 5.1],
+    "V8.GC_MC_EVACUATE": [86.1, 5.1],
+    "V8.GC_HEAP_EMBEDDER_TRACING_EPILOGUE": [449.5, 5.1],
+    "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED": [196.3, 3.8]
+  }
+}
