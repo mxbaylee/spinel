@@ -534,3 +534,17 @@ test('back-to-back Sheet scrolls each redraw on their own next frame (SPN-146)',
     expect(drawPresence).toHaveBeenCalledTimes(scroll);
   }
 });
+
+test('a Sheet member joining or moving redraws within one redraw interval (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  f.emit({
+    members: [
+      { id: 'self', name: 'Collaborator', avatar: '' },
+      { id: 'late', name: 'Late', avatar: '', selection: 'sheet!B2:B2' },
+    ],
+  });
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  expect(drawPresence).toHaveBeenCalled();
+});

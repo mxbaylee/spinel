@@ -6,6 +6,8 @@ counts as of those dates. Older sections that say the cause was not proven are s
 
 ## 📍 Current state (2026-11-09)
 
+**Landing status:** SPN-146 stays open. The ticket file, `completed_since` and SPN-089's `depends_on` are unchanged on this branch, and the owner's landing decision is pending.
+
 Describes the branch from commit d890587c on. Later commits changed `web/Collaborators.tsx` and `src/ui/redrawScheduler.ts` (theme redraw at once, Sheet scroll/zoom on the frame path) and added tests and documentation; the Doc-side measurements below predate the Sheet routing change and are unaffected by it, since Docs keep the interval.
 
 **Cause chain, with where each link is measured.** Three Spinel-owned costs were found and fixed; the rest is
@@ -44,7 +46,8 @@ failed suites (an earlier run of the same command printed 142; the difference is
 "Filesystem backups require Linux", 16 test or fixture timeouts, 2 recovery-verification failures, 1 restore
 process-ownership failure, 1 "Transition fixture stopped at startup", and 2 assertion failures in the cold-file
 fixtures (sums to 141). The branch changes nothing under `src/server`; the
-assertion failures were not each traced to the Linux requirement.
+assertion failures are in `src/server` files this branch does not touch, so they are not caused by it; they were not each traced to the Linux requirement.
+The 9 KB per key residual is left as is: no action is taken in SPN-146, and a stock mobile-UI page to split it is deferred to the owner's follow-up decision above.
 
 **Diagnostics left in the product tree, and when they go.** `src/ui/nativeDocFlushDiagnostic.ts` (gated by
 `VITE_DOC_FLUSH_DIAGNOSTIC=1` in `web/docResponsivenessEvidence.ts`), `scripts/ci/doc-native-runtime/*` and the
@@ -446,14 +449,8 @@ Merge still requires the unchanged gate to pass on the final head (p95 at most 5
 most 100 ms, zero retries, full workload) or an evidence-supported disposition, plus two grades
 above 95 on the merged head. A failing first attempt is recorded as failed; no unchanged rerun.
 
-**Superseded 2026-11-09 by the deferral paragraph at the top of this section: the bookkeeping is NOT in this PR now.** (Earlier text: bookkeeping stays in the PR, and takes effect only on merge.) Reviewers C and D asked to restore
-the ticket file and SPN-089's dependency. Both are deleted/removed here because the PR checker
-(required **Pull request** gate) fails a ticket-titled PR that keeps its ticket file or omits its
-`completed_since` entry. The PR is a draft and merging is gated by the acceptance above. If the
-validation fails, restore `docs/todo/SPN-146.md`, SPN-146's removal from `completed_since` and
-SPN-089's `depends_on: [SPN-146]` from `origin/main` before any other work. (The validation passed,
-so this restore is not needed now. It applies again if a later hosted attempt on the final head
-fails.)
+**Superseded 2026-11-09 by the deferral paragraph at the top of this section: the bookkeeping is NOT in this PR now.** (Earlier text: bookkeeping stays in the PR, and takes effect only on merge.) Reviewers C and D asked for the ticket file and SPN-089's dependency to stay. They do: this branch
+changes nothing in `docs/todo` except `process.md`, and the landing edits wait for the owner's decision.
 
 ## ✅ First-attempt hosted mobile result on `dde23e1`
 
@@ -480,7 +477,7 @@ the intermittent failure is gone. The PR stays a draft until two independent rev
 head above 95 and every required check is green on that head.
 
 The pre-push waiver above is spent: the validation ran once and passed, and no unchanged rerun was
-needed. Restoring the ticket bookkeeping is therefore not required.
+needed.
 
 **Second owner exception (chat, 2026-11-05).** Two independent reviews of `d0054c4` graded it 67 and 84
 (both below 95; neither found a defect in the patch or bookkeeping; the deductions were one hosted
