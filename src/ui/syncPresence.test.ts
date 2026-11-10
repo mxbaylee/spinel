@@ -87,6 +87,8 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
   });
   const activated = new BehaviorSubject(true);
   const transforms = new Subject<void>();
+  const engineTransforms = new Subject<void>();
+  let apiScroll: (event: { workbook: { getId(): string } }) => void = () => {};
   const scrolling = new Subject<void>();
   const event = (subject: Subject<void>) => ({
     subscribeEvent: (callback: () => void) => subject.subscribe(callback),
@@ -100,7 +102,7 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
       onTransformChange$: event(transforms),
       getViewports: () => [{ onScrollAfter$: event(scrolling) }],
     },
-    engine: { onTransformChange$: event(transforms) },
+    engine: { onTransformChange$: event(engineTransforms) },
     with: (token: unknown) => {
       if (token === DocSkeletonManagerService) return { currentSkeleton$: skeletons };
       if (token === DocSelectionRenderService) return { focus, setSegment, setSegmentPage };
@@ -149,7 +151,10 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
         : undefined,
     getActiveWorkbook: () => (kind === 'sheet' ? book : undefined),
     Event: { Scroll: 'scroll' },
-    addEvent: () => ({ dispose: vi.fn() }),
+    addEvent: (_name: string, callback: typeof apiScroll) => {
+      apiScroll = callback;
+      return { dispose: vi.fn() };
+    },
   } as unknown as FUniver;
   let state: SyncPresenceState = {
     connected: true,
@@ -200,6 +205,8 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
     activated,
     scrolling,
     transforms,
+    engineTransforms,
+    scrollApi: () => apiScroll({ workbook: { getId: () => 'unit' } }),
     setSelection,
     focus,
     setSegment,
@@ -416,4 +423,49 @@ test('a Doc keeps scroll and transform events inside the redraw interval, since 
   expect(drawPresence).not.toHaveBeenCalled();
   await vi.advanceTimersByTimeAsync(REDRAW_MS);
   expect(drawPresence).toHaveBeenCalledOnce();
+});
+
+const wheelSources = {
+  'api scroll event': (f: Awaited<ReturnType<typeof fixture>>) => f.scrollApi(),
+  'viewport scroll': (f: Awaited<ReturnType<typeof fixture>>) => f.scrolling.next(),
+  'scene transform': (f: Awaited<ReturnType<typeof fixture>>) => f.transforms.next(),
+  'engine transform': (f: Awaited<ReturnType<typeof fixture>>) => f.engineTransforms.next(),
+  'window resize': () => window.dispatchEvent(new Event('resize')),
+};
+for (const [name, fire] of Object.entries(wheelSources)) {
+  test(`${name}: a Sheet redraws within a frame, a Doc waits for the interval (SPN-146)`, async () => {
+    for (const kind of ['sheet', 'doc'] as const) {
+      const f = await fixture(kind);
+      await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+      window.dispatchEvent(new Event('spinel-theme')); // draws at once, closing the interval
+      await vi.advanceTimersByTimeAsync(20);
+      vi.mocked(drawPresence).mockClear();
+      fire(f);
+      await vi.advanceTimersByTimeAsync(20);
+      if (kind === 'sheet') expect(drawPresence).toHaveBeenCalled();
+      else expect(drawPresence).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(REDRAW_MS);
+      expect(drawPresence).toHaveBeenCalled();
+      f.stop();
+    }
+  });
+}
+
+test('disposing leaves no frame or timer pending for Doc or Sheet (SPN-146)', async () => {
+  const timersAfterStop = async (kind: 'doc' | 'sheet', pending: boolean) => {
+    const f = await fixture(kind);
+    await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+    window.dispatchEvent(new Event('spinel-theme')); // closes the interval
+    if (pending) {
+      f.dirty.next(true); // trailing timer (Doc layout) or nothing (Sheet)
+      f.scrollApi(); // Sheet frame, or merged into the Doc timer
+      f.transforms.next();
+    }
+    f.stop();
+    return vi.getTimerCount();
+  };
+  for (const kind of ['doc', 'sheet'] as const) {
+    const idle = await timersAfterStop(kind, false);
+    expect(await timersAfterStop(kind, true)).toBe(idle);
+  }
 });

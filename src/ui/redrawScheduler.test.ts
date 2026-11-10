@@ -123,3 +123,34 @@ test('a pending frame blocks a second request, and a clock whose handles start a
   env.advance(150);
   expect(draws).toBe(2);
 });
+
+test('a request partway through the interval draws at the interval end, not a full interval later', () => {
+  const env = fakeClock();
+  const times: number[] = [];
+  let time = 0;
+  const scheduler = redrawScheduler(() => times.push(time), 150, env.clock);
+  scheduler.runNow();
+  const step = (ms: number) => {
+    time += ms;
+    env.advance(ms);
+  };
+  step(100);
+  scheduler.schedule();
+  step(49);
+  expect(times).toEqual([0]);
+  step(1);
+  expect(times).toEqual([0, 150]);
+});
+
+test('runNow while a frame is pending cancels the frame and draws exactly once', () => {
+  const env = fakeClock();
+  let draws = 0;
+  const scheduler = redrawScheduler(() => draws++, 150, env.clock);
+  scheduler.schedule();
+  expect(env.pending()).toBe(1);
+  scheduler.runNow();
+  expect(draws).toBe(1);
+  expect(env.pending()).toBe(0);
+  env.frame();
+  expect(draws).toBe(1);
+});

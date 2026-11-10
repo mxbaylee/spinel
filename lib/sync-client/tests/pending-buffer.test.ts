@@ -48,6 +48,17 @@ describe('PendingBuffer', () => {
     expect(buffer.bytesWith(encodedBytes(first))).toBe(encodedBytes([first, second, first]));
   });
 
+  test('push straight after replace, with no read between, keeps the size exact', () => {
+    const buffer = new PendingBuffer();
+    const kept = [[write({ v: '漢' })], [write({ v: 'a' })]];
+    const added = [write({ v: '😀' })];
+    buffer.replace([...kept]);
+    buffer.push(added);
+    expect(buffer.bytes).toBe(encodedBytes([...kept, added]));
+    expect(buffer.drain(1)).toEqual([kept[0]]);
+    expect(buffer.bytes).toBe(encodedBytes([kept[1], added]));
+  });
+
   test('push accepts the caller-measured size and drain returns what it removed', () => {
     const buffer = new PendingBuffer();
     const items = [[write({ v: 'a' })], [write({ v: '漢' })], [write({ v: '😀' })]];

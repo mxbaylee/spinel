@@ -395,11 +395,13 @@ both and their file-reading assertions are deleted. Their results remain recorde
 the earlier sections. The runner, converter and watchdog sources are kept for now because the
 next question may reuse them; move or remove them once the ticket's verdict is in.
 
-**Landing bookkeeping is not acceptance.** Deleting the ticket file and dropping the SPN-089
-dependency are prepared in this PR as the process requires before grading
-([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). They take effect only on
-merge, which still requires a causal repair or evidence-supported disposition and a green
-current-head native acceptance. (Status update: the hosted mobile gate has since passed once on
+**Landing bookkeeping is not acceptance, and is deferred.** The process prepares the landing bookkeeping (ticket
+file deleted, `completed_since`, SPN-089's dependency dropped) before grading
+([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). With the hosted-breach criterion unmet and
+the owner decision above unmade, this PR keeps `docs/todo/SPN-146.md`, the backlog counter and SPN-089's
+`depends_on: [SPN-146]` as on main, so nothing closes or ungates ahead of that decision (review round 7, 2026-11-09). The
+three edits are applied in the merge-preparation commit once the owner chooses. The earlier text follows.
+(Status update: the hosted mobile gate has since passed once on
 `dde23e1`; the head's remaining checks are recorded in the hosted result below.)
 
 ## ⚖️ Pre-push review grades and owner decision to validate on CI
@@ -1496,7 +1498,11 @@ The idle bare page had 0 GCs, so the growth is driven by typing.
   2,086-key run; layouts per run 12,453). The redraw is now at most one per 150 ms (the cursor transport's own
   granularity): attaches fell to 5, layouts to 8,335 and allocation to 88.2 KB per key. The scheduler is
   `src/ui/redrawScheduler.ts` with unit tests (a burst of 100 events draws once at the interval). Mutants run against the tests on 2026-11-09: a theme handler
-  that throttles instead of redrawing at once fails the theme test; a 100 ms interval fails the burst test.
+  that throttles instead of redrawing at once fails the theme test; a 100 ms interval fails the burst test. Round 7 (2026-11-09) added tests for
+  the trailing-timer length, each of the five Sheet scroll/zoom sources against the Doc interval, and disposal of both
+  schedulers; mutants for a full-interval trailing timer, each source routed to the interval, and either `cancel`
+  removed on dispose now fail. The presence e2e results (2 of 3 failed before, 6 of 6 and 8 of 8 passed after) are
+  local runs on this Mac, not hosted run identities.
 - **A residual of about 9 KB per key (88.2 against 79.1) is unattributed.** The stock page uses the desktop UI and
   has no sync, phone view or evidence hooks, so mobile UI and Spinel's layers share this gap.
 - **Message volume is not the lever.** Draining the shared channel's queue in one message cut `postMessage` from about
