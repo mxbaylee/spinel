@@ -6,6 +6,10 @@ counts as of those dates. Older sections that say the cause was not proven are s
 
 ## 📍 Current state (2026-11-09)
 
+**📖 How to read this file.** Only this section is current. Every section after "Final status" is a dated checkpoint kept as the record of what was tried and decided at that time; where one says a cause was unexplained or a measurement was missing, this section's cause chain and open items replace it. The decisions that govern landing are the PR-size exception (2026-11-05, re-confirmation pending at about +26.7k) and the owner decision below.
+
+**🧬 Mutation evidence for the patches.** The pooled-channel patch in `scripts/dependencies/patch-univer-core.ts` was mutated in review round 11 (removing `ref`/`unref`, removing the `cancelled` check, FIFO to LIFO, disabling the `pooledChannel` bypass): every mutant was killed by `patch-univer-core.test.ts`. Its hosted effect is the patch A/B in `docs/implementation/evidence/SPN-146/patch-ab/` (patched less in 14 of 14 comparable pairs). `patch-univer-docs.ts` is not part of this change's behaviour.
+
 **Landing status:** SPN-146 stays open. The ticket file, `completed_since` and SPN-089's `depends_on` are unchanged on this branch, and the owner's landing decision is pending.
 
 Describes the branch from commit d890587c on. Later commits changed `web/Collaborators.tsx` and `src/ui/redrawScheduler.ts` (theme redraw at once, Sheet scroll/zoom on the frame path) and added tests and documentation; the Doc-side measurements below predate the Sheet routing change and are unaffected by it, since Docs keep the interval.
@@ -429,12 +433,12 @@ three edits are applied in the merge-preparation commit once the owner chooses. 
 **2026-11-05.** Four independent read-only reviewers graded two committed heads, each against the
 repository rubric (none was given a prior score or target):
 
-| Head      | Reviewer | Score | Main deductions                                                              |
-| --------- | -------- | ----- | ---------------------------------------------------------------------------- |
-| `97d0b32` | A        | 66    | no latency evidence; spent workflows; patcher/docs weight                    |
-| `97d0b32` | B        | 86    | no latency evidence; dead workflow; historical variants                      |
-| `64f208d` | C        | 52    | ticket closed before acceptance; SPN-089 unblocked; no repair or disposition |
-| `64f208d` | D        | 66    | no repair or disposition; component numbers unretained; unreachable tooling  |
+| Head      | Reviewer | Score | Main deductions                                                                                                           |
+| --------- | -------- | ----- | ------------------------------------------------------------------------------------------------------------------------- |
+| `97d0b32` | A        | 66    | no latency evidence; spent workflows; patcher/docs weight                                                                 |
+| `97d0b32` | B        | 86    | no latency evidence; dead workflow; historical variants                                                                   |
+| `64f208d` | C        | 52    | ticket closed before acceptance; SPN-089 unblocked (superseded 2026-11-09: dependency retained); no repair or disposition |
+| `64f208d` | D        | 66    | no repair or disposition; component numbers unretained; unreachable tooling                                               |
 
 None reached the 95 bar, and no reviewer found a semantic or access-boundary defect in the patch.
 The recurring deduction is the ticket's own scope: neither a causal repair nor an evidence-supported
