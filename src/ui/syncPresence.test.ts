@@ -548,3 +548,21 @@ test('a Sheet member joining or moving redraws within one redraw interval (SPN-1
   await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
   expect(drawPresence).toHaveBeenCalled();
 });
+
+test('a Doc caret move restyles the local caret on the next frame, not at the interval end (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  window.dispatchEvent(new Event('spinel-theme')); // closes the interval, so a redraw would trail by 150 ms
+  await vi.advanceTimersByTimeAsync(20);
+  vi.mocked(setLocalDocSelectionColor).mockClear();
+  vi.mocked(drawPresence).mockClear();
+  f.input.next(selection(3, 3));
+  await vi.advanceTimersByTimeAsync(8); // one fake frame
+  expect(setLocalDocSelectionColor).toHaveBeenCalledOnce();
+  expect(drawPresence).not.toHaveBeenCalled(); // remote carets still wait for the interval
+  f.stop();
+  vi.mocked(setLocalDocSelectionColor).mockClear();
+  f.input.next(selection(4, 4));
+  await vi.advanceTimersByTimeAsync(REDRAW_MS);
+  expect(setLocalDocSelectionColor).not.toHaveBeenCalled(); // nothing armed after disposal
+});

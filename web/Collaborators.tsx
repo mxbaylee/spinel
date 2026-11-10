@@ -258,6 +258,11 @@ function watchSyncPresence(
   // trailing by an interval. A Doc raises the same events while typing (measured: 84 against 106 KB of Blink
   // objects per key when they skip the interval), so Docs keep the interval for them.
   const follow = redrawScheduler(() => update(), 0);
+  // The local caret's own restyle must not wait for the trailing draw: it replaces the text range, so landing
+  // in the middle of a typing burst it reverts the caret to a stale offset and reorders the typed letters
+  // (hosted e2e/collaboration.spec.ts "two document editors merge text", every head with the interval).
+  // It runs on the next frame after the selection moves, as it did before the throttle.
+  const localFrame = redrawScheduler(() => localColor(), 0);
   const scheduleFrame = () => {
     if (disposed) return;
     if (docSelections) redraw.schedule();
@@ -374,7 +379,9 @@ function watchSyncPresence(
       });
       const selection = docSelections.textSelection$.subscribe((event) => {
         // Capture every native move, coalescing transport to the 150 ms timer.
-        if (event.unitId === id) docSelection = event;
+        if (event.unitId !== id) return;
+        docSelection = event;
+        localFrame.schedule();
       });
       cleanups.push(
         () => {
@@ -394,6 +401,7 @@ function watchSyncPresence(
     clearInterval(timer);
     redraw.cancel();
     follow.cancel();
+    localFrame.cancel();
     cleanups.reverse().forEach((close) => close());
     clearPopups();
     publish([]);
