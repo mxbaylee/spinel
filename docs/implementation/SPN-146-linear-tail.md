@@ -1369,7 +1369,7 @@ Half-CPU stress, 4x, GC trace, same Docs patch both sides. The toggle read back 
   the 105 and 124 ms flushes and the shared channel had none, large-major time 3,933 ms to 1,282 ms, run
   42710690905). This answers the owner's "why is the cause not proven" with a reproduced old-vs-new result and a
   causal local test, not only a mechanism count. It stays one hosted cycle and a rare tail (2 of 7 previous
-  breaches, p about 0.2 by that count alone), so a second `ci-patch-ab-channel` cycle is the way to tighten it.
+  breaches, p about 0.2 by that count alone), so a second `ci-patch-ab-channel` cycle was run to tighten it; its result is below and it did **not** repeat the clean patched run.
 - **The layout Worker is not shipped.** It was a throughput experiment (about 20% faster typing and fewer long
   tasks locally), it does not remove the tail or the majors (its majors were about 30% longer), and its offline
   cold load and phone view were never verified. The experiment code (`web/docLayoutWorker.ts`, the
@@ -1378,3 +1378,32 @@ Half-CPU stress, 4x, GC trace, same Docs patch both sides. The toggle read back 
   Revisit as its own ticket if typing throughput matters.
 - **Diagnostics stay until a second hosted cycle repeats the channel result** ("after the fix is proven"). The
   hand-run `scripts/ci/doc-native-runtime/*` and the flush diagnostic then move out, as ruled on 2026-11-07.
+
+### ❌ Hosted result: second `ci-patch-ab-channel` cycle (run 42720456662, head `89f09e40`)
+
+Same method and rule as run 42710690905, scored per cycle and not pooled silently. This runner was slower (flush p95
+11.4-17.5 ms against 9.4-13.5 ms in cycle 1).
+
+|                                          | Cycle 1 (run 42710690905)              | Cycle 2 (run 42720456662)             | Both     |
+| ---------------------------------------- | -------------------------------------- | ------------------------------------- | -------- |
+| Previous flush breaches (over 100 ms)    | 2 of 7 (105.1, 124.5 ms), 1 unmeasured | 0 of 7, 1 unmeasured                  | 2 of 14  |
+| Patched flush breaches                   | 0 of 8                                 | **1 of 8 (106.1 ms, pair 4, exit 1)** | 1 of 16  |
+| Patched flush max, other runs            | 19.7-30.4 ms                           | 29.0-71.9 ms                          |          |
+| Large-major time over 20 ms, total       | patched 1,282 ms, previous 3,933 ms    | patched 1,214 ms, previous 4,288 ms   |          |
+| Pairs with less large-major time patched | 7 of 7                                 | 7 of 7                                | 14 of 14 |
+
+- **Pre-registered rule: failed in cycle 2.** The first condition passed (7 of 7 comparable pairs, worst single
+  major 46 ms patched against 255 ms previous), but a patched run exceeded the 100 ms paired flush budget.
+- **What the breach was.** Patched pair 4's 106.1 ms flush held 79.4 ms of GC: several incremental-marking steps
+  (24.4, 7.5, 4.4, 2.9 ms ...) and one 37.6 ms mark-compact finalize. Patched pair 3's 71.9 ms flush was 59 ms of
+  `V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED` (the main thread finishing sweeping). So collections still land inside
+  flushes under stress; the fix shortens each major, it does not remove GC from the flush path.
+- **What is and is not shown.** Shown, in 14 of 14 pairs on two runner states: shared channel cuts large-major
+  time about 3.5x and the worst major about 4x. Not shown: that it removes the 100 ms tail. Combined breaches are
+  2 of 14 previous against 1 of 16 patched, which these runs cannot separate, and the previous build did not
+  breach in cycle 2. The claim in the decisions section above that the fix explains the tail is therefore
+  **withdrawn to "reduces the GC pauses that make it"**; the tail's cause is not fully closed.
+- **Consequence.** The diagnostics stay (the fix is not proven to remove the tail). The remaining GC-in-flush
+  sources are incremental-marking steps, mark-compact finalize and sweeping completion under a loaded main
+  thread, driven by the unattributed ~75 MB per cycle of non-old memory. Evidence:
+  `docs/implementation/evidence/SPN-146/patch-ab/run-42720456662-channel-8-pairs/`.
