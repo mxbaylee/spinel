@@ -30,18 +30,21 @@ them to the frame path measured 106 KB of non-old allocation per key against 84 
 1 and 3 runs, 2,086 keys).
 
 **PR size and evidence storage.** The 29 largest raw per-run `metrics.json` files (1.1 million lines) are gzipped in
-[the patch-ab evidence](evidence/SPN-146/patch-ab/README.md#️-raw-per-run-metricsjson-files); the PR is about +26.6k lines
+[the patch-ab evidence](evidence/SPN-146/patch-ab/README.md#️-raw-per-run-metricsjson-files); the PR is +26.7k insertions (net +26.1k)
 and the owner's size exception, approved at about 17k, awaits re-confirmation.
 
 **Sheet join and selection updates.** Events that reach `schedule()` (member joins, selection and sheet changes) can trail the previous
 draw by up to 150 ms, as Doc events already did.
 
-**Local full-suite run (2026-11-09, macOS).** `vitest run lib src`: 142 failed, by file: `maintenance/supervisor` 106,
-`backup/service` 11, `backup/filesystem` 7, `backup/export-jobs` 4, `backup/transfer` 4, `maintenance/cold-files` 3,
-`backup/restore-candidate` 2, `restore-http`, `restore-registry`, `maintenance/cli` and `sync/transition-ownership`
-1 each. Reasons: 93 "Supervised maintenance requires Linux", 26 "Filesystem backups require Linux", 8 fixture
-timeouts, 6 test timeouts, 2 recovery-verification failures on the same Linux-only fixtures. None is under a path this
-branch changes.
+**Local full-suite run (2026-11-09, macOS).** `vitest run lib src` (JSON report): 3,805 tests, **141 failed** and 11
+failed suites (an earlier run of the same command printed 142; the difference is a timing-dependent test). By file:
+`maintenance/supervisor` 106, `backup/service` 11, `backup/filesystem` 7, `backup/export-jobs` 4, `backup/transfer` 4,
+`maintenance/cold-files` 3, `backup/restore-candidate` 2, `restore-http`, `restore-registry`, `maintenance/cli` and
+`sync/transition-ownership` 1 each (sums to 141). By message: 93 "Supervised maintenance requires Linux", 26
+"Filesystem backups require Linux", 16 test or fixture timeouts, 2 recovery-verification failures, 1 restore
+process-ownership failure, 1 "Transition fixture stopped at startup", and 2 assertion failures in the cold-file
+fixtures (sums to 141). The branch changes nothing under `src/server`; the
+assertion failures were not each traced to the Linux requirement.
 
 **Diagnostics left in the product tree, and when they go.** `src/ui/nativeDocFlushDiagnostic.ts` (gated by
 `VITE_DOC_FLUSH_DIAGNOSTIC=1` in `web/docResponsivenessEvidence.ts`), `scripts/ci/doc-native-runtime/*` and the
@@ -590,7 +593,7 @@ tests passing. The owner ruled on the open points:
   work-scaling test that shows the mechanism deterministically.
 - **The process changes stay in this PR** (`docs/run-backlog.md`, `docs/todo/process.md`,
   `backlog-workflow.md`, `AGENTS.md`). Splitting them out is declined, again. Reviewers do not deduct for it.
-- **The PR size was approved at about 17k lines; the head is now about +26.6k (+15.0k evidence, 11.6k other) and the owner has not re-confirmed it.** (Earlier wording: the PR size is approved, about 17k lines, mostly retained evidence and diagnostics). Reviewers do not
+- **The PR size was approved at about 17k lines; the head is now +26.7k insertions (15.0k evidence, 11.7k other) and the owner has not re-confirmed it.** (Earlier wording: the PR size is approved, about 17k lines, mostly retained evidence and diagnostics). Reviewers do not
   deduct for it.
 - **The diagnostics move out of the product tree after the fix is proven**, not before.
 

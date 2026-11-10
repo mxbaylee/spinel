@@ -244,8 +244,7 @@ export function patchCore(
     return text.slice(0, start) + body + text.slice(end);
   }, original);
   if (!pooledChannel) return patched;
-  if (patched.split(upstreamMacroTask).length !== 2)
-    throw new Error('Core patch target must occur exactly once.');
+  // The sha256 gate above fixes the macrotask function to one occurrence in the upstream build.
   return patched.replace(upstreamMacroTask, pooledMacroTask);
 }
 

@@ -249,7 +249,7 @@ function watchSyncPresence(
   // Every document layout step asks for a redraw, and each redraw rebuilds a canvas range and popup per
   // remote caret, which reads layout several times. During typing that was one rebuild per key (about 6
   // layouts and 100 KB of Blink objects per key, SPN-146). The cursor transport already coalesces to 150 ms,
-  // so carets redraw at most that often: the first request draws at once, later ones share one trailing draw.
+  // so carets redraw at most that often: the first request draws on the next frame, later ones share one trailing draw.
   const redraw = redrawScheduler(() => update(), REDRAW_INTERVAL_MS);
   const schedule = () => {
     if (!disposed) redraw.schedule();

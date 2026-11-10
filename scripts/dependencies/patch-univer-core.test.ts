@@ -326,6 +326,9 @@ test('the pooled macrotask scheduler keeps order, cancellation and one channel (
     const upstream = patchCore(source, format, { pooledChannel: false });
     assert.ok(!upstream.includes('pendingMacroTasks'));
     assert.match(upstream, /const channel = new MessageChannel\(\);/);
+    // The two builds differ only by the macrotask function: pooling the upstream build gives the shipped one.
+    assert.notEqual(upstream, patchCore(source, format));
+    assert.equal(patchCore(upstream, format), patchCore(source, format));
   }
   let channels = 0;
   class Counting extends MessageChannel {
