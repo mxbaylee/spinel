@@ -4,7 +4,7 @@ Proposal of November 5, 2026; the checkpoints below record its execution and are
 the next section**; the intro and the "Final status" table further down describe 2026-11-06/07 and keep their
 counts as of those dates. Older sections that say the cause was not proven are superseded where marked.
 
-## 📍 Current state (2026-11-09)
+## 📍 Current state (2026-11-10)
 
 **📖 How to read this file.** Only this section is current. Every section after "Final status" is a dated checkpoint kept as the record of what was tried and decided at that time; where one says a cause was unexplained or a measurement was missing, this section's cause chain and open items replace it. The decisions that govern landing are the PR-size exception (2026-11-05, re-confirmed at +26.7k on 2026-11-10) and the owner decision below (made 2026-11-10: land, option 1).
 
@@ -490,7 +490,7 @@ needed.
 attempt, no diagnosed cause, no CI on the final head, stale docs, and the PR's size and retained
 tooling). The owner authorized one more push of the docs-reconciled head so CI runs on it as a second
 first-attempt hosted validation. As before, this raises no score and certifies nothing; the unresolved
-deductions remain open until the owner decides the disposition and the tooling cleanup. A Docker smoke
+deductions remain open until the owner decides the disposition and the tooling cleanup (owner decided 2026-11-10: land; see Current state). A Docker smoke
 check of the unchanged code passed all three plain mobile samples first (flush maxima 11.7–12.3 ms; see
 the rehearsal below). That run is a smoke check only.
 
