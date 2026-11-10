@@ -59,7 +59,7 @@ The 9 KB per key residual is left as is: no action is taken in SPN-146, and a st
 
 **Diagnostics left in the product tree, and when they go.** `src/ui/nativeDocFlushDiagnostic.ts` (gated by
 `VITE_DOC_FLUSH_DIAGNOSTIC=1` in `web/docResponsivenessEvidence.ts`), `scripts/ci/doc-native-runtime/*` and the
-`SPN146_AB_V8_FLAGS` hook stay in the product tree after landing (owner decision 2026-11-10 accepted the unmet criterion without moving them): SPN-089 carries the hosted performance gate and revalidates with them, and whoever closes that gate removes them. No in-repo build sets the flag, so they are inert in production.
+`SPN146_AB_V8_FLAGS` hook stay in the product tree after landing (owner decision 2026-11-10 accepted the unmet criterion without moving them): SPN-089 carries the hosted performance gate and revalidates with them, and whoever closes that gate removes them. No production build sets `VITE_DOC_FLUSH_DIAGNOSTIC`, and `SPN146_AB_V8_FLAGS` is set only by the opt-in `patch-ab` CI workflow, so the diagnostics are inert in production. The removal list is in SPN-089's first Rule.
 
 **Owner decision (made, chat 2026-11-10: accept and land, option 1).** Landing closes a ticket whose headline acceptance, no flush breach under
 hosted stress, is recorded as not met. The choices are: accept the three fixes and land with the criterion
