@@ -6,18 +6,18 @@ counts as of those dates. Older sections that say the cause was not proven are s
 
 ## 📍 Current state (2026-11-09)
 
-Describes the branch from commit d890587c on; later commits only add review repairs to tests and this document.
+Describes the branch from commit d890587c on. Later commits changed `web/Collaborators.tsx` and `src/ui/redrawScheduler.ts` (theme redraw at once, Sheet scroll/zoom on the frame path) and added tests and documentation; the Doc-side measurements below predate the Sheet routing change and are unaffected by it, since Docs keep the interval.
 
 **Cause chain, with where each link is measured.** Three Spinel-owned costs were found and fixed; the rest is
 Univer's and Chromium's own per-key work.
 
-| Link                                                                                                   | Evidence                                                                                                                                                         | Status                   |
-| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| Sync `enqueue` re-encoded the whole pending buffer on every edit (quadratic)                           | Hosted `ci-patch-ab-sync`: majors 207 → 41; lowest-layer work-scaling test; `PendingBuffer` differential and work-scaling tests                                  | Fixed                    |
-| Univer `requestImmediateMacroTask` created one `MessageChannel` per call (about 47,000 per run)        | Hosted `ci-patch-ab-channel`, two cycles: large-major time 3,933 → 1,282 ms and 4,288 → 1,214 ms, patched less in 14 of 14 pairs; worst major 250 → 46 ms        | Fixed                    |
-| Remote-caret presence redrew on every layout event: one canvas range and popup per caret per key       | Stacks: 1,962 `attachPopupToRange` per 2,086 keys; layouts 12,453 → 8,335 and non-old allocation 110.8 → 88.2 KB per key after a 150 ms throttle (local, 2 runs) | Fixed, hosted pending    |
-| Stock Univer Doc allocates about 79 KB of non-old memory per key (bare `contenteditable`: about 13 KB) | `evidence/SPN-146/oilpan-control/summary.json`, 3 runs each                                                                                                      | Not Spinel's to remove   |
-| Spinel Doc residual above stock Univer                                                                 | 88.2 against 79.1 KB per key; the stock page uses the desktop UI, so mobile UI is inside this gap                                                                | About 9 KB, unattributed |
+| Link                                                                                                   | Evidence                                                                                                                                                                                  | Status                   |
+| ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Sync `enqueue` re-encoded the whole pending buffer on every edit (quadratic)                           | Hosted `ci-patch-ab-sync`: majors 207 → 41; lowest-layer work-scaling test; `PendingBuffer` differential and work-scaling tests                                                           | Fixed                    |
+| Univer `requestImmediateMacroTask` created one `MessageChannel` per call (about 47,000 per run)        | Hosted `ci-patch-ab-channel`, two cycles: large-major time 3,933 → 1,282 ms and 4,288 → 1,214 ms, patched less in 14 of 14 comparable pairs (2 of 16 unmeasured); worst major 250 → 46 ms | Fixed                    |
+| Remote-caret presence redrew on every layout event: one canvas range and popup per caret per key       | Stacks: 1,962 `attachPopupToRange` per 2,086 keys; layouts 12,453 → 8,335 and non-old allocation 110.8 → 88.2 KB per key after a 150 ms throttle (local, 2 runs)                          | Fixed, hosted pending    |
+| Stock Univer Doc allocates about 79 KB of non-old memory per key (bare `contenteditable`: about 13 KB) | `evidence/SPN-146/oilpan-control/summary.json`, 3 runs each                                                                                                                               | Not Spinel's to remove   |
+| Spinel Doc residual above stock Univer                                                                 | 88.2 against 79.1 KB per key; the stock page uses the desktop UI, so mobile UI is inside this gap                                                                                         | About 9 KB, unattributed |
 
 **Presence redraw exceptions.** A theme change, a disconnect and deactivation redraw immediately instead of waiting
 for the interval. With the theme change throttled, the presence e2e (`e2e/presence-prototype.spec.ts:10`) left a
@@ -28,6 +28,16 @@ pre-throttle code passed 5 of 5. A unit test pins it (`syncPresence.test.ts`, th
 they do not trail by an interval. A Doc keeps those events inside the interval: typing raises them, and sending
 them to the frame path measured 106 KB of non-old allocation per key against 84 KB with the interval (local,
 1 and 3 runs, 2,086 keys).
+
+**Sheet join and selection updates.** Events that reach `schedule()` (member joins, selection and sheet changes) can trail the previous
+draw by up to 150 ms, as Doc events already did.
+
+**Local full-suite run (2026-11-09, macOS).** `vitest run lib src`: 142 failed, by file: `maintenance/supervisor` 106,
+`backup/service` 11, `backup/filesystem` 7, `backup/export-jobs` 4, `backup/transfer` 4, `maintenance/cold-files` 3,
+`backup/restore-candidate` 2, `restore-http`, `restore-registry`, `maintenance/cli` and `sync/transition-ownership`
+1 each. Reasons: 93 "Supervised maintenance requires Linux", 26 "Filesystem backups require Linux", 8 fixture
+timeouts, 6 test timeouts, 2 recovery-verification failures on the same Linux-only fixtures. None is under a path this
+branch changes.
 
 **Diagnostics left in the product tree, and when they go.** `src/ui/nativeDocFlushDiagnostic.ts` (gated by
 `VITE_DOC_FLUSH_DIAGNOSTIC=1` in `web/docResponsivenessEvidence.ts`), `scripts/ci/doc-native-runtime/*` and the
@@ -124,7 +134,7 @@ owners remain unresolved and unchanged.
 Operator gets a finite test of a concrete repeated-copy mechanism; Owner and
 Collaborator keep exact native metadata/history/content; Link guest keeps access
 fences. The complete accepted outcome remains XL. This is scoped to SPN-146,
-with SPN-090 the only other authorized ticket, plus the SPN-089 dependency bookkeeping and the SPN-146 ticket removal that landing requires, and the review–repair loop process addition (`docs/run-backlog.md`, `docs/todo/process.md`, `docs/implementation/backlog-workflow.md`, `AGENTS.md`). The loop is included because this ticket's reviews were the case that exposed the gap and the owner asked for it in the same chat. The owner decided to keep it in this PR (chat 2026-11-06) instead of splitting it out.
+with SPN-090 the only other authorized ticket, plus the review–repair loop process addition (`docs/run-backlog.md`, `docs/todo/process.md`, `docs/implementation/backlog-workflow.md`, `AGENTS.md`). The loop is included because this ticket's reviews were the case that exposed the gap and the owner asked for it in the same chat. The owner decided to keep it in this PR (chat 2026-11-06) instead of splitting it out.
 
 ## ✅ Exact scratch-script checkpoint
 
@@ -429,7 +439,7 @@ Merge still requires the unchanged gate to pass on the final head (p95 at most 5
 most 100 ms, zero retries, full workload) or an evidence-supported disposition, plus two grades
 above 95 on the merged head. A failing first attempt is recorded as failed; no unchanged rerun.
 
-**Bookkeeping stays in the PR, and takes effect only on merge.** Reviewers C and D asked to restore
+**Superseded 2026-11-09 by the deferral paragraph at the top of this section: the bookkeeping is NOT in this PR now.** (Earlier text: bookkeeping stays in the PR, and takes effect only on merge.) Reviewers C and D asked to restore
 the ticket file and SPN-089's dependency. Both are deleted/removed here because the PR checker
 (required **Pull request** gate) fails a ticket-titled PR that keeps its ticket file or omits its
 `completed_since` entry. The PR is a draft and merging is gated by the acceptance above. If the

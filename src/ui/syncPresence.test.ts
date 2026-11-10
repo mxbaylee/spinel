@@ -80,10 +80,13 @@ test('registry is per Univer/unit and retiring cleanup preserves a replacement',
 async function fixture(kind: 'doc' | 'sheet' = 'doc') {
   const input = new Subject<ReturnType<typeof selection>>();
   const dirty = new Subject<boolean>();
+  const progress = new Subject<void>();
+  const materialized = new Subject<void>();
+  const mainTransforms = new Subject<void>();
   const skeletons = new BehaviorSubject({
     dirty$: dirty,
-    layoutProgress$: new Subject(),
-    layoutPageMaterialized$: new Subject(),
+    layoutProgress$: progress,
+    layoutPageMaterialized$: materialized,
   });
   const activated = new BehaviorSubject(true);
   const transforms = new Subject<void>();
@@ -103,6 +106,7 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
       getViewports: () => [{ onScrollAfter$: event(scrolling) }],
     },
     engine: { onTransformChange$: event(engineTransforms) },
+    mainComponent: { onTransformChange$: event(mainTransforms) },
     with: (token: unknown) => {
       if (token === DocSkeletonManagerService) return { currentSkeleton$: skeletons };
       if (token === DocSelectionRenderService) return { focus, setSegment, setSegmentPage };
@@ -206,6 +210,9 @@ async function fixture(kind: 'doc' | 'sheet' = 'doc') {
     scrolling,
     transforms,
     engineTransforms,
+    progress,
+    materialized,
+    mainTransforms,
     scrollApi: () => apiScroll({ workbook: { getId: () => 'unit' } }),
     setSelection,
     focus,
@@ -468,4 +475,34 @@ test('disposing leaves no frame or timer pending for Doc or Sheet (SPN-146)', as
     const idle = await timersAfterStop(kind, false);
     expect(await timersAfterStop(kind, true)).toBe(idle);
   }
+});
+
+const docTriggers = {
+  'layout progress': (f: Awaited<ReturnType<typeof fixture>>) => f.progress.next(),
+  'page materialized': (f: Awaited<ReturnType<typeof fixture>>) => f.materialized.next(),
+  'document position': (f: Awaited<ReturnType<typeof fixture>>) => f.mainTransforms.next(),
+  'dirty layout': (f: Awaited<ReturnType<typeof fixture>>) => f.dirty.next(true),
+};
+for (const [name, fire] of Object.entries(docTriggers)) {
+  test(`${name} asks a Doc for a redraw at the end of the interval (SPN-146)`, async () => {
+    const f = await fixture();
+    await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+    window.dispatchEvent(new Event('spinel-theme'));
+    await vi.advanceTimersByTimeAsync(20);
+    vi.mocked(drawPresence).mockClear();
+    fire(f);
+    await vi.advanceTimersByTimeAsync(20);
+    expect(drawPresence).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(REDRAW_MS);
+    expect(drawPresence).toHaveBeenCalledOnce();
+  });
+}
+
+test('switching the active Sheet redraws remote carets (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  vi.mocked(drawPresence).mockClear();
+  f.sheetId('other-sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS * 4);
+  expect(drawPresence).toHaveBeenCalled();
 });

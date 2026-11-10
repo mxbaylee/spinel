@@ -154,3 +154,20 @@ test('runNow while a frame is pending cancels the frame and draws exactly once',
   env.frame();
   expect(draws).toBe(1);
 });
+
+test('after a trailing-timer draw and after cancel, schedule arms new work', () => {
+  const env = fakeClock();
+  let draws = 0;
+  const scheduler = redrawScheduler(() => draws++, 150, env.clock);
+  scheduler.runNow();
+  env.advance(10);
+  scheduler.schedule();
+  env.advance(140); // the trailing timer draws
+  expect(draws).toBe(2);
+  expect(env.pending()).toBe(0);
+  scheduler.schedule();
+  expect(env.pending()).toBe(1); // armed again, not wedged by a stale handle
+  scheduler.cancel();
+  scheduler.schedule();
+  expect(env.pending()).toBe(1);
+});

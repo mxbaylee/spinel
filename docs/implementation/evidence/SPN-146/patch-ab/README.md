@@ -77,3 +77,9 @@ The label `ci-patch-ab-channel` (added after the MessageChannel probe) keeps the
 The label `ci-patch-ab-worker` and its `VITE_DOC_LAYOUT_WORKER` toggle were removed from the workflow and the product tree after the Worker was not shipped (decision in the implementation doc); the Worker runs above keep their evidence but the label cannot be re-run.
 
 - `run-42720456662-channel-8-pairs/`: head `89f09e40`, second `ci-patch-ab-channel` cycle (slower runner). Previous: 0 of 7 breaches, one unmeasured pair (4). Patched: one breach (106.1 ms, pair 4; 79.4 ms of GC in the flush: incremental marking plus a 37.6 ms finalize), so the pre-registered rule failed; large major time 1,214 ms patched against 4,288 ms previous, patched less in 7 of 7 comparable pairs. Combined with cycle 1: previous 2 of 14, patched 1 of 16. Kept: summary, derived `gc-summary.json`, metrics of the breaching patched run (pair 4), patched pairs 3 and 1, and the unmeasured previous pair 4.
+
+## 🗜️ Raw per-run `metrics.json` files
+
+Twenty-nine of the largest per-run `metrics.json` files (about 1.1 million pretty-printed lines, 60 MB) are stored as
+`metrics.json.gz` so the PR's line count reflects reviewable change. Unpack one with `gunzip -k metrics.json.gz`; the
+content is byte-identical to the file the workflow produced. Nothing in the repository reads these files.
