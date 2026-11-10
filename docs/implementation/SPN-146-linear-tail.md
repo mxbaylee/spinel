@@ -14,7 +14,7 @@ counts as of those dates. Older sections that say the cause was not proven are s
 
 **Double draw.** A pending Sheet `follow` frame survives `redraw.runNow()`, so a theme change and a Sheet scroll in the same frame draw twice. This is accepted: both draws are cheap and idempotent.
 
-**Landing status:** SPN-146 stays open. The ticket file, `completed_since` and SPN-089's `depends_on` are unchanged on this branch, and the owner's landing decision is pending.
+**Landing status (owner, chat 2026-11-10):** option 1, land with the hosted-breach criterion recorded as unmet. The ticket file is deleted, SPN-146 is in `completed_since`, and SPN-089's `depends_on` is cleared; SPN-089 now carries the hosted performance gate. The PR size is approved as is (+26.7k).
 
 Describes the branch from commit d890587c on. Later commits changed `web/Collaborators.tsx` and `src/ui/redrawScheduler.ts` (theme redraw at once, Sheet scroll/zoom on the frame path) and added tests and documentation; the Doc-side measurements below predate the Sheet routing change and are unaffected by it, since Docs keep the interval.
 
@@ -41,7 +41,7 @@ them to the frame path measured 106 KB of non-old allocation per key against 84 
 
 **PR size and evidence storage.** The 29 largest raw per-run `metrics.json` files (1.1 million lines) are gzipped in
 [the patch-ab evidence](evidence/SPN-146/patch-ab/README.md#️-raw-per-run-metricsjson-files); the PR is +26.7k insertions (net +26.1k)
-and the owner's size exception, approved at about 17k, awaits re-confirmation.
+and the owner re-confirmed the size exception at this size (chat, 2026-11-10).
 
 **Sheet join and selection updates.** Events that reach `schedule()` (member joins, selection and sheet changes) can trail the previous
 draw by up to 150 ms, as Doc events already did. `syncPresence.test.ts` pins that a Sheet member join redraws within one interval.
@@ -63,10 +63,10 @@ The 9 KB per key residual is left as is: no action is taken in SPN-146, and a st
 so they are inert in production. They move out of `src/` the same day the owner accepts or rejects the unmet
 acceptance below.
 
-**Owner decision needed (not made).** Landing closes a ticket whose headline acceptance, no flush breach under
+**Owner decision (made, chat 2026-11-10: accept and land, option 1).** Landing closes a ticket whose headline acceptance, no flush breach under
 hosted stress, is recorded as not met. The choices are: accept the three fixes and land with the criterion
 recorded here; keep SPN-146 open for the hosted proof; or file a sized follow-up for the criterion, which must
-carry SPN-089's performance gate. No such decision exists yet.
+carry SPN-089's performance gate. The owner chose the first.
 
 **What is and is not proven.** The two earlier fixes are proven by hosted A/B on the pause length of each major.
 Neither removed every 100 ms breach (cycle 2: patched 1 of 8, 106.1 ms, 79.4 ms of it GC inside the flush), and the
@@ -423,12 +423,12 @@ both and their file-reading assertions are deleted. Their results remain recorde
 the earlier sections. The runner, converter and watchdog sources are kept for now because the
 next question may reuse them; move or remove them once the ticket's verdict is in.
 
-**Landing bookkeeping is not acceptance, and is deferred.** The process prepares the landing bookkeeping (ticket
+**Landing bookkeeping is not acceptance (deferred until 2026-11-10, now applied).** The process prepares the landing bookkeeping (ticket
 file deleted, `completed_since`, SPN-089's dependency dropped) before grading
 ([run-backlog step 3](../run-backlog.md#3-get-two-independent-grades)). With the hosted-breach criterion unmet and
 the owner decision above unmade, this PR keeps `docs/todo/SPN-146.md`, the backlog counter and SPN-089's
 `depends_on: [SPN-146]` as on main, so nothing closes or ungates ahead of that decision (review round 7, 2026-11-09). The
-three edits are applied in the merge-preparation commit once the owner chooses. The earlier text follows.
+three edits were applied in the merge-preparation commit after the owner chose on 2026-11-10. The earlier text follows.
 (Status update: the hosted mobile gate has since passed once on
 `dde23e1`; the head's remaining checks are recorded in the hosted result below.)
 
@@ -598,7 +598,7 @@ tests passing. The owner ruled on the open points:
   work-scaling test that shows the mechanism deterministically.
 - **The process changes stay in this PR** (`docs/run-backlog.md`, `docs/todo/process.md`,
   `backlog-workflow.md`, `AGENTS.md`). Splitting them out is declined, again. Reviewers do not deduct for it.
-- **The PR size was approved at about 17k lines; the head is now +26.7k insertions (15.0k evidence, 11.7k other) and the owner has not re-confirmed it.** (Earlier wording: the PR size is approved, about 17k lines, mostly retained evidence and diagnostics). Reviewers do not
+- **The PR size was approved at about 17k lines; the head is now +26.7k insertions (15.0k evidence, 11.7k other) and the owner re-confirmed it on 2026-11-10.** (Earlier wording: the PR size is approved, about 17k lines, mostly retained evidence and diagnostics). Reviewers do not
   deduct for it.
 - **The diagnostics move out of the product tree after the fix is proven**, not before.
 
