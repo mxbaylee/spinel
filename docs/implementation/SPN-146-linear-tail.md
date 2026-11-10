@@ -29,6 +29,10 @@ they do not trail by an interval. A Doc keeps those events inside the interval: 
 them to the frame path measured 106 KB of non-old allocation per key against 84 KB with the interval (local,
 1 and 3 runs, 2,086 keys).
 
+**PR size and evidence storage.** The 29 largest raw per-run `metrics.json` files (1.1 million lines) are gzipped in
+[the patch-ab evidence](evidence/SPN-146/patch-ab/README.md#️-raw-per-run-metricsjson-files); the PR is about +26.6k lines
+and the owner's size exception, approved at about 17k, awaits re-confirmation.
+
 **Sheet join and selection updates.** Events that reach `schedule()` (member joins, selection and sheet changes) can trail the previous
 draw by up to 150 ms, as Doc events already did.
 
@@ -586,7 +590,7 @@ tests passing. The owner ruled on the open points:
   work-scaling test that shows the mechanism deterministically.
 - **The process changes stay in this PR** (`docs/run-backlog.md`, `docs/todo/process.md`,
   `backlog-workflow.md`, `AGENTS.md`). Splitting them out is declined, again. Reviewers do not deduct for it.
-- **The PR size is approved** (about 17k lines, mostly retained evidence and diagnostics). Reviewers do not
+- **The PR size was approved at about 17k lines; the head is now about +26.6k (+15.0k evidence, 11.6k other) and the owner has not re-confirmed it.** (Earlier wording: the PR size is approved, about 17k lines, mostly retained evidence and diagnostics). Reviewers do not
   deduct for it.
 - **The diagnostics move out of the product tree after the fix is proven**, not before.
 

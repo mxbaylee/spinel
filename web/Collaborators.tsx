@@ -109,7 +109,7 @@ export function collaboratorColor(id: string) {
 }
 
 /** Shortest gap between remote-caret redraws while the document is changing (SPN-146). */
-const REDRAW_INTERVAL_MS = 150;
+export const REDRAW_INTERVAL_MS = 150;
 
 export async function watchPresence(
   univer: Univer,
@@ -333,11 +333,7 @@ function watchSyncPresence(
       else schedule();
     }),
   );
-  cleanups.push(
-    watchTheme(() => {
-      if (!disposed) redraw.runNow();
-    }),
-  );
+  cleanups.push(watchTheme(() => redraw.runNow()));
   window.addEventListener('resize', scheduleFrame);
   cleanups.push(() => window.removeEventListener('resize', scheduleFrame));
   const scrolling = api.addEvent(api.Event.Scroll, ({ workbook }) => {

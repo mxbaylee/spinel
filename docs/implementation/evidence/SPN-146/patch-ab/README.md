@@ -80,6 +80,6 @@ The label `ci-patch-ab-worker` and its `VITE_DOC_LAYOUT_WORKER` toggle were remo
 
 ## 🗜️ Raw per-run `metrics.json` files
 
-Twenty-nine of the largest per-run `metrics.json` files (about 1.1 million pretty-printed lines, 60 MB) are stored as
+Twenty-nine of the largest per-run `metrics.json` files (about 1.1 million pretty-printed lines, 31.9 MB uncompressed, 1.7 MB gzipped) are stored as
 `metrics.json.gz` so the PR's line count reflects reviewable change. Unpack one with `gunzip -k metrics.json.gz`; the
 content is byte-identical to the file the workflow produced. Nothing in the repository reads these files.

@@ -171,3 +171,15 @@ test('after a trailing-timer draw and after cancel, schedule arms new work', () 
   scheduler.schedule();
   expect(env.pending()).toBe(1);
 });
+
+test('a request exactly one interval after the last draw takes a frame, not a timer', () => {
+  const env = fakeClock();
+  let draws = 0;
+  const scheduler = redrawScheduler(() => draws++, 150, env.clock);
+  scheduler.runNow();
+  env.advance(150);
+  scheduler.schedule();
+  env.frame();
+  expect(draws).toBe(2);
+  expect(env.pending()).toBe(0);
+});
