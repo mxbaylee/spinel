@@ -1,7 +1,7 @@
 /**
  * Coalesces redraw requests: the first request after a quiet period draws on the next animation frame, and
- * requests inside the interval share one trailing draw when it elapses (SPN-146). The caller reports the
- * draw by calling `ran()` at its start; `cancel()` drops anything pending.
+ * requests inside the interval share one trailing draw when it elapses (SPN-146). `cancel()` drops anything
+ * pending and `runNow()` draws at once and restarts the interval.
  */
 export interface RedrawClock {
   now(): number;

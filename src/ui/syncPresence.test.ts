@@ -388,3 +388,32 @@ test('disposing drops a pending trailing redraw and ignores later theme changes 
   await vi.advanceTimersByTimeAsync(REDRAW_MS * 3);
   expect(drawPresence).not.toHaveBeenCalled();
 });
+
+test('scrolling and zooming a Sheet redraw on the next frame even inside the redraw interval (SPN-146)', async () => {
+  const f = await fixture('sheet');
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20); // a layout draw has just run; the interval is closed
+  vi.mocked(drawPresence).mockClear();
+  f.scrolling.next();
+  await vi.advanceTimersByTimeAsync(20); // one frame, far less than the interval
+  expect(drawPresence).toHaveBeenCalled();
+  vi.mocked(drawPresence).mockClear();
+  f.transforms.next();
+  await vi.advanceTimersByTimeAsync(20);
+  expect(drawPresence).toHaveBeenCalled();
+});
+
+test('a Doc keeps scroll and transform events inside the redraw interval, since typing raises them (SPN-146)', async () => {
+  const f = await fixture();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS + 20);
+  f.dirty.next(true);
+  await vi.advanceTimersByTimeAsync(20);
+  vi.mocked(drawPresence).mockClear();
+  f.scrolling.next();
+  f.transforms.next();
+  await vi.advanceTimersByTimeAsync(20);
+  expect(drawPresence).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(REDRAW_MS);
+  expect(drawPresence).toHaveBeenCalledOnce();
+});

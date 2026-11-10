@@ -24,6 +24,22 @@ for the interval. With the theme change throttled, the presence e2e (`e2e/presen
 caret label in the old theme and failed 2 of 3 local runs; with the immediate redraw it passed 6 of 6, and the
 pre-throttle code passed 5 of 5. A unit test pins it (`syncPresence.test.ts`, theme at once inside the interval).
 
+**Scroll and zoom.** Sheets redraw remote carets on the next frame after a scroll, zoom, resize or transform, so
+they do not trail by an interval. A Doc keeps those events inside the interval: typing raises them, and sending
+them to the frame path measured 106 KB of non-old allocation per key against 84 KB with the interval (local,
+1 and 3 runs, 2,086 keys).
+
+**Diagnostics left in the product tree, and when they go.** `src/ui/nativeDocFlushDiagnostic.ts` (gated by
+`VITE_DOC_FLUSH_DIAGNOSTIC=1` in `web/docResponsivenessEvidence.ts`), `scripts/ci/doc-native-runtime/*` and the
+`SPN146_AB_V8_FLAGS` hook stay until the owner closes the hosted-breach question; no in-repo build sets the flag,
+so they are inert in production. They move out of `src/` the same day the owner accepts or rejects the unmet
+acceptance below.
+
+**Owner decision needed (not made).** Landing closes a ticket whose headline acceptance, no flush breach under
+hosted stress, is recorded as not met. The choices are: accept the three fixes and land with the criterion
+recorded here; keep SPN-146 open for the hosted proof; or file a sized follow-up for the criterion, which must
+carry SPN-089's performance gate. No such decision exists yet.
+
 **What is and is not proven.** The two earlier fixes are proven by hosted A/B on the pause length of each major.
 Neither removed every 100 ms breach (cycle 2: patched 1 of 8, 106.1 ms, 79.4 ms of it GC inside the flush), and the
 presence fix has no hosted A/B yet, so **the claim that the tail is gone is not made**. The remaining majors are

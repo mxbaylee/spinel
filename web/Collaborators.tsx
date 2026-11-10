@@ -254,6 +254,15 @@ function watchSyncPresence(
   const schedule = () => {
     if (!disposed) redraw.schedule();
   };
+  // Sheet scrolling, zooming and resizing move every caret, so they redraw on the next frame rather than
+  // trailing by an interval. A Doc raises the same events while typing (measured: 84 against 106 KB of Blink
+  // objects per key when they skip the interval), so Docs keep the interval for them.
+  const follow = redrawScheduler(() => update(), 0);
+  const scheduleFrame = () => {
+    if (disposed) return;
+    if (docSelections) redraw.schedule();
+    else follow.schedule();
+  };
   const sendCursor = () => {
     if (disposed || !state.connected || !state.selfId || !active) {
       previous = '';
@@ -329,10 +338,10 @@ function watchSyncPresence(
       if (!disposed) redraw.runNow();
     }),
   );
-  window.addEventListener('resize', schedule);
-  cleanups.push(() => window.removeEventListener('resize', schedule));
+  window.addEventListener('resize', scheduleFrame);
+  cleanups.push(() => window.removeEventListener('resize', scheduleFrame));
   const scrolling = api.addEvent(api.Event.Scroll, ({ workbook }) => {
-    if (workbook.getId() === id) schedule();
+    if (workbook.getId() === id) scheduleFrame();
   });
   cleanups.push(() => scrolling.dispose());
   if (render) {
@@ -342,14 +351,14 @@ function watchSyncPresence(
       else schedule();
     });
     cleanups.push(() => activation.unsubscribe());
-    const transform = render.scene.onTransformChange$.subscribeEvent(schedule);
-    const engine = render.engine.onTransformChange$.subscribeEvent(schedule);
+    const transform = render.scene.onTransformChange$.subscribeEvent(scheduleFrame);
+    const engine = render.engine.onTransformChange$.subscribeEvent(scheduleFrame);
     cleanups.push(
       () => transform.unsubscribe(),
       () => engine.unsubscribe(),
     );
     for (const viewport of render.scene.getViewports()) {
-      const scrolling = viewport.onScrollAfter$.subscribeEvent(schedule);
+      const scrolling = viewport.onScrollAfter$.subscribeEvent(scheduleFrame);
       cleanups.push(() => scrolling.unsubscribe());
     }
     if (docSelections) {
@@ -388,6 +397,7 @@ function watchSyncPresence(
     disposed = true;
     clearInterval(timer);
     redraw.cancel();
+    follow.cancel();
     cleanups.reverse().forEach((close) => close());
     clearPopups();
     publish([]);
