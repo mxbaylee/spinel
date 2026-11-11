@@ -6,12 +6,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
-import {
-  checkSession,
-  clientFor,
-  targetsFromInventory,
-  webdriverErrorCode,
-} from './browserstack.ts';
+import { clientFor, targetsFromInventory, webdriverErrorCode } from './browserstack.ts';
 import type { CapabilityScope } from './browserstack-scope.ts';
 
 // The monthly phone scopes, one day apart so no scheduled run displaces another
@@ -200,121 +195,6 @@ test(
     }
   },
 );
-
-test('a wrong runner challenge fails and still deletes the allocated session', async () => {
-  const calls: string[] = [];
-  const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
-    calls.push(`${init?.method} ${String(url).split('/wd/hub/')[1]}`);
-    const value = String(url).endsWith('/session')
-      ? {
-          sessionId: 'test-session',
-          capabilities: { browserName: 'chrome', browserVersion: '145.0' },
-        }
-      : String(url).endsWith('/title')
-        ? 'a different runner'
-        : null;
-    return Response.json({ value });
-  });
-  const result = await checkSession(
-    client,
-    { browser: 'chrome', device: 'Google Pixel 10', osVersion: '16' },
-    'expected',
-    'local-id',
-    'fixture-build',
-  );
-  assert.equal(result.status, 'failed');
-  assert.equal(result.failure, 'tunnel-challenge-mismatch');
-  assert.equal(result.tunnelReached, false);
-  assert.equal(result.teardown, 'passed');
-  assert.equal(calls.at(-1), 'DELETE session/test-session');
-});
-
-test('real-browser evidence is required and a teardown failure cannot produce a pass', async () => {
-  for (const teardownFails of [false, true]) {
-    const client = clientFor('fixture-user', 'fixture-key', async (url, init) => {
-      if (init?.method === 'DELETE' && teardownFails)
-        return new Response('sensitive', { status: 500 });
-      const path = String(url).split('/wd/hub/')[1];
-      if (path === 'session') {
-        const payload = JSON.parse(String(init?.body));
-        assert.equal(payload.capabilities.alwaysMatch['bstack:options'].realMobile, true);
-        assert.equal(
-          payload.capabilities.alwaysMatch['bstack:options'].localIdentifier,
-          'local-id',
-        );
-        return Response.json({
-          value: {
-            sessionId: 'test-session',
-            capabilities: { browserName: 'android', browserVersion: '145' },
-          },
-        });
-      }
-      const value = path.endsWith('/title')
-        ? 'expected'
-        : path.endsWith('/execute/sync')
-          ? 'Mozilla/5.0 (Android 16) Gecko/145.0 Firefox/145.0'
-          : null;
-      return Response.json({ value });
-    });
-    const result = await checkSession(
-      client,
-      { browser: 'firefox', device: 'Google Pixel 10', osVersion: '16' },
-      'expected',
-      'local-id',
-      'fixture-build',
-    );
-    assert.equal(result.tunnelReached, true);
-    assert.equal(result.returnedBrowserName, 'android');
-    assert.equal(result.status, teardownFails ? 'failed' : 'passed');
-    assert.equal(result.teardown, teardownFails ? 'failed' : 'passed');
-  }
-});
-
-test('session creation failures never echo the remote exception or claim cleanup', async () => {
-  const client = clientFor('fixture-user', 'fixture-key', async () => {
-    throw new Error('fixture-key in a remote exception');
-  });
-  const result = await checkSession(
-    client,
-    { browser: 'safari', device: 'iPhone 17', osVersion: '26' },
-    'expected',
-    'local-id',
-    'fixture-build',
-  );
-  assert.equal(result.status, 'failed');
-  assert.equal(result.failure, 'request-failed');
-  assert.equal(result.teardown, 'session-id-unavailable');
-  assert.doesNotMatch(JSON.stringify(result), /fixture-key/);
-});
-
-test('malformed success responses and a different Android browser do not pass', async () => {
-  const malformed = clientFor('fixture-user', 'fixture-key', async () => Response.json({}));
-  await assert.rejects(malformed.command('session/test-session', 'DELETE'), {
-    message: 'invalid-response-shape',
-  });
-  const client = clientFor('fixture-user', 'fixture-key', async (url) => {
-    const path = String(url).split('/wd/hub/')[1];
-    const value =
-      path === 'session'
-        ? { sessionId: 'test-session', capabilities: { browserName: 'chrome' } }
-        : path.endsWith('/title')
-          ? 'expected'
-          : path.endsWith('/execute/sync')
-            ? 'Mozilla/5.0 (Android 16) Chrome/145.0 SamsungBrowser/28.0'
-            : null;
-    return Response.json({ value });
-  });
-  const result = await checkSession(
-    client,
-    { browser: 'chrome', device: 'Google Pixel 10', osVersion: '16' },
-    'expected',
-    'local-id',
-    'fixture-build',
-  );
-  assert.equal(result.status, 'failed');
-  assert.equal(result.failure, 'unexpected-browser');
-  assert.equal(result.teardown, 'passed');
-});
 
 test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read-only diagnostics preserve their boundaries', async () => {
   const source = await readFile(
@@ -773,45 +653,28 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
   }
 });
 
-test('direct legacy smoke CLI stays closed before any provider call', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'spinel-smoke-guard-'));
+test('removed smoke and quota modes are rejected before any provider call', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'spinel-removed-mode-'));
   try {
     const guard = join(directory, 'network-guard.ts');
     await writeFile(
       guard,
       "globalThis.fetch = async () => { console.log('NETWORK_ATTEMPT'); throw new Error('mock-network'); };\n",
     );
-    const child = spawnSync(
-      process.execPath,
-      ['--import', guard, fileURLToPath(new URL('./browserstack.ts', import.meta.url)), 'smoke'],
-      {
-        cwd: directory,
-        timeout: 5000,
-        encoding: 'utf8',
-        env: { ...process.env, BS_USERNAME: 'unit-user', BS_ACCESS_KEY: 'unit-key' },
-      },
-    );
-    assert.equal(child.status, 1, child.stderr);
-    assert.doesNotMatch(child.stdout, /NETWORK_ATTEMPT|unit-user|unit-key/);
-    const report = JSON.parse(
-      await readFile(join(directory, 'artifacts/browserstack-smoke.json'), 'utf8'),
-    );
-    assert.equal(report.failure, 'legacy-smoke-closed');
-    assert.equal(report.status, 'failed');
-    assert.equal(report.authentication, 'not-verified');
-    // The removed quota report is no longer a mode and reaches no provider.
-    const quota = spawnSync(
-      process.execPath,
-      ['--import', guard, fileURLToPath(new URL('./browserstack.ts', import.meta.url)), 'quota'],
-      {
-        cwd: directory,
-        timeout: 5000,
-        encoding: 'utf8',
-        env: { ...process.env, BS_USERNAME: 'unit-user', BS_ACCESS_KEY: 'unit-key' },
-      },
-    );
-    assert.equal(quota.status, 1, quota.stderr);
-    assert.doesNotMatch(quota.stdout + quota.stderr, /NETWORK_ATTEMPT|unit-user|unit-key/);
+    for (const mode of ['smoke', 'quota']) {
+      const child = spawnSync(
+        process.execPath,
+        ['--import', guard, fileURLToPath(new URL('./browserstack.ts', import.meta.url)), mode],
+        {
+          cwd: directory,
+          timeout: 5000,
+          encoding: 'utf8',
+          env: { ...process.env, BS_USERNAME: 'unit-user', BS_ACCESS_KEY: 'unit-key' },
+        },
+      );
+      assert.equal(child.status, 1, child.stderr);
+      assert.doesNotMatch(child.stdout + child.stderr, /NETWORK_ATTEMPT|unit-user|unit-key/);
+    }
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

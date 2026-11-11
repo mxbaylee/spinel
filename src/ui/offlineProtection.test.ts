@@ -37,3 +37,11 @@ test('an older storage answer cannot replace a newer identical-title preparation
   expect(completed).toEqual({ ...newer, ...protectionDetail('denied') });
   expect(answeredMessage(completed, deciding, 'granted')).toBe(completed);
 });
+
+test('a late storage answer after the preparation scope ended leaves the result untouched', () => {
+  expect(answeredMessage(deciding, deciding, 'granted', false)).toBe(deciding);
+  expect(answeredMessage(deciding, deciding, 'denied', true)).toEqual({
+    ...deciding,
+    ...protectionDetail('denied'),
+  });
+});

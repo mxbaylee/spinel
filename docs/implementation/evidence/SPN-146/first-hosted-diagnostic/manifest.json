@@ -1,0 +1,221 @@
+{
+  "diagnosticOnly": true,
+  "hostedSource": "1eeb90f1d50291791d39913350c28c672c7154ee",
+  "run": 41992099001,
+  "job": 127126484269,
+  "artifact": 13398019033,
+  "disposition": "failed and causally inconclusive; no raw trace; no unchanged rerun",
+  "candidateSources": [
+    {
+      "path": "e2e/doc-responsiveness-callback-trace.ts",
+      "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b"
+    },
+    {
+      "path": "e2e/doc-responsiveness-native-trace.ts",
+      "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888"
+    },
+    {
+      "path": "scripts/ci/doc-native-trace.test.ts",
+      "sha256": "db509f4b493f7c7eaea10e81166ba42ae86395fce4c243e39fc289fbb0dd3bee"
+    }
+  ],
+  "artifactMembers": [
+    {
+      "path": "spn146-diagnostic-build.json",
+      "bytes": 2375,
+      "sha256": "de857e1545c2002fad255181648dbedb153d34418e60399863dcbfc2aa12ba50"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/error-context.md",
+      "bytes": 8409,
+      "sha256": "e013ac2a44b28a913575c9431911002bbcb6b95cba37989833471545e8d46e4c"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "bytes": 499807,
+      "sha256": "6270f0eb25f396ed33691dc1a9fa52f9d3adedfd8dad9bac3a7ce0dd2423136b"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+      "bytes": 240,
+      "sha256": "19f99cb5c4042479da4b4df8752b705f54192063f40a3d8b33f906bac6e540db"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+      "bytes": 4785899,
+      "sha256": "ceb0fc6ff2b96a2f95765a4d84877a3f77234052f08aab24f488a03a173fa6da"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-progress.json",
+      "bytes": 2669,
+      "sha256": "9e64dcd10a45ebcb86ed90fc168230765154dfeb996558c4d33c6d91600d3f76"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-runtime-trace.pftrace.gz.receipt.json",
+      "bytes": 831,
+      "sha256": "93ce579ba97ff3b0f5182a8ee5a866ae606fac34418b8e2525185e034fcea799"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn146-native-caches.json",
+      "bytes": 19651759,
+      "sha256": "6134e03a7ce8dfe95a6967cd0a5caa11a682b27f685ab1cb6de5431bf650a343"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/test-failed-1.png",
+      "bytes": 81572,
+      "sha256": "3aa2cae4187666ba7d0fde2aa5fa810602cfc76bd1215e6b9a5caaded6f61da5"
+    },
+    {
+      "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/test-failed-2.png",
+      "bytes": 71339,
+      "sha256": "8a48c09d67847d38a8448626ea6cf6854342fee40e902f93315faccaab4231a4"
+    },
+    {
+      "path": "playwright-report/doc-responsiveness.json",
+      "bytes": 29877,
+      "sha256": "d6cad9e48b89dc8dd8e716dc077cb08236f89d8021dbf4e780c348fed1bc5612"
+    }
+  ],
+  "payloads": [
+    {
+      "name": "diagnostic-13398019033.zip.gz",
+      "rawBytes": 1230504,
+      "storedBytes": 1079983,
+      "rawSha256": "3d3a62137f076ea4a59a63539878ee4b9ee8a68bae1a8b1fb1d9e83a8dbbe81b",
+      "storedSha256": "15f8b0db6ad27aa32819a324e3aaa25497293e763838723802cc1165edb0b860"
+    },
+    {
+      "name": "diagnostic-job-full.log.gz",
+      "rawBytes": 60244,
+      "storedBytes": 13376,
+      "rawSha256": "4f98bd13cc8d31c4e5d5ce78f350ce5f915c986e7d995776b8c8de8ca48234a2",
+      "storedSha256": "8916bca62dc9da3508db4f88555d75dd5dc8f6d6b5a4fd5e4360044bfddbcd48"
+    },
+    {
+      "name": "diagnostic-run-final.json.gz",
+      "rawBytes": 12212,
+      "storedBytes": 1664,
+      "rawSha256": "3f663db3f029d1b341955a9c98d4aa5e3ff6f53ebd42f5a75ba02edb40983b94",
+      "storedSha256": "95226eba8a68eb7b9bc9efaf8f0f8b23bdb8119948e279a0dd60e3c015e74efd"
+    },
+    {
+      "name": "diagnostic-jobs-final.json.gz",
+      "rawBytes": 3117,
+      "storedBytes": 858,
+      "rawSha256": "a9fd688bf0a9f0d555b5494df79f8035221b50736eb22300493d5fc8a8f9327d",
+      "storedSha256": "5e44a467cef31a123828e83e93140f4aa5ff1dd2da74e752766a2de211f53d5e"
+    },
+    {
+      "name": "diagnostic-artifacts-final.json.gz",
+      "rawBytes": 743,
+      "storedBytes": 448,
+      "rawSha256": "cfbf29e65e66962e9d160c6cf41881b9c6e86c3145215925004c02752da22ebe",
+      "storedSha256": "7053b63c4e21ad593c2ddd2047ecea099d9c3f157a39b011ee50ab5701c8410b"
+    },
+    {
+      "name": "diagnostic-summary.json.gz",
+      "rawBytes": 10233,
+      "storedBytes": 3015,
+      "rawSha256": "9abba68ec179311644c754f48155d27ba24e79acaabcaf5e8ced7acd05f36043",
+      "storedSha256": "0df9a0a4698ebaf1d287d0530e1c8cf999fe42f171ecc249b8432b50d9cdeddf"
+    },
+    {
+      "name": "inspect-diagnostic.ts.gz",
+      "rawBytes": 1578,
+      "storedBytes": 699,
+      "rawSha256": "476a4e188eca83f0bbd6fd172794aeba0a205ec581323401e3ca817e06af83a7",
+      "storedSha256": "d75a0ffe2331bf7e4e0ef032a01f80533740c9832f591bb48de6c2e1aad8ce76"
+    },
+    {
+      "name": "diagnostic-inspection-watchdog.json.gz",
+      "rawBytes": 1545,
+      "storedBytes": 417,
+      "rawSha256": "58ab19244ed8da9e4e838eeac5b5579b8741316d6260c81e9e1fcee64557e0e8",
+      "storedSha256": "45b8dfb9b41516232a8f69f45a08c93fc6ffe5171eef16a46c63d8920200365a"
+    },
+    {
+      "name": "diagnostic-inspection.log.gz",
+      "rawBytes": 10300,
+      "storedBytes": 3072,
+      "rawSha256": "2780419c0ee5b3924d1ddaa2bc7ae57432d8df81626f3fd08a5465f598796dc0",
+      "storedSha256": "3449865fe246ea3523a3869faaaa2fccb9cb8881468be5773cb4342812d4eecc"
+    },
+    {
+      "name": "telemetry-backlog.log.gz",
+      "rawBytes": 16,
+      "storedBytes": 36,
+      "rawSha256": "d5d5cc1ef0bf6ba1c6d613f05063308d50cdb28350458fc6901adef0520e6294",
+      "storedSha256": "59afa59eeb633f52038b9fec641e0cef13fcae8c966079588159547ca487370d"
+    },
+    {
+      "name": "telemetry-close-watchdog.json.gz",
+      "rawBytes": 3388,
+      "storedBytes": 1024,
+      "rawSha256": "9aac7ecd52548e35767e4bfb4244fab48a6c4493cbf12a2932bd0fc95f0aede7",
+      "storedSha256": "39639d494ffdcf5455d0b13a5912a292ebcf13adad1d16cece0fe08d9fdfb128"
+    },
+    {
+      "name": "telemetry-close.log.gz",
+      "rawBytes": 5077,
+      "storedBytes": 1490,
+      "rawSha256": "290ae7710d002f60d2470238317c8034f94cef679c7d7b240420fc669e50de69",
+      "storedSha256": "0dde7395a091659c6510c05d5778f6284d69f3c1f20f47cfa6a7b151d4d75b03"
+    },
+    {
+      "name": "telemetry-lint-watchdog.json.gz",
+      "rawBytes": 1817,
+      "storedBytes": 495,
+      "rawSha256": "7acc5ed703c36545e8cda333446f27d54063a62a7802afd0c7f94e691124b246",
+      "storedSha256": "b3a37c018ac05089bbfbfdc8dfea1ab381291bf8d71fa6733b6213a835a02f66"
+    },
+    {
+      "name": "telemetry-lint.log.gz",
+      "rawBytes": 67,
+      "storedBytes": 87,
+      "rawSha256": "83fa9a9f61498c693b56decfc84a082e6c525e6adaafce0aa19bd2b6bb91cbd7",
+      "storedSha256": "ca4d78d315d7fbaa3e15e36337fac23c870d3e840baaecd4818867defae5189c"
+    },
+    {
+      "name": "telemetry-offline-watchdog.json.gz",
+      "rawBytes": 3392,
+      "storedBytes": 1025,
+      "rawSha256": "579d22bf4aa39b37b2adc846d9d6ac857418c1a704e35f1e44fd243315725117",
+      "storedSha256": "1e84d8196ad52def15fc1c223f931ea7113f29c641fcf8da3afe9498bb47926a"
+    },
+    {
+      "name": "telemetry-offline.log.gz",
+      "rawBytes": 4245,
+      "storedBytes": 1422,
+      "rawSha256": "3f4271e9fce9da640dd10708b26ca23deee39c629786a0033e531b7b289fa1e7",
+      "storedSha256": "99f8821dc346c97ef5a485d5d03182d1573c519e67bbb4268df3cc52f699fe71"
+    },
+    {
+      "name": "telemetry-types-watchdog.json.gz",
+      "rawBytes": 2166,
+      "storedBytes": 519,
+      "rawSha256": "d39e1feb96e8c97ba1418d00ee59e9fe28731932ede9347222835d6f933c66e2",
+      "storedSha256": "9ec6f8bd247111ce4ddac6aec7bfc77c87ab94748f40f500673f4d36cbb18801"
+    },
+    {
+      "name": "telemetry-types.log.gz",
+      "rawBytes": 68,
+      "storedBytes": 86,
+      "rawSha256": "66e7ef79b3c8315f975aa63b25794fd09b11aabc01328bb427168d764d742671",
+      "storedSha256": "5b6913e7fcfb17a3b8705961244a15847a0ace7aa9fc23e5d934f755ea41236e"
+    },
+    {
+      "name": "spn146-diagnostic-disposition-a.md.gz",
+      "rawBytes": 7827,
+      "storedBytes": 3721,
+      "rawSha256": "371997762080ed278902704a2e27d82eeb9e08146d81f6da8aee5b5c8f459756",
+      "storedSha256": "922614cf43c01af3a286e7d4826393b76ea5b785fd40a6542adba962b419d9ea"
+    },
+    {
+      "name": "spn146-diagnostic-disposition-b.md.gz",
+      "rawBytes": 8128,
+      "storedBytes": 3957,
+      "rawSha256": "821b7cf954f5aca1bfecc869390821d65d12ac8c7d424a09c081b0d75e136f7d",
+      "storedSha256": "da4c5d477bb2397f61c49f0099a3b1c6675b1c436526404a6fa9afca5d75af66"
+    }
+  ]
+}

@@ -95,9 +95,7 @@
     "builds": [
       {
         "buildId": "5802d28742dea83633be732af3dd9bd8d72c0d34",
-        "providerStatuses": [
-          "done"
-        ],
+        "providerStatuses": ["done"],
         "conflict": false,
         "sessionIds": [
           "c35a65e15df0cc708c5c0c7832f6fb98ff1fcd6f",
@@ -112,9 +110,7 @@
       },
       {
         "buildId": "d47710c513a76234828c6b539325dc4278f424e3",
-        "providerStatuses": [
-          "done"
-        ],
+        "providerStatuses": ["done"],
         "conflict": false,
         "sessionIds": [
           "86df27b7af8110ac8cb7e16a37562ab583c9e3bc",
@@ -129,9 +125,7 @@
       },
       {
         "buildId": "bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76",
-        "providerStatuses": [
-          "done"
-        ],
+        "providerStatuses": ["done"],
         "conflict": false,
         "sessionIds": [
           "5885cfb32a69ace80fb848999cb4c5571afbe1c7",
@@ -146,9 +140,7 @@
       },
       {
         "buildId": "dbd58709314b178b01d886c5a91be6e5c7311d22",
-        "providerStatuses": [
-          "done"
-        ],
+        "providerStatuses": ["done"],
         "conflict": false,
         "sessionIds": [
           "81a4cba3033bb2760f11bbe801b94a569b4ba6f4",
@@ -163,9 +155,7 @@
       },
       {
         "buildId": "e5ccd4281a6a3a833cd6b59e1641e149f34eb500",
-        "providerStatuses": [
-          "done"
-        ],
+        "providerStatuses": ["done"],
         "conflict": false,
         "sessionIds": [
           "65a1f6569b467ee40f62d591c8a931e7029f7620",
@@ -182,9 +172,7 @@
     "sessions": [
       {
         "sessionId": "b7c91146c925ed5d98567eb41cb43e7eeac5900b",
-        "buildIds": [
-          "e5ccd4281a6a3a833cd6b59e1641e149f34eb500"
-        ],
+        "buildIds": ["e5ccd4281a6a3a833cd6b59e1641e149f34eb500"],
         "observations": [
           {
             "source": "retained-smoke",
@@ -215,9 +203,7 @@
       },
       {
         "sessionId": "2a80cede7b3faa3d2c0e64eb295b9175c2406b9b",
-        "buildIds": [
-          "e5ccd4281a6a3a833cd6b59e1641e149f34eb500"
-        ],
+        "buildIds": ["e5ccd4281a6a3a833cd6b59e1641e149f34eb500"],
         "observations": [
           {
             "source": "retained-smoke",
@@ -248,9 +234,7 @@
       },
       {
         "sessionId": "65a1f6569b467ee40f62d591c8a931e7029f7620",
-        "buildIds": [
-          "e5ccd4281a6a3a833cd6b59e1641e149f34eb500"
-        ],
+        "buildIds": ["e5ccd4281a6a3a833cd6b59e1641e149f34eb500"],
         "observations": [
           {
             "source": "retained-smoke",
@@ -281,9 +265,7 @@
       },
       {
         "sessionId": "12a1af12bf9dfd03d7f62325dda0f784abd1439c",
-        "buildIds": [
-          "dbd58709314b178b01d886c5a91be6e5c7311d22"
-        ],
+        "buildIds": ["dbd58709314b178b01d886c5a91be6e5c7311d22"],
         "observations": [
           {
             "source": "retained-smoke",
@@ -314,9 +296,7 @@
       },
       {
         "sessionId": "19fe182c1aa612a5db508de9e9593cac2e227cc7",
-        "buildIds": [
-          "dbd58709314b178b01d886c5a91be6e5c7311d22"
-        ],
+        "buildIds": ["dbd58709314b178b01d886c5a91be6e5c7311d22"],
         "observations": [
           {
             "source": "retained-smoke",
@@ -347,9 +327,7 @@
       },
       {
         "sessionId": "81a4cba3033bb2760f11bbe801b94a569b4ba6f4",
-        "buildIds": [
-          "dbd58709314b178b01d886c5a91be6e5c7311d22"
-        ],
+        "buildIds": ["dbd58709314b178b01d886c5a91be6e5c7311d22"],
         "observations": [
           {
             "source": "retained-smoke",
@@ -380,9 +358,7 @@
       },
       {
         "sessionId": "c35a65e15df0cc708c5c0c7832f6fb98ff1fcd6f",
-        "buildIds": [
-          "5802d28742dea83633be732af3dd9bd8d72c0d34"
-        ],
+        "buildIds": ["5802d28742dea83633be732af3dd9bd8d72c0d34"],
         "observations": [
           {
             "source": "build-list",
@@ -401,9 +377,7 @@
       },
       {
         "sessionId": "8aa54a04f27c537ad36c42b05a9ffd6e6e7c5453",
-        "buildIds": [
-          "5802d28742dea83633be732af3dd9bd8d72c0d34"
-        ],
+        "buildIds": ["5802d28742dea83633be732af3dd9bd8d72c0d34"],
         "observations": [
           {
             "source": "build-list",
@@ -422,9 +396,7 @@
       },
       {
         "sessionId": "49d1cc9c7e50cfc9eff2727b2a903a78f7d85401",
-        "buildIds": [
-          "5802d28742dea83633be732af3dd9bd8d72c0d34"
-        ],
+        "buildIds": ["5802d28742dea83633be732af3dd9bd8d72c0d34"],
         "observations": [
           {
             "source": "build-list",
@@ -443,9 +415,7 @@
       },
       {
         "sessionId": "86df27b7af8110ac8cb7e16a37562ab583c9e3bc",
-        "buildIds": [
-          "d47710c513a76234828c6b539325dc4278f424e3"
-        ],
+        "buildIds": ["d47710c513a76234828c6b539325dc4278f424e3"],
         "observations": [
           {
             "source": "build-list",
@@ -464,9 +434,7 @@
       },
       {
         "sessionId": "eebc18376df5dfca0e2f57834b25cc80d9d4c857",
-        "buildIds": [
-          "d47710c513a76234828c6b539325dc4278f424e3"
-        ],
+        "buildIds": ["d47710c513a76234828c6b539325dc4278f424e3"],
         "observations": [
           {
             "source": "build-list",
@@ -485,9 +453,7 @@
       },
       {
         "sessionId": "190e93eeb9466c0240f7f5e0f9c905bac2c9d499",
-        "buildIds": [
-          "d47710c513a76234828c6b539325dc4278f424e3"
-        ],
+        "buildIds": ["d47710c513a76234828c6b539325dc4278f424e3"],
         "observations": [
           {
             "source": "build-list",
@@ -506,9 +472,7 @@
       },
       {
         "sessionId": "5885cfb32a69ace80fb848999cb4c5571afbe1c7",
-        "buildIds": [
-          "bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76"
-        ],
+        "buildIds": ["bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76"],
         "observations": [
           {
             "source": "build-list",
@@ -527,9 +491,7 @@
       },
       {
         "sessionId": "c6572a485df397cc213b2726a0b60dd6a5448727",
-        "buildIds": [
-          "bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76"
-        ],
+        "buildIds": ["bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76"],
         "observations": [
           {
             "source": "build-list",
@@ -548,9 +510,7 @@
       },
       {
         "sessionId": "ae5ab1da8ef39c388c89b0795993f753095b0e08",
-        "buildIds": [
-          "bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76"
-        ],
+        "buildIds": ["bb6e5ab6113d2e1c3fdf02e7f9fb03935e00dd76"],
         "observations": [
           {
             "source": "build-list",

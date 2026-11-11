@@ -42,8 +42,12 @@ The remaining parts of this contract were split by the Owner in chat on 2026-10-
 every unmet requirement stayed on a ticket:
 
 - [SPN-090](implementation/SPN-090.md) lands BrowserStack Android/iPhone launch and
-  stable-link observations with PR #224, once its three BrowserStack scopes have
-  run there (owner, 2026-11-03). The [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
+  stable-link observations with PR #224 (owner, 2026-11-03). The ticket is closed with
+  BrowserStack real-device runs standing in for the owner's own phones; its authored
+  Safari, Chrome and Firefox lanes have no passing run yet, and the owner will check
+  on a personal Android phone and iPhone and file follow-up tickets for any failure
+  (owner, 2026-11-11). Quota admission and reporting were dropped on 2026-11-04
+  ([record](implementation/SPN-090.md#-budget-estimation-removed-owner-2026-11-04)). The [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
   records observed operation limits, automated alternatives and the phone
   observations still unobserved. Its rules are kept under
   [real-phone verification rules](#real-phone-verification-rules).

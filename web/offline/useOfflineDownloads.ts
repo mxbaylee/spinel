@@ -417,10 +417,9 @@ export function useOfflineDownloads(
         };
         setMessage(result);
         if (outcome === 'prepared' && protection === null && asked) {
-          void asked.then((state) => {
-            if (!scope.isCurrent()) return;
-            setMessage((shown) => answeredMessage(shown, result, state));
-          });
+          void asked.then((state) =>
+            setMessage((shown) => answeredMessage(shown, result, state, scope.isCurrent())),
+          );
         }
       }
     } catch (error) {

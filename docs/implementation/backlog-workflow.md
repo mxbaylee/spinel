@@ -373,3 +373,37 @@ requests, documentation-only handling, desktop ownership and rejected incomplete
 results. The grooming PR must verify both labelled and unlabelled CI behavior,
 inspect manifests/artifacts for honest capture counts and record comparable
 timings. Source changes alone do not claim those checks passed.
+
+## Review–repair loop before a validation push
+
+Owner, chat 2026-11-06 (SPN-146). Before a validation or repair push intended to run CI,
+the implementing agent runs a loop: commit the complete candidate, obtain two fresh
+independent reviews of that exact SHA, require every reviewer who withholds points to list
+every actionable step to 100/100 (points at stake, exact file and line or command, change,
+and whether it is local, hosted-only or an owner decision, including one-point and
+impossible steps), repair every local step, recommit and review again. Push only when both
+reviews exceed 95; if every remaining deduction is hosted-only or an owner decision, stop and
+ask for a recorded one-time push exception.
+
+**Why.** Fixes that each earned a few points did not converge when reviewers listed only enough
+steps to clear 95, and hosted-only deductions looked like unfinished local work. Weighed across
+the personas: the Operator gets a visible path to a perfect score and an explicit stopping
+rule; the Owner can see which gaps need a decision; Collaborators and Guests are unaffected.
+The procedure is in [run-backlog](../run-backlog.md#-reviewrepair-loop-before-a-validation-push).
+
+## Reviewers do not deduct for CI results
+
+Owner, chat 2026-11-06 (SPN-146). Reviewers give no points less for CI that is pending, queued,
+missing, cancelled, failing or not yet run, on the reviewed SHA or another, and are not asked to
+check it. GitHub's required checks already gate every merge, and the numerical gate and the checks
+are separate. The rubric's 10 CI points grade whether the delivered workflows, job selection,
+diagnostics and runbooks are usable, never whether a run passed. Reviewers do still care about the
+specific tests related to the work: they run those locally, and a missing, weak or failing local
+test costs regression-evidence points. A report still lists the hosted acceptance that is pending
+so nobody mistakes the grade for a check result.
+
+**Why.** On SPN-146 reviewers repeatedly withheld a point or two for CI that had not run, which no
+local edit could clear and which duplicated a merge requirement. Weighed across the personas: the
+Operator keeps one clear gate per concern; the Owner sees grades about the work; Collaborators and
+Guests are unaffected. Procedure: [run-backlog](../run-backlog.md#3-get-two-independent-grades).
+

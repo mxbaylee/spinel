@@ -1,16 +1,157 @@
 import type { DesktopBrowser } from './desktop-browser.ts';
+import assert from 'node:assert/strict';
 
-export function clearDesktopStorage(browser: Pick<DesktopBrowser, 'evaluate'>, database: string) {
+export function validateStorageLossHandles(before: unknown, after: unknown) {
+  for (const handles of [before, after]) {
+    assert.ok(Array.isArray(handles) && handles.length > 0);
+    assert.ok(handles.every((handle) => typeof handle === 'string' && handle.length > 0));
+    assert.equal(new Set(handles).size, handles.length, 'Duplicate window handles are ambiguous.');
+  }
+  assert.deepEqual(
+    new Set(after as string[]),
+    new Set(before as string[]),
+    'Browser tabs changed during storage preparation.',
+  );
+}
+
+export function validateStorageLossTabs(preparationURL: string, tabs: string[]) {
+  assert.ok(tabs.length > 0, 'Storage preparation requires an observed browser tab.');
+  const origin = new URL(preparationURL).origin;
+  for (const url of tabs) {
+    assert.equal(typeof url, 'string');
+    assert.ok(url, 'An unreadable tab cannot establish storage quiescence.');
+    if (new URL(url).origin === origin)
+      assert.equal(url, preparationURL, 'Another fixture tab can still produce offline storage.');
+  }
+  assert.ok(tabs.includes(preparationURL), 'The inert fixture tab is missing.');
+  return tabs;
+}
+
+export type StorageLossTabMode = 'prepare' | 'handoff' | 'verify';
+export type StorageLossDocument = ReturnType<typeof inspectStorageLossDocument>;
+export type StorageLossTabInventory = {
+  before: string[];
+  after: string[];
+  documents?: StorageLossDocument[];
+};
+
+// Serialized into each fixture tab. The marker is page-only, never persisted.
+export function inspectStorageLossDocument(marker: string) {
+  return {
+    url: location.href,
+    fresh: !(globalThis as unknown as Record<string, unknown>)[marker],
+    ready: document.readyState,
+    marker: document.body?.dataset.spinelStorageLoss,
+    scripts: document.scripts.length,
+    controller: navigator.serviceWorker.controller?.scriptURL ?? null,
+  };
+}
+
+export function storageLossDocumentReady(url: string, state: StorageLossDocument) {
+  return (
+    state.url === url &&
+    state.fresh === true &&
+    state.ready === 'complete' &&
+    state.marker === 'inert' &&
+    state.scripts === 0 &&
+    state.controller === null
+  );
+}
+
+// Only owned fixture tabs may be navigated, once each. The handoff also observes
+// a fresh, uncontrolled document in every tab before the browser may shut down.
+export const safariStorageLossTabsScript = String.raw`
+function run(argv) {
+  var app = Application(Number(argv[0]));
+  var preparationURL = argv[1];
+  var originPrefix = argv[2];
+  var mode = argv[3];
+  var marker = argv[4];
+  var inspect = '(' + ${JSON.stringify(inspectStorageLossDocument.toString())} + ')(' + JSON.stringify(marker) + ')';
+  var ready = ${storageLossDocumentReady.toString()};
+  function tabs() {
+    var result = [];
+    app.windows().forEach(function(window) {
+      window.tabs().forEach(function(tab) {
+        result.push({ key: window.id() + ':' + tab.index(), tab: tab });
+      });
+    });
+    return result;
+  }
+  var initial = tabs();
+  var keys = initial.map(function(entry) { return entry.key; }).sort();
+  if (!keys.length || keys.some(function(key, index) { return index && key === keys[index - 1]; }))
+    throw new Error('Ambiguous Safari tab inventory');
+  var before = initial.map(function(entry) { return entry.tab.url(); });
+  if (mode !== 'verify') {
+    initial.forEach(function(entry) {
+      var tab = entry.tab;
+      var url = tab.url();
+      if (url.indexOf(originPrefix) !== 0) return;
+      if (mode === 'handoff') {
+        app.doJavaScript('globalThis[' + JSON.stringify(marker) + '] = true; void 0;', { in: tab });
+        tab.url = preparationURL;
+      } else if (url !== preparationURL) tab.url = preparationURL;
+    });
+  }
+  var deadline = Date.now() + 2000;
+  var after;
+  var documents;
+  do {
+    var current = tabs();
+    if (JSON.stringify(current.map(function(entry) { return entry.key; }).sort()) !== JSON.stringify(keys))
+      throw new Error('Safari tabs changed during storage preparation');
+    after = current.map(function(entry) { return entry.tab.url(); });
+    documents = mode === 'handoff' ? current.filter(function(entry) {
+      return entry.tab.url().indexOf(originPrefix) === 0;
+    }).map(function(entry) {
+      return JSON.parse(app.doJavaScript('JSON.stringify(' + inspect + ')', { in: entry.tab }));
+    }) : undefined;
+    if (after.every(function(url) { return url.indexOf(originPrefix) !== 0 || url === preparationURL; }) &&
+        (!documents || documents.every(function(state) { return ready(preparationURL, state); })))
+      return JSON.stringify({ before: before, after: after, documents: documents });
+    if (mode === 'verify') break;
+    delay(0.05);
+  } while (Date.now() < deadline);
+  throw new Error('Another fixture tab remains active: ' + JSON.stringify({ before: before, after: after, documents: documents }));
+}`;
+
+export function unregisterDesktopStorageWorkers(
+  browser: Pick<DesktopBrowser, 'evaluate'>,
+  database: string,
+  preparationURL: string,
+) {
+  return browser.evaluate<StorageDeletion>(
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(preparationURL)}, "unregister")`,
+  );
+}
+
+export function clearDesktopStorage(
+  browser: Pick<DesktopBrowser, 'evaluate'>,
+  database: string,
+  preparationURL: string,
+) {
   // One driver request only: an unresponsive/crashed page must not consume a
   // second script budget trying to recover diagnostic state.
   return browser.evaluate<StorageDeletion>(
-    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)})`,
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(preparationURL)}, "delete")`,
+  );
+}
+
+export function verifyDesktopStorageQuiescence(
+  browser: Pick<DesktopBrowser, 'evaluate'>,
+  database: string,
+  preparationURL: string,
+) {
+  return browser.evaluate<StorageDeletion>(
+    `(${deleteDesktopStorage.toString()})(${JSON.stringify(database)}, ${JSON.stringify(preparationURL)}, "verify")`,
   );
 }
 
 export type StorageDeletion = {
   status: 'running' | 'passed' | 'failed';
   database: string;
+  phase: 'unregister' | 'verify' | 'delete';
   timeoutMs: number;
   operations: Array<{
     name: string;
@@ -25,10 +166,15 @@ export type StorageDeletion = {
 
 // Serialized into the real browser page. Keep this function self-contained.
 // Leave two seconds within the existing 30-second driver bound to return evidence.
-export async function deleteDesktopStorage(database: string): Promise<StorageDeletion> {
+export async function deleteDesktopStorage(
+  database: string,
+  preparationURL: string,
+  phase: StorageDeletion['phase'],
+): Promise<StorageDeletion> {
   const report: StorageDeletion = {
     status: 'running',
     database,
+    phase,
     timeoutMs: 28_000,
     operations: [],
   };
@@ -61,24 +207,55 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
     }
   }
   try {
-    // A loaded app page rewrites its localStorage keys, which raced the empty-storage
-    // check (Firefox, run 41684932652), so deletion only runs on a script-free page.
-    await step('verify-no-page-scripts', () => {
-      // Any namespace: document.scripts misses an SVG document's own <script>.
-      if (document.getElementsByTagNameNS('*', 'script').length)
-        throw new Error('A page with scripts is still loaded');
-      return location.pathname;
+    await step('verify-preparation-document', () => {
+      const state = {
+        url: location.href,
+        marker: document.body.dataset.spinelStorageLoss,
+        scripts: document.scripts.length,
+      };
+      if (state.url !== preparationURL || state.marker !== 'inert' || state.scripts !== 0)
+        throw new Error(
+          `Storage preparation requires the inert fixture document: ${JSON.stringify(state)}`,
+        );
+      return state;
     });
     const registrations = await step('serviceWorker.getRegistrations', () =>
       navigator.serviceWorker.getRegistrations(),
     );
     // Native objects are not serializable evidence; record their stable identities.
     report.operations.at(-1)!.value = registrations.map((registration) => registration.scope);
-    for (const registration of registrations) {
-      await step(`serviceWorker.unregister:${registration.scope}`, async () => {
-        if (!(await registration.unregister())) throw new Error('Worker was not unregistered');
-        return true;
+    if (phase === 'unregister') {
+      for (const registration of registrations) {
+        await step(`serviceWorker.unregister:${registration.scope}`, async () => {
+          if (!(await registration.unregister())) throw new Error('Worker was not unregistered');
+          return true;
+        });
+      }
+      await step('verify-unregistered', async () => {
+        const workers = (await navigator.serviceWorker.getRegistrations()).map(
+          (entry) => entry.scope,
+        );
+        if (workers.length)
+          throw new Error(`Workers remain registered: ${JSON.stringify(workers)}`);
+        return { workers, controller: navigator.serviceWorker.controller?.scriptURL ?? null };
       });
+      // Existing clients remain controlled. The caller must replace every inert
+      // document and verify quiescence before the witnessed shutdown/restart.
+      report.status = 'passed';
+      return report;
+    }
+    await step('verify-uncontrolled', () => {
+      const state = {
+        workers: registrations.map((entry) => entry.scope),
+        controller: navigator.serviceWorker.controller?.scriptURL ?? null,
+      };
+      if (state.workers.length || state.controller !== null)
+        throw new Error(`Storage producers are still present: ${JSON.stringify(state)}`);
+      return state;
+    });
+    if (phase === 'verify') {
+      report.status = 'passed';
+      return report;
     }
     const keys = await step('caches.keys', () => caches.keys());
     for (const key of keys) {
@@ -109,16 +286,7 @@ export async function deleteDesktopStorage(database: string): Promise<StorageDel
       (await indexedDB.databases()).map((entry) => entry.name),
     );
     await step('verify-storage-empty', () => {
-      const state = {
-        workers,
-        cacheNames,
-        databases,
-        localStorageEntries: localStorage.length,
-        // Names only, so a leftover entry can be attributed without retaining values.
-        localStorageKeys: Array.from({ length: localStorage.length }, (_, index) =>
-          localStorage.key(index),
-        ),
-      };
+      const state = { workers, cacheNames, databases, localStorageEntries: localStorage.length };
       if (
         workers.length ||
         cacheNames.length ||

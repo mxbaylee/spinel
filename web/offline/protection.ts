@@ -20,14 +20,18 @@ export function protectionDetail(protection: PersistenceState | null) {
 
 /**
  * A late storage answer updates only the still-deciding result it belongs to:
- * a dismissed, failed or newer message stays exactly as it is.
+ * a dismissed, failed or newer message stays exactly as it is, and so does
+ * every message once the preparation's scope is no longer current (`current`).
+ * That scope check replaces the `verify(scope)()` that used to run after the
+ * awaited storage answer, now that the download no longer waits for it.
  */
 export function answeredMessage(
   shown: OfflineMessage | null,
   expected: OfflineMessage,
   protection: PersistenceState,
+  current = true,
 ): OfflineMessage | null {
-  return shown === expected && shown.detail === protectionDetail(null).detail
+  return current && shown === expected && shown.detail === protectionDetail(null).detail
     ? { ...shown, ...protectionDetail(protection) }
     : shown;
 }

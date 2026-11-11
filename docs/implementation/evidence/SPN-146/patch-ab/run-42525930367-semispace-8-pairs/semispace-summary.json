@@ -1,0 +1,277 @@
+[
+  {
+    "run": "pair-1-patched",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 39.70000000001164,
+    "exit": 0,
+    "flushes": 131,
+    "totalGcInFlushMs": 20,
+    "flushesWithGc": 3,
+    "slowestFlush": {
+      "ms": 40,
+      "gcMs": 0
+    },
+    "majorGcCount": 15,
+    "majorGcTotalMs": 991,
+    "majorGcMaxMs": 137,
+    "totalHeapAfterMB": 190,
+    "usedHeapAfterMB": 59
+  },
+  {
+    "run": "pair-1-previous",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 39.80000000000291,
+    "exit": 0,
+    "flushes": 133,
+    "totalGcInFlushMs": 44,
+    "flushesWithGc": 3,
+    "slowestFlush": {
+      "ms": 40,
+      "gcMs": 0
+    },
+    "majorGcCount": 13,
+    "majorGcTotalMs": 959,
+    "majorGcMaxMs": 129,
+    "totalHeapAfterMB": 192,
+    "usedHeapAfterMB": 65
+  },
+  {
+    "run": "pair-2-patched",
+    "mode": "default",
+    "pairedFlushMaxMs": 36.59999999997672,
+    "exit": 0,
+    "flushes": 131,
+    "totalGcInFlushMs": 4,
+    "flushesWithGc": 1,
+    "slowestFlush": {
+      "ms": 37,
+      "gcMs": 0
+    },
+    "majorGcCount": 25,
+    "majorGcTotalMs": 1270,
+    "majorGcMaxMs": 118,
+    "totalHeapAfterMB": 121,
+    "usedHeapAfterMB": 72
+  },
+  {
+    "run": "pair-2-previous",
+    "mode": "default",
+    "metrics": false
+  },
+  {
+    "run": "pair-3-patched",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 127.30000000004657,
+    "exit": 1,
+    "flushes": 132,
+    "totalGcInFlushMs": 120,
+    "flushesWithGc": 4,
+    "slowestFlush": {
+      "ms": 127,
+      "gcMs": 95
+    },
+    "majorGcCount": 14,
+    "majorGcTotalMs": 923,
+    "majorGcMaxMs": 118,
+    "totalHeapAfterMB": 192,
+    "usedHeapAfterMB": 63
+  },
+  {
+    "run": "pair-3-previous",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 41.10000000009313,
+    "exit": 0,
+    "flushes": 132,
+    "totalGcInFlushMs": 29,
+    "flushesWithGc": 2,
+    "slowestFlush": {
+      "ms": 41,
+      "gcMs": 24
+    },
+    "majorGcCount": 15,
+    "majorGcTotalMs": 1028,
+    "majorGcMaxMs": 151,
+    "totalHeapAfterMB": 190,
+    "usedHeapAfterMB": 72
+  },
+  {
+    "run": "pair-4-patched",
+    "mode": "default",
+    "pairedFlushMaxMs": 31.800000000046566,
+    "exit": 0,
+    "flushes": 132,
+    "totalGcInFlushMs": 41,
+    "flushesWithGc": 7,
+    "slowestFlush": {
+      "ms": 32,
+      "gcMs": 0
+    },
+    "majorGcCount": 24,
+    "majorGcTotalMs": 1329,
+    "majorGcMaxMs": 148,
+    "totalHeapAfterMB": 124,
+    "usedHeapAfterMB": 71
+  },
+  {
+    "run": "pair-4-previous",
+    "mode": "default",
+    "pairedFlushMaxMs": 151,
+    "exit": 1,
+    "flushes": 132,
+    "totalGcInFlushMs": 221,
+    "flushesWithGc": 7,
+    "slowestFlush": {
+      "ms": 151,
+      "gcMs": 117
+    },
+    "majorGcCount": 24,
+    "majorGcTotalMs": 1357,
+    "majorGcMaxMs": 159,
+    "totalHeapAfterMB": 123,
+    "usedHeapAfterMB": 49
+  },
+  {
+    "run": "pair-5-patched",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 158.70000000018626,
+    "exit": 1,
+    "flushes": 132,
+    "totalGcInFlushMs": 173,
+    "flushesWithGc": 4,
+    "slowestFlush": {
+      "ms": 159,
+      "gcMs": 130
+    },
+    "majorGcCount": 14,
+    "majorGcTotalMs": 1079,
+    "majorGcMaxMs": 175,
+    "totalHeapAfterMB": 192,
+    "usedHeapAfterMB": 59
+  },
+  {
+    "run": "pair-5-previous",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 89.3000000002794,
+    "exit": 1,
+    "flushes": 131,
+    "totalGcInFlushMs": 96,
+    "flushesWithGc": 2,
+    "slowestFlush": {
+      "ms": 89,
+      "gcMs": 74
+    },
+    "majorGcCount": 14,
+    "majorGcTotalMs": 990,
+    "majorGcMaxMs": 128,
+    "totalHeapAfterMB": 191,
+    "usedHeapAfterMB": 72
+  },
+  {
+    "run": "pair-6-patched",
+    "mode": "default",
+    "pairedFlushMaxMs": 79.3000000002794,
+    "exit": 0,
+    "flushes": 131,
+    "totalGcInFlushMs": 109,
+    "flushesWithGc": 6,
+    "slowestFlush": {
+      "ms": 79,
+      "gcMs": 72
+    },
+    "majorGcCount": 26,
+    "majorGcTotalMs": 1422,
+    "majorGcMaxMs": 139,
+    "totalHeapAfterMB": 122,
+    "usedHeapAfterMB": 59
+  },
+  {
+    "run": "pair-6-previous",
+    "mode": "default",
+    "pairedFlushMaxMs": 56.39999999990687,
+    "exit": 0,
+    "flushes": 132,
+    "totalGcInFlushMs": 39,
+    "flushesWithGc": 2,
+    "slowestFlush": {
+      "ms": 56,
+      "gcMs": 0
+    },
+    "majorGcCount": 20,
+    "majorGcTotalMs": 1170,
+    "majorGcMaxMs": 114,
+    "totalHeapAfterMB": 125,
+    "usedHeapAfterMB": 59
+  },
+  {
+    "run": "pair-7-patched",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 27.200000000186265,
+    "exit": 0,
+    "flushes": 133,
+    "totalGcInFlushMs": 11,
+    "flushesWithGc": 2,
+    "slowestFlush": {
+      "ms": 27,
+      "gcMs": 0
+    },
+    "majorGcCount": 14,
+    "majorGcTotalMs": 1047,
+    "majorGcMaxMs": 122,
+    "totalHeapAfterMB": 191,
+    "usedHeapAfterMB": 65
+  },
+  {
+    "run": "pair-7-previous",
+    "mode": "flagged (64 MB young generation)",
+    "pairedFlushMaxMs": 36.39999999990687,
+    "exit": 0,
+    "flushes": 133,
+    "totalGcInFlushMs": 42,
+    "flushesWithGc": 4,
+    "slowestFlush": {
+      "ms": 36,
+      "gcMs": 0
+    },
+    "majorGcCount": 15,
+    "majorGcTotalMs": 1082,
+    "majorGcMaxMs": 131,
+    "totalHeapAfterMB": 190,
+    "usedHeapAfterMB": 64
+  },
+  {
+    "run": "pair-8-patched",
+    "mode": "default",
+    "pairedFlushMaxMs": 98.10000000009313,
+    "exit": 0,
+    "flushes": 131,
+    "totalGcInFlushMs": 176,
+    "flushesWithGc": 4,
+    "slowestFlush": {
+      "ms": 98,
+      "gcMs": 88
+    },
+    "majorGcCount": 26,
+    "majorGcTotalMs": 1402,
+    "majorGcMaxMs": 102,
+    "totalHeapAfterMB": 123,
+    "usedHeapAfterMB": 64
+  },
+  {
+    "run": "pair-8-previous",
+    "mode": "default",
+    "pairedFlushMaxMs": 35.5,
+    "exit": 1,
+    "flushes": 132,
+    "totalGcInFlushMs": 13,
+    "flushesWithGc": 2,
+    "slowestFlush": {
+      "ms": 36,
+      "gcMs": 0
+    },
+    "majorGcCount": 24,
+    "majorGcTotalMs": 1395,
+    "majorGcMaxMs": 132,
+    "totalHeapAfterMB": 125,
+    "usedHeapAfterMB": 50
+  }
+]

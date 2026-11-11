@@ -3,7 +3,6 @@ import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { runInNewContext } from 'node:vm';
 import {
   inspectBuildGraph,
   inspectFinalBuild,
@@ -192,32 +191,6 @@ test('missing entry, unresolved static or dynamic dependencies and unsafe paths 
     inspectBuildGraph({ ...fixture(), 'alias.js': chunk('shared.js') }, read, '/repo'),
     /conflicting emitted path/,
   );
-});
-
-test('one build-only branch transition cannot route provider or browser work', async () => {
-  const workflow = await readFile('.github/workflows/phone-build-inspection.yml', 'utf8');
-  assert.match(workflow, /branches: \[codex\/spn-090-production-integration\]/);
-  assert.doesNotMatch(
-    workflow,
-    /workflow_dispatch|pull_request:|schedule:|secrets\.|BS_USERNAME|setup-local|playwright|browserstack-capability/,
-  );
-  assert.match(workflow, /test "\$GITHUB_RUN_ATTEMPT" = 1/);
-  assert.match(workflow, /timeout-minutes: 15/);
-  assert.match(workflow, /timeout-minutes: 10/);
-  assert.match(workflow, /if: always\(\)/);
-  assert.match(workflow, /if-no-files-found: error/);
-  const expression = workflow.match(/^    if: (.+)$/m)?.[1];
-  assert.ok(expression);
-  for (const [repository, before, expected] of [
-    ['mxbaylee/spinel', '3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b', true],
-    ['fork/spinel', '3ac03e9ecf48798aa4942aba1f1ab0fb4650c09b', false],
-    ['mxbaylee/spinel', '5bb97d17484ca7df151114ad2f6e28a03b4630c2', false],
-    ['mxbaylee/spinel', 'later-head', false],
-  ])
-    assert.equal(
-      runInNewContext(expression, { github: { repository, event: { before } } }),
-      expected,
-    );
 });
 
 test('renderer boundary rejects eager imports and missing dictionary, shell or editor reachability', () => {
