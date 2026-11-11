@@ -31,6 +31,7 @@ import {
   clientFor,
   cleanProviderText as clean,
   targetsFromInventory,
+  providerDetail,
   webdriverErrorCode,
   type Target,
 } from './browserstack.ts';
@@ -371,6 +372,7 @@ type CapabilityTiming = {
     outcome: 'running' | 'completed' | 'failed';
     failure?: string;
     webdriverErrorCode?: string;
+    providerDetail?: string;
     laneAborted?: boolean;
     commandAborted?: boolean;
     deadlineReached?: boolean;
@@ -1599,6 +1601,8 @@ export async function runCapability(
       entry.failure = failure(error);
       const code = webdriverErrorCode(error);
       if (code) entry.webdriverErrorCode = code;
+      const detail = providerDetail(error);
+      if (allocationRequest && detail) entry.providerDetail = detail;
       entry.laneAborted = signal.aborted;
       entry.commandAborted = commandSignal?.aborted ?? false;
       entry.deadlineReached = Date.now() >= deadline;

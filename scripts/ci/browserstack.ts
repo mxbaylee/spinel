@@ -89,13 +89,27 @@ const webdriverErrors = new Set([
 function allowedWebdriverCode(value: unknown): string | undefined {
   return typeof value === 'string' && webdriverErrors.has(value) ? value : undefined;
 }
+/**
+ * The provider's own words for a failed session creation, redacted and bounded.
+ * Without them a `webdriver-error` carries no cause the operator can act on.
+ */
+export function providerDetail(error: unknown): string | undefined {
+  return error && typeof error === 'object' && 'providerDetail' in error
+    ? typeof error.providerDetail === 'string'
+      ? error.providerDetail
+      : undefined
+    : undefined;
+}
 export function webdriverErrorCode(error: unknown): string | undefined {
   return error && typeof error === 'object' && 'webdriverErrorCode' in error
     ? allowedWebdriverCode(error.webdriverErrorCode)
     : undefined;
 }
-function providerError(message: string, code?: string): Error {
-  return Object.assign(new Error(message), code ? { webdriverErrorCode: code } : {});
+function providerError(message: string, code?: string, detail?: string): Error {
+  return Object.assign(new Error(message), {
+    ...(code ? { webdriverErrorCode: code } : {}),
+    ...(detail ? { providerDetail: detail } : {}),
+  });
 }
 async function responseWebdriverCode(response: Response): Promise<string | undefined> {
   let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
@@ -209,8 +223,21 @@ export function clientFor(username: string, accessKey: string, fetcher: typeof f
       );
       if (!Object.hasOwn(response, 'value')) throw new Error('invalid-response-shape');
       const value = response.value;
-      if (value && typeof value === 'object' && 'error' in value)
-        throw providerError('webdriver-error', allowedWebdriverCode(value.error));
+      if (value && typeof value === 'object' && 'error' in value) {
+        // Only session creation: its refusal reasons (device unavailable, plan limit)
+        // are the one provider text worth keeping, and no session exists to inspect.
+        const detail =
+          path === 'session'
+            ? redact(
+                cleanProviderText(
+                  [value.error, 'message' in value ? value.message : '']
+                    .filter((part) => typeof part === 'string' && part)
+                    .join(': '),
+                ),
+              )
+            : undefined;
+        throw providerError('webdriver-error', allowedWebdriverCode(value.error), detail);
+      }
       return value;
     },
   };

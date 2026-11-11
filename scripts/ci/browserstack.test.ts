@@ -2,7 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
-import { clientFor, targetsFromInventory, webdriverErrorCode } from './browserstack.ts';
+import {
+  clientFor,
+  providerDetail,
+  targetsFromInventory,
+  webdriverErrorCode,
+} from './browserstack.ts';
 import type { CapabilityScope } from './browserstack-scope.ts';
 
 // The monthly phone scopes, one day apart so no scheduled run displaces another
@@ -661,4 +666,33 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
       `shared tunnel cleanup: ${outcome}`,
     );
   }
+});
+
+test('a refused session creation keeps the provider reason, redacted and bounded', async () => {
+  const refusal = {
+    value: {
+      error: 'device unavailable',
+      message: `Device busy for fixture-user with key fixture-key ${'x'.repeat(900)}`,
+    },
+  };
+  const client = clientFor(
+    'fixture-user',
+    'fixture-key',
+    async () => new Response(JSON.stringify(refusal), { status: 200 }),
+  );
+  await assert.rejects(client.command('session', 'POST', {}), (error: unknown) => {
+    assert.ok(error instanceof Error);
+    assert.equal(error.message, 'webdriver-error');
+    assert.equal(webdriverErrorCode(error), undefined);
+    const detail = providerDetail(error) ?? '';
+    assert.match(detail, /^device unavailable: Device busy for \[redacted\] with key \[redacted\]/);
+    assert.ok(detail.length <= 500);
+    assert.doesNotMatch(detail, /fixture-user|fixture-key/);
+    return true;
+  });
+  // Other commands never carry provider text.
+  await assert.rejects(client.command('session/abc/url', 'POST', {}), (error: unknown) => {
+    assert.equal(providerDetail(error), undefined);
+    return true;
+  });
 });
