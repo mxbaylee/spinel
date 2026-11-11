@@ -1,6 +1,6 @@
 # 🔧 SPN-090 renderer dependency boundary repair
 
-2026-11-05. The completed source3ac03e9e build proves20initialJS chunks8,076,912B, including5,916,016B renderer via sharedUI/FloatingUI/Core dependencies. Full result archive5988c515ecfcecd4445f6676f4d5f8b33af5c38d. This does not prove the old Safari blank screen cause; no readiness timeout changes or newdeviceexecution yet.
+2026-11-05. The completed source 3ac03e9e build proves 20 initial JS chunks 8,076,912 B, including 5,916,016 B renderer via shared UI/Floating UI/Core dependencies. Full result archive 5988c515ecfcecd4445f6676f4d5f8b33af5c38d. This does not prove the old Safari blank screen cause; no readiness timeout changes or new device execution yet.
 
 Chosen repair: set includeDependenciesRecursively:false only on the explicit renderer group, leave the isolated module-preload group, and apply strictExecutionOrder:true to the shared production/dependency-optimization output configuration. Rolldown1.2.14's documented default captures shared dependencies recursively; its pinned types and official manual recommend strict execution order plus compatible entry signatures. Vite8.3.4 client already defaults preserveEntrySignatures:false; retain it. No new custom chunk lists, lazy route changes, CSS omissions, app entry API change or public data/authority change.
 

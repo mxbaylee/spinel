@@ -1,7 +1,3 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
-
 type JsonObject = Record<string, unknown>;
 export type Target = {
   browser: 'chrome' | 'firefox' | 'safari';
@@ -15,16 +11,6 @@ function object(value: unknown): JsonObject {
     throw new Error('invalid-response-shape');
   }
   return value as JsonObject;
-}
-
-// Only these locally constructed messages reach logs; remote bodies and errors never do.
-function failure(error: unknown): string {
-  const message = error instanceof Error ? error.message : '';
-  return /^(http-\d{3}|invalid-response-shape|request-failed|webdriver-error|unexpected-browser|tunnel-challenge-mismatch|missing-mobile-targets|missing-credentials)$/.test(
-    message,
-  )
-    ? message
-    : 'probe-failed';
 }
 
 export function cleanProviderText(value: unknown): string {
@@ -228,43 +214,4 @@ export function clientFor(username: string, accessKey: string, fetcher: typeof f
       return value;
     },
   };
-}
-
-async function main() {
-  const mode = process.argv[2];
-  if (mode !== 'credentials') throw new Error('invalid-mode');
-  const report: JsonObject = {
-    scope: 'Automate credentials and real mobile browser inventory only',
-    mode,
-    date: new Date().toISOString(),
-    sourceSha: process.env.SOURCE_SHA,
-    testedSha: process.env.GITHUB_SHA,
-    run: `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
-    authentication: 'not-verified',
-    status: 'failed',
-  };
-  try {
-    const client = clientFor(process.env.BS_USERNAME ?? '', process.env.BS_ACCESS_KEY ?? '');
-    const plan = object(await client.api('plan.json'));
-    report.authentication = 'passed';
-    if (typeof plan.parallel_sessions_max_allowed === 'number') {
-      report.parallelSessionsAllowed = plan.parallel_sessions_max_allowed;
-    }
-    const targets = targetsFromInventory(await client.api('browsers.json'));
-    report.targets = targets;
-    report.status = 'passed';
-  } catch (error) {
-    report.failure = failure(error);
-  }
-  await mkdir('artifacts', { recursive: true });
-  await writeFile(`artifacts/browserstack-${mode}.json`, `${JSON.stringify(report, null, 2)}\n`);
-  console.log(JSON.stringify(report, null, 2));
-  if (report.status !== 'passed') process.exitCode = 1;
-}
-
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  main().catch(() => {
-    console.error('BrowserStack probe failed; no credentials or raw remote responses were logged.');
-    process.exitCode = 1;
-  });
 }

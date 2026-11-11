@@ -118,7 +118,7 @@ jobs:
   capability:
     name: Selected phone capability or acceptance with disposable CI HTTPS
     if: >-
-      github.event_name == 'schedule' ||
+      (github.event_name == 'schedule' && github.repository == 'mxbaylee/spinel') ||
       (github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics') ||
       (github.event_name == 'pull_request' &&
       github.event.action == 'labeled' &&

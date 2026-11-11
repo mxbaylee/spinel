@@ -1,9 +1,5 @@
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
 import { test } from 'node:test';
 import { clientFor, targetsFromInventory, webdriverErrorCode } from './browserstack.ts';
@@ -307,7 +303,21 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
   assert.doesNotMatch(capability, /diagnostic_kind|BS_DIAGNOSTIC_KIND/);
   // Without a budget job nothing needs to write repository or Actions state.
   assert.doesNotMatch(source, /actions: write|contents: write|GITHUB_TOKEN|needs:/);
-  assert.match(capability, /github.event_name == 'schedule'/);
+  assert.match(
+    capability,
+    /github.event_name == 'schedule' && github.repository == 'mxbaylee\/spinel'/,
+  );
+  // Retained artifacts are the sanitized JSON and the build, never raw tunnel logs.
+  const uploads = [
+    ...source.matchAll(
+      /upload-artifact@[^\n]*\n\s+with:[\s\S]*?path:\s*\|?\s*\n?([\s\S]*?)if-no-files-found/g,
+    ),
+  ].map((match) => match[1]);
+  assert.ok(uploads.length >= 3, 'every artifact upload is checked');
+  for (const paths of uploads) {
+    assert.doesNotMatch(paths, /\.log|local\.log|tunnel|\*\*\/\*\s*$/m);
+  }
+  assert.match(capability, /local-logging-level: 'false'|local-logging-level: false/);
   assert.match(
     capability,
     /github.event_name == 'workflow_dispatch' && inputs.mode != 'diagnostics'/,
@@ -650,32 +660,5 @@ test('monthly Safari, Chrome and Firefox acceptance, every phone scope, and read
       ['success', 'failure', 'cancelled'].includes(outcome),
       `shared tunnel cleanup: ${outcome}`,
     );
-  }
-});
-
-test('removed smoke and quota modes are rejected before any provider call', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'spinel-removed-mode-'));
-  try {
-    const guard = join(directory, 'network-guard.ts');
-    await writeFile(
-      guard,
-      "globalThis.fetch = async () => { console.log('NETWORK_ATTEMPT'); throw new Error('mock-network'); };\n",
-    );
-    for (const mode of ['smoke', 'quota']) {
-      const child = spawnSync(
-        process.execPath,
-        ['--import', guard, fileURLToPath(new URL('./browserstack.ts', import.meta.url)), mode],
-        {
-          cwd: directory,
-          timeout: 5000,
-          encoding: 'utf8',
-          env: { ...process.env, BS_USERNAME: 'unit-user', BS_ACCESS_KEY: 'unit-key' },
-        },
-      );
-      assert.equal(child.status, 1, child.stderr);
-      assert.doesNotMatch(child.stdout + child.stderr, /NETWORK_ATTEMPT|unit-user|unit-key/);
-    }
-  } finally {
-    await rm(directory, { recursive: true, force: true });
   }
 });
