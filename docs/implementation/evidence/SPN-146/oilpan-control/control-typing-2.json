@@ -1,0 +1,15 @@
+{
+  "kind": "bare-contenteditable-typing",
+  "throttle": 4,
+  "keys": 2086,
+  "typingSeconds": 1.8,
+  "keysPerSecond": 1166.7,
+  "growth": {
+    "gcs": 4,
+    "spanSeconds": 1.2,
+    "allocatedMB": 28.1,
+    "allocatedMBPerSecond": 23.5,
+    "peakMB": 11
+  },
+  "allocatedKBPerKey": 13.5
+}

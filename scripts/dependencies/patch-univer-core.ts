@@ -18,12 +18,18 @@
  * negative retain, and let a REPLACE style's falsy keys win over a concurrent
  * COVER style, in open-source @univerjs/core 1.1.0. No @univerjs-pro
  * package is read or modified.
+ * It also schedules Univer's immediate macrotasks on one shared MessageChannel
+ * instead of constructing a channel per call (SPN-146: about 47,000 per typing
+ * run, and each one is browser-heap garbage that lengthens every major GC).
+ * Known difference: a cancelled task stays queued (closure included) until its
+ * message is delivered one macrotask later, and keeps a Node loop alive until then.
  * Temporary: SPN-099 removes this once upstream ships the fixes. The custom
  * range fixes are https://github.com/dream-num/univer/pull/7938; if upstream
  * takes another direction, follow it rather than keep this patch.
  * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator,transform-utils}.ts,
  * packages/core/src/docs/data-model/text-x/apply-utils/{common,update-apply}.ts and
- * packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts, tag v1.1.0.
+ * packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts and
+ * packages/core/src/common/request-immediate-macro-task.ts, tag v1.1.0.
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -41,7 +47,73 @@ const formats = {
   },
 } as const;
 
-export function patchCore(source: string, format: keyof typeof formats): string {
+/** The original function, byte for byte, as shipped in 1.1.0 (es and cjs are identical here). */
+const upstreamMacroTask = `function requestImmediateMacroTask(callback) {
+	const channel = new MessageChannel();
+	let cancelled = false;
+	const close = () => {
+		channel.port1.onmessage = null;
+		channel.port1.close();
+		channel.port2.close();
+	};
+	const handler = () => {
+		if (!cancelled) {
+			cancelled = true;
+			close();
+			callback();
+		}
+	};
+	channel.port1.onmessage = handler;
+	channel.port2.postMessage(null);
+	return () => {
+		if (cancelled) return;
+		cancelled = true;
+		close();
+	};
+}`;
+/**
+ * Modified for Spinel (SPN-146): one channel for every call. Each post still yields one later macrotask and
+ * messages arrive in order, so a call runs after the ones before it, as before. Cancelling marks the entry;
+ * its message is consumed and skipped. In Node the port is kept referenced only while a task is pending, so a
+ * pending task still keeps the process alive and an idle one does not. A cancelled entry is not removed: it
+ * (and its callback's closure) stays queued and keeps the Node loop alive until its own message is delivered,
+ * which happens in the next macrotask, so the delay is bounded to one turn. The upstream helper closed its
+ * channel on cancel instead. This text is hashed and patched in verbatim, so the function body is left as is
+ * and this behaviour is covered in patch-univer-core.test.ts rather than changed here.
+ */
+export const pooledMacroTask = `// Modified for Spinel: one shared MessageChannel instead of one per call (SPN-146).
+const pendingMacroTasks = [];
+let macroTaskChannel;
+function requestImmediateMacroTask(callback) {
+	if (!macroTaskChannel) {
+		macroTaskChannel = new MessageChannel();
+		macroTaskChannel.port1.onmessage = () => {
+			const entry = pendingMacroTasks.shift();
+			if (pendingMacroTasks.length === 0) macroTaskChannel.port1.unref?.();
+			if (entry && !entry.cancelled) {
+				entry.cancelled = true;
+				entry.callback();
+			}
+		};
+	}
+	const entry = { callback, cancelled: false };
+	pendingMacroTasks.push(entry);
+	macroTaskChannel.port1.ref?.();
+	macroTaskChannel.port2.postMessage(null);
+	return () => {
+		entry.cancelled = true;
+	};
+}`;
+
+/**
+ * `pooledChannel: false` leaves the upstream function in place. It exists for the SPN-146 A/B only
+ * (scripts/ci/patch-ab/core-channel.ts); the installed build always uses the default.
+ */
+export function patchCore(
+  source: string,
+  format: keyof typeof formats,
+  { pooledChannel = true }: { pooledChannel?: boolean } = {},
+): string {
   const spec = formats[format];
   const before = `paragraphs.push(${spec.merge}(thisParagraph, otherParagraph));`;
   const after = `// Modified for Spinel: REPLACE clears removed attributes, retaining stable identity.
@@ -146,15 +218,17 @@ export function patchCore(source: string, format: keyof typeof formats): string 
       ],
     },
   ];
+  const macroTask: [string, string] = [upstreamMacroTask, pooledMacroTask];
   // Idempotent, but never silently patch a different upstream version or local edit.
-  const original = regions
-    .flatMap((region) => region.replacements)
-    .reduce((text, [old, replacement]) => text.replace(replacement, old), source);
+  const original = [...regions.flatMap((region) => region.replacements), macroTask].reduce(
+    (text, [old, replacement]) => text.replace(replacement, old),
+    source,
+  );
   if (createHash('sha256').update(original).digest('hex') !== spec.sha256)
     throw new Error(
       `Unrecognized @univerjs/core ${format} build; review the core patch before installing.`,
     );
-  return regions.reduce((text, { from, to, toFileEnd, replacements: edits }) => {
+  const patched = regions.reduce((text, { from, to, toFileEnd, replacements: edits }) => {
     const start = text.indexOf(from);
     const stop = text.indexOf(to, start);
     const end = toFileEnd ? text.indexOf('//#endregion', stop) : stop;
@@ -169,6 +243,9 @@ export function patchCore(source: string, format: keyof typeof formats): string 
     );
     return text.slice(0, start) + body + text.slice(end);
   }, original);
+  if (!pooledChannel) return patched;
+  // The sha256 gate above fixes the macrotask function to one occurrence in the upstream build.
+  return patched.replace(upstreamMacroTask, pooledMacroTask);
 }
 
 export async function patchInstalledCore(root: string) {

@@ -83,22 +83,30 @@ const sha = (v: unknown): v is string =>
 const object = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === 'object' && !Array.isArray(v);
 
+/** SPN-146 opt-in hosted A/B: never part of the product or a required gate. Its
+ * script tests still run (the change is not documentation-only), but it does not
+ * widen coverage to the full or performance suites. Remove with the experiment. */
+const experimentInput = (path: string) =>
+  path === '.github/workflows/patch-ab.yml' ||
+  /^scripts\/ci\/(patch-ab\/|patch-ab\.test\.ts$)/.test(path);
 const performanceInput = (path: string) =>
-  /^(web|server|lib|e2e|\.github|\.storybook)\//.test(path) ||
-  /^src\/(shared|server\/(sync|history|collaboration))\//.test(path) ||
-  /^scripts\/(ci|dependencies|sync-transition)\//.test(path) ||
-  /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
-    path,
-  );
+  !experimentInput(path) &&
+  (/^(web|server|lib|e2e|\.github|\.storybook)\//.test(path) ||
+    /^src\/(shared|server\/(sync|history|collaboration))\//.test(path) ||
+    /^scripts\/(ci|dependencies|sync-transition)\//.test(path) ||
+    /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
+      path,
+    ));
 const serviceInput = (path: string) =>
   /^src\/server\/(auth|workspace|backup|maintenance|appearance|diagnostics|formulas|health|mcp|pdf)\//.test(
     path,
   );
 const fullInput = (path: string) =>
-  /^(\.github|scripts\/(ci|dependencies))\//.test(path) ||
-  /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
-    path,
-  );
+  !experimentInput(path) &&
+  (/^(\.github|scripts\/(ci|dependencies))\//.test(path) ||
+    /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
+      path,
+    ));
 const libraryInput = (path: string) =>
   /^(lib|scripts\/dependencies)\//.test(path) ||
   /^(package(-lock)?\.json|vitest\.config\.ts|tsconfig\.json|\.nvmrc|\.github\/workflows\/ci\.yml)$/.test(
@@ -135,7 +143,11 @@ export function coveragePlan(
   const reliable = paths !== null && sha(base) && sha(head) && labelsValid;
   const unknown =
     paths?.filter(
-      (path) => !documentationOnly([path]) && !performanceInput(path) && !serviceInput(path),
+      (path) =>
+        !documentationOnly([path]) &&
+        !experimentInput(path) &&
+        !performanceInput(path) &&
+        !serviceInput(path),
     ) ?? [];
   const fullReason = !knownEvent
     ? 'Scheduled/manual or unsupported event requires full coverage.'

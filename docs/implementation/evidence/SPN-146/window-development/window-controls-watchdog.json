@@ -1,0 +1,94 @@
+{
+  "root": 85494,
+  "started": 1793885142931,
+  "elapsedMs": 587,
+  "outcome": "command-failed",
+  "pressure": "1",
+  "rssKiB": 78304,
+  "peakKiB": 482592,
+  "live": [
+    {
+      "pid": 85494,
+      "parent": 85458,
+      "group": 85494,
+      "rssKiB": 76752,
+      "started": "Thu Nov  5 05:25:42 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-controls-watchdog.json node --test scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-trace.test.ts scripts/ci/doc-responsiveness.test.ts"
+    },
+    {
+      "pid": 85576,
+      "parent": 85494,
+      "group": 85494,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:25:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 85494,
+      "parent": 85458,
+      "group": 85494,
+      "rssKiB": 76752,
+      "started": "Thu Nov  5 05:25:42 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-controls-watchdog.json node --test scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-trace.test.ts scripts/ci/doc-responsiveness.test.ts"
+    },
+    {
+      "pid": 85513,
+      "parent": 85494,
+      "group": 85494,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:25:42 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 85539,
+      "parent": 85494,
+      "group": 85494,
+      "rssKiB": 62432,
+      "started": "Thu Nov  5 05:25:42 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 85542,
+      "parent": 85539,
+      "group": 85494,
+      "rssKiB": 231840,
+      "started": "Thu Nov  5 05:25:43 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/doc-native-trace.test.ts"
+    },
+    {
+      "pid": 85544,
+      "parent": 85539,
+      "group": 85494,
+      "rssKiB": 93232,
+      "started": "Thu Nov  5 05:25:43 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 85550,
+      "parent": 85494,
+      "group": 85494,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:25:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 85563,
+      "parent": 85494,
+      "group": 85494,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:25:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 85576,
+      "parent": 85494,
+      "group": 85494,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:25:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

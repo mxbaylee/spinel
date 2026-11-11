@@ -1,0 +1,14 @@
+{
+  "pair-3-patched": {
+    "exitCode": 1,
+    "reason": "longest task 628 ms over the 500 ms budget (a 338 ms major GC)"
+  },
+  "pair-3-previous": {
+    "exitCode": 1,
+    "reason": "every recorded budget passed; the first-failure message was not retained"
+  },
+  "pair-4-previous": {
+    "exitCode": 1,
+    "reason": "every recorded budget passed; the first-failure message was not retained"
+  }
+}

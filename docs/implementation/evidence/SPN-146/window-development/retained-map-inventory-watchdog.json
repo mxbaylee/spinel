@@ -1,0 +1,78 @@
+{
+  "root": 88069,
+  "started": 1793885632404,
+  "elapsedMs": 442,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 79520,
+  "peakKiB": 248928,
+  "live": [
+    {
+      "pid": 88069,
+      "parent": 88033,
+      "group": 88069,
+      "rssKiB": 77968,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/retained-map-inventory-watchdog.json node /tmp/spn146-investigation/inspect-retained-maps.ts"
+    },
+    {
+      "pid": 88224,
+      "parent": 88069,
+      "group": 88069,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 88069,
+      "parent": 88033,
+      "group": 88069,
+      "rssKiB": 77968,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/retained-map-inventory-watchdog.json node /tmp/spn146-investigation/inspect-retained-maps.ts"
+    },
+    {
+      "pid": 88088,
+      "parent": 88069,
+      "group": 88069,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 88114,
+      "parent": 88069,
+      "group": 88069,
+      "rssKiB": 153552,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "node /tmp/spn146-investigation/inspect-retained-maps.ts"
+    },
+    {
+      "pid": 88159,
+      "parent": 88114,
+      "group": 88069,
+      "rssKiB": 2512,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "(unzip)"
+    },
+    {
+      "pid": 88165,
+      "parent": 88069,
+      "group": 88069,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 88224,
+      "parent": 88069,
+      "group": 88069,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:33:52 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}
