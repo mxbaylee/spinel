@@ -4698,10 +4698,8 @@ test('only installed Chrome acceptance requests keep-data in the single W3C payl
         assert.deepEqual(Object.keys(payload), ['capabilities']);
         assert.deepEqual(Object.keys(payload.capabilities), ['alwaysMatch']);
         const caps = payload.capabilities.alwaysMatch;
-        assert.deepEqual(
-          caps['goog:chromeOptions'],
-          scope === 'chrome-acceptance' ? { androidKeepAppDataDir: true } : undefined,
-        );
+        // The hub refuses androidKeepAppDataDir, so no scope sends chromeOptions.
+        assert.equal(caps['goog:chromeOptions'], undefined);
         for (const key of [
           'chromeOptions',
           'appium:chromeOptions',

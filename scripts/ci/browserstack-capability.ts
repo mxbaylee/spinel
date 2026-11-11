@@ -2666,9 +2666,8 @@ export async function runCapability(
           alwaysMatch: {
             browserName: target.browser,
             acceptInsecureCerts: true,
-            ...(target.browser === 'chrome' && scope === 'chrome-acceptance'
-              ? { 'goog:chromeOptions': { androidKeepAppDataDir: true } }
-              : {}),
+            // No goog:chromeOptions: BrowserStack's hub refuses androidKeepAppDataDir
+            // (run43115587839), so Chrome keeps whatever app data it keeps unaided.
             ...(target.browser === 'safari'
               ? {
                   // The runner separately proves secure worker/application readiness.

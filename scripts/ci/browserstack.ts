@@ -230,9 +230,13 @@ export function clientFor(username: string, accessKey: string, fetcher: typeof f
           path === 'session'
             ? redact(
                 cleanProviderText(
-                  [value.error, 'message' in value ? value.message : '']
-                    .filter((part) => typeof part === 'string' && part)
-                    .join(': '),
+                  [
+                    ...new Set(
+                      [value.error, 'message' in value ? value.message : ''].filter(
+                        (part): part is string => typeof part === 'string' && part !== '',
+                      ),
+                    ),
+                  ].join(': '),
                 ),
               )
             : undefined;

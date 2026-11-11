@@ -58,6 +58,8 @@ ordered CHROMIUM reuse, driver reinitialization and a new ChromeDriver session,
 with128 recognized rows/71 omitted/one malformed. Nearest requests are not
 correlated; no ClearAppData causal proof or historical keep-data value exists.
 
+> ⚠️ **Superseded 2026-11-11:** BrowserStack's hub rejects `androidKeepAppDataDir` as outside its `goog:chromeOptions` schema (run 43115587839; the 2026-11-06 run 42274361653 failed the same way), so `chrome-acceptance` no longer sends it. The paragraph below is the reasoning that was tried and not adopted.
+
 Version-matched public ChromeDriver152.0.7977.54 source shows that Boolean
 `androidKeepAppDataDir` suppresses its stopped-app ClearAppData branch. Add it
 only to the existing single W3C `alwaysMatch` object's `goog:chromeOptions` for
