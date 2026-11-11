@@ -50,7 +50,7 @@ async function identifySafari(pid: string, stage: string) {
   return readSafariIdentity(pid, entry);
 }
 function safariRequest(
-  mode: 'title' | 'evaluate' | 'quit' | 'baseline',
+  mode: 'title' | 'evaluate' | 'quit' | 'baseline' | 'documents',
   source = '',
   timeout = 8000,
   trace?: (stderr: string) => void,
@@ -485,6 +485,12 @@ self.addEventListener('fetch', event => { if (event.request.mode === 'navigate')
     report.afterPid = await until(safariPid, Boolean);
     assert.notEqual(report.beforePid, report.afterPid);
     target = await identifySafari(String(report.afterPid), 'offline-restart');
+    // A reopened Safari may not have a document yet. Wait on a read-only count so
+    // every request failure stays fatal and no JavaScript is sent before one exists.
+    await until(
+      () => safariRequest('documents'),
+      (value) => Number(value) > 0,
+    );
     await until(
       () => evaluate('document.title'),
       (value) => value === 'Spinel desktop profile probe',

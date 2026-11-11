@@ -25,6 +25,7 @@ function fixture(
   options: {
     constructorFailures?: Error[];
     actionFailure?: Error;
+    noDocuments?: boolean;
     afterConstructor?: (running: Record<string, unknown>, attempt: number) => void;
   } = {},
 ) {
@@ -124,7 +125,14 @@ function fixture(
             const failure = options.constructorFailures?.[constructors - 1];
             if (failure) throw failure;
             return {
-              documents: [document],
+              documents: Object.assign(
+                () => {
+                  calls.push(['documents']);
+                  if (options.actionFailure) throw options.actionFailure;
+                  return options.noDocuments ? [] : [document];
+                },
+                { 0: document },
+              ),
               windows: [window],
               frontmost: () => false,
               activate: () => calls.push(['activate']),
@@ -169,7 +177,7 @@ const loadingCalls = [
 const notFound = () =>
   Object.assign(new Error("Application can't be found."), { errorNumber: -2700 });
 
-for (const mode of ['title', 'evaluate', 'quit', 'baseline']) {
+for (const mode of ['title', 'evaluate', 'quit', 'baseline', 'documents']) {
   test(`${mode} permits one constructor-only recovery with the same revalidated identity`, () => {
     const first = notFound();
     const f = fixture({}, undefined, { constructorFailures: [first] });
@@ -435,6 +443,28 @@ test('the consent loop renews only a finished successful title and then reports 
   await assert.rejects(f.run, /generic deadline/);
   assert.equal(f.events.filter((event) => event.startsWith('start')).length, 2);
   assert.ok(f.events.includes('settled2'));
+});
+
+test('documents reports a missing document as zero without dispatching any JavaScript', () => {
+  const none = fixture({}, undefined, { noDocuments: true });
+  assert.equal(none.execute(['42', '1234', 'documents', '', '5']), '0');
+  assert.deepEqual(
+    none.calls.filter(([name]) => name === 'evaluate' || name === 'title'),
+    [],
+  );
+  assert.ok(none.trace.some((line) => line.includes('document-count-end')));
+  const one = fixture();
+  assert.equal(one.execute(['42', '1234', 'documents', '', '5']), '1');
+});
+
+test('a document appearing after Safari restart is awaited by the read-only count', async () => {
+  let reads = 0;
+  const value = await waitForSafariValue(
+    async () => String(reads++ < 2 ? 0 : 1),
+    (count) => Number(count) > 0,
+  );
+  assert.equal(value, '1');
+  assert.equal(reads, 3);
 });
 
 test('a valid required baseline is retained before optional capture diagnostics', async () => {

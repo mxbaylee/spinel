@@ -99,6 +99,14 @@ function run(argv) {
     phase('title-get-end');
     return title;
   }
+  if (argv[2] === 'documents') {
+    // Read-only readiness: a reopened Safari may not have a document yet, which is
+    // a count of zero rather than an unresolved specifier. No JavaScript is sent.
+    phase('document-count-begin');
+    var count = app.documents().length;
+    phase('document-count-end');
+    return String(count);
+  }
   if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });
   if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }
   if (argv[2] === 'baseline') {
@@ -236,7 +244,7 @@ export async function readSafariBaseline(
 
 export async function requestSafari(
   target: SafariTarget,
-  mode: 'title' | 'evaluate' | 'quit' | 'baseline',
+  mode: 'title' | 'evaluate' | 'quit' | 'baseline' | 'documents',
   source: string,
   timeout: number,
   entry: Record<string, unknown>,
