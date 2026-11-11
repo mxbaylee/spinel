@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { identifySafari, safariRequestScript } from './desktop-safari-identity.ts';
+import {
+  identifySafari,
+  requestSafari,
+  safariRequestScript,
+  waitForSafariValue,
+  observeSafariTitle,
+  readSafariBaseline,
+  waitForSafariConsentTitle,
+} from './desktop-safari-identity.ts';
 
 type LoaderFailure =
   | 'nil bundle'
@@ -11,11 +19,21 @@ type LoaderFailure =
   | 'nil class'
   | 'class lookup throws';
 
-function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFailure) {
+function fixture(
+  changes: Record<string, unknown> = {},
+  loaderFailure?: LoaderFailure,
+  options: {
+    constructorFailures?: Error[];
+    actionFailure?: Error;
+    noDocuments?: boolean;
+    afterConstructor?: (running: Record<string, unknown>, attempt: number) => void;
+  } = {},
+) {
   const trace: string[] = [];
   const calls: unknown[][] = [];
   const failure = new Error(loaderFailure);
   let quit = false;
+  let constructors = 0;
   const running = {
     isNil: () => false,
     terminated: false,
@@ -27,7 +45,7 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
   };
   const page = {
     url: 'http://localhost:8176/probe',
-    title: 'Capability probe',
+    title: 'Spinel desktop profile probe',
     readyState: 'complete',
     visibility: 'visible',
     hasFocus: true,
@@ -42,11 +60,12 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
     miniaturized: () => true,
     currentTab: () => tab,
     id: () => 19,
-    bounds: () => [0, 25, 1280, 900],
+    bounds: () => ({ x: 0, y: 25, width: 1280, height: 900 }),
   };
   const document = {
     name: ({ timeout }: { timeout: number }) => {
       calls.push(['title', timeout]);
+      if (options.actionFailure) throw options.actionFailure;
       return page.title;
     },
   };
@@ -101,29 +120,43 @@ function fixture(changes: Record<string, unknown> = {}, loaderFailure?: LoaderFa
           $: foundation,
           Application: (pid: number) => {
             calls.push(['application', pid]);
+            constructors++;
+            options.afterConstructor?.(running, constructors);
+            const failure = options.constructorFailures?.[constructors - 1];
+            if (failure) throw failure;
             return {
-              documents: [document],
+              documents: Object.assign(
+                () => {
+                  calls.push(['documents']);
+                  if (options.actionFailure) throw options.actionFailure;
+                  return options.noDocuments ? [] : [document];
+                },
+                { 0: document },
+              ),
               windows: [window],
               frontmost: () => false,
               activate: () => calls.push(['activate']),
               doJavaScript: (
                 source: string,
-                options: { in: unknown },
+                destination: { in: unknown },
                 request?: { timeout: number },
               ) => {
-                if (options.in === document) {
+                if (destination.in === document) {
                   calls.push(['evaluate', source, request?.timeout]);
+                  if (options.actionFailure) throw options.actionFailure;
                   return 'Evaluated sentinel';
                 }
-                assert.equal(options.in, tab);
+                assert.equal(destination.in, tab);
                 assert.match(source, /document\.hasFocus\(\)/);
                 assert.match(source, /document\.body\.innerText/);
                 calls.push(['baseline-page']);
+                if (options.actionFailure) throw options.actionFailure;
                 return JSON.stringify(page);
               },
               quit: () => {
                 calls.push(['quit']);
                 quit = true;
+                if (options.actionFailure) throw options.actionFailure;
               },
             };
           },
@@ -140,6 +173,394 @@ const loadingCalls = [
   ['class', 'NSRunningApplication'],
   ['lookup', 42],
 ];
+
+const notFound = () =>
+  Object.assign(new Error("Application can't be found."), { errorNumber: -2700 });
+
+for (const mode of ['title', 'evaluate', 'quit', 'baseline', 'documents']) {
+  test(`${mode} permits one constructor-only recovery with the same revalidated identity`, () => {
+    const first = notFound();
+    const f = fixture({}, undefined, { constructorFailures: [first] });
+    f.execute(['42', '1234', mode, 'sentinel', '5']);
+    assert.deepEqual(
+      f.calls.filter(([name]) => name === 'application'),
+      [
+        ['application', 42],
+        ['application', 42],
+      ],
+    );
+    assert.equal(f.calls.filter(([name]) => name === 'lookup').length, 3);
+    assert.equal(
+      f.calls.filter(([name]) => name === (mode === 'baseline' ? 'baseline-page' : mode)).length,
+      1,
+    );
+    assert.ok(
+      f.trace.some(
+        (line) => line.includes('Safari constructor failure:') && line.includes('-2700'),
+      ),
+    );
+    assert.ok(f.trace.some((line) => line.includes('application-constructor-second-end')));
+    assert.equal(f.trace.filter((line) => line.includes('action-dispatch-begin')).length, 1);
+  });
+
+  test(`${mode} never repeats an action that throws the same native error after dispatch`, () => {
+    const failure = notFound();
+    const f = fixture({}, undefined, { actionFailure: failure });
+    assert.throws(
+      () => f.execute(['42', '1234', mode, 'sentinel', '5']),
+      (error) => error === failure,
+    );
+    assert.equal(f.calls.filter(([name]) => name === 'application').length, 1);
+    assert.equal(
+      f.calls.filter(([name]) => name === (mode === 'baseline' ? 'baseline-page' : mode)).length,
+      1,
+    );
+    assert.ok(!f.trace.some((line) => line.includes('Safari constructor failure:')));
+  });
+}
+
+for (const failure of [
+  new Error("Application can't be found."),
+  Object.assign(new Error('Not authorized'), { errorNumber: -1743 }),
+  Object.assign(new Error('Unknown failure'), { errorNumber: -2700 }),
+])
+  test(`unclassified constructor failure is fatal: ${String(failure)}`, () => {
+    const f = fixture({}, undefined, { constructorFailures: [failure] });
+    assert.throws(
+      () => f.execute(['42', '1234', 'quit']),
+      (error) => error === failure,
+    );
+    assert.equal(f.calls.filter(([name]) => name === 'application').length, 1);
+    assert.ok(!f.quit());
+  });
+
+test('a repeated constructor failure retains both attempts and throws the original cause', () => {
+  const first = notFound();
+  const second = new Error('second failure');
+  const f = fixture({}, undefined, {
+    constructorFailures: [first, second, new Error('must not reach')],
+  });
+  assert.throws(
+    () => f.execute(['42', '1234', 'quit']),
+    (error) => error === first,
+  );
+  assert.equal(f.calls.filter(([name]) => name === 'application').length, 2);
+  assert.ok(f.trace.some((line) => line.includes('second failure')));
+  assert.ok(!f.quit());
+});
+
+for (const changed of [
+  { terminated: true },
+  { bundleIdentifier: 'other.app' },
+  { launchDate: { timeIntervalSince1970: 5678 } },
+  { executableURL: { path: '/other/Safari' } },
+]) {
+  test(`changed identity prevents constructor recovery: ${JSON.stringify(changed)}`, () => {
+    const first = notFound();
+    const f = fixture({}, undefined, {
+      constructorFailures: [first],
+      afterConstructor: (running) => Object.assign(running, changed),
+    });
+    assert.throws(
+      () => f.execute(['42', '1234', 'quit']),
+      (error) => error === first,
+    );
+    assert.equal(f.calls.filter(([name]) => name === 'application').length, 1);
+    assert.ok(f.trace.some((line) => line.includes('Safari constructor recovery failure:')));
+    assert.ok(!f.quit());
+  });
+}
+
+test('identity replacement during a successful constructor is rejected before dispatch', () => {
+  const f = fixture({}, undefined, {
+    afterConstructor: (running) =>
+      Object.assign(running, { launchDate: { timeIntervalSince1970: 5678 } }),
+  });
+  assert.throws(() => f.execute(['42', '1234', 'quit']), /PID has been reused/);
+  assert.ok(!f.quit());
+});
+
+test('the host-observed executable is checked before resolving an application', () => {
+  const f = fixture();
+  assert.throws(
+    () => f.execute(['42', '1234', 'quit', '', '5', '/different/Safari']),
+    /executable changed/,
+  );
+  assert.ok(!f.calls.some(([name]) => name === 'application'));
+});
+
+const target = {
+  pid: 42,
+  bundleIdentifier: 'com.apple.Safari',
+  launchedAt: 1234,
+  executablePath: '/Applications/Safari.app/Contents/MacOS/Safari',
+};
+
+for (const failure of [
+  new Error('identity changed'),
+  Object.assign(new Error('denied'), { code: -1743 }),
+  notFound(),
+  Object.assign(new Error('host timeout'), { killed: true }),
+])
+  test(`value polling propagates ${failure.message} without a second native request`, async () => {
+    let invocations = 0;
+    await assert.rejects(
+      waitForSafariValue(
+        () =>
+          requestSafari(target, 'evaluate', 'document.title', 8000, {}, async () => {
+            invocations++;
+            throw failure;
+          }),
+        Boolean,
+      ),
+      (error) => error === failure,
+    );
+    assert.equal(invocations, 1);
+  });
+
+test('readiness still polls successful values until the requested state arrives', async () => {
+  let reads = 0;
+  assert.equal(
+    await waitForSafariValue(async () => (++reads === 1 ? '' : 'ready'), Boolean),
+    'ready',
+  );
+  assert.equal(reads, 2);
+});
+
+test('normal consent can inspect one pending request and observe its eventual success', async () => {
+  let resolve!: (value: string) => void;
+  const entry: Record<string, unknown> = {};
+  const observation = observeSafariTitle(
+    new Promise<string>((done) => {
+      resolve = done;
+    }),
+    entry,
+  );
+  assert.equal(observation.value(), undefined);
+  assert.equal(entry.finishedAt, undefined);
+  resolve('Spinel desktop profile probe');
+  await observation.promise;
+  assert.equal(observation.value(), 'Spinel desktop profile probe');
+  assert.equal(typeof entry.finishedAt, 'string');
+});
+
+test('the consent-loop observation throws the original failed request before it can be renewed', async () => {
+  const failure = Object.assign(new Error('denied after dispatch'), {
+    stderr: 'action-dispatch-begin',
+  });
+  let invocations = 0;
+  const entry: Record<string, unknown> = {};
+  const observation = observeSafariTitle(
+    requestSafari(target, 'title', '', 60000, {}, async () => {
+      invocations++;
+      throw failure;
+    }),
+    entry,
+  );
+  await observation.promise;
+  assert.throws(
+    () => observation.value(),
+    (error) => error === failure,
+  );
+  assert.equal(invocations, 1);
+  assert.equal((entry.error as { stderr: string }).stderr, failure.stderr);
+});
+
+function consentLoop(
+  observe: (attempt: number) => { value: () => unknown; finished?: boolean },
+  stepResult: (attempt: number) => boolean | void = () => {},
+  expected = 'ready',
+) {
+  const events: string[] = [];
+  let attempts = 0;
+  let now = 0;
+  const run = waitForSafariConsentTitle({
+    expected,
+    deadline: 3,
+    now: () => now++,
+    start: () => {
+      attempts++;
+      events.push(`start${attempts}`);
+      const attempt = attempts;
+      const view = observe(attempt);
+      return {
+        entry: { attempt, finishedAt: view.finished ? 'done' : undefined },
+        promise: Promise.resolve().then(() => events.push(`settled${attempt}`)),
+        value: view.value,
+      };
+    },
+    step: async () => {
+      events.push('step');
+      return stepResult(attempts);
+    },
+    pause: async () => {
+      events.push('pause');
+    },
+    deadlineError: () => new Error('generic deadline'),
+  });
+  return { run, events };
+}
+
+test('the consent loop returns the ready title request after awaiting its work', async () => {
+  const f = consentLoop(() => ({ value: () => 'ready' }));
+  const request = await f.run;
+  assert.equal(request.entry.attempt, 1);
+  assert.deepEqual(f.events, ['start1', 'settled1']);
+});
+
+test('the consent loop rethrows a completed title failure before any UI step or renewal', async () => {
+  const failure = new Error('denied after dispatch');
+  const f = consentLoop(() => ({
+    value: () => {
+      throw failure;
+    },
+    finished: true,
+  }));
+  await assert.rejects(f.run, (error) => error === failure);
+  assert.deepEqual(f.events, ['start1', 'settled1']);
+});
+
+test('the consent loop prefers a failure completed during the step over the generic deadline error', async () => {
+  const failure = new Error('failed while consent was serviced');
+  let failed = false;
+  const f = consentLoop(
+    () => ({
+      value: () => {
+        if (failed) throw failure;
+      },
+    }),
+    () => {
+      failed = true;
+      return false;
+    },
+  );
+  await assert.rejects(f.run, (error) => error === failure);
+  assert.deepEqual(f.events, ['start1', 'step', 'settled1']);
+});
+
+test('the consent loop renews only a finished successful title and then reports the generic deadline', async () => {
+  const f = consentLoop((attempt) => ({ value: () => undefined, finished: attempt === 1 }));
+  await assert.rejects(f.run, /generic deadline/);
+  assert.equal(f.events.filter((event) => event.startsWith('start')).length, 2);
+  assert.ok(f.events.includes('settled2'));
+});
+
+test('documents reports a missing document as zero without dispatching any JavaScript', () => {
+  const none = fixture({}, undefined, { noDocuments: true });
+  assert.equal(none.execute(['42', '1234', 'documents', '', '5']), '0');
+  assert.deepEqual(
+    none.calls.filter(([name]) => name === 'evaluate' || name === 'title'),
+    [],
+  );
+  assert.ok(none.trace.some((line) => line.includes('document-count-end')));
+  const one = fixture();
+  assert.equal(one.execute(['42', '1234', 'documents', '', '5']), '1');
+});
+
+test('a document appearing after Safari restart is awaited by the read-only count', async () => {
+  let reads = 0;
+  const value = await waitForSafariValue(
+    async () => String(reads++ < 2 ? 0 : 1),
+    (count) => Number(count) > 0,
+  );
+  assert.equal(value, '1');
+  assert.equal(reads, 3);
+});
+
+test('a valid required baseline is retained before optional capture diagnostics', async () => {
+  const f = fixture();
+  const entry: Record<string, unknown> = {};
+  const state = await readSafariBaseline(
+    async () => f.execute(['42', '1234', 'baseline', '', '5']),
+    entry,
+  );
+  assert.equal(state.title, 'Spinel desktop profile probe');
+  assert.deepEqual(state.bounds, { x: 0, y: 25, width: 1280, height: 900 });
+  assert.equal(entry.state, state);
+});
+
+for (const value of [
+  'not json',
+  '{}',
+  JSON.stringify({ title: 'wrong', bounds: { x: 0, y: 0, width: 1, height: 1 } }),
+  JSON.stringify({
+    title: 'Spinel desktop profile probe',
+    bounds: { x: 0, y: 0, width: 0, height: 1 },
+  }),
+])
+  test(`invalid baseline cannot become passed evidence: ${value}`, async () => {
+    const entry: Record<string, unknown> = {};
+    await assert.rejects(readSafariBaseline(async () => value, entry));
+    assert.equal(entry.state, undefined);
+    assert.ok(entry.error);
+  });
+
+test('a post-dispatch baseline failure is fatal and preserves its cause without another request', async () => {
+  const failure = notFound();
+  const f = fixture({}, undefined, { actionFailure: failure });
+  const entry: Record<string, unknown> = {};
+  await assert.rejects(
+    readSafariBaseline(async () => f.execute(['42', '1234', 'baseline', '', '5']), entry),
+    (error) => error === failure,
+  );
+  assert.equal(f.calls.filter(([name]) => name === 'baseline-page').length, 1);
+  assert.equal(entry.state, undefined);
+  assert.ok(entry.error);
+});
+test('successful host request retains constructor trace and exact original timeout/target', async () => {
+  const entry: Record<string, unknown> = {};
+  const trace =
+    'Safari constructor failure: {"attempt":1,"errorNumber":-2700}\nSafari request phase: {"phase":"action-dispatch-begin"}\n';
+  let calls = 0;
+  assert.equal(
+    await requestSafari(
+      target,
+      'evaluate',
+      'sentinel',
+      8000,
+      entry,
+      async (_file, args, options) => {
+        calls++;
+        assert.equal(options.timeout, 8000);
+        assert.deepEqual(args.slice(4), [
+          '42',
+          '1234',
+          'evaluate',
+          'sentinel',
+          '8',
+          target.executablePath,
+        ]);
+        return { stdout: 'retained\n', stderr: trace };
+      },
+    ),
+    'retained',
+  );
+  assert.equal(calls, 1);
+  assert.equal(entry.trace, trace);
+  assert.equal(entry.status, 'passed');
+  assert.equal(entry.target, target);
+});
+
+test('host timeout is never retried and preserves the first failure plus constructor trace', async () => {
+  const entry: Record<string, unknown> = {};
+  const failure = Object.assign(new Error('timeout'), {
+    killed: true,
+    signal: 'SIGTERM',
+    stderr: 'application-constructor-second-begin',
+  });
+  let calls = 0;
+  await assert.rejects(
+    requestSafari(target, 'quit', '', 5000, entry, async (_file, _args, options) => {
+      calls++;
+      assert.equal(options.timeout, 5000);
+      throw failure;
+    }),
+    (error) => error === failure,
+  );
+  assert.equal(calls, 1);
+  assert.equal(entry.trace, failure.stderr);
+  assert.equal(entry.status, 'failed');
+});
 
 test('the checked system executable and class establish identity without any Apple Event', () => {
   const f = fixture();
@@ -205,14 +626,14 @@ for (const [name, changes, expected] of [
 test('positively matched identity permits teardown', () => {
   const f = fixture();
   assert.equal(f.execute(['42', '1234', 'quit']), 'Quit requested');
-  assert.deepEqual(f.calls, [...loadingCalls, ['application', 42], ['quit']]);
+  assert.deepEqual(f.calls, [...loadingCalls, ['application', 42], ['lookup', 42], ['quit']]);
   assert.ok(f.quit());
 });
 
 test('title preserves the PID and supplied Apple Event timeout after checked loading', () => {
   const f = fixture();
   assert.equal(f.execute(['42', '1234', 'title', '', '25']), f.page.title);
-  assert.deepEqual(f.calls, [...loadingCalls, ['application', 42], ['title', 25]]);
+  assert.deepEqual(f.calls, [...loadingCalls, ['application', 42], ['lookup', 42], ['title', 25]]);
 });
 
 test('evaluate preserves the source, document and supplied timeout after checked loading', () => {
@@ -224,6 +645,7 @@ test('evaluate preserves the source, document and supplied timeout after checked
   assert.deepEqual(f.calls, [
     ...loadingCalls,
     ['application', 42],
+    ['lookup', 42],
     ['evaluate', 'localStorage.getItem("sentinel")', 8],
   ]);
 });
@@ -232,7 +654,7 @@ test('baseline preserves native window, tab and page state after checked loading
   const f = fixture();
   assert.deepEqual(JSON.parse(f.execute(['42', '1234', 'baseline', '', '5'])), {
     windowId: 19,
-    bounds: [0, 25, 1280, 900],
+    bounds: { x: 0, y: 25, width: 1280, height: 900 },
     tabIndex: 1,
     title: f.page.title,
     url: f.page.url,
@@ -242,6 +664,7 @@ test('baseline preserves native window, tab and page state after checked loading
   assert.deepEqual(f.calls, [
     ...loadingCalls,
     ['application', 42],
+    ['lookup', 42],
     ['activate'],
     ['baseline-page'],
   ]);
