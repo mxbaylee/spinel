@@ -23,7 +23,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 | 7 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
 | 8 | 🔄 [SPN-145](SPN-145.md) Resolve intermittent offline-upgrade worker activation | 🌿 M | 💜 M | 21 | — |
 | 9 | 🖱️ [SPN-148](SPN-148.md) Diagnose recurring native Safari click delivery | 🌿 M | 💜 M | 21 | — |
-| 10 | 🔏 [SPN-149](SPN-149.md) Preserve passkey-revocation closure evidence across navigation | 🌿 M | 💜 M | 21 | — |
+| 10 | 🔏 [SPN-149](SPN-149.md) Preserve session-revocation closure evidence across navigation | 🌿 M | 💜 M | 21 | — |
 | 11 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
 | 12 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
 | 13 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
