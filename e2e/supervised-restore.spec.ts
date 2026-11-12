@@ -243,33 +243,55 @@ async function chooseSavedBackup(page: Page) {
 }
 
 async function attachFailure(browser: Browser | undefined, info: TestInfo) {
-  let index = 0;
+  const collectionFailures: string[] = [];
+  const capture = async (name: string, collect: () => Promise<void>) => {
+    try {
+      await collect();
+    } catch {
+      // A broken context/trace or attachment must not replace the test's
+      // original rejection or prevent evidence from other contexts/pages.
+      collectionFailures.push(name);
+    }
+  };
   let contextIndex = 0;
   for (const context of browser?.contexts() ?? []) {
     const index = contextIndex++;
-    await info.attach(`restore-startup-${index}`, {
-      body: JSON.stringify(startupEvidence.get(context) ?? [], null, 2),
-      contentType: 'application/json',
+    await capture(`startup-${index}`, () =>
+      info.attach(`restore-startup-${index}`, {
+        body: JSON.stringify(startupEvidence.get(context) ?? [], null, 2),
+        contentType: 'application/json',
+      }),
+    );
+    await capture(`trace-${index}`, async () => {
+      const path = info.outputPath(`restore-first-failure-${index}.zip`);
+      await context.tracing.stop({ path });
+      await info.attach(`restore-first-failure-${index}`, { path, contentType: 'application/zip' });
     });
-    const path = info.outputPath(`restore-first-failure-${index}.zip`);
-    await context.tracing.stop({ path });
-    await info.attach(`restore-first-failure-${index}`, { path, contentType: 'application/zip' });
-  }
-  for (const context of browser?.contexts() ?? [])
+    let pageIndex = 0;
     for (const page of context.pages()) {
+      const id = `${index}-${pageIndex++}`;
       if (page.isClosed()) continue;
-      await info.attach(`restore-failure-${index}`, {
-        body: await page.screenshot({ animations: 'disabled' }).catch(() => Buffer.alloc(0)),
-        contentType: 'image/png',
-      });
-      await info.attach(`restore-state-${index++}`, {
-        body: await page
-          .locator('body')
-          .ariaSnapshot()
-          .catch(() => 'Page unavailable.'),
-        contentType: 'text/plain',
-      });
+      await capture(`screenshot-${id}`, async () =>
+        info.attach(`restore-failure-${id}`, {
+          body: await page.screenshot({ animations: 'disabled' }),
+          contentType: 'image/png',
+        }),
+      );
+      await capture(`state-${id}`, async () =>
+        info.attach(`restore-state-${id}`, {
+          body: await page.locator('body').ariaSnapshot(),
+          contentType: 'text/plain',
+        }),
+      );
     }
+  }
+  if (collectionFailures.length)
+    await info
+      .attach('restore-diagnostic-collection-failures', {
+        body: JSON.stringify(collectionFailures),
+        contentType: 'application/json',
+      })
+      .catch(() => {});
 }
 
 const skipUnsupported = (info: TestInfo) =>
