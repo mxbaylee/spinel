@@ -1,0 +1,144 @@
+[
+  {
+    "name": "followup-fresh-install",
+    "args": [
+      "npm",
+      "ci",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "code": 1,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 2636,
+    "peakKiB": 402464
+  },
+  {
+    "name": "followup-complete-install",
+    "args": [
+      "npm",
+      "ci",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 5440,
+    "peakKiB": 1069712
+  },
+  {
+    "name": "followup-icon-audit",
+    "args": [
+      "node",
+      "/tmp/spinel-dependabot-2026-11-12/inspect-icons.ts"
+    ],
+    "code": 1,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 114,
+    "peakKiB": 0
+  },
+  {
+    "name": "followup-icon-audit-complete",
+    "args": [
+      "node",
+      "/tmp/spinel-dependabot-2026-11-12/inspect-icons.ts"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 150,
+    "peakKiB": 0
+  },
+  {
+    "name": "followup-profile-tests",
+    "args": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "src/profile/profile.test.ts",
+      "src/shared/appearance.test.ts"
+    ],
+    "code": 1,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 3632,
+    "peakKiB": 583776
+  },
+  {
+    "name": "followup-profile-repair",
+    "args": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "src/profile/profile.test.ts"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 2703,
+    "peakKiB": 510192
+  },
+  {
+    "name": "followup-server-contracts",
+    "args": [
+      "node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "src/server/appearance/routes.test.ts",
+      "src/server/appearance/store.test.ts",
+      "src/server/auth/profile.test.ts",
+      "src/server/mcp/mcp.test.ts",
+      "src/server/sync/mcp.test.ts",
+      "src/server/sync/transport.test.ts"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 24047,
+    "peakKiB": 1017696
+  },
+  {
+    "name": "followup-lint",
+    "args": [
+      "npm",
+      "run",
+      "lint"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 11744,
+    "peakKiB": 810704
+  },
+  {
+    "name": "followup-typecheck",
+    "args": [
+      "npm",
+      "run",
+      "typecheck"
+    ],
+    "code": 1,
+    "signal": null,
+    "reason": "Resource guard",
+    "elapsedMs": 5020,
+    "peakKiB": 1220704
+  },
+  {
+    "name": "followup-comparison-controls",
+    "args": [
+      "node",
+      "--test",
+      "scripts/ci/doc-callback-comparison.test.ts",
+      "scripts/ci/doc-responsiveness.test.ts",
+      "scripts/ci/plan.test.ts",
+      "scripts/ci/coverage-result.test.ts"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 1480,
+    "peakKiB": 433696
+  }
+]
