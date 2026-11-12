@@ -75,8 +75,8 @@ export default defineConfig(({ mode }) => {
     mode === 'offline-upgrade' ? Number(process.env.SPINEL_TEST_OFFLINE_FORMAT ?? 1) : 1;
   if (![1, 2, 3].includes(format)) throw new Error('Unsupported offline upgrade fixture format.');
   const compatibility = { format, sdkVersion: CURRENT_SDK_VERSION };
-  // The acceptance builds use the same actual SDK. Distinct emitted namespaces
-  // ensure B cannot serve A's unchanged lazy files, without rewriting any bytes
+  // Each acceptance build declares its actual installed SDK. Distinct namespaces
+  // also keep B from serving any unchanged A lazy files, without rewriting bytes
   // after hashing or pretending that the fixture implements a future converter.
   const fixtureSuffix = mode === 'offline-upgrade' ? `-format${format}` : '';
   return {
