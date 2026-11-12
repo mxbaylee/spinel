@@ -97,14 +97,38 @@
       "sha256": "bca0ac4656e85ee763633144d1017ad910075a48d49dba3619fbfba058081f49",
       "job": 131159229913,
       "artifact": 13942491571,
-      "environment": "Linux native PDF raster fixture, current aggregate source; strict rendered ink clearance and independent reference comparison passed."
+      "environment": "Linux native PDF raster fixture, current aggregate source; strict rendered ink clearance and independent reference comparison passed.",
+      "run": 43211061354,
+      "original": "output/pdf/spn-102/mixed-image-paragraph-18-1.png",
+      "artifactPath": "mixed-image-paragraph-18-1.png",
+      "imageWidth": 450,
+      "imageHeight": 300,
+      "renderer": {
+        "pdfjs-dist": "6.5.438",
+        "@napi-rs/canvas": "1.1.0",
+        "scale": 1,
+        "useSystemFonts": false,
+        "helper": "lib/print/native-test-support.ts:retainPdf"
+      }
     },
     {
       "file": "header-image-section-geometry-0-2.png",
       "sha256": "f7d489c4b453fbf2b3165265ad572b6148db0a6c52451bc46c5240fd1608138e",
       "job": 131159229913,
       "artifact": 13942491571,
-      "environment": "Linux native PDF raster fixture, current aggregate source; strict rendered ink clearance and independent reference comparison passed."
+      "environment": "Linux native PDF raster fixture, current aggregate source; strict rendered ink clearance and independent reference comparison passed.",
+      "run": 43211061354,
+      "original": "output/pdf/spn-102/header-image-section-geometry-0-2.png",
+      "artifactPath": "header-image-section-geometry-0-2.png",
+      "imageWidth": 450,
+      "imageHeight": 315,
+      "renderer": {
+        "pdfjs-dist": "6.5.438",
+        "@napi-rs/canvas": "1.1.0",
+        "scale": 1,
+        "useSystemFonts": false,
+        "helper": "lib/print/native-test-support.ts:retainPdf"
+      }
     }
   ],
   "artifacts": [
@@ -124,6 +148,11 @@
       "id": 13942025891,
       "name": "theme-screenshots-mobile-https",
       "retentionDays": 14
+    },
+    {
+      "id": 13942491571,
+      "name": "doc-pdf-evidence",
+      "retentionDays": 7
     }
   ],
   "visualReview": {

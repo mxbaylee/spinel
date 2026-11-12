@@ -31,9 +31,10 @@ resolved diagnostic/source-fixture findings. **Agent review only.**
 Reviewer A inspected all six final application captures against the design
 playbook/theme, and both PDF examples, approving the candidate with no remaining
 visual findings on 2026-11-12. No new design is proposed. Owner and Collaborator
-retain coherent editing controls and readable content; Operator retains clear
-save/connection cues; Link guest access boundaries are exercised separately by
-CI rather than inferred from member screenshots. Existing accessibility/theme
+retain coherent editing controls and readable content; Operator has no new editor
+surface and its operational/access evidence is separate; Link guest access
+boundaries are exercised separately by CI rather than inferred from member
+screenshots. Existing accessibility/theme
 checks remain applicable.
 
 The four desktop captures are actual Chromium development application states at
