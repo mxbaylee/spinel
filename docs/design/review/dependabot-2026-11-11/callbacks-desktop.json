@@ -1,0 +1,254 @@
+{
+  "schema": 1,
+  "mode": "paired",
+  "preset": "desktop",
+  "accepted": true,
+  "failures": [],
+  "baseline": {
+    "source": "2a49413a1d4d8841289412e311ddd237f522afa5",
+    "traceSha256": "85ec1f00adb35b781169d55d6cf4c0156d7548130c743c07682887494c3a77fb",
+    "bounded": false,
+    "unmappedSourcePositions": 10,
+    "families": {
+      "cursor": {
+        "installations": 16735,
+        "removals": 8365,
+        "duplicateRemovals": 0,
+        "firings": 8375,
+        "oneShotFirings": 8370,
+        "intervalFirings": 5,
+        "pendingHighWater": 7724,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 5,
+          "finalKey": 7720,
+          "disposed": 9,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 7741,
+        "callbacksAfterDisposal": 9,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 8375,
+          "sumMs": 96.3,
+          "unionMs": 96.3,
+          "maxMs": 0.34
+        },
+        "postInputCallbackWall": {
+          "count": 7741,
+          "sumMs": 85.073,
+          "unionMs": 85.073,
+          "maxMs": 0.34
+        },
+        "postDisposalCallbackWall": {
+          "count": 9,
+          "sumMs": 0.242,
+          "unionMs": 0.242,
+          "maxMs": 0.05
+        }
+      },
+      "zoom-init": {
+        "installations": 1,
+        "removals": 0,
+        "duplicateRemovals": 1,
+        "firings": 1,
+        "oneShotFirings": 1,
+        "intervalFirings": 0,
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 1,
+          "sumMs": 5.386,
+          "unionMs": 5.386,
+          "maxMs": 5.386
+        },
+        "postInputCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        }
+      },
+      "zoom-update": {
+        "installations": 2087,
+        "removals": 0,
+        "duplicateRemovals": 1,
+        "firings": 2087,
+        "oneShotFirings": 2087,
+        "intervalFirings": 0,
+        "pendingHighWater": 1846,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1845,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 1846,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 2087,
+          "sumMs": 694.748,
+          "unionMs": 694.748,
+          "maxMs": 8.294
+        },
+        "postInputCallbackWall": {
+          "count": 1846,
+          "sumMs": 561.721,
+          "unionMs": 561.721,
+          "maxMs": 8.294
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        }
+      }
+    }
+  },
+  "candidate": {
+    "source": "eef70b35c2361e7fb9e151a967dd09070566cedf",
+    "traceSha256": "8c146efa0c48b286cc404a1c9477f4ba783bc0e69330fe80eb9317152a71f8e1",
+    "bounded": true,
+    "unmappedSourcePositions": 10,
+    "families": {
+      "cursor": {
+        "installations": 16655,
+        "removals": 16650,
+        "duplicateRemovals": 0,
+        "firings": 10,
+        "oneShotFirings": 5,
+        "intervalFirings": 5,
+        "pendingHighWater": 4,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 2,
+          "finalKey": 2,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 10,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 10,
+          "sumMs": 0.646,
+          "unionMs": 0.646,
+          "maxMs": 0.123
+        },
+        "postInputCallbackWall": {
+          "count": 10,
+          "sumMs": 0.646,
+          "unionMs": 0.646,
+          "maxMs": 0.123
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        }
+      },
+      "zoom-init": {
+        "installations": 1,
+        "removals": 0,
+        "duplicateRemovals": 0,
+        "firings": 1,
+        "oneShotFirings": 1,
+        "intervalFirings": 0,
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 1,
+          "sumMs": 4.891,
+          "unionMs": 4.891,
+          "maxMs": 4.891
+        },
+        "postInputCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        }
+      },
+      "zoom-update": {
+        "installations": 2087,
+        "removals": 2085,
+        "duplicateRemovals": 0,
+        "firings": 2,
+        "oneShotFirings": 2,
+        "intervalFirings": 0,
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterFinalKey": 1,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0,
+        "directCallbackWall": {
+          "count": 2,
+          "sumMs": 2.421,
+          "unionMs": 2.421,
+          "maxMs": 1.337
+        },
+        "postInputCallbackWall": {
+          "count": 1,
+          "sumMs": 1.084,
+          "unionMs": 1.084,
+          "maxMs": 1.084
+        },
+        "postDisposalCallbackWall": {
+          "count": 0,
+          "sumMs": 0,
+          "unionMs": 0,
+          "maxMs": 0
+        }
+      }
+    }
+  },
+  "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+  "originalComparisonSha256": "611e82d2eefe4d521b063aafe022d39658eff0305ee361da037c706ef273f0ca",
+  "retention": "Summary preserves every reported counter and timing aggregate; individual callback spans and large raw traces omitted. Source CI artifacts expire after 14 days."
+}

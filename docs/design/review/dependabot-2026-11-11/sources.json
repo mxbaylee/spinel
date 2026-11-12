@@ -1,0 +1,137 @@
+{
+  "head": "09622e074512d2fb069b7ed27e6e26f71549a4de",
+  "testedMerge": "eef70b35c2361e7fb9e151a967dd09070566cedf",
+  "run": 43211061354,
+  "environment": "Chromium, synthetic actual application fixtures; unmodified CI screenshots. Desktop: development server. Phone: HTTPS mobile project; emulated touch, not physical-device evidence.",
+  "files": [
+    {
+      "file": "sheet-light.png",
+      "original": "development-1/test-results/theme-screenshots/development-sheet-light.png",
+      "sha256": "790eeba75e7ef7dd2b8f54a1b5f2dbc9d65b10f4a39c91707385ee4d21654359",
+      "imageWidth": 1440,
+      "imageHeight": 1100,
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "job": 131159230128,
+      "pointer": "desktop"
+    },
+    {
+      "file": "sheet-dark.png",
+      "original": "development-1/test-results/theme-screenshots/development-sheet-dark.png",
+      "sha256": "67bc056b4892ce2230573224ade2e42f237c1c7b643a74f2ea7adbb2accf85cf",
+      "imageWidth": 1440,
+      "imageHeight": 1100,
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "job": 131159230128,
+      "pointer": "desktop"
+    },
+    {
+      "file": "doc-light.png",
+      "original": "development-1/test-results/theme-screenshots/development-doc-light.png",
+      "sha256": "1cb48ecd5cfe9347e3a7cd36a702c9d81d806be9a3ee0c1ef8cda186a93eb6fb",
+      "imageWidth": 1440,
+      "imageHeight": 1100,
+      "theme": "light",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "job": 131159230128,
+      "pointer": "desktop"
+    },
+    {
+      "file": "doc-dark.png",
+      "original": "development-1/test-results/theme-screenshots/development-doc-dark.png",
+      "sha256": "1aac61903a13ad8602688a6d8334b5d031bcb746bc431916ebd2cc69164bae25",
+      "imageWidth": 1440,
+      "imageHeight": 1100,
+      "theme": "dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "job": 131159230128,
+      "pointer": "desktop"
+    },
+    {
+      "file": "sheet-phone.png",
+      "original": "mobile-https/test-results/theme-screenshots/mobile-sheet-light-mobile-https.png",
+      "sha256": "39ff6c68f466aa06c215bc8cf3ee236812a48a014a5d860502389fc90fb271db",
+      "imageWidth": 1082,
+      "imageHeight": 2202,
+      "theme": "light",
+      "viewport": {
+        "width": 412,
+        "height": 839
+      },
+      "job": 131159230259,
+      "deviceScaleFactor": 2.625,
+      "pointer": "coarse, isMobile=true, hasTouch=true",
+      "state": "Native Sheet after touch pan and pinch to 190%; browser viewport scale remains 1"
+    },
+    {
+      "file": "doc-phone.png",
+      "original": "mobile-https/test-results/theme-screenshots/spn-072-reading-light-zoom-1-mobile-https.png",
+      "sha256": "1bf24498cbc690932eb390fe59f9deb5246cfc25289c0d23e393ee10b0edbe77",
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "theme": "light",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "job": 131159230259,
+      "deviceScaleFactor": 1,
+      "pointer": "coarse, isMobile=true, hasTouch=true",
+      "state": "Modern Doc reading mode, native 100% zoom; text reflows without modifying saved geometry"
+    },
+    {
+      "file": "mixed-image-paragraph-18-1.png",
+      "sha256": "bca0ac4656e85ee763633144d1017ad910075a48d49dba3619fbfba058081f49",
+      "job": 131159229913,
+      "artifact": 13942491571,
+      "environment": "Linux native PDF raster fixture, current aggregate source; strict rendered ink clearance and independent reference comparison passed."
+    },
+    {
+      "file": "header-image-section-geometry-0-2.png",
+      "sha256": "f7d489c4b453fbf2b3165265ad572b6148db0a6c52451bc46c5240fd1608138e",
+      "job": 131159229913,
+      "artifact": 13942491571,
+      "environment": "Linux native PDF raster fixture, current aggregate source; strict rendered ink clearance and independent reference comparison passed."
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13941678263,
+      "name": "theme-screenshots-development-1",
+      "sha256": "67642b0a49db44afdb719b58957527adb08f91aa276482fdc91c7fc5958f878b",
+      "retentionDays": 14
+    },
+    {
+      "id": 13942147585,
+      "name": "theme-screenshots-development-2",
+      "sha256": "939081b4ef33cf37dd8ec7293fa3d1c90a5ffffe460ecfd2a6e74e3de10c4b28",
+      "retentionDays": 14
+    },
+    {
+      "id": 13942025891,
+      "name": "theme-screenshots-mobile-https",
+      "retentionDays": 14
+    }
+  ],
+  "visualReview": {
+    "reviewer": "/root/dependency_review_a",
+    "head": "09622e074512d2fb069b7ed27e6e26f71549a4de",
+    "status": "approved",
+    "disclosure": "agent review only",
+    "findings": [],
+    "scope": "All six actual application screenshots and both PDF samples. Existing design retained; all four personas assessed. Phone images are touch emulation, not physical-device evidence."
+  }
+}
