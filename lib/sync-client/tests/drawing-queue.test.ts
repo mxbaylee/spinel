@@ -216,7 +216,7 @@ test.each([0, 20])(
 );
 
 test.each([0, 1].flatMap((first) => [0, 20].map((offset) => ({ first, offset }))))(
-  'concurrent insertion and removal produce native collapsed geometry ($first first, $offset offset)',
+  'concurrent insertion and removal preserve native positive geometry ($first first, $offset offset)',
   async ({ first, offset }) => {
     const source = book();
     source.sheets.one.columnCount = 4;
@@ -297,10 +297,9 @@ test.each([0, 1].flatMap((first) => [0, 20].map((offset) => ({ first, offset }))
       }
 
       // Concurrently created drawings retain their sender's anchors. The first
-      // deletion therefore leaves a positive drawing beyond the shortened
-      // sheet. The next native deletion maps its endpoints to columns 1 and 2;
-      // native geometry clamps both to the final existing column, producing
-      // width 0 or -20 without a hand-authored collapsed drawing mutation.
+      // deletion leaves a positive drawing beyond the shortened sheet. Univer
+      // 1.3.1 preserves its width on the next native deletion too; the retained
+      // collapsed-drawing cases above cover older saved zero/signed extents.
       const queued: ReturnType<typeof wire>[] = [];
       async function send(command: string, params: object) {
         expect(await sender.commands.executeCommand(command, { ...target, ...params })).toBe(true);
@@ -310,11 +309,11 @@ test.each([0, 1].flatMap((first) => [0, 20].map((offset) => ({ first, offset }))
         queued.push(wire(accepted.edit));
         return request;
       }
-      const collapsing = await send(RemoveColByRangeCommand.id, remove);
+      const structural = await send(RemoveColByRangeCommand.id, remove);
       expect(
-        collapsing.mutations.some((mutation) => mutation.id === 'sheet.mutation.set-drawing-apply'),
+        structural.mutations.some((mutation) => mutation.id === 'sheet.mutation.set-drawing-apply'),
       ).toBe(true);
-      const width = offset === 0 ? 0 : -offset;
+      const width = 88 - offset;
       expect(drawing(sender).transform?.width).toBe(width);
       expect(drawing(sender).drawingId).toBe('image');
       expect(drawing(receiver).transform?.width).toBe(88 - offset);
@@ -332,7 +331,7 @@ test.each([0, 1].flatMap((first) => [0, 20].map((offset) => ({ first, offset }))
       });
       await send('sheet.command.set-range-values', {
         range: { startRow: 4, endRow: 4, startColumn: 1, endColumn: 1 },
-        value: { v: 'after-native-collapse' },
+        value: { v: 'after-native-structure' },
       });
       expect(queued).toHaveLength(5);
       for (const edit of queued) receiver.sync.receive({ type: 'edit', ...edit });
@@ -364,7 +363,7 @@ test.each([0, 1].flatMap((first) => [0, 20].map((offset) => ({ first, offset }))
         expect(saved).toMatchObject({ drawingId: 'image', transform: { width, height: 40 } });
         expect(
           (reopened.snapshot() as ReturnType<typeof book>).sheets.one.cellData?.[4]?.[1]?.v,
-        ).toBe('after-native-collapse');
+        ).toBe('after-native-structure');
       } finally {
         reopened.dispose();
       }

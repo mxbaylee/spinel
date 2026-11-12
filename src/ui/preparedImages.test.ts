@@ -18,7 +18,7 @@ async function fixture() {
     unitId: 'unit',
     kind: 'doc' as const,
     access: 'owner' as const,
-    sdkVersion: '1.1.0' as const,
+    sdkVersion: '1.3.1' as const,
     schema: 1 as const,
     revisionOffset: 0,
   };

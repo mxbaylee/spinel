@@ -231,7 +231,7 @@ before; [profile behavior](design/account.md#saved-profile-behaviour-spn-036) ap
 ## Pinned open-source paragraph repair
 
 `npm ci` runs `scripts/dependencies/patch-univer-core.ts` against Apache-2.0
-`@univerjs/core` 1.1.0 only. The upstream paragraph composer merges attributes
+`@univerjs/core` 1.3.1 only. The upstream paragraph composer merges attributes
 when an operation requests replacement: leaving a bullet list can look correct
 locally but restore a bullet or heading when saved. Its operation slicer also
 loses explicit empty paragraph replacement arrays. The repair matches the tested
@@ -244,7 +244,7 @@ their IDs; content and formatting matched in the independent replacement matrix.
 
 The same patch fixes how a text style that replaces a run's style (REPLACE, as
 the format painter sends) transforms past a concurrent style that merges
-(COVER): stock 1.1.0 overrides the merged style's keys only where the
+(COVER): stock 1.3.1 overrides the merged style's keys only where the
 replacing style's value is truthy, so a concurrent bold survived a winning
 `bl: 0` on one screen only. Any key the replacing style sets now wins.
 
@@ -263,10 +263,13 @@ re-patching. Never bypass the guard just to make an install pass.
 ## Pinned open-source drawing refresh repair
 
 `npm ci` also runs `scripts/dependencies/patch-univer-drawing.ts` against the
-Apache-2.0 `@univerjs/sheets-drawing` 1.1.0 ES and CJS builds. Its two internal
-resize/refresh paths can encounter a retained image with finite zero or signed
-extents after structural work. Applying new-placement validation there throws
-and can stop later native edits. The repair preserves the image's identity,
+Apache-2.0 `@univerjs/sheets-drawing` 1.3.1 ES and CJS builds. Its shared internal
+resize/refresh path can encounter a retained image with finite zero or signed
+extents after structural work. New-placement validation there skips the image.
+🔎 The reviewed 1.3.1 adaptation permits only that finite collapsed extent after
+both anchor markers pass upstream validation; other invalid drawings remain
+logged and skipped. It uses the upstream placement resolver, including hidden-cell
+coordinates, and preserves upstream range filtering and per-image error handling. The repair preserves the image's identity,
 anchors and exact finite extent through native coordinate conversion; it does
 not clamp or delete content. Explicit new placement, invalid anchor coordinates
 and nonfinite sizes keep strict validation.

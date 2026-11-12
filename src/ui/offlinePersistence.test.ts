@@ -29,7 +29,7 @@ const bundle: OfflineBundle = {
   kind: 'doc',
   access: 'editor',
   readOnly: false,
-  sdkVersion: '1.1.0',
+  sdkVersion: '1.3.1',
   snapshot: { id: scope.item, body: { dataStream: '\r\n' }, documentStyle: {} },
   images: [],
 };

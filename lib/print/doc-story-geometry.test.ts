@@ -12,6 +12,7 @@ import { prepareDocSnapshot } from './doc-preparation.ts';
 import { docStories } from './doc-stories.ts';
 import { inspectSnapshot } from './preflight.ts';
 import { docInput, retainDocPdf, runDocJobs, textDoc } from './doc-native-test-support.ts';
+import { blackTextInkTop } from './raster-text-test-support.ts';
 
 function fixture(independent = false): IDocumentData {
   const snapshot = textDoc(['BODY-FIRST', 'BODY-SECOND'], {
@@ -164,7 +165,7 @@ test('reused image-only headers reserve the complete image independently in each
       expect(Math.abs(blue - 100 * 90 * 0.75 ** 2)).toBeLessThan(100);
       expect(left).toBeCloseTo((pageIndex ? 140 : 40) * 0.75, 0);
       const after = page.items.find((item) => item.str.includes('HEADER-AFTER'))!;
-      expect(page.height - after.transform[5] - after.height).toBeGreaterThan(bottom);
+      expect(blackTextInkTop(page, after)).toBeGreaterThan(bottom);
       const body = page.items.find((item) => item.str.includes('BODY-'))!;
       expect(body.transform[5]).toBeLessThan(after.transform[5] - after.height);
     }

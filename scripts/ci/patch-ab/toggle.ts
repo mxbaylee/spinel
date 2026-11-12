@@ -26,18 +26,18 @@ export const sha256 = (text: string) => createHash('sha256').update(text).digest
 
 /**
  * Complete-module sha256 each variant must produce from the pinned @univerjs/docs
- * 1.1.0 bundles. They are the same pins patch-univer-docs.test.ts asserts, repeated
+ * 1.3.1 bundles. They are the same pins patch-univer-docs.test.ts asserts, repeated
  * here so a toggle that wrote the wrong build, or a drifted generator, fails the
  * job instead of only proving that a write round-trips.
  */
 export const pinnedInstalled: Record<Variant, Installed> = {
   previous: {
-    es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
-    cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+    es: '83b7c9780e3c7e23767f65357915e6d419d3be64d9717f9d6f4c4588f0803a77',
+    cjs: '4505cd09d6237053f43c2cdc32d3027be24d381a0917844f47c2c41949b5fa5c',
   },
   patched: {
-    es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
-    cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+    es: '788566fd844ad732f3dce124c64daf9f14a742487b5e11191d96da7c82b0563c',
+    cjs: 'f5d9d7a67e528159e16bb1abc341f4efd7b62dcfa29d18d925c7bd60904626a9',
   },
 };
 

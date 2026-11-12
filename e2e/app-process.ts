@@ -10,6 +10,8 @@ export async function startApp(options: {
   origin: string;
   development: boolean;
   staticDirectory?: string;
+  /** Immutable historical backend for real offline SDK transition evidence. */
+  sourceRoot?: string;
   /** Upgrade acceptance keeps one public origin while swapping its fixture backend. */
   listenPort?: number;
   spaceReview?: boolean;
@@ -40,7 +42,7 @@ export async function startApp(options: {
       'server/index.ts',
       ...(options.development ? ['--dev', '--no-open'] : []),
     ],
-    { cwd: projectRoot, env, stdio: ['ignore', 'pipe', 'pipe'] },
+    { cwd: options.sourceRoot ?? projectRoot, env, stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let output = '';
   let startupError: Error | undefined;
