@@ -130,3 +130,108 @@ The guards and compiler configuration in the repository are unchanged. The
 [local receipts](evidence/dependabot-2026-11-11/) retain commands, elapsed time,
 peak observed RSS and both aborts; successful install/control/PDF logs are
 compressed beside them. No local typecheck pass is claimed.
+
+
+## 🔧 Second aggregate: retained patches and the three remaining updates
+
+2026-11-11, owner direction in chat: finish the three Dependabot PRs before
+SPN-147; Univer patches may be reapplied after precise source comparison.
+This supersedes the earlier stock-only upgrade checkpoint and the preceding
+separate-PR plan. Resume #240 with #275 and #238, preserving their failure
+history. Close the superseded PRs only after the aggregate actually lands.
+Complete outcome is **XL**, including five guarded OSS patch migrations,
+SDK/peer/lock consistency, retained offline runtimes, native PDF geometry,
+first-failure startup diagnosis, historical comparison sources, visual review,
+two independent reviews, all selected CI and guarded branch cleanup. This is
+an aggregate dependency exception, not completion of the unpatch tickets.
+
+Sources and intended versions:
+
+- Univer #240: bot source `24e1f3394a6a59799b9a6a0be3f29f1e005210b6` and checkpoint
+  `243151b94c16da82e918acd52d9e31cf61f560b5`; every SDK package/peer is 1.3.1.
+  The [precise source comparison](SPN-099.md#-retain-reviewed-patches-while-updating-dependencies)
+  records unchanged patch targets and the drawing controller adaptation.
+- Print #275: `5c29dad4b38193c3bf140d0f2202bf9d9fc7b68f`, Canvas 1.1.0
+  and PDF.js 6.5.438. Its manifest/lock changes were integrated while preserving
+  the Univer dependency updates. No text-renderer override or relaxed image
+  boundary assertion is included. Prior Linux geometry failures remain open
+  pending the combined candidate's native output and a supported repair.
+- Caddy #238: `ff0872497ad8a83856e77b4d404333f85a020117`, only its pinned
+  Compose digest changes to
+  `e70b164da81ef698b3ad19af799ea6086ce6d9e48ed4079eb9fe26f6fbf14ee5`.
+  The earlier localhost bootstrap failure remains unexplained, not attributed
+  to Caddy. Bootstrap now emits only a bounded stage and error-name identity;
+  private exception text/stack are excluded. A deliberate rejected-import unit
+  control exercises the actual catch. Manually created restore browser contexts
+  observe startup diagnostics before the first page and retain first-failure
+  traces; their journey, timing limits and fail-on-flaky policy stay intact.
+
+### 💾 Actual SDK identity and retained offline evidence
+
+The current client/build and newly created Sheet metadata now identify 1.3.1.
+The legacy compatibility constant remains 1.1.0. A no-host unit contract accepts
+only the current SDK. Active positive UI/offline/Storybook fixtures follow the
+new identity; historical fixtures remain historical.
+
+The existing sequential offline-upgrade environment still builds three real
+applications. Its eager legacy054 client comes from
+`c2e8cac0fcdec36d992d6ebf3f377c9b579a8002`; host A and its initial backend
+come from the last genuine 1.1.0 source
+`3a0e2238fb5be3907d04120eabda2aafd6565d63`; host/backend B are the candidate
+with SDK 1.3.1 and fixture format 2. CI installs each immutable source's exact
+lock/postinstall patches. Archive workspace links stay within the archive.
+No archived bytes are relabeled and no worker compatibility guard is weakened.
+The retained journey proves legacy adoption and old-runtime reopening/auth
+admission after deployment while preserving pending data. It deliberately holds
+sync; it does not claim old pending mutations drained into the new backend.
+
+Historical performance descendants retain their previous application and
+pre-fix behavior while matching the candidate's eight manifests and complete
+lock. They keep exactly the historical three postinstall patchers; no current
+Doc optimization, Doc UI repair or core channel pooling is copied into them.
+
+- Responsiveness: `ae2885ede75a168711a712a837245bc7d61b0abc`, parent
+  `e4d361f0ce3c08d4a1e80b000e29f2c2f28f6670`.
+- Callback: `2a49413a1d4d8841289412e311ddd237f522afa5`, parent
+  `f609961e4a2460bae0feedb62cedd722af270e86`.
+
+### 🔕 Quieter routine dependency checks
+
+Owner explicitly selected **“Apply the quieter configuration”** in chat on
+2026-11-11. npm, root Docker, deployment Compose (Caddy only), and GitHub Actions
+now check monthly at 09:00 America/Los_Angeles, with at most two open routine
+PRs per ecosystem. Monthly means the first day of the month, not every 30 days.
+The seven-day npm cooldown stays. Ordinary npm minor/patch updates share one
+group; Univer and print-rendering retain separate groups. Major updates remain
+eligible and separate. Existing security grouping remains unchanged; routine
+schedule/cooldown/PR caps do not delay security advisory-triggered updates.
+See GitHub's [options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference)
+and [security trigger behavior](https://docs.github.com/en/enterprise-cloud%40latest/code-security/concepts/supply-chain-security/dependabot-pull-requests).
+This reduces routine interruption without promising exactly two total PRs.
+
+All four personas favor this tradeoff: Operator has a smaller routine review
+queue and timely security remediation; Owner keeps document and print fidelity;
+Collaborator keeps synchronization and retained edits; Link guest keeps scoped
+access and revocation. Broader npm groups may take longer to qualify, so SDK and
+rendering groups stay isolated and majors remain explicit.
+
+### 🧪 Current validation checkpoint
+
+The first precise source inspection verified pristine 1.1.0 and 1.3.1 package
+bytes against their lockfile integrity, compared affected upstream regions, and
+refreshed whole-bundle ES/CJS guards and all 22 Doc A/B variant identities.
+Patch algorithms outside the reviewed drawing adaptation are unchanged.
+Existing upstream #7938 and #7969 remain open, unmerged and mergeable on
+`5a06a7842c8e13fa0646d0733dc3662cf4b330b9`; their repair semantics are unchanged,
+so no unnecessary upstream rebase or new submission is claimed.
+
+Local test/build/browser execution is deferred while macOS memory pressure
+reports `2`; no current candidate install or runtime check has passed yet.
+Formatting edits and source inspection do not substitute for execution. The
+previous stock-only failures are preserved in SPN-099's record and are not
+results for this patched candidate. Required next evidence includes a fresh
+install, all five patch/negative-control suites, native semantic/fuzz checks,
+offline admission/retention, Linux PDF geometry, first-attempt supervised restore,
+matching historical comparisons and selected desktop/container/provider work.
+All seven current-head CI gates and every selected ancillary result, both exact
+commit grades and independent light/dark/phone visual review remain required.

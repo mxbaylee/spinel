@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import { shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
+import { CURRENT_SDK_VERSION, shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
 
 // Language layout data must arrive with the renderer, before offline editing.
@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => {
   const format =
     mode === 'offline-upgrade' ? Number(process.env.SPINEL_TEST_OFFLINE_FORMAT ?? 1) : 1;
   if (![1, 2, 3].includes(format)) throw new Error('Unsupported offline upgrade fixture format.');
-  const compatibility = { format, sdkVersion: '1.1.0' };
+  const compatibility = { format, sdkVersion: CURRENT_SDK_VERSION };
   // The acceptance builds use the same actual SDK. Distinct emitted namespaces
   // ensure B cannot serve A's unchanged lazy files, without rewriting any bytes
   // after hashing or pretending that the fixture implements a future converter.

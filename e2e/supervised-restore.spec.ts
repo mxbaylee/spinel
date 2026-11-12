@@ -10,6 +10,22 @@ import { startMaintenanceFixture } from './maintenance-fixture.ts';
  * selection, double-click, cancel, a lost confirmation reply, an admitted upload
  * outlasting its passkey window, and old clients meeting the restored workspace. */
 
+const startupEvidence = new WeakMap<BrowserContext, string[]>();
+async function observeStartup(context: BrowserContext) {
+  const events: string[] = [];
+  startupEvidence.set(context, events);
+  // These contexts are created manually, so the project trace setting does not
+  // cover them. Capture the original attempt, before any page can navigate.
+  await context.tracing.start({ screenshots: true, snapshots: true });
+  context.on('page', (page) => {
+    page.on('console', (message) => {
+      if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))
+        events.push(message.text());
+    });
+    page.on('pageerror', (error) => events.push(`pageerror: ${error.name}`));
+  });
+}
+
 type Fixture = Awaited<ReturnType<typeof startMaintenanceFixture>>;
 
 async function passkey(context: BrowserContext, page: Page) {
@@ -126,6 +142,7 @@ async function enrollOperator(browser: Browser, app: Fixture) {
     colorScheme: 'light',
     reducedMotion: 'reduce',
   });
+  await observeStartup(context);
   const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   const key = await passkey(context, page);
@@ -161,6 +178,7 @@ async function joinWorkspace(
     colorScheme: 'light',
     reducedMotion: 'reduce',
   });
+  await observeStartup(context);
   const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   const key = await passkey(context, page);
@@ -226,6 +244,17 @@ async function chooseSavedBackup(page: Page) {
 
 async function attachFailure(browser: Browser | undefined, info: TestInfo) {
   let index = 0;
+  let contextIndex = 0;
+  for (const context of browser?.contexts() ?? []) {
+    const index = contextIndex++;
+    await info.attach(`restore-startup-${index}`, {
+      body: JSON.stringify(startupEvidence.get(context) ?? [], null, 2),
+      contentType: 'application/json',
+    });
+    const path = info.outputPath(`restore-first-failure-${index}.zip`);
+    await context.tracing.stop({ path });
+    await info.attach(`restore-first-failure-${index}`, { path, contentType: 'application/zip' });
+  }
   for (const context of browser?.contexts() ?? [])
     for (const page of context.pages()) {
       if (page.isClosed()) continue;

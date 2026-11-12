@@ -17,7 +17,7 @@
  * controlled graphics and native test timers. Verified upstream bytes remain
  * negative controls. No Pro package is read or modified.
  * Source: packages/docs-ui/src/services/selection/text-range.ts and
- * controllers/render-controllers/zoom.render-controller.ts, Univer v1.1.0.
+ * controllers/render-controllers/zoom.render-controller.ts, Univer v1.3.1.
  */
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
@@ -408,14 +408,14 @@ test('Docs UI installer validates name, version and both complete builds before 
   }
   for (const data of [
     { name: '@univerjs/docs-ui', version: '1.2.0' },
-    { name: 'other', version: '1.1.0' },
+    { name: 'other', version: '1.3.1' },
   ]) {
     await writeFile(metadata, JSON.stringify(data));
     await assert.rejects(patchInstalledDocsUi(root), /Upgrading @univerjs\/docs-ui/);
     assert.equal(await readFile(resolve(directory, 'lib/es/index.js'), 'utf8'), originals.es);
     assert.equal(await readFile(resolve(directory, 'lib/cjs/index.js'), 'utf8'), originals.cjs);
   }
-  await writeFile(metadata, JSON.stringify({ name: '@univerjs/docs-ui', version: '1.1.0' }));
+  await writeFile(metadata, JSON.stringify({ name: '@univerjs/docs-ui', version: '1.3.1' }));
   const cjs = resolve(directory, 'lib/cjs/index.js');
   await writeFile(cjs, originals.cjs + '\n// unexpected change');
   await assert.rejects(patchInstalledDocsUi(root), /Unrecognized/);

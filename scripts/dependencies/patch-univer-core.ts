@@ -16,7 +16,7 @@
  * Modified for Spinel: repair paragraph REPLACE composition, keep custom ranges
  * canonical after every update, stop adding a custom range from emitting a
  * negative retain, and let a REPLACE style's falsy keys win over a concurrent
- * COVER style, in open-source @univerjs/core 1.1.0. No @univerjs-pro
+ * COVER style, in open-source @univerjs/core 1.3.1. No @univerjs-pro
  * package is read or modified.
  * It also schedules Univer's immediate macrotasks on one shared MessageChannel
  * instead of constructing a channel per call (SPN-146: about 47,000 per typing
@@ -29,7 +29,7 @@
  * Source: packages/core/src/docs/data-model/text-x/{utils,action-iterator,transform-utils}.ts,
  * packages/core/src/docs/data-model/text-x/apply-utils/{common,update-apply}.ts and
  * packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts and
- * packages/core/src/common/request-immediate-macro-task.ts, tag v1.1.0.
+ * packages/core/src/common/request-immediate-macro-task.ts, tag v1.3.1.
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -38,16 +38,16 @@ import { fileURLToPath } from 'node:url';
 
 const formats = {
   es: {
-    sha256: 'ecbebddd3821c5603d41fb7febf5277ca051171caa170d0c51afe12143cedc12',
+    sha256: '84945d2f297af99bf4c83a79928ef05a7aab03ab70c2249e2f32ec8262af831e',
     merge: 'merge',
   },
   cjs: {
-    sha256: 'abbf88dcec149753c405c6a7243a3ea5267df31e56849ba4cde6bc839512d829',
+    sha256: '3eb778711d5d1ce5517d2e0758caeecb4e181718931c6923b6d89c87ff0d452c',
     merge: '(0, lodash_es.merge)',
   },
 } as const;
 
-/** The original function, byte for byte, as shipped in 1.1.0 (es and cjs are identical here). */
+/** The original function, byte for byte, as shipped in 1.3.1 (es and cjs are identical here). */
 const upstreamMacroTask = `function requestImmediateMacroTask(callback) {
 	const channel = new MessageChannel();
 	let cancelled = false;
@@ -251,7 +251,7 @@ export function patchCore(
 export async function patchInstalledCore(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/core');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
-  if (metadata.version !== '1.1.0')
+  if (metadata.version !== '1.3.1')
     throw new Error('Upgrading @univerjs/core: do SPN-099 first (docs/todo/SPN-099.md).');
   // Validate both formats before making either change.
   const updates = await Promise.all(

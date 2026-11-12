@@ -40,7 +40,7 @@ beforeEach(() => {
   boundary.readiness.mockReset().mockResolvedValue({
     kind: 'ready',
     buildId: '0123456789abcdef',
-    compatibility: { format: 1, sdkVersion: '1.1.0' },
+    compatibility: { format: 1, sdkVersion: '1.3.1' },
   });
   boundary.release.mockReset().mockResolvedValue(undefined);
   values = new Map();
@@ -104,7 +104,7 @@ function copy(name = '旅の記録 🌿'): StoredItem {
       readOnly: false,
       revision: 3,
       revisionOffset: 0,
-      sdkVersion: '1.1.0',
+      sdkVersion: '1.3.1',
       images: [],
       snapshot: { id: itemId, body: { dataStream: '旅の記録 🌿\r\n' }, documentStyle: {} },
     },

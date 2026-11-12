@@ -26,8 +26,15 @@ test.beforeEach(({ browserName }, info) =>
 );
 const origin = 'http://localhost:3110';
 const legacyCommit = 'c2e8cac0fcdec36d992d6ebf3f377c9b579a8002';
+const previousCommit = '3a0e2238fb5be3907d04120eabda2aafd6565d63';
+const previousSource = resolve(process.env.SPINEL_PREVIOUS_OFFLINE_SOURCE || projectRoot);
 const legacySource = resolve(process.env.SPINEL_LEGACY_OFFLINE_SOURCE || projectRoot);
-type EmittedBuild = { directory: string; html: string; manifest: ShellManifest };
+type EmittedBuild = {
+  directory: string;
+  html: string;
+  manifest: ShellManifest;
+  applicationSource: string;
+};
 type LegacyBuild = { directory: string; html: string; files: string[] };
 let buildDirectory: string;
 let legacy: LegacyBuild;
@@ -82,9 +89,8 @@ async function emit(directory: string, source: string, format?: 1 | 2) {
   });
 }
 
-async function buildLegacy(): Promise<LegacyBuild> {
-  const source = join(buildDirectory, 'legacy054-source');
-  const directory = join(buildDirectory, 'legacy054-build');
+async function archiveSource(label: string, commit: string, installed: string) {
+  const source = join(buildDirectory, `${label}-source`);
   await mkdir(source);
   // CI provides an immutable checkout when its normal checkout is shallow.
   // A local checkout may already contain this commit. Neither path fetches or
@@ -94,10 +100,10 @@ async function buildLegacy(): Promise<LegacyBuild> {
       'git',
       [
         '-C',
-        legacySource,
+        installed,
         'archive',
         '--format=tar',
-        legacyCommit,
+        commit,
         'web',
         'src',
         'lib',
@@ -130,7 +136,7 @@ async function buildLegacy(): Promise<LegacyBuild> {
         child.once('close', (code) =>
           code === 0
             ? resolve()
-            : fail(new Error(`Could not materialize legacy054 (${code}). ${output}`)),
+            : fail(new Error(`Could not materialize ${label} (${code}). ${output}`)),
         );
       });
     void Promise.all([completion(archive), completion(extract)])
@@ -147,9 +153,14 @@ async function buildLegacy(): Promise<LegacyBuild> {
       });
   });
   // Use the immutable checkout's installed external packages and its own
-  // postinstall patches. Every workspace import still targets the archive;
-  // the upgrade server below continues to use the current application.
-  await linkLegacyOfflineDependencies(source, legacySource);
+  // postinstall patches. Every workspace import still targets the archive.
+  await linkLegacyOfflineDependencies(source, installed);
+  return source;
+}
+
+async function buildLegacy(): Promise<LegacyBuild> {
+  const source = await archiveSource('legacy054', legacyCommit, legacySource);
+  const directory = join(buildDirectory, 'legacy054-build');
   await emit(directory, source);
   const html = await readFile(join(directory, 'index.html'), 'utf8');
   expect(runtimeDescriptor(html)).toBeNull();
@@ -162,11 +173,15 @@ async function buildLegacy(): Promise<LegacyBuild> {
 
 async function build(format: 1 | 2): Promise<EmittedBuild> {
   const directory = join(buildDirectory, `format-${format}`);
-  await emit(directory, projectRoot, format);
+  // A is the genuine last 1.1.0 host/backend; B is the candidate. Keeping
+  // their own SDK bytes proves retention across a real SDK and format change.
+  const applicationSource =
+    format === 1 ? await archiveSource('previous', previousCommit, previousSource) : projectRoot;
+  await emit(directory, applicationSource, format);
   const html = await readFile(join(directory, 'index.html'), 'utf8');
   const manifest = runtimeDescriptor(html);
   if (!manifest) throw new Error('The actual emitted build has no runtime descriptor.');
-  expect(manifest.compatibility).toEqual({ format, sdkVersion: '1.1.0' });
+  expect(manifest.compatibility).toEqual({ format, sdkVersion: format === 1 ? '1.1.0' : '1.3.1' });
   const worker = await readFile(join(directory, 'service-worker.js'), 'utf8');
   expect(worker).toContain(manifest.version);
   for (const file of manifest.files)
@@ -184,7 +199,7 @@ async function build(format: 1 | 2): Promise<EmittedBuild> {
     bootstrapBytes += (await readFile(join(directory, file))).length;
   }
   expect(bootstrapBytes).toBeLessThan(32_768);
-  return { directory, html, manifest };
+  return { directory, html, manifest, applicationSource };
 }
 
 test.beforeAll(async ({ browserName }, info) => {
@@ -212,7 +227,10 @@ test('the actual SPN-054 eager client keeps its pending Doc and lazy files durin
   const lazy = legacy.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
   expect(missing).toBeDefined();
   expect(lazy).toBeDefined();
-  const server = await upgradeServer(databasePath, missing, legacy);
+  const server = await upgradeServer(databasePath, missing, {
+    ...legacy,
+    applicationSource: a.applicationSource,
+  });
   let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
   try {
     browser = await chromium.launch({ headless: true });
@@ -332,7 +350,7 @@ type Fault = 'missing-lazy' | 'html-asset' | 'wrong-html' | 'redirect' | 'interr
 async function upgradeServer(
   databasePath: string,
   missing: string,
-  initial: { directory: string } = a,
+  initial: { directory: string; applicationSource?: string } = a,
 ) {
   let fault: Fault | undefined;
   const hits: { fault: Fault; path: string; credentialed: boolean }[] = [];
@@ -414,7 +432,7 @@ async function upgradeServer(
     server.listen(3110, '127.0.0.1', done);
   });
   let app: Awaited<ReturnType<typeof startApp>> | undefined;
-  const replace = async (next: { directory: string }) => {
+  const replace = async (next: { directory: string; applicationSource?: string }) => {
     await app?.close();
     app = await startApp({
       databasePath,
@@ -422,6 +440,7 @@ async function upgradeServer(
       listenPort: 3111,
       development: false,
       staticDirectory: next.directory,
+      sourceRoot: next.applicationSource,
     });
   };
   try {
