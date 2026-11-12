@@ -13,4 +13,8 @@ test('visible sentinel clearance rejects touching, overlapping and missing ink',
   }
   page.pixels.fill(255);
   expect(() => blackTextInkTop(page, item)).toThrow('no visible black ink');
+  // A visible following paragraph cannot stand in for an invisible sentinel.
+  const nextLine = (23 * page.width + 10) * 4;
+  page.pixels.fill(0, nextLine, nextLine + 3);
+  expect(() => blackTextInkTop(page, item)).toThrow('no visible black ink');
 });

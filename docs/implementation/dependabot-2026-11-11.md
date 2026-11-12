@@ -313,9 +313,12 @@ inspection of artifact `13937851096` found:
   `f7d489c4b453fbf2b3165265ad572b6148db0a6c52451bc46c5240fd1608138e`.
 
 The fixture's Atkinson font has units/em 1000, cap height 668 and ascent 950.
-Measure actual black sentinel pixels in a conservative upright em window, fail
-on missing ink, and keep strict separation. Synthetic touching, overlapping and
-missing-ink controls guard the oracle. All image areas, origins, text uniqueness,
+Measure actual black sentinel pixels above their baseline in a conservative
+upright em window, fail on missing ink, and keep strict separation. These fixed
+uppercase sentinels have no descenders. Independent review caught that scanning
+below the baseline could mistake a following paragraph for missing sentinel ink;
+exclude that line and retain an explicit negative control for it. Synthetic
+touching, overlapping and missing-ink controls guard the oracle. All image areas, origins, text uniqueness,
 independently authored reference comparisons and snapshot immutability remain.
 No renderer override or overlap tolerance is introduced. Later reference checks
 were not reached after those original failures and still require fresh execution.

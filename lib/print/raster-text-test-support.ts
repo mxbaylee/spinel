@@ -15,13 +15,14 @@ export function blackTextInkTop(
   )
     throw new Error('Expected upright sentinel text');
   // PDF.js TextItem.height is the transformed font/em height, not glyph ascent.
-  // Search its full surrounding em box, including horizontal overhangs. Never
-  // start at the image boundary: overlapping ink must remain observable.
+  // These uppercase sentinels have no descenders. Search the full em above the
+  // baseline, including horizontal overhangs, but exclude the following line.
+  // Never start at the image boundary: overlapping ink must remain observable.
   const baseline = page.height - y;
   const left = Math.max(0, Math.floor(x - item.height));
   const right = Math.min(page.width, Math.ceil(x + item.width + item.height));
   const top = Math.max(0, Math.floor(baseline - item.height));
-  const bottom = Math.min(page.height, Math.ceil(baseline + item.height));
+  const bottom = Math.min(page.height, Math.ceil(baseline));
   for (let row = top; row < bottom; row++)
     for (let column = left; column < right; column++) {
       const offset = (row * page.width + column) * 4;
