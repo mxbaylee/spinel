@@ -1,0 +1,148 @@
+[
+  {
+    "name": "grooming-draft-check",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:check"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 469,
+    "peakKiB": 235568
+  },
+  {
+    "name": "grooming-draft-index",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:index"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 627,
+    "peakKiB": 160272
+  },
+  {
+    "name": "grooming-final-check",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:check"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 362,
+    "peakKiB": 151008
+  },
+  {
+    "name": "grooming-final-index",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:index"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 537,
+    "peakKiB": 160976
+  },
+  {
+    "name": "grooming-final-pr",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:pr",
+      "--",
+      "--base",
+      "origin/main",
+      "--title",
+      "\ud83e\uddf9 Groom backlog after merged-ticket audit"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 470,
+    "peakKiB": 258832
+  },
+  {
+    "name": "grooming-new-revocation",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:new",
+      "--",
+      "\ud83d\udd0f",
+      "Preserve passkey-revocation closure evidence across navigation"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 225,
+    "peakKiB": 251776
+  },
+  {
+    "name": "grooming-new-safari",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:new",
+      "--",
+      "\ud83d\uddb1\ufe0f",
+      "Diagnose recurring native Safari click delivery"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 513,
+    "peakKiB": 161136
+  },
+  {
+    "name": "grooming-repair-index",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:index"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 538,
+    "peakKiB": 161056
+  },
+  {
+    "name": "grooming-repaired-check",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:check"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 241,
+    "peakKiB": 251696
+  },
+  {
+    "name": "grooming-repaired-pr",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/npm",
+      "run",
+      "backlog:pr",
+      "--",
+      "--base",
+      "origin/main",
+      "--title",
+      "\ud83e\uddf9 Groom backlog after merged-ticket audit"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 752,
+    "peakKiB": 257792
+  }
+]
