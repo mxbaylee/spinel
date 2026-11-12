@@ -348,3 +348,50 @@ restore, both sync projects, and Spaces provider backup/restore acceptance.
 Mobile responsiveness remained running at this checkpoint. These are historical
 first-attempt results only; the repaired head needs its own selected gates and
 independent visual review. Local execution remains blocked by pressure level 2.
+
+### 🔎 Second hosted candidate and current-runtime admission fixture
+
+Candidate `e3471dc322cc4f45ab5b3f2e1d42590db3f82950` received **98/100 from
+both independent nonimplementing reviewers** before publication. The following-line
+ink finding was fixed on that exact head. Its
+[CI run 43209110912](https://github.com/mxbaylee/spinel/actions/runs/43209110912)
+uses merge source `670ca5405150be91e0db598183ed7e1c7bb198cb` over unchanged base
+`3a0e2238fb5be3907d04120eabda2aafd6565d63`.
+
+The first head's mobile responsiveness ultimately passed before the repair push;
+all four candidate samples retained content and undo/redo. Original PR metadata
+run `43209088242` was deliberately cancelled after the repair publication. Its
+fail-closed aggregate jobs did not turn missing classification into acceptance;
+normal cancellation left an always-run aggregate queued, so forced cancellation
+was requested and the terminal **cancelled** state verified.
+
+Local memory briefly permitted guarded checks on the second candidate:
+
+- Pure ink oracle: **1 passed**, 567 ms, peak 204,912 KiB.
+- Fresh normal `npm ci`, including all five postinstall patchers: **passed**,
+  8,365 ms, peak 1,008,560 KiB. An earlier attempt was blocked at preflight.
+- Seven-file print/native attempt with `FUZZ_SEED=1`: resource-aborted after
+  3,078 ms, peak 927,232 KiB when memory pressure rose. No completed test results;
+  do not count this as a pass or as the complete fuzz matrix.
+
+The second hosted mixed-fuzz job `131152168290` passed the complete original
+100-seed workload in **351.75 s**, including exactly two retained collapsed-image
+captures. No random capture created a new collapsed extent. Independent content
+checks covered 2,783 Doc cases, 1,521 Sheet insertions and 495 removals. All cell
+tests and the desktop callback lifetime comparison also passed.
+
+Unit remaining job `131152168589` passed the previously blocked Node phase and
+reached application Vitest: **2,040 passed, 8 failed**, 255.38 s, all eight in
+`offlineClaim.test.ts`. Its shared supposedly compatible fixture still declared
+SDK 1.1.0, so current-runtime admission correctly rejected it before the awaited
+catalog boundary. Use `CURRENT_SDK_VERSION` for compatible data. The test's
+“legacy prepared catalog” refers to an old account pointer without a cancellation
+nonce, not permission to expose a different SDK's data. Preserve that legacy
+pointer test and explicitly exercise both old SDK 1.1.0 and future SDK 2.0.0:
+neither can claim data, expose catalog titles or cancel its compatible old tab.
+No runtime admission policy or timeout is loosened.
+
+The repaired admission file passed **all 26 tests** in a guarded local run
+(1,073 ms total, peak 504,928 KiB); the file is the only new executable change at
+this checkpoint. Other second-head jobs continue; their original attempts and
+required visual approval remain part of acceptance.
