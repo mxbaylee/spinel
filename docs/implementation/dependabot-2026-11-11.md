@@ -131,7 +131,6 @@ The guards and compiler configuration in the repository are unchanged. The
 peak observed RSS and both aborts; successful install/control/PDF logs are
 compressed beside them. No local typecheck pass is claimed.
 
-
 ## 🔧 Second aggregate: retained patches and the three remaining updates
 
 2026-11-11, owner direction in chat: finish the three Dependabot PRs before
@@ -236,7 +235,6 @@ matching historical comparisons and selected desktop/container/provider work.
 All seven current-head CI gates and every selected ancillary result, both exact
 commit grades and independent light/dark/phone visual review remain required.
 
-
 ### 🔎 First hosted candidate and focused fixture repairs — 2026-11-12
 
 The owner approved publication of `7d545cb4dcf5382c86fc6bd94cff2f8904e981b8`
@@ -280,3 +278,70 @@ rejection, Doc folds, callback lifetime controls and detached resize. A failing
 unit job remains a failure despite those passing subcontracts. Broader native
 PDF, callback comparisons, supervised restore and visual results remain pending
 at this checkpoint; collect their original attempts before the next push.
+
+### 🧪 Remaining first-head findings and acceptance repair
+
+The same first head's lib remaining job `131135102706` finished with **949
+passed, 17 failed, 3 skipped** (86 files, 618.56 s). Ten rule-based final-cell
+pins and the F5 schema wire pin reflected 1.1.0 retyping. Update only the exact
+1.3.1 value/type results identified by upstream's value-preservation change;
+retain native intent, all replica equality, refusal/resync and complete wire
+claims. Four drawing queue cases expected the old structural deletion to create
+width 0/-20. The upstream structural refresh now preserves positive Position
+extents, observed as exactly 88/68. Retain both acceptance orders, real native
+commands, queued delivery, subsequent row/column edits and persisted reopen.
+The separate saved zero/signed-extent cases remain unchanged and passed.
+
+Mixed fuzz job `131135102708` completed all **100,000 mutations** and its
+convergence/intent/family assertions in 415.20 s, then failed the collapsed-drawing
+capture coverage assertion. The original seeds no longer create collapsed
+extents through the new native structural implementation. Keep every original
+seed, workload and acceptance threshold; prepend explicit saved width 0/-20
+fixtures through the same resource-copy/native capture path, require both
+captures and preserve their saved geometry after a real row-height command.
+Log these separately as retained captures, without claiming random creation.
+
+The other two lib failures were PDF assertions deriving glyph top by subtracting
+PDF.js `TextItem.height` from its baseline. PDF.js defines that height from the
+transformed font/em size, not actual glyph ascent. Independent nonimplementing
+inspection of artifact `13937851096` found:
+
+- `mixed-image-paragraph-18-1.png`: image bottom **170**, sentinel ink **174–183**;
+  SHA-256 `bca0ac4656e85ee763633144d1017ad910075a48d49dba3619fbfba058081f49`.
+- `header-image-section-geometry-0-2.png`: image bottom **82**, header sentinel ink
+  **86–95**, body starts **103**; SHA-256
+  `f7d489c4b453fbf2b3165265ad572b6148db0a6c52451bc46c5240fd1608138e`.
+
+The fixture's Atkinson font has units/em 1000, cap height 668 and ascent 950.
+Measure actual black sentinel pixels in a conservative upright em window, fail
+on missing ink, and keep strict separation. Synthetic touching, overlapping and
+missing-ink controls guard the oracle. All image areas, origins, text uniqueness,
+independently authored reference comparisons and snapshot immutability remain.
+No renderer override or overlap tolerance is introduced. Later reference checks
+were not reached after those original failures and still require fresh execution.
+
+Native fills failed in both browser modes (`131135103336`, `131135103303`);
+production otherwise passed **83 tests**. Development stopped after **22 passed,
+1 skipped**, leaving 52 unrun. The retained trace shows the menu open with named
+`#F05252` and `#0DA471` buttons; the old CSS/data-attribute selector was obsolete.
+Use those actual accessible swatch names, keeping persistence, both themes,
+viewer rejection and canvas-color assertions. Teardown now always cleans database
+rows and cannot replace the interaction error with navigation on a closed page.
+
+Storybook run `43204078093` built successfully; desktop light passed. Dark,
+phone light/dark and tablet failed exact Doc canvas restoration (761 → 721 px).
+The desktop dark path never shrinks its viewport, and its failure artifact
+`13937218574` shows a 40 px footer. Independent inspection found that the
+rootUnitType$-mounted Doc footer implementation is unchanged from 1.1.0. This
+supports a prematurely sampled baseline; absent initial geometry, event ordering
+is an inference. Await actual Start toolbar, statistics and Zoom controls before
+matching canvas CSS/backing dimensions to the live mount. Keep exact phone
+shrink/full-size restoration checks, and retain initial/failure geometry for a
+fresh attempt. No hardcoded final height, delay or relaxed equality.
+
+The first head also passed desktop responsiveness, all three real desktop
+offline browser checks (Chrome/Firefox macOS 26 and Safari macOS 15), supervised
+restore, both sync projects, and Spaces provider backup/restore acceptance.
+Mobile responsiveness remained running at this checkpoint. These are historical
+first-attempt results only; the repaired head needs its own selected gates and
+independent visual review. Local execution remains blocked by pressure level 2.
