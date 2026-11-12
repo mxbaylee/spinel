@@ -235,3 +235,48 @@ offline admission/retention, Linux PDF geometry, first-attempt supervised restor
 matching historical comparisons and selected desktop/container/provider work.
 All seven current-head CI gates and every selected ancillary result, both exact
 commit grades and independent light/dark/phone visual review remain required.
+
+
+### 🔎 First hosted candidate and focused fixture repairs — 2026-11-12
+
+The owner approved publication of `7d545cb4dcf5382c86fc6bd94cff2f8904e981b8`
+and then directed “no need to ask questions, do whatever to get these merged.”
+This authorizes necessary repair/review/validation cycles without repeated push
+permission requests. Preserve actual acceptance and independent reviews; missing
+or failed checks remain failures. Initial exact-head reviews were 98/100 and
+95/100, both deducting only resource-blocked local execution. Original source
+findings (diagnostic collection masking the first error and stale SDK commentary)
+were repaired before that publication. No product/ticket merge gate is waived.
+
+[CI 43204077899](https://github.com/mxbaylee/spinel/actions/runs/43204077899)
+ran the full immutable plan. Fresh installation, typecheck, lint, backlog, PR
+shape, container smoke, retained sync transition, sized restore, offline SDK
+upgrade and both Sheet/Doc soak projects passed on that head. This is first-head
+provenance, not evidence for a later repair. Local pressure still reports `2`.
+
+- Cells job `131135102830`: **105 passed, 1 failed**, 156.29 s. The failure
+  is the final old numeric/string expectation at `cells.test.ts:845`; the
+  preceding two-way convergence and real native loser-then-winner assertions
+  passed. Comparing upstream `set-range-values.mutation.ts` identifies 1.3.1's
+  new `canPreserveValue` / `numberFormatChanged` logic: a style-only write
+  preserves the previous value/type unless the number format changes. The
+  existing boolean therefore remains `{v: 1, t: 3}` on both sides. Update this
+  exact version-specific expectation/comment while retaining all convergence,
+  native-order and other cell-format cases. No transform algorithm changes.
+- Unit remaining job `131135102883`: Node suites **806 passed, 5 failed,
+  2 skipped**; the following Vitest phase did not run. Four failures are the
+  callback source verifier's stale complete-package allowlist. Recompute the
+  four pristine/patched ES/CJS hashes from guarded 1.3.1 sources and replace the
+  old allowlist; retain rejection of unrecognized source bytes. The fifth is
+  the complete ES module fixture resolving `@univerjs/rpc` from its temporary
+  location instead of Docs' real nested dependencies. Link the fixture's local
+  dependency directory to the installed Docs dependency directory and resolve
+  CJS requires from the actual Docs module location. Preserve full-module
+  execution and the missing-ActionIterator negative control.
+
+All five patch families' direct suites completed in that Node phase, including
+both drawing formats, hidden-cell offsets, skipped invalid drawings, whole-file
+rejection, Doc folds, callback lifetime controls and detached resize. A failing
+unit job remains a failure despite those passing subcontracts. Broader native
+PDF, callback comparisons, supervised restore and visual results remain pending
+at this checkpoint; collect their original attempts before the next push.

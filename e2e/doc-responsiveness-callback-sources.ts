@@ -11,10 +11,10 @@ import type {
 // Hash the complete embedded package, so a stale map or a similarly named file
 // cannot supply target attribution. SPN-119 must revisit these with the patch.
 const docsUiSources = new Set([
-  '82ff8f5bb6a16cb52a0d7b10de81cebf5a1e004bb4c7fd629ddfc993d55913cf',
-  'bc1e09498276d65c6d14240e6494a25a01d036cf3a0ab0a8aeeea6cc735b75bb',
-  '635dced08421d4f9710af399cd84224678d1fbd3cb11ac7bd37510d9d99d40bc',
-  'dad649bd32e248632982a74a20626fa4a4ae4f8aa89e0eeefb791667dc04fce9',
+  '39edbad37992dd2af30f6bac56a05fc5d82c0a74078f330047e00fb0b48d1c11',
+  '5e102d42b6ccafcbbf33bbc58f16e5c1bb20f43dd286c6f2b8520740d73356d4',
+  '5e9d899115f96bab1dd66debdc5446c879f2df69577b2ef32524288faafaa7eb',
+  'c405e5aa878779ffdd911f16a361c3d965b7ad82f6c14bdf4d0257c6d8122606',
 ]);
 const cursorRegion = 'src/services/selection/text-range.ts';
 const zoomRegion = 'src/controllers/render-controllers/zoom.render-controller.ts';

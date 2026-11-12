@@ -22,7 +22,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
@@ -762,7 +762,13 @@ for (const format of ['es', 'cjs'] as const) {
         'module',
         'exports',
         source,
-      )(createRequire(import.meta.url), module, module.exports);
+      )(
+        createRequire(
+          new URL('../../node_modules/@univerjs/docs/lib/cjs/index.js', import.meta.url),
+        ),
+        module,
+        module.exports,
+      );
       return module.exports as Record<string, any>;
     }
     function exercise(ManagerClass: any, states: State[]) {
@@ -793,6 +799,13 @@ for (const format of ['es', 'cjs'] as const) {
       }
     }
     try {
+      // Execute the complete copied module with its real package-local
+      // dependencies too; npm need not hoist Docs' RPC dependency to the root.
+      await symlink(
+        resolve('node_modules/@univerjs/docs/node_modules'),
+        resolve(directory, 'node_modules'),
+        'dir',
+      );
       const module = await load(patched, 'complete');
       for (const position of [3, 4, 23]) {
         const { states } = paragraphSequence(position);
