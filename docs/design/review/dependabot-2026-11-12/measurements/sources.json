@@ -1,0 +1,22 @@
+[
+  {
+    "file": "measurements/responsiveness-desktop.json",
+    "sha256": "22df82756862e50729ec58b36e239e2dda881ae6ea5dc0bbf1154a528fdd42b9",
+    "run": 43237407934,
+    "artifact": 13953968349,
+    "job": 131249116385,
+    "originalPath": "test-results/spn108-comparison-desktop.json",
+    "retentionDays": 7,
+    "transformation": "none; complete original JSON"
+  },
+  {
+    "file": "measurements/responsiveness-mobile.json",
+    "sha256": "cc4668bfd1f9f5cb40fa55f9e25279d19e96cab108d262a5fe7ab2eb3f1471b1",
+    "run": 43237407934,
+    "artifact": 13956147893,
+    "job": 131249116537,
+    "originalPath": "test-results/spn108-comparison-mobile.json",
+    "retentionDays": 7,
+    "transformation": "none; complete original JSON"
+  }
+]

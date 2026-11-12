@@ -1,0 +1,156 @@
+{
+  "head": "0d6e1ffae53fe5432fa2bb581bdf52ba7d9a2166",
+  "testedMerge": "00c196fd661a5cf4d0a5f7d7d832c0811547358c",
+  "files": [
+    {
+      "file": "icons-light.png",
+      "original": "account-icon-picker--browse-light.png",
+      "sha256": "7605a5dfd58727fa23a99a8bf5ecb0753d4ce856e970c5f9157e74238a7cb2a3",
+      "run": 43237408378,
+      "job": 131249434040,
+      "artifact": 13952854044,
+      "imageWidth": 1280,
+      "imageHeight": 900,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "theme": "light",
+      "pointer": "desktop",
+      "surface": "Actual production IconPicker component in Storybook, browse state; no new design",
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "reviewedAt": "2026-11-12T14:39:00.860Z"
+    },
+    {
+      "file": "icons-dark.png",
+      "original": "account-icon-picker--browse-dark.png",
+      "sha256": "199ee9427cc60a94ddf2e0024ce7989f760eb67ead0428724aada86913c2ef16",
+      "run": 43237408378,
+      "job": 131249434162,
+      "artifact": 13953479116,
+      "imageWidth": 1280,
+      "imageHeight": 900,
+      "viewport": {
+        "width": 1280,
+        "height": 900
+      },
+      "theme": "dark",
+      "pointer": "desktop",
+      "surface": "Actual production IconPicker component in Storybook, browse state; no new design",
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "reviewedAt": "2026-11-12T14:42:21.316Z"
+    },
+    {
+      "file": "icons-phone.png",
+      "original": "account-icon-picker--browse-phone.png",
+      "sha256": "8a8983e0454be79df2ee0936886538e6b02f5e75fbc7279bdf205b23a2db2088",
+      "run": 43237408378,
+      "job": 131249434207,
+      "artifact": 13954351299,
+      "imageWidth": 390,
+      "imageHeight": 900,
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "theme": "light",
+      "pointer": "mobile touch emulation, isMobile=true, hasTouch=true",
+      "surface": "Actual production IconPicker component in Storybook, browse state; no new design",
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "reviewedAt": "2026-11-12T14:40:18.540Z"
+    },
+    {
+      "file": "icons-phone-dark.png",
+      "original": "account-icon-picker--browse-phone-dark.png",
+      "sha256": "7bf742a2b0dce902eeb5eabc2e99a9be5dd4106d343abb34630fd6c3e8d9d012",
+      "run": 43237408378,
+      "job": 131249434152,
+      "artifact": 13953977614,
+      "imageWidth": 390,
+      "imageHeight": 900,
+      "viewport": {
+        "width": 390,
+        "height": 900
+      },
+      "theme": "dark",
+      "pointer": "mobile touch emulation, isMobile=true, hasTouch=true",
+      "surface": "Actual production IconPicker component in Storybook, browse state; no new design",
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "reviewedAt": "2026-11-12T14:39:28.902Z"
+    },
+    {
+      "file": "identity-light.png",
+      "original": "spn-086-identity-picker-light-production.png",
+      "sha256": "7cf5652ad1e6d5f20776cea1bcd2ca213c9ae536b5f79876891778e1816eac49",
+      "run": 43237407934,
+      "job": 131249117413,
+      "artifact": 13953499494,
+      "imageWidth": 1440,
+      "imageHeight": 1000,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "light",
+      "pointer": "desktop-pointer Chromium; resized viewport, not mobile touch emulation",
+      "surface": "Actual production application identity picker; lemon search; authenticated Owner fixture",
+      "retentionDays": 7
+    },
+    {
+      "file": "identity-dark.png",
+      "original": "spn-086-identity-picker-dark-production.png",
+      "sha256": "4ccaba3a6ce7e529fcd4c07a3e2551ee4a35a8f129fba6d54caff9f129a0ebb0",
+      "run": 43237407934,
+      "job": 131249117413,
+      "artifact": 13953499494,
+      "imageWidth": 1440,
+      "imageHeight": 1000,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "theme": "dark",
+      "pointer": "desktop-pointer Chromium; resized viewport, not mobile touch emulation",
+      "surface": "Actual production application identity picker; lemon search; authenticated Owner fixture",
+      "retentionDays": 7
+    },
+    {
+      "file": "identity-phone-light.png",
+      "original": "spn-086-identity-picker-phone-light-production.png",
+      "sha256": "ca9a07a8264c787af1a12792be766c2d51f10e8c91660aee76b7b38d8087572b",
+      "run": 43237407934,
+      "job": 131249117413,
+      "artifact": 13953499494,
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "theme": "light",
+      "pointer": "desktop-pointer Chromium; resized viewport, not mobile touch emulation",
+      "surface": "Actual production application identity picker; lemon search; authenticated Owner fixture",
+      "retentionDays": 7
+    },
+    {
+      "file": "identity-phone-dark.png",
+      "original": "spn-086-identity-picker-phone-dark-production.png",
+      "sha256": "98ce579e23f0c02a7d75374efcd700d956b90e6e15f4cdc65d3690dd133f90b3",
+      "run": 43237407934,
+      "job": 131249117413,
+      "artifact": 13953499494,
+      "imageWidth": 390,
+      "imageHeight": 844,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "theme": "dark",
+      "pointer": "desktop-pointer Chromium; resized viewport, not mobile touch emulation",
+      "surface": "Actual production application identity picker; lemon search; authenticated Owner fixture",
+      "retentionDays": 7
+    }
+  ],
+  "retentionDays": 14,
+  "qualification": "Application phone captures resize desktop-pointer Chromium; Storybook phone captures use Chromium mobile touch emulation. Neither is physical-device testing."
+}
