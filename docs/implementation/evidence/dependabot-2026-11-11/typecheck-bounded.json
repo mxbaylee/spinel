@@ -1,0 +1,13 @@
+{
+  "name": "typecheck-bounded",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 10188,
+  "peakKiB": 1766336
+}
