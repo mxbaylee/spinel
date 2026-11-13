@@ -1,0 +1,1804 @@
+{
+  "version": 1,
+  "ticket": "SPN-149",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 282,
+  "preparedAt": "2026-11-13T05:35:14+00:00",
+  "purpose": "Content-free record of required main integration before a new reviewed validation push; this is not a final code review or hosted acceptance result.",
+  "candidate": {
+    "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "parents": [
+      "db24230dd4df539e2055471f55e50a402596c1fb",
+      "977de3a3a7608a05e2103787f4dac01ec180013e"
+    ],
+    "committedAt": "2026-11-12T21:32:34-08:00",
+    "subject": "Integrate current main for SPN-149 acceptance",
+    "previousSource": "db24230dd4df539e2055471f55e50a402596c1fb",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "baseTree": "94cec8df4650c3e497f10c94cb2eb3bba0e0a744",
+    "previousBase": "04baabd6a68abe7c0b225f8699681532e2205b60",
+    "testedMerge": null,
+    "sourceURL": "https://github.com/mxbaylee/spinel/commit/64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "cleanAtInspection": true,
+    "identitySource": "Local Git object database plus owner integration task and retained connector tree-upload declaration.",
+    "uploadDeclaration": {
+      "path": "integration-977de3a-upload.json",
+      "bytes": 7750,
+      "sha256": "f34150620f625f4c6864a5c4779dd848e8aa2d1d28b7f6ea16a2cf4a95a462fd"
+    }
+  },
+  "scope": {
+    "reason": "Main advanced to the already merged SPN-148 result while the old-source metadata validation was executing. Incorporate that current main before merging SPN-149.",
+    "ticketDiffFileCount": 18,
+    "sameTicketDiffPathSetAsPreviousCandidate": true,
+    "changedTicketFilesRelativeToPreviousCandidate": [
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md"
+    ],
+    "ticketCodeTestsImplementationEvidenceUnchanged": true,
+    "runtimeAuthorityProtocolChangesForSPN149": false,
+    "newTicketWorkStarted": false,
+    "allOtherChangesRelativeToPreviousCandidateMatchAlreadyMergedMain": true,
+    "instructionAndRuntimeInputsUnchanged": [
+      {
+        "path": "AGENTS.md",
+        "blob": "c7ea7ee1530b8f180a321a49e63fd499f183429a",
+        "bytes": 8901,
+        "sha256": "3d1db5621797bb12f219fa82114def766fa586b0c938fec7bad4bddcbf762706",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": "docs/todo/process.md",
+        "blob": "eae24eae50928791154258621d21194cb6ee6391",
+        "bytes": 28990,
+        "sha256": "74f5daf8e43a3ed6110ccb0936ce67ff677d912447b7d799cdea4e63644e542c",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": "docs/run-backlog.md",
+        "blob": "6a60b9db6010d4389e3ee83e7f7ddd31d8d8ea07",
+        "bytes": 27503,
+        "sha256": "4a4365f7cc25c0daa83b4ef2af82819352640bb22c83c72f518a327643cf6a27",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": "docs/testing.md",
+        "blob": "dd54de4d32faa9ac81d8418696cf6bd5aca585c7",
+        "bytes": 14590,
+        "sha256": "ccc8a626fcbac3956d537debe45c684017d50c6d1e7828f847c8319521364eb1",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": ".nvmrc",
+        "blob": "1dda03ddb06ad1c7da5b913539290187eb7fc5aa",
+        "bytes": 8,
+        "sha256": "6e775beae185bb3f5837d2f6d3fbe910e6f60e18fa507e661e312e84d707a92f",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": "package.json",
+        "blob": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be",
+        "bytes": 4348,
+        "sha256": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": "package-lock.json",
+        "blob": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0",
+        "bytes": 366646,
+        "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": "playwright.config.ts",
+        "blob": "fe75c6581e3fd1ca616c2c8afe629da1f220fb9b",
+        "bytes": 10974,
+        "sha256": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "blob": "4f2eac4f6ea8fde4afec92df9fae1a459a030edb",
+        "bytes": 35779,
+        "sha256": "fd9583d5d9fee71d00b40f152978cb3718c184a040d66ffca3a30b94ecce9c3f",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      },
+      {
+        "path": ".github/workflows/storybook.yml",
+        "blob": "54758abff8770ba497402841c400a3f9ee3eb370",
+        "bytes": 14506,
+        "sha256": "3834e10f8c68f17904af5a8c3a9864a1457f7c3290e2f8840464f0067f3f59f8",
+        "identicalAcross": [
+          "db24230dd4df539e2055471f55e50a402596c1fb",
+          "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        ]
+      }
+    ],
+    "diffFromCurrentMain": {
+      "bytes": 116475,
+      "sha256": "cf1f76ea9b4cfdf7a7df1c1c6df1920ef99fb2f81e792f80219da1b80fa93740",
+      "reproduce": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--no-color",
+        "--binary",
+        "--full-index",
+        "977de3a3a7608a05e2103787f4dac01ec180013e",
+        "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+      ]
+    },
+    "diffFromPreviousCandidate": {
+      "bytes": 1845811,
+      "sha256": "e5f581cae24b2c11e67dda94af24837000fd8c8bba94fc719efa0b4b73932b81",
+      "reproduce": [
+        "git",
+        "diff",
+        "--no-ext-diff",
+        "--no-color",
+        "--binary",
+        "--full-index",
+        "db24230dd4df539e2055471f55e50a402596c1fb",
+        "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+      ]
+    },
+    "ticketDiffEntries": [
+      {
+        "path": "THIRD-PARTY-NOTICES.md",
+        "status": "modified",
+        "newMain": {
+          "blob": "09618b9dbe1ab68462d79828da211b0075c6e572",
+          "bytes": 16284,
+          "sha256": "36e3e883665eefefe16f099478b67bf474ddb4274c88303d951cf0c960b75754"
+        },
+        "candidate": {
+          "blob": "535725b551ccf1326150d60b4b49ca3a5b8ae788",
+          "bytes": 16943,
+          "sha256": "69a0932754d07a9012adb8fe18b5795bddbff09d7c8484f4b6abe9ccb691cf04"
+        },
+        "previousCandidate": {
+          "blob": "535725b551ccf1326150d60b4b49ca3a5b8ae788",
+          "bytes": 16943,
+          "sha256": "69a0932754d07a9012adb8fe18b5795bddbff09d7c8484f4b6abe9ccb691cf04"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 1102,
+          "sha256": "c2933615ca0648727f69dfd191aa6072d761a9885114dbf338db4cc7f3ddee1b",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "THIRD-PARTY-NOTICES.md"
+          ]
+        }
+      },
+      {
+        "path": "docs/collaboration.md",
+        "status": "modified",
+        "newMain": {
+          "blob": "e107b9616a60568e31b5715976f9d5f43fbec688",
+          "bytes": 24645,
+          "sha256": "35cd40fad89997967321e0e03b105c5cddc58aa38a432c8001db7d7f821f9dae"
+        },
+        "candidate": {
+          "blob": "94994001a7853cec609360d2437c343365da7a4b",
+          "bytes": 25711,
+          "sha256": "dc921b3ffe2f4838dec8973874f555536a54669a28d5ee185106cd3cb63a4f34"
+        },
+        "previousCandidate": {
+          "blob": "94994001a7853cec609360d2437c343365da7a4b",
+          "bytes": 25711,
+          "sha256": "dc921b3ffe2f4838dec8973874f555536a54669a28d5ee185106cd3cb63a4f34"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 1802,
+          "sha256": "57d4e1a79bd7ca098ea1ab211752ca35c466fd39ba34655e09b5c677ffc9cb18",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/collaboration.md"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/SPN-149.md",
+        "status": "modified",
+        "newMain": {
+          "blob": "f10cc9409cc4f0d4155967f76508494e1a52e99a",
+          "bytes": 3260,
+          "sha256": "ac9bc27eb202354370c1fde3b1359ba196f25a1267afda8700de428b0b6444a1"
+        },
+        "candidate": {
+          "blob": "4d5d49741faeda728c98deb05e5f62c58e4b817d",
+          "bytes": 14441,
+          "sha256": "64c8187a8e6a7247d8a1ebb4de745e6066e27a0b6be676ae4f0f37001647d781"
+        },
+        "previousCandidate": {
+          "blob": "4d5d49741faeda728c98deb05e5f62c58e4b817d",
+          "bytes": 14441,
+          "sha256": "64c8187a8e6a7247d8a1ebb4de745e6066e27a0b6be676ae4f0f37001647d781"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 11972,
+          "sha256": "3eaf07e8d24fb564f40dd86c1335d7d165c2e85b804b31cb58ee33c2ff0fd1fd",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/SPN-149.md"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "c2f1e7ce19fe6074c9195eea4d60c01e9143950a",
+          "bytes": 1205,
+          "sha256": "5809ab1677db96bb6707264783c987364a91facd914e879302ff441a737f5505"
+        },
+        "previousCandidate": {
+          "blob": "c2f1e7ce19fe6074c9195eea4d60c01e9143950a",
+          "bytes": 1205,
+          "sha256": "5809ab1677db96bb6707264783c987364a91facd914e879302ff441a737f5505"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 1604,
+          "sha256": "1eaa2c16403fbb8f71f85cbf63bdd57890999dd7d88eaa2f1290191e3c126c67",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/boundary-probe-result.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/local-validation.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "b1e4848b8ee1281c2eeec6fd27e2a34345863c3f",
+          "bytes": 15570,
+          "sha256": "2fe1e038d0d616c98b54e0813b5fef08215739dd3f21763857206cde0ada2214"
+        },
+        "previousCandidate": {
+          "blob": "b1e4848b8ee1281c2eeec6fd27e2a34345863c3f",
+          "bytes": 15570,
+          "sha256": "2fe1e038d0d616c98b54e0813b5fef08215739dd3f21763857206cde0ada2214"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 16289,
+          "sha256": "54e7db6f6a04f30bff199ef34804a82237fbe0ab1b3970bf9366239ad7c82ca5",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/local-validation.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "09863f39ea1c4a0ecf70ab9ba1374d54b2e1a1d2",
+          "bytes": 3264,
+          "sha256": "810bcb12ebf578039bba5a89f6aaaef19fa844ee806b44b05f4c6871f2377174"
+        },
+        "previousCandidate": {
+          "blob": "09863f39ea1c4a0ecf70ab9ba1374d54b2e1a1d2",
+          "bytes": 3264,
+          "sha256": "810bcb12ebf578039bba5a89f6aaaef19fa844ee806b44b05f4c6871f2377174"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 3702,
+          "sha256": "53bf2811a9200064eb89ff8cc6fffd48d372253a66c9964dc788a12f94b922b1",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/original-13557930894-case.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "9734aa6a6a8c0f64343c7b2e8f0ddfee58f7f89d",
+          "bytes": 879,
+          "sha256": "cb81c931703c06021ca42328d7767bc3e002366d7e11c62307db51dbc1903c2b"
+        },
+        "previousCandidate": {
+          "blob": "9734aa6a6a8c0f64343c7b2e8f0ddfee58f7f89d",
+          "bytes": 879,
+          "sha256": "cb81c931703c06021ca42328d7767bc3e002366d7e11c62307db51dbc1903c2b"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 1310,
+          "sha256": "5102abb165a5bbc998a25a3992e04119b8b9d6aff9e545581c89f236043d7e07",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "20c50ad4f2bc86c1ad7359dd923c5ff187426a82",
+          "bytes": 2955,
+          "sha256": "71a4c88a608f1a92bf4cdb16a5c23632a2047cccfa3abf184a305dd9487cb1a5"
+        },
+        "previousCandidate": {
+          "blob": "20c50ad4f2bc86c1ad7359dd923c5ff187426a82",
+          "bytes": 2955,
+          "sha256": "71a4c88a608f1a92bf4cdb16a5c23632a2047cccfa3abf184a305dd9487cb1a5"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 3395,
+          "sha256": "f1e735687ade6323c2309a6bb83f17186c0c4ac5aa83c3c4206b676698e5c919",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "c3ba273769880127a23dddbcf319a8377f20b1c7",
+          "bytes": 3527,
+          "sha256": "f0746ae4d7758af6b77c5c1917dc40264ee5527fb36087c0d965daea2d053757"
+        },
+        "previousCandidate": {
+          "blob": "c3ba273769880127a23dddbcf319a8377f20b1c7",
+          "bytes": 3527,
+          "sha256": "f0746ae4d7758af6b77c5c1917dc40264ee5527fb36087c0d965daea2d053757"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 3996,
+          "sha256": "3b3cd5308b62e8ead1dfdf58b65ff955d058d35e7142abe035405af18cc231de",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "b6d65d1f3dd3941410a90a689017d9f92c4a2be0",
+          "bytes": 1817,
+          "sha256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a"
+        },
+        "previousCandidate": {
+          "blob": "b6d65d1f3dd3941410a90a689017d9f92c4a2be0",
+          "bytes": 1817,
+          "sha256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 2208,
+          "sha256": "ce540ff650c02996a44b7de5a71c88fe822f4b358dd78a5a2e38f91a01bf9622",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "4f11255c7b7bf1cb49dc41ff4923e02ab565da38",
+          "bytes": 25845,
+          "sha256": "18fbb420ec3bf69ffdf93696526bb6d24c6dc17b303b19a1221f0d8ad265cf67"
+        },
+        "previousCandidate": {
+          "blob": "4f11255c7b7bf1cb49dc41ff4923e02ab565da38",
+          "bytes": 25845,
+          "sha256": "18fbb420ec3bf69ffdf93696526bb6d24c6dc17b303b19a1221f0d8ad265cf67"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 26251,
+          "sha256": "d17587649d8ba73b4f3ae43a817d96353024086e74444cfc4a8281c79549e10e",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/evidence/SPN-149/review-iteration-1.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/implementation/grooming-2026-11-12.md",
+        "status": "modified",
+        "newMain": {
+          "blob": "7c189d360022c256c5e61ad793dc4d7c55b9ec42",
+          "bytes": 17909,
+          "sha256": "e009c6955615893cd52edb822b75b2b27abe01c866ba277591ca8990aa87b781"
+        },
+        "candidate": {
+          "blob": "bb2f98a2cc3e98658967c7e500760fa15ca823d5",
+          "bytes": 17901,
+          "sha256": "fcb6910a9741441bdc99b189c2a81ae78ee67fbe910e4b41abae7dbc7bc1f142"
+        },
+        "previousCandidate": {
+          "blob": "bb2f98a2cc3e98658967c7e500760fa15ca823d5",
+          "bytes": 17901,
+          "sha256": "fcb6910a9741441bdc99b189c2a81ae78ee67fbe910e4b41abae7dbc7bc1f142"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 895,
+          "sha256": "b3400ba1fd0fdf8c3aa8ef1787b5376dbc0194b74822340ad4f45c1be09b8a19",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/implementation/grooming-2026-11-12.md"
+          ]
+        }
+      },
+      {
+        "path": "docs/todo/SPN-149.md",
+        "status": "deleted",
+        "newMain": {
+          "blob": "e8d830497d3178bd2a50f70d4518395a3797d1f7",
+          "bytes": 3391,
+          "sha256": "4d12d182396a9e64eb7dfe6af9b076c77c358b5527c9d1d03ad1b793a884dc1f"
+        },
+        "candidate": null,
+        "previousCandidate": null,
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 3668,
+          "sha256": "0028def4ce1d0c1a33a6b543b22a6429f5e76823822247679304e14efde30e78",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/todo/SPN-149.md"
+          ]
+        }
+      },
+      {
+        "path": "docs/todo/backlog.json",
+        "status": "modified",
+        "newMain": {
+          "blob": "5198e26b496579ab118b51a85dffc8b1a52786cb",
+          "bytes": 527,
+          "sha256": "49552485ecf7db0b4c2d439f5b8503aa6976c948d3c738030c0bcf5f35c34bfb"
+        },
+        "candidate": {
+          "blob": "98d8eb7f1a7261f20bc49225936c14ad6cb5ccde",
+          "bytes": 538,
+          "sha256": "b9d41e94b9ddc4a244372b76c5d2613b9d289b302e169f9c25657a39a8061a95"
+        },
+        "previousCandidate": {
+          "blob": "e924e4bd10a1e987806ee10ca5c23a0e25ef37bf",
+          "bytes": 527,
+          "sha256": "ad56266d6108f81c21ec0650747d5a50cd1b194adca17d9a9bf778ced222b9c7"
+        },
+        "unchangedFromPreviousCandidate": false,
+        "diffFromNewMain": {
+          "bytes": 414,
+          "sha256": "f0e27f9f3f047972d3cda676e90a331b0a65d53cb2a1698bf2cd2e49e3b5947e",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/todo/backlog.json"
+          ]
+        }
+      },
+      {
+        "path": "docs/todo/readme.md",
+        "status": "modified",
+        "newMain": {
+          "blob": "98353d7670f8d395012859588ed0c7dab10f8a3d",
+          "bytes": 3841,
+          "sha256": "e0ed3d1ba18e1b8ef329746c515c94b051771c885be7187d01052854294de69d"
+        },
+        "candidate": {
+          "blob": "6cbe68077a69bc429d5a90ae7cf904308d1d8a6a",
+          "bytes": 3722,
+          "sha256": "7f1d1f4518e415cc8e201881faec641fc11fcd460914c9c870a08913bc9081ad"
+        },
+        "previousCandidate": {
+          "blob": "61f07b78a0e988e6aa60b89315b79739a68d68f3",
+          "bytes": 3829,
+          "sha256": "8369855fca3e91e17793b8afadcf3cd6723b8255917ed289845fa90cd0783a31"
+        },
+        "unchangedFromPreviousCandidate": false,
+        "diffFromNewMain": {
+          "bytes": 5478,
+          "sha256": "3ec38127eae8beb922732d93100c210c8c5fff0d824b3b46c8086ef325205bcc",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "docs/todo/readme.md"
+          ]
+        }
+      },
+      {
+        "path": "e2e/collaboration.spec.ts",
+        "status": "modified",
+        "newMain": {
+          "blob": "349350b2aca4b5682637ab3e703b04df24caf87a",
+          "bytes": 21343,
+          "sha256": "4a0fcef33b6a70b865a61f80b4d30934e7cd0d3762a71cde7a212fd37e6d85c4"
+        },
+        "candidate": {
+          "blob": "4288b469f77dc552bd92698fc33d1b13f3608491",
+          "bytes": 24881,
+          "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c"
+        },
+        "previousCandidate": {
+          "blob": "4288b469f77dc552bd92698fc33d1b13f3608491",
+          "bytes": 24881,
+          "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 10706,
+          "sha256": "fa177a8ef7078c8bdee8baef038890cea86ebc31b92805fc84f20be606e9fd9a",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "e2e/collaboration.spec.ts"
+          ]
+        }
+      },
+      {
+        "path": "e2e/session-revocation.ts",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c",
+          "bytes": 6622,
+          "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a"
+        },
+        "previousCandidate": {
+          "blob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c",
+          "bytes": 6622,
+          "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 7054,
+          "sha256": "2dda3633ce375b2619d1225c81e7a03b5e82c27a4835f129946f024d1cd15bdc",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "e2e/session-revocation.ts"
+          ]
+        }
+      },
+      {
+        "path": "scripts/ci/session-revocation.test.ts",
+        "status": "added",
+        "newMain": null,
+        "candidate": {
+          "blob": "71c9a32209f6f0a2da124a3353766f626b4d0203",
+          "bytes": 13967,
+          "sha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462"
+        },
+        "previousCandidate": {
+          "blob": "71c9a32209f6f0a2da124a3353766f626b4d0203",
+          "bytes": 13967,
+          "sha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462"
+        },
+        "unchangedFromPreviousCandidate": true,
+        "diffFromNewMain": {
+          "bytes": 14629,
+          "sha256": "39dd15c39c40a9b40df67d42cd9756e575b28fe00212d0f297afadf17da1c304",
+          "reproduce": [
+            "git",
+            "diff",
+            "--no-ext-diff",
+            "--no-color",
+            "--binary",
+            "--full-index",
+            "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "--",
+            "scripts/ci/session-revocation.test.ts"
+          ]
+        }
+      }
+    ],
+    "importedMainEntries": [
+      {
+        "path": "docs/implementation/SPN-148.md",
+        "previousCandidate": {
+          "blob": "76d973b00d47a544dcb73c8d3908af4621256c96",
+          "bytes": 2667,
+          "sha256": "ff3e3b12024e92b72441f09b5341442cbcae601da0a38c3728e57c2fdee1b538"
+        },
+        "newMain": {
+          "blob": "89f2c6c8468e584b8fb4f40201235b22bcbd2b02",
+          "bytes": 14272,
+          "sha256": "ddaf70b1e0bb7530e6ffc35c2d2324c1c09a3209ef6599709b783c4cdf26435a"
+        },
+        "candidate": {
+          "blob": "89f2c6c8468e584b8fb4f40201235b22bcbd2b02",
+          "bytes": 14272,
+          "sha256": "ddaf70b1e0bb7530e6ffc35c2d2324c1c09a3209ef6599709b783c4cdf26435a"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/backlog-check.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "437567de9e4dc566b64c147167faa73563d6b1ca",
+          "bytes": 342,
+          "sha256": "44814d78eca400663d74f9b8ee362ce01b0943c047cc0ad15440f10047c7e19e"
+        },
+        "candidate": {
+          "blob": "437567de9e4dc566b64c147167faa73563d6b1ca",
+          "bytes": 342,
+          "sha256": "44814d78eca400663d74f9b8ee362ce01b0943c047cc0ad15440f10047c7e19e"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/backlog-index.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "21f4428db5e491b0aee89ae979bf4a0d7f3873c8",
+          "bytes": 344,
+          "sha256": "df1bd9d43dcbb71563e221919c1383a7a0d83d3a897ab6c25b69f88b37925613"
+        },
+        "candidate": {
+          "blob": "21f4428db5e491b0aee89ae979bf4a0d7f3873c8",
+          "bytes": 344,
+          "sha256": "df1bd9d43dcbb71563e221919c1383a7a0d83d3a897ab6c25b69f88b37925613"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/backlog-pr.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "891fe7b0090e10d03800dbeb7795242c5137f353",
+          "bytes": 250,
+          "sha256": "634f5e581ce9d54a18b80a26bfb2bcbb211aea6e018fd00e1f5118eb85662ef0"
+        },
+        "candidate": {
+          "blob": "891fe7b0090e10d03800dbeb7795242c5137f353",
+          "bytes": 250,
+          "sha256": "634f5e581ce9d54a18b80a26bfb2bcbb211aea6e018fd00e1f5118eb85662ef0"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/committed-backlog-pr.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "d35545187815f99b850b8849b6746f4e5ce3cf18",
+          "bytes": 293,
+          "sha256": "c1facdd934d6288e0579d972d3f589e09f21d7b55c4304033820626668b5e601"
+        },
+        "candidate": {
+          "blob": "d35545187815f99b850b8849b6746f4e5ce3cf18",
+          "bytes": 293,
+          "sha256": "c1facdd934d6288e0579d972d3f589e09f21d7b55c4304033820626668b5e601"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/focused-final.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "57f5447561eba79a184eddf1fbbd8f714f07a927",
+          "bytes": 4751,
+          "sha256": "51a083c5ff80a36f240f9458f08263162200ccc5ea331161eb86ef9ae03896b8"
+        },
+        "candidate": {
+          "blob": "57f5447561eba79a184eddf1fbbd8f714f07a927",
+          "bytes": 4751,
+          "sha256": "51a083c5ff80a36f240f9458f08263162200ccc5ea331161eb86ef9ae03896b8"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/format.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "eccfc693916f5e99ce65e3e33766e0cd2cd5a444",
+          "bytes": 140,
+          "sha256": "f86739dd9d9719aba8bd7b1d84c539d779d325c64cebf3221990fd4f92862b22"
+        },
+        "candidate": {
+          "blob": "eccfc693916f5e99ce65e3e33766e0cd2cd5a444",
+          "bytes": 140,
+          "sha256": "f86739dd9d9719aba8bd7b1d84c539d779d325c64cebf3221990fd4f92862b22"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/install.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "9f754940f5867bf9aa056b6d038dd13233b3bfda",
+          "bytes": 399,
+          "sha256": "eac56cca5f81963d8e3a8d96e71bed701d724310b81d9e64eb6503d09fdc6749"
+        },
+        "candidate": {
+          "blob": "9f754940f5867bf9aa056b6d038dd13233b3bfda",
+          "bytes": 399,
+          "sha256": "eac56cca5f81963d8e3a8d96e71bed701d724310b81d9e64eb6503d09fdc6749"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/lint.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "1f3e3204e9fece156beb4ba72fefe26f90415a06",
+          "bytes": 423,
+          "sha256": "4e2ea6ae9a8163bf3b020efc92a7a09a171c39853ec40ee8331190f5d828ebbc"
+        },
+        "candidate": {
+          "blob": "1f3e3204e9fece156beb4ba72fefe26f90415a06",
+          "bytes": 423,
+          "sha256": "4e2ea6ae9a8163bf3b020efc92a7a09a171c39853ec40ee8331190f5d828ebbc"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/pointer-after-fix.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "f21e1ee53b0724f9e2aad11705c5da1aac6d9f20",
+          "bytes": 1265,
+          "sha256": "a21dcaa051cd385c09bb1d7742e521a0cb8bcd9274326103dd51485d1252cd93"
+        },
+        "candidate": {
+          "blob": "f21e1ee53b0724f9e2aad11705c5da1aac6d9f20",
+          "bytes": 1265,
+          "sha256": "a21dcaa051cd385c09bb1d7742e521a0cb8bcd9274326103dd51485d1252cd93"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/pointer-negative-before-fix.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "2fa00bb4a9b60a240da1b645535191f3762006cb",
+          "bytes": 1909,
+          "sha256": "7cf0b2600f9058c9ec6006cbd8ff678dc83afe332c058d6dcbc3dab1e863c4bd"
+        },
+        "candidate": {
+          "blob": "2fa00bb4a9b60a240da1b645535191f3762006cb",
+          "bytes": 1909,
+          "sha256": "7cf0b2600f9058c9ec6006cbd8ff678dc83afe332c058d6dcbc3dab1e863c4bd"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/receipts.json",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "935f63e22eb209a51cc1ade620de5dc15af67587",
+          "bytes": 7282,
+          "sha256": "e89921eac24616db1cc29b87a5a72051330ceb1ac4f1a733af09a43f82061b1c"
+        },
+        "candidate": {
+          "blob": "935f63e22eb209a51cc1ade620de5dc15af67587",
+          "bytes": 7282,
+          "sha256": "e89921eac24616db1cc29b87a5a72051330ceb1ac4f1a733af09a43f82061b1c"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-focused.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "b04bc19027040982bdaf093f5c9e7c05ca0f7cb6",
+          "bytes": 4802,
+          "sha256": "6d1350565e02591e26e2d328dfdf098c4fef3ea63c63a4fe40a2ed2ebef3fc5c"
+        },
+        "candidate": {
+          "blob": "b04bc19027040982bdaf093f5c9e7c05ca0f7cb6",
+          "bytes": 4802,
+          "sha256": "6d1350565e02591e26e2d328dfdf098c4fef3ea63c63a4fe40a2ed2ebef3fc5c"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-format.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "e8901c0f82a7e09dfa60e1ce793fd5b5c674f8be",
+          "bytes": 61,
+          "sha256": "c4b7c7fa6501f229c413dd4fb671f000d426c0db833b380bd97e4d6975b828c6"
+        },
+        "candidate": {
+          "blob": "e8901c0f82a7e09dfa60e1ce793fd5b5c674f8be",
+          "bytes": 61,
+          "sha256": "c4b7c7fa6501f229c413dd4fb671f000d426c0db833b380bd97e4d6975b828c6"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-lint.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+          "bytes": 20,
+          "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        "candidate": {
+          "blob": "d4b9926df0b7defceb6caf0b474c4a190c5ca8f0",
+          "bytes": 20,
+          "sha256": "f61f27bd17de546264aa58f40f3aafaac7021e0ef69c17f6b1b4cd7664a037ec"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-receipts.json",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "573bcb6107bb50f85ca996ccf83983eb488c8a93",
+          "bytes": 8885,
+          "sha256": "11094b16e0ce7e985ce0f61206ee37dce0c565fc4f8ed2b178bb169e22267b23"
+        },
+        "candidate": {
+          "blob": "573bcb6107bb50f85ca996ccf83983eb488c8a93",
+          "bytes": 8885,
+          "sha256": "11094b16e0ce7e985ce0f61206ee37dce0c565fc4f8ed2b178bb169e22267b23"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-types-corrected.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "61f232cd56b1443b3e0ce09b9afc2d61b7585ada",
+          "bytes": 455,
+          "sha256": "c63f154b9bac383b17b24b8590252c94b9b950098c9ea1306217ecfdbaa9e12a"
+        },
+        "candidate": {
+          "blob": "61f232cd56b1443b3e0ce09b9afc2d61b7585ada",
+          "bytes": 455,
+          "sha256": "c63f154b9bac383b17b24b8590252c94b9b950098c9ea1306217ecfdbaa9e12a"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-types-final.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "52a0b4eb55633d4739f773edb4a6dd6a879f75d0",
+          "bytes": 79,
+          "sha256": "cc9866e1ed3dfe59a518a527b1df0f7405e77d953d5f4ed13700c9ea1ca39aed"
+        },
+        "candidate": {
+          "blob": "52a0b4eb55633d4739f773edb4a6dd6a879f75d0",
+          "bytes": 79,
+          "sha256": "cc9866e1ed3dfe59a518a527b1df0f7405e77d953d5f4ed13700c9ea1ca39aed"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/repair-types.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "ef9a18ec75fb0998d1fb50123ee19eeb301855cd",
+          "bytes": 135,
+          "sha256": "ff4e3bbe617f9c6c9df787b7d4ef17755cab96854009ec0bb2996d3fe8e3fba1"
+        },
+        "candidate": {
+          "blob": "ef9a18ec75fb0998d1fb50123ee19eeb301855cd",
+          "bytes": 135,
+          "sha256": "ff4e3bbe617f9c6c9df787b7d4ef17755cab96854009ec0bb2996d3fe8e3fba1"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/reviewer-a-late-event.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "985062d63b187fb5b797914421fee2cbfb7fac2c",
+          "bytes": 172,
+          "sha256": "e46155366d5336834cb5933449953b42dabbd21ecb2bf00ae291ef57db0ae5a8"
+        },
+        "candidate": {
+          "blob": "985062d63b187fb5b797914421fee2cbfb7fac2c",
+          "bytes": 172,
+          "sha256": "e46155366d5336834cb5933449953b42dabbd21ecb2bf00ae291ef57db0ae5a8"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/reviewer-a-pointer.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "9f656ed519a9ee6ee88f25a25966b9f811af100f",
+          "bytes": 1227,
+          "sha256": "d801d40a6be0153bab0bd550f25e45d60b17c551dacc028721e1ca85adcf19fc"
+        },
+        "candidate": {
+          "blob": "9f656ed519a9ee6ee88f25a25966b9f811af100f",
+          "bytes": 1227,
+          "sha256": "d801d40a6be0153bab0bd550f25e45d60b17c551dacc028721e1ca85adcf19fc"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/reviewer-b-negative-control.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "88c5edfd1d331071d6a1251fe92a6d00e8ac68a8",
+          "bytes": 1954,
+          "sha256": "02bff38e26090026a5237071974037e5fd63909d8e3f5119967888ab6e37afa1"
+        },
+        "candidate": {
+          "blob": "88c5edfd1d331071d6a1251fe92a6d00e8ac68a8",
+          "bytes": 1954,
+          "sha256": "02bff38e26090026a5237071974037e5fd63909d8e3f5119967888ab6e37afa1"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/reviewer-b-pointer.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "46a6823fcaec184a822819edbca961290a40e6f5",
+          "bytes": 1229,
+          "sha256": "c4467a52273bb1c5a8d3dbdfac0464f728ca0c665a7f03f91e1b41b4c62e1c21"
+        },
+        "candidate": {
+          "blob": "46a6823fcaec184a822819edbca961290a40e6f5",
+          "bytes": 1229,
+          "sha256": "c4467a52273bb1c5a8d3dbdfac0464f728ca0c665a7f03f91e1b41b4c62e1c21"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-local/typecheck.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "52a0b4eb55633d4739f773edb4a6dd6a879f75d0",
+          "bytes": 79,
+          "sha256": "cc9866e1ed3dfe59a518a527b1df0f7405e77d953d5f4ed13700c9ea1ca39aed"
+        },
+        "candidate": {
+          "blob": "52a0b4eb55633d4739f773edb4a6dd6a879f75d0",
+          "bytes": 79,
+          "sha256": "cc9866e1ed3dfe59a518a527b1df0f7405e77d953d5f4ed13700c9ea1ca39aed"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-original/README.md",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "fe0bb140b32084881f4ace5c81f0332832d8598c",
+          "bytes": 1843,
+          "sha256": "cb6d20506de081b35451709a07f9d71194058041b7b52649e694ad08a7cccd23"
+        },
+        "candidate": {
+          "blob": "fe0bb140b32084881f4ace5c81f0332832d8598c",
+          "bytes": 1843,
+          "sha256": "cb6d20506de081b35451709a07f9d71194058041b7b52649e694ad08a7cccd23"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-original/job.log.gz",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "e1a94b9d36b9ac210e2d666d4c08fbb077ae1270",
+          "bytes": 41706,
+          "sha256": "bd23d46ab9754da531c367d42307a8aa32a449176e6784099bdea0c08b73ec68"
+        },
+        "candidate": {
+          "blob": "e1a94b9d36b9ac210e2d666d4c08fbb077ae1270",
+          "bytes": 41706,
+          "sha256": "bd23d46ab9754da531c367d42307a8aa32a449176e6784099bdea0c08b73ec68"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-original/manifest.json",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "0a22465c4741e5cb66d61e489ca9cd2f29d3b948",
+          "bytes": 4632,
+          "sha256": "de6aa5a14b562a2ba019d288810f00f96862675a969d75a82df6a862866c3d52"
+        },
+        "candidate": {
+          "blob": "0a22465c4741e5cb66d61e489ca9cd2f29d3b948",
+          "bytes": 4632,
+          "sha256": "de6aa5a14b562a2ba019d288810f00f96862675a969d75a82df6a862866c3d52"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-148-original/safari.zip",
+        "previousCandidate": null,
+        "newMain": {
+          "blob": "f0fa1f9615a91e0a26a4d9bacd7ad9df7d847c36",
+          "bytes": 1314764,
+          "sha256": "5cbd4d880e7fc2cc2efdae7b0e5524e500de232fba5e417dd552a234b0037c76"
+        },
+        "candidate": {
+          "blob": "f0fa1f9615a91e0a26a4d9bacd7ad9df7d847c36",
+          "bytes": 1314764,
+          "sha256": "5cbd4d880e7fc2cc2efdae7b0e5524e500de232fba5e417dd552a234b0037c76"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/todo/SPN-148.md",
+        "previousCandidate": {
+          "blob": "c71a31f8154cf2ad49c9f333b7f953f61516ea0a",
+          "bytes": 3148,
+          "sha256": "84ac3103f83e87e0a89191617166a3ad998d30b8523d0c82aaa09cbedd02c7f8"
+        },
+        "newMain": null,
+        "candidate": null,
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "docs/todo/backlog.json",
+        "previousCandidate": {
+          "blob": "e924e4bd10a1e987806ee10ca5c23a0e25ef37bf",
+          "bytes": 527,
+          "sha256": "ad56266d6108f81c21ec0650747d5a50cd1b194adca17d9a9bf778ced222b9c7"
+        },
+        "newMain": {
+          "blob": "5198e26b496579ab118b51a85dffc8b1a52786cb",
+          "bytes": 527,
+          "sha256": "49552485ecf7db0b4c2d439f5b8503aa6976c948d3c738030c0bcf5f35c34bfb"
+        },
+        "candidate": {
+          "blob": "98d8eb7f1a7261f20bc49225936c14ad6cb5ccde",
+          "bytes": 538,
+          "sha256": "b9d41e94b9ddc4a244372b76c5d2613b9d289b302e169f9c25657a39a8061a95"
+        },
+        "matchesNewMain": false,
+        "disposition": "combined SPN-148/SPN-149 completion bookkeeping"
+      },
+      {
+        "path": "docs/todo/readme.md",
+        "previousCandidate": {
+          "blob": "61f07b78a0e988e6aa60b89315b79739a68d68f3",
+          "bytes": 3829,
+          "sha256": "8369855fca3e91e17793b8afadcf3cd6723b8255917ed289845fa90cd0783a31"
+        },
+        "newMain": {
+          "blob": "98353d7670f8d395012859588ed0c7dab10f8a3d",
+          "bytes": 3841,
+          "sha256": "e0ed3d1ba18e1b8ef329746c515c94b051771c885be7187d01052854294de69d"
+        },
+        "candidate": {
+          "blob": "6cbe68077a69bc429d5a90ae7cf904308d1d8a6a",
+          "bytes": 3722,
+          "sha256": "7f1d1f4518e415cc8e201881faec641fc11fcd460914c9c870a08913bc9081ad"
+        },
+        "matchesNewMain": false,
+        "disposition": "combined SPN-148/SPN-149 completion bookkeeping"
+      },
+      {
+        "path": "scripts/ci/desktop-browser.ts",
+        "previousCandidate": {
+          "blob": "2f11a7924627593c4ade2c38de28d896d8d61e6a",
+          "bytes": 52326,
+          "sha256": "3cd324a2aa9e9cab9b24204c2d5ffa906a7403edd46e29c99a5c4d65c3f9b744"
+        },
+        "newMain": {
+          "blob": "870ee927cbfb9477c8378f32a8beca3a8e0452da",
+          "bytes": 52338,
+          "sha256": "ebbfb07c74c932a2c119107e6dc4cb6eb31cfc163acb14ddf12da4ed166bd6ac"
+        },
+        "candidate": {
+          "blob": "870ee927cbfb9477c8378f32a8beca3a8e0452da",
+          "bytes": 52338,
+          "sha256": "ebbfb07c74c932a2c119107e6dc4cb6eb31cfc163acb14ddf12da4ed166bd6ac"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "scripts/ci/desktop-pointer.test.ts",
+        "previousCandidate": {
+          "blob": "472592c59554ee1191e7dfa60a21b6c2e2231dcd",
+          "bytes": 18223,
+          "sha256": "c5b517ae641c0de2f1329f29b541eccee2a8edcd58a0ea61a1763e0aa1486747"
+        },
+        "newMain": {
+          "blob": "17bbf8c35d4d692689d08b8fbe1cb60cae64b11c",
+          "bytes": 23799,
+          "sha256": "428585992e833256d6560a3dd58e6b1c86d160660194f1bf66501401fd6d6bdb"
+        },
+        "candidate": {
+          "blob": "17bbf8c35d4d692689d08b8fbe1cb60cae64b11c",
+          "bytes": 23799,
+          "sha256": "428585992e833256d6560a3dd58e6b1c86d160660194f1bf66501401fd6d6bdb"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      },
+      {
+        "path": "scripts/ci/desktop-pointer.ts",
+        "previousCandidate": {
+          "blob": "cd1e41c97fa30a70f360d25dff25807fbce9c718",
+          "bytes": 14855,
+          "sha256": "0b16935123ba0e64af5d0fb556259f62f369f32a24ed34fd203247228cee83eb"
+        },
+        "newMain": {
+          "blob": "f97dee104170661513688d19efb12acb8afb167a",
+          "bytes": 15413,
+          "sha256": "373ae922328ac00683bee69a386ac4d1498dc1ecd1fcfe40ea9a2e7b70f2e170"
+        },
+        "candidate": {
+          "blob": "f97dee104170661513688d19efb12acb8afb167a",
+          "bytes": 15413,
+          "sha256": "373ae922328ac00683bee69a386ac4d1498dc1ecd1fcfe40ea9a2e7b70f2e170"
+        },
+        "matchesNewMain": true,
+        "disposition": "unchanged bytes imported from already merged SPN-148 main"
+      }
+    ]
+  },
+  "conflictAndBookkeepingDisposition": {
+    "conflictsReportedByOwner": [
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md"
+    ],
+    "conflictObservationLimit": "The conflict-path list is owner-reported; this record inspects the resolved committed objects and retained generator/check receipts, not a preserved conflicted index.",
+    "groomingCompletedSince": {
+      "previousCandidate": [
+        "SPN-149"
+      ],
+      "newMain": [
+        "SPN-148"
+      ],
+      "integratedCandidate": [
+        "SPN-148",
+        "SPN-149"
+      ]
+    },
+    "resolution": "Preserve both SPN-148 and SPN-149 completions, in that order. Regenerate the backlog index using the existing generator.",
+    "generatedIndex": {
+      "path": "docs/todo/readme.md",
+      "generator": "node scripts/serial.ts npm run backlog:index",
+      "handEdited": false,
+      "generationReceipt": "integration-977de3a-backlog-index-watchdog.json",
+      "openTickets": 21,
+      "blob": "6cbe68077a69bc429d5a90ae7cf904308d1d8a6a",
+      "bytes": 3722,
+      "sha256": "7f1d1f4518e415cc8e201881faec641fc11fcd460914c9c870a08913bc9081ad"
+    },
+    "ticketRemoval": {
+      "path": "docs/todo/SPN-149.md",
+      "existsInNewMain": true,
+      "existsInCandidate": false
+    },
+    "groomingHistory": {
+      "path": "docs/implementation/grooming-2026-11-12.md",
+      "disposition": "The existing SPN-149 completion link to its implementation record is byte-identical to the prior reviewed candidate. No SPN-148 record is overwritten.",
+      "blob": "bb2f98a2cc3e98658967c7e500760fa15ca823d5",
+      "bytes": 17901,
+      "sha256": "fcb6910a9741441bdc99b189c2a81ae78ee67fbe910e4b41abae7dbc7bc1f142"
+    },
+    "dependencyBookkeeping": "No additional dependency change appears in the 18-path SPN-149 delta; the backlog and PR guards passed on the integration."
+  },
+  "localVerification": {
+    "executor": "root owner; receipt assembler ran no validation workload",
+    "node": "26.13.0",
+    "serial": true,
+    "watchdogBudget": {
+      "processTreeRSSLimitKiB": 2097152,
+      "elapsedLimitMs": 480000
+    },
+    "allAttemptsPassed": true,
+    "peakProcessTreeKiB": 2028068,
+    "minimumAvailableKiB": 6509236,
+    "abortedAttempts": 0,
+    "attempts": [
+      {
+        "check": "backlog-index",
+        "attempt": 1,
+        "status": "passed",
+        "watchdog": {
+          "startedAt": "2026-11-13T05:31:26.234Z",
+          "finishedAt": "2026-11-13T05:31:26.860Z",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "npm",
+            "run",
+            "backlog:index"
+          ],
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+          "elapsedMs": 626,
+          "initialMemory": {
+            "availableKiB": 8472788,
+            "totalKiB": 10206472
+          },
+          "minimumAvailableKiB": 8376296,
+          "peakKiB": 232948,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        },
+        "watchdogFile": {
+          "path": "integration-977de3a-backlog-index-watchdog.json",
+          "bytes": 473,
+          "sha256": "ee08af80422d94877273b1ad96586e34967efa4bf100b2342063054938e41b0f"
+        },
+        "logFile": {
+          "path": "integration-977de3a-backlog-index.log",
+          "bytes": 2159,
+          "sha256": "f3ff01de77c09410b5a689281c9c90f0957bd677fd98c832ee8326a5a9885bad"
+        },
+        "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+        "resultingCommittedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "sourceIdentityNote": "Generator execution produced the final combined index before commit creation; the resulting index blob/hash is retained in diff entries. This is a generation action, not a claim that the pre-generation tree already equaled the final candidate."
+      },
+      {
+        "check": "backlog-check",
+        "attempt": 1,
+        "status": "passed",
+        "watchdog": {
+          "startedAt": "2026-11-13T05:31:45.849Z",
+          "finishedAt": "2026-11-13T05:31:46.474Z",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "npm",
+            "run",
+            "backlog:check"
+          ],
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+          "elapsedMs": 625,
+          "initialMemory": {
+            "availableKiB": 8457164,
+            "totalKiB": 10206472
+          },
+          "minimumAvailableKiB": 8356324,
+          "peakKiB": 233276,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        },
+        "watchdogFile": {
+          "path": "integration-977de3a-backlog-check-watchdog.json",
+          "bytes": 473,
+          "sha256": "00ee9e400be9fc984c5dbdefab31dbf0ac110632268874d5b7e027eebbbb156c"
+        },
+        "logFile": {
+          "path": "integration-977de3a-backlog-check.log",
+          "bytes": 2161,
+          "sha256": "467d58ddebcbc1859e2c785bc58b13ced300e47ed370ebb4b8f672472a3801f3"
+        },
+        "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+        "resultingCommittedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "sourceIdentityNote": "The owner reports execution against the integrated tree. The exact watchdog records command/times/runtime/resources but does not itself embed a commit or tree. The resulting committed tree and exact file hashes are independently retained here. This execution preceded commit creation."
+      },
+      {
+        "check": "focused",
+        "attempt": 1,
+        "status": "passed",
+        "watchdog": {
+          "startedAt": "2026-11-13T05:31:46.829Z",
+          "finishedAt": "2026-11-13T05:31:47.280Z",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "node",
+            "--test",
+            "scripts/ci/session-revocation.test.ts"
+          ],
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+          "elapsedMs": 451,
+          "initialMemory": {
+            "availableKiB": 8427524,
+            "totalKiB": 10206472
+          },
+          "minimumAvailableKiB": 8360368,
+          "peakKiB": 233732,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        },
+        "watchdogFile": {
+          "path": "integration-977de3a-focused-watchdog.json",
+          "bytes": 501,
+          "sha256": "a69c6601612721b4b565deed451f62bb0e14ddef658b7b20ba264adfe4345377"
+        },
+        "logFile": {
+          "path": "integration-977de3a-focused.log",
+          "bytes": 2309,
+          "sha256": "a5bca5d2a56da61f3283fdee423faa48b46093788779630834df78f1b3759ff6"
+        },
+        "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+        "resultingCommittedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "sourceIdentityNote": "The owner reports execution against the integrated tree. The exact watchdog records command/times/runtime/resources but does not itself embed a commit or tree. The resulting committed tree and exact file hashes are independently retained here. This execution preceded commit creation.",
+        "results": {
+          "tests": 19,
+          "passed": 19,
+          "failed": 0,
+          "cancelled": 0,
+          "skipped": 0,
+          "todo": 0,
+          "nodeReportedDurationMs": 278.368265
+        }
+      },
+      {
+        "check": "typecheck",
+        "attempt": 1,
+        "status": "passed",
+        "watchdog": {
+          "startedAt": "2026-11-13T05:31:47.603Z",
+          "finishedAt": "2026-11-13T05:31:53.999Z",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+          "elapsedMs": 6396,
+          "initialMemory": {
+            "availableKiB": 8372928,
+            "totalKiB": 10206472
+          },
+          "minimumAvailableKiB": 6509236,
+          "peakKiB": 2028068,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        },
+        "watchdogFile": {
+          "path": "integration-977de3a-typecheck-watchdog.json",
+          "bytes": 471,
+          "sha256": "4601ea8d364ee13536e9bbe380fa7f0dc7efb62eaa96941873f414ef054c5bbd"
+        },
+        "logFile": {
+          "path": "integration-977de3a-typecheck.log",
+          "bytes": 555,
+          "sha256": "ef3fe46c4e59e96ff634588bb4a58b8cfe208f2e712a9bf9fbed9e15051e88eb"
+        },
+        "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+        "resultingCommittedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "sourceIdentityNote": "The owner reports execution against the integrated tree. The exact watchdog records command/times/runtime/resources but does not itself embed a commit or tree. The resulting committed tree and exact file hashes are independently retained here. This execution preceded commit creation."
+      },
+      {
+        "check": "lint",
+        "attempt": 1,
+        "status": "passed",
+        "watchdog": {
+          "startedAt": "2026-11-13T05:31:59.555Z",
+          "finishedAt": "2026-11-13T05:32:22.001Z",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "npm",
+            "run",
+            "lint"
+          ],
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+          "elapsedMs": 22445,
+          "initialMemory": {
+            "availableKiB": 8327364,
+            "totalKiB": 10206472
+          },
+          "minimumAvailableKiB": 7756908,
+          "peakKiB": 821360,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        },
+        "watchdogFile": {
+          "path": "integration-977de3a-lint-watchdog.json",
+          "bytes": 466,
+          "sha256": "edb14f9b1040dbdc7bb656a49533a176ad774cd48c1bfda74db636c8de10910a"
+        },
+        "logFile": {
+          "path": "integration-977de3a-lint.log",
+          "bytes": 1445,
+          "sha256": "0129b1cb216458ca584dae38856886d00591dc63f3f9d26e77bcbbd8101a3e0a"
+        },
+        "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+        "resultingCommittedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "sourceIdentityNote": "The owner reports execution against the integrated tree. The exact watchdog records command/times/runtime/resources but does not itself embed a commit or tree. The resulting committed tree and exact file hashes are independently retained here. This execution preceded commit creation."
+      },
+      {
+        "check": "backlog-pr",
+        "attempt": 1,
+        "status": "passed",
+        "watchdog": {
+          "startedAt": "2026-11-13T05:32:46.504Z",
+          "finishedAt": "2026-11-13T05:32:47.403Z",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "npm",
+            "run",
+            "backlog:pr",
+            "--",
+            "--base",
+            "origin/main",
+            "--title",
+            "🔏 SPN-149 Preserve session-revocation closure evidence across navigation"
+          ],
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+          "elapsedMs": 899,
+          "initialMemory": {
+            "availableKiB": 8461796,
+            "totalKiB": 10206472
+          },
+          "minimumAvailableKiB": 8345508,
+          "peakKiB": 277460,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        },
+        "watchdogFile": {
+          "path": "integration-977de3a-backlog-pr-watchdog.json",
+          "bytes": 611,
+          "sha256": "a39fe044416ca6004cf60c04febb90dc99d9d7e741c73d5e32f5f662702ad738"
+        },
+        "logFile": {
+          "path": "integration-977de3a-backlog-pr.log",
+          "bytes": 812,
+          "sha256": "113e0286be3b97ee5997a3b18f552d0e0838db6f5205ea5aff81ae5442517c05"
+        },
+        "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+        "resultingCommittedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "sourceIdentityNote": "Executed after creation of the complete candidate; owner reports exact candidate checkout. This record independently verifies its clean committed tree."
+      }
+    ],
+    "warnings": "The existing npm http-proxy configuration warning and existing backlog ticket-length advisory warnings are retained in source logs; all commands exited zero.",
+    "identityLimit": "The first five actions completed before creation of the Git commit. They are tied to the integrated source tree by owner execution provenance and retained exact resulting source hashes, not by an invented commit identity in their logs."
+  },
+  "previousHostedExecutions": [
+    {
+      "workflow": "CI",
+      "run": 43364365825,
+      "attempt": 1,
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+      "result": "passed_initial_complete_candidate",
+      "currentIntegrationMergeAcceptance": false,
+      "preservedEvidence": "hosted-final-verdict-43364365825.json",
+      "reason": "Different candidate and older base; remains historical evidence."
+    },
+    {
+      "workflow": "CI",
+      "run": 43370718838,
+      "attempt": 1,
+      "purpose": "Required metadata-edited validation of the previous source",
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+      "workflowId": 387826308,
+      "checkSuiteId": 117441910102,
+      "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+      "planFileSHA256": "e7c36b96d2a6d65b70bab28dfdf4c9c78aa244b5e45636fc307bf65cef5cd89d",
+      "currentIntegrationMergeAcceptance": false,
+      "disposition": "Preserve every attempt, pending/failed/completed worker and final results as older-base execution history. No result from this run substitutes for current-source/current-base acceptance.",
+      "baseAdvanceObservedAt": "2026-11-13T05:31:17.010Z",
+      "baseAdvanceEvidence": {
+        "path": "ci-base-advance-43370718838.json",
+        "bytes": 996,
+        "sha256": "7be86f47e84c594d6f6af628b94871627a5b9d71235b1ea9430018888c864a32"
+      },
+      "retainedRunSpecificCoverage": "hosted-coverage-43370718838.json",
+      "coverageMayContinueUpdating": true,
+      "lastFixedJobSnapshot": {
+        "observedAt": "2026-11-13T05:24:34.468Z",
+        "snapshot": {
+          "path": "ci-status-43370718838-attempt-1-direct-gates.json",
+          "bytes": 10279,
+          "sha256": "4e8254e2a19fd2415c8dda0f582974c4fa18f3bfee037ddf8abe55e40bde671a"
+        },
+        "jobCount": 30,
+        "statusCounts": {
+          "success": 7,
+          "in_progress": 13,
+          "queued": 10
+        },
+        "final": false
+      },
+      "conclusion": "not_asserted_by_this_integration_record"
+    }
+  ],
+  "reviewAndHostedAcceptance": {
+    "status": "pending",
+    "reviews": {
+      "status": "two_independent_nonimplementing_reviews_in_progress",
+      "requiredSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "requiredThreshold": "Each strictly above 95/100 on this same complete committed candidate.",
+      "scores": null,
+      "reports": [],
+      "priorCandidateScoresDoNotTransfer": true
+    },
+    "validationPush": {
+      "status": "pending_reviews",
+      "intendedSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+    },
+    "currentSourceCI": {
+      "run": null,
+      "attempt": null,
+      "testedMerge": null,
+      "status": "pending",
+      "requiredGates": [
+        "Backlog",
+        "Pull request",
+        "Lint",
+        "Typecheck",
+        "Unit tests",
+        "Lib tests",
+        "Playwright smoke"
+      ],
+      "allApplicableSelectedWorkersRequired": true,
+      "selectionRequirement": "Preserve authentication/session, sync transport, navigation, shared-fixture and harness dependencies. Do not reuse the old-base plan or checks as acceptance."
+    },
+    "mergeEligibility": false,
+    "remaining": "Attach both completed review reports and scores, publish the eligible candidate, retain exact source/base/tested/run identities, and verify all seven current-head gates plus every applicable selected worker before guarded squash merge."
+  },
+  "closedDiagnosticSample": {
+    "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+    "run": 43364365825,
+    "attempt": 1,
+    "status": "closed_complete",
+    "nativeFirstAttemptSample": 2,
+    "cases": [
+      {
+        "project": "development",
+        "job": 131685834643,
+        "retry": 0,
+        "status": "passed",
+        "durationMs": 10861
+      },
+      {
+        "project": "production",
+        "job": 131685834559,
+        "retry": 0,
+        "status": "passed",
+        "durationMs": 4845
+      }
+    ],
+    "naturalGap": "not_reproduced",
+    "historicalFirstAttemptOrdering": "unknown; original first-attempt timeline missing",
+    "sourceBoundaryProbe": "The earlier fixed two-ordering installed-runtime dispatch probe demonstrates the conditional observer boundary only.",
+    "laterExecutionAccounting": "Old-source metadata validation and the necessary integrated-source acceptance runs are separate required acceptance executions, not additions to the fixed diagnostic sample or retries until green.",
+    "noWaiver": "Neither an older green run, natural non-reproduction, nor unchanged SPN-149 helper bytes waives failed or missing current-head acceptance."
+  },
+  "privacyAndAssembly": {
+    "retained": "Git source/diff identities, exact file hashes, bounded resource metrics, command identities, categorical outcomes, public workflow IDs and local diagnostic limits.",
+    "excluded": [
+      "raw ZIPs",
+      "traces",
+      "screenshots",
+      "cookies",
+      "session identifiers",
+      "actual socket/request identifiers",
+      "network payloads",
+      "authored fixture values"
+    ],
+    "sourceOrReceiptModified": false,
+    "additionalWorkloadsExecuted": false,
+    "githubMutated": false,
+    "recordOutput": "validation/integration-977de3a-record.json"
+  }
+}

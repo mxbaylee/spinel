@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-11-13T05:33:49.216Z",
+  "finishedAt": "2026-11-13T05:33:49.770Z",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "--test",
+    "scripts/ci/session-revocation.test.ts"
+  ],
+  "node": "v26.13.0",
+  "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+  "elapsedMs": 554,
+  "initialMemory": {
+    "availableKiB": 8459720,
+    "totalKiB": 10206472
+  },
+  "minimumAvailableKiB": 8368612,
+  "peakKiB": 233104,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

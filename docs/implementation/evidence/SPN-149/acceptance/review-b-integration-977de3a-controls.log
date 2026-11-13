@@ -1,0 +1,29 @@
+serial: waiting for another run (/tmp/spinel-test.lock)…
+✔ protocol closure survives close-first ordering and retains frame counts (3.825532ms)
+✔ protocol closure survives navigation-first ordering and retains frame counts (0.43559ms)
+✔ a socket without a successful handshake (missing) cannot prove revocation (1.101689ms)
+✔ a socket without a successful handshake (403) cannot prove revocation (0.416893ms)
+✔ unrelated socket closes and frames cannot satisfy the established target (0.645458ms)
+✔ 401, navigation and a Playwright close cannot accept a live protocol socket (0.595525ms)
+✔ a protocol close cannot accept authorization that is still active (0.845883ms)
+✔ every established target must close before revocation can pass (0.501647ms)
+✔ post-revocation handshake status 101 preserves the establishment boundary (0.529789ms)
+✔ post-revocation handshake status 401 preserves the establishment boundary (0.427699ms)
+✔ losing the protocol observer invalidates completed closure evidence (0.380439ms)
+✔ overflow retains bounded content-free evidence and cannot turn into acceptance (0.442851ms)
+✔ too many socket identities fail closed without retaining an unbounded map (0.362032ms)
+✔ failed Network.enable removes listeners and detach failure preserves its original error (0.496008ms)
+✔ failed Network.enable preserves its original error when detach reaches the cleanup bound (1.888184ms)
+✔ stop detaches only owned listeners and prevents late events from changing evidence (0.540955ms)
+✔ cleanup runs every remaining owned phase after synchronous and asynchronous rejection (0.277948ms)
+✔ a stalled cleanup phase reaches its original bound and still releases later resources (0.375692ms)
+✔ revocation source and shared inputs keep unit/browser owners and fail-closed aggregates (7.259039ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 150.861353
+{"startedAt":"2026-11-13T05:34:09.496Z","finishedAt":"2026-11-13T05:34:34.073Z","command":"node","args":["scripts/serial.ts","node","--test","scripts/ci/session-revocation.test.ts"],"node":"v26.13.0","cwd":"/workspace/scratch/13a7bba7afec/spinel","elapsedMs":24576,"initialMemory":{"availableKiB":6678520,"totalKiB":10206472},"minimumAvailableKiB":6520116,"peakKiB":236940,"code":0,"signal":null,"aborted":null}

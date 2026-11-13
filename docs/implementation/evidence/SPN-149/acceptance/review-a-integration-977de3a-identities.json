@@ -1,0 +1,287 @@
+{
+  "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "priorReviewedHead": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "parents": [
+    "db24230dd4df539e2055471f55e50a402596c1fb",
+    "977de3a3a7608a05e2103787f4dac01ec180013e"
+  ],
+  "clean": true,
+  "diffPaths": [
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "baseBlob": "09618b9dbe1ab68462d79828da211b0075c6e572",
+      "candidateBlob": "535725b551ccf1326150d60b4b49ca3a5b8ae788",
+      "priorReviewedBlob": "535725b551ccf1326150d60b4b49ca3a5b8ae788"
+    },
+    {
+      "path": "docs/collaboration.md",
+      "baseBlob": "e107b9616a60568e31b5715976f9d5f43fbec688",
+      "candidateBlob": "94994001a7853cec609360d2437c343365da7a4b",
+      "priorReviewedBlob": "94994001a7853cec609360d2437c343365da7a4b"
+    },
+    {
+      "path": "docs/implementation/SPN-149.md",
+      "baseBlob": "f10cc9409cc4f0d4155967f76508494e1a52e99a",
+      "candidateBlob": "4d5d49741faeda728c98deb05e5f62c58e4b817d",
+      "priorReviewedBlob": "4d5d49741faeda728c98deb05e5f62c58e4b817d"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+      "baseBlob": null,
+      "candidateBlob": "c2f1e7ce19fe6074c9195eea4d60c01e9143950a",
+      "priorReviewedBlob": "c2f1e7ce19fe6074c9195eea4d60c01e9143950a"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/local-validation.json",
+      "baseBlob": null,
+      "candidateBlob": "b1e4848b8ee1281c2eeec6fd27e2a34345863c3f",
+      "priorReviewedBlob": "b1e4848b8ee1281c2eeec6fd27e2a34345863c3f"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+      "baseBlob": null,
+      "candidateBlob": "09863f39ea1c4a0ecf70ab9ba1374d54b2e1a1d2",
+      "priorReviewedBlob": "09863f39ea1c4a0ecf70ab9ba1374d54b2e1a1d2"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+      "baseBlob": null,
+      "candidateBlob": "9734aa6a6a8c0f64343c7b2e8f0ddfee58f7f89d",
+      "priorReviewedBlob": "9734aa6a6a8c0f64343c7b2e8f0ddfee58f7f89d"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+      "baseBlob": null,
+      "candidateBlob": "20c50ad4f2bc86c1ad7359dd923c5ff187426a82",
+      "priorReviewedBlob": "20c50ad4f2bc86c1ad7359dd923c5ff187426a82"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+      "baseBlob": null,
+      "candidateBlob": "c3ba273769880127a23dddbcf319a8377f20b1c7",
+      "priorReviewedBlob": "c3ba273769880127a23dddbcf319a8377f20b1c7"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+      "baseBlob": null,
+      "candidateBlob": "b6d65d1f3dd3941410a90a689017d9f92c4a2be0",
+      "priorReviewedBlob": "b6d65d1f3dd3941410a90a689017d9f92c4a2be0"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+      "baseBlob": null,
+      "candidateBlob": "4f11255c7b7bf1cb49dc41ff4923e02ab565da38",
+      "priorReviewedBlob": "4f11255c7b7bf1cb49dc41ff4923e02ab565da38"
+    },
+    {
+      "path": "docs/implementation/grooming-2026-11-12.md",
+      "baseBlob": "7c189d360022c256c5e61ad793dc4d7c55b9ec42",
+      "candidateBlob": "bb2f98a2cc3e98658967c7e500760fa15ca823d5",
+      "priorReviewedBlob": "bb2f98a2cc3e98658967c7e500760fa15ca823d5"
+    },
+    {
+      "path": "docs/todo/SPN-149.md",
+      "baseBlob": "e8d830497d3178bd2a50f70d4518395a3797d1f7",
+      "candidateBlob": null,
+      "priorReviewedBlob": null
+    },
+    {
+      "path": "docs/todo/backlog.json",
+      "baseBlob": "5198e26b496579ab118b51a85dffc8b1a52786cb",
+      "candidateBlob": "98d8eb7f1a7261f20bc49225936c14ad6cb5ccde",
+      "priorReviewedBlob": "e924e4bd10a1e987806ee10ca5c23a0e25ef37bf"
+    },
+    {
+      "path": "docs/todo/readme.md",
+      "baseBlob": "98353d7670f8d395012859588ed0c7dab10f8a3d",
+      "candidateBlob": "6cbe68077a69bc429d5a90ae7cf904308d1d8a6a",
+      "priorReviewedBlob": "61f07b78a0e988e6aa60b89315b79739a68d68f3"
+    },
+    {
+      "path": "e2e/collaboration.spec.ts",
+      "baseBlob": "349350b2aca4b5682637ab3e703b04df24caf87a",
+      "candidateBlob": "4288b469f77dc552bd92698fc33d1b13f3608491",
+      "priorReviewedBlob": "4288b469f77dc552bd92698fc33d1b13f3608491"
+    },
+    {
+      "path": "e2e/session-revocation.ts",
+      "baseBlob": null,
+      "candidateBlob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c",
+      "priorReviewedBlob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c"
+    },
+    {
+      "path": "scripts/ci/session-revocation.test.ts",
+      "baseBlob": null,
+      "candidateBlob": "71c9a32209f6f0a2da124a3353766f626b4d0203",
+      "priorReviewedBlob": "71c9a32209f6f0a2da124a3353766f626b4d0203"
+    }
+  ],
+  "changedSPN149PathsFromPrior": [
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "instructionRuntimeRoutingBlobs": [
+    {
+      "path": "AGENTS.md",
+      "priorBlob": "c7ea7ee1530b8f180a321a49e63fd499f183429a",
+      "candidateBlob": "c7ea7ee1530b8f180a321a49e63fd499f183429a"
+    },
+    {
+      "path": "docs/todo/process.md",
+      "priorBlob": "eae24eae50928791154258621d21194cb6ee6391",
+      "candidateBlob": "eae24eae50928791154258621d21194cb6ee6391"
+    },
+    {
+      "path": "docs/run-backlog.md",
+      "priorBlob": "6a60b9db6010d4389e3ee83e7f7ddd31d8d8ea07",
+      "candidateBlob": "6a60b9db6010d4389e3ee83e7f7ddd31d8d8ea07"
+    },
+    {
+      "path": "docs/testing.md",
+      "priorBlob": "dd54de4d32faa9ac81d8418696cf6bd5aca585c7",
+      "candidateBlob": "dd54de4d32faa9ac81d8418696cf6bd5aca585c7"
+    },
+    {
+      "path": "docs/product/personas.md",
+      "priorBlob": "770a6692bf006123b1e02ad58e3b78dd7e58d57d",
+      "candidateBlob": "770a6692bf006123b1e02ad58e3b78dd7e58d57d"
+    },
+    {
+      "path": ".nvmrc",
+      "priorBlob": "1dda03ddb06ad1c7da5b913539290187eb7fc5aa",
+      "candidateBlob": "1dda03ddb06ad1c7da5b913539290187eb7fc5aa"
+    },
+    {
+      "path": "package.json",
+      "priorBlob": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be",
+      "candidateBlob": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be"
+    },
+    {
+      "path": "package-lock.json",
+      "priorBlob": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0",
+      "candidateBlob": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "priorBlob": "4f2eac4f6ea8fde4afec92df9fae1a459a030edb",
+      "candidateBlob": "4f2eac4f6ea8fde4afec92df9fae1a459a030edb"
+    },
+    {
+      "path": "scripts/ci/plan.ts",
+      "priorBlob": "d41f63903f91689e952275ee63c788bf1780e624",
+      "candidateBlob": "d41f63903f91689e952275ee63c788bf1780e624"
+    },
+    {
+      "path": "scripts/ci/changes.ts",
+      "priorBlob": "ae21b33d963fb3fcacca173c251d9f8543b6efda",
+      "candidateBlob": "ae21b33d963fb3fcacca173c251d9f8543b6efda"
+    },
+    {
+      "path": "scripts/ci/coverage-result.ts",
+      "priorBlob": "8be7b998bb75649f7c995c3bf8cd2416f3774b5e",
+      "candidateBlob": "8be7b998bb75649f7c995c3bf8cd2416f3774b5e"
+    }
+  ],
+  "originalTicketBlob": "e8d830497d3178bd2a50f70d4518395a3797d1f7",
+  "openTickets": 21,
+  "completedSince": [
+    "SPN-148",
+    "SPN-149"
+  ],
+  "priorManifestKeys": [
+    "base",
+    "localSourceCommit",
+    "sourceTree",
+    "sourceSHA256",
+    "node",
+    "finalCommittedChecks",
+    "controlResults",
+    "attempts",
+    "limitations",
+    "bookkeeping",
+    "previousSourceSnapshot",
+    "repairedSourceChecks",
+    "repairedSourceCheckIdentity"
+  ],
+  "priorReviewedPathStatesRetained": 16,
+  "retainedManifestSourceIdentity": {
+    "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+    "localSourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
+    "sourceTree": "924001dbca2b2e27d24fc40d6ccbdc28b68eff3f",
+    "repairedSourceCheckIdentity": "Executed on byte-identical source immediately before the local source commit. Exact source hashes are retained; final independent reviewers check the complete remote-created candidate."
+  },
+  "retainedSourceHashChecks": [
+    {
+      "path": "e2e/collaboration.spec.ts",
+      "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "matched": true
+    },
+    {
+      "path": "e2e/session-revocation.ts",
+      "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "matched": true
+    },
+    {
+      "path": "scripts/ci/session-revocation.test.ts",
+      "sha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
+      "matched": true
+    },
+    {
+      "path": "e2e/sync-network.ts",
+      "sha256": "d7b5260969c65ec880e30d41002e725396edf3fdfa1599a77e15c4143cbb30f6",
+      "matched": true
+    },
+    {
+      "path": "e2e/native-sheet-value.ts",
+      "sha256": "138fbdee2bf57d16464fc07873424afe193e01796f363d6fcdfafa8c2673f7f2",
+      "matched": true
+    },
+    {
+      "path": "src/server/auth/store.ts",
+      "sha256": "685ce48e89ec1dc8377846d43fc8f5c35c70b3a56ca1420405fd857fc358fedf",
+      "matched": true
+    },
+    {
+      "path": "src/server/collaboration/identity.ts",
+      "sha256": "04178ff41ec48241bd230060f11b1d11e479befb2115665c4e8ae3e9e4dd3f79",
+      "matched": true
+    },
+    {
+      "path": "src/server/sync/transport.ts",
+      "sha256": "4e20587e388d8917d469a03d8b8815ba189e1132541572adcb54f7711969034f",
+      "matched": true
+    },
+    {
+      "path": "web/spinelSync.ts",
+      "sha256": "f311fae970039a4e1bca97f5d84da6e8da21720e10aa6703149bbec0a1fa1310",
+      "matched": true
+    },
+    {
+      "path": "web/App.tsx",
+      "sha256": "62aeb0cc70ebe9fa437d80499bd62574f46aafb3e3fb122d0128ce7bdaa44021",
+      "matched": true
+    },
+    {
+      "path": "scripts/ci/plan.ts",
+      "sha256": "b63905295532481182910853d4384580cc53ac790fad318ab67d6567852b2704",
+      "matched": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa",
+      "matched": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+      "matched": true
+    },
+    {
+      "path": ".nvmrc",
+      "sha256": "6e775beae185bb3f5837d2f6d3fbe910e6f60e18fa507e661e312e84d707a92f",
+      "matched": true
+    }
+  ]
+}

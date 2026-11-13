@@ -1,0 +1,6 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> typecheck
+> tsc -p .
+
+{"startedAt":"2026-11-13T05:31:47.603Z","finishedAt":"2026-11-13T05:31:53.999Z","command":"node","args":["scripts/serial.ts","npm","run","typecheck"],"node":"v26.13.0","cwd":"/workspace/scratch/13a7bba7afec/spinel","elapsedMs":6396,"initialMemory":{"availableKiB":8372928,"totalKiB":10206472},"minimumAvailableKiB":6509236,"peakKiB":2028068,"code":0,"signal":null,"aborted":null}

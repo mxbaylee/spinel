@@ -1,0 +1,24 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> backlog:check
+> node scripts/backlog/cli.ts check
+
+warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-089.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-099.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-122.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-147.md: 59 lines; tickets aim for 50 or fewer, consider splitting or trimming
+backlog ok: 21 open tickets
+{"startedAt":"2026-11-13T05:31:45.849Z","finishedAt":"2026-11-13T05:31:46.474Z","command":"node","args":["scripts/serial.ts","npm","run","backlog:check"],"node":"v26.13.0","cwd":"/workspace/scratch/13a7bba7afec/spinel","elapsedMs":625,"initialMemory":{"availableKiB":8457164,"totalKiB":10206472},"minimumAvailableKiB":8356324,"peakKiB":233276,"code":0,"signal":null,"aborted":null}

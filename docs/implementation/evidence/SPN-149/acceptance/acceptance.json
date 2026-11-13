@@ -5,16 +5,21 @@
   "pullRequest": 282,
   "pullRequestURL": "https://github.com/mxbaylee/spinel/pull/282",
   "recordRole": "Authoritative maintained latest source, review, run and landing record. Preserve earlier immutable entries when appending later source revisions or workflow executions.",
-  "observedAt": "2026-11-13T05:16:06.083239+00:00",
+  "observedAt": "2026-11-13T05:40:29.181632+00:00",
   "current": {
-    "source": "db24230dd4df539e2055471f55e50a402596c1fb",
-    "tree": "42cd4dfe89d0281ff5b11aa984053bd0493e22bb",
-    "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
-    "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+    "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
     "reviewStatus": "passed",
-    "initialHostedAcceptance": "passed",
-    "metadataValidation": "queued",
-    "overallAcceptance": "pending_metadata_validation_and_landing",
+    "reviewScores": [
+      100,
+      100
+    ],
+    "initialHostedAcceptance": "historical pass on earlier source db24230; not integration acceptance",
+    "metadataValidation": "older-base history; preserve every attempt and final result",
+    "hostedAcceptance": "pending_current_head",
+    "overallAcceptance": "pending_current_head_validation_and_landing",
     "merge": "pending",
     "cleanup": "pending; evidence archive pin and guarded ref deletion unavailable"
   },
@@ -82,6 +87,92 @@
         }
       ],
       "immutableCandidateEvidence": "candidate-evidence-links.json"
+    },
+    {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+      "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "parents": [
+        "db24230dd4df539e2055471f55e50a402596c1fb",
+        "977de3a3a7608a05e2103787f4dac01ec180013e"
+      ],
+      "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "purpose": "Required integration of newly merged main; complete current-base source rereviewed before validation publication.",
+      "reviews": [
+        {
+          "reviewer": "/root/review_a",
+          "role": "independent nonimplementing agent reviewer",
+          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+          "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "score": 100,
+          "strictlyAbove95": true,
+          "rubric": [
+            35,
+            25,
+            20,
+            10,
+            10
+          ],
+          "unresolvedFindings": [],
+          "fullReport": "review-a-integration-977de3a.md",
+          "fullReportSHA256": "7f6ff8b1688b32b0cb031f18f629f6e955ed6b31581c4d5bbfdbdff011689802",
+          "focusedControls": {
+            "passed": 19,
+            "failed": 0,
+            "skipped": 0,
+            "cancelled": 0,
+            "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "log": "review-a-integration-977de3a-controls.log",
+            "watchdog": "review-a-integration-977de3a-controls-watchdog.json"
+          },
+          "timing": "Complete and read before the guarded source branch update at 2026-11-13T05:39:04Z. Hosted acceptance remained separate and pending."
+        },
+        {
+          "reviewer": "/root/review_b",
+          "role": "independent nonimplementing agent reviewer",
+          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+          "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "score": 100,
+          "strictlyAbove95": true,
+          "rubric": [
+            35,
+            25,
+            20,
+            10,
+            10
+          ],
+          "unresolvedFindings": [],
+          "fullReport": "review-b-integration-977de3a.md",
+          "fullReportSHA256": "95515a433ba83d011f63ef1551c9182a091c5360c2ef8cb121d0061f4e9f1f7d",
+          "focusedControls": {
+            "passed": 19,
+            "failed": 0,
+            "skipped": 0,
+            "cancelled": 0,
+            "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "log": "review-b-integration-977de3a-controls.log",
+            "watchdog": "review-b-integration-977de3a-controls-watchdog.json"
+          },
+          "timing": "Complete and read before the guarded source branch update at 2026-11-13T05:39:04Z. Hosted acceptance remained separate and pending."
+        }
+      ],
+      "localIntegrationEvidence": "integration-977de3a-record.json",
+      "reviewerIdentityEvidence": "review-a-integration-977de3a-identities.json",
+      "publishedAt": "2026-11-13T05:39:04Z",
+      "publicationGuard": {
+        "expectedOldHead": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "newHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "force": false,
+        "result": "success"
+      },
+      "unchangedTicketImplementation": true,
+      "changedTicketBookkeeping": [
+        "docs/todo/backlog.json",
+        "docs/todo/readme.md"
+      ],
+      "pending": "Fresh current-head hosted acceptance and tested merge identity."
     }
   ],
   "workflowExecutions": [
@@ -596,7 +687,8 @@
       ],
       "allAggregateReceiptsVerified": true,
       "browserArtifactId": 14012001088,
-      "browserGateCheckId": 131701094769
+      "browserGateCheckId": 131701094769,
+      "eligibleForCurrentMerge": false
     },
     {
       "purpose": "initial selected companion workflow",
@@ -619,7 +711,8 @@
         "Main Pages publication is inapplicable to this pull_request event."
       ],
       "aggregateJobId": 131692373625,
-      "snapshot": "storybook-43364365751-attempt-1-final.json"
+      "snapshot": "storybook-43364365751-attempt-1-final.json",
+      "eligibleForCurrentMerge": false
     },
     {
       "purpose": "required full validation following consolidated PR description publication",
@@ -629,24 +722,65 @@
       "attempt": 1,
       "source": "db24230dd4df539e2055471f55e50a402596c1fb",
       "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
-      "status": "queued",
+      "status": "in_progress_or_queued",
       "conclusion": null,
       "createdAt": "2026-11-13T05:14:30Z",
-      "plan": "Await authoritative edited-event plan and every selected worker; no initial pass is substituted.",
+      "plan": "Authoritative full edited-event plan; preserved separately in run-specific audit.",
+      "fixedDiagnosticSample": false,
+      "eligibleForCurrentMerge": false,
+      "disposition": "Main advanced to 977de3a; this previous-source execution is retained history, not acceptance for current source64d85c1.",
+      "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e"
+    },
+    {
+      "purpose": "Required current-base integration acceptance",
+      "workflow": "CI",
+      "run": 43373411759,
+      "runURL": "https://github.com/mxbaylee/spinel/actions/runs/43373411759",
+      "attempt": 1,
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+      "checkSuiteId": 117448946471,
+      "createdAt": "2026-11-13T05:39:09Z",
+      "status": "queued",
+      "conclusion": null,
+      "eligibleForCurrentMerge": "pending_all_selected_results",
+      "fixedDiagnosticSample": false
+    },
+    {
+      "purpose": "Required current-base integration acceptance",
+      "workflow": "Storybook",
+      "run": 43373411761,
+      "runURL": "https://github.com/mxbaylee/spinel/actions/runs/43373411761",
+      "attempt": 1,
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+      "checkSuiteId": 117448946483,
+      "createdAt": "2026-11-13T05:39:09Z",
+      "status": "in_progress",
+      "conclusion": null,
+      "eligibleForCurrentMerge": "pending_all_selected_results",
       "fixedDiagnosticSample": false
     }
   ],
   "pendingWorkflowRequirements": [
     {
-      "purpose": "Required full metadata-triggered CI after the single consolidated PR description edit.",
-      "workflow": "CI",
-      "trigger": "pull_request.edited",
-      "status": "pending_not_started",
-      "run": null,
-      "attempt": null,
-      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
-      "requiredAcceptance": "All seven exact current-head gates and every applicable selected worker must pass on the correct tested source/base; preserve every attempt. Any failed current-head acceptance remains blocking.",
-      "nativeCaseAccounting": "Any target cases in this separately required acceptance run are acceptance evidence, not extra samples in the closed fixed diagnostic experiment."
+      "purpose": "Required fresh validation after integration with current main.",
+      "workflow": "CI and every applicable companion workflow",
+      "trigger": "pull_request.synchronize",
+      "status": "queued",
+      "run": 43373411759,
+      "attempt": 1,
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "requiredAcceptance": "All seven exact current-head gates and every applicable selected worker must pass on the correct tested source/base. Every failed or missing current-head result remains blocking.",
+      "nativeCaseAccounting": "Ordinary required current-base acceptance, separate from the closed fixed initial diagnostic sample.",
+      "companionRun": 43373411761,
+      "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed"
     }
   ],
   "fixedNativeInvestigation": {
@@ -766,15 +900,21 @@
     "plan": "Publish this content-free receipt on one maintained branch, then make one consolidated PR body edit linking it. Record the resulting required full CI and all later acceptance/landing updates here without recursive body edits.",
     "futureSourceUpdates": "Append complete new source/review/workflow identities and update current; do not overwrite the initial candidate, fixed sample or earlier attempts. Necessary candidate pushes still require two independent complete reviews above 95 on that exact candidate.",
     "receiptCommitIdentity": "Resolve the maintained branch head; the initial exact receipt commit is also pinned in PR #282.",
-    "consolidatedPRDescriptionPublishedAt": "2026-11-13T05:14:27Z"
+    "consolidatedPRDescriptionPublishedAt": "2026-11-13T05:14:27Z",
+    "lastSourcePublication": {
+      "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "at": "2026-11-13T05:39:04Z",
+      "bothQualifyingReviewsBeforePublication": true
+    }
   },
   "landing": {
     "status": "pending",
-    "expectedHead": "db24230dd4df539e2055471f55e50a402596c1fb",
+    "expectedHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
     "latestMainCheck": "Recheck current main immediately before guarded merge.",
     "squashCommit": null,
     "landedTreeVerified": false,
-    "guardedMergeRequirement": "Squash merge only after full current-head acceptance and source/base currency; use an expected-head guard and preserve the immutable final receipt locator in the merge record."
+    "guardedMergeRequirement": "Squash merge only after full current-head acceptance and source/base currency; use an expected-head guard and preserve the immutable final receipt locator in the merge record.",
+    "requiredBase": "977de3a3a7608a05e2103787f4dac01ec180013e"
   },
   "cleanup": {
     "status": "pending",

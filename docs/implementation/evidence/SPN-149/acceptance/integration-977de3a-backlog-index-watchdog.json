@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-11-13T05:31:26.234Z",
+  "finishedAt": "2026-11-13T05:31:26.860Z",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "npm",
+    "run",
+    "backlog:index"
+  ],
+  "node": "v26.13.0",
+  "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+  "elapsedMs": 626,
+  "initialMemory": {
+    "availableKiB": 8472788,
+    "totalKiB": 10206472
+  },
+  "minimumAvailableKiB": 8376296,
+  "peakKiB": 232948,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

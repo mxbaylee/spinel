@@ -1,21 +1,21 @@
 {
   "version": 1,
   "ticket": "SPN-149",
-  "source": "db24230dd4df539e2055471f55e50a402596c1fb",
-  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
-  "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
-  "observedAt": "2026-11-13T05:16:06.083239+00:00",
+  "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "observedAt": "2026-11-13T05:41:02.033388+00:00",
   "files": [
     {
       "path": "README.md",
-      "bytes": 13426,
-      "sha256": "555b10fd6342f6367e587e022fc0b67cb50e0451b8daf81f9c0d7587db636573",
+      "bytes": 15110,
+      "sha256": "c92144d5e7650ca64b5bbda13ec12ea9797b69c6bebcfdc2e5b34ff362ce51dd",
       "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
     },
     {
       "path": "acceptance.json",
-      "bytes": 33261,
-      "sha256": "9936c9d2354fd907f8a40379a2a00defac51aea236b2209aaff91c7e8b1ef09f",
+      "bytes": 39263,
+      "sha256": "25e727b2e5d4f48389d09c70d976566203034ea08cbd36dec5ec3b33284490b1",
       "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
     },
     {
@@ -109,6 +109,90 @@
       "provenance": "byte-exact copy of validation/hosted-negative-controls-43364365825.json"
     },
     {
+      "path": "integration-977de3a-backlog-check-watchdog.json",
+      "bytes": 473,
+      "sha256": "00ee9e400be9fc984c5dbdefab31dbf0ac110632268874d5b7e027eebbbb156c",
+      "provenance": "byte-exact copy of validation/integration-977de3a-backlog-check-watchdog.json"
+    },
+    {
+      "path": "integration-977de3a-backlog-check.log",
+      "bytes": 2161,
+      "sha256": "467d58ddebcbc1859e2c785bc58b13ced300e47ed370ebb4b8f672472a3801f3",
+      "provenance": "byte-exact copy of validation/integration-977de3a-backlog-check.log"
+    },
+    {
+      "path": "integration-977de3a-backlog-index-watchdog.json",
+      "bytes": 473,
+      "sha256": "ee08af80422d94877273b1ad96586e34967efa4bf100b2342063054938e41b0f",
+      "provenance": "byte-exact copy of validation/integration-977de3a-backlog-index-watchdog.json"
+    },
+    {
+      "path": "integration-977de3a-backlog-index.log",
+      "bytes": 2159,
+      "sha256": "f3ff01de77c09410b5a689281c9c90f0957bd677fd98c832ee8326a5a9885bad",
+      "provenance": "byte-exact copy of validation/integration-977de3a-backlog-index.log"
+    },
+    {
+      "path": "integration-977de3a-backlog-pr-watchdog.json",
+      "bytes": 611,
+      "sha256": "a39fe044416ca6004cf60c04febb90dc99d9d7e741c73d5e32f5f662702ad738",
+      "provenance": "byte-exact copy of validation/integration-977de3a-backlog-pr-watchdog.json"
+    },
+    {
+      "path": "integration-977de3a-backlog-pr.log",
+      "bytes": 812,
+      "sha256": "113e0286be3b97ee5997a3b18f552d0e0838db6f5205ea5aff81ae5442517c05",
+      "provenance": "byte-exact copy of validation/integration-977de3a-backlog-pr.log"
+    },
+    {
+      "path": "integration-977de3a-focused-watchdog.json",
+      "bytes": 501,
+      "sha256": "a69c6601612721b4b565deed451f62bb0e14ddef658b7b20ba264adfe4345377",
+      "provenance": "byte-exact copy of validation/integration-977de3a-focused-watchdog.json"
+    },
+    {
+      "path": "integration-977de3a-focused.log",
+      "bytes": 2309,
+      "sha256": "a5bca5d2a56da61f3283fdee423faa48b46093788779630834df78f1b3759ff6",
+      "provenance": "byte-exact copy of validation/integration-977de3a-focused.log"
+    },
+    {
+      "path": "integration-977de3a-lint-watchdog.json",
+      "bytes": 466,
+      "sha256": "edb14f9b1040dbdc7bb656a49533a176ad774cd48c1bfda74db636c8de10910a",
+      "provenance": "byte-exact copy of validation/integration-977de3a-lint-watchdog.json"
+    },
+    {
+      "path": "integration-977de3a-lint.log",
+      "bytes": 1445,
+      "sha256": "0129b1cb216458ca584dae38856886d00591dc63f3f9d26e77bcbbd8101a3e0a",
+      "provenance": "byte-exact copy of validation/integration-977de3a-lint.log"
+    },
+    {
+      "path": "integration-977de3a-record.json",
+      "bytes": 70171,
+      "sha256": "78527d8138db6b6f3abd2c20dcad837e64aeb78b0afaf9dbf9b9542a23b0ad77",
+      "provenance": "byte-exact copy of validation/integration-977de3a-record.json"
+    },
+    {
+      "path": "integration-977de3a-typecheck-watchdog.json",
+      "bytes": 471,
+      "sha256": "4601ea8d364ee13536e9bbe380fa7f0dc7efb62eaa96941873f414ef054c5bbd",
+      "provenance": "byte-exact copy of validation/integration-977de3a-typecheck-watchdog.json"
+    },
+    {
+      "path": "integration-977de3a-typecheck.log",
+      "bytes": 555,
+      "sha256": "ef3fe46c4e59e96ff634588bb4a58b8cfe208f2e712a9bf9fbed9e15051e88eb",
+      "provenance": "byte-exact copy of validation/integration-977de3a-typecheck.log"
+    },
+    {
+      "path": "integration-977de3a-upload.json",
+      "bytes": 7750,
+      "sha256": "f34150620f625f4c6864a5c4779dd848e8aa2d1d28b7f6ea16a2cf4a95a462fd",
+      "provenance": "byte-exact copy of validation/integration-977de3a-upload.json"
+    },
+    {
       "path": "pr-282-acceptance-audit-final.json",
       "bytes": 11096,
       "sha256": "8f79fbdad5daaca9e7ffc35513785eecda2912d94d8e0895167ea00a221747dd",
@@ -133,6 +217,30 @@
       "provenance": "byte-exact copy of validation/review-a-2.md"
     },
     {
+      "path": "review-a-integration-977de3a-controls-watchdog.json",
+      "bytes": 501,
+      "sha256": "d0835392dd67f31c62d81d7197ae6a34b4d5362d8f35de07320dee81533afe50",
+      "provenance": "byte-exact copy of validation/review-a-integration-977de3a-controls-watchdog.json"
+    },
+    {
+      "path": "review-a-integration-977de3a-controls.log",
+      "bytes": 2309,
+      "sha256": "74bb6f3ab63142734a1964f3d33176cef7929b739c2486cd76aa6328ee4a4fd5",
+      "provenance": "byte-exact copy of validation/review-a-integration-977de3a-controls.log"
+    },
+    {
+      "path": "review-a-integration-977de3a-identities.json",
+      "bytes": 10365,
+      "sha256": "65768fd46118968cdfc3b1f7dc8517a543d8e2e0830f27450353be1aafa14a40",
+      "provenance": "byte-exact copy of validation/review-a-integration-977de3a-identities.json"
+    },
+    {
+      "path": "review-a-integration-977de3a.md",
+      "bytes": 11861,
+      "sha256": "7f6ff8b1688b32b0cb031f18f629f6e955ed6b31581c4d5bbfdbdff011689802",
+      "provenance": "byte-exact copy of validation/review-a-integration-977de3a.md"
+    },
+    {
       "path": "review-b-2-controls-watchdog.json",
       "bytes": 501,
       "sha256": "9d6316012b53067c5d5c539ce366b50f442756ac4a21b6260e966985767f2442",
@@ -149,6 +257,24 @@
       "bytes": 8216,
       "sha256": "cb5ce7b0a0dbe97503d3e901de1e313424dc3d8faf54bbd51e8b957853f04739",
       "provenance": "byte-exact copy of validation/review-b-2.md"
+    },
+    {
+      "path": "review-b-integration-977de3a-controls-watchdog.json",
+      "bytes": 503,
+      "sha256": "604f2e566f8ef21e9edd1d64699316aa0e9d3a919baae439fcbcaa339936880f",
+      "provenance": "byte-exact copy of validation/review-b-integration-977de3a-controls-watchdog.json"
+    },
+    {
+      "path": "review-b-integration-977de3a-controls.log",
+      "bytes": 2370,
+      "sha256": "6a8a08fc6b461e32a0f96af47f1bc3068860f11f10d857df5923f9da2330b1e6",
+      "provenance": "byte-exact copy of validation/review-b-integration-977de3a-controls.log"
+    },
+    {
+      "path": "review-b-integration-977de3a.md",
+      "bytes": 8398,
+      "sha256": "95515a433ba83d011f63ef1551c9182a091c5360c2ef8cb121d0061f4e9f1f7d",
+      "provenance": "byte-exact copy of validation/review-b-integration-977de3a.md"
     },
     {
       "path": "review-b-native-audit.md",
@@ -240,5 +366,6 @@
       "sha256": "83529060d61746d40127442dfe3561850295355a0d33e6e0f6b64bcd2554245d"
     }
   ],
-  "privacyScan": "Passed on all copied files; exact raw diagnostics validated against bounded content-free schema. No raw ZIP, trace, screenshot, private state, payload or authored value retained."
+  "privacyScan": "Passed on all copied files; exact raw diagnostics validated against bounded content-free schema. No raw ZIP, trace, screenshot, private state, payload or authored value retained.",
+  "initialSource": "db24230dd4df539e2055471f55e50a402596c1fb"
 }

@@ -1,0 +1,19 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> lint
+> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check
+
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> dependencies:check
+> node scripts/dependencies/no-univer-pro.ts
+
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> format:check
+> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts
+
+Checking formatting...
+All matched files use Prettier code style!
+{"startedAt":"2026-11-13T05:31:59.555Z","finishedAt":"2026-11-13T05:32:22.001Z","command":"node","args":["scripts/serial.ts","npm","run","lint"],"node":"v26.13.0","cwd":"/workspace/scratch/13a7bba7afec/spinel","elapsedMs":22445,"initialMemory":{"availableKiB":8327364,"totalKiB":10206472},"minimumAvailableKiB":7756908,"peakKiB":821360,"code":0,"signal":null,"aborted":null}

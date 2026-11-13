@@ -2,9 +2,25 @@
 
 ## ✅ Current disposition
 
-**The complete initial candidate passed both independent reviews and its first hosted acceptance. Final completion remains pending the required metadata-triggered CI, guarded squash merge, and landed-result verification.** No pending step is counted as passed.
+**The current integrated candidate passed both independent reviews at 100/100 and was published for fresh current-head validation at 2026-11-13T05:39:04Z. Hosted acceptance and guarded landing remain pending.** Earlier successful executions are retained as history and do not qualify the new source/base.
 
-This README and [acceptance.json](acceptance.json) are the maintained latest source, review, run, and landing record for [PR #282](https://github.com/mxbaylee/spinel/pull/282). Append later revisions and executions; retain the initial evidence below unchanged. The first hosted audit was finalized at **2026-11-13T05:04:18.598Z**.
+This README and [acceptance.json](acceptance.json) are the maintained latest source, review, run and landing record for [PR #282](https://github.com/mxbaylee/spinel/pull/282). Earlier source revisions, exact first attempts and the fixed diagnostic sample remain intact.
+
+| Current identity | Exact value |
+| --- | --- |
+| Complete reviewed source | `64d85c15288017bbfe3434d91fe0647eb2a2d613` |
+| Candidate tree | `b293f8c3c816415864c09f185d77e717bab11e38` |
+| Integrated current main | `977de3a3a7608a05e2103787f4dac01ec180013e` |
+| Independent reviews | [A](review-a-integration-977de3a.md): 100/100; [B](review-b-integration-977de3a.md): 100/100 |
+| Tested PR merge | `6389a8c29b337b6e993b699d544ed2e43d86ffed`; tree equals reviewed tree |
+| Fresh CI / Storybook | [43373411759](https://github.com/mxbaylee/spinel/actions/runs/43373411759) / [43373411761](https://github.com/mxbaylee/spinel/actions/runs/43373411761), attempt 1; pending, acceptance not yet complete |
+| Landing | Pending current-head acceptance and an expected-head squash merge |
+
+The [integration record](integration-977de3a-record.json) verifies every changed path and blob. All SPN-149 implementation, regression and historical-evidence bytes remain unchanged. Current main's SPN-148 result is inherited unchanged; only the completion list and CLI-generated index required conflict resolution. Both completions remain recorded, with 21 open tickets. The six relevant local actions passed under Node 26.13.0, shared serialization and the existing memory/time watchdog; each reviewer separately passed the 19 focused controls on this exact committed head. No resource abort occurred.
+
+## 🗃️ Earlier candidate identities
+
+The complete initial candidate passed its first hosted acceptance before main advanced. Its audit finalized at 2026-11-13T05:04:18.598Z. These identities are historical; they are not relabeled as execution of the integration above.
 
 | Identity | Exact value |
 | --- | --- |
@@ -14,11 +30,11 @@ This README and [acceptance.json](acceptance.json) are the maintained latest sou
 | Tested PR merge | `9ee8ac68165f25e097c93f84bb2b20f00fcaf09e` |
 | CI run / attempt | [43364365825](https://github.com/mxbaylee/spinel/actions/runs/43364365825) / 1 |
 | Storybook run / attempt | [43364365751](https://github.com/mxbaylee/spinel/actions/runs/43364365751) / 1 |
-| Required follow-up metadata CI | [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) / 1 — queued; final acceptance pending |
+| Metadata CI on the earlier base | [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) / 1 — retained history; not current integration acceptance |
 
-## 🔎 Exact-candidate reviews and controls
+## 🔎 Initial-candidate reviews and controls
 
-[Review A](review-a-2.md) and [Review B](review-b-2.md) are complete independent nonimplementing agent reviews of the source above. Each scores **100/100**, with no unresolved findings. They were completed before the validation publication. Their original statements that hosted acceptance was pending remain intact as evidence of that timing; the later audited results below supply hosted acceptance separately. Both reviewers independently passed all **19 focused controls**, with their exact logs and bounded watchdog receipts retained here.
+[Review A](review-a-2.md) and [Review B](review-b-2.md) are complete independent nonimplementing agent reviews of the initial source above. Each scores **100/100**, with no unresolved findings. They were completed before the validation publication. Their original statements that hosted acceptance was pending remain intact as evidence of that timing; the later audited results below supply hosted acceptance separately. Both reviewers independently passed all **19 focused controls**, with their exact logs and bounded watchdog receipts retained here.
 
 The initial review findings and repairs are preserved in the immutable candidate's [review iteration record](https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/review-iteration-1.json). The final candidate adds the existing cleanup bound to failed observer setup and retains the required pinned Playwright copyright/license attribution.
 
@@ -90,7 +106,7 @@ The historical first attempt observed sign-in and zero page close events; it fai
 
 ## 📦 Publication, remaining acceptance and cleanup
 
-This directory is prepared for `docs/implementation/evidence/SPN-149/acceptance/` on the single maintained branch `evidence/spn-149-acceptance-20261113`. This is the initial publication snapshot; the branch head supplies its exact immutable receipt identity. The one consolidated PR description edit links this authoritative maintained record and has triggered required full core CI run 43370718838. Preserve every resulting attempt, exact gates and selected workers here. Do not mark completion until that execution passes on the eligible current source/base, then recheck main and squash-merge with an expected-head guard. Record the final immutable receipt locator in the merge record and verify the landed result.
+This directory is published at `docs/implementation/evidence/SPN-149/acceptance/` on the single maintained branch `evidence/spn-149-acceptance-20261113`. The branch head supplies its current immutable receipt identity. The one consolidated PR description edit links this authoritative record. Its metadata run 43370718838 remains older-source history after main advanced; the guarded source update 64d85c1 requires fresh CI and every applicable companion workflow. Preserve all attempts and exact selected gates/workers here. Recheck main and squash-merge with an expected-head guard only after current-source/current-base acceptance. Record the final immutable receipt locator in the merge message and verify the landed result.
 
 If main changes, append a new complete source/review/acceptance entry here while preserving this initial candidate and fixed sample. Every candidate push intended to run CI still requires two independent complete-candidate reviews strictly above 95/100. A later green or inconclusive diagnostic result cannot waive failed current-head acceptance.
 
