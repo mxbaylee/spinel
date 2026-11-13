@@ -258,13 +258,9 @@ export async function startOfflineUpgradeObservation(
   }
   try {
     const deadline = Date.now() + collectionMs;
-    const categories = await before(
-      cdp.send('Tracing.getCategories'),
-      deadline,
-      'Worker trace categories',
-    );
-    if (!categories.categories.includes('ServiceWorker'))
-      throw new Error('Chromium has no ServiceWorker trace category.');
+    // GetCategories can change as new code paths run; it is not a capability
+    // gate before the first worker operation. Start the requested category now;
+    // finish still requires actual, nonempty, well-formed, lossless worker events.
     // Set before sending: a command timing out may still have started the trace.
     started = true;
     await before(

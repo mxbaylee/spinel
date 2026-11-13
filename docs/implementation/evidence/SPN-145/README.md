@@ -145,3 +145,45 @@ RSS was 2,072,788 KiB, below the unchanged 2 GiB ceiling. Every workload used th
 pinned Node and serial watchdog with no resource abort. Earlier intermediate
 checks remain separate records. Fresh exact-commit grades and hosted acceptance
 are still required before publication and merge respectively.
+
+## 🔎 Proven mechanism; rejected trace-category preflight
+
+[`hosted-5b645370/receipt.json`](hosted-5b645370/receipt.json) binds the next
+failed head, tested merge, full plan and original artifact. The raw retry-0
+mechanism receipt establishes the original proxy's obstruction and exact-owner
+release, followed by automatic response cleanup and strict replacement activation
+with the repaired proxy. Both samples retain the actual emitted workers and the
+same real preparation event. The original historical incident remains unattributed.
+
+The real retained-client attempt failed before trace startup because the collector
+mistook one category enumeration for permanent capability. Its raw failure
+receipt, screenshot, context and job log remain preserved. The result summary
+retains the exact original errors, retries and durations; its normalization and
+the original full-report hash are explicit. The complete retry-1 trace is reduced
+to metadata/counts and its original hash to avoid republishing raw synthetic
+fixture URLs. A passing retry and the second scenario's retry-only execution do
+not qualify the failed job. The actual enumeration list was not captured.
+
+The [diagnostic checkpoint](../../SPN-145.md#-diagnostic-startup-checkpoint-after-the-proven-mechanism)
+records Chromium's current public contract, exact inspected upstream blobs and
+the unavailable exact-browser-source limitation. The repair removes the invalid
+enumeration prerequisite while preserving bounded startup and every actual
+nonempty/lossless/completeness check. Protocol-adapter controls reproduce the
+old rejection, require actual worker data for success and preserve startup errors;
+they do not replace the mandatory real browser scenarios.
+
+[`trace-category-local.json`](trace-category-local.json) and its 43-file companion
+archive retain the prospective control, first local failures, corrected results,
+and independent reviews of the preceding `5b645370` candidate. The verified
+`trace-category-commit.bundle` preserves exact local repair commit
+`52f6a9668fbbd693b81c5a2962047c46e59b6bca`, with `5b645370` as prerequisite.
+The final integrated source hashes are recorded separately from those old grades.
+
+Integration with main `977de3a3a7608a05e2103787f4dac01ec180013e` required only
+backlog bookkeeping resolution and CLI regeneration. All 98 focused controls,
+full typecheck, lint, backlog and exact-new-base PR-policy checks passed. The
+integrated typecheck used a 1,408 MiB compiler heap and peaked at 1,987,016 KiB
+process-tree RSS; the unchanged watchdog did not abort any final integration
+check. The earlier 2 GiB termination and test-adapter typing/representation
+failures remain recorded instead of being overwritten. Two fresh reviews must
+grade the complete integrated commit before its next validation publication.

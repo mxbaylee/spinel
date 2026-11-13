@@ -1,0 +1,121 @@
+{
+  "stats": {
+    "startTime": "2026-11-13T05:15:23.113Z",
+    "duration": 61489.372,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 1
+  },
+  "errors": [],
+  "specs": [
+    {
+      "title": "an interrupted real legacy preparation releases its worker before replacement activation",
+      "file": "offline-upgrade.spec.ts",
+      "line": 241,
+      "column": 1,
+      "timeout": 90000,
+      "expectedStatus": "passed",
+      "projectName": "offline-upgrade",
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "duration": 4487,
+          "startTime": "2026-11-13T05:15:24.149Z",
+          "errors": []
+        },
+        {
+          "retry": 1,
+          "status": "passed",
+          "duration": 5671,
+          "startTime": "2026-11-13T05:15:36.791Z",
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "the actual SPN-054 eager client keeps its pending Doc and lazy files during new-host adoption",
+      "file": "offline-upgrade.spec.ts",
+      "line": 283,
+      "column": 1,
+      "timeout": 180000,
+      "expectedStatus": "passed",
+      "projectName": "offline-upgrade",
+      "status": "flaky",
+      "results": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "duration": 2043,
+          "startTime": "2026-11-13T05:15:34.351Z",
+          "errors": [
+            {
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts",
+                "column": 15,
+                "line": 256
+              },
+              "message": "AggregateError: Offline-upgrade failed; original failure is first.\n\n   at offline-upgrade-observation.ts:256\n\n  254 |       if (failures.length === 1) throw failures[0];\n  255 |       if (failures.length)\n> 256 |         throw new AggregateError(failures, 'Offline-upgrade failed; original failure is first.');\n      |               ^\n  257 |     })());\n  258 |   }\n  259 |   try {\n    at /home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts:256:15\n    at startOfflineUpgradeObservation (/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts:284:5)\n    at /home/runner/work/spinel/spinel/e2e/offline-upgrade.spec.ts:308:19"
+            },
+            {
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts",
+                "column": 13,
+                "line": 267
+              },
+              "message": "Error: Chromium has no ServiceWorker trace category.\n\n   at offline-upgrade-observation.ts:267\n\n  265 |     );\n  266 |     if (!categories.categories.includes('ServiceWorker'))\n> 267 |       throw new Error('Chromium has no ServiceWorker trace category.');\n      |             ^\n  268 |     // Set before sending: a command timing out may still have started the trace.\n  269 |     started = true;\n  270 |     await before(\n    at startOfflineUpgradeObservation (/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts:267:13)\n    at /home/runner/work/spinel/spinel/e2e/offline-upgrade.spec.ts:308:19"
+            },
+            {
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts",
+                "column": 23,
+                "line": 216
+              },
+              "message": "Error: Offline-upgrade worker diagnostics are incomplete.\n\n   at offline-upgrade-observation.ts:216\n\n  214 |         !truncatedPaths;\n  215 |       if (!completeEvidence)\n> 216 |         failures.push(new Error('Offline-upgrade worker diagnostics are incomplete.'));\n      |                       ^\n  217 |       const receipt = {\n  218 |         schema: 1,\n  219 |         startedAt,\n    at /home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts:216:23\n    at startOfflineUpgradeObservation (/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts:284:5)\n    at /home/runner/work/spinel/spinel/e2e/offline-upgrade.spec.ts:308:19"
+            }
+          ],
+          "errorLocation": {
+            "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade-observation.ts",
+            "column": 15,
+            "line": 256
+          }
+        },
+        {
+          "retry": 1,
+          "status": "passed",
+          "duration": 9876,
+          "startTime": "2026-11-13T05:15:48.456Z",
+          "errors": []
+        }
+      ]
+    },
+    {
+      "title": "interrupted emitted updates preserve exact native work, a live old client and cold offline startup",
+      "file": "offline-upgrade.spec.ts",
+      "line": 675,
+      "column": 1,
+      "timeout": 420000,
+      "expectedStatus": "passed",
+      "projectName": "offline-upgrade",
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "skipped",
+          "duration": 0,
+          "startTime": "2026-11-13T05:15:36.457Z",
+          "errors": []
+        },
+        {
+          "retry": 1,
+          "status": "passed",
+          "duration": 24700,
+          "startTime": "2026-11-13T05:15:58.735Z",
+          "errors": []
+        }
+      ]
+    }
+  ]
+}
