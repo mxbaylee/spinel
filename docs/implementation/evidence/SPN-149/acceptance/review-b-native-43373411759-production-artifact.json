@@ -20,9 +20,18 @@
   "job": {
     "id": 131715559199,
     "run_id": 43373411759,
+    "run_attempt": 1,
     "name": "Playwright smoke (production 1/2)",
+    "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "head_branch": "codex/spn-149-revocation-evidence",
     "status": "completed",
     "conclusion": "success",
+    "started_at": "2026-11-13T06:01:32Z",
+    "completed_at": "2026-11-13T06:13:59Z",
+    "runner_id": 1000052593,
+    "runner_name": "GitHub Actions 1000052593",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions",
     "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559199"
   },
   "runUrl": "https://github.com/mxbaylee/spinel/actions/runs/43373411759",

@@ -1,0 +1,4159 @@
+{
+  "repository": "mxbaylee/spinel",
+  "pr": 282,
+  "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "ciRun": 43373411759,
+  "storybookRun": 43373411761,
+  "runAttempt": 1,
+  "checkSuiteId": 117448946471,
+  "storybookCheckSuiteId": 117448946483,
+  "workflowId": 387826308,
+  "event": "pull_request",
+  "action": "synchronize",
+  "artifact": {
+    "id": 14013253207,
+    "node_id": "MDg6QXJ0aWZhY3QxNDAxMzI1MzIwNw==",
+    "name": "ci-plan",
+    "size_in_bytes": 1267,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14013253207",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14013253207/zip",
+    "expired": false,
+    "digest": "sha256:b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+    "created_at": "2026-11-13T05:43:01Z",
+    "updated_at": "2026-11-13T05:43:01Z",
+    "expires_at": "2026-12-13T05:43:00Z",
+    "workflow_run": {
+      "id": 43373411759,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-149-revocation-evidence",
+      "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+    }
+  },
+  "zipSHA256": "b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+  "planFileSHA256": "58e7eb4d7951df39331a72b170ee55770a876d70283d507c8913f5003ad1ddff",
+  "planSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+  "plan": {
+    "version": 1,
+    "event": "pull_request",
+    "action": "synchronize",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "mode": "full",
+    "labels": [],
+    "paths": [
+      "THIRD-PARTY-NOTICES.md",
+      "docs/collaboration.md",
+      "docs/implementation/SPN-149.md",
+      "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+      "docs/implementation/evidence/SPN-149/local-validation.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+      "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+      "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+      "docs/implementation/grooming-2026-11-12.md",
+      "docs/todo/SPN-149.md",
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md",
+      "e2e/collaboration.spec.ts",
+      "e2e/session-revocation.ts",
+      "scripts/ci/session-revocation.test.ts"
+    ],
+    "suites": {
+      "backlog": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "pull-request": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "lint": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "typecheck": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "unit-tests": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "lib-test-run": {
+        "selected": true,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "playwright-run": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "container-smoke": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "restore-timing": {
+        "selected": true,
+        "dependencies": [
+          "server/**",
+          "src/{server,shared}/**",
+          "lib/**",
+          "web/** and src/ui/** (shared application/authentication bundle)",
+          "e2e restore/shared helpers",
+          "runtime/build/dependency/workflow inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "sync-transition": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "doc-responsiveness": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "doc-callback-lifetimes": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "responsiveness-baseline": {
+        "selected": true,
+        "dependencies": [
+          "web/**",
+          "server/**",
+          "lib/**",
+          "e2e/**",
+          "src/shared/**",
+          "src/server/{sync,history,collaboration}/**",
+          "scripts/{ci,dependencies,sync-transition}/**",
+          "build/runtime/dependency/workflow configuration"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "callback-baseline": {
+        "selected": true,
+        "dependencies": [
+          "web/**",
+          "server/**",
+          "lib/**",
+          "e2e/**",
+          "src/shared/**",
+          "src/server/{sync,history,collaboration}/**",
+          "scripts/{ci,dependencies,sync-transition}/**",
+          "build/runtime/dependency/workflow configuration"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "phone-compatibility": {
+        "selected": true,
+        "dependencies": [
+          "full plan backstop; ordinary phone owners remain in routine browser coverage"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      }
+    }
+  },
+  "diffKeysFromOpenedPlan": [
+    "action",
+    "base",
+    "head",
+    "tested"
+  ],
+  "selection": {
+    "capturedAt": "2026-11-13T05:45:19.847Z",
+    "rawJobTotal": 30,
+    "returnedJobs": 30,
+    "expectedNonaggregateWorkers": 29,
+    "expectedAggregates": 3,
+    "allExpectedNonaggregateWorkersPresent": true,
+    "workers": [
+      {
+        "suite": "backlog",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Backlog",
+            "id": 131715558972,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558972,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558972"
+          }
+        ]
+      },
+      {
+        "suite": "pull-request",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Pull request",
+            "id": 131714231020,
+            "status": "completed",
+            "conclusion": "success",
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131714231020,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131714231020"
+          }
+        ]
+      },
+      {
+        "suite": "lint",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Lint",
+            "id": 131715558929,
+            "status": "in_progress",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558929,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558929"
+          }
+        ]
+      },
+      {
+        "suite": "typecheck",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Typecheck",
+            "id": 131715558993,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558993,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558993"
+          }
+        ]
+      },
+      {
+        "suite": "unit-tests",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Unit tests (supervisor)",
+            "id": 131715559008,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559008,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559008"
+          },
+          {
+            "name": "Unit tests (recovery)",
+            "id": 131715559026,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559026,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559026"
+          },
+          {
+            "name": "Unit tests (remaining)",
+            "id": 131715559074,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559074,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559074"
+          }
+        ]
+      },
+      {
+        "suite": "lib-test-run",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Lib tests (dense-cells)",
+            "id": 131715558963,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558963,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558963"
+          },
+          {
+            "name": "Lib tests (cells)",
+            "id": 131715559014,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559014,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559014"
+          },
+          {
+            "name": "Lib tests (mixed-fuzz)",
+            "id": 131715559010,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559010,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559010"
+          },
+          {
+            "name": "Lib tests (remaining)",
+            "id": 131715558966,
+            "status": "in_progress",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558966,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558966"
+          }
+        ]
+      },
+      {
+        "suite": "playwright-run",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Playwright smoke (development 1/2)",
+            "id": 131715559510,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559510,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559510"
+          },
+          {
+            "name": "Playwright smoke (development 2/2)",
+            "id": 131715559252,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559252,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559252"
+          },
+          {
+            "name": "Playwright smoke (production 1/2)",
+            "id": 131715559199,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559199,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559199"
+          },
+          {
+            "name": "Playwright smoke (production 2/2)",
+            "id": 131715559183,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559183,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559183"
+          },
+          {
+            "name": "Playwright smoke (mobile-https)",
+            "id": 131715559376,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559376,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559376"
+          },
+          {
+            "name": "Playwright smoke (sync-development)",
+            "id": 131715559295,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559295,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559295"
+          },
+          {
+            "name": "Playwright smoke (sync-production)",
+            "id": 131715559136,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559136,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559136"
+          },
+          {
+            "name": "Playwright smoke (sync-soak-sheet)",
+            "id": 131715559159,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559159,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559159"
+          },
+          {
+            "name": "Playwright smoke (sync-soak-doc)",
+            "id": 131715559173,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559173,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559173"
+          },
+          {
+            "name": "Playwright smoke (offline-upgrade)",
+            "id": 131715559196,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559196,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559196"
+          },
+          {
+            "name": "Playwright smoke (supervised-restore)",
+            "id": 131715559115,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559115,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559115"
+          }
+        ]
+      },
+      {
+        "suite": "container-smoke",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Container smoke",
+            "id": 131715558949,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558949,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558949"
+          }
+        ]
+      },
+      {
+        "suite": "restore-timing",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Sized restore acceptance",
+            "id": 131715559043,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559043,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559043"
+          }
+        ]
+      },
+      {
+        "suite": "sync-transition",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Retained sync transition",
+            "id": 131715559030,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559030,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559030"
+          }
+        ]
+      },
+      {
+        "suite": "doc-responsiveness",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Doc responsiveness (desktop)",
+            "id": 131715558925,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715558925,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715558925"
+          },
+          {
+            "name": "Doc responsiveness (mobile)",
+            "id": 131715559046,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559046,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559046"
+          }
+        ]
+      },
+      {
+        "suite": "doc-callback-lifetimes",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Doc callback lifetimes (desktop)",
+            "id": 131715559123,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559123,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559123"
+          },
+          {
+            "name": "Doc callback lifetimes (mobile)",
+            "id": 131715559133,
+            "status": "queued",
+            "conclusion": null,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkRunId": 131715559133,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559133"
+          }
+        ]
+      }
+    ],
+    "modeFlags": {
+      "responsiveness-baseline": {
+        "owners": [
+          "Doc responsiveness (desktop)",
+          "Doc responsiveness (mobile)"
+        ],
+        "mechanism": "Selected baseline first attempts and paired evidence in both existing responsiveness workers."
+      },
+      "callback-baseline": {
+        "owners": [
+          "Doc callback lifetimes (desktop)",
+          "Doc callback lifetimes (mobile)"
+        ],
+        "mechanism": "Selected baseline first attempts and paired comparison in both existing callback workers."
+      },
+      "phone-compatibility": {
+        "owners": [
+          "Playwright smoke (development 1/2)",
+          "Playwright smoke (development 2/2)",
+          "Playwright smoke (production 1/2)",
+          "Playwright smoke (production 2/2)",
+          "Playwright smoke (mobile-https)",
+          "Playwright smoke (sync-development)",
+          "Playwright smoke (sync-production)",
+          "Playwright smoke (sync-soak-sheet)",
+          "Playwright smoke (sync-soak-doc)",
+          "Playwright smoke (offline-upgrade)",
+          "Playwright smoke (supervised-restore)"
+        ],
+        "mechanism": "SPINEL_CI_FULL_COMPATIBILITY=true passed to the existing Playwright matrix; mode flag, not an additional job."
+      }
+    },
+    "requiredGates": [
+      {
+        "name": "Backlog",
+        "jobId": 131715558972,
+        "checkRunId": 131715558972,
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "name": "Pull request",
+        "jobId": 131714231020,
+        "checkRunId": 131714231020,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "jobId": 131715558929,
+        "checkRunId": 131715558929,
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "name": "Typecheck",
+        "jobId": 131715558993,
+        "checkRunId": 131715558993,
+        "status": "queued",
+        "conclusion": null
+      },
+      {
+        "name": "Unit tests",
+        "jobId": null,
+        "checkRunId": null,
+        "status": "pending dependencies",
+        "conclusion": null
+      },
+      {
+        "name": "Lib tests",
+        "jobId": null,
+        "checkRunId": null,
+        "status": "pending dependencies",
+        "conclusion": null
+      },
+      {
+        "name": "Playwright smoke",
+        "jobId": null,
+        "checkRunId": null,
+        "status": "pending dependencies",
+        "conclusion": null
+      }
+    ]
+  },
+  "aggregateReceipts": {
+    "ci-results-unit": {
+      "artifact": {
+        "id": 14015196118,
+        "node_id": "MDg6QXJ0aWZhY3QxNDAxNTE5NjExOA==",
+        "name": "ci-results-unit",
+        "size_in_bytes": 1642,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015196118",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015196118/zip",
+        "expired": false,
+        "digest": "sha256:c25af54e78445b24a9945ee7edeffdeffd5a02b5d21528eb6f66e52e486edc3d",
+        "created_at": "2026-11-13T06:12:12Z",
+        "updated_at": "2026-11-13T06:12:12Z",
+        "expires_at": "2026-12-13T06:12:11Z",
+        "workflow_run": {
+          "id": 43373411759,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-149-revocation-evidence",
+          "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        }
+      },
+      "zipSHA256": "c25af54e78445b24a9945ee7edeffdeffd5a02b5d21528eb6f66e52e486edc3d",
+      "jsonSHA256": "5de25e3f6f4ac22d05bd0d7bfb23dd34def95d3b0eb80910847e778f04c02b7c",
+      "receipt": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+            "mode": "full",
+            "labels": [],
+            "paths": [
+              "THIRD-PARTY-NOTICES.md",
+              "docs/collaboration.md",
+              "docs/implementation/SPN-149.md",
+              "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+              "docs/implementation/evidence/SPN-149/local-validation.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+              "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+              "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+              "docs/implementation/grooming-2026-11-12.md",
+              "docs/todo/SPN-149.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "e2e/collaboration.spec.ts",
+              "e2e/session-revocation.ts",
+              "scripts/ci/session-revocation.test.ts"
+            ],
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "unit-tests",
+              "selected": true,
+              "dependencies": [
+                "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+              ],
+              "inputs": [
+                "THIRD-PARTY-NOTICES.md",
+                "docs/collaboration.md",
+                "docs/implementation/SPN-149.md",
+                "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                "docs/implementation/evidence/SPN-149/local-validation.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                "docs/implementation/grooming-2026-11-12.md",
+                "docs/todo/SPN-149.md",
+                "docs/todo/backlog.json",
+                "docs/todo/readme.md",
+                "e2e/collaboration.spec.ts",
+                "e2e/session-revocation.ts",
+                "scripts/ci/session-revocation.test.ts"
+              ],
+              "reason": "Unknown paths require full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      },
+      "verifiedPlanSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+      "verifiedSelectedResults": true
+    },
+    "ci-results-lib": {
+      "artifact": {
+        "id": 14015067361,
+        "node_id": "MDg6QXJ0aWZhY3QxNDAxNTA2NzM2MQ==",
+        "name": "ci-results-lib",
+        "size_in_bytes": 1663,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015067361",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015067361/zip",
+        "expired": false,
+        "digest": "sha256:81ced1845613fd5047fd804c86c9671fb3915e2b7ede7e24507b5c47674e0032",
+        "created_at": "2026-11-13T06:14:22Z",
+        "updated_at": "2026-11-13T06:14:22Z",
+        "expires_at": "2026-12-13T06:14:21Z",
+        "workflow_run": {
+          "id": 43373411759,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-149-revocation-evidence",
+          "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        }
+      },
+      "zipSHA256": "81ced1845613fd5047fd804c86c9671fb3915e2b7ede7e24507b5c47674e0032",
+      "jsonSHA256": "47d917299f1c51a2e24205d353c09cf65bfdd6485c75d42dba8530bb4516d9aa",
+      "receipt": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+            "mode": "full",
+            "labels": [],
+            "paths": [
+              "THIRD-PARTY-NOTICES.md",
+              "docs/collaboration.md",
+              "docs/implementation/SPN-149.md",
+              "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+              "docs/implementation/evidence/SPN-149/local-validation.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+              "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+              "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+              "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+              "docs/implementation/grooming-2026-11-12.md",
+              "docs/todo/SPN-149.md",
+              "docs/todo/backlog.json",
+              "docs/todo/readme.md",
+              "e2e/collaboration.spec.ts",
+              "e2e/session-revocation.ts",
+              "scripts/ci/session-revocation.test.ts"
+            ],
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [
+                  "THIRD-PARTY-NOTICES.md",
+                  "docs/collaboration.md",
+                  "docs/implementation/SPN-149.md",
+                  "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                  "docs/implementation/evidence/SPN-149/local-validation.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                  "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                  "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                  "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                  "docs/implementation/grooming-2026-11-12.md",
+                  "docs/todo/SPN-149.md",
+                  "docs/todo/backlog.json",
+                  "docs/todo/readme.md",
+                  "e2e/collaboration.spec.ts",
+                  "e2e/session-revocation.ts",
+                  "scripts/ci/session-revocation.test.ts"
+                ],
+                "reason": "Unknown paths require full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "lib-test-run",
+              "selected": true,
+              "dependencies": [
+                "lib/**",
+                "scripts/dependencies/**",
+                "package{,-lock}.json",
+                "vitest.config.ts",
+                "tsconfig.json",
+                ".nvmrc",
+                ".github/workflows/ci.yml"
+              ],
+              "inputs": [
+                "THIRD-PARTY-NOTICES.md",
+                "docs/collaboration.md",
+                "docs/implementation/SPN-149.md",
+                "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+                "docs/implementation/evidence/SPN-149/local-validation.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+                "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+                "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+                "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+                "docs/implementation/grooming-2026-11-12.md",
+                "docs/todo/SPN-149.md",
+                "docs/todo/backlog.json",
+                "docs/todo/readme.md",
+                "e2e/collaboration.spec.ts",
+                "e2e/session-revocation.ts",
+                "scripts/ci/session-revocation.test.ts"
+              ],
+              "reason": "Unknown paths require full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      },
+      "verifiedPlanSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+      "verifiedSelectedResults": true
+    },
+    "ci-results-browser": {
+      "artifact": {
+        "id": 14015887735,
+        "node_id": "MDg6QXJ0aWZhY3QxNDAxNTg4NzczNQ==",
+        "name": "ci-results-browser",
+        "size_in_bytes": 469,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015887735",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015887735/zip",
+        "expired": false,
+        "digest": "sha256:62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+        "created_at": "2026-11-13T06:36:37Z",
+        "updated_at": "2026-11-13T06:36:37Z",
+        "expires_at": "2026-12-13T06:36:37Z",
+        "workflow_run": {
+          "id": 43373411759,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-149-revocation-evidence",
+          "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        }
+      },
+      "zipSHA256": "62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+      "jsonSHA256": "8942e9927e35786daa7d35255c9f12f406c251a8c1a7b4286a95ff105e0b8d76",
+      "receipt": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+          "error": "Error: Incomplete coverage playwright-run: selected=true, result=cancelled",
+          "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"cancelled\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\"}"
+        }
+      },
+      "verifiedPlanSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+      "verifiedFailureResultMap": true,
+      "verifiedCompletePlanFromAggregateLog": true,
+      "verifiedPrerequisiteGateMapFromAggregateLog": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      }
+    }
+  },
+  "acceptance": "blocked_terminal",
+  "sourceReview": {
+    "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "score": 100,
+    "rubric": [
+      35,
+      25,
+      20,
+      10,
+      10
+    ],
+    "report": "/workspace/scratch/13a7bba7afec/validation/review-a-integration-977de3a.md"
+  },
+  "desktopApplicability": {
+    "workflow": ".github/workflows/desktop-offline.yml",
+    "matchedCurrentBasePaths": [],
+    "selected": false,
+    "reason": "The 18-path PR diff has no desktop-offline workflow path-filter match; incoming SPN-148 desktop helpers are already in the base."
+  },
+  "originalReceiptsPreserved": true,
+  "historicalRuns": [
+    {
+      "run": 43364365825,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "mergeAcceptanceForCurrentHead": false
+    },
+    {
+      "run": 43370718838,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "mergeAcceptanceForCurrentHead": false
+    }
+  ],
+  "storybookAcceptance": {
+    "run": 43373411761,
+    "attempt": 1,
+    "conclusion": "success",
+    "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "aggregateJobId": 131721043444,
+    "aggregateCheckRunId": 131721043444,
+    "checkSuiteId": 117448946483,
+    "allFiveWorkersSucceeded": true,
+    "evidenceFile": "storybook-43373411761-attempt-1-final.json",
+    "aggregateLogSHA256": "3444b5cdb325d8a0c7a02c9ae531bf17c4c05dc1f9c40ab2449ca4b19ecc73e5"
+  },
+  "hostedNegativeControls": {
+    "evidenceFile": "hosted-negative-controls-43373411759.json",
+    "count": 19,
+    "passed": true,
+    "run": 43373411759,
+    "attempt": 1,
+    "jobId": 131715559074,
+    "checkRunId": 131715559074,
+    "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "node": "v26.13.0",
+    "decodedFullLogSHA256": "395b29fffaa986afac01826c49179fc0aa32f84d53f908e54e8d38a2f527b796",
+    "targetedLinesSHA256": "93608cc687a5c56eadfae8e3bd47ef885bbfe85a5116965234a2c045384f1f89"
+  },
+  "blockers": [
+    {
+      "job": 131715559252,
+      "name": "Playwright smoke (development 2/2)",
+      "conclusion": "cancelled",
+      "firstAttemptFailure": "ECONNRESET during e2e/space-guests.spec.ts:892 export snapshot",
+      "flakySummary": true,
+      "receipt": "selected-worker-failure-43373411759-131715559252.json",
+      "rerunPerformed": false
+    }
+  ],
+  "accepted": false,
+  "mergeAcceptanceEligible": false,
+  "blockedCheckpoint": {
+    "observedAt": "2026-11-13T06:34:28.469Z",
+    "repository": "mxbaylee/spinel",
+    "pr": 282,
+    "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "run": 43373411759,
+    "runAttempt": 1,
+    "checkSuiteId": 117448946471,
+    "workflowId": 387826308,
+    "event": "pull_request",
+    "action": "synchronize",
+    "planSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+    "rawPlanFileSHA256": "58e7eb4d7951df39331a72b170ee55770a876d70283d507c8913f5003ad1ddff",
+    "planArchiveSHA256": "b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+    "sourceReview": {
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "report": "review-a-integration-977de3a.md",
+      "hostedStatusExcludedFromGrade": true
+    },
+    "accepted": false,
+    "executionPassed": false,
+    "mergeAcceptanceEligible": false,
+    "disposition": "blocked",
+    "workflowComplete": false,
+    "workflowStatus": "in_progress",
+    "workflowConclusion": null,
+    "checkpointComplete": true,
+    "jobs": {
+      "total": 32,
+      "returned": 32,
+      "states": {
+        "success": 30,
+        "in_progress": 1,
+        "cancelled": 1
+      },
+      "selectedExecutionWorkers": 29,
+      "selectedExecutionStates": {
+        "success": 27,
+        "cancelled": 1,
+        "in_progress": 1
+      },
+      "everySelectedWorkerPresent": true,
+      "allCurrentJobCheckIdentitiesMatched": true
+    },
+    "checkRuns": {
+      "total": 42,
+      "returned": 42,
+      "ciSuiteCount": 32,
+      "storybookSuiteCount": 10,
+      "everyObservedCheckAccountedFor": true
+    },
+    "requiredGates": [
+      {
+        "name": "Backlog",
+        "jobId": 131715558972,
+        "checkRunId": 131715558972,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Pull request",
+        "jobId": 131714231020,
+        "checkRunId": 131714231020,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "jobId": 131715558929,
+        "checkRunId": 131715558929,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Typecheck",
+        "jobId": 131715558993,
+        "checkRunId": 131715558993,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Unit tests",
+        "jobId": 131722748867,
+        "checkRunId": 131722748867,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Lib tests",
+        "jobId": 131725643298,
+        "checkRunId": 131725643298,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Playwright smoke",
+        "jobId": null,
+        "checkRunId": null,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "not_created_at_checkpoint",
+        "conclusion": null,
+        "acceptance": "pending; not passed"
+      }
+    ],
+    "selectedFamilies": {
+      "backlog": [
+        {
+          "name": "Backlog",
+          "jobId": 131715558972,
+          "checkRunId": 131715558972,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "pull-request": [
+        {
+          "name": "Pull request",
+          "jobId": 131714231020,
+          "checkRunId": 131714231020,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "lint": [
+        {
+          "name": "Lint",
+          "jobId": 131715558929,
+          "checkRunId": 131715558929,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "typecheck": [
+        {
+          "name": "Typecheck",
+          "jobId": 131715558993,
+          "checkRunId": 131715558993,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "unit-tests": [
+        {
+          "name": "Unit tests (supervisor)",
+          "jobId": 131715559008,
+          "checkRunId": 131715559008,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (recovery)",
+          "jobId": 131715559026,
+          "checkRunId": 131715559026,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (remaining)",
+          "jobId": 131715559074,
+          "checkRunId": 131715559074,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "lib-test-run": [
+        {
+          "name": "Lib tests (dense-cells)",
+          "jobId": 131715558963,
+          "checkRunId": 131715558963,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests (cells)",
+          "jobId": 131715559014,
+          "checkRunId": 131715559014,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests (mixed-fuzz)",
+          "jobId": 131715559010,
+          "checkRunId": 131715559010,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests (remaining)",
+          "jobId": 131715558966,
+          "checkRunId": 131715558966,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "playwright-run": [
+        {
+          "name": "Playwright smoke (development 1/2)",
+          "jobId": 131715559510,
+          "checkRunId": 131715559510,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (development 2/2)",
+          "jobId": 131715559252,
+          "checkRunId": 131715559252,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "name": "Playwright smoke (production 1/2)",
+          "jobId": 131715559199,
+          "checkRunId": 131715559199,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (production 2/2)",
+          "jobId": 131715559183,
+          "checkRunId": 131715559183,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (mobile-https)",
+          "jobId": 131715559376,
+          "checkRunId": 131715559376,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-development)",
+          "jobId": 131715559295,
+          "checkRunId": 131715559295,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-production)",
+          "jobId": 131715559136,
+          "checkRunId": 131715559136,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "jobId": 131715559159,
+          "checkRunId": 131715559159,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-soak-doc)",
+          "jobId": 131715559173,
+          "checkRunId": 131715559173,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (offline-upgrade)",
+          "jobId": 131715559196,
+          "checkRunId": 131715559196,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (supervised-restore)",
+          "jobId": 131715559115,
+          "checkRunId": 131715559115,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "container-smoke": [
+        {
+          "name": "Container smoke",
+          "jobId": 131715558949,
+          "checkRunId": 131715558949,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "restore-timing": [
+        {
+          "name": "Sized restore acceptance",
+          "jobId": 131715559043,
+          "checkRunId": 131715559043,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "sync-transition": [
+        {
+          "name": "Retained sync transition",
+          "jobId": 131715559030,
+          "checkRunId": 131715559030,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "doc-responsiveness": [
+        {
+          "name": "Doc responsiveness (desktop)",
+          "jobId": 131715558925,
+          "checkRunId": 131715558925,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Doc responsiveness (mobile)",
+          "jobId": 131715559046,
+          "checkRunId": 131715559046,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "doc-callback-lifetimes": [
+        {
+          "name": "Doc callback lifetimes (desktop)",
+          "jobId": 131715559123,
+          "checkRunId": 131715559123,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Doc callback lifetimes (mobile)",
+          "jobId": 131715559133,
+          "checkRunId": 131715559133,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "selectedFlags": {
+      "responsiveness-baseline": {
+        "selected": true,
+        "mechanism": "Selected baseline first attempts and paired evidence in both existing responsiveness workers.",
+        "owners": [
+          {
+            "jobId": 131715558925,
+            "name": "Doc responsiveness (desktop)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 9,
+                "name": "Install and build baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Observe baseline first attempts",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Build candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Verify candidate responsiveness and boundaries",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate evidence and selected paired comparison",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Retain every baseline and candidate attempt",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "jobId": 131715559046,
+            "name": "Doc responsiveness (mobile)",
+            "status": "in_progress",
+            "conclusion": null,
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 9,
+                "name": "Install and build baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Observe baseline first attempts",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Build candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Verify candidate responsiveness and boundaries",
+                "status": "in_progress",
+                "conclusion": null
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate evidence and selected paired comparison",
+                "status": "pending",
+                "conclusion": null
+              },
+              {
+                "number": 14,
+                "name": "Retain every baseline and candidate attempt",
+                "status": "pending",
+                "conclusion": null
+              }
+            ]
+          }
+        ],
+        "accepted": false
+      },
+      "callback-baseline": {
+        "selected": true,
+        "mechanism": "Selected baseline first attempts and paired comparison in both existing callback workers.",
+        "owners": [
+          {
+            "jobId": 131715559123,
+            "name": "Doc callback lifetimes (desktop)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 8,
+                "name": "Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Install and build baseline with source maps",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Retain baseline first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Build candidate with identical source-map settings",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Verify complete paired callback evidence",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 28,
+                "name": "Post Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "jobId": 131715559133,
+            "name": "Doc callback lifetimes (mobile)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 8,
+                "name": "Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Install and build baseline with source maps",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Retain baseline first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Build candidate with identical source-map settings",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Verify complete paired callback evidence",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 28,
+                "name": "Post Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ],
+        "accepted": true
+      },
+      "phone-compatibility": {
+        "selected": true,
+        "mechanism": "SPINEL_CI_FULL_COMPATIBILITY=true passed to the existing Playwright matrix; mode flag, not an additional job.",
+        "owners": [
+          {
+            "jobId": 131715559510,
+            "name": "Playwright smoke (development 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559252,
+            "name": "Playwright smoke (development 2/2)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559199,
+            "name": "Playwright smoke (production 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559183,
+            "name": "Playwright smoke (production 2/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559376,
+            "name": "Playwright smoke (mobile-https)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559295,
+            "name": "Playwright smoke (sync-development)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559136,
+            "name": "Playwright smoke (sync-production)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559159,
+            "name": "Playwright smoke (sync-soak-sheet)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559173,
+            "name": "Playwright smoke (sync-soak-doc)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559196,
+            "name": "Playwright smoke (offline-upgrade)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559115,
+            "name": "Playwright smoke (supervised-restore)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          }
+        ],
+        "accepted": false
+      }
+    },
+    "blockers": [
+      {
+        "jobId": 131715559252,
+        "checkRunId": 131715559252,
+        "name": "Playwright smoke (development 2/2)",
+        "conclusion": "cancelled",
+        "firstAttemptFailure": {
+          "case": "e2e/space-guests.spec.ts:892",
+          "category": "apiRequestContext.get ECONNRESET during fixture export snapshot",
+          "retry0": "failed",
+          "retry1": "passed",
+          "reportOutcome": "flaky"
+        },
+        "failOnFlakyTests": true,
+        "receipt": "selected-worker-failure-43373411759-131715559252.json",
+        "exactCancellationTrigger": "unconfirmed; three annotation contents inaccessible",
+        "notWaivedByOtherPasses": true
+      }
+    ],
+    "pending": [
+      {
+        "jobId": 131715559046,
+        "name": "Doc responsiveness (mobile)",
+        "status": "in_progress"
+      },
+      {
+        "jobId": null,
+        "name": "Playwright smoke",
+        "status": "not_created_at_checkpoint"
+      },
+      {
+        "artifact": "ci-results-browser",
+        "status": "not_produced_at_checkpoint"
+      }
+    ],
+    "aggregateArtifacts": {
+      "unit": "passed with exact current plan",
+      "lib": "passed with exact current plan",
+      "browser": "pending; artifact absent at checkpoint"
+    },
+    "storybook": {
+      "run": 43373411761,
+      "attempt": 1,
+      "checkSuiteId": 117448946483,
+      "aggregateJobId": 131721043444,
+      "aggregateCheckRunId": 131721043444,
+      "accepted": true,
+      "jobs": 10,
+      "successful": 8,
+      "inapplicableSkipped": 2,
+      "receipt": "storybook-43373411761-attempt-1-final.json"
+    },
+    "nativeTargets": {
+      "accepted": true,
+      "bothActualRetry0Passed": true,
+      "owners": {
+        "development": 131715559510,
+        "production": 131715559199
+      },
+      "receipt": "review-b-native-43373411759-audit.md",
+      "doesNotWaiveOtherSelectedWorkers": true,
+      "fixedOriginalSampleUnchanged": true
+    },
+    "hostedNegativeControls": {
+      "passed": 19,
+      "failed": 0,
+      "jobId": 131715559074,
+      "receipt": "hosted-negative-controls-43373411759.json"
+    },
+    "desktopApplicability": {
+      "workflow": ".github/workflows/desktop-offline.yml",
+      "matchedCurrentBasePaths": [],
+      "selected": false,
+      "reason": "The 18-path PR diff has no desktop-offline workflow path-filter match; incoming SPN-148 desktop helpers are already in the base."
+    },
+    "baseFreshness": {
+      "observedAt": "2026-11-13T06:34:28.469Z",
+      "main": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "prHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "prBase": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "mergeCommit": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "identitiesMatch": true,
+      "freshnessDoesNotOvercomeFailedGate": true
+    },
+    "discoveredRuns": [
+      {
+        "id": 43373411761,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 43373411759,
+        "attempt": 1,
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ],
+    "priorReceipts": [
+      {
+        "run": 43364365825,
+        "fileCount": 19,
+        "allUnchanged": true,
+        "manifest": "hosted-audit-manifest-43364365825.json"
+      },
+      {
+        "run": 43370718838,
+        "fileCount": 21,
+        "allUnchanged": true,
+        "manifest": "hosted-audit-manifest-43370718838.json"
+      }
+    ],
+    "limitations": [
+      "This is a dated blocked checkpoint, not a completed workflow or passed acceptance. Mobile and the downstream browser aggregate were still pending.",
+      "Selected cancellation and the observed flaky first attempt independently prevent acceptance. A later mobile success cannot waive them.",
+      "The generic cancellation line plus 1211-second job duration is consistent with the configured 20-minute budget, but annotation access failed and the exact trigger/actor is unconfirmed.",
+      "The first-attempt ECONNRESET cause is unresolved; identical error categories elsewhere do not establish the same cause or assign the failure to SPN-120.",
+      "Only content-free log/case extracts and exact hashes are publishable. No raw failure request, cookie, private IDs or authored content is included.",
+      "No rerun, cancellation, source change, browser execution or local validation workload was performed by this audit."
+    ],
+    "boundedFailureAssessment": {
+      "scopeReport": "spn149-current-head-scope-assessment.md",
+      "sourceBoundaries": "spn149-current-head-source-boundaries.json",
+      "allAttemptExtract": "review-b-development-2-failure-43373411759.json",
+      "actualAttempts": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "durationMs": 7822
+        },
+        {
+          "retry": 1,
+          "status": "passed",
+          "durationMs": 41501
+        }
+      ],
+      "firstAttemptTracePresent": false,
+      "retryTraceCannotReconstructFirstAttempt": true,
+      "spn149TargetAbsentFromFailedShard": true,
+      "sourceOverlapEstablished": false,
+      "causeEstablished": false,
+      "sourceGradeUnchanged": true,
+      "separateScopeRequiredForBroaderRepair": true
+    }
+  },
+  "workflowComplete": true,
+  "boundedFailureAssessment": {
+    "scopeReport": "spn149-current-head-scope-assessment.md",
+    "sourceBoundaries": "spn149-current-head-source-boundaries.json",
+    "allAttemptExtract": "review-b-development-2-failure-43373411759.json",
+    "actualAttempts": [
+      {
+        "retry": 0,
+        "status": "failed",
+        "durationMs": 7822
+      },
+      {
+        "retry": 1,
+        "status": "passed",
+        "durationMs": 41501
+      }
+    ],
+    "firstAttemptTracePresent": false,
+    "retryTraceCannotReconstructFirstAttempt": true,
+    "spn149TargetAbsentFromFailedShard": true,
+    "sourceOverlapEstablished": false,
+    "causeEstablished": false,
+    "sourceGradeUnchanged": true,
+    "separateScopeRequiredForBroaderRepair": true
+  },
+  "finalExecutionAudit": {
+    "observedAt": "2026-11-13T06:38:11.745Z",
+    "repository": "mxbaylee/spinel",
+    "pr": 282,
+    "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "run": 43373411759,
+    "runAttempt": 1,
+    "checkSuiteId": 117448946471,
+    "workflowId": 387826308,
+    "event": "pull_request",
+    "action": "synchronize",
+    "planSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+    "rawPlanFileSHA256": "58e7eb4d7951df39331a72b170ee55770a876d70283d507c8913f5003ad1ddff",
+    "planArchiveSHA256": "b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+    "sourceReview": {
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "report": "review-a-integration-977de3a.md",
+      "hostedStatusExcludedFromGrade": true
+    },
+    "accepted": false,
+    "executionPassed": false,
+    "mergeAcceptanceEligible": false,
+    "disposition": "blocked_terminal",
+    "workflowComplete": true,
+    "workflowStatus": "completed",
+    "workflowConclusion": "cancelled",
+    "checkpointComplete": true,
+    "jobs": {
+      "total": 33,
+      "returned": 33,
+      "states": {
+        "success": 31,
+        "cancelled": 1,
+        "failure": 1
+      },
+      "selectedExecutionWorkers": 29,
+      "selectedExecutionStates": {
+        "success": 28,
+        "cancelled": 1
+      },
+      "everySelectedWorkerPresent": true,
+      "allCurrentJobCheckIdentitiesMatched": true
+    },
+    "checkRuns": {
+      "total": 43,
+      "returned": 43,
+      "ciSuiteCount": 33,
+      "storybookSuiteCount": 10,
+      "everyObservedCheckAccountedFor": true
+    },
+    "requiredGates": [
+      {
+        "name": "Backlog",
+        "jobId": 131715558972,
+        "checkRunId": 131715558972,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Pull request",
+        "jobId": 131714231020,
+        "checkRunId": 131714231020,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Lint",
+        "jobId": 131715558929,
+        "checkRunId": 131715558929,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Typecheck",
+        "jobId": 131715558993,
+        "checkRunId": 131715558993,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Unit tests",
+        "jobId": 131722748867,
+        "checkRunId": 131722748867,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Lib tests",
+        "jobId": 131725643298,
+        "checkRunId": 131725643298,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "Playwright smoke",
+        "jobId": 131734863793,
+        "checkRunId": 131734863793,
+        "runId": 43373411759,
+        "attempt": 1,
+        "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "checkSuiteId": 117448946471,
+        "status": "completed",
+        "conclusion": "failure"
+      }
+    ],
+    "selectedFamilies": {
+      "backlog": [
+        {
+          "name": "Backlog",
+          "jobId": 131715558972,
+          "checkRunId": 131715558972,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "pull-request": [
+        {
+          "name": "Pull request",
+          "jobId": 131714231020,
+          "checkRunId": 131714231020,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "lint": [
+        {
+          "name": "Lint",
+          "jobId": 131715558929,
+          "checkRunId": 131715558929,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "typecheck": [
+        {
+          "name": "Typecheck",
+          "jobId": 131715558993,
+          "checkRunId": 131715558993,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "unit-tests": [
+        {
+          "name": "Unit tests (supervisor)",
+          "jobId": 131715559008,
+          "checkRunId": 131715559008,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (recovery)",
+          "jobId": 131715559026,
+          "checkRunId": 131715559026,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests (remaining)",
+          "jobId": 131715559074,
+          "checkRunId": 131715559074,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "lib-test-run": [
+        {
+          "name": "Lib tests (dense-cells)",
+          "jobId": 131715558963,
+          "checkRunId": 131715558963,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests (cells)",
+          "jobId": 131715559014,
+          "checkRunId": 131715559014,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests (mixed-fuzz)",
+          "jobId": 131715559010,
+          "checkRunId": 131715559010,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests (remaining)",
+          "jobId": 131715558966,
+          "checkRunId": 131715558966,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "playwright-run": [
+        {
+          "name": "Playwright smoke (development 1/2)",
+          "jobId": 131715559510,
+          "checkRunId": 131715559510,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (development 2/2)",
+          "jobId": 131715559252,
+          "checkRunId": 131715559252,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "name": "Playwright smoke (production 1/2)",
+          "jobId": 131715559199,
+          "checkRunId": 131715559199,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (production 2/2)",
+          "jobId": 131715559183,
+          "checkRunId": 131715559183,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (mobile-https)",
+          "jobId": 131715559376,
+          "checkRunId": 131715559376,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-development)",
+          "jobId": 131715559295,
+          "checkRunId": 131715559295,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-production)",
+          "jobId": 131715559136,
+          "checkRunId": 131715559136,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "jobId": 131715559159,
+          "checkRunId": 131715559159,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (sync-soak-doc)",
+          "jobId": 131715559173,
+          "checkRunId": 131715559173,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (offline-upgrade)",
+          "jobId": 131715559196,
+          "checkRunId": 131715559196,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke (supervised-restore)",
+          "jobId": 131715559115,
+          "checkRunId": 131715559115,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "container-smoke": [
+        {
+          "name": "Container smoke",
+          "jobId": 131715558949,
+          "checkRunId": 131715558949,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "restore-timing": [
+        {
+          "name": "Sized restore acceptance",
+          "jobId": 131715559043,
+          "checkRunId": 131715559043,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "sync-transition": [
+        {
+          "name": "Retained sync transition",
+          "jobId": 131715559030,
+          "checkRunId": 131715559030,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "doc-responsiveness": [
+        {
+          "name": "Doc responsiveness (desktop)",
+          "jobId": 131715558925,
+          "checkRunId": 131715558925,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Doc responsiveness (mobile)",
+          "jobId": 131715559046,
+          "checkRunId": 131715559046,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "doc-callback-lifetimes": [
+        {
+          "name": "Doc callback lifetimes (desktop)",
+          "jobId": 131715559123,
+          "checkRunId": 131715559123,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Doc callback lifetimes (mobile)",
+          "jobId": 131715559133,
+          "checkRunId": 131715559133,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "selectedFlags": {
+      "responsiveness-baseline": {
+        "selected": true,
+        "mechanism": "Selected baseline first attempts and paired evidence in both existing responsiveness workers.",
+        "owners": [
+          {
+            "jobId": 131715558925,
+            "name": "Doc responsiveness (desktop)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 9,
+                "name": "Install and build baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Observe baseline first attempts",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Build candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Verify candidate responsiveness and boundaries",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate evidence and selected paired comparison",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Retain every baseline and candidate attempt",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "jobId": 131715559046,
+            "name": "Doc responsiveness (mobile)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 9,
+                "name": "Install and build baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Observe baseline first attempts",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Build candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Verify candidate responsiveness and boundaries",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate evidence and selected paired comparison",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Retain every baseline and candidate attempt",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ],
+        "accepted": true
+      },
+      "callback-baseline": {
+        "selected": true,
+        "mechanism": "Selected baseline first attempts and paired comparison in both existing callback workers.",
+        "owners": [
+          {
+            "jobId": 131715559123,
+            "name": "Doc callback lifetimes (desktop)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 8,
+                "name": "Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Install and build baseline with source maps",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Retain baseline first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Build candidate with identical source-map settings",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Verify complete paired callback evidence",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 28,
+                "name": "Post Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          },
+          {
+            "jobId": 131715559133,
+            "name": "Doc callback lifetimes (mobile)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": [
+              {
+                "number": 5,
+                "name": "Install candidate",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 8,
+                "name": "Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 10,
+                "name": "Install and build baseline with source maps",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 11,
+                "name": "Retain baseline first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 12,
+                "name": "Build candidate with identical source-map settings",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 13,
+                "name": "Verify candidate first attempt",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 14,
+                "name": "Verify complete paired callback evidence",
+                "status": "completed",
+                "conclusion": "success"
+              },
+              {
+                "number": 28,
+                "name": "Post Immutable merged SPN-108 baseline",
+                "status": "completed",
+                "conclusion": "success"
+              }
+            ]
+          }
+        ],
+        "accepted": true
+      },
+      "phone-compatibility": {
+        "selected": true,
+        "mechanism": "SPINEL_CI_FULL_COMPATIBILITY=true passed to the existing Playwright matrix; mode flag, not an additional job.",
+        "owners": [
+          {
+            "jobId": 131715559510,
+            "name": "Playwright smoke (development 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559252,
+            "name": "Playwright smoke (development 2/2)",
+            "status": "completed",
+            "conclusion": "cancelled",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559199,
+            "name": "Playwright smoke (production 1/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559183,
+            "name": "Playwright smoke (production 2/2)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559376,
+            "name": "Playwright smoke (mobile-https)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559295,
+            "name": "Playwright smoke (sync-development)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559136,
+            "name": "Playwright smoke (sync-production)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559159,
+            "name": "Playwright smoke (sync-soak-sheet)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559173,
+            "name": "Playwright smoke (sync-soak-doc)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559196,
+            "name": "Playwright smoke (offline-upgrade)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          },
+          {
+            "jobId": 131715559115,
+            "name": "Playwright smoke (supervised-restore)",
+            "status": "completed",
+            "conclusion": "success",
+            "selectedComparisonSteps": []
+          }
+        ],
+        "accepted": false
+      }
+    },
+    "blockers": [
+      {
+        "jobId": 131715559252,
+        "checkRunId": 131715559252,
+        "name": "Playwright smoke (development 2/2)",
+        "conclusion": "cancelled",
+        "firstAttemptFailure": {
+          "case": "e2e/space-guests.spec.ts:892",
+          "category": "apiRequestContext.get ECONNRESET during fixture export snapshot",
+          "retry0": "failed",
+          "retry1": "passed",
+          "reportOutcome": "flaky"
+        },
+        "failOnFlakyTests": true,
+        "receipt": "selected-worker-failure-43373411759-131715559252.json",
+        "exactCancellationTrigger": "unconfirmed; three annotation contents inaccessible",
+        "notWaivedByOtherPasses": true
+      },
+      {
+        "jobId": 131734863793,
+        "checkRunId": 131734863793,
+        "name": "Playwright smoke",
+        "conclusion": "failure",
+        "reason": "Error: Incomplete coverage playwright-run: selected=true, result=cancelled",
+        "artifactId": 14015887735
+      }
+    ],
+    "pending": [],
+    "aggregateArtifacts": {
+      "unit": "passed with exact current plan",
+      "lib": "passed with exact current plan",
+      "browser": "passed=false; fail-closed rejection of cancelled selected playwright-run"
+    },
+    "storybook": {
+      "run": 43373411761,
+      "attempt": 1,
+      "checkSuiteId": 117448946483,
+      "aggregateJobId": 131721043444,
+      "aggregateCheckRunId": 131721043444,
+      "accepted": true,
+      "jobs": 10,
+      "successful": 8,
+      "inapplicableSkipped": 2,
+      "receipt": "storybook-43373411761-attempt-1-final.json"
+    },
+    "nativeTargets": {
+      "accepted": true,
+      "bothActualRetry0Passed": true,
+      "owners": {
+        "development": 131715559510,
+        "production": 131715559199
+      },
+      "receipt": "review-b-native-43373411759-audit.md",
+      "doesNotWaiveOtherSelectedWorkers": true,
+      "fixedOriginalSampleUnchanged": true
+    },
+    "hostedNegativeControls": {
+      "passed": 19,
+      "failed": 0,
+      "jobId": 131715559074,
+      "receipt": "hosted-negative-controls-43373411759.json"
+    },
+    "desktopApplicability": {
+      "workflow": ".github/workflows/desktop-offline.yml",
+      "matchedCurrentBasePaths": [],
+      "selected": false,
+      "reason": "The 18-path PR diff has no desktop-offline workflow path-filter match; incoming SPN-148 desktop helpers are already in the base."
+    },
+    "baseFreshness": {
+      "observedAt": "2026-11-13T06:38:11.745Z",
+      "main": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "prHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "prBase": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "mergeCommit": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "draft": true,
+      "merged": false,
+      "identitiesMatch": true,
+      "freshnessDoesNotOvercomeFailedGate": true
+    },
+    "discoveredRuns": [
+      {
+        "id": 43373411761,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 43373411759,
+        "attempt": 1,
+        "status": "completed",
+        "conclusion": "cancelled"
+      }
+    ],
+    "priorReceipts": [
+      {
+        "run": 43364365825,
+        "fileCount": 19,
+        "allUnchanged": true,
+        "manifest": "hosted-audit-manifest-43364365825.json"
+      },
+      {
+        "run": 43370718838,
+        "fileCount": 21,
+        "allUnchanged": true,
+        "manifest": "hosted-audit-manifest-43370718838.json"
+      }
+    ],
+    "limitations": [
+      "The CI run overall conclusion is cancelled; the final browser aggregate is failure. Both exact conclusions are preserved.",
+      "The selected worker cancellation and independently observed flaky first attempt prevent acceptance. Other successful workers and native targets do not waive this gate.",
+      "The generic cancellation line plus 1211-second duration is consistent with the configured 20-minute budget, but unavailable annotation contents leave the exact trigger/actor unconfirmed.",
+      "The first-attempt ECONNRESET cause remains unresolved, the first-attempt trace is absent, and identical error categories elsewhere do not establish the same cause or assign this case to SPN-120.",
+      "The browser failure artifact contains the plan digest, error and result map; its complete plan and prerequisite gate map were verified from the aggregate log and separately retained authoritative plan.",
+      "Only content-free extracts, public job/check/source metadata and exact hashes are published. Raw failed browser archives/request data are excluded.",
+      "No rerun, cancellation, source or GitHub mutation, browser execution or local validation workload was performed by this audit."
+    ],
+    "boundedFailureAssessment": {
+      "scopeReport": "spn149-current-head-scope-assessment.md",
+      "sourceBoundaries": "spn149-current-head-source-boundaries.json",
+      "allAttemptExtract": "review-b-development-2-failure-43373411759.json",
+      "actualAttempts": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "durationMs": 7822
+        },
+        {
+          "retry": 1,
+          "status": "passed",
+          "durationMs": 41501
+        }
+      ],
+      "firstAttemptTracePresent": false,
+      "retryTraceCannotReconstructFirstAttempt": true,
+      "spn149TargetAbsentFromFailedShard": true,
+      "sourceOverlapEstablished": false,
+      "causeEstablished": false,
+      "sourceGradeUnchanged": true,
+      "separateScopeRequiredForBroaderRepair": true
+    },
+    "workflowUpdatedAt": "2026-11-13T06:36:40Z",
+    "browserAggregate": {
+      "jobId": 131734863793,
+      "checkRunId": 131734863793,
+      "conclusion": "failure",
+      "artifact": {
+        "id": 14015887735,
+        "node_id": "MDg6QXJ0aWZhY3QxNDAxNTg4NzczNQ==",
+        "name": "ci-results-browser",
+        "size_in_bytes": 469,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015887735",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015887735/zip",
+        "expired": false,
+        "digest": "sha256:62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+        "created_at": "2026-11-13T06:36:37Z",
+        "updated_at": "2026-11-13T06:36:37Z",
+        "expires_at": "2026-12-13T06:36:37Z",
+        "workflow_run": {
+          "id": 43373411759,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-149-revocation-evidence",
+          "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        }
+      },
+      "archiveSHA256": "62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+      "jsonSHA256": "8942e9927e35786daa7d35255c9f12f406c251a8c1a7b4286a95ff105e0b8d76",
+      "receipt": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+          "error": "Error: Incomplete coverage playwright-run: selected=true, result=cancelled",
+          "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"cancelled\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\"}"
+        }
+      },
+      "authoritativePlanVerifiedFromLog": true,
+      "authoritativePlanSource": "ci-plan-43373411759.json",
+      "gateResultsVerifiedFromLog": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      },
+      "all12FamilyResultsVerifiedFromLog": {
+        "backlog": "success",
+        "pull-request": "success",
+        "lint": "success",
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-test-run": "success",
+        "playwright-run": "cancelled",
+        "container-smoke": "success",
+        "restore-timing": "success",
+        "sync-transition": "success",
+        "doc-responsiveness": "success",
+        "doc-callback-lifetimes": "success"
+      },
+      "checkoutTestedMergeVerified": true,
+      "logSHA256": "7ba3a48ad79a2d55a733c6e46c93e69275eeb7b2ca0ef4de7448a02d7b5605b8",
+      "receiptShape": "Failure receipt contains the plan digest, error and serialized result map. Full plan and prerequisite gate map were independently checked from the aggregate log against the authoritative plan artifact."
+    },
+    "preservedManifests": [
+      {
+        "manifest": "hosted-audit-manifest-43364365825.json",
+        "fileCount": 19,
+        "allUnchanged": true
+      },
+      {
+        "manifest": "hosted-audit-manifest-43370718838.json",
+        "fileCount": 21,
+        "allUnchanged": true
+      },
+      {
+        "manifest": "hosted-audit-manifest-43373411759-blocked-checkpoint.json",
+        "fileCount": 37,
+        "allUnchanged": true
+      }
+    ],
+    "precedingCheckpoint": {
+      "observedAt": "2026-11-13T06:34:28.469Z",
+      "manifest": "hosted-audit-manifest-43373411759-blocked-checkpoint.json",
+      "unchanged": true
+    }
+  }
+}

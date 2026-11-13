@@ -1,0 +1,406 @@
+{
+  "version": 1,
+  "ticket": "SPN-149",
+  "kind": "Read-only historical ownership classification; no implementation, case rerun or raw artifact analysis.",
+  "observedAt": "2026-11-13T06:31:52+00:00",
+  "classification": {
+    "exactCaseInSPN120FiniteInventory": false,
+    "confidence": "High for named-case exclusion based on exact historical inventory and PR228 declared scenario matrix; no conclusion about shared transport root cause.",
+    "relationship": "The current Space guest export reset is a related saved-content observation symptom. The SPN-120 historical reset is a different native-Docs sync snapshot case, on a different source, project, endpoint family and phase. ECONNRESET alone does not establish common cause.",
+    "ownership": "Do not silently absorb this exact new failure into SPN-120 or SPN-149. Preserve it as the observed current-head acceptance blocker; any repair requires an evidence-backed scope/ownership decision. SPN-120 retains its named historical inventory and existing shared setup/process scope.",
+    "noCurrentHeadGateWaiver": true
+  },
+  "currentFailure": {
+    "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "run": 43373411759,
+    "runAttempt": 1,
+    "job": 131715559252,
+    "project": "development",
+    "partition": "2/2",
+    "testFile": "e2e/space-guests.spec.ts",
+    "testLine": 892,
+    "testTitle": "an Edit Space guest manages native pages and loses every child on rotation, downgrade and revocation",
+    "snapshotHelperLine": 139,
+    "assertionLine": 905,
+    "phase": "Post-feature saved-content export observation, after guest editing and UI save readiness; not pre-feature session setup.",
+    "transportError": "ECONNRESET",
+    "firstAttempt": "failed",
+    "retry1": "passed",
+    "reportedWorkerSummary": {
+      "passed": 74,
+      "flaky": 1,
+      "skipped": 1,
+      "laterCancellation": "Job cancelled after 1,211 seconds; the duration is consistent with the existing 20-minute budget, but the exact cancellation trigger remains unconfirmed. Independent terminal execution/artifact records own the final verdict."
+    },
+    "observationProvenance": "Current runtime outcome supplied by parent and preserved in its selected-worker failure record. This history task inspected source and maintained provenance, not the raw artifact.",
+    "parentFailureRecord": {
+      "path": "selected-worker-failure-43373411759-131715559252.json",
+      "bytes": 15498,
+      "sha256": "70f01ecc9e9e364db1b5947aee819abc0754e0bdc00bcb362ab19744caab53b8"
+    },
+    "currentFileBlobs": {
+      "977de3a3a7608a05e2103787f4dac01ec180013e": "24c9a586feaca2dc2b2d592c5edff8b8d2311b22",
+      "64d85c15288017bbfe3434d91fe0647eb2a2d613": "24c9a586feaca2dc2b2d592c5edff8b8d2311b22"
+    },
+    "unchangedFromIntegratedMain": true,
+    "firstFailureLimits": [
+      "The failing transport read does not establish the saved-content assertion at line905 on that attempt. UI saved state alone does not substitute for the failed export/content observation.",
+      "Later steps in this test are not proved by the failed first attempt; the successful configured scenario retry cannot convert the first attempt or failOnFlakyTests gate into success.",
+      "This historical ownership review does not establish request/socket/server lifetime ordering, a product defect, data loss or an authorization defect. Exact first-attempt artifact availability and cleanup/process telemetry are handled by the separate artifact audit.",
+      "The later worker cancellation is distinct from the already reported flaky scenario failure. No causal connection between them is inferred."
+    ]
+  },
+  "historicalSnapshotInventory": {
+    "owner": "SPN-120, following the explicit SPN-116 scope split",
+    "source": "d001fb0fe106bf81a7bcd57b9b4db78de86424cb",
+    "run": 40461836024,
+    "job": 122048106950,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/40461836024/job/122048106950",
+    "project": "sync-production",
+    "testFile": "e2e/sync-client.spec.ts",
+    "historicalTestLine": 347,
+    "testTitle": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+    "operation": "Saved native-Docs sync snapshot GET",
+    "helperLines": [
+      153,
+      160
+    ],
+    "observedFailure": "ECONNRESET on the snapshot GET, followed by a successful scenario retry.",
+    "historicalArtifactReferencedInMaintainedRecord": 12714443489,
+    "supportedDisposition": "Not reproduced in the predeclared bounded SPN-120 baseline sample; historical cause remains unknown. No blanket retry or unrelated later pass establishes a fix.",
+    "evidenceLimits": [
+      "The maintained audit preserves the original symptom and exact source/run/job. This owner-history task did not independently reopen that original raw artifact or establish absence/presence of a particular first-attempt trace.",
+      "The maintained decisions expressly warn that later repairs cannot reconstruct an unavailable original phase trace or establish unknown historical interleaving.",
+      "SPN-118 separately recorded a later mobile redo snapshot reset at a different endpoint/phase and explicitly rejected identical-causality inference. That separate symptom does not enlarge the finite inventory automatically."
+    ]
+  },
+  "SPN120FiniteSample": {
+    "maintainedAt": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+    "combinations": 12,
+    "repetitions": 2,
+    "executionsPerRevision": 24,
+    "workers": 1,
+    "scenarioRetries": 0,
+    "setupRecoveryInRepairProof": false,
+    "rows": [
+      {
+        "project": "production",
+        "scenarios": "Two named real passkey scenarios",
+        "executions": 4
+      },
+      {
+        "project": "production",
+        "scenarios": "Four phone Doc light/dark editor/guest-viewer pan/zoom cases",
+        "executions": 8
+      },
+      {
+        "project": "development",
+        "scenarios": "The same four phone Doc cases",
+        "executions": 8
+      },
+      {
+        "project": "sync-production",
+        "scenarios": "Unfinished Sheet cell-draft recovery",
+        "executions": 2
+      },
+      {
+        "project": "sync-production",
+        "scenarios": "The named native-Docs concurrent text/undo/reconnect/presence/image-UI scenario",
+        "executions": 2
+      }
+    ],
+    "spaceGuestExportCaseIncluded": false,
+    "originalBaseline": {
+      "run": 41340400081,
+      "attempt": 1,
+      "source": "e63956c7ec214af03c825104a81f63517eb87d0b",
+      "driver": "27ff4585a3efdc9b9b97064236e8791eef611f59",
+      "diagnosticPatch": "Snapshot observation maxRetries changed from1 to0 for the baseline; explicit, retained, no setup recovery.",
+      "passed": 24,
+      "node": "26.12.1",
+      "playwright": "1.64.1",
+      "chromium": "156.0.8078.4",
+      "limit": "This finite non-reproduction sample does not establish that the historical cause is fixed or that no intermittent failure remains."
+    }
+  },
+  "PR228Provenance": {
+    "url": "https://github.com/mxbaylee/spinel/pull/228",
+    "observedUsing": "GitHub connector get_pr_info, read-only; exact maintained document additionally fetched at head and matched local Git blob.",
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "headBranch": "codex/spn-120-fixture-reliability",
+    "head": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+    "recordedIntegratedBase": "642eb32bb52dd7dd13b6582869ef9482910e04ec",
+    "recordedTestedMerge": "a5a83657bc551b690567ef29bee48015e492d2d3",
+    "recordedTree": "9fb93e234734661501dd725042e750dc944430ba",
+    "updatedAt": "2026-11-04T17:34:20Z",
+    "recordedLatestAudit": {
+      "run": 41875292847,
+      "attempt": 1,
+      "passed": 24,
+      "scenarioRetries": 0,
+      "setupRecovery": 0
+    },
+    "recordedBlockers": "Distinct native Safari constructor and Firefox cache-deletion failures; full acceptance was not complete in that PR checkpoint.",
+    "authoritativeCurrentHandoff": "Current SPN-120 ticket line31 and November12 grooming lines115\u2013118 state SPN-140/141 are now landed, while PR228 head still predates those squashes and needs current-main integration plus fresh validation. Its November4 body is historical and cannot override this current instruction.",
+    "authorizationLimit": "Historical SPN-120 owner/backlog-run authorizations in its document are provenance only. The current user authorized SPN-149 alone; this investigation does not resume or implement SPN-120."
+  },
+  "approvedBoundaryAndNextSteps": {
+    "existingRules": [
+      {
+        "source": "currentSPN120Ticket",
+        "lines": [
+          35,
+          39
+        ],
+        "rule": "Keep finite historical inventory and explicit per-case disposition; establish current status before changing code. A retry pass is not a fix."
+      },
+      {
+        "source": "currentSPN120Ticket",
+        "lines": [
+          40,
+          45
+        ],
+        "rule": "Preserve content/authentication/revocation and first failures. No blanket timeout increases, unconditional request retries, skipped assertions or retry-to-green acceptance."
+      },
+      {
+        "source": "currentSPN120Ticket",
+        "lines": [
+          43,
+          47
+        ],
+        "rule": "At most one explicitly classified idempotent setup retry inside the original budget while the owned server is healthy; failed product assertions are not setup noise. A new product defect requires evidence-backed ownership/estimate."
+      },
+      {
+        "source": "PR228MaintainedDecisions",
+        "lines": [
+          123,
+          137
+        ],
+        "rule": "The draft permits recovery only for pre-feature session GET with fresh owned-process health. Saved-content snapshot GETs use zero retries and are never reclassified as setup."
+      },
+      {
+        "source": "currentSPN120Ticket",
+        "lines": [
+          56,
+          60
+        ],
+        "rule": "A predeclared small first-attempt sample, fatal controls and full final-SHA checks are required when that ticket is resumed; no expansion or execution is authorized by this history check."
+      }
+    ],
+    "withinCurrentSPN149Task": [
+      "Retain the exact failed first attempt, successful configured retry, selected-worker failure/cancellation, source/tested/base identities and artifact limitations in maintained evidence.",
+      "Keep SPN-149 as a durable blocked draft checkpoint while current-head required acceptance is failed. Do not merge, skip the selected worker, increase deadlines or rerun until green.",
+      "Record the concrete missing prerequisite as diagnosis and approved repair/disposition of the distinct Space guest saved-content export reset, followed by both qualifying reviews and complete fresh current-head acceptance as required.",
+      "Do not begin SPN-120 or broaden its finite inventory under this SPN-149-only authorization. Reassess the ownership/scope before any transport/session/product change."
+    ]
+  },
+  "sources": {
+    "originalAudit": {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "path": "docs/implementation/ci-reliability-2026-10-28.md",
+      "gitBlob": "e5cc7b5b1a34c586850d18d03e7131a906939df9",
+      "bytes": 13634,
+      "sha256": "cc9dda187b9a260a9abdd6a9ad0c7fe48fa5d219b8666269ab62d36412ef5164",
+      "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/ci-reliability-2026-10-28.md",
+      "lineRanges": [
+        {
+          "first": 3,
+          "last": 8,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/ci-reliability-2026-10-28.md#L3-L8"
+        },
+        {
+          "first": 38,
+          "last": 53,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/ci-reliability-2026-10-28.md#L38-L53"
+        },
+        {
+          "first": 142,
+          "last": 167,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/ci-reliability-2026-10-28.md#L142-L167"
+        }
+      ]
+    },
+    "currentSPN120Ticket": {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "path": "docs/todo/SPN-120.md",
+      "gitBlob": "2a6605dc1a34cb741926e581933dc7b368fc2651",
+      "bytes": 7351,
+      "sha256": "be09d466790b75a2cacd2c17755c68a14925fe672f30154b5ce4235bb03c2309",
+      "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/todo/SPN-120.md",
+      "lineRanges": [
+        {
+          "first": 31,
+          "last": 47,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/todo/SPN-120.md#L31-L47"
+        },
+        {
+          "first": 54,
+          "last": 60,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/todo/SPN-120.md#L54-L60"
+        }
+      ]
+    },
+    "currentGrooming": {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "path": "docs/implementation/grooming-2026-11-12.md",
+      "gitBlob": "bb2f98a2cc3e98658967c7e500760fa15ca823d5",
+      "bytes": 17901,
+      "sha256": "fcb6910a9741441bdc99b189c2a81ae78ee67fbe910e4b41abae7dbc7bc1f142",
+      "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/grooming-2026-11-12.md",
+      "lineRanges": [
+        {
+          "first": 85,
+          "last": 90,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/grooming-2026-11-12.md#L85-L90"
+        },
+        {
+          "first": 115,
+          "last": 118,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/grooming-2026-11-12.md#L115-L118"
+        }
+      ]
+    },
+    "relatedResetLimitations": {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "path": "docs/implementation/SPN-118.md",
+      "gitBlob": "c96e2aedf5caf762457bedbb206a91547d752976",
+      "bytes": 19437,
+      "sha256": "4881ae355b96a9d50111b55b8fd6a8055360d17bed922fdb804fe39aaeb83934",
+      "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/SPN-118.md",
+      "lineRanges": [
+        {
+          "first": 210,
+          "last": 232,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/SPN-118.md#L210-L232"
+        },
+        {
+          "first": 234,
+          "last": 263,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/docs/implementation/SPN-118.md#L234-L263"
+        }
+      ]
+    },
+    "historicalSyncCase": {
+      "source": "d001fb0fe106bf81a7bcd57b9b4db78de86424cb",
+      "path": "e2e/sync-client.spec.ts",
+      "gitBlob": "c652644ad2223963a9795db12428d9588b2d1ca0",
+      "bytes": 36387,
+      "sha256": "cf8a04d0c160a79f13e12ff285e75555b1db1ca6b348211bf9ec20ebcfb7c5d7",
+      "url": "https://github.com/mxbaylee/spinel/blob/d001fb0fe106bf81a7bcd57b9b4db78de86424cb/e2e/sync-client.spec.ts",
+      "lineRanges": [
+        {
+          "first": 153,
+          "last": 160,
+          "url": "https://github.com/mxbaylee/spinel/blob/d001fb0fe106bf81a7bcd57b9b4db78de86424cb/e2e/sync-client.spec.ts#L153-L160"
+        },
+        {
+          "first": 347,
+          "last": 352,
+          "url": "https://github.com/mxbaylee/spinel/blob/d001fb0fe106bf81a7bcd57b9b4db78de86424cb/e2e/sync-client.spec.ts#L347-L352"
+        }
+      ]
+    },
+    "currentSpaceCase": {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "path": "e2e/space-guests.spec.ts",
+      "gitBlob": "24c9a586feaca2dc2b2d592c5edff8b8d2311b22",
+      "bytes": 45805,
+      "sha256": "73d97021b89d0132e5c0abc9027ebe6257031273068bd662bd3aff3114eca825",
+      "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/e2e/space-guests.spec.ts",
+      "lineRanges": [
+        {
+          "first": 138,
+          "last": 141,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/e2e/space-guests.spec.ts#L138-L141"
+        },
+        {
+          "first": 892,
+          "last": 907,
+          "url": "https://github.com/mxbaylee/spinel/blob/64d85c15288017bbfe3434d91fe0647eb2a2d613/e2e/space-guests.spec.ts#L892-L907"
+        }
+      ]
+    },
+    "PR228MaintainedDecisions": {
+      "source": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+      "path": "docs/implementation/SPN-120.md",
+      "gitBlob": "fd4f90dce33eb61001c3104238473067df7cdd6c",
+      "bytes": 22983,
+      "sha256": "282ccdb60bd1dc0c3a28b668a9b4e877d22f5739d0ec0f01cef9a67b5cb922b7",
+      "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md",
+      "lineRanges": [
+        {
+          "first": 31,
+          "last": 60,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L31-L60"
+        },
+        {
+          "first": 62,
+          "last": 77,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L62-L77"
+        },
+        {
+          "first": 80,
+          "last": 111,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L80-L111"
+        },
+        {
+          "first": 113,
+          "last": 137,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L113-L137"
+        },
+        {
+          "first": 215,
+          "last": 228,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L215-L228"
+        },
+        {
+          "first": 251,
+          "last": 266,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L251-L266"
+        },
+        {
+          "first": 289,
+          "last": 330,
+          "url": "https://github.com/mxbaylee/spinel/blob/597c3182ae34a9bb0734b3e2f599ba5d845cf849/docs/implementation/SPN-120.md#L289-L330"
+        }
+      ]
+    }
+  },
+  "privacy": {
+    "rawArtifactsDownloaded": false,
+    "rawLogsCopied": false,
+    "authoredFixtureValuesCopied": false,
+    "cookiesCredentialsSocketURLsSessionIDsCopied": false,
+    "sourceEndpointPresentation": "Only categorical endpoint families and source line references retained; no raw request URL or instantiated identifier."
+  },
+  "mutations": {
+    "source": false,
+    "receipt": false,
+    "github": false,
+    "testsWorkloadsReruns": false,
+    "onlyWrittenFile": "validation/spn149-snapshot-owner-history.json"
+  },
+  "publicationCorrections": [
+    {
+      "reason": "Independent pre-publication evidence review found a stale parent-record hash. The record was extended with annotation-access and cancellation limitations before this owner-history publication.",
+      "supersededUnpublishedParentSnapshot": {
+        "path": "selected-worker-failure-43373411759-131715559252.json",
+        "bytes": 15082,
+        "sha256": "d92e585f07b23d6449f173356e170cd880275f5363e2881a1918773194527360"
+      },
+      "currentParentSnapshot": {
+        "path": "selected-worker-failure-43373411759-131715559252.json",
+        "bytes": 15498,
+        "sha256": "70f01ecc9e9e364db1b5947aee819abc0754e0bdc00bcb362ab19744caab53b8"
+      }
+    },
+    {
+      "reason": "Clarify that the cancellation trigger is unconfirmed; timing consistency with the existing budget is not proof of the trigger.",
+      "source": "selected-worker-failure-43373411759-131715559252.json"
+    }
+  ]
+}

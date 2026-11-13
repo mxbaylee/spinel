@@ -1,0 +1,228 @@
+{
+  "version": 1,
+  "observedAt": "2026-11-13 06:34:56 UTC",
+  "classification": "Selected worker cancelled; independent first-attempt failure and flaky retry block current acceptance. Cause of transport reset and exact cancellation trigger remain unproved.",
+  "source": {
+    "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed"
+  },
+  "run": 43373411759,
+  "runAttempt": 1,
+  "job": {
+    "id": 131715559252,
+    "name": "Playwright smoke (development 2/2)",
+    "status": "completed",
+    "conclusion": "cancelled",
+    "started_at": "2026-11-13T06:05:37Z",
+    "completed_at": "2026-11-13T06:25:48Z",
+    "runner_id": 1000052604,
+    "runner_name": "GitHub Actions 1000052604",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions"
+  },
+  "artifact": {
+    "id": 14015561426,
+    "name": "theme-screenshots-development-2",
+    "size_in_bytes": 29051950,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015561426",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015561426/zip",
+    "expired": false,
+    "created_at": "2026-11-13T06:25:44Z",
+    "expires_at": "2026-11-20T06:25:41Z",
+    "updated_at": "2026-11-13T06:25:44Z",
+    "digest": "sha256:2c4da380aa1aa1ff9b29abbd2355ce33060a8e2b61537cd27725edd4945d302c",
+    "workflow_run": {
+      "id": 43373411759,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-149-revocation-evidence",
+      "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+    }
+  },
+  "archive": {
+    "inspectionInput": "review-a-failed-worker-43373411759-development-2.zip",
+    "bytes": 29051950,
+    "sha256": "2c4da380aa1aa1ff9b29abbd2355ce33060a8e2b61537cd27725edd4945d302c",
+    "digestMatches": true,
+    "members": 323,
+    "rawArchiveNotForPublication": true
+  },
+  "report": {
+    "member": "playwright-report/development-2-of-2.json",
+    "bytes": 1567744,
+    "sha256": "4831258dcc8fa9bca9e7b571147c972911dea5616390709b3c0cdb377a7a9ec2",
+    "stats": {
+      "startTime": "2026-11-13T06:06:40.880Z",
+      "duration": 1140650.883,
+      "expected": 74,
+      "skipped": 1,
+      "unexpected": 0,
+      "flaky": 1
+    },
+    "topLevelErrorCount": 0,
+    "nonExpectedCaseInventory": [
+      {
+        "file": "space-guests.spec.ts",
+        "line": 892,
+        "id": "616f14ec52821b3809e5-b31d48a01c2d8f025cbc",
+        "overallStatus": "flaky",
+        "attempts": [
+          {
+            "retry": 0,
+            "status": "failed",
+            "durationMs": 7822
+          },
+          {
+            "retry": 1,
+            "status": "passed",
+            "durationMs": 41501
+          }
+        ]
+      }
+    ],
+    "spn149TargetCasePresent": false
+  },
+  "case": {
+    "file": "space-guests.spec.ts",
+    "line": 892,
+    "column": 1,
+    "id": "616f14ec52821b3809e5-b31d48a01c2d8f025cbc",
+    "title": "an Edit Space guest manages native pages and loses every child on rotation, downgrade and revocation",
+    "project": "development",
+    "expectedStatus": "passed",
+    "overallStatus": "flaky",
+    "timeoutMs": 210000,
+    "attempts": [
+      {
+        "retry": 0,
+        "status": "failed",
+        "startTime": "2026-11-13T06:20:34.280Z",
+        "durationMs": 7822,
+        "workerIndex": 1,
+        "parallelIndex": 0,
+        "errorCount": 1,
+        "errors": [
+          {
+            "category": "transport-read-reset",
+            "code": "ECONNRESET",
+            "api": "APIRequestContext.get",
+            "phase": "Space export snapshot observation after native edit/save UI checkpoints",
+            "sourceLocations": [
+              {
+                "file": "e2e/space-guests.spec.ts",
+                "line": 139,
+                "column": 44
+              },
+              {
+                "file": "e2e/space-guests.spec.ts",
+                "line": 905,
+                "column": 21
+              }
+            ],
+            "rawErrorTextOmitted": true,
+            "rawCallLogOmitted": true
+          }
+        ],
+        "attachments": [
+          {
+            "kind": "screenshot",
+            "contentType": "image/png",
+            "archiveMember": "test-results/development/space-guests-an-Edit-Space-05a4f-on-downgrade-and-revocation-development/test-failed-1.png",
+            "bytes": 61231,
+            "sha256": "2d43ddddac121d44cbae0605215ae5aab5ec395235b36484f28d3e9e18e8700c",
+            "contentExtractedForPublication": false,
+            "contentInterpreted": false
+          },
+          {
+            "kind": "error-context",
+            "contentType": "text/markdown",
+            "archiveMember": "test-results/development/space-guests-an-Edit-Space-05a4f-on-downgrade-and-revocation-development/error-context.md",
+            "bytes": 9770,
+            "sha256": "fd1a1f20d89a83702eecbaefa9ac3ab3d8c4157583cc7263434da59da94a916c",
+            "contentExtractedForPublication": false,
+            "contentInterpreted": false
+          }
+        ]
+      },
+      {
+        "retry": 1,
+        "status": "passed",
+        "startTime": "2026-11-13T06:20:42.940Z",
+        "durationMs": 41501,
+        "workerIndex": 2,
+        "parallelIndex": 0,
+        "errorCount": 0,
+        "errors": [],
+        "attachments": [
+          {
+            "kind": "trace",
+            "contentType": "application/zip",
+            "archiveMember": "test-results/development/space-guests-an-Edit-Space-05a4f-on-downgrade-and-revocation-development-retry1/trace.zip",
+            "bytes": 13110785,
+            "sha256": "a953fe429d448725d807b6fabf675962de565f23a1e2ded5603ca809c01c3276",
+            "contentExtractedForPublication": false,
+            "contentInterpreted": false
+          }
+        ]
+      }
+    ]
+  },
+  "configuration": {
+    "playwrightVersion": "1.64.1",
+    "configuredRetries": 2,
+    "repeatEach": 1,
+    "failOnFlakyTests": true,
+    "workers": 1,
+    "maxFailures": 1,
+    "globalTimeoutMs": 0,
+    "shard": {
+      "current": 2,
+      "total": 2
+    },
+    "sourceTracePolicy": "on-first-retry",
+    "sourceTracePolicyLocation": "playwright.config.ts:65"
+  },
+  "runtime": {
+    "node": "v26.13.0",
+    "npm": "11.20.0",
+    "chromiumVersion": "156.0.8078.4",
+    "chromiumRevision": "1248",
+    "os": "Ubuntu",
+    "osVersion": "24.04.5",
+    "image": "ubuntu-24.04",
+    "imageVersion": "20261111.370.1",
+    "runnerVersion": "2.338.2",
+    "checkoutHeadVerified": true,
+    "testedMergePresent": true,
+    "rawLogNotPublished": true
+  },
+  "firstAttemptEvidence": {
+    "traceInReport": false,
+    "traceInAttemptArchiveDirectory": false,
+    "retainedTypes": [
+      "screenshot",
+      "error-context"
+    ],
+    "postReadinessProcessTailAvailable": false,
+    "postReadinessProcessStateAvailableThroughFixture": false,
+    "sourceLimit": "e2e/app-process.ts:86-101 removes stdout/stderr collection and readiness close listener, drains output, and returns only close. Its private exit/cleanup handling does not publish a first-failure process state.",
+    "retryTraceCannotReconstructFailedAttempt": true
+  },
+  "cancellation": {
+    "jobSeconds": 1211,
+    "configuredJobBudgetMinutes": 20,
+    "trigger": "unconfirmed",
+    "annotationsAvailable": false,
+    "annotationCountExpected": 3,
+    "annotationAccessLimit": "unavailable through connected GitHub fetch endpoint",
+    "interpretation": "Observed duration is consistent with the budget, but generic cancellation and unavailable annotations do not establish the trigger."
+  },
+  "limits": [
+    "Retry 1 passed in a new Playwright worker and does not erase the failed first attempt or prove the earlier server was healthy.",
+    "ECONNRESET alone does not establish an infrastructure fault, server crash, stale-connection mechanism, authorization defect or content loss.",
+    "Only metadata, categorical failures, public source locations and hashes are retained; no raw error/call-log text, fixture URLs, cookies, request IDs, authored content, screenshots or trace content are published.",
+    "One existing artifact was inspected. No new execution, source change, GitHub mutation, retry, rerun or cancellation was performed."
+  ]
+}

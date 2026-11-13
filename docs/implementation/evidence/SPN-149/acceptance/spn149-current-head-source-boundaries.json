@@ -1,0 +1,76 @@
+{
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "files": [
+    {
+      "path": "e2e/space-guests.spec.ts",
+      "baseBlob": "24c9a586feaca2dc2b2d592c5edff8b8d2311b22",
+      "headBlob": "24c9a586feaca2dc2b2d592c5edff8b8d2311b22",
+      "unchanged": true,
+      "headFileSHA256": "73d97021b89d0132e5c0abc9027ebe6257031273068bd662bd3aff3114eca825"
+    },
+    {
+      "path": "e2e/app-process.ts",
+      "baseBlob": "212f32b870e152d11247dd2fd38361b6b23e7ff4",
+      "headBlob": "212f32b870e152d11247dd2fd38361b6b23e7ff4",
+      "unchanged": true,
+      "headFileSHA256": "05506e7380997ccbb711b335a94de89141df31398c91d62bc81811d0ed401251"
+    },
+    {
+      "path": "e2e/restore-snapshot.ts",
+      "baseBlob": "2cc7d334d2b7adfb897fa38a4aa7475de3eb6e78",
+      "headBlob": "2cc7d334d2b7adfb897fa38a4aa7475de3eb6e78",
+      "unchanged": true,
+      "headFileSHA256": "341bc4112bd312f2d0a1e4359017965ee85bf1004ef73c220c935637ce57a374"
+    },
+    {
+      "path": "playwright.config.ts",
+      "baseBlob": "fe75c6581e3fd1ca616c2c8afe629da1f220fb9b",
+      "headBlob": "fe75c6581e3fd1ca616c2c8afe629da1f220fb9b",
+      "unchanged": true,
+      "headFileSHA256": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "baseBlob": "4f2eac4f6ea8fde4afec92df9fae1a459a030edb",
+      "headBlob": "4f2eac4f6ea8fde4afec92df9fae1a459a030edb",
+      "unchanged": true,
+      "headFileSHA256": "fd9583d5d9fee71d00b40f152978cb3718c184a040d66ffca3a30b94ecce9c3f"
+    },
+    {
+      "path": "server/app.ts",
+      "baseBlob": "2003ceebc30b5cea057d5134970ee7ad1db05f2e",
+      "headBlob": "2003ceebc30b5cea057d5134970ee7ad1db05f2e",
+      "unchanged": true,
+      "headFileSHA256": "6ca19c7e3e6fb26a5aaab19dd12df6e1df88d84b9d31a51e10a6d600ed459006"
+    },
+    {
+      "path": "server/index.ts",
+      "baseBlob": "ede16b21fcf8d3544e8b8ae24076bc645b7267dd",
+      "headBlob": "ede16b21fcf8d3544e8b8ae24076bc645b7267dd",
+      "unchanged": true,
+      "headFileSHA256": "0c5ae37ac747b1797eb3122fcbf31c491231bfbe613a88fd407b09ac01bf9eb9"
+    },
+    {
+      "path": "src/server/workspace/space-native-routes.ts",
+      "baseBlob": "d7d45e60b3a9f67e9c4dc6a50aaffd0ada5a1ffa",
+      "headBlob": "d7d45e60b3a9f67e9c4dc6a50aaffd0ada5a1ffa",
+      "unchanged": true,
+      "headFileSHA256": "fbb6b13de6cfcc0766131587bf8c003f08d36afcbd853606fcc51c368b7df568"
+    },
+    {
+      "path": "src/server/workspace/portable.ts",
+      "baseBlob": "e5223044882c6f30adeea960e1f33de269b279c2",
+      "headBlob": "e5223044882c6f30adeea960e1f33de269b279c2",
+      "unchanged": true,
+      "headFileSHA256": "9e6a59f02c1f5226e76dca935c5c94472a56c2597310df5807a18dbb3938cc6c"
+    },
+    {
+      "path": "docs/todo/SPN-120.md",
+      "baseBlob": "2a6605dc1a34cb741926e581933dc7b368fc2651",
+      "headBlob": "2a6605dc1a34cb741926e581933dc7b368fc2651",
+      "unchanged": true,
+      "headFileSHA256": "be09d466790b75a2cacd2c17755c68a14925fe672f30154b5ce4235bb03c2309"
+    }
+  ]
+}

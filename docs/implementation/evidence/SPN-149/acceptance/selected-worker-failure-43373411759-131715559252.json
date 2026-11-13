@@ -1,0 +1,396 @@
+{
+  "observedAt": "2026-11-13T06:28:21.951Z",
+  "classification": "selected worker cancellation with independently observed first-attempt test failure and flaky retry; current acceptance blocked",
+  "sourceHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "workflow": {
+    "id": 43373411759,
+    "run_attempt": 1,
+    "workflow_id": 387826308,
+    "check_suite_id": 117448946471,
+    "event": "pull_request",
+    "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "created_at": "2026-11-13T05:39:09Z",
+    "updated_at": "2026-11-13T06:14:07Z",
+    "status": "in_progress",
+    "conclusion": null,
+    "actor": "mxbaylee",
+    "triggering_actor": "mxbaylee"
+  },
+  "job": {
+    "id": 131715559252,
+    "run_id": 43373411759,
+    "workflow_name": "\ud83d\udc8e CI",
+    "head_branch": "codex/spn-149-revocation-evidence",
+    "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759",
+    "run_attempt": 1,
+    "node_id": "CR_kwDOVNik2c8AAAAeqtvvVA",
+    "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/131715559252",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559252",
+    "status": "completed",
+    "conclusion": "cancelled",
+    "created_at": "2026-11-13T05:43:03Z",
+    "started_at": "2026-11-13T06:05:37Z",
+    "completed_at": "2026-11-13T06:25:48Z",
+    "name": "Playwright smoke (development 2/2)",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-11-13T06:05:39Z",
+        "completed_at": "2026-11-13T06:05:40Z"
+      },
+      {
+        "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-11-13T06:05:40Z",
+        "completed_at": "2026-11-13T06:05:45Z"
+      },
+      {
+        "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-11-13T06:05:45Z",
+        "completed_at": "2026-11-13T06:05:50Z"
+      },
+      {
+        "name": "Install",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-11-13T06:05:50Z",
+        "completed_at": "2026-11-13T06:06:05Z"
+      },
+      {
+        "name": "Install Chromium",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-11-13T06:06:05Z",
+        "completed_at": "2026-11-13T06:06:37Z"
+      },
+      {
+        "name": "Install maintenance fixture init",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-11-13T06:06:37Z",
+        "completed_at": "2026-11-13T06:06:37Z"
+      },
+      {
+        "name": "Immutable offline source for adoption evidence",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 7,
+        "started_at": "2026-11-13T06:06:37Z",
+        "completed_at": "2026-11-13T06:06:37Z"
+      },
+      {
+        "name": "Install immutable offline build dependencies",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 8,
+        "started_at": "2026-11-13T06:06:37Z",
+        "completed_at": "2026-11-13T06:06:37Z"
+      },
+      {
+        "name": "Immutable last 1.1.0 offline host and backend",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 9,
+        "started_at": "2026-11-13T06:06:37Z",
+        "completed_at": "2026-11-13T06:06:37Z"
+      },
+      {
+        "name": "Install previous offline host dependencies",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 10,
+        "started_at": "2026-11-13T06:06:37Z",
+        "completed_at": "2026-11-13T06:06:37Z"
+      },
+      {
+        "name": "Build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-11-13T06:06:37Z",
+        "completed_at": "2026-11-13T06:06:39Z"
+      },
+      {
+        "name": "Playwright smoke",
+        "status": "completed",
+        "conclusion": "cancelled",
+        "number": 12,
+        "started_at": "2026-11-13T06:06:39Z",
+        "completed_at": "2026-11-13T06:25:41Z"
+      },
+      {
+        "name": "Artifact name",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-11-13T06:25:41Z",
+        "completed_at": "2026-11-13T06:25:41Z"
+      },
+      {
+        "name": "Theme screenshots",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-11-13T06:25:41Z",
+        "completed_at": "2026-11-13T06:25:44Z"
+      },
+      {
+        "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 27,
+        "started_at": "2026-11-13T06:25:44Z",
+        "completed_at": "2026-11-13T06:25:44Z"
+      },
+      {
+        "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-11-13T06:25:44Z",
+        "completed_at": "2026-11-13T06:25:45Z"
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-11-13T06:25:45Z",
+        "completed_at": "2026-11-13T06:25:45Z"
+      }
+    ],
+    "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131715559252",
+    "labels": [
+      "ubuntu-latest"
+    ],
+    "runner_id": 1000052604,
+    "runner_name": "GitHub Actions 1000052604",
+    "runner_group_id": 0,
+    "runner_group_name": "GitHub Actions"
+  },
+  "checkRun": {
+    "id": 131715559252,
+    "name": "Playwright smoke (development 2/2)",
+    "node_id": "CR_kwDOVNik2c8AAAAeqtvvVA",
+    "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "external_id": "10fc098a-f0cc-53a3-a3d9-8f2eb91b8aff",
+    "url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131715559252",
+    "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559252",
+    "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131715559252",
+    "status": "completed",
+    "conclusion": "cancelled",
+    "started_at": "2026-11-13T06:05:37Z",
+    "completed_at": "2026-11-13T06:25:48Z",
+    "output": {
+      "title": null,
+      "summary": null,
+      "text": null,
+      "annotations_count": 3,
+      "annotations_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131715559252/annotations"
+    },
+    "check_suite": {
+      "id": 117448946471
+    },
+    "app": {
+      "id": 15368,
+      "client_id": "Iv1.05c79e9ad1f6bdfa",
+      "slug": "github-actions",
+      "node_id": "MDM6QXBwMTUzNjg=",
+      "owner": {
+        "login": "github",
+        "id": 9919,
+        "node_id": "MDEyOk9yZ2FuaXphdGlvbjk5MTk=",
+        "avatar_url": "https://avatars.githubusercontent.com/u/9919?v=4",
+        "gravatar_id": "",
+        "url": "https://api.github.com/users/github",
+        "html_url": "https://github.com/github",
+        "followers_url": "https://api.github.com/users/github/followers",
+        "following_url": "https://api.github.com/users/github/following{/other_user}",
+        "gists_url": "https://api.github.com/users/github/gists{/gist_id}",
+        "starred_url": "https://api.github.com/users/github/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/github/subscriptions",
+        "organizations_url": "https://api.github.com/users/github/orgs",
+        "repos_url": "https://api.github.com/users/github/repos",
+        "events_url": "https://api.github.com/users/github/events{/privacy}",
+        "received_events_url": "https://api.github.com/users/github/received_events",
+        "type": "Organization",
+        "user_view_type": "public",
+        "site_admin": false
+      },
+      "name": "GitHub Actions",
+      "description": "Automate your workflow from idea to production",
+      "external_url": "https://help.github.com/en/actions",
+      "html_url": "https://github.com/apps/github-actions",
+      "created_at": "2018-07-30T09:30:17Z",
+      "updated_at": "2026-06-18T16:17:48Z",
+      "permissions": {
+        "actions": "write",
+        "administration": "read",
+        "artifact_metadata": "write",
+        "attestations": "write",
+        "checks": "write",
+        "code_quality": "write",
+        "contents": "write",
+        "copilot_requests": "write",
+        "deployments": "write",
+        "discussions": "write",
+        "drives": "write",
+        "issues": "write",
+        "merge_queues": "write",
+        "metadata": "read",
+        "models": "read",
+        "packages": "write",
+        "pages": "write",
+        "pull_requests": "write",
+        "repository_hooks": "write",
+        "repository_projects": "write",
+        "security_events": "write",
+        "statuses": "write",
+        "vulnerability_alerts": "read"
+      },
+      "events": [
+        "branch_protection_rule",
+        "check_run",
+        "check_suite",
+        "create",
+        "delete",
+        "deployment",
+        "deployment_status",
+        "discussion",
+        "discussion_comment",
+        "fork",
+        "gollum",
+        "issues",
+        "issue_comment",
+        "label",
+        "merge_group",
+        "milestone",
+        "page_build",
+        "public",
+        "pull_request",
+        "pull_request_review",
+        "pull_request_review_comment",
+        "push",
+        "registry_package",
+        "release",
+        "repository",
+        "repository_dispatch",
+        "status",
+        "watch",
+        "workflow_dispatch",
+        "workflow_run"
+      ]
+    },
+    "pull_requests": [
+      {
+        "url": "https://api.github.com/repos/mxbaylee/spinel/pulls/282",
+        "id": 5289885798,
+        "number": 282,
+        "head": {
+          "ref": "codex/spn-149-revocation-evidence",
+          "sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "repo": {
+            "id": 1423484121,
+            "url": "https://api.github.com/repos/mxbaylee/spinel",
+            "name": "spinel"
+          }
+        },
+        "base": {
+          "ref": "main",
+          "sha": "977de3a3a7608a05e2103787f4dac01ec180013e",
+          "repo": {
+            "id": 1423484121,
+            "url": "https://api.github.com/repos/mxbaylee/spinel",
+            "name": "spinel"
+          }
+        }
+      }
+    ]
+  },
+  "annotations": {
+    "expectedCount": 3,
+    "status": "unavailable through connected GitHub fetch endpoint",
+    "error": "HTTPError: 400: GitHub Fetch URL is not an allowed public GitHub repository or search endpoint.",
+    "annotationContentsNotObserved": true,
+    "parentReportedFallback": {
+      "at": "2026-11-13T06:33Z",
+      "method": "one read-only public job-page fetch",
+      "result": "DisabledError; no page or annotation content",
+      "provenance": "parent /root report; not independently observed page content"
+    },
+    "acceptanceImpact": "Access limitation does not itself block acceptance; the selected cancellation and observed flaky first attempt do."
+  },
+  "logExtract": {
+    "scope": "Content-free exact lines selected from the decoded log; no request URLs, cookies, request IDs, authored content or raw full log are retained for publication.",
+    "lines": [
+      "\ufeff2026-11-13T06:05:39.1257381Z Current runner version: '2.338.2'",
+      "2026-11-13T06:05:39.1285841Z Version: 20261103.629",
+      "2026-11-13T06:05:39.1295696Z Image: ubuntu-24.04",
+      "2026-11-13T06:05:39.1296354Z Version: 20261111.370.1",
+      "2026-11-13T06:05:40.6334128Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6389a8c29b337b6e993b699d544ed2e43d86ffed:refs/remotes/pull/282/merge",
+      "2026-11-13T06:05:44.9572658Z  * [new ref]         6389a8c29b337b6e993b699d544ed2e43d86ffed -> pull/282/merge",
+      "2026-11-13T06:05:45.6484563Z 6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "2026-11-13T06:05:50.5551712Z node: v26.13.0",
+      "2026-11-13T06:05:50.5552307Z npm: 11.20.0",
+      "2026-11-13T06:20:34.2809119Z [61/76] [development] \u203a e2e/space-guests.spec.ts:892:1 \u203a an Edit Space guest manages native pages and loses every child on rotation, downgrade and revocation",
+      "2026-11-13T06:20:42.9449188Z [62/76] (retries) [development] \u203a e2e/space-guests.spec.ts:892:1 \u203a an Edit Space guest manages native pages and loses every child on rotation, downgrade and revocation (retry #1)",
+      "2026-11-13T06:21:25.3578699Z   1) [development] \u203a e2e/space-guests.spec.ts:892:1 \u203a an Edit Space guest manages native pages and loses every child on rotation, downgrade and revocation ",
+      "2026-11-13T06:21:25.3579543Z     Error: apiRequestContext.get: read ECONNRESET",
+      "2026-11-13T06:21:25.3587053Z         at Object.snapshot (/home/runner/work/spinel/spinel/e2e/space-guests.spec.ts:139:44)",
+      "2026-11-13T06:21:25.3587718Z         at /home/runner/work/spinel/spinel/e2e/space-guests.spec.ts:905:21",
+      "2026-11-13T06:25:41.5326187Z   1 flaky",
+      "2026-11-13T06:25:41.5329508Z   1 skipped",
+      "2026-11-13T06:25:41.5330073Z   74 passed (19.0m)",
+      "2026-11-13T06:25:41.5980846Z ##[error]The operation was canceled."
+    ],
+    "decodedFullLogSHA256": "b1e0bf68b99b17f48551a27ece72b8a311543c29bf8e5919ddd9f018ff21bc32",
+    "decodedFullLogBytes": 73750,
+    "exactSafeLinesSHA256": "13c845ebf586acd3f3b27a9ab0d0c45fc7806c709388baa00dd320bdc06a5685",
+    "hashScope": "SHA-256 of exact tool-decoded UTF-8 full log bytes; exact content-free lines joined by LF plus final LF for the extract."
+  },
+  "artifact": {
+    "id": 14015561426,
+    "archiveSHA256": "2c4da380aa1aa1ff9b29abbd2355ce33060a8e2b61537cd27725edd4945d302c"
+  },
+  "limits": [
+    "The exact cancellation trigger is not established by the observed generic cancellation line. It must not be inferred to be a user cancellation or pure infrastructure failure.",
+    "The first-attempt ECONNRESET is an observed test failure. Its retry passing does not waive failOnFlakyTests or selected-worker acceptance.",
+    "No source changes, workloads, reruns or cancellations were performed by this audit."
+  ],
+  "workflowBudget": {
+    "path": ".github/workflows/ci.yml",
+    "line": 435,
+    "minutes": 20,
+    "endToEndJobSeconds": 1211,
+    "interpretation": "Duration is consistent with the configured job budget; unavailable annotation contents mean the exact cancellation trigger is not independently confirmed."
+  },
+  "flakyGate": {
+    "path": "playwright.config.ts",
+    "line": 39,
+    "failOnFlakyTests": true,
+    "observedFlakyCase": "e2e/space-guests.spec.ts:892",
+    "firstAttemptErrorCategory": "ECONNRESET during API export snapshot",
+    "retryObserved": 1,
+    "summary": {
+      "flaky": 1,
+      "skipped": 1,
+      "passed": 74
+    },
+    "disposition": "blocks acceptance independently of the cancellation trigger"
+  }
+}

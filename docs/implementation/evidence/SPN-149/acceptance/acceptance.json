@@ -5,7 +5,7 @@
   "pullRequest": 282,
   "pullRequestURL": "https://github.com/mxbaylee/spinel/pull/282",
   "recordRole": "Authoritative maintained latest source, review, run and landing record. Preserve earlier immutable entries when appending later source revisions or workflow executions.",
-  "observedAt": "2026-11-13T06:22:48.266357+00:00",
+  "observedAt": "2026-11-13T06:42:48.523035+00:00",
   "current": {
     "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
     "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
@@ -18,10 +18,10 @@
     ],
     "initialHostedAcceptance": "historical pass on earlier source db24230; not integration acceptance",
     "metadataValidation": "completed successfully on prior source/base; historical only",
-    "hostedAcceptance": "six required gates and Storybook passed; final browser gate pending",
-    "overallAcceptance": "pending_remaining_selected_workers_final_browser_gate_and_landing",
-    "merge": "pending",
-    "cleanup": "pending; evidence archive pin and guarded ref deletion unavailable"
+    "hostedAcceptance": "FAILED: six required gates passed; Playwright smoke aggregate failed after selected development2/2 was cancelled with a flaky first-attempt failure. Storybook and both SPN-149 target first attempts passed.",
+    "overallAcceptance": "blocked_failed_current_head_selected_worker_and_required_gate",
+    "merge": "not_merged; PR282 remains open and draft",
+    "cleanup": "not_started; active unmerged implementation and maintained reachable evidence branches retained"
   },
   "sourceRevisions": [
     {
@@ -172,7 +172,8 @@
         "docs/todo/backlog.json",
         "docs/todo/readme.md"
       ],
-      "pending": "Fresh current-head hosted acceptance."
+      "pending": "Current-head acceptance is blocked by the cancelled/flaky selected worker and failed Playwright aggregate; further diagnosis requires a separate scope decision.",
+      "currentHostedAcceptance": "failed; source-review scores unchanged"
     }
   ],
   "workflowExecutions": [
@@ -1133,9 +1134,9 @@
       "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
       "checkSuiteId": 117448946471,
       "createdAt": "2026-11-13T05:39:09Z",
-      "status": "in_progress",
-      "conclusion": null,
-      "eligibleForCurrentMerge": "pending_all_selected_results",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "eligibleForCurrentMerge": false,
       "fixedDiagnosticSample": false,
       "planSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
       "planFile": "ci-plan-43373411759.json",
@@ -1147,85 +1148,973 @@
       "allExpectedWorkersDispatched": true,
       "allSelectedWorkersPassed": false,
       "lastWorkerObservation": {
-        "observedAt": "2026-11-13T06:21:00Z",
-        "totalJobsCreated": 32,
-        "successfulJobs": 29,
-        "runningJobs": 3,
+        "observedAt": "2026-11-13T06:37:51Z",
+        "totalJobsCreated": 33,
+        "successfulJobs": 31,
+        "cancelledJobs": 1,
+        "failedJobs": 1,
+        "runningJobs": 0,
         "queuedJobs": 0,
-        "remainingExecutionWorkers": [
-          "Playwright smoke (development 1/2)",
-          "Playwright smoke (development 2/2)",
-          "Doc responsiveness (mobile)"
-        ],
-        "finalBrowserAggregate": "not_yet_created"
+        "remainingExecutionWorkers": [],
+        "finalBrowserAggregate": "failure",
+        "finalBrowserAggregateJobId": 131734863793
       },
       "requiredGates": [
         {
           "name": "Backlog",
           "jobId": 131715558972,
-          "conclusion": "success",
-          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-          "run": 43373411759,
-          "attempt": 1
+          "checkRunId": 131715558972,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
         },
         {
           "name": "Pull request",
           "jobId": 131714231020,
-          "conclusion": "success",
-          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-          "run": 43373411759,
-          "attempt": 1
+          "checkRunId": 131714231020,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
         },
         {
           "name": "Lint",
           "jobId": 131715558929,
-          "conclusion": "success",
-          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-          "run": 43373411759,
-          "attempt": 1
+          "checkRunId": 131715558929,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
         },
         {
           "name": "Typecheck",
           "jobId": 131715558993,
-          "conclusion": "success",
-          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-          "run": 43373411759,
-          "attempt": 1
+          "checkRunId": 131715558993,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
         },
         {
           "name": "Unit tests",
           "jobId": 131722748867,
-          "conclusion": "success",
-          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-          "run": 43373411759,
-          "attempt": 1
+          "checkRunId": 131722748867,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
         },
         {
           "name": "Lib tests",
           "jobId": 131725643298,
-          "conclusion": "success",
-          "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-          "run": 43373411759,
-          "attempt": 1
+          "checkRunId": 131725643298,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke",
+          "jobId": 131734863793,
+          "checkRunId": 131734863793,
+          "runId": 43373411759,
+          "attempt": 1,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "checkSuiteId": 117448946471,
+          "status": "completed",
+          "conclusion": "failure"
         }
       ],
       "nativeCases": [
         {
-          "project": "production",
-          "job": 131715559199,
+          "project": "development",
+          "job": 131715559510,
+          "artifactId": 14015555446,
           "retry": 0,
           "status": "passed",
+          "startedAt": "2026-11-13T06:13:31.541Z",
+          "durationMs": 8070,
+          "caseReport": "review-b-native-43373411759-development-case.json",
+          "artifactRecord": "review-b-native-43373411759-development-artifact.json",
+          "exactDiagnostic": "review-b-native-43373411759-development-retry-0-observation.json",
+          "diagnosticBytes": 1539,
+          "diagnosticSHA256": "439e355c531e7ad6547efa5a8d953d72dce08d4460d69d93a3945f60073f583d",
+          "contractCompleted": true,
+          "primaryFailed": false,
+          "cleanupFailures": [],
+          "targetCount": 1,
+          "closedTargets": 1,
+          "openSockets": 0,
+          "observerLost": false,
+          "overflow": false,
+          "reopened": false,
+          "protocolCloseRelativeMs": 4787,
+          "postRevocationNavigationRelativeMs": 4815,
+          "fixedDiagnosticSample": false,
+          "runtime": {
+            "node": "26.13.0",
+            "npm": "11.20.0",
+            "playwright": "1.64.1",
+            "chromium": "156.0.8078.4",
+            "chromiumRevision": 1248,
+            "os": "Ubuntu24.04.5",
+            "runnerAgent": "2.338.2",
+            "runnerImage": "20261101.360.1"
+          }
+        },
+        {
+          "project": "production",
+          "job": 131715559199,
+          "artifactId": 14014966855,
+          "retry": 0,
+          "status": "passed",
+          "startedAt": "2026-11-13T06:05:29.444Z",
           "durationMs": 6431,
           "caseReport": "review-b-native-43373411759-production-case.json",
           "artifactRecord": "review-b-native-43373411759-production-artifact.json",
           "exactDiagnostic": "review-b-native-43373411759-production-retry-0-observation.json",
+          "diagnosticBytes": 1538,
+          "diagnosticSHA256": "7e7ac010ecd97e4442e179c913ab8ae4aefb6d12d0f7890402ae98a156e3f93c",
           "contractCompleted": true,
+          "primaryFailed": false,
           "cleanupFailures": [],
-          "fixedDiagnosticSample": false
+          "targetCount": 1,
+          "closedTargets": 1,
+          "openSockets": 0,
+          "observerLost": false,
+          "overflow": false,
+          "reopened": false,
+          "protocolCloseRelativeMs": 3785,
+          "postRevocationNavigationRelativeMs": 3814,
+          "fixedDiagnosticSample": false,
+          "runtime": {
+            "node": "26.13.0",
+            "npm": "11.20.0",
+            "playwright": "1.64.1",
+            "chromium": "156.0.8078.4",
+            "chromiumRevision": 1248,
+            "os": "Ubuntu24.04.5",
+            "runnerAgent": "2.338.2",
+            "runnerImage": "20261111.370.1"
+          }
         }
       ],
-      "nativeDevelopment": "pending actual case report and diagnostic",
-      "browserArtifactId": null
+      "nativeDevelopment": "passed retry0; exact first-attempt case and diagnostic retained",
+      "browserArtifactId": 14015887735,
+      "nativeAudit": "review-b-native-43373411759-audit.md",
+      "nativeActualRetries": 0,
+      "workflowComplete": true,
+      "totalJobs": 33,
+      "successfulJobs": 31,
+      "cancelledJobs": 1,
+      "failedJobs": 1,
+      "successfulExecutionWorkers": 28,
+      "cancelledExecutionWorkers": 1,
+      "remainingExecutionWorkers": [],
+      "finalAudit": "hosted-final-verdict-43373411759.json",
+      "auditHistory": "hosted-coverage-43373411759.json",
+      "browserArtifactSHA256": "62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+      "browserGateCheckId": 131734863793,
+      "aggregateReceipts": [
+        "ci-results-unit-43373411759-attempt-1.json",
+        "ci-results-lib-43373411759-attempt-1.json",
+        "ci-results-browser-43373411759-attempt-1.json"
+      ],
+      "browserAggregatePassed": false,
+      "blockingFailure": {
+        "selectedJobId": 131715559252,
+        "selectedJobConclusion": "cancelled",
+        "caseFile": "e2e/space-guests.spec.ts",
+        "caseLine": 892,
+        "caseId": "616f14ec52821b3809e5-b31d48a01c2d8f025cbc",
+        "failureLocation": "e2e/space-guests.spec.ts:139:44",
+        "callerLocation": "e2e/space-guests.spec.ts:905:21",
+        "category": "ECONNRESET during authenticated Space export snapshot read after editing and saved UI checkpoints",
+        "attempts": [
+          {
+            "retry": 0,
+            "status": "failed",
+            "durationMs": 7822,
+            "traceAvailable": false
+          },
+          {
+            "retry": 1,
+            "status": "passed",
+            "durationMs": 41501,
+            "traceAvailable": true
+          }
+        ],
+        "failOnFlakyTests": true,
+        "firstFailureIndependentlyBlocks": true,
+        "reportCaseCounts": {
+          "expected": 74,
+          "skipped": 1,
+          "flaky": 1,
+          "unexpected": 0
+        },
+        "artifactId": 14015561426,
+        "artifactSHA256": "2c4da380aa1aa1ff9b29abbd2355ce33060a8e2b61537cd27725edd4945d302c",
+        "reportSHA256": "4831258dcc8fa9bca9e7b571147c972911dea5616390709b3c0cdb377a7a9ec2",
+        "independentArtifactAudit": "review-b-development-2-failure-43373411759.json",
+        "selectedWorkerReceipt": "selected-worker-failure-43373411759-131715559252.json",
+        "scopeAssessment": "spn149-current-head-scope-assessment.md",
+        "cancellationTrigger": "unconfirmed; duration1211sec is consistent with existing20minute cap, but generic cancellation and unavailable annotations do not establish the trigger",
+        "historicalLimit": "Only retry1 has a trace. Neither it nor later passing cases can reconstruct retry0 or waive its failed acceptance.",
+        "cause": "not established",
+        "productSecurityDefectEstablished": false
+      },
+      "readableAudit": "hosted-coverage-43373411759.md",
+      "terminalObservedAt": "2026-11-13T06:38:11.745Z",
+      "selectedFamilies": {
+        "backlog": [
+          {
+            "name": "Backlog",
+            "jobId": 131715558972,
+            "checkRunId": 131715558972,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "pull-request": [
+          {
+            "name": "Pull request",
+            "jobId": 131714231020,
+            "checkRunId": 131714231020,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "lint": [
+          {
+            "name": "Lint",
+            "jobId": 131715558929,
+            "checkRunId": 131715558929,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "typecheck": [
+          {
+            "name": "Typecheck",
+            "jobId": 131715558993,
+            "checkRunId": 131715558993,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "unit-tests": [
+          {
+            "name": "Unit tests (supervisor)",
+            "jobId": 131715559008,
+            "checkRunId": 131715559008,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Unit tests (recovery)",
+            "jobId": 131715559026,
+            "checkRunId": 131715559026,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Unit tests (remaining)",
+            "jobId": 131715559074,
+            "checkRunId": 131715559074,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "lib-test-run": [
+          {
+            "name": "Lib tests (dense-cells)",
+            "jobId": 131715558963,
+            "checkRunId": 131715558963,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Lib tests (cells)",
+            "jobId": 131715559014,
+            "checkRunId": 131715559014,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Lib tests (mixed-fuzz)",
+            "jobId": 131715559010,
+            "checkRunId": 131715559010,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Lib tests (remaining)",
+            "jobId": 131715558966,
+            "checkRunId": 131715558966,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "playwright-run": [
+          {
+            "name": "Playwright smoke (development 1/2)",
+            "jobId": 131715559510,
+            "checkRunId": 131715559510,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (development 2/2)",
+            "jobId": 131715559252,
+            "checkRunId": 131715559252,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "cancelled"
+          },
+          {
+            "name": "Playwright smoke (production 1/2)",
+            "jobId": 131715559199,
+            "checkRunId": 131715559199,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (production 2/2)",
+            "jobId": 131715559183,
+            "checkRunId": 131715559183,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (mobile-https)",
+            "jobId": 131715559376,
+            "checkRunId": 131715559376,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (sync-development)",
+            "jobId": 131715559295,
+            "checkRunId": 131715559295,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (sync-production)",
+            "jobId": 131715559136,
+            "checkRunId": 131715559136,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (sync-soak-sheet)",
+            "jobId": 131715559159,
+            "checkRunId": 131715559159,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (sync-soak-doc)",
+            "jobId": 131715559173,
+            "checkRunId": 131715559173,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (offline-upgrade)",
+            "jobId": 131715559196,
+            "checkRunId": 131715559196,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Playwright smoke (supervised-restore)",
+            "jobId": 131715559115,
+            "checkRunId": 131715559115,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "container-smoke": [
+          {
+            "name": "Container smoke",
+            "jobId": 131715558949,
+            "checkRunId": 131715558949,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "restore-timing": [
+          {
+            "name": "Sized restore acceptance",
+            "jobId": 131715559043,
+            "checkRunId": 131715559043,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "sync-transition": [
+          {
+            "name": "Retained sync transition",
+            "jobId": 131715559030,
+            "checkRunId": 131715559030,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "doc-responsiveness": [
+          {
+            "name": "Doc responsiveness (desktop)",
+            "jobId": 131715558925,
+            "checkRunId": 131715558925,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Doc responsiveness (mobile)",
+            "jobId": 131715559046,
+            "checkRunId": 131715559046,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "doc-callback-lifetimes": [
+          {
+            "name": "Doc callback lifetimes (desktop)",
+            "jobId": 131715559123,
+            "checkRunId": 131715559123,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          },
+          {
+            "name": "Doc callback lifetimes (mobile)",
+            "jobId": 131715559133,
+            "checkRunId": 131715559133,
+            "runId": 43373411759,
+            "attempt": 1,
+            "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+            "checkSuiteId": 117448946471,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "selectedFlags": {
+        "responsiveness-baseline": {
+          "selected": true,
+          "mechanism": "Selected baseline first attempts and paired evidence in both existing responsiveness workers.",
+          "owners": [
+            {
+              "jobId": 131715558925,
+              "name": "Doc responsiveness (desktop)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": [
+                {
+                  "number": 5,
+                  "name": "Install candidate",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 9,
+                  "name": "Install and build baseline",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 10,
+                  "name": "Observe baseline first attempts",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 11,
+                  "name": "Build candidate",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 12,
+                  "name": "Verify candidate responsiveness and boundaries",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 13,
+                  "name": "Verify candidate evidence and selected paired comparison",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 14,
+                  "name": "Retain every baseline and candidate attempt",
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            },
+            {
+              "jobId": 131715559046,
+              "name": "Doc responsiveness (mobile)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": [
+                {
+                  "number": 5,
+                  "name": "Install candidate",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 9,
+                  "name": "Install and build baseline",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 10,
+                  "name": "Observe baseline first attempts",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 11,
+                  "name": "Build candidate",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 12,
+                  "name": "Verify candidate responsiveness and boundaries",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 13,
+                  "name": "Verify candidate evidence and selected paired comparison",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 14,
+                  "name": "Retain every baseline and candidate attempt",
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            }
+          ],
+          "accepted": true
+        },
+        "callback-baseline": {
+          "selected": true,
+          "mechanism": "Selected baseline first attempts and paired comparison in both existing callback workers.",
+          "owners": [
+            {
+              "jobId": 131715559123,
+              "name": "Doc callback lifetimes (desktop)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": [
+                {
+                  "number": 5,
+                  "name": "Install candidate",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 8,
+                  "name": "Immutable merged SPN-108 baseline",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 10,
+                  "name": "Install and build baseline with source maps",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 11,
+                  "name": "Retain baseline first attempt",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 12,
+                  "name": "Build candidate with identical source-map settings",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 13,
+                  "name": "Verify candidate first attempt",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 14,
+                  "name": "Verify complete paired callback evidence",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 28,
+                  "name": "Post Immutable merged SPN-108 baseline",
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            },
+            {
+              "jobId": 131715559133,
+              "name": "Doc callback lifetimes (mobile)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": [
+                {
+                  "number": 5,
+                  "name": "Install candidate",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 8,
+                  "name": "Immutable merged SPN-108 baseline",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 10,
+                  "name": "Install and build baseline with source maps",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 11,
+                  "name": "Retain baseline first attempt",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 12,
+                  "name": "Build candidate with identical source-map settings",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 13,
+                  "name": "Verify candidate first attempt",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 14,
+                  "name": "Verify complete paired callback evidence",
+                  "status": "completed",
+                  "conclusion": "success"
+                },
+                {
+                  "number": 28,
+                  "name": "Post Immutable merged SPN-108 baseline",
+                  "status": "completed",
+                  "conclusion": "success"
+                }
+              ]
+            }
+          ],
+          "accepted": true
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "mechanism": "SPINEL_CI_FULL_COMPATIBILITY=true passed to the existing Playwright matrix; mode flag, not an additional job.",
+          "owners": [
+            {
+              "jobId": 131715559510,
+              "name": "Playwright smoke (development 1/2)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559252,
+              "name": "Playwright smoke (development 2/2)",
+              "status": "completed",
+              "conclusion": "cancelled",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559199,
+              "name": "Playwright smoke (production 1/2)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559183,
+              "name": "Playwright smoke (production 2/2)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559376,
+              "name": "Playwright smoke (mobile-https)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559295,
+              "name": "Playwright smoke (sync-development)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559136,
+              "name": "Playwright smoke (sync-production)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559159,
+              "name": "Playwright smoke (sync-soak-sheet)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559173,
+              "name": "Playwright smoke (sync-soak-doc)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559196,
+              "name": "Playwright smoke (offline-upgrade)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            },
+            {
+              "jobId": 131715559115,
+              "name": "Playwright smoke (supervised-restore)",
+              "status": "completed",
+              "conclusion": "success",
+              "selectedComparisonSteps": []
+            }
+          ],
+          "accepted": false
+        }
+      },
+      "checkRuns": {
+        "total": 43,
+        "returned": 43,
+        "ciSuiteCount": 33,
+        "storybookSuiteCount": 10,
+        "everyObservedCheckAccountedFor": true
+      },
+      "aggregateArtifacts": {
+        "unit": "passed with exact current plan",
+        "lib": "passed with exact current plan",
+        "browser": "passed=false; fail-closed rejection of cancelled selected playwright-run"
+      },
+      "terminalBrowserAggregate": {
+        "jobId": 131734863793,
+        "checkRunId": 131734863793,
+        "conclusion": "failure",
+        "artifact": {
+          "id": 14015887735,
+          "node_id": "MDg6QXJ0aWZhY3QxNDAxNTg4NzczNQ==",
+          "name": "ci-results-browser",
+          "size_in_bytes": 469,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015887735",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14015887735/zip",
+          "expired": false,
+          "digest": "sha256:62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+          "created_at": "2026-11-13T06:36:37Z",
+          "updated_at": "2026-11-13T06:36:37Z",
+          "expires_at": "2026-12-13T06:36:37Z",
+          "workflow_run": {
+            "id": 43373411759,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-149-revocation-evidence",
+            "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+          }
+        },
+        "archiveSHA256": "62ef52973e10b78bea05af4c54d85ab442ccd22114ec104c9c2dde9e0bd3267e",
+        "jsonSHA256": "8942e9927e35786daa7d35255c9f12f406c251a8c1a7b4286a95ff105e0b8d76",
+        "receipt": {
+          "passed": false,
+          "evidence": {
+            "planSha256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+            "error": "Error: Incomplete coverage playwright-run: selected=true, result=cancelled",
+            "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"cancelled\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\"}"
+          }
+        },
+        "authoritativePlanVerifiedFromLog": true,
+        "authoritativePlanSource": "ci-plan-43373411759.json",
+        "gateResultsVerifiedFromLog": {
+          "typecheck": "success",
+          "unit-tests": "success",
+          "lib-tests": "success"
+        },
+        "all12FamilyResultsVerifiedFromLog": {
+          "backlog": "success",
+          "pull-request": "success",
+          "lint": "success",
+          "typecheck": "success",
+          "unit-tests": "success",
+          "lib-test-run": "success",
+          "playwright-run": "cancelled",
+          "container-smoke": "success",
+          "restore-timing": "success",
+          "sync-transition": "success",
+          "doc-responsiveness": "success",
+          "doc-callback-lifetimes": "success"
+        },
+        "checkoutTestedMergeVerified": true,
+        "logSHA256": "7ba3a48ad79a2d55a733c6e46c93e69275eeb7b2ca0ef4de7448a02d7b5605b8",
+        "receiptShape": "Failure receipt contains the plan digest, error and serialized result map. Full plan and prerequisite gate map were independently checked from the aggregate log against the authoritative plan artifact."
+      },
+      "auditManifest": "hosted-audit-manifest-43373411759.json",
+      "publicationAllowlist": "hosted-publication-allowlist-43373411759.json",
+      "precedingBlockedCheckpoint": {
+        "observedAt": "2026-11-13T06:34:28.469Z",
+        "manifest": "hosted-audit-manifest-43373411759-blocked-checkpoint.json",
+        "unchanged": true
+      },
+      "allAggregateReceiptsVerified": true,
+      "scopeLimit": "Failed selected-worker result is retained; independent source-review scores and passing case-level results do not waive acceptance."
     },
     {
       "purpose": "Required current-base integration acceptance",
@@ -1241,7 +2130,7 @@
       "createdAt": "2026-11-13T05:39:09Z",
       "status": "completed",
       "conclusion": "success",
-      "eligibleForCurrentMerge": "pending_all_selected_results",
+      "eligibleForCurrentMerge": false,
       "fixedDiagnosticSample": false,
       "totalJobs": 10,
       "successfulJobs": 8,
@@ -1252,7 +2141,8 @@
       ],
       "aggregateJobId": 131721043444,
       "snapshot": "storybook-43373411761-attempt-1-final.json",
-      "allFiveWorkersSucceeded": true
+      "allFiveWorkersSucceeded": true,
+      "componentAcceptance": "passed; overall merge remains blocked by CI43373411759"
     }
   ],
   "pendingWorkflowRequirements": [
@@ -1260,7 +2150,7 @@
       "purpose": "Required fresh validation after integration with current main.",
       "workflow": "CI and every applicable companion workflow",
       "trigger": "pull_request.synchronize",
-      "status": "six_gates_passed_selected_workers_and_browser_aggregate_pending",
+      "status": "blocked_failed_current_head_acceptance",
       "run": 43373411759,
       "attempt": 1,
       "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
@@ -1269,7 +2159,12 @@
       "nativeCaseAccounting": "Ordinary required current-base acceptance, separate from the closed fixed initial diagnostic sample.",
       "companionRun": 43373411761,
       "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
-      "companionRunConclusion": "success"
+      "companionRunConclusion": "success",
+      "workflowComplete": true,
+      "requiredGateFailure": "Playwright smoke, check131734863793",
+      "selectedWorkerBlocker": "development2/2, job131715559252 cancelled with independently disqualifying flaky first-attempt failure",
+      "remainingRunningJobs": 0,
+      "nextPrerequisite": "Separate bounded evidence-backed diagnosis/repair scope decision for the unresolved Space guest export reset; no rerun-to-green or broader fixture work started."
     }
   ],
   "fixedNativeInvestigation": {
@@ -1411,24 +2306,27 @@
     }
   },
   "landing": {
-    "status": "pending",
+    "status": "blocked_not_merged",
     "expectedHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
-    "latestMainCheck": "Recheck current main immediately before guarded merge.",
+    "latestMainCheck": "spn149-final-github-checkpoint.json verifies main977de3a and draft/unmerged PR282 at head64d85c; recheck before any future eligible landing.",
     "squashCommit": null,
     "landedTreeVerified": false,
     "guardedMergeRequirement": "Squash merge only after full current-head acceptance and source/base currency; use an expected-head guard and preserve the immutable final receipt locator in the merge record.",
-    "requiredBase": "977de3a3a7608a05e2103787f4dac01ec180013e"
+    "requiredBase": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "mergeAttempted": false,
+    "reason": "Failed current-head selected worker and required Playwright gate."
   },
   "cleanup": {
-    "status": "pending",
+    "status": "retained_active_unmerged_work",
     "implementationBranch": "refs/heads/codex/spn-149-revocation-evidence",
-    "implementationBranchDeletion": "pending ownership/current-head/landed verification and available guarded deletion capability",
+    "implementationBranchDeletion": "not performed; active source belongs to draft unmerged PR282 at64d85c",
     "evidenceBranch": "refs/heads/evidence/spn-149-acceptance-20261113",
-    "evidenceBranchDisposition": "retain until durable archive pin and guarded deletion are available",
+    "evidenceBranchDisposition": "retained as maintained reachable evidence; no PR owns it, and no post-merge cleanup is eligible while PR282 is unmerged",
     "archivePinStatus": "unavailable_in_exposed_capabilities",
     "refDeletionStatus": "unavailable_in_exposed_capabilities",
     "capabilityLimitation": "The GitHub connector exposes no tag/archive-pin or ref-deletion endpoint; shell GitHub push has no credential and the public browser is signed out. Do not treat an unreferenced commit as durable evidence or claim cleanup completed.",
-    "remainingPrerequisite": "Create and verify a durable archive/tag pin for the exact final evidence commit, then recheck current heads and PR ownership before deleting obsolete ticket-owned branches. No tag emulation or weaker acceptance is permitted."
+    "remainingPrerequisite": "Resolve current-head acceptance through separately scoped evidence-backed work before an eligible guarded squash merge. After landing, preserve unique evidence under a verified durable archive/tag pin and recheck branch heads/PR ownership before guarded deletion; archive-pin/ref-deletion capabilities remain unavailable.",
+    "ownershipAndHeads": "spn149-final-github-checkpoint.json"
   },
   "privacy": {
     "diagnostics": "Exact decoded JSON bytes preserved without reserialization or newline changes. The field named socket contains only local ordinal integer 1, not a CDP request ID, socket URL, ticket or session identifier.",
@@ -1443,7 +2341,8 @@
       "authored fixture values"
     ],
     "rawAuditInventory": "hosted-audit-manifest-43364365825.json preserves the auditor original inventory and digests. ZIPs and raw aggregate logs named there remain audit inputs, deliberately omitted from this published directory. The content-free extracted plan/results and public GitHub metadata are retained.",
-    "verification": "Credential/query/private-field pattern scan and diagnostic schema checks completed on retained files; all copied bytes match originals."
+    "verification": "Credential/query/private-field pattern scan and diagnostic schema checks completed on retained files; all copied bytes match originals.",
+    "currentFailurePublication": "Independent privacy review permits categorical error, public source/test/job identities, attachment inventory and hashes. Raw failed-worker request logs, cookies, URLs, authored values, screenshots and trace contents remain excluded."
   },
   "receiptQualityReviews": [
     {
@@ -1462,6 +2361,21 @@
         {
           "finding": "Known tested merge still called pending",
           "disposition": "Corrected; only fresh current-head hosted acceptance is pending."
+        }
+      ]
+    },
+    {
+      "audit": "spn149-blocked-checkpoint-privacy-review.md",
+      "sourceUnchanged": true,
+      "privacy": "Five added failure/scope/history records passed independent content-free publication review.",
+      "findings": [
+        {
+          "finding": "Owner-history retained a parent hash for an earlier unpublished selected-worker snapshot.",
+          "disposition": "Corrected current reference to the15498-byte finalized record; preserved superseded snapshot identity explicitly in publicationCorrections."
+        },
+        {
+          "finding": "Intermediate workflow state and approximate budget wording could be misread as terminal state or confirmed cancellation cause.",
+          "disposition": "Preserved timed intermediate receipt; latest record reports terminal CIcancelled and browseraggregatefailure. Owner-history now explicitly states1211seconds and an unconfirmed cancellation trigger."
         }
       ]
     }
@@ -1487,5 +2401,41 @@
       ],
       "limitation": "Browser-free controls establish observer and routing behavior; native closure and the full product contract remain owned by the existing two-login Chromium journey."
     }
-  ]
+  ],
+  "scopeCheckpoint": {
+    "status": "blocked; no additional backlog work started",
+    "failureOwner": "Space guest export-snapshot journey; exact cause unresolved",
+    "assessment": "spn149-current-head-scope-assessment.md",
+    "sourceBoundaries": "spn149-current-head-source-boundaries.json",
+    "historicalOwnership": "spn149-snapshot-owner-history.json",
+    "SPN120InventoryExpanded": false,
+    "SPN149FixedSampleReopened": false,
+    "newDiagnosticExecutions": 0,
+    "workflowRerunsAfterFailure": 0,
+    "sourceRepairPushesAfterFailure": 0,
+    "requiresSeparateScopeDecision": true,
+    "nextStep": "Define a separate bounded first-attempt diagnosis that can distinguish owned-server exit from request transport behavior at the Space export snapshot boundary, with exact source/runtime identities, resource budget, negative controls and stop conditions before executing. Establish ownership from observed evidence before choosing any repair.",
+    "sourceReviewScoresUnchanged": [
+      100,
+      100
+    ],
+    "firstCauseMissing": true,
+    "annotationsAccess": "Unavailable through supported connector endpoint; this secondary evidence limit does not explain or waive the independently observed first-attempt failure."
+  },
+  "terminalCheckpoint": {
+    "observedAt": "2026-11-13T06:38:11.745Z",
+    "status": "blocked_terminal",
+    "accepted": false,
+    "mergeAcceptanceEligible": false,
+    "allCurrentRunsFinished": true,
+    "currentSourceCheckRuns": 43,
+    "allObservedChecksAccountedFor": true,
+    "frozenPrecedingCheckpoint": "hosted-blocked-verdict-43373411759.json",
+    "terminalAudit": "hosted-final-verdict-43373411759.json",
+    "publicationSummary": "terminal-publication-summary.json",
+    "githubState": "spn149-final-github-checkpoint.json",
+    "sourceUnchanged": true,
+    "draft": true,
+    "merged": false
+  }
 }

@@ -1,0 +1,825 @@
+{
+  "observedAt": "2026-11-13T05:41:49.004Z",
+  "repository": "mxbaylee/spinel",
+  "pr": 282,
+  "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "workflowDiscovery": {
+    "total_count": 2,
+    "workflow_runs": [
+      {
+        "id": 43373411761,
+        "name": "📚 Storybook",
+        "node_id": "WFR_kwLOVNik2c8AAAAKGUG9sQ",
+        "head_branch": "codex/spn-149-revocation-evidence",
+        "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "path": ".github/workflows/storybook.yml",
+        "display_title": "🔏 SPN-149 Preserve session-revocation closure evidence across navigation",
+        "run_number": 1297,
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "workflow_id": 389835998,
+        "check_suite_id": 117448946483,
+        "check_suite_node_id": "CS_kwDOVNik2c8AAAAbWICzMw",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761",
+        "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411761",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/mxbaylee/spinel/pulls/282",
+            "id": 5289885798,
+            "number": 282,
+            "head": {
+              "ref": "codex/spn-149-revocation-evidence",
+              "sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+              "repo": {
+                "id": 1423484121,
+                "url": "https://api.github.com/repos/mxbaylee/spinel",
+                "name": "spinel"
+              }
+            },
+            "base": {
+              "ref": "main",
+              "sha": "977de3a3a7608a05e2103787f4dac01ec180013e",
+              "repo": {
+                "id": 1423484121,
+                "url": "https://api.github.com/repos/mxbaylee/spinel",
+                "name": "spinel"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-13T05:39:09Z",
+        "updated_at": "2026-11-13T05:39:09Z",
+        "actor": {
+          "login": "mxbaylee",
+          "id": 119542904,
+          "node_id": "U_kgDOByAUeA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mxbaylee",
+          "html_url": "https://github.com/mxbaylee",
+          "followers_url": "https://api.github.com/users/mxbaylee/followers",
+          "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+          "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+          "repos_url": "https://api.github.com/users/mxbaylee/repos",
+          "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-13T05:39:09Z",
+        "triggering_actor": {
+          "login": "mxbaylee",
+          "id": 119542904,
+          "node_id": "U_kgDOByAUeA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mxbaylee",
+          "html_url": "https://github.com/mxbaylee",
+          "followers_url": "https://api.github.com/users/mxbaylee/followers",
+          "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+          "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+          "repos_url": "https://api.github.com/users/mxbaylee/repos",
+          "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761/jobs",
+        "logs_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761/logs",
+        "check_suite_url": "https://api.github.com/repos/mxbaylee/spinel/check-suites/117448946483",
+        "artifacts_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761/artifacts",
+        "cancel_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761/cancel",
+        "rerun_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/mxbaylee/spinel/actions/workflows/389835998",
+        "head_commit": {
+          "id": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "tree_id": "b293f8c3c816415864c09f185d77e717bab11e38",
+          "message": "Integrate current main for SPN-149 acceptance",
+          "timestamp": "2026-11-13T05:32:34Z",
+          "author": {
+            "name": "Baylee Schmeisser",
+            "email": "119542904+mxbaylee@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Baylee Schmeisser",
+            "email": "119542904+mxbaylee@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1423484121,
+          "node_id": "R_kgDOVNik2Q",
+          "name": "spinel",
+          "full_name": "mxbaylee/spinel",
+          "private": false,
+          "owner": {
+            "login": "mxbaylee",
+            "id": 119542904,
+            "node_id": "U_kgDOByAUeA",
+            "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mxbaylee",
+            "html_url": "https://github.com/mxbaylee",
+            "followers_url": "https://api.github.com/users/mxbaylee/followers",
+            "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+            "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+            "repos_url": "https://api.github.com/users/mxbaylee/repos",
+            "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/mxbaylee/spinel",
+          "description": "🌌 Personal Univer Deployment",
+          "fork": false,
+          "url": "https://api.github.com/repos/mxbaylee/spinel",
+          "forks_url": "https://api.github.com/repos/mxbaylee/spinel/forks",
+          "keys_url": "https://api.github.com/repos/mxbaylee/spinel/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/mxbaylee/spinel/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/mxbaylee/spinel/teams",
+          "hooks_url": "https://api.github.com/repos/mxbaylee/spinel/hooks",
+          "issue_events_url": "https://api.github.com/repos/mxbaylee/spinel/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/mxbaylee/spinel/events",
+          "assignees_url": "https://api.github.com/repos/mxbaylee/spinel/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/mxbaylee/spinel/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/mxbaylee/spinel/tags",
+          "blobs_url": "https://api.github.com/repos/mxbaylee/spinel/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/mxbaylee/spinel/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/mxbaylee/spinel/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/mxbaylee/spinel/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/mxbaylee/spinel/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/mxbaylee/spinel/languages",
+          "stargazers_url": "https://api.github.com/repos/mxbaylee/spinel/stargazers",
+          "contributors_url": "https://api.github.com/repos/mxbaylee/spinel/contributors",
+          "subscribers_url": "https://api.github.com/repos/mxbaylee/spinel/subscribers",
+          "subscription_url": "https://api.github.com/repos/mxbaylee/spinel/subscription",
+          "commits_url": "https://api.github.com/repos/mxbaylee/spinel/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/mxbaylee/spinel/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/mxbaylee/spinel/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/mxbaylee/spinel/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/mxbaylee/spinel/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/mxbaylee/spinel/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/mxbaylee/spinel/merges",
+          "archive_url": "https://api.github.com/repos/mxbaylee/spinel/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/mxbaylee/spinel/downloads",
+          "issues_url": "https://api.github.com/repos/mxbaylee/spinel/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/mxbaylee/spinel/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/mxbaylee/spinel/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/mxbaylee/spinel/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/mxbaylee/spinel/labels{/name}",
+          "releases_url": "https://api.github.com/repos/mxbaylee/spinel/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/mxbaylee/spinel/deployments"
+        },
+        "head_repository": {
+          "id": 1423484121,
+          "node_id": "R_kgDOVNik2Q",
+          "name": "spinel",
+          "full_name": "mxbaylee/spinel",
+          "private": false,
+          "owner": {
+            "login": "mxbaylee",
+            "id": 119542904,
+            "node_id": "U_kgDOByAUeA",
+            "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mxbaylee",
+            "html_url": "https://github.com/mxbaylee",
+            "followers_url": "https://api.github.com/users/mxbaylee/followers",
+            "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+            "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+            "repos_url": "https://api.github.com/users/mxbaylee/repos",
+            "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/mxbaylee/spinel",
+          "description": "🌌 Personal Univer Deployment",
+          "fork": false,
+          "url": "https://api.github.com/repos/mxbaylee/spinel",
+          "forks_url": "https://api.github.com/repos/mxbaylee/spinel/forks",
+          "keys_url": "https://api.github.com/repos/mxbaylee/spinel/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/mxbaylee/spinel/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/mxbaylee/spinel/teams",
+          "hooks_url": "https://api.github.com/repos/mxbaylee/spinel/hooks",
+          "issue_events_url": "https://api.github.com/repos/mxbaylee/spinel/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/mxbaylee/spinel/events",
+          "assignees_url": "https://api.github.com/repos/mxbaylee/spinel/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/mxbaylee/spinel/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/mxbaylee/spinel/tags",
+          "blobs_url": "https://api.github.com/repos/mxbaylee/spinel/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/mxbaylee/spinel/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/mxbaylee/spinel/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/mxbaylee/spinel/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/mxbaylee/spinel/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/mxbaylee/spinel/languages",
+          "stargazers_url": "https://api.github.com/repos/mxbaylee/spinel/stargazers",
+          "contributors_url": "https://api.github.com/repos/mxbaylee/spinel/contributors",
+          "subscribers_url": "https://api.github.com/repos/mxbaylee/spinel/subscribers",
+          "subscription_url": "https://api.github.com/repos/mxbaylee/spinel/subscription",
+          "commits_url": "https://api.github.com/repos/mxbaylee/spinel/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/mxbaylee/spinel/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/mxbaylee/spinel/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/mxbaylee/spinel/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/mxbaylee/spinel/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/mxbaylee/spinel/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/mxbaylee/spinel/merges",
+          "archive_url": "https://api.github.com/repos/mxbaylee/spinel/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/mxbaylee/spinel/downloads",
+          "issues_url": "https://api.github.com/repos/mxbaylee/spinel/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/mxbaylee/spinel/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/mxbaylee/spinel/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/mxbaylee/spinel/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/mxbaylee/spinel/labels{/name}",
+          "releases_url": "https://api.github.com/repos/mxbaylee/spinel/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/mxbaylee/spinel/deployments"
+        }
+      },
+      {
+        "id": 43373411759,
+        "name": "💎 CI",
+        "node_id": "WFR_kwLOVNik2c8AAAAKGUG9rw",
+        "head_branch": "codex/spn-149-revocation-evidence",
+        "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "path": ".github/workflows/ci.yml",
+        "display_title": "🔏 SPN-149 Preserve session-revocation closure evidence across navigation",
+        "run_number": 2218,
+        "event": "pull_request",
+        "status": "queued",
+        "conclusion": null,
+        "workflow_id": 387826308,
+        "check_suite_id": 117448946471,
+        "check_suite_node_id": "CS_kwDOVNik2c8AAAAbWICzJw",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759",
+        "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759",
+        "pull_requests": [
+          {
+            "url": "https://api.github.com/repos/mxbaylee/spinel/pulls/282",
+            "id": 5289885798,
+            "number": 282,
+            "head": {
+              "ref": "codex/spn-149-revocation-evidence",
+              "sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+              "repo": {
+                "id": 1423484121,
+                "url": "https://api.github.com/repos/mxbaylee/spinel",
+                "name": "spinel"
+              }
+            },
+            "base": {
+              "ref": "main",
+              "sha": "977de3a3a7608a05e2103787f4dac01ec180013e",
+              "repo": {
+                "id": 1423484121,
+                "url": "https://api.github.com/repos/mxbaylee/spinel",
+                "name": "spinel"
+              }
+            }
+          }
+        ],
+        "created_at": "2026-11-13T05:39:09Z",
+        "updated_at": "2026-11-13T05:39:09Z",
+        "actor": {
+          "login": "mxbaylee",
+          "id": 119542904,
+          "node_id": "U_kgDOByAUeA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mxbaylee",
+          "html_url": "https://github.com/mxbaylee",
+          "followers_url": "https://api.github.com/users/mxbaylee/followers",
+          "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+          "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+          "repos_url": "https://api.github.com/users/mxbaylee/repos",
+          "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "run_attempt": 1,
+        "referenced_workflows": [],
+        "run_started_at": "2026-11-13T05:39:09Z",
+        "triggering_actor": {
+          "login": "mxbaylee",
+          "id": 119542904,
+          "node_id": "U_kgDOByAUeA",
+          "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+          "gravatar_id": "",
+          "url": "https://api.github.com/users/mxbaylee",
+          "html_url": "https://github.com/mxbaylee",
+          "followers_url": "https://api.github.com/users/mxbaylee/followers",
+          "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+          "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+          "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+          "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+          "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+          "repos_url": "https://api.github.com/users/mxbaylee/repos",
+          "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+          "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+          "type": "User",
+          "user_view_type": "public",
+          "site_admin": false
+        },
+        "jobs_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759/jobs",
+        "logs_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759/logs",
+        "check_suite_url": "https://api.github.com/repos/mxbaylee/spinel/check-suites/117448946471",
+        "artifacts_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759/artifacts",
+        "cancel_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759/cancel",
+        "rerun_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759/rerun",
+        "previous_attempt_url": null,
+        "workflow_url": "https://api.github.com/repos/mxbaylee/spinel/actions/workflows/387826308",
+        "head_commit": {
+          "id": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+          "tree_id": "b293f8c3c816415864c09f185d77e717bab11e38",
+          "message": "Integrate current main for SPN-149 acceptance",
+          "timestamp": "2026-11-13T05:32:34Z",
+          "author": {
+            "name": "Baylee Schmeisser",
+            "email": "119542904+mxbaylee@users.noreply.github.com"
+          },
+          "committer": {
+            "name": "Baylee Schmeisser",
+            "email": "119542904+mxbaylee@users.noreply.github.com"
+          }
+        },
+        "repository": {
+          "id": 1423484121,
+          "node_id": "R_kgDOVNik2Q",
+          "name": "spinel",
+          "full_name": "mxbaylee/spinel",
+          "private": false,
+          "owner": {
+            "login": "mxbaylee",
+            "id": 119542904,
+            "node_id": "U_kgDOByAUeA",
+            "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mxbaylee",
+            "html_url": "https://github.com/mxbaylee",
+            "followers_url": "https://api.github.com/users/mxbaylee/followers",
+            "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+            "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+            "repos_url": "https://api.github.com/users/mxbaylee/repos",
+            "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/mxbaylee/spinel",
+          "description": "🌌 Personal Univer Deployment",
+          "fork": false,
+          "url": "https://api.github.com/repos/mxbaylee/spinel",
+          "forks_url": "https://api.github.com/repos/mxbaylee/spinel/forks",
+          "keys_url": "https://api.github.com/repos/mxbaylee/spinel/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/mxbaylee/spinel/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/mxbaylee/spinel/teams",
+          "hooks_url": "https://api.github.com/repos/mxbaylee/spinel/hooks",
+          "issue_events_url": "https://api.github.com/repos/mxbaylee/spinel/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/mxbaylee/spinel/events",
+          "assignees_url": "https://api.github.com/repos/mxbaylee/spinel/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/mxbaylee/spinel/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/mxbaylee/spinel/tags",
+          "blobs_url": "https://api.github.com/repos/mxbaylee/spinel/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/mxbaylee/spinel/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/mxbaylee/spinel/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/mxbaylee/spinel/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/mxbaylee/spinel/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/mxbaylee/spinel/languages",
+          "stargazers_url": "https://api.github.com/repos/mxbaylee/spinel/stargazers",
+          "contributors_url": "https://api.github.com/repos/mxbaylee/spinel/contributors",
+          "subscribers_url": "https://api.github.com/repos/mxbaylee/spinel/subscribers",
+          "subscription_url": "https://api.github.com/repos/mxbaylee/spinel/subscription",
+          "commits_url": "https://api.github.com/repos/mxbaylee/spinel/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/mxbaylee/spinel/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/mxbaylee/spinel/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/mxbaylee/spinel/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/mxbaylee/spinel/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/mxbaylee/spinel/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/mxbaylee/spinel/merges",
+          "archive_url": "https://api.github.com/repos/mxbaylee/spinel/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/mxbaylee/spinel/downloads",
+          "issues_url": "https://api.github.com/repos/mxbaylee/spinel/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/mxbaylee/spinel/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/mxbaylee/spinel/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/mxbaylee/spinel/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/mxbaylee/spinel/labels{/name}",
+          "releases_url": "https://api.github.com/repos/mxbaylee/spinel/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/mxbaylee/spinel/deployments"
+        },
+        "head_repository": {
+          "id": 1423484121,
+          "node_id": "R_kgDOVNik2Q",
+          "name": "spinel",
+          "full_name": "mxbaylee/spinel",
+          "private": false,
+          "owner": {
+            "login": "mxbaylee",
+            "id": 119542904,
+            "node_id": "U_kgDOByAUeA",
+            "avatar_url": "https://avatars.githubusercontent.com/u/119542904?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/mxbaylee",
+            "html_url": "https://github.com/mxbaylee",
+            "followers_url": "https://api.github.com/users/mxbaylee/followers",
+            "following_url": "https://api.github.com/users/mxbaylee/following{/other_user}",
+            "gists_url": "https://api.github.com/users/mxbaylee/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/mxbaylee/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/mxbaylee/subscriptions",
+            "organizations_url": "https://api.github.com/users/mxbaylee/orgs",
+            "repos_url": "https://api.github.com/users/mxbaylee/repos",
+            "events_url": "https://api.github.com/users/mxbaylee/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/mxbaylee/received_events",
+            "type": "User",
+            "user_view_type": "public",
+            "site_admin": false
+          },
+          "html_url": "https://github.com/mxbaylee/spinel",
+          "description": "🌌 Personal Univer Deployment",
+          "fork": false,
+          "url": "https://api.github.com/repos/mxbaylee/spinel",
+          "forks_url": "https://api.github.com/repos/mxbaylee/spinel/forks",
+          "keys_url": "https://api.github.com/repos/mxbaylee/spinel/keys{/key_id}",
+          "collaborators_url": "https://api.github.com/repos/mxbaylee/spinel/collaborators{/collaborator}",
+          "teams_url": "https://api.github.com/repos/mxbaylee/spinel/teams",
+          "hooks_url": "https://api.github.com/repos/mxbaylee/spinel/hooks",
+          "issue_events_url": "https://api.github.com/repos/mxbaylee/spinel/issues/events{/number}",
+          "events_url": "https://api.github.com/repos/mxbaylee/spinel/events",
+          "assignees_url": "https://api.github.com/repos/mxbaylee/spinel/assignees{/user}",
+          "branches_url": "https://api.github.com/repos/mxbaylee/spinel/branches{/branch}",
+          "tags_url": "https://api.github.com/repos/mxbaylee/spinel/tags",
+          "blobs_url": "https://api.github.com/repos/mxbaylee/spinel/git/blobs{/sha}",
+          "git_tags_url": "https://api.github.com/repos/mxbaylee/spinel/git/tags{/sha}",
+          "git_refs_url": "https://api.github.com/repos/mxbaylee/spinel/git/refs{/sha}",
+          "trees_url": "https://api.github.com/repos/mxbaylee/spinel/git/trees{/sha}",
+          "statuses_url": "https://api.github.com/repos/mxbaylee/spinel/statuses/{sha}",
+          "languages_url": "https://api.github.com/repos/mxbaylee/spinel/languages",
+          "stargazers_url": "https://api.github.com/repos/mxbaylee/spinel/stargazers",
+          "contributors_url": "https://api.github.com/repos/mxbaylee/spinel/contributors",
+          "subscribers_url": "https://api.github.com/repos/mxbaylee/spinel/subscribers",
+          "subscription_url": "https://api.github.com/repos/mxbaylee/spinel/subscription",
+          "commits_url": "https://api.github.com/repos/mxbaylee/spinel/commits{/sha}",
+          "git_commits_url": "https://api.github.com/repos/mxbaylee/spinel/git/commits{/sha}",
+          "comments_url": "https://api.github.com/repos/mxbaylee/spinel/comments{/number}",
+          "issue_comment_url": "https://api.github.com/repos/mxbaylee/spinel/issues/comments{/number}",
+          "contents_url": "https://api.github.com/repos/mxbaylee/spinel/contents/{+path}",
+          "compare_url": "https://api.github.com/repos/mxbaylee/spinel/compare/{base}...{head}",
+          "merges_url": "https://api.github.com/repos/mxbaylee/spinel/merges",
+          "archive_url": "https://api.github.com/repos/mxbaylee/spinel/{archive_format}{/ref}",
+          "downloads_url": "https://api.github.com/repos/mxbaylee/spinel/downloads",
+          "issues_url": "https://api.github.com/repos/mxbaylee/spinel/issues{/number}",
+          "pulls_url": "https://api.github.com/repos/mxbaylee/spinel/pulls{/number}",
+          "milestones_url": "https://api.github.com/repos/mxbaylee/spinel/milestones{/number}",
+          "notifications_url": "https://api.github.com/repos/mxbaylee/spinel/notifications{?since,all,participating}",
+          "labels_url": "https://api.github.com/repos/mxbaylee/spinel/labels{/name}",
+          "releases_url": "https://api.github.com/repos/mxbaylee/spinel/releases{/id}",
+          "deployments_url": "https://api.github.com/repos/mxbaylee/spinel/deployments"
+        }
+      }
+    ]
+  },
+  "sourceCommit": {
+    "sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "node_id": "C_kwDOVNik2doAKDY0ZDg1YzE1Mjg4MDE3YmJmZTM0MzRkOTFmZTA2NDdlYjJhMmQ2MTM",
+    "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "html_url": "https://github.com/mxbaylee/spinel/commit/64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "author": {
+      "name": "Baylee Schmeisser",
+      "email": "119542904+mxbaylee@users.noreply.github.com",
+      "date": "2026-11-13T05:32:34Z"
+    },
+    "committer": {
+      "name": "Baylee Schmeisser",
+      "email": "119542904+mxbaylee@users.noreply.github.com",
+      "date": "2026-11-13T05:32:34Z"
+    },
+    "tree": {
+      "sha": "b293f8c3c816415864c09f185d77e717bab11e38",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/git/trees/b293f8c3c816415864c09f185d77e717bab11e38"
+    },
+    "message": "Integrate current main for SPN-149 acceptance",
+    "parents": [
+      {
+        "sha": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/db24230dd4df539e2055471f55e50a402596c1fb",
+        "html_url": "https://github.com/mxbaylee/spinel/commit/db24230dd4df539e2055471f55e50a402596c1fb"
+      },
+      {
+        "sha": "977de3a3a7608a05e2103787f4dac01ec180013e",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/977de3a3a7608a05e2103787f4dac01ec180013e",
+        "html_url": "https://github.com/mxbaylee/spinel/commit/977de3a3a7608a05e2103787f4dac01ec180013e"
+      }
+    ],
+    "verification": {
+      "verified": false,
+      "reason": "unsigned",
+      "signature": null,
+      "payload": null,
+      "verified_at": null
+    }
+  },
+  "testedCommit": {
+    "sha": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "node_id": "C_kwDOVNik2doAKDYzODlhOGMyOWIzMzdiNmU5OTNiNjk5ZDU0NGVkMmU0M2Q4NmZmZWQ",
+    "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "html_url": "https://github.com/mxbaylee/spinel/commit/6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "author": {
+      "name": "Baylee Schmeisser",
+      "email": "119542904+mxbaylee@users.noreply.github.com",
+      "date": "2026-11-13T05:39:07Z"
+    },
+    "committer": {
+      "name": "GitHub",
+      "email": "noreply@github.com",
+      "date": "2026-11-13T05:39:07Z"
+    },
+    "tree": {
+      "sha": "b293f8c3c816415864c09f185d77e717bab11e38",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/git/trees/b293f8c3c816415864c09f185d77e717bab11e38"
+    },
+    "message": "Merge 64d85c15288017bbfe3434d91fe0647eb2a2d613 into 977de3a3a7608a05e2103787f4dac01ec180013e",
+    "parents": [
+      {
+        "sha": "977de3a3a7608a05e2103787f4dac01ec180013e",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/977de3a3a7608a05e2103787f4dac01ec180013e",
+        "html_url": "https://github.com/mxbaylee/spinel/commit/977de3a3a7608a05e2103787f4dac01ec180013e"
+      },
+      {
+        "sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "html_url": "https://github.com/mxbaylee/spinel/commit/64d85c15288017bbfe3434d91fe0647eb2a2d613"
+      }
+    ],
+    "verification": {
+      "verified": true,
+      "reason": "valid",
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\nwsFcBAABCAAQBQJq9qJ7CRC1aQ7uu5UhlAAAmnIQABzNZcIqgpX/Sy4qa7uallVn\ndtAyxTsWzyL66qJrYsPvYEyjvLt6WFMf1OiURwFtXjYfv8c5BWtqCvmPnmjHE0c0\n9fQTIyjTwmmydS1V0vGJQIOeqk7kL6kdcVWc9PZmmUnC/P7M0ilPdOBQ7OgoACjr\nh4B5KLVBBE+Rqxkh/1j2XhZDWlZMMwIcS9OXeJQB4MOfd4oZ1VZHN5n1Ued0yUWh\nxpg+kV+zsAt1SOBJZ0Jby/Mlj/cQkbV9ljUpujy2qaQZB0X3bq/Jdo89gA4YhbbU\nJCL0zqSlMr8Qvx9ogQVYMQVhF6cEW7tu3IKgYLKfETsuxf7NHFV8yhGy7K0hJiyI\niS8K59+Y/Otg0ATOwcCbeVvMBPuVT8Y33mfGeLcxAD3440IjOOCeXbE6CxqID61v\n/IRrvOq3OZFrbP1vCcRs94CHCy6djoVN9PzRECXNJ5Pe+TjX1b/aEeZGXRbTgduz\nEzYSTmD6Ewlr2ENE3tVWzWUfo46nZbdn+ceaAXNmAIPeArB+nNFjRxjoD2MjH7Ft\nCEjgypD87BYfn18VPguVm2jCeV1U5C5X5sQO0yb28qxMtXr8M0j0qaw3kBxCQahX\n1HEjjyk1+zzL7DjF/KxhFqiStcdD+2XXzGSlw24LZI9NhqIJm80KQaJbn5EQm6/k\n1j52dJ6+AgLfGeQZlmFn\n=6xx4\n-----END PGP SIGNATURE-----\n",
+      "payload": "tree b293f8c3c816415864c09f185d77e717bab11e38\nparent 977de3a3a7608a05e2103787f4dac01ec180013e\nparent 64d85c15288017bbfe3434d91fe0647eb2a2d613\nauthor Baylee Schmeisser <119542904+mxbaylee@users.noreply.github.com> 1794548347 +0000\ncommitter GitHub <noreply@github.com> 1794548347 +0000\n\nMerge 64d85c15288017bbfe3434d91fe0647eb2a2d613 into 977de3a3a7608a05e2103787f4dac01ec180013e\n",
+      "verified_at": "2026-11-13T05:39:08Z"
+    }
+  },
+  "initialCIJobs": {
+    "total_count": 2,
+    "jobs": [
+      {
+        "id": 131714231020,
+        "run_id": 43373411759,
+        "workflow_name": "💎 CI",
+        "head_branch": "codex/spn-149-revocation-evidence",
+        "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOVNik2c8AAAAeqseq7A",
+        "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/131714231020",
+        "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131714231020",
+        "status": "completed",
+        "conclusion": "success",
+        "created_at": "2026-11-13T05:39:09Z",
+        "started_at": "2026-11-13T05:39:58Z",
+        "completed_at": "2026-11-13T05:40:44Z",
+        "name": "Pull request",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-13T05:39:58Z",
+            "completed_at": "2026-11-13T05:39:59Z"
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-13T05:39:59Z",
+            "completed_at": "2026-11-13T05:40:37Z"
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-13T05:40:37Z",
+            "completed_at": "2026-11-13T05:40:41Z"
+          },
+          {
+            "name": "Title, ticket, IDs and size",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-13T05:40:41Z",
+            "completed_at": "2026-11-13T05:40:41Z"
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-13T05:40:41Z",
+            "completed_at": "2026-11-13T05:40:42Z"
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-13T05:40:42Z",
+            "completed_at": "2026-11-13T05:40:42Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-13T05:40:42Z",
+            "completed_at": "2026-11-13T05:40:42Z"
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131714231020",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000052517,
+        "runner_name": "GitHub Actions 1000052517",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      },
+      {
+        "id": 131714231522,
+        "run_id": 43373411759,
+        "workflow_name": "💎 CI",
+        "head_branch": "codex/spn-149-revocation-evidence",
+        "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411759",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOVNik2c8AAAAeqses4g",
+        "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/131714231522",
+        "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411759/job/131714231522",
+        "status": "queued",
+        "conclusion": null,
+        "created_at": "2026-11-13T05:39:10Z",
+        "started_at": "2026-11-13T05:39:10Z",
+        "completed_at": null,
+        "name": "Classify changes (43373411759)",
+        "steps": [],
+        "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131714231522",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 0,
+        "runner_name": "",
+        "runner_group_id": 0,
+        "runner_group_name": ""
+      }
+    ]
+  },
+  "initialStorybookJobs": {
+    "total_count": 1,
+    "jobs": [
+      {
+        "id": 131714231425,
+        "run_id": 43373411761,
+        "workflow_name": "📚 Storybook",
+        "head_branch": "codex/spn-149-revocation-evidence",
+        "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43373411761",
+        "run_attempt": 1,
+        "node_id": "CR_kwDOVNik2c8AAAAeqsesgQ",
+        "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/131714231425",
+        "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43373411761/job/131714231425",
+        "status": "in_progress",
+        "conclusion": null,
+        "created_at": "2026-11-13T05:39:09Z",
+        "started_at": "2026-11-13T05:40:21Z",
+        "completed_at": null,
+        "name": "Classify changes",
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-13T05:40:22Z",
+            "completed_at": "2026-11-13T05:40:23Z"
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 2,
+            "started_at": "2026-11-13T05:40:23Z",
+            "completed_at": null
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 3,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Run if [ \"$GITHUB_EVENT_NAME\" = pull_request ]; then",
+            "status": "pending",
+            "conclusion": null,
+            "number": 4,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Choose screenshot evidence",
+            "status": "pending",
+            "conclusion": null,
+            "number": 5,
+            "started_at": null,
+            "completed_at": null
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10,
+            "started_at": null,
+            "completed_at": null
+          }
+        ],
+        "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131714231425",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "runner_id": 1000052519,
+        "runner_name": "GitHub Actions 1000052519",
+        "runner_group_id": 0,
+        "runner_group_name": "GitHub Actions"
+      }
+    ]
+  },
+  "ciRun": 43373411759,
+  "storybookRun": 43373411761,
+  "runAttempt": 1,
+  "ciCheckSuite": 117448946471,
+  "storybookCheckSuite": 117448946483,
+  "acceptance": "pending",
+  "sourceReview": {
+    "report": "review-a-integration-977de3a.md",
+    "score": 100,
+    "rubric": [
+      35,
+      25,
+      20,
+      10,
+      10
+    ]
+  },
+  "desktopApplicability": {
+    "workflow": ".github/workflows/desktop-offline.yml",
+    "matchedCurrentBasePaths": [],
+    "selected": false,
+    "reason": "The 18-path PR diff has no desktop-offline workflow path-filter match; incoming SPN-148 desktop helpers are already in the base."
+  },
+  "historicalRuns": [
+    {
+      "run": 43364365825,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "mergeAcceptanceForCurrentHead": false
+    },
+    {
+      "run": 43370718838,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "mergeAcceptanceForCurrentHead": false
+    }
+  ]
+}

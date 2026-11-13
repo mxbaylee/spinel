@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "observedAt": "2026-11-13 06:39:26 UTC",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": {
+    "number": 282,
+    "url": "https://github.com/mxbaylee/spinel/pull/282",
+    "state": "open",
+    "draft": true,
+    "merged": false,
+    "mergedAt": null,
+    "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "headRef": "codex/spn-149-revocation-evidence",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "baseRef": "main",
+    "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "mergeable": true,
+    "mergeableState": "blocked",
+    "updatedAt": "2026-11-13T05:39:05Z"
+  },
+  "main": {
+    "ref": "refs/heads/main",
+    "sha": "977de3a3a7608a05e2103787f4dac01ec180013e"
+  },
+  "branches": [
+    {
+      "ref": "refs/heads/codex/spn-149-revocation-evidence",
+      "sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "activePullRequest": 282,
+      "disposition": "Retain active unmerged candidate; current-head acceptance failed."
+    },
+    {
+      "ref": "refs/heads/evidence/spn-149-acceptance-20261113",
+      "sha": "16033e992f8a5c529d0de5f470a396cb9417ec25",
+      "activePullRequest": null,
+      "disposition": "Retain maintained reachable evidence; receipt is being updated from this observed head with an expected-head guard."
+    }
+  ],
+  "ownershipQueries": {
+    "source": {
+      "total": 1,
+      "prs": [
+        {
+          "number": 282,
+          "state": "open",
+          "draft": true,
+          "mergedAt": null,
+          "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+        }
+      ]
+    },
+    "evidence": {
+      "total": 0,
+      "prs": []
+    }
+  },
+  "mergeAcceptanceEligible": false,
+  "sourceReviewScores": [
+    100,
+    100
+  ],
+  "blockedBy": "Current CI run43373411759 selected development2/2 worker131715559252 cancelled with a flaky first-attempt Space guest export read failure; final Playwright aggregate131734863793 failed.",
+  "attemptsAfterFailure": {
+    "workflowReruns": 0,
+    "sourceRepairPushes": 0,
+    "newTestWorkloads": 0,
+    "scopeExpansion": false
+  },
+  "cleanup": {
+    "afterMergeEligible": false,
+    "reason": "PR is unmerged; active implementation and maintained evidence branches are not obsolete.",
+    "performed": false
+  },
+  "nextDecision": "Separately scope the unresolved first-attempt Space guest export reset before any new diagnosis/repair execution. No SPN-120 inventory expansion or additional backlog work was started."
+}
