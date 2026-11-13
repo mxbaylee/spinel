@@ -428,6 +428,51 @@ test('cleanup failure alone cannot report a successful action', async () => {
   await assert.rejects(f.click(), /cleanup failed/);
 });
 
+test('a click arriving during failure diagnostics cannot pass the expired observation', async () => {
+  const f = fixture(),
+    post = f.boundary.post,
+    poll = f.boundary.poll,
+    snapshot = f.boundary.snapshot;
+  let original: unknown;
+  f.boundary.post = async (mode, point, evidence) => {
+    if (mode === 'move') return post(mode, point, evidence);
+    f.posts.push({ mode, point });
+    evidence.posted = 2;
+  };
+  f.boundary.poll = async (...args) => {
+    try {
+      return await poll(...args);
+    } catch (error) {
+      original = error;
+      throw error;
+    }
+  };
+  f.boundary.snapshot = async (phase) => {
+    assert.equal(phase, 'click-observation-failure');
+    assert.ok(original, 'The original observation must fail before this diagnostic.');
+    // A later matching press is diagnostic evidence, never renewed acceptance.
+    f.emit('mousedown', f.posts[1].point);
+    return snapshot(phase);
+  };
+  await assert.rejects(f.click(), (error) => error === original);
+  const record = f.records[0];
+  assert.equal(record.status, 'failed');
+  assert.equal(record.phase, 'click-observation');
+  assert.equal(record.error, String(original));
+  assert.equal(record.clickObservation, undefined);
+  const late = (record.finalObservation as { clicked: { trusted: boolean; target: boolean } })
+    .clicked;
+  assert.ok(late.trusted && late.target);
+  assert.equal(f.reads(), 4);
+  assert.equal(f.snapshots(), 1);
+  assert.deepEqual(
+    f.posts.map((value) => value.mode),
+    ['move', 'click'],
+  );
+  assert.equal(record.observerRemoved, true);
+  assert.ok(f.clean());
+});
+
 test('bounded observations retain a matching move even after the diagnostic event cap', async () => {
   const f = fixture(),
     post = f.boundary.post;

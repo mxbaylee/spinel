@@ -225,5 +225,6 @@
       "logSha256": "831f99d89246053394c79de14076764930a34ad3ddfdeb52ca32fed570668a50",
       "scope": "Pre-commit title/configuration check; HEAD was still the base, so committed-diff size is not established by this receipt. Recheck the complete commit before publication and retain that result in the PR."
     }
-  ]
+  ],
+  "sourceCommit": "5ffd7956e9883b319c2bbc3003ac7c41b5fe4d7d"
 }
