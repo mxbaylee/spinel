@@ -1,0 +1,229 @@
+{
+  "baseSha": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "finalSourceFiles": [
+    {
+      "path": "scripts/ci/desktop-pointer.ts",
+      "gitBlob": "f97dee104170661513688d19efb12acb8afb167a",
+      "sha256": "373ae922328ac00683bee69a386ac4d1498dc1ecd1fcfe40ea9a2e7b70f2e170"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.test.ts",
+      "gitBlob": "ab36e7b987366a590f692c7544817232f045471e",
+      "sha256": "ed261fe2d5ae81fe480428d59e6666a5b229c2c7f4a6189a1e5855af7b45eb9f"
+    },
+    {
+      "path": "scripts/ci/desktop-browser.ts",
+      "gitBlob": "870ee927cbfb9477c8378f32a8beca3a8e0452da",
+      "sha256": "ebbfb07c74c932a2c119107e6dc4cb6eb31cfc163acb14ddf12da4ed166bd6ac"
+    }
+  ],
+  "sourceCoverage": "The focused-final 178-test run, full typecheck, lint and backlog checks used these final formatted source files. Initial before/after-repair pointer controls used the uncommitted pre-format test harness, with no separate test commit SHA; they do not replace the final source-bound controls.",
+  "checks": [
+    {
+      "startedAt": "2026-11-13T03:47:58.060Z",
+      "finishedAt": "2026-11-13T03:48:23.724Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "npm",
+        "ci"
+      ],
+      "elapsedMs": 25664,
+      "peakKiB": 1314296,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "install",
+      "outcome": "passed",
+      "logSha256": "b9ad98d18885bcd986d041066ecc215ab57f29aaeb3a0332af9080c2de4a29c2"
+    },
+    {
+      "startedAt": "2026-11-13T03:49:44.938Z",
+      "finishedAt": "2026-11-13T03:49:45.396Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 458,
+      "peakKiB": 334684,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "pointer-negative-before-fix",
+      "outcome": "expected-negative-control-failure",
+      "logSha256": "504ada638df5f27e682efb16e81841b25cad9af8817abe42dd5f0e48f7825c0f"
+    },
+    {
+      "startedAt": "2026-11-13T03:49:54.590Z",
+      "finishedAt": "2026-11-13T03:50:12.992Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 18402,
+      "peakKiB": 333732,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "pointer-after-fix",
+      "outcome": "passed",
+      "logSha256": "91b42009062ebd722880c23e82c7e83758861508bb8382809db756eccffbc0ad"
+    },
+    {
+      "startedAt": "2026-11-13T03:50:12.045Z",
+      "finishedAt": "2026-11-13T03:50:14.772Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "scripts/ci/desktop-pointer.ts",
+        "scripts/ci/desktop-pointer.test.ts",
+        "scripts/ci/desktop-browser.ts"
+      ],
+      "elapsedMs": 2727,
+      "peakKiB": 302572,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "format",
+      "outcome": "passed",
+      "logSha256": "3da2411802ce0003c7ea7d61c9cf813cf52abc9497b738efc493ce21f0d47028"
+    },
+    {
+      "startedAt": "2026-11-13T03:50:35.982Z",
+      "finishedAt": "2026-11-13T03:50:59.202Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--max-old-space-size=1400",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "elapsedMs": 23219,
+      "peakKiB": 1997176,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "typecheck",
+      "outcome": "passed",
+      "logSha256": "60cce5c95f0489928e91074553d0cfc45809e37fdcb9f9b5cbec2810df6795f4"
+    },
+    {
+      "startedAt": "2026-11-13T03:52:08.566Z",
+      "finishedAt": "2026-11-13T03:52:09.102Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "npm",
+        "run",
+        "backlog:index"
+      ],
+      "elapsedMs": 536,
+      "peakKiB": 339496,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "backlog-index",
+      "outcome": "passed",
+      "logSha256": "73e761feaaeab29111fa3845c44e451d9676a882e2660c56f154fb0fbe9ee7d4"
+    },
+    {
+      "startedAt": "2026-11-13T03:52:19.343Z",
+      "finishedAt": "2026-11-13T03:52:23.790Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/desktop-pointer.test.ts",
+        "scripts/ci/desktop-safari-identity.test.ts",
+        "scripts/ci/desktop-storage.test.ts",
+        "scripts/ci/plan.test.ts",
+        "scripts/ci/changes.test.ts",
+        "scripts/ci/coverage-result.test.ts"
+      ],
+      "elapsedMs": 4446,
+      "peakKiB": 393752,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "focused-final",
+      "outcome": "passed",
+      "logSha256": "4c9250a7d0b7d359af26d760cefd07f59bc381c187c85bfa0e9e9ba17e9c15cd"
+    },
+    {
+      "startedAt": "2026-11-13T03:52:23.894Z",
+      "finishedAt": "2026-11-13T03:52:46.105Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "elapsedMs": 22211,
+      "peakKiB": 811820,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "lint",
+      "outcome": "passed",
+      "logSha256": "7d2eb3a12612588f094b27079ca770be3a56221538e77dd3355ec518c5d168be"
+    },
+    {
+      "startedAt": "2026-11-13T03:52:46.192Z",
+      "finishedAt": "2026-11-13T03:52:46.540Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "elapsedMs": 348,
+      "peakKiB": 334436,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "backlog-check",
+      "outcome": "passed",
+      "logSha256": "c1ee0b0be6ff92c6db294678c63f9fcbe60ef9ba4e28c1e5ba79a47d1be10ac2"
+    },
+    {
+      "startedAt": "2026-11-13T03:52:46.625Z",
+      "finishedAt": "2026-11-13T03:52:47.103Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "origin/main",
+        "--title",
+        "\ud83d\uddb1\ufe0f SPN-148 Diagnose recurring native Safari click delivery"
+      ],
+      "elapsedMs": 478,
+      "peakKiB": 339860,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "backlog-pr",
+      "outcome": "passed",
+      "logSha256": "831f99d89246053394c79de14076764930a34ad3ddfdeb52ca32fed570668a50",
+      "scope": "Pre-commit title/configuration check; HEAD was still the base, so committed-diff size is not established by this receipt. Recheck the complete commit before publication and retain that result in the PR."
+    }
+  ]
+}
