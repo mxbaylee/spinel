@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "project": "production",
+  "retry": 0,
+  "tested": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "node": "v26.13.0",
+  "browser": "156.0.8078.4",
+  "contractCompleted": true,
+  "primaryFailed": false,
+  "cleanupFailures": [],
+  "observation": {
+    "targetCount": 1,
+    "closedTargets": 1,
+    "openSockets": 0,
+    "receivedFrames": 6,
+    "overflow": false,
+    "observerLost": false,
+    "reopened": false,
+    "events": [
+      {
+        "kind": "navigation",
+        "ms": 11
+      },
+      {
+        "kind": "socket-created",
+        "ms": 1879,
+        "socket": 1
+      },
+      {
+        "kind": "socket-opened",
+        "ms": 1891,
+        "socket": 1
+      },
+      {
+        "kind": "edit-held",
+        "ms": 2639
+      },
+      {
+        "kind": "revocation-requested",
+        "ms": 2639
+      },
+      {
+        "kind": "revocation-written",
+        "ms": 2760
+      },
+      {
+        "kind": "page-close",
+        "ms": 2780
+      },
+      {
+        "kind": "socket-closed",
+        "ms": 2780,
+        "socket": 1
+      },
+      {
+        "kind": "navigation",
+        "ms": 2807
+      },
+      {
+        "kind": "closure-observed",
+        "ms": 2868
+      },
+      {
+        "kind": "sign-in",
+        "ms": 3157
+      },
+      {
+        "kind": "request-denied",
+        "ms": 3160
+      },
+      {
+        "kind": "edit-released",
+        "ms": 3160
+      },
+      {
+        "kind": "saved",
+        "ms": 3232
+      },
+      {
+        "kind": "reloaded",
+        "ms": 4674
+      }
+    ]
+  }
+}

@@ -1,0 +1,761 @@
+{
+  "observedAt": "2026-11-13T05:04:18.598Z",
+  "passed": true,
+  "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "tested": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "ci": {
+    "run": 43364365825,
+    "workflowId": 387826308,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "success",
+    "checkSuiteId": 117425360718,
+    "totalJobs": 33,
+    "allJobsSucceeded": true,
+    "classificationJobId": 131685159022,
+    "executionWorkerCount": 29,
+    "aggregateCount": 3
+  },
+  "currentHeadChecks": {
+    "total": 43,
+    "returned": 43,
+    "ciCount": 33,
+    "storybookCount": 10
+  },
+  "requiredGates": [
+    {
+      "name": "Backlog",
+      "jobId": 131685834150,
+      "checkRunId": 131685834150,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834150"
+    },
+    {
+      "name": "Pull request",
+      "jobId": 131685158763,
+      "checkRunId": 131685158763,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685158763"
+    },
+    {
+      "name": "Lint",
+      "jobId": 131685834166,
+      "checkRunId": 131685834166,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834166"
+    },
+    {
+      "name": "Typecheck",
+      "jobId": 131685834289,
+      "checkRunId": 131685834289,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834289"
+    },
+    {
+      "name": "Unit tests",
+      "jobId": 131693806635,
+      "checkRunId": 131693806635,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131693806635"
+    },
+    {
+      "name": "Lib tests",
+      "jobId": 131690436695,
+      "checkRunId": 131690436695,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131690436695"
+    },
+    {
+      "name": "Playwright smoke",
+      "jobId": 131701094769,
+      "checkRunId": 131701094769,
+      "checkSuiteId": 117425360718,
+      "runId": 43364365825,
+      "attempt": 1,
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131701094769"
+    }
+  ],
+  "selectedFamilies": [
+    {
+      "suite": "backlog",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Backlog",
+          "id": 131685834150,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834150,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834150"
+        }
+      ]
+    },
+    {
+      "suite": "pull-request",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Pull request",
+          "id": 131685158763,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685158763,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685158763"
+        }
+      ]
+    },
+    {
+      "suite": "lint",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Lint",
+          "id": 131685834166,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834166,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834166"
+        }
+      ]
+    },
+    {
+      "suite": "typecheck",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Typecheck",
+          "id": 131685834289,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834289,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834289"
+        }
+      ]
+    },
+    {
+      "suite": "unit-tests",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Unit tests (supervisor)",
+          "id": 131685834180,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834180,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834180"
+        },
+        {
+          "name": "Unit tests (recovery)",
+          "id": 131685834129,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834129,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834129"
+        },
+        {
+          "name": "Unit tests (remaining)",
+          "id": 131685834288,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834288,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834288"
+        }
+      ]
+    },
+    {
+      "suite": "lib-test-run",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Lib tests (dense-cells)",
+          "id": 131685834240,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834240,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834240"
+        },
+        {
+          "name": "Lib tests (cells)",
+          "id": 131685834198,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834198,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834198"
+        },
+        {
+          "name": "Lib tests (mixed-fuzz)",
+          "id": 131685834236,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834236,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834236"
+        },
+        {
+          "name": "Lib tests (remaining)",
+          "id": 131685834191,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834191,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834191"
+        }
+      ]
+    },
+    {
+      "suite": "playwright-run",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Playwright smoke (development 1/2)",
+          "id": 131685834643,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834643,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834643"
+        },
+        {
+          "name": "Playwright smoke (development 2/2)",
+          "id": 131685834554,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834554,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834554"
+        },
+        {
+          "name": "Playwright smoke (production 1/2)",
+          "id": 131685834559,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834559,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834559"
+        },
+        {
+          "name": "Playwright smoke (production 2/2)",
+          "id": 131685834600,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834600,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834600"
+        },
+        {
+          "name": "Playwright smoke (mobile-https)",
+          "id": 131685834542,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834542,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834542"
+        },
+        {
+          "name": "Playwright smoke (sync-development)",
+          "id": 131685834511,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834511,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834511"
+        },
+        {
+          "name": "Playwright smoke (sync-production)",
+          "id": 131685834603,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834603,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834603"
+        },
+        {
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "id": 131685834618,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834618,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834618"
+        },
+        {
+          "name": "Playwright smoke (sync-soak-doc)",
+          "id": 131685834612,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834612,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834612"
+        },
+        {
+          "name": "Playwright smoke (offline-upgrade)",
+          "id": 131685834684,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834684,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834684"
+        },
+        {
+          "name": "Playwright smoke (supervised-restore)",
+          "id": 131685834611,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834611,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834611"
+        }
+      ]
+    },
+    {
+      "suite": "container-smoke",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Container smoke",
+          "id": 131685834161,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834161,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834161"
+        }
+      ]
+    },
+    {
+      "suite": "restore-timing",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Sized restore acceptance",
+          "id": 131685834267,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834267,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834267"
+        }
+      ]
+    },
+    {
+      "suite": "sync-transition",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Retained sync transition",
+          "id": 131685834305,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834305,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834305"
+        }
+      ]
+    },
+    {
+      "suite": "doc-responsiveness",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Doc responsiveness (desktop)",
+          "id": 131685834588,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834588,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834588"
+        },
+        {
+          "name": "Doc responsiveness (mobile)",
+          "id": 131685834311,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834311,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834311"
+        }
+      ]
+    },
+    {
+      "suite": "doc-callback-lifetimes",
+      "selected": true,
+      "workers": [
+        {
+          "name": "Doc callback lifetimes (desktop)",
+          "id": 131685834287,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834287,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834287"
+        },
+        {
+          "name": "Doc callback lifetimes (mobile)",
+          "id": 131685834347,
+          "runId": 43364365825,
+          "attempt": 1,
+          "status": "completed",
+          "conclusion": "success",
+          "checkRunId": 131685834347,
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43364365825/job/131685834347"
+        }
+      ]
+    }
+  ],
+  "modeFlags": {
+    "responsiveness-baseline": {
+      "owners": [
+        "Doc responsiveness (desktop)",
+        "Doc responsiveness (mobile)"
+      ],
+      "mechanism": "Selected baseline first attempts and paired evidence in both existing responsiveness workers."
+    },
+    "callback-baseline": {
+      "owners": [
+        "Doc callback lifetimes (desktop)",
+        "Doc callback lifetimes (mobile)"
+      ],
+      "mechanism": "Selected baseline first attempts and paired comparison in both existing callback workers."
+    },
+    "phone-compatibility": {
+      "owners": [
+        "Playwright smoke (development 1/2)",
+        "Playwright smoke (development 2/2)",
+        "Playwright smoke (production 1/2)",
+        "Playwright smoke (production 2/2)",
+        "Playwright smoke (mobile-https)",
+        "Playwright smoke (sync-development)",
+        "Playwright smoke (sync-production)",
+        "Playwright smoke (sync-soak-sheet)",
+        "Playwright smoke (sync-soak-doc)",
+        "Playwright smoke (offline-upgrade)",
+        "Playwright smoke (supervised-restore)"
+      ],
+      "mechanism": "SPINEL_CI_FULL_COMPATIBILITY=true passed to the existing Playwright matrix; mode flag, not an additional job."
+    }
+  },
+  "pairedModeSteps": [
+    {
+      "name": "Doc callback lifetimes (desktop)",
+      "jobId": 131685834287,
+      "steps": [
+        {
+          "number": 2,
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Install and build baseline with source maps",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Retain baseline first attempt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Build candidate with identical source-map settings",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Verify candidate first attempt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Verify complete paired callback evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 28,
+          "name": "Post Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Doc responsiveness (mobile)",
+      "jobId": 131685834311,
+      "steps": [
+        {
+          "number": 2,
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Install and build baseline",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Observe baseline first attempts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Build candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Verify candidate responsiveness and boundaries",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Verify candidate evidence and selected paired comparison",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Retain every baseline and candidate attempt",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Doc callback lifetimes (mobile)",
+      "jobId": 131685834347,
+      "steps": [
+        {
+          "number": 2,
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Install and build baseline with source maps",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Retain baseline first attempt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Build candidate with identical source-map settings",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Verify candidate first attempt",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Verify complete paired callback evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 28,
+          "name": "Post Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "Doc responsiveness (desktop)",
+      "jobId": 131685834588,
+      "steps": [
+        {
+          "number": 2,
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Install and build baseline",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Observe baseline first attempts",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Build candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Verify candidate responsiveness and boundaries",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Verify candidate evidence and selected paired comparison",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Retain every baseline and candidate attempt",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "noSelectedWorkerOmitted": true,
+  "pr": {
+    "number": 282,
+    "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+    "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+    "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+    "draft": true,
+    "state": "open",
+    "updatedAt": "2026-11-13T04:17:11Z"
+  },
+  "independentReviewUnchanged": {
+    "score": 100,
+    "report": "review-a-2.md",
+    "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+  },
+  "auditAccessNotes": [
+    "A direct /check-runs/{id} GET was rejected by the connector's endpoint allowlist. The supported /commits/{head}/check-runs collection returned and independently verified every exact identity.",
+    "A command to persist the large first check-run response hit the OS argument length limit before process creation. A compact snapshot was then saved; final full raw responses are written in bounded chunks. Neither retrieval/persistence issue affected CI execution or source."
+  ],
+  "planSHA256": "e26b485c286be51036d5d213da96fea7fe251aa4600bdd76612964edbf90d15d",
+  "allAggregateReceiptsVerified": true,
+  "allCIStepsSuccessOrInapplicableSkip": true,
+  "aggregateLogSHA256": "d0e03f524809651f354debf528f59c0799502be978ecead237a3f52372b028fb"
+}

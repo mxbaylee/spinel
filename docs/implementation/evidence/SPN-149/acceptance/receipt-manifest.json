@@ -1,0 +1,244 @@
+{
+  "version": 1,
+  "ticket": "SPN-149",
+  "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "observedAt": "2026-11-13T05:04:18.598Z",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 13278,
+      "sha256": "b3078a44d8faf4d4d8888d2802555f08f3c716fbaf8392bd064e134e4f2362ac",
+      "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
+    },
+    {
+      "path": "acceptance.json",
+      "bytes": 32558,
+      "sha256": "36ee550e96264c4b84ea1b6f2a4dbe3a27915ce66a9f23cbc54c5a4e18cacd2b",
+      "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
+    },
+    {
+      "path": "candidate-evidence-links.json",
+      "bytes": 6946,
+      "sha256": "3f1764d4f3706f2500e32e19d57b6b05ca481f29cae50bc875119c021d7abf38",
+      "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
+    },
+    {
+      "path": "ci-artifacts-43364365825-attempt-1-final.json",
+      "bytes": 20228,
+      "sha256": "e31601be7bbd15cda69657ff0bce1ad94d6215189735f9d1856aec76302ee8af",
+      "provenance": "byte-exact copy of validation/ci-artifacts-43364365825-attempt-1-final.json"
+    },
+    {
+      "path": "ci-jobs-43364365825-attempt-1-final.json",
+      "bytes": 151521,
+      "sha256": "a1ba7fe1a4b5e9f43aecbcfdfddc5b1a89373764092e5ca67b8c216f3f04953e",
+      "provenance": "byte-exact copy of validation/ci-jobs-43364365825-attempt-1-final.json"
+    },
+    {
+      "path": "ci-plan-43364365825.json",
+      "bytes": 17359,
+      "sha256": "078f6e5dfd36b69b8b7cb9c5007236c1044ea132a324318a67d74da2a574b5ca",
+      "provenance": "byte-exact copy of validation/ci-plan-43364365825.json"
+    },
+    {
+      "path": "ci-results-browser-43364365825-attempt-1.json",
+      "bytes": 40145,
+      "sha256": "698aab10880428124e359fe8f8064a5cc197c5a99b96855da386983ea580da17",
+      "provenance": "byte-exact copy of validation/ci-results-browser-43364365825-attempt-1.json"
+    },
+    {
+      "path": "ci-results-lib-43364365825-attempt-1.json",
+      "bytes": 24668,
+      "sha256": "6803efa701b8044967c99c436e4a28f2a576557968dd7fb5f36ff664cfa0b296",
+      "provenance": "byte-exact copy of validation/ci-results-lib-43364365825-attempt-1.json"
+    },
+    {
+      "path": "ci-results-unit-43364365825-attempt-1.json",
+      "bytes": 24561,
+      "sha256": "d7a47262ced90d853ca1579a8f192e5ff292bd1dfa55833e0a247ca464d11216",
+      "provenance": "byte-exact copy of validation/ci-results-unit-43364365825-attempt-1.json"
+    },
+    {
+      "path": "ci-run-43364365825-attempt-1-final.json",
+      "bytes": 13798,
+      "sha256": "ab172d1c9601f5f0bcb7be28cbae0783046d3345f4b96fd24ce89e1f581ec0f1",
+      "provenance": "byte-exact copy of validation/ci-run-43364365825-attempt-1-final.json"
+    },
+    {
+      "path": "current-head-check-runs-db24230-attempt-1-final.json",
+      "bytes": 216377,
+      "sha256": "7e50b4ca0d7ecbe38d620609e2a550830cd5d537a3e63d20ddcc8ffff110674d",
+      "provenance": "byte-exact copy of validation/current-head-check-runs-db24230-attempt-1-final.json"
+    },
+    {
+      "path": "declaration.json",
+      "bytes": 7752,
+      "sha256": "95fd0ef9070f515282576db03ae548bdb6cb42ac9a923afcf968ae3e58f9348e",
+      "provenance": "byte-exact copy of validation/declaration.json"
+    },
+    {
+      "path": "hosted-audit-manifest-43364365825.json",
+      "bytes": 3576,
+      "sha256": "efda2cc3d488ee2c1aebc8ce864a8a19e4eeda036b0ea3215db5583c4ef60636",
+      "provenance": "byte-exact copy of validation/hosted-audit-manifest-43364365825.json"
+    },
+    {
+      "path": "hosted-coverage-43364365825.json",
+      "bytes": 209348,
+      "sha256": "717f2d5569c14ad88344ec72aee9b435d725f33290a895cffb1f8c3ffa188713",
+      "provenance": "byte-exact copy of validation/hosted-coverage-43364365825.json"
+    },
+    {
+      "path": "hosted-coverage-43364365825.md",
+      "bytes": 8481,
+      "sha256": "b97008e5291e3c2b3e1f8f594c857dd7e53f43a887801f5aec94720de0406f2c",
+      "provenance": "byte-exact copy of validation/hosted-coverage-43364365825.md"
+    },
+    {
+      "path": "hosted-final-verdict-43364365825.json",
+      "bytes": 23624,
+      "sha256": "7b773fb9094eeb2147984b726de04c0bd21d7e1601c07c6e8fda5a69a64babd4",
+      "provenance": "byte-exact copy of validation/hosted-final-verdict-43364365825.json"
+    },
+    {
+      "path": "hosted-negative-controls-43364365825.json",
+      "bytes": 2969,
+      "sha256": "51b1b47a4a8f1ad3fb4a1e445910abbdee577ad7fe884e7488bc418ce6a3e56f",
+      "provenance": "byte-exact copy of validation/hosted-negative-controls-43364365825.json"
+    },
+    {
+      "path": "pr-282-acceptance-audit-final.json",
+      "bytes": 11096,
+      "sha256": "8f79fbdad5daaca9e7ffc35513785eecda2912d94d8e0895167ea00a221747dd",
+      "provenance": "byte-exact copy of validation/pr-282-acceptance-audit-final.json"
+    },
+    {
+      "path": "review-a-2-controls-watchdog.json",
+      "bytes": 501,
+      "sha256": "95095f83d383be60df5c9d5d4fe90ad2e45a3372f316a0c1a3c963493bc6c77a",
+      "provenance": "byte-exact copy of validation/review-a-2-controls-watchdog.json"
+    },
+    {
+      "path": "review-a-2-controls.log",
+      "bytes": 2310,
+      "sha256": "6239138b52d3742eb423b01adb2e098666c3d7c6ae18a7ab345c75e41d64b91d",
+      "provenance": "byte-exact copy of validation/review-a-2-controls.log"
+    },
+    {
+      "path": "review-a-2.md",
+      "bytes": 10162,
+      "sha256": "dbdd067bc2c73588c9e8f86b509e7b405ebc811782d14b991b0dbb0021bf8f82",
+      "provenance": "byte-exact copy of validation/review-a-2.md"
+    },
+    {
+      "path": "review-b-2-controls-watchdog.json",
+      "bytes": 501,
+      "sha256": "9d6316012b53067c5d5c539ce366b50f442756ac4a21b6260e966985767f2442",
+      "provenance": "byte-exact copy of validation/review-b-2-controls-watchdog.json"
+    },
+    {
+      "path": "review-b-2-controls.log",
+      "bytes": 2310,
+      "sha256": "aa4b02ba3b9715a20a0672d8b2265ebbd77c497215e90c8263b271d4a71b63c3",
+      "provenance": "byte-exact copy of validation/review-b-2-controls.log"
+    },
+    {
+      "path": "review-b-2.md",
+      "bytes": 8216,
+      "sha256": "cb5ce7b0a0dbe97503d3e901de1e313424dc3d8faf54bbd51e8b957853f04739",
+      "provenance": "byte-exact copy of validation/review-b-2.md"
+    },
+    {
+      "path": "review-b-native-audit.md",
+      "bytes": 9285,
+      "sha256": "0948114b552e1134a81ffda670eb1673f53a8f87de2ba424839e4f288a8c7be5",
+      "provenance": "byte-exact copy of validation/review-b-native-audit.md"
+    },
+    {
+      "path": "review-b-native-development-2.json",
+      "bytes": 2254,
+      "sha256": "a77dbc4421ab7c615e3c35c8f4a8d224a9405895732fb29c2c9eb733f47389a0",
+      "provenance": "byte-exact copy of validation/review-b-native-development-2.json"
+    },
+    {
+      "path": "review-b-native-development-artifact.json",
+      "bytes": 2511,
+      "sha256": "b2feba553c940a1f536196cbb0302f43751712237a9cff93096010805b3c4a22",
+      "provenance": "byte-exact copy of validation/review-b-native-development-artifact.json"
+    },
+    {
+      "path": "review-b-native-development-case.json",
+      "bytes": 5137,
+      "sha256": "652eb2ccd9a05d62d375e60c5bc3d453b7de9e908beca3ed43edb5165eeaf6be",
+      "provenance": "byte-exact copy of validation/review-b-native-development-case.json"
+    },
+    {
+      "path": "review-b-native-development-retry-0-observation.json",
+      "bytes": 1540,
+      "sha256": "8d6325e0a09c8dccd61cb4c12c868032a36bf91ff0c69b946c94b33d86fef90d",
+      "provenance": "byte-exact copy of validation/review-b-native-development-retry-0-observation.json"
+    },
+    {
+      "path": "review-b-native-production-artifact.json",
+      "bytes": 2455,
+      "sha256": "05a2ec91ac2fd87aa0dc1bc8963c9123711248925c58a779457eae04a92728df",
+      "provenance": "byte-exact copy of validation/review-b-native-production-artifact.json"
+    },
+    {
+      "path": "review-b-native-production-case.json",
+      "bytes": 5137,
+      "sha256": "984e4968ab9f132781797863e9229ff8f06529283df1603cbcc0ea0acbdc2a88",
+      "provenance": "byte-exact copy of validation/review-b-native-production-case.json"
+    },
+    {
+      "path": "review-b-native-production-retry-0-observation.json",
+      "bytes": 1538,
+      "sha256": "cdf1ee55cf808d12ca90b01ae11f02f5ece85514f72cd78075873bcbe2c0cfde",
+      "provenance": "byte-exact copy of validation/review-b-native-production-retry-0-observation.json"
+    },
+    {
+      "path": "storybook-43364365751-attempt-1-final.json",
+      "bytes": 50876,
+      "sha256": "bf33f1a520e74504e06a0aa18817e7a468d1fd6ab3bfc2cdcdaa1af1d63cf432",
+      "provenance": "byte-exact copy of validation/storybook-43364365751-attempt-1-final.json"
+    }
+  ],
+  "exactCopiedFiles": 30,
+  "generatedFiles": 3,
+  "selfHashExcluded": true,
+  "excludedAuditorInputs": [
+    {
+      "path": "ci-browser-aggregate-43364365825-attempt-1.log",
+      "size": 101551,
+      "sha256": "d0e03f524809651f354debf528f59c0799502be978ecead237a3f52372b028fb"
+    },
+    {
+      "path": "storybook-aggregate-43364365751-attempt-1.log",
+      "size": 17860,
+      "sha256": "46fcb940376db307050ab798205bebccb4796874afb223bcefe0a379255b002a"
+    },
+    {
+      "path": "ci-plan-43364365825.zip",
+      "size": 1265,
+      "sha256": "ef0cf326ba0a39700a2a1c1f8310e67c398d6520b4db243b9b499e1c1c738c07"
+    },
+    {
+      "path": "ci-results-unit-43364365825-attempt-1.zip",
+      "size": 1640,
+      "sha256": "d21cdf7eb7dcc813aed06a7abb89c4ebbcb8295f58ae7197c243de05a07f501d"
+    },
+    {
+      "path": "ci-results-lib-43364365825-attempt-1.zip",
+      "size": 1662,
+      "sha256": "d6caf928093abe699a93fefd27af2c3b37ebb24b5edb9b94ae505279f9a2f446"
+    },
+    {
+      "path": "ci-results-browser-43364365825-attempt-1.zip",
+      "size": 1917,
+      "sha256": "83529060d61746d40127442dfe3561850295355a0d33e6e0f6b64bcd2554245d"
+    }
+  ],
+  "privacyScan": "Passed on all copied files; exact raw diagnostics validated against bounded content-free schema. No raw ZIP, trace, screenshot, private state, payload or authored value retained."
+}

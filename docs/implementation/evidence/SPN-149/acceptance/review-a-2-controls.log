@@ -1,0 +1,28 @@
+✔ protocol closure survives close-first ordering and retains frame counts (6.574072ms)
+✔ protocol closure survives navigation-first ordering and retains frame counts (0.678676ms)
+✔ a socket without a successful handshake (missing) cannot prove revocation (1.761446ms)
+✔ a socket without a successful handshake (403) cannot prove revocation (0.836648ms)
+✔ unrelated socket closes and frames cannot satisfy the established target (1.057202ms)
+✔ 401, navigation and a Playwright close cannot accept a live protocol socket (0.986247ms)
+✔ a protocol close cannot accept authorization that is still active (1.026868ms)
+✔ every established target must close before revocation can pass (0.846403ms)
+✔ post-revocation handshake status 101 preserves the establishment boundary (0.907643ms)
+✔ post-revocation handshake status 401 preserves the establishment boundary (0.671686ms)
+✔ losing the protocol observer invalidates completed closure evidence (0.624086ms)
+✔ overflow retains bounded content-free evidence and cannot turn into acceptance (0.985186ms)
+✔ too many socket identities fail closed without retaining an unbounded map (0.799173ms)
+✔ failed Network.enable removes listeners and detach failure preserves its original error (1.235168ms)
+✔ failed Network.enable preserves its original error when detach reaches the cleanup bound (3.396847ms)
+✔ stop detaches only owned listeners and prevents late events from changing evidence (0.79054ms)
+✔ cleanup runs every remaining owned phase after synchronous and asynchronous rejection (0.818171ms)
+✔ a stalled cleanup phase reaches its original bound and still releases later resources (0.509468ms)
+✔ revocation source and shared inputs keep unit/browser owners and fail-closed aggregates (14.133959ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 279.566345
+{"startedAt":"2026-11-13T04:13:06.223Z","finishedAt":"2026-11-13T04:13:06.806Z","command":"node","args":["scripts/serial.ts","node","--test","scripts/ci/session-revocation.test.ts"],"node":"v26.13.0","cwd":"/workspace/scratch/13a7bba7afec/spinel","elapsedMs":582,"initialMemory":{"availableKiB":8181136,"totalKiB":10206472},"minimumAvailableKiB":8097124,"peakKiB":230868,"code":0,"signal":null,"aborted":null}

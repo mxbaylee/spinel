@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "run": 43364365825,
+  "runNumber": 2211,
+  "pullRequest": 282,
+  "jobId": 131685834554,
+  "jobName": "Playwright smoke (development 2/2)",
+  "jobConclusion": "success",
+  "candidate": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "artifact": {
+    "id": 14011600282,
+    "name": "theme-screenshots-development-2",
+    "size_in_bytes": 16685613,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14011600282",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14011600282/zip",
+    "expired": false,
+    "created_at": "2026-11-13T04:52:36Z",
+    "expires_at": "2026-11-20T04:52:33Z",
+    "updated_at": "2026-11-13T04:52:36Z",
+    "digest": "sha256:3ab3ff0567715dfb9c68bc06f164a7f054771fc4a99d995cc528223fa99ada09",
+    "workflow_run": {
+      "id": 43364365825,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-149-revocation-evidence",
+      "head_sha": "db24230dd4df539e2055471f55e50a402596c1fb"
+    }
+  },
+  "archive": "native-audit-14011600282.zip",
+  "archiveSHA256": "3ab3ff0567715dfb9c68bc06f164a7f054771fc4a99d995cc528223fa99ada09",
+  "archiveDigestMatches": true,
+  "memberCount": 320,
+  "reportMember": "playwright-report/development-2-of-2.json",
+  "reportSHA256": "c82a9a5a00ad58504caf58e0b08ca04a47b972f9e0720953238c73ccfbc73a2e",
+  "reportStats": {
+    "startTime": "2026-11-13T04:38:04.270Z",
+    "duration": 869046.333,
+    "expected": 75,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "targetCaseMatches": 0,
+  "disposition": "This shard does not own the revocation case. It is not evidence that the development revocation sample passed.",
+  "runtime": {
+    "node": "v26.13.0",
+    "npm": "11.20.0",
+    "playwright": "1.64.1",
+    "chromium": "156.0.8078.4",
+    "chromiumRevision": 1248,
+    "os": "Ubuntu 24.04.5",
+    "runnerImage": "ubuntu-24.04 20261111.127.1"
+  },
+  "privacy": "Only runtime/source identities, artifact/report hashes, counts and disposition are retained here; unrelated authored content and traces remain in the temporary raw archive."
+}

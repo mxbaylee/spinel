@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "candidate": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "run": 43364365825,
+  "job": 131685834643,
+  "artifactId": 14011352752,
+  "artifactName": "theme-screenshots-development-1",
+  "archiveFile": "native-audit-14011352752.zip",
+  "archiveBytes": 33516221,
+  "archiveSHA256": "813a5e0f999d42b971f808929898daa80af283412b282f923135229c81e8e112",
+  "archiveDigestMatches": true,
+  "archiveMembers": 446,
+  "reportMember": "playwright-report/development-1-of-2.json",
+  "reportBytes": 1476032,
+  "reportSHA256": "aeac88f592f9bb3bf63132211307f1764a42c57baa0562d659806ead72b8e863",
+  "source": {
+    "title": "revoking one login preserves another login\u2019s queued edit and stops later broadcasts",
+    "file": "collaboration.spec.ts",
+    "line": 365,
+    "column": 1,
+    "id": "960cd46fcfcce4c1b118-f9c243e09467aec02189"
+  },
+  "project": "development",
+  "caseTimeoutMs": 60000,
+  "expectedStatus": "passed",
+  "overallCaseStatus": "expected",
+  "playwrightVersion": "1.64.1",
+  "configuredRetries": 2,
+  "configuredRepeatEach": 1,
+  "failOnFlakyTests": true,
+  "workers": 1,
+  "shard": {
+    "current": 1,
+    "total": 2
+  },
+  "attempts": [
+    {
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 10861,
+      "startTime": "2026-11-13T04:47:57.774Z",
+      "errorCount": 0,
+      "attachmentNames": [
+        "session-revocation-observation"
+      ],
+      "observations": [
+        {
+          "name": "session-revocation-observation",
+          "contentType": "application/json",
+          "exactDecodedFile": "review-b-native-development-retry-0-observation.json",
+          "decodedBytes": 1540,
+          "decodedSHA256": "8d6325e0a09c8dccd61cb4c12c868032a36bf91ff0c69b946c94b33d86fef90d",
+          "observation": {
+            "version": 1,
+            "project": "development",
+            "retry": 0,
+            "tested": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+            "node": "v26.13.0",
+            "browser": "156.0.8078.4",
+            "contractCompleted": true,
+            "primaryFailed": false,
+            "cleanupFailures": [],
+            "observation": {
+              "targetCount": 1,
+              "closedTargets": 1,
+              "openSockets": 0,
+              "receivedFrames": 6,
+              "overflow": false,
+              "observerLost": false,
+              "reopened": false,
+              "events": [
+                {
+                  "kind": "navigation",
+                  "ms": 14
+                },
+                {
+                  "kind": "socket-created",
+                  "ms": 4808,
+                  "socket": 1
+                },
+                {
+                  "kind": "socket-opened",
+                  "ms": 4815,
+                  "socket": 1
+                },
+                {
+                  "kind": "edit-held",
+                  "ms": 6183
+                },
+                {
+                  "kind": "revocation-requested",
+                  "ms": 6183
+                },
+                {
+                  "kind": "revocation-written",
+                  "ms": 6184
+                },
+                {
+                  "kind": "page-close",
+                  "ms": 6348
+                },
+                {
+                  "kind": "socket-closed",
+                  "ms": 6348,
+                  "socket": 1
+                },
+                {
+                  "kind": "navigation",
+                  "ms": 6382
+                },
+                {
+                  "kind": "closure-observed",
+                  "ms": 6537
+                },
+                {
+                  "kind": "sign-in",
+                  "ms": 7441
+                },
+                {
+                  "kind": "request-denied",
+                  "ms": 7445
+                },
+                {
+                  "kind": "edit-released",
+                  "ms": 7445
+                },
+                {
+                  "kind": "saved",
+                  "ms": 7516
+                },
+                {
+                  "kind": "reloaded",
+                  "ms": 10655
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "reportStats": {
+    "startTime": "2026-11-13T04:44:03.711Z",
+    "duration": 846504.728,
+    "expected": 74,
+    "skipped": 3,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "retention": {
+    "createdAt": "2026-11-13T04:58:13Z",
+    "expiresAt": "2026-11-20T04:58:10Z"
+  },
+  "extraction": "Exact case identity, statuses, counts, source/runtime fields, and schema-checked content-free observer attachments only. Each original decoded attachment is also saved byte-for-byte without reserialization or added newline. No authored values, network frames, cookies, storage state, screenshots, trace bodies or unrelated case data copied.",
+  "limit": "Passing exact-source case plus contractCompleted proves the programmed assertions completed. The finite timeline records observer delivery order; it does not reconstruct the original historical failure."
+}

@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "purpose": "Immutable source and existing historical/local evidence. These repository-backed files are linked rather than duplicated.",
+  "files": [
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+      "gitBlob": "c2f1e7ce19fe6074c9195eea4d60c01e9143950a",
+      "bytes": 1205,
+      "sha256": "5809ab1677db96bb6707264783c987364a91facd914e879302ff441a737f5505",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/boundary-probe-result.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/local-validation.json",
+      "gitBlob": "b1e4848b8ee1281c2eeec6fd27e2a34345863c3f",
+      "bytes": 15570,
+      "sha256": "2fe1e038d0d616c98b54e0813b5fef08215739dd3f21763857206cde0ada2214",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/local-validation.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+      "gitBlob": "09863f39ea1c4a0ecf70ab9ba1374d54b2e1a1d2",
+      "bytes": 3264,
+      "sha256": "810bcb12ebf578039bba5a89f6aaaef19fa844ee806b44b05f4c6871f2377174",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/original-13557930894-case.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+      "gitBlob": "9734aa6a6a8c0f64343c7b2e8f0ddfee58f7f89d",
+      "bytes": 879,
+      "sha256": "cb81c931703c06021ca42328d7767bc3e002366d7e11c62307db51dbc1903c2b",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+      "gitBlob": "20c50ad4f2bc86c1ad7359dd923c5ff187426a82",
+      "bytes": 2955,
+      "sha256": "71a4c88a608f1a92bf4cdb16a5c23632a2047cccfa3abf184a305dd9487cb1a5",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/original-13557930894-metadata.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+      "gitBlob": "c3ba273769880127a23dddbcf319a8377f20b1c7",
+      "bytes": 3527,
+      "sha256": "f0746ae4d7758af6b77c5c1917dc40264ee5527fb36087c0d965daea2d053757",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+      "gitBlob": "b6d65d1f3dd3941410a90a689017d9f92c4a2be0",
+      "bytes": 1817,
+      "sha256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+      "gitBlob": "4f11255c7b7bf1cb49dc41ff4923e02ab565da38",
+      "bytes": 25845,
+      "sha256": "18fbb420ec3bf69ffdf93696526bb6d24c6dc17b303b19a1221f0d8ad265cf67",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/evidence/SPN-149/review-iteration-1.json"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/implementation/SPN-149.md",
+      "gitBlob": "4d5d49741faeda728c98deb05e5f62c58e4b817d",
+      "bytes": 14441,
+      "sha256": "64c8187a8e6a7247d8a1ebb4de745e6066e27a0b6be676ae4f0f37001647d781",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/implementation/SPN-149.md"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "docs/collaboration.md",
+      "gitBlob": "94994001a7853cec609360d2437c343365da7a4b",
+      "bytes": 25711,
+      "sha256": "dc921b3ffe2f4838dec8973874f555536a54669a28d5ee185106cd3cb63a4f34",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/docs/collaboration.md"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "THIRD-PARTY-NOTICES.md",
+      "gitBlob": "535725b551ccf1326150d60b4b49ca3a5b8ae788",
+      "bytes": 16943,
+      "sha256": "69a0932754d07a9012adb8fe18b5795bddbff09d7c8484f4b6abe9ccb691cf04",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/THIRD-PARTY-NOTICES.md"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "e2e/collaboration.spec.ts",
+      "gitBlob": "4288b469f77dc552bd92698fc33d1b13f3608491",
+      "bytes": 24881,
+      "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/e2e/collaboration.spec.ts"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "e2e/session-revocation.ts",
+      "gitBlob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c",
+      "bytes": 6622,
+      "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/e2e/session-revocation.ts"
+    },
+    {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "path": "scripts/ci/session-revocation.test.ts",
+      "gitBlob": "71c9a32209f6f0a2da124a3353766f626b4d0203",
+      "bytes": 13967,
+      "sha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
+      "url": "https://github.com/mxbaylee/spinel/blob/db24230dd4df539e2055471f55e50a402596c1fb/scripts/ci/session-revocation.test.ts"
+    },
+    {
+      "source": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "path": "docs/todo/SPN-149.md",
+      "gitBlob": "e8d830497d3178bd2a50f70d4518395a3797d1f7",
+      "bytes": 3391,
+      "sha256": "4d12d182396a9e64eb7dfe6af9b076c77c358b5527c9d1d03ad1b793a884dc1f",
+      "url": "https://github.com/mxbaylee/spinel/blob/04baabd6a68abe7c0b225f8699681532e2205b60/docs/todo/SPN-149.md"
+    }
+  ]
+}
