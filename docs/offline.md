@@ -350,6 +350,15 @@ also gets the generic page. In the app (`web/App.tsx`), only a network failure
 Local mode reads the prepared account's catalog and downloads, never a cached
 session as fresh authorization.
 
+**🔌 Connection lost on an open Dashboard.** A Dashboard that started online and then
+loses the network opens a downloaded Doc or Sheet from its device copy, shown as
+offline with no server-only actions, and reuses a saved folder listing. Only a
+network failure for the prepared account qualifies: a real server answer (denied,
+missing) still shows the access screen. The item stays on the device copy until the
+network returns, when it refetches once and returns to the live editor; a failed refetch
+keeps the device copy open. A request that hangs for 15 s counts as an outage. The decision
+lives in `web/offline/warmOpen.ts`.
+
 **Local mode.** The shared network icon beside the gem reports **Offline**,
 **Reconnecting** or verified **Online**, independently of local durability.
 Its hover/focus/tap detail preserves **Files as of** and explains saved document
@@ -612,8 +621,10 @@ SPN-058 semantics, independent of the server database; neither an open connectio
 nor a UI status alone proves them. A local-save failure stays visible until resolved.
 
 Sync is attempted on startup, on returning to the foreground and when the
-connection returns, while the app is running. Pending work stays visible until it
-actually succeeds. Background Sync may be an optional enhancement. It is not a
+connection returns, while that document's editor is open. The file list does not
+sync pending edits: a document edited offline keeps its changes on the device until
+it is opened again while connected (own-phone run, 2026-11-13). Pending work stays
+visible until it actually succeeds. Background Sync may be an optional enhancement. It is not a
 requirement for Firefox/Android or Safari/iOS, and not a promise that the sync
 client runs while the app is closed. Follow the existing [history](history.md)
 and [collaboration](collaboration.md) contracts.

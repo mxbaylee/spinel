@@ -52,6 +52,7 @@ import {
   openLocalStart,
 } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
+import { startupDone, startupStage } from './startupStage.ts';
 import {
   claimOnlineAccount,
   expirePreparedAccount,
@@ -191,6 +192,7 @@ function AccountApp() {
     if (setup) history.replaceState(null, '', '/setup');
     void (async () => {
       try {
+        startupStage('account exit check');
         const pendingExit = await restoreAccountExit();
         verifyCurrent();
         if (pendingExit) {
@@ -200,7 +202,9 @@ function AccountApp() {
           setExit(pendingExit);
           return;
         }
+        startupStage('sign-in lock');
         await withAccountRead(verifyCurrent, async (verifyTransition) => {
+          startupStage('sign-in check');
           if (invitation) {
             const details = await api<{ recovery: boolean; name: string }>(
               'invite/details',
@@ -228,6 +232,11 @@ function AccountApp() {
             verifyTransition();
             verifySessionEpoch();
           };
+          // The browser already knows it is offline: skip the wait for a request that cannot
+          // answer and start from the saved files. (`onLine` true proves nothing, so only
+          // false short-circuits.)
+          if (globalThis.navigator?.onLine === false)
+            throw new TypeError('The browser is offline.');
           const { user, restore } = await api<{
             user: User;
             restore?: RestoreNoticeDetails | null;
@@ -318,6 +327,7 @@ function AccountApp() {
           setUnreachable(true);
           return;
         }
+        startupStage('saved files');
         const start = await within(
           openLocalStart(
             () => current && admitting && !accountRetired.current && !accountExitPending(),
@@ -337,7 +347,10 @@ function AccountApp() {
         setUser({ ...start.user, isAdmin: false });
       } finally {
         admitting = false;
-        if (current) setLoaded(true);
+        if (current) {
+          setLoaded(true);
+          startupDone();
+        }
       }
     })();
     return () => {

@@ -1028,3 +1028,53 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
     db.close();
   }
 });
+
+// Regression contract (SPN-090 own-phone run, item 4): a Dashboard that was online when it
+// listed a downloaded Doc opens that device copy when the connection drops afterwards. It
+// must not show "This item isn't available" or the browser's raw fetch error.
+test('a warm Dashboard that goes offline opens a downloaded Doc from the device', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(180_000);
+  const context = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1100 } });
+  const page = await context.newPage();
+  const db = openDatabase(`test-results/${info.project.name}/warm-offline.sqlite`);
+  const auth = new AuthStore(db),
+    workspace = new WorkspaceStore(auth);
+  const user = auth.createUser(`Warm ${info.testId}`);
+  const doc = workspace.create(user.id, { name: 'Warm notes', kind: 'doc', parentId: null });
+  await context.addCookies([
+    {
+      name: COOKIE_NAME,
+      value: auth.createSession(user.id).token,
+      url: baseURL!.replace('http:', 'https:'),
+      secure: true,
+      httpOnly: true,
+      sameSite: 'Strict',
+    },
+  ]);
+  try {
+    await page.goto('/');
+    await expect
+      .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+      .toBe(true);
+    await page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }).click();
+    await page
+      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+      .click();
+    await expect(page.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
+      `${doc.name} is available offline on this device.`,
+      { timeout: 120_000 },
+    );
+    // Stay on this warm Dashboard: it was not started offline.
+    await context.setOffline(true);
+    await page.getByRole('button', { name: `${doc.name} Doc`, exact: true }).click();
+    await expect(page.locator('.editor-frame')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText("This item isn't available")).toHaveCount(0);
+    await expect(page.getByText('Failed to fetch')).toHaveCount(0);
+  } finally {
+    await context.close();
+    db.close();
+  }
+});

@@ -3,6 +3,7 @@ import { parseShellManifest, sameCompatibility } from '../src/shared/offlineShel
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import { installRuntimeHost, runtimeRequest } from './offline/runtime.ts';
 import type { RuntimeHost } from './offline/runtime.ts';
+import { startupDone, startupStage } from './startupStage.ts';
 import { createBootstrapJournal } from '../src/shared/bootstrapEvidence.ts';
 
 type Application = {
@@ -82,6 +83,7 @@ async function start(
   };
   verify();
   if (initialBoot) bootstrap?.mark('application-import-start');
+  startupStage('app code');
   // The production entry is a public descriptor URL; the bootstrap has no static
   // dependency on React, the application, native editor code, or any private data.
   const application = (
@@ -92,6 +94,7 @@ async function start(
   if (manifest && !sameCompatibility(manifest.compatibility, application.compatibility))
     throw new Error('This saved editor does not match its app version.');
   if (initialBoot) bootstrap?.mark('styles-start');
+  startupStage('styles');
   const prepared = manifest ? await loadStyles(manifest, verify) : [];
   if (initialBoot) bootstrap?.mark('styles-end');
   try {
@@ -131,6 +134,7 @@ async function boot() {
     }
     try {
       bootstrap?.mark('worker-selection-start');
+      startupStage('service worker');
       const result = await runtimeRequest('bootstrap', current.version, accountId);
       if (result.manifest) selected = result.manifest;
       bootstrap?.mark('worker-selection-settled');
@@ -143,6 +147,7 @@ async function boot() {
   bootstrap?.seal();
 }
 void boot().catch(() => {
+  startupDone();
   bootstrap?.mark('boot-rejected');
   bootstrap?.seal();
   root.textContent =

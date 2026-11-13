@@ -313,9 +313,17 @@ self.addEventListener('message', (event) => {
   );
 });
 
+// A page load that cannot reach the server must fall back to the saved app quickly. In
+// airplane mode or on a stalled radio the browser can leave this fetch pending for minutes.
+const NAVIGATION_DEADLINE_MS = 8000;
+
 async function navigate(request: Request, url: URL) {
   try {
-    return await fetch(request, { cache: 'no-store' });
+    if (self.navigator.onLine === false) throw new TypeError('The browser is offline.');
+    return await fetch(request, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(NAVIGATION_DEADLINE_MS),
+    });
   } catch {
     if (needsServer(url.pathname)) return offlinePage();
     const state = await readRuntimeState().catch(() => null);

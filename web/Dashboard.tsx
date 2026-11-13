@@ -49,6 +49,7 @@ import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { isNetworkFailure } from './offline/localStart.ts';
 import type { LocalStart } from './offline/localStart.ts';
+import { hasUsableCopy, isRequestTimeout, viewAfterNetworkFailure } from './offline/warmOpen.ts';
 import { preparedAccount } from './offline/offlineStore.ts';
 import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
@@ -181,6 +182,8 @@ export function Dashboard({
   const [viewLoading, setViewLoading] = useState(false);
   const [viewId, setViewId] = useState<string | null>(null);
   const [viewMissing, setViewMissing] = useState(false);
+  // A warm Dashboard that lost its connection opens this downloaded item from the device.
+  const [deviceOpenId, setDeviceOpenId] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
   const [accessDetails, setAccessDetails] = useState<FileItem | null>(null);
@@ -381,7 +384,11 @@ export function Dashboard({
   if (currentCreation) heldCreation.current = currentCreation;
   else if (heldCreation.current?.id !== currentId) heldCreation.current = null;
   const heldCreationId = heldCreation.current?.id;
-  const localEditor = Boolean(local || heldCreationId === currentId);
+  // A warm Dashboard that lost its connection shows this downloaded item as offline
+  // does: from the device copy, with no server-only actions.
+  const deviceOpen = Boolean(currentId && deviceOpenId === currentId);
+  const offlineFrame = Boolean(local || deviceOpen);
+  const localEditor = Boolean(local || heldCreationId === currentId || deviceOpen);
   useEffect(() => {
     // Returning from the native editor reuses this Dashboard. Read its newly
     // committed pending state before showing the account recovery entries.
@@ -423,6 +430,16 @@ export function Dashboard({
     window.addEventListener('popstate', back);
     return () => window.removeEventListener('popstate', back);
   }, []);
+  // Only navigation ends a device-copy open. A refresh keeps it, so the live editor is
+  // not mounted offline while the refetch is in flight; a successful refetch clears it.
+  useEffect(() => setDeviceOpenId(null), [currentId]);
+  // The network is back while a device copy is open: refetch once. Success returns to the
+  // live editor; a failure keeps the device copy.
+  useEffect(() => {
+    if (connection === 'online' && deviceOpen) setRefresh((value) => value + 1);
+  }, [connection, deviceOpen]);
+  const latest = useRef({ items, shared: shared.items, downloads: offline.downloads });
+  latest.current = { items, shared: shared.items, downloads: offline.downloads };
   useEffect(() => {
     setSharing(null);
     setAccessDetails(null);
@@ -448,27 +465,43 @@ export function Dashboard({
       item: FileItem;
       children: FileItem[];
       ancestors: FileItem[];
-    }>(`/${currentId}`)
+    }>(`/${currentId}`, 'GET', undefined, undefined, AbortSignal.timeout(15_000))
       .then((result) => {
         if (disposed) return;
         const view = [...result.ancestors, result.item, ...result.children];
         views.current = { ...views.current, [currentId]: view };
         setViewed(view);
+        setDeviceOpenId(null);
       })
       .catch((failure) => {
         if (!disposed) {
-          const saved = views.current[currentId];
-          // A warm Dashboard can disconnect after this folder was prepared.
-          // Reuse only that account's saved folder on a network failure; an
-          // actual server denial remains authoritative even with cached rows.
-          if (
-            isNetworkFailure(failure) &&
-            preparedAccount() === user.id &&
-            saved?.some((item) => item.id === currentId && item.kind === 'folder')
-          ) {
-            setViewed(saved);
+          // Read the newest lists: this effect only re-runs on navigation, so its
+          // own render's `items` and downloads may predate the lists' first load.
+          const now = latest.current;
+          const copy = now.downloads.get(currentId);
+          // A warm Dashboard can disconnect after this item was listed or prepared.
+          // On a network failure reuse only that account's saved folder, or open
+          // its downloaded Doc or Sheet from this device; an actual server denial
+          // remains authoritative even with cached rows.
+          const fallback = viewAfterNetworkFailure({
+            networkFailure: isNetworkFailure(failure),
+            accountId: user.id,
+            preparedAccountId: preparedAccount(),
+            currentId,
+            saved: views.current[currentId],
+            views: Object.values(views.current),
+            rows: [...now.items, ...now.shared],
+            downloaded: hasUsableCopy(copy),
+          });
+          if (fallback) {
+            setViewed(fallback.rows);
+            if (fallback.kind === 'device') setDeviceOpenId(currentId);
           } else {
-            setError(failure.message);
+            setError(
+              isRequestTimeout(failure)
+                ? 'Spinel did not answer. Check your connection and try again.'
+                : failure.message,
+            );
             setViewMissing(true);
           }
         }
@@ -788,7 +821,7 @@ export function Dashboard({
             },
           ]
         : [];
-    if (local) return [];
+    if (local || (deviceOpen && item.id === currentId)) return [];
     const result: MenuAction[] = [];
     if (placement === 'row' && (item.kind === 'sheet' || item.kind === 'doc'))
       result.push({
@@ -1263,14 +1296,14 @@ export function Dashboard({
         current && (
           <EditorFrame
             appearanceTarget={current}
-            appearanceDisabled={!!local || Boolean(currentCreation)}
+            appearanceDisabled={offlineFrame || Boolean(currentCreation)}
             offlineAccountId={user.id}
             key={current.id}
             name={current.name}
-            connection={local ? 'offline' : connection}
+            connection={offlineFrame ? 'offline' : connection}
             catalog={connectionCatalog}
             access={
-              local
+              offlineFrame
                 ? offline.downloads.get(current.id)?.readOnly
                   ? 'Read only'
                   : 'On this device'
@@ -1281,7 +1314,7 @@ export function Dashboard({
             onBack={returnToFiles}
             actions={rowActions(current, 'editor').filter((action) => action.label !== 'Rename…')}
             onRename={
-              !local && !currentCreation && canAdminister(current.access)
+              !offlineFrame && !currentCreation && canAdminister(current.access)
                 ? async (name) => {
                     const { item } = await itemsRequest<{ item: FileItem }>(
                       `/${current.id}`,

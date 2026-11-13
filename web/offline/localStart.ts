@@ -27,9 +27,13 @@ export type LocalStart = {
 /**
  * Only a failed network round trip enters local mode. A 401 or any other
  * answer from the server is not an outage, so it never opens local data.
+ * A request that hit its own deadline (`TimeoutError`) never got an answer
+ * either: airplane mode or a stalled radio can hang instead of failing fast.
  */
 export function isNetworkFailure(error: unknown) {
-  return error instanceof TypeError;
+  return (
+    error instanceof TypeError || (error instanceof DOMException && error.name === 'TimeoutError')
+  );
 }
 
 /** Reads local mode's starting point; null when this device was not prepared. */
