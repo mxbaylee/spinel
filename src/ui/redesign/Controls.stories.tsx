@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ActionMenu, Button, Choice, DetailsPopover, Modal } from './Controls.tsx';
-import './mockups.css';
+import './controlsStories.css';
 import { AppearanceChoice } from './ThemeMenu.tsx';
 function Controls({ disabled = false, error = false }: { disabled?: boolean; error?: boolean }) {
   const [value, setValue] = useState('system');

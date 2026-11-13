@@ -1,0 +1,575 @@
+{
+  "base": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "method": "All tracked source outside redesign plus every retained story is a conservative root; TypeScript AST static imports/reexports/import types/dynamic literal imports and CSS imports form edges. Assets are retained. Inspect nonliteral and external consumers separately.",
+  "inventory": [
+    {
+      "name": "src/ui/redesign/AppearanceReview.stories.tsx",
+      "reachable": true,
+      "lines": 156,
+      "sha256": "bf5a7b8d23d5fb616e750b3771a2b0f484a819d6cb800f68bde9efc14d2ed697",
+      "imports": [
+        "web/Appearance.tsx",
+        "src/shared/appearance.ts",
+        "src/shared/appearance.ts",
+        "src/ui/redesign/AppearanceReview.tsx",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/palette.ts"
+      ],
+      "importers": []
+    },
+    {
+      "name": "src/ui/redesign/AppearanceReview.tsx",
+      "reachable": true,
+      "lines": 62,
+      "sha256": "f91a7ed9de2b9b1071a7fffbbf7269f9047a392e7c0aaf68b5ea328325ece4cd",
+      "imports": [
+        "src/ui/palette.ts",
+        "src/ui/palette.ts",
+        "src/ui/theme.ts",
+        "src/ui/redesign/gemCovers.ts",
+        "src/ui/redesign/appearanceReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/AppearanceReview.stories.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/ConnectionsReview.tsx",
+      "reachable": false,
+      "lines": 150,
+      "sha256": "5b2410431282ae5e41cff6981abc2bf716a0823209c8f60432e240d053bb4713",
+      "imports": [
+        "src/ui/redesign/Controls.tsx"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/Controls.stories.tsx",
+      "reachable": true,
+      "lines": 132,
+      "sha256": "d41adf5b8b5b68c3a52c43b73eb5af551e65f634145a699bffd9102cdc947310",
+      "imports": [
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/mockups.css",
+        "src/ui/redesign/ThemeMenu.tsx"
+      ],
+      "importers": []
+    },
+    {
+      "name": "src/ui/redesign/Controls.tsx",
+      "reachable": true,
+      "lines": 278,
+      "sha256": "cad112b740da2286552dd2b02722d0f0b9c12939061879f84fce22da89e9e57f",
+      "imports": [
+        "src/profile/ProfileIcon.tsx",
+        "src/ui/EntityIcon.tsx",
+        "src/ui/entityIconGeometry.ts",
+        "src/ui/redesign/controls.css"
+      ],
+      "importers": [
+        "src/ui/redesign/AppearanceReview.stories.tsx",
+        "src/ui/redesign/ConnectionsReview.tsx",
+        "src/ui/redesign/Controls.stories.tsx",
+        "src/ui/redesign/EntryJourney.tsx",
+        "src/ui/redesign/FormulaReview.tsx",
+        "src/ui/redesign/ImportReview.tsx",
+        "src/ui/redesign/Mockups.tsx",
+        "src/ui/redesign/NativeEditors.stories.tsx",
+        "src/ui/redesign/PresenceReview.tsx",
+        "src/ui/redesign/SharingReview.tsx",
+        "src/ui/redesign/TagsReview.tsx",
+        "src/ui/redesign/ThemeMenu.tsx",
+        "src/ui/redesign/TokenManager.tsx",
+        "src/ui/redesign/VersionNamesReview.tsx",
+        "src/ui/redesign/Walkthrough.tsx",
+        "web/AccessDetails.tsx",
+        "web/AccessState.tsx",
+        "web/AccountExit.tsx",
+        "web/AdminAccountRecovery.tsx",
+        "web/AdminDiagnostics.tsx",
+        "web/AdminInvites.tsx",
+        "web/AdminUsers.tsx",
+        "web/Appearance.tsx",
+        "web/AuthEntry.tsx",
+        "web/BackupDownloads.tsx",
+        "web/BackupRestore.tsx",
+        "web/BackupStatus.tsx",
+        "web/Collaborators.tsx",
+        "web/ConnectAssistant.tsx",
+        "web/ConsoleRecovery.tsx",
+        "web/CopyFile.stories.tsx",
+        "web/CopyFile.tsx",
+        "web/Dashboard.tsx",
+        "web/DashboardFiles.tsx",
+        "web/DeviceStoragePanel.tsx",
+        "web/DocFormulas.tsx",
+        "web/DocumentTags.tsx",
+        "web/EditorFrame.stories.tsx",
+        "web/EditorFrame.tsx",
+        "web/EditorTools.tsx",
+        "web/EntryFrame.tsx",
+        "web/EntryHelp.tsx",
+        "web/GuestLinks.tsx",
+        "web/HistoryBrowser.tsx",
+        "web/ImportFile.tsx",
+        "web/Maintenance.tsx",
+        "web/MaintenanceBanner.stories.tsx",
+        "web/OfflineSpace.tsx",
+        "web/PasskeySettings.tsx",
+        "web/ProfileSettings.tsx",
+        "web/Rail.tsx",
+        "web/RestoreNotice.tsx",
+        "web/SearchControls.tsx",
+        "web/ServerHealth.tsx",
+        "web/ShareLink.tsx",
+        "web/Sharing.tsx",
+        "web/SharingAddress.tsx",
+        "web/SharingSources.tsx",
+        "web/Space.tsx",
+        "web/SpaceItemDialog.tsx",
+        "web/SpaceOfflineActions.tsx",
+        "web/SpaceRootActions.tsx",
+        "web/SpaceShell.tsx",
+        "web/SpaceTrash.tsx",
+        "web/SpaceTree.tsx",
+        "web/Trash.tsx",
+        "web/VersionPreview.tsx",
+        "web/WorkspaceArchive.tsx",
+        "web/offline/OfflineAvailability.tsx",
+        "web/offline/StorageHelp.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/EntryJourney.tsx",
+      "reachable": false,
+      "lines": 294,
+      "sha256": "9c4d5f54cf29b6aeddb8b24ef1354df7e1b1b6d38be634573b99e07212ec8b39",
+      "imports": [
+        "src/ui/GemLogo.tsx",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/entryJourney.css",
+        "src/ui/redesign/Mockups.tsx"
+      ],
+      "importers": [
+        "src/ui/redesign/Walkthrough.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/FormulaReview.tsx",
+      "reachable": false,
+      "lines": 410,
+      "sha256": "959e8934da5f31fd67a46c5a97f816fa33a94b613875f41fe1c01e05695b3878",
+      "imports": [
+        "web/DocFormulas.tsx",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/formulaReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/GuestEntryReview.tsx",
+      "reachable": false,
+      "lines": 39,
+      "sha256": "1e7a27d727c4f8a2dc66c389e6a3fa4bd35eb25ed9905c0d1e53428f265d16bd",
+      "imports": [
+        "src/ui/redesign/LoadingReview.tsx",
+        "src/ui/GemLogo.tsx",
+        "src/ui/redesign/Mockups.tsx",
+        "src/ui/redesign/entryJourney.css"
+      ],
+      "importers": []
+    },
+    {
+      "name": "src/ui/redesign/ImportReview.tsx",
+      "reachable": false,
+      "lines": 172,
+      "sha256": "03effc73bee14c156647a6468fecbabc51e7682e8b94e57683ea9240a0dbec01",
+      "imports": [
+        "src/shared/portable.ts",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/importReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/LoadingReview.tsx",
+      "reachable": true,
+      "lines": 95,
+      "sha256": "64a546f82b5e3cabdcf75c0d8630f24d44247a8d7c445303c2385850db3ad0ab",
+      "imports": [
+        "src/ui/redesign/loadingReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/GuestEntryReview.tsx",
+        "src/ui/redesign/Mockups.tsx",
+        "src/ui/redesign/NativeEditors.tsx",
+        "src/ui/redesign/Walkthrough.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/Mockups.tsx",
+      "reachable": false,
+      "lines": 4191,
+      "sha256": "f455b242e25991ff00d2865829b825c73b664ff9e335590b5c5f97719be76254",
+      "imports": [
+        "src/ui/GemLogo.tsx",
+        "src/ui/EntityIcon.tsx",
+        "src/profile/ProfileIcon.tsx",
+        "src/profile/profile.ts",
+        "src/profile/profile.ts",
+        "web/ProfileSettings.tsx",
+        "src/ui/palette.ts",
+        "src/ui/theme.ts",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/ThemeMenu.tsx",
+        "src/ui/redesign/ThemeMenu.tsx",
+        "src/ui/redesign/mockups.css",
+        "src/ui/redesign/LoadingReview.tsx",
+        "src/ui/redesign/TokenManager.tsx",
+        "src/ui/redesign/ConnectionsReview.tsx",
+        "src/ui/redesign/TagsReview.tsx",
+        "src/ui/redesign/ImportReview.tsx",
+        "src/ui/redesign/VersionNamesReview.tsx",
+        "src/ui/redesign/PresenceReview.tsx",
+        "src/ui/redesign/FormulaReview.tsx",
+        "src/ui/redesign/SharingReview.tsx",
+        "src/ui/redesign/SharingReview.tsx",
+        "web/Collaborators.tsx"
+      ],
+      "importers": [
+        "src/ui/redesign/EntryJourney.tsx",
+        "src/ui/redesign/GuestEntryReview.tsx",
+        "src/ui/redesign/Walkthrough.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/NativeEditors.stories.tsx",
+      "reachable": true,
+      "lines": 146,
+      "sha256": "656943921300a8d9a0631a7dc9aaaa49c6f8ffcffb24ae5893f7ce7502ff1328",
+      "imports": [
+        "src/ui/syncSheetMenus.fixture.ts",
+        "src/ui/redesign/NativeEditors.tsx",
+        "src/ui/redesign/NativeEditors.tsx",
+        "src/ui/redesign/Controls.tsx"
+      ],
+      "importers": []
+    },
+    {
+      "name": "src/ui/redesign/NativeEditors.tsx",
+      "reachable": true,
+      "lines": 398,
+      "sha256": "976c1afe8aebf05d019035fb094f797fcccf63f21560c9d2848d5c6bea421dab",
+      "imports": [
+        "src/ui/redesign/LoadingReview.tsx",
+        "web/sheetPreset.ts",
+        "web/documentReady.ts",
+        "src/ui/editorTheme.ts",
+        "src/ui/theme.ts",
+        "src/ui/redesign/nativeEditors.css"
+      ],
+      "importers": [
+        "src/ui/redesign/NativeEditors.stories.tsx",
+        "src/ui/redesign/Walkthrough.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/PresenceReview.tsx",
+      "reachable": false,
+      "lines": 76,
+      "sha256": "bda85f34ee378d216e45d28efb7a67679c908cdfe870791e76f30ad095200aba",
+      "imports": [
+        "web/Collaborators.tsx",
+        "src/profile/ProfileIcon.tsx",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/presenceReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/SharingReview.tsx",
+      "reachable": false,
+      "lines": 326,
+      "sha256": "9164abc59a62419da07b174b4b85e087fd9d2832f10b553fac211d6570e7cd6e",
+      "imports": [
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/sharingReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/TagsReview.tsx",
+      "reachable": false,
+      "lines": 187,
+      "sha256": "d3989ee5d06dae10bf6a1e3bdb9ee1da0cdaa1f6a4f1b69f956ec4ebea16a812",
+      "imports": [
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/tagsReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/ThemeMenu.stories.tsx",
+      "reachable": true,
+      "lines": 102,
+      "sha256": "751c3633d9d0a147288a99747ca8f299311743555ed8c56a0c0664c2316c6570",
+      "imports": [
+        "src/ui/theme.ts",
+        "src/ui/redesign/ThemeMenu.tsx"
+      ],
+      "importers": []
+    },
+    {
+      "name": "src/ui/redesign/ThemeMenu.tsx",
+      "reachable": true,
+      "lines": 85,
+      "sha256": "7adca1e3c5e681a6d333e0fde6ad5dfd605d29d8f4c79d04109bfe4a6383cda2",
+      "imports": [
+        "src/ui/theme.ts",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/themeMenu.css"
+      ],
+      "importers": [
+        "src/ui/ThemeSettings.tsx",
+        "src/ui/redesign/Controls.stories.tsx",
+        "src/ui/redesign/Mockups.tsx",
+        "src/ui/redesign/ThemeMenu.stories.tsx",
+        "web/AccessState.tsx",
+        "web/ConsoleRecovery.tsx",
+        "web/EntryFrame.tsx",
+        "web/Rail.tsx",
+        "web/SpaceShell.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/TokenManager.tsx",
+      "reachable": false,
+      "lines": 236,
+      "sha256": "ad537272ccc3e37a18fa9c3f591cc59440b9014c55c3b46cd0a006ccff433f53",
+      "imports": [
+        "src/ui/redesign/Controls.tsx"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/VersionNamesReview.tsx",
+      "reachable": false,
+      "lines": 306,
+      "sha256": "e2b16c5bfc9c3deb447d2301680ccb327a1049663b5a77496f88a105e4b33ce3",
+      "imports": [
+        "src/shared/historyNavigation.ts",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/versionNamesReview.css"
+      ],
+      "importers": [
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/Walkthrough.tsx",
+      "reachable": false,
+      "lines": 460,
+      "sha256": "e04d8f8150425bda3d9657e5d107e068bf2378a3fd4242ee9dc53ef8e9239752",
+      "imports": [
+        "src/ui/redesign/LoadingReview.tsx",
+        "src/ui/redesign/NativeEditors.tsx",
+        "src/ui/redesign/Controls.tsx",
+        "src/ui/redesign/Mockups.tsx",
+        "src/ui/redesign/EntryJourney.tsx",
+        "src/ui/redesign/EntryJourney.tsx",
+        "src/ui/redesign/walkthrough.css",
+        "src/profile/profile.ts",
+        "src/ui/redesign/NativeEditors.tsx"
+      ],
+      "importers": []
+    },
+    {
+      "name": "src/ui/redesign/appearanceReview.css",
+      "reachable": true,
+      "lines": 57,
+      "sha256": "f3632f30580dcc038ed4c351f3102c3e10fcd64a1bdbde050fe7f0040f0b64e8",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/AppearanceReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/controls.css",
+      "reachable": true,
+      "lines": 349,
+      "sha256": "3ba49dcabf5779e11f289c34f634ec17118af862eaa8dd7069eb02892ecabb18",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/Controls.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/entryJourney.css",
+      "reachable": true,
+      "lines": 198,
+      "sha256": "025bf5e316fe77705233a07801114027a95185ba50e8ad764f36f973b1ff45bc",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/EntryJourney.tsx",
+        "src/ui/redesign/GuestEntryReview.tsx",
+        "web/ConsoleRecovery.tsx",
+        "web/EntryFrame.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/formulaReview.css",
+      "reachable": false,
+      "lines": 86,
+      "sha256": "7187d68fb7c940f1d1bf0a39a3df659a6cc3f66144a1f054e2fbf2257fc6cff0",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/FormulaReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/gemCovers.ts",
+      "reachable": true,
+      "lines": 356,
+      "sha256": "585e40e92b30c5521f929e7484fe539acd12234076cf5190565563a721b8e3c6",
+      "imports": [
+        "src/ui/palette.ts",
+        "src/ui/redesign/spinelCover.ts"
+      ],
+      "importers": [
+        "scripts/gem-covers.ts",
+        "src/ui/redesign/AppearanceReview.tsx",
+        "web/Appearance.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/importReview.css",
+      "reachable": false,
+      "lines": 52,
+      "sha256": "0df3fb443196d6e58263bace60914f20dd943fa586ede3c90fed6b84208a15e2",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/ImportReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/loadingReview.css",
+      "reachable": true,
+      "lines": 150,
+      "sha256": "29da92879247e3f595b6b611c7b998059a8515f0c0ebdf964c4edf45d665fd54",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/LoadingReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/mockups.css",
+      "reachable": true,
+      "lines": 1966,
+      "sha256": "03325c663843ed0c3c4273e557925ee8006ad081b6af3b3f7b3e7c3d83fc8627",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/Controls.stories.tsx",
+        "src/ui/redesign/Mockups.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/nativeEditors.css",
+      "reachable": true,
+      "lines": 93,
+      "sha256": "a78eee7a21b633d2eb1b9b59d1463cc986dff4f070f8d6f94aff76c65798d8d2",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/NativeEditors.tsx",
+        "web/PresenceNative.stories.tsx",
+        "web/SyncNative.stories.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/presenceReview.css",
+      "reachable": false,
+      "lines": 79,
+      "sha256": "dc4c45f30fe8e455559ce2e70de99e4e1bc52080b3a7c290b468e0cda2a1c962",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/PresenceReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/sharingReview.css",
+      "reachable": false,
+      "lines": 38,
+      "sha256": "b5921751d6151bb8f5aeb934c0ae09c6c23eb8731fdc6cb5b70c69bca6aa8fbe",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/SharingReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/spinelCover.ts",
+      "reachable": true,
+      "lines": 56,
+      "sha256": "51fa19ea739ed1e8e078ea538c042b1c094420505b7912aa241805d27e04c5d5",
+      "imports": [
+        "src/ui/gemGeometry.ts",
+        "src/ui/palette.ts"
+      ],
+      "importers": [
+        "src/ui/redesign/gemCovers.ts"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/tagsReview.css",
+      "reachable": false,
+      "lines": 72,
+      "sha256": "160012126128ef4cb24b86d44a88ae433b3631d64746f0cf5f511645c36ddd0a",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/TagsReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/themeMenu.css",
+      "reachable": true,
+      "lines": 30,
+      "sha256": "4bcbc3eb037407983dee2673a39baa89f3255a289e6f14db2bd278ba0553b5b7",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/ThemeMenu.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/versionNamesReview.css",
+      "reachable": false,
+      "lines": 68,
+      "sha256": "31179bcb729657a5f0669b3ebb29b57b669489eeff0fc67cb957887bf7c6f5c9",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/VersionNamesReview.tsx"
+      ]
+    },
+    {
+      "name": "src/ui/redesign/walkthrough.css",
+      "reachable": false,
+      "lines": 128,
+      "sha256": "79f2c272a087b27a49afb86f30e7c004fe92ed8323da7c70be3d44cc351a5a9a",
+      "imports": [],
+      "importers": [
+        "src/ui/redesign/Walkthrough.tsx"
+      ]
+    }
+  ]
+}
