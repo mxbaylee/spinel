@@ -1,0 +1,250 @@
+{
+  "schema": 1,
+  "reviewed": "ac42137cf8e16a906df4e20ab430fa446f4a4152",
+  "tree": "658a052d5b0fb431f779e139aec0c7a602eda68a",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "independentNonimplementing": true,
+  "rubricOrder": [
+    "scope",
+    "correctness-data-access",
+    "regression-evidence",
+    "CI-operational-usability",
+    "maintainability-docs-process-complexity"
+  ],
+  "reviewers": [
+    {
+      "name": "candidate_review_a",
+      "total": 96,
+      "scores": [
+        35,
+        25,
+        18,
+        8,
+        10
+      ],
+      "findings": [
+        "A1",
+        "A2"
+      ],
+      "localTests": {
+        "passed": 34,
+        "receipt": {
+          "startedAt": "2026-11-13T04:13:32.409Z",
+          "finishedAt": "2026-11-13T04:13:34.908Z",
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/cece61e42934/spinel",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "node",
+            "--test",
+            "scripts/ci/offline-upgrade-proxy.test.ts",
+            "scripts/ci/offline-upgrade-observation.test.ts",
+            "scripts/ci/offline-upgrade-dependencies.test.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/changes.test.ts",
+            "scripts/ci/coverage-result.test.ts"
+          ],
+          "elapsedMs": 2499,
+          "initialMemAvailableKiB": 8172592,
+          "peakKiB": 709636,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        }
+      },
+      "probe": {
+        "startedAt": "2026-11-13T04:16:21.693Z",
+        "finishedAt": "2026-11-13T04:16:27.025Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "../validation/review-a-observer-probe.ts"
+        ],
+        "elapsedMs": 5332,
+        "initialMemAvailableKiB": 8189192,
+        "peakKiB": 251600,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "name": "candidate_review_b",
+      "total": 97,
+      "scores": [
+        34,
+        25,
+        20,
+        8,
+        10
+      ],
+      "findings": [
+        "B1"
+      ],
+      "localTests": {
+        "passed": 31,
+        "receipt": {
+          "startedAt": "2026-11-13T04:13:55.365Z",
+          "finishedAt": "2026-11-13T04:13:58.587Z",
+          "node": "v26.13.0",
+          "cwd": "/workspace/scratch/cece61e42934/spinel",
+          "command": "node",
+          "args": [
+            "scripts/serial.ts",
+            "node",
+            "--test",
+            "--test-concurrency=1",
+            "scripts/ci/offline-upgrade-proxy.test.ts",
+            "scripts/ci/offline-upgrade-observation.test.ts",
+            "scripts/ci/offline-upgrade-dependencies.test.ts",
+            "scripts/ci/plan.test.ts",
+            "scripts/ci/coverage-result.test.ts"
+          ],
+          "elapsedMs": 3222,
+          "initialMemAvailableKiB": 8162000,
+          "peakKiB": 394492,
+          "code": 0,
+          "signal": null,
+          "aborted": null
+        }
+      },
+      "typecheck": {
+        "startedAt": "2026-11-13T04:14:11.582Z",
+        "finishedAt": "2026-11-13T04:14:17.029Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--max-old-space-size=1536",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "elapsedMs": 5446,
+        "initialMemAvailableKiB": 8151900,
+        "peakKiB": 2053736,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "A1",
+      "severity": "P2",
+      "points": 2,
+      "owner": "local",
+      "paths": [
+        "e2e/offline-upgrade-observation.ts",
+        "scripts/ci/offline-upgrade-observation.test.ts"
+      ],
+      "finding": "Object-shaped malformed trace events can certify complete evidence.",
+      "reproduction": "The retained exact-commit probe shows complete:true and malformed:0 for a category-only worker record, a valid worker mixed with {}, and a record with invalid name/phase/timestamp types.",
+      "requiredRepair": "Validate the minimum trace envelope, preserve legitimate raw metadata/events, and add the three object-shaped negative regressions."
+    },
+    {
+      "id": "A2",
+      "sameFindingAs": "B1",
+      "severity": "P2",
+      "points": 2,
+      "owner": "local",
+      "paths": [
+        "e2e/offline-upgrade.spec.ts"
+      ],
+      "finding": "Second required scenario acquisition and cleanup, including nested proxy/app shutdown, can skip remaining owners or replace the first failure.",
+      "requiredRepair": "Protect acquisition; preserve original error; attempt every independent shutdown with unchanged bounds; verify failure ordering."
+    },
+    {
+      "id": "B1",
+      "sameFindingAs": "A2",
+      "severity": "medium",
+      "points": 3,
+      "pointAllocation": {
+        "protectAcquisition": 1,
+        "preserveFirstFailure": 1,
+        "attemptEveryOwner": 1
+      },
+      "owner": "local",
+      "paths": [
+        "e2e/offline-upgrade.spec.ts"
+      ],
+      "finding": "Same cleanup-contract defect independently verified.",
+      "requiredRepair": "Use the existing cleanup coordinator, protect database/server acquisition, and initiate independent proxy/app shutdowns before awaiting either."
+    }
+  ],
+  "disposition": "All identified steps are local repairs in the subsequent complete candidate. Both reviewers must revalidate that exact new commit before validation publication. No target grade or other reviewer score was supplied.",
+  "hostedAcceptance": "Pending and deducted zero points. Real emitted-worker comparison, original retained Doc/lazy-asset adoption, A-to-B/access scenario, all selected workers and seven gates remain mandatory.",
+  "archive": {
+    "file": "initial-review.tar.gz",
+    "sha256": "b4829a880ad96a6e6de4b1436f04e79314bb77f73d20f4d62092a4b104943592"
+  },
+  "files": [
+    {
+      "path": "review-a-focused-watchdog.json",
+      "sha256": "dbebdf1f0d3d6f316230693b56ed8a6738c33a38b5af57d0e43bd4b396d12bf6",
+      "bytes": 644
+    },
+    {
+      "path": "review-a-observer-probe-watchdog.json",
+      "sha256": "693a155362aeb493f2818826510603abef010947bcdd9ec7880347547e8d2527",
+      "bytes": 414
+    },
+    {
+      "path": "review-a-observer-probe.log",
+      "sha256": "bfc78577f17a8ef848905f49b1baffe2cef1b12eb4511c2a514e70dbfd4c597c",
+      "bytes": 2390
+    },
+    {
+      "path": "review-a-observer-probe.ts",
+      "sha256": "099e3af8e2153bc64cc0b16d70d69e60952338e79640d786c6daf5e5942cae46",
+      "bytes": 3789
+    },
+    {
+      "path": "review-a-observer-probe/missing-category.json",
+      "sha256": "6e96692a3bbf0149fb2d79bb52278d1524dcdb4349cc76a706cb7b9087501c8d",
+      "bytes": 1390
+    },
+    {
+      "path": "review-a-observer-probe/missing-terminal.json",
+      "sha256": "68685ca8254af7390f039f052acfb47a635366aa8100126f51e5a8490de63a3b",
+      "bytes": 1990
+    },
+    {
+      "path": "review-a-observer-probe/original-and-detach-error.json",
+      "sha256": "37428e8c1675eba8a29a28ed2d8cc09bc9c90719d073b7591eb7a58bdc613b0a",
+      "bytes": 1957
+    },
+    {
+      "path": "review-a-observer-probe/success.json",
+      "sha256": "32f665e13cd2c6f9d36a3f2ffc0a945a36c5c10dbeb2bc9bd57fa831dd7f8320",
+      "bytes": 1886
+    },
+    {
+      "path": "review-b-focused.json",
+      "sha256": "008efe9c47462f5623b3f917d57d6bfb8b82d7b3af7bad78ea59763c76dfeee7",
+      "bytes": 638
+    },
+    {
+      "path": "review-b-focused.log",
+      "sha256": "8a6471577ef62f04dca671ed0ff0940448947ecc6b9650cef994379160b3fccd",
+      "bytes": 3580
+    },
+    {
+      "path": "review-b-typecheck.json",
+      "sha256": "99f52f9c9fc86bd1f0feeb6d4db801e7daf406b672f398ed676ba817a507111a",
+      "bytes": 458
+    },
+    {
+      "path": "review-b-typecheck.log",
+      "sha256": "ef2c91378e65f8ad9353e24c2603f135adc04bd4e6cee3f31ac415cd177e61e9",
+      "bytes": 376
+    }
+  ]
+}
