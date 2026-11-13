@@ -1,0 +1,68 @@
+{
+  "reviewedAt": "2026-11-02T22:18:17.340Z",
+  "durationMs": 6507,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "desktop",
+  "theme": "light",
+  "variants": [
+    "light"
+  ],
+  "requested": [
+    "redesign-controls--default",
+    "redesign-appearance--playground-story"
+  ],
+  "checked": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light",
+      "filename": "redesign-controls--default-light.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "redesign-appearance--playground-story-light.png",
+      "title": "Current production/Appearance / Playground"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-nested-icon-before-light.png",
+      "title": "Appearance after shared Controls: nested-icon-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-selected-cover-before-light.png",
+      "title": "Appearance after shared Controls: selected-cover-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-nested-icon-after-light.png",
+      "title": "Appearance after shared Controls: nested-icon-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-selected-cover-after-light.png",
+      "title": "Appearance after shared Controls: selected-cover-after"
+    }
+  ],
+  "verifications": [
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "light: Appearance styles survive a same-document Controls visit"
+  ],
+  "failures": []
+}

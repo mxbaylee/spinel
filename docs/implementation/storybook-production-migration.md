@@ -49,9 +49,12 @@ journeys cover their routing, native editors and persistence.
 Production stories replace the old file dialogs/mutations/recovery, sharing,
 history/version names, formula authoring, profile/icon picker, authentication,
 admin/account actions, connections/tokens, tags, presence and import specimens.
-Unowned loading proposals are retired. SPN-087 removes obsolete fixture CSS and
-source later; it is not a blanket owner for obsolete visible stories. SPN-089
-checks production dialogs and their actual stories.
+Unowned loading proposals are retired. 🧩 [SPN-087](SPN-087.md) removes the unreachable
+mock screen sources and their private CSS, keeping the production Controls
+specimen's layout in `controlsStories.css`. Production entry styles, shared
+controls, native loading/editor fixtures and gem artwork remain with their live
+consumers. Visiting Controls must not restyle another production story in the same
+Storybook document. SPN-089 checks production dialogs and their actual stories.
 
 Appearance, shared Controls and Theme control already render shipped components
 and move into Current production with their existing IDs retained. Native

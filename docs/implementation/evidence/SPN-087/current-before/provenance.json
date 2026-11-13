@@ -1,0 +1,1032 @@
+{
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "captureSource": "0d6e1ffae53fe5432fa2bb581bdf52ba7d9a2166",
+  "captureRun": 43237408378,
+  "captureAttempt": 1,
+  "sourceDifferenceToBase": [
+    "docs/formulas.md",
+    "docs/implementation/SPN-148.md",
+    "docs/implementation/SPN-149.md",
+    "docs/implementation/grooming-2026-11-12.md",
+    "docs/todo/SPN-038.md",
+    "docs/todo/SPN-090.md",
+    "docs/todo/SPN-099.md",
+    "docs/todo/SPN-120.md",
+    "docs/todo/SPN-122.md",
+    "docs/todo/SPN-147.md",
+    "docs/todo/SPN-148.md",
+    "docs/todo/SPN-149.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "sourceEquivalence": "Only Markdown/backlog documentation differs; application, story, CSS, configuration, dependencies, runtime pin and capture runner are identical.",
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewportHeight": 900,
+  "variants": {
+    "light": {
+      "width": 1280,
+      "theme": "light",
+      "touch": false
+    },
+    "dark": {
+      "width": 1280,
+      "theme": "dark",
+      "touch": false
+    },
+    "phone": {
+      "width": 390,
+      "theme": "light",
+      "touch": true
+    },
+    "phone-dark": {
+      "width": 390,
+      "theme": "dark",
+      "touch": true
+    },
+    "tablet": {
+      "width": 768,
+      "theme": "light",
+      "touch": true
+    }
+  },
+  "selectedBeforeAfterStories": [
+    "redesign-controls--default",
+    "redesign-controls--disabled",
+    "redesign-controls--error",
+    "redesign-controls--long-modal-title",
+    "redesign-appearance--playground-story",
+    "redesign-appearance--gems-light-and-dark",
+    "redesign-theme-control--default",
+    "redesign-theme-control--storage-blocked",
+    "redesign-theme-control--dismiss-storage-warning",
+    "redesign-native-editors--sheet",
+    "redesign-native-editors--doc",
+    "redesign-native-editors--sheet-viewer",
+    "redesign-native-editors--doc-viewer",
+    "redesign-native-editors--sheet-formula",
+    "redesign-native-editors--sheet-copy-available",
+    "redesign-native-editors--sheet-copy-unavailable",
+    "shell-applayout--desktop",
+    "dashboard-dashboard--populated",
+    "dashboard-dashboard--grid",
+    "dashboard-dashboard--shared-folder-viewer",
+    "editor-frame--default",
+    "editor-frame--guest",
+    "space-review--populated",
+    "space-review--view-only",
+    "space-review--guest-viewer",
+    "account-profile-page--profile",
+    "account-profile-page--operator",
+    "admin-page--people",
+    "guest-guestapp--link-revoked",
+    "shell-connectionstatus--touch-details"
+  ],
+  "artifacts": [
+    {
+      "variant": "dark",
+      "artifactName": "design-review-desktop-dark",
+      "sha256": "18f77b091376f3059e68322954945fb6cd17dbf89b00329d19bb945c05300166",
+      "checked": 1041,
+      "capturesPreserved": [
+        {
+          "file": "redesign-appearance--playground-story-dark.png",
+          "sha256": "77311502fb16c4e25391943a10563c77f15286ac432bd33c604617f5480c309f",
+          "id": "redesign-appearance--playground-story",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-appearance--gems-light-and-dark-dark.png",
+          "sha256": "6cb74c671b69a73dc7a97336c8ec0b355a6e98b005ef49aa0fa2642c25e96162",
+          "id": "redesign-appearance--gems-light-and-dark",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-controls--default-dark.png",
+          "sha256": "c870f812bd1b89fef5809a85fe1fdc445b76b1cae37fa7df06cd2d870611b781",
+          "id": "redesign-controls--default",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-controls--disabled-dark.png",
+          "sha256": "1498884bd19c8add3370c633ea412f05bb230e5870ccbdbfe01bb84edc4d4a13",
+          "id": "redesign-controls--disabled",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-controls--error-dark.png",
+          "sha256": "e8bb39f9f54b21cb1a9d5a7ab989698cd67f8e970866a665106e4d4bea0127f9",
+          "id": "redesign-controls--error",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-controls--long-modal-title-dark.png",
+          "sha256": "5f4f6ff82d3de0f99c5546cee9833e153f3cc43f0b5b062840e45244d00830bc",
+          "id": "redesign-controls--long-modal-title",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-theme-control--default-dark.png",
+          "sha256": "41b38552a31742759fe64774a0a0cf7790b8156d0fa3ce053582785cdd2a8fa7",
+          "id": "redesign-theme-control--default",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-theme-control--storage-blocked-dark.png",
+          "sha256": "23ba62f94c54494e6a3eb276e12794f770b3cff7e7981587ccbd2977d9284e17",
+          "id": "redesign-theme-control--storage-blocked",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-theme-control--dismiss-storage-warning-dark.png",
+          "sha256": "52c02ba72b250ea3932cdc7649e4db264b574a7ebb14f2bd15416da56c5bd941",
+          "id": "redesign-theme-control--dismiss-storage-warning",
+          "variant": "dark"
+        },
+        {
+          "file": "admin-page--people-dark.png",
+          "sha256": "434604506e9048bd07e05cd06f21a0cc2f5704bf12cac5b1604fb63b2ea3e76a",
+          "id": "admin-page--people",
+          "variant": "dark"
+        },
+        {
+          "file": "shell-applayout--desktop-dark.png",
+          "sha256": "f05e4c0f232feccc41aabc3e6dc9971a43bd2895562f4db3c1df7707cc837fbb",
+          "id": "shell-applayout--desktop",
+          "variant": "dark"
+        },
+        {
+          "file": "shell-connectionstatus--touch-details-dark.png",
+          "sha256": "72caf4e7d5dfe2b869ff42fa39210535f0989df3f2e2bff71688314ed32741e8",
+          "id": "shell-connectionstatus--touch-details",
+          "variant": "dark"
+        },
+        {
+          "file": "dashboard-dashboard--populated-dark.png",
+          "sha256": "606932b2b54b6c613590f73a35bc8af411f8e458c0dd5d52b98bf8565a8264c9",
+          "id": "dashboard-dashboard--populated",
+          "variant": "dark"
+        },
+        {
+          "file": "dashboard-dashboard--shared-folder-viewer-dark.png",
+          "sha256": "29a99b1b7a5ea66c3b0fb1bb976a398176aceb6f65f718e610c21cf37af864e8",
+          "id": "dashboard-dashboard--shared-folder-viewer",
+          "variant": "dark"
+        },
+        {
+          "file": "dashboard-dashboard--grid-dark.png",
+          "sha256": "02b2cffd78acf1b8971063d364442b24983e18a8361775d5ebf731589c39ec84",
+          "id": "dashboard-dashboard--grid",
+          "variant": "dark"
+        },
+        {
+          "file": "editor-frame--default-dark.png",
+          "sha256": "a8f196e7f8b461e96fdd79ac68c277525f3fc0a9dccf1e66628f78ba9d721c49",
+          "id": "editor-frame--default",
+          "variant": "dark"
+        },
+        {
+          "file": "editor-frame--guest-dark.png",
+          "sha256": "e202e7bb8c312cffb1209f3d0d51866189a10049ee97251c0b9f00fceb5cc928",
+          "id": "editor-frame--guest",
+          "variant": "dark"
+        },
+        {
+          "file": "guest-guestapp--link-revoked-dark.png",
+          "sha256": "92a84ed52cb559b325b8eb7f9f325988e3502a792705ab22cc2f1cc86a2cc3f9",
+          "id": "guest-guestapp--link-revoked",
+          "variant": "dark"
+        },
+        {
+          "file": "account-profile-page--profile-dark.png",
+          "sha256": "3c662840b5386e7260c25ad1b196046ee9d7a3c91d56855b032df0856e525e31",
+          "id": "account-profile-page--profile",
+          "variant": "dark"
+        },
+        {
+          "file": "account-profile-page--operator-dark.png",
+          "sha256": "0a8b3f53a33134e5043f49d0be5cad8a1bfa60cc2e60f10b6a7b76faec5b167d",
+          "id": "account-profile-page--operator",
+          "variant": "dark"
+        },
+        {
+          "file": "space-review--populated-dark.png",
+          "sha256": "d0942fa1eb584457ee44d50956047b4bd740117b046f34b1b6ca169eda95237f",
+          "id": "space-review--populated",
+          "variant": "dark"
+        },
+        {
+          "file": "space-review--view-only-dark.png",
+          "sha256": "d5a5f27ca1d8c3e39ed854131cd37522c421d80c387411f88b5cfda833955d92",
+          "id": "space-review--view-only",
+          "variant": "dark"
+        },
+        {
+          "file": "space-review--guest-viewer-dark.png",
+          "sha256": "c64a9228857d3484ec5b745e7084770d2171f4b411deef881cd875229def2b3c",
+          "id": "space-review--guest-viewer",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-dark.png",
+          "sha256": "74b72ed8404843f6ef12f1d93d7d2cbc74be6591d7157e6d4f21d23a37e55331",
+          "id": "redesign-native-editors--sheet",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--doc-dark.png",
+          "sha256": "f9f6854401edecc21840f7ad27c13fc6c12c126fb9dcf0669288b2f396ba7d49",
+          "id": "redesign-native-editors--doc",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-viewer-dark.png",
+          "sha256": "f6bcfec6e1ff6ea5815f41d17a2c545bd085665ec4c205f99bf478be1fa704ba",
+          "id": "redesign-native-editors--sheet-viewer",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--doc-viewer-dark.png",
+          "sha256": "74125383394eb8cdcc252f64b12c6bffd1959fb5eeccaa9d0a0df36f6fdcc82b",
+          "id": "redesign-native-editors--doc-viewer",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-formula-dark.png",
+          "sha256": "fedfce18dd62ff1c47a0fb9acc006a7b65783e2f6305da507136e34ec1842e83",
+          "id": "redesign-native-editors--sheet-formula",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-available-dark.png",
+          "sha256": "3037945853ccb06c8b8040cbacb087e97dfb86ff4516e88380482964301f8142",
+          "id": "redesign-native-editors--sheet-copy-available",
+          "variant": "dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-unavailable-dark.png",
+          "sha256": "3a8f52a10db6ea67533663cb205821f1aa0dfddaac404f9739a997559b25fe3b",
+          "id": "redesign-native-editors--sheet-copy-unavailable",
+          "variant": "dark"
+        }
+      ],
+      "artifactId": 13953479116
+    },
+    {
+      "variant": "light",
+      "artifactName": "design-review-desktop-light",
+      "sha256": "f6db4fbd87f2e1a4479d3d0c4f7df74169b49d14428d93488fdcf93971395018",
+      "checked": 1041,
+      "capturesPreserved": [
+        {
+          "file": "redesign-appearance--playground-story-light.png",
+          "sha256": "6c9367cdfa425d68bfa35c23ce617404e2e3dd0c2929e0751174b9fab217ca62",
+          "id": "redesign-appearance--playground-story",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-appearance--gems-light-and-dark-light.png",
+          "sha256": "e0cebe2808fac1bbea0c8e79a888394cafb495cce0d68a0b5daa2ff466303aa8",
+          "id": "redesign-appearance--gems-light-and-dark",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-controls--default-light.png",
+          "sha256": "4e5c1afe2eb8bd2a161eb7dc171224c1fb037c534ad3b9c3b99ae6c3dd773434",
+          "id": "redesign-controls--default",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-controls--disabled-light.png",
+          "sha256": "6953b2ee31b978bec34f74ce62586206e6f55c5db72875d697dd1cdaabe0e4fc",
+          "id": "redesign-controls--disabled",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-controls--error-light.png",
+          "sha256": "b981292535fb79929e4eb6a00f7c04c23992d4bbced8a2ee5afae678bf090f60",
+          "id": "redesign-controls--error",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-controls--long-modal-title-light.png",
+          "sha256": "a0353134cb262ebdf175494af47902da6ddb54208d94d902e507c5a699b16d75",
+          "id": "redesign-controls--long-modal-title",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-theme-control--default-light.png",
+          "sha256": "bf53b592330fe2f043cf7908dffbf6fbddc00d63c70b1178d013cd10510c6422",
+          "id": "redesign-theme-control--default",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-theme-control--storage-blocked-light.png",
+          "sha256": "0299b0288ac2e4985e85b3e048bc87c8e9b4cf96f520e076836c9f27071402e3",
+          "id": "redesign-theme-control--storage-blocked",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-theme-control--dismiss-storage-warning-light.png",
+          "sha256": "04fcac4201438d97ca162ca525961ad2c7c1ce6b453e4c02b5915a8633292f3f",
+          "id": "redesign-theme-control--dismiss-storage-warning",
+          "variant": "light"
+        },
+        {
+          "file": "admin-page--people-light.png",
+          "sha256": "4abf22d45831a10d74a85fdf7926eac34b165efc95ce57a079417e7bfc2ec8d0",
+          "id": "admin-page--people",
+          "variant": "light"
+        },
+        {
+          "file": "shell-applayout--desktop-light.png",
+          "sha256": "885af770961a80e0fef91d657bed599341e5ecff928d75ef797766039ad60629",
+          "id": "shell-applayout--desktop",
+          "variant": "light"
+        },
+        {
+          "file": "shell-connectionstatus--touch-details-light.png",
+          "sha256": "ee169e46f38090942a29b65e56d7bb4c8b22321351d86c5d49b0fe57f66ae75e",
+          "id": "shell-connectionstatus--touch-details",
+          "variant": "light"
+        },
+        {
+          "file": "dashboard-dashboard--populated-light.png",
+          "sha256": "6379a98a3fef444297f132c59c734709637487b4123fd9ef5f613dcbbe962b8f",
+          "id": "dashboard-dashboard--populated",
+          "variant": "light"
+        },
+        {
+          "file": "dashboard-dashboard--shared-folder-viewer-light.png",
+          "sha256": "d01d065da001052a602b01edc4daa423d01672936b73f0b62316673c8cf7b373",
+          "id": "dashboard-dashboard--shared-folder-viewer",
+          "variant": "light"
+        },
+        {
+          "file": "dashboard-dashboard--grid-light.png",
+          "sha256": "20d04e88d1017607ee998145ad45e9480a0358bfb9d565eb79cc86aa2a7c2110",
+          "id": "dashboard-dashboard--grid",
+          "variant": "light"
+        },
+        {
+          "file": "editor-frame--default-light.png",
+          "sha256": "d459e742ed096518799700a3c30edcb6ee52d4cb17cdc2507082fe813c70a3e9",
+          "id": "editor-frame--default",
+          "variant": "light"
+        },
+        {
+          "file": "editor-frame--guest-light.png",
+          "sha256": "b7e62da94ed14215005a9991f611a46b96b13fef228c29c5a3a56895c1094f03",
+          "id": "editor-frame--guest",
+          "variant": "light"
+        },
+        {
+          "file": "guest-guestapp--link-revoked-light.png",
+          "sha256": "c24c770c8ce007fea3f7f34d12354e46de5966c64d7f03af45fb0c14324c42e5",
+          "id": "guest-guestapp--link-revoked",
+          "variant": "light"
+        },
+        {
+          "file": "account-profile-page--profile-light.png",
+          "sha256": "edf17419d58e2f8bd85b5bb7eecc496f3e12227aaca557fee221c0706e96d856",
+          "id": "account-profile-page--profile",
+          "variant": "light"
+        },
+        {
+          "file": "account-profile-page--operator-light.png",
+          "sha256": "3fab56306826d4def1612c2bced5b18b1988d3016c85a4d5c350a37325ac3733",
+          "id": "account-profile-page--operator",
+          "variant": "light"
+        },
+        {
+          "file": "space-review--populated-light.png",
+          "sha256": "5311e1d7c7ca322587c07e2e39ee62d934cd60dc5895c7907cd431ba544c1a6e",
+          "id": "space-review--populated",
+          "variant": "light"
+        },
+        {
+          "file": "space-review--view-only-light.png",
+          "sha256": "38f4b314ae0a0c85d25c98cacdc3c9fb62ff3c1ec471c5dc8259e5bcc80dc4cd",
+          "id": "space-review--view-only",
+          "variant": "light"
+        },
+        {
+          "file": "space-review--guest-viewer-light.png",
+          "sha256": "146111a3dc3c647320229676398bf9d65ff88a632c65813873690e372dc71c4a",
+          "id": "space-review--guest-viewer",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--sheet-light.png",
+          "sha256": "847d67f0cdf5844d2836814548c5d53e5b123c0c32ad4b7e3eefdebfa9330de8",
+          "id": "redesign-native-editors--sheet",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--doc-light.png",
+          "sha256": "394c553e29a4fd715e3ed293663c0e67af2d5283d34177a84e1e123b4c49767c",
+          "id": "redesign-native-editors--doc",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--sheet-viewer-light.png",
+          "sha256": "a2c250b9e51e763433beacff25cfa80063fed48102874be3efc4f97c2ee0bd8c",
+          "id": "redesign-native-editors--sheet-viewer",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--doc-viewer-light.png",
+          "sha256": "e1899307c0717ec80b306a44d2bbe5b7f6ce990ae2f0df59c4bebf7b1676f4b5",
+          "id": "redesign-native-editors--doc-viewer",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--sheet-formula-light.png",
+          "sha256": "d1d1d905c35566f83c194c8475f97292539ea2f59f3fd428d7f761808f09a71d",
+          "id": "redesign-native-editors--sheet-formula",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-available-light.png",
+          "sha256": "fa00e17c78e839a995435650eb7a18df51cdf90935d9f354091173dce8997b72",
+          "id": "redesign-native-editors--sheet-copy-available",
+          "variant": "light"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-unavailable-light.png",
+          "sha256": "563ea83dd767163910dc58c6c2138d344f26445cf5196ff2075cbf78e1eb7751",
+          "id": "redesign-native-editors--sheet-copy-unavailable",
+          "variant": "light"
+        }
+      ],
+      "artifactId": 13952854044
+    },
+    {
+      "variant": "phone-dark",
+      "artifactName": "design-review-mobile-dark",
+      "sha256": "fa328bb778939ae8f8bc1e4ce035ebe9bbdbe8bfc21806c0b894c4dffd152351",
+      "checked": 1041,
+      "capturesPreserved": [
+        {
+          "file": "redesign-appearance--playground-story-phone-dark.png",
+          "sha256": "5b1a62023ae431962303bf496cac6f46fff0c9dbe5f7032a7c75a5f674efed50",
+          "id": "redesign-appearance--playground-story",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-appearance--gems-light-and-dark-phone-dark.png",
+          "sha256": "4feb3b4816b2cecf8dd48e4fa07915df3c950e046a49041ffa7a30a5f110f7e2",
+          "id": "redesign-appearance--gems-light-and-dark",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-controls--default-phone-dark.png",
+          "sha256": "105eaf26b736dabfe3a3fc53a4a84db5febeb0b93e0c397019347aba346ab398",
+          "id": "redesign-controls--default",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-controls--disabled-phone-dark.png",
+          "sha256": "720aa70dfb64e97e67006d1c67bb2e356127b05d3eafbc37b7e8e9714068d92e",
+          "id": "redesign-controls--disabled",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-controls--error-phone-dark.png",
+          "sha256": "36201024898f1456a6ab485a3e866fdb474038080216dde04ba4f1989e7d597e",
+          "id": "redesign-controls--error",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-controls--long-modal-title-phone-dark.png",
+          "sha256": "bd7cc6df768b41575110eb071df8a59237cf528ac643d26ce7913594dc315c67",
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-theme-control--default-phone-dark.png",
+          "sha256": "3746a7466d010533fc498c61459feabc5360539145e0829d3a9f517cfd9bb8f6",
+          "id": "redesign-theme-control--default",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-theme-control--storage-blocked-phone-dark.png",
+          "sha256": "44c072237d14669658307e8a053f3c1b3cea27bf6aa8ce3997c1105b15de142a",
+          "id": "redesign-theme-control--storage-blocked",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-theme-control--dismiss-storage-warning-phone-dark.png",
+          "sha256": "050bb69cce4e5054df1f998a8a2992dcb89762502fb725c235b399cbdb0b99f6",
+          "id": "redesign-theme-control--dismiss-storage-warning",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "admin-page--people-phone-dark.png",
+          "sha256": "619d3245ffa461bbc77d8c7068067c5e43d4e8efdb449ac83133801659e32a39",
+          "id": "admin-page--people",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "shell-applayout--desktop-phone-dark.png",
+          "sha256": "97b30083a91d2a0fb6e4bcc5473312290d5e50e11715ff129e3915d6f3604d22",
+          "id": "shell-applayout--desktop",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "shell-connectionstatus--touch-details-phone-dark.png",
+          "sha256": "117439bb10e30f1e5fd6879cc89cf1fcd64adf7e8cf87be9bdc2ac3eae700a83",
+          "id": "shell-connectionstatus--touch-details",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "dashboard-dashboard--populated-phone-dark.png",
+          "sha256": "9be1784d0070a90f9db5acc05913e5f9926b948211b71165d2e8fdbc4031c1d9",
+          "id": "dashboard-dashboard--populated",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "dashboard-dashboard--shared-folder-viewer-phone-dark.png",
+          "sha256": "bad03713d593afc4a45d416ab66ff02d81ef2d6e26f45f70004631a6ab78b093",
+          "id": "dashboard-dashboard--shared-folder-viewer",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "dashboard-dashboard--grid-phone-dark.png",
+          "sha256": "6b776065a4d4671974454ff6db568d1b310ff4ddf0c630f7279bb98f779838e4",
+          "id": "dashboard-dashboard--grid",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "editor-frame--default-phone-dark.png",
+          "sha256": "40141a2b13c7b6bcaa9566b038b195c7f7b6373bab0983b9e853a37e67589e8d",
+          "id": "editor-frame--default",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "editor-frame--guest-phone-dark.png",
+          "sha256": "037494f638bdc358f2aa1f0247ab3317b9c013e764e7df9473c71e3747996551",
+          "id": "editor-frame--guest",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "guest-guestapp--link-revoked-phone-dark.png",
+          "sha256": "855e6e0b7384499ad987ad6d64f8d755bb4837ff8c58a6c562e0199e26e7933d",
+          "id": "guest-guestapp--link-revoked",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "account-profile-page--profile-phone-dark.png",
+          "sha256": "e30c411199cb6f46f9273f5a87079fb38630732fd49ecf279ade7a716c7228e2",
+          "id": "account-profile-page--profile",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "account-profile-page--operator-phone-dark.png",
+          "sha256": "578c55c90cb4311287ce72fcaea77eb2df704469941c6c524432ec81b0d9a1d9",
+          "id": "account-profile-page--operator",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "space-review--populated-phone-dark.png",
+          "sha256": "5af0eb602f4403058f78bc3237f306ed37906942e32308d66102d569699893f8",
+          "id": "space-review--populated",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "space-review--view-only-phone-dark.png",
+          "sha256": "534535e9e562baabd27d88f3c544f1c57d0aef98929053cb53b514c04bcb032b",
+          "id": "space-review--view-only",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "space-review--guest-viewer-phone-dark.png",
+          "sha256": "6e47a5a3e7d5521cae58507f8d60c49985e38b766d52ed98137968bebd22826e",
+          "id": "space-review--guest-viewer",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-phone-dark.png",
+          "sha256": "031a2142e4477c28406faa8b82459fc25a40b851e020b10fa3f2b3af53b29029",
+          "id": "redesign-native-editors--sheet",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--doc-phone-dark.png",
+          "sha256": "31353b32a8280d6856b0c2cd18bd62fc3765ba0f1febc9a869bab4d890368efd",
+          "id": "redesign-native-editors--doc",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-viewer-phone-dark.png",
+          "sha256": "a1a870f7adff818bd82106155dc702fe6a3e1c36ba66c287aa33928fd99839d8",
+          "id": "redesign-native-editors--sheet-viewer",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--doc-viewer-phone-dark.png",
+          "sha256": "d0d3e0ba11b601ff92d9a31fed624cdf9d216b6459bdc76567c3d2f20d5def8c",
+          "id": "redesign-native-editors--doc-viewer",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-formula-phone-dark.png",
+          "sha256": "a9275314eb1f6fb6f7ef087bba17d85f5cea66acc57120a33d05bf5ebac58702",
+          "id": "redesign-native-editors--sheet-formula",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-available-phone-dark.png",
+          "sha256": "0b7ee2c44042ead1f3aec837f202a19468b5e1e14925451571d5eea6dbba2e7d",
+          "id": "redesign-native-editors--sheet-copy-available",
+          "variant": "phone-dark"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-unavailable-phone-dark.png",
+          "sha256": "019af87320b6cdbde5f2696bd582f64d6408a3f661867c36fe61f0a775c82bd0",
+          "id": "redesign-native-editors--sheet-copy-unavailable",
+          "variant": "phone-dark"
+        }
+      ],
+      "artifactId": 13953977614
+    },
+    {
+      "variant": "phone",
+      "artifactName": "design-review-mobile-light",
+      "sha256": "76fe690713fe8452853f2538f175845283c84dd4a030381aa1f907e911c58fcb",
+      "checked": 1041,
+      "capturesPreserved": [
+        {
+          "file": "redesign-appearance--playground-story-phone.png",
+          "sha256": "c7e7d68742fc6df6a5156e21ed806ce63a5ae398999ae2560abbc6c6abf55555",
+          "id": "redesign-appearance--playground-story",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-appearance--gems-light-and-dark-phone.png",
+          "sha256": "fa8485c64de5b00a62a1b3b7f1622abc7ed5f04c41f18e91bc1fdf0fd1b84a9c",
+          "id": "redesign-appearance--gems-light-and-dark",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-controls--default-phone.png",
+          "sha256": "7bfc759b498266ef18f3988aee05a8a3a9397ade3da9a93ccc2a498fa1e7ffdf",
+          "id": "redesign-controls--default",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-controls--disabled-phone.png",
+          "sha256": "533c8908b2f4107863150e1264b41a46d45ec7cdb382b75151a10fc0965edef8",
+          "id": "redesign-controls--disabled",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-controls--error-phone.png",
+          "sha256": "138a2933fa73371be65999ad53a24d51489ab187fe893f52182c15bd9cd6f37e",
+          "id": "redesign-controls--error",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-controls--long-modal-title-phone.png",
+          "sha256": "e20c620a5ba026759bc55f2fcec26de6a5b939f14843c1a01edfadf298a4bf8f",
+          "id": "redesign-controls--long-modal-title",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-theme-control--default-phone.png",
+          "sha256": "89ea6070113e15c02f736b212113d3d2eb09a02b4cc9c1ca49387cdd77147a37",
+          "id": "redesign-theme-control--default",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-theme-control--storage-blocked-phone.png",
+          "sha256": "b8c38ec2a1290fddcc97f18aaf3c8fa2d8dc7f3aad2f125d1180d42f89832d15",
+          "id": "redesign-theme-control--storage-blocked",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-theme-control--dismiss-storage-warning-phone.png",
+          "sha256": "127ed88103d5e86298b342aaf797555e284d95d2b101f0fe56adaffd0700cd6f",
+          "id": "redesign-theme-control--dismiss-storage-warning",
+          "variant": "phone"
+        },
+        {
+          "file": "admin-page--people-phone.png",
+          "sha256": "c580de37dc40d0d12b8abf1f17595c066047473952bc8e94f795f9fbc10bf33d",
+          "id": "admin-page--people",
+          "variant": "phone"
+        },
+        {
+          "file": "shell-applayout--desktop-phone.png",
+          "sha256": "3c35fb9cbf1889460d1ed1cd75006258bb265e7716976d97434bc9855b8be7d5",
+          "id": "shell-applayout--desktop",
+          "variant": "phone"
+        },
+        {
+          "file": "shell-connectionstatus--touch-details-phone.png",
+          "sha256": "83aeb0aa950a1469e0e0f8efbc91765e3ec56e90f148b183800fee7ce7bc62ee",
+          "id": "shell-connectionstatus--touch-details",
+          "variant": "phone"
+        },
+        {
+          "file": "dashboard-dashboard--populated-phone.png",
+          "sha256": "3cad12084957d687c2957f0df2eccb3d5bd97852bc0b6401cd71af38568f79af",
+          "id": "dashboard-dashboard--populated",
+          "variant": "phone"
+        },
+        {
+          "file": "dashboard-dashboard--shared-folder-viewer-phone.png",
+          "sha256": "d3bed123a0092b3184f115848990c97861146a718c6853b120793910b645c46e",
+          "id": "dashboard-dashboard--shared-folder-viewer",
+          "variant": "phone"
+        },
+        {
+          "file": "dashboard-dashboard--grid-phone.png",
+          "sha256": "9327980d1411d0f87a7e5d1559e36381e999cbdabdeecd02abc1a5e93c915bfe",
+          "id": "dashboard-dashboard--grid",
+          "variant": "phone"
+        },
+        {
+          "file": "editor-frame--default-phone.png",
+          "sha256": "96e3005fca7998a9c7db24b3c18ed0d2e88b910b770fcf5813a2be3a84e753e7",
+          "id": "editor-frame--default",
+          "variant": "phone"
+        },
+        {
+          "file": "editor-frame--guest-phone.png",
+          "sha256": "8639970399ce2fbaa68a1cce64223968d9ab76966fcc0f6fd44e59ebb8f904d3",
+          "id": "editor-frame--guest",
+          "variant": "phone"
+        },
+        {
+          "file": "guest-guestapp--link-revoked-phone.png",
+          "sha256": "c6b82b8039e79f8d618edb9f2e75e6c14faacb4d3f4ead1ed7d90fe62c84a049",
+          "id": "guest-guestapp--link-revoked",
+          "variant": "phone"
+        },
+        {
+          "file": "account-profile-page--profile-phone.png",
+          "sha256": "3154fa00f47e7e9f42c248790db94c8a11481422578051c8aa9282d1175d4101",
+          "id": "account-profile-page--profile",
+          "variant": "phone"
+        },
+        {
+          "file": "account-profile-page--operator-phone.png",
+          "sha256": "b1a6335d16f7216072886e816f0b8c4b75e7997fbd4a4286aaacba73fc1325e0",
+          "id": "account-profile-page--operator",
+          "variant": "phone"
+        },
+        {
+          "file": "space-review--populated-phone.png",
+          "sha256": "304838ad314c9c1ecf3d1346f0fe5fc0225081b27731b78a9f2133a9470b1c39",
+          "id": "space-review--populated",
+          "variant": "phone"
+        },
+        {
+          "file": "space-review--view-only-phone.png",
+          "sha256": "d8cbdea4a8127308479f8951a398f6bebfd3738647d49b6a291ad9199cbab1ff",
+          "id": "space-review--view-only",
+          "variant": "phone"
+        },
+        {
+          "file": "space-review--guest-viewer-phone.png",
+          "sha256": "c528c4503d16858b6ee26e18c51b70b35c745aa1f554552e52f27f60b42b633e",
+          "id": "space-review--guest-viewer",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--sheet-phone.png",
+          "sha256": "85b8780a254e84d77dcff887674150ab66a52daa33f825fd26c7106e601cc5ff",
+          "id": "redesign-native-editors--sheet",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--doc-phone.png",
+          "sha256": "6b795b977af2a1ffc2a2a20ce3b14a8c2aae657415dfaeec523cf31006d41e0f",
+          "id": "redesign-native-editors--doc",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--sheet-viewer-phone.png",
+          "sha256": "90c90572d889edbe81426528a86143832edc8d6016c301109b3eae5a69893d02",
+          "id": "redesign-native-editors--sheet-viewer",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--doc-viewer-phone.png",
+          "sha256": "95af9578d23303cc8d7e78df9d4454a8f3c6fce2a0cdb5ce5ca38d65ce46f593",
+          "id": "redesign-native-editors--doc-viewer",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--sheet-formula-phone.png",
+          "sha256": "d3bf9f0b6d55b0eff1c843bb86a5e8bec28a520caa63636870dceedaf355f4a6",
+          "id": "redesign-native-editors--sheet-formula",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-available-phone.png",
+          "sha256": "7a5fe461aa9b21d24cd1b24e6f941b309f7c0caf576c556adb6fea5ddb1f6d3a",
+          "id": "redesign-native-editors--sheet-copy-available",
+          "variant": "phone"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-unavailable-phone.png",
+          "sha256": "0fb03767b5844b0723f618dba9421b8b398eafaf5266a4b3ee7cbe0b2d01c5b7",
+          "id": "redesign-native-editors--sheet-copy-unavailable",
+          "variant": "phone"
+        }
+      ],
+      "artifactId": 13954351299
+    },
+    {
+      "variant": "tablet",
+      "artifactName": "design-review-tablet",
+      "sha256": "b670fc4532394e2f5247342231f9ba0b6fe480b415634bc70b8e6537c68e654f",
+      "checked": 1041,
+      "capturesPreserved": [
+        {
+          "file": "redesign-appearance--playground-story-tablet.png",
+          "sha256": "71feb9b5d26e38181a0faa24d08e81d1bd500db7d39c11aa4e2853205ad27875",
+          "id": "redesign-appearance--playground-story",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-appearance--gems-light-and-dark-tablet.png",
+          "sha256": "b0a412df1a9f44613640c9b44adbc09fc47e079953b3ea2134c9ddf6fb0219bc",
+          "id": "redesign-appearance--gems-light-and-dark",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-controls--default-tablet.png",
+          "sha256": "1bd8b07231acb08f741d9a94ba3c030555b9c4e1cfbb6bda341f90a528a59899",
+          "id": "redesign-controls--default",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-controls--disabled-tablet.png",
+          "sha256": "76ea53a1c431da7d684e1496f443e329cd1f512c858a46f8f6c8e45f125e9a9f",
+          "id": "redesign-controls--disabled",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-controls--error-tablet.png",
+          "sha256": "b3a6109f91de29a6cc067ec996a7dc61d70d5f65110a0859553a6f0fddae6c6f",
+          "id": "redesign-controls--error",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-controls--long-modal-title-tablet.png",
+          "sha256": "1bbb08500bf18887839c824c6f1e4732cbef7c4bb53cb956fe6c0f900a717e34",
+          "id": "redesign-controls--long-modal-title",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-theme-control--default-tablet.png",
+          "sha256": "9f32cf325b0bae9ea802be7fa018fe05426f5ebfb9c0d92263fe94994f459bb5",
+          "id": "redesign-theme-control--default",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-theme-control--storage-blocked-tablet.png",
+          "sha256": "2a53d282c661feac543f7998285b9490a8d911011df3fb81466536ada97ea261",
+          "id": "redesign-theme-control--storage-blocked",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-theme-control--dismiss-storage-warning-tablet.png",
+          "sha256": "7e2d38ab4bffd2d0f71b4f76602edc57d2a87b81e4e8d7e0f62ea2126a75d4d1",
+          "id": "redesign-theme-control--dismiss-storage-warning",
+          "variant": "tablet"
+        },
+        {
+          "file": "admin-page--people-tablet.png",
+          "sha256": "3f092d8ea0bb49eab769d27ab2b35604ce161ea96766af2e4d01ed133a64b200",
+          "id": "admin-page--people",
+          "variant": "tablet"
+        },
+        {
+          "file": "shell-applayout--desktop-tablet.png",
+          "sha256": "1e1dd8edb9e8d30c621f4e05015d8f567602ca711111e9d49947483437740499",
+          "id": "shell-applayout--desktop",
+          "variant": "tablet"
+        },
+        {
+          "file": "shell-connectionstatus--touch-details-tablet.png",
+          "sha256": "cad1dde47a94a89ca310d88e4078b554111367a5c4ae6fd5141bc306df8963ca",
+          "id": "shell-connectionstatus--touch-details",
+          "variant": "tablet"
+        },
+        {
+          "file": "dashboard-dashboard--populated-tablet.png",
+          "sha256": "d86db9dfbb7e2daf63addcf2689a0892706a405b679a12d38858ffc0cecc0758",
+          "id": "dashboard-dashboard--populated",
+          "variant": "tablet"
+        },
+        {
+          "file": "dashboard-dashboard--shared-folder-viewer-tablet.png",
+          "sha256": "7eb0b77768e1abdb6da281055bc416861dac724a2e37924b932310911c24e3d4",
+          "id": "dashboard-dashboard--shared-folder-viewer",
+          "variant": "tablet"
+        },
+        {
+          "file": "dashboard-dashboard--grid-tablet.png",
+          "sha256": "45d442c3e6648009efe953848bf0dbdf36f345da93793c7d91729eb7087175d1",
+          "id": "dashboard-dashboard--grid",
+          "variant": "tablet"
+        },
+        {
+          "file": "editor-frame--default-tablet.png",
+          "sha256": "c966c212a9bd84b950524e6f345d59903e6f133ff4577708ef3134f5aecea121",
+          "id": "editor-frame--default",
+          "variant": "tablet"
+        },
+        {
+          "file": "editor-frame--guest-tablet.png",
+          "sha256": "ee2a4595b63597965a9a5b407e70da3b499a71aed41bb0bf9298487e8fe5e5aa",
+          "id": "editor-frame--guest",
+          "variant": "tablet"
+        },
+        {
+          "file": "guest-guestapp--link-revoked-tablet.png",
+          "sha256": "be97e68a6b00321d5ecff1cb19454b82c84e157f4f7960b1592d4675b7bce692",
+          "id": "guest-guestapp--link-revoked",
+          "variant": "tablet"
+        },
+        {
+          "file": "account-profile-page--profile-tablet.png",
+          "sha256": "5dbed6c78d37c93a5830767b8bd7fe3a0469ed4e6e44559e0c6423b33f81e404",
+          "id": "account-profile-page--profile",
+          "variant": "tablet"
+        },
+        {
+          "file": "account-profile-page--operator-tablet.png",
+          "sha256": "51adcfe153cdd80197870f547cba5ba0cef91df78608d791f477f65f03cabc90",
+          "id": "account-profile-page--operator",
+          "variant": "tablet"
+        },
+        {
+          "file": "space-review--populated-tablet.png",
+          "sha256": "b92df7f13e1f9cdaa8208ae85adb0d5771891e20508292d5a9e15161e44eb141",
+          "id": "space-review--populated",
+          "variant": "tablet"
+        },
+        {
+          "file": "space-review--view-only-tablet.png",
+          "sha256": "3bf990a58a62ce9fb62059b770d7682880f06e3164067fab295453a85b7d924e",
+          "id": "space-review--view-only",
+          "variant": "tablet"
+        },
+        {
+          "file": "space-review--guest-viewer-tablet.png",
+          "sha256": "db885082d0718895394a1377d00c23cf727eb49f9d3e910bc8477856fd8ba335",
+          "id": "space-review--guest-viewer",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--sheet-tablet.png",
+          "sha256": "604c7d7c6bf3aa99fa5d9b7a6a0fc49b7ef66f3a4383eb2999af77bd0e1934ee",
+          "id": "redesign-native-editors--sheet",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--doc-tablet.png",
+          "sha256": "0ececc307b3c5da353abfd9b0671d27f8efe0ab8a176eb0731672f12f95422c8",
+          "id": "redesign-native-editors--doc",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--sheet-viewer-tablet.png",
+          "sha256": "00f7eb21c72f35c8b8be4ada4813bcb5d63758785bd3d1f2f8f427e9dbaf67a7",
+          "id": "redesign-native-editors--sheet-viewer",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--doc-viewer-tablet.png",
+          "sha256": "9ba082eb11e2eb082db25fccb2aec2af82202360726e2d7ddece2fa563f5567e",
+          "id": "redesign-native-editors--doc-viewer",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--sheet-formula-tablet.png",
+          "sha256": "3cf29ce29e077bf4a3775648cffbd1076b8e6b0d0b34e70549666f7711907ca4",
+          "id": "redesign-native-editors--sheet-formula",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-available-tablet.png",
+          "sha256": "e870b905d59b32d89972df4844738c544491d9fdbae98c51bcf4cdba83138727",
+          "id": "redesign-native-editors--sheet-copy-available",
+          "variant": "tablet"
+        },
+        {
+          "file": "redesign-native-editors--sheet-copy-unavailable-tablet.png",
+          "sha256": "8a534e50a52d573356257b252fc73b75008ea194ba85f2c26c5dba8d6097e8f3",
+          "id": "redesign-native-editors--sheet-copy-unavailable",
+          "variant": "tablet"
+        }
+      ],
+      "artifactId": 13952999623
+    }
+  ],
+  "captureRunUrl": "https://github.com/mxbaylee/spinel/actions/runs/43237408378"
+}

@@ -1,0 +1,212 @@
+[
+  {
+    "file": "appearance-choice-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "appearance-choice-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "appearance-choice-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "appearance-choice-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "appearance-choice-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "dialog-select-open-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "dialog-select-open-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "dialog-select-open-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "dialog-select-open-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "dialog-select-open-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "menu-open-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "menu-open-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "menu-open-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "menu-open-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "menu-open-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--default-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--default-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--default-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--default-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--default-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--disabled-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--disabled-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--disabled-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--disabled-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--disabled-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--error-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--error-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--error-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--error-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--error-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--long-modal-title-dark.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--long-modal-title-light.png",
+    "width": 1280,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--long-modal-title-phone-dark.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--long-modal-title-phone.png",
+    "width": 390,
+    "height": 900,
+    "changedPixels": 0
+  },
+  {
+    "file": "redesign-controls--long-modal-title-tablet.png",
+    "width": 768,
+    "height": 900,
+    "changedPixels": 0
+  }
+]
