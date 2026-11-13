@@ -1,0 +1,256 @@
+{
+  "reviewedAt": "2026-11-02T22:20:35.704Z",
+  "durationMs": 28153,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "redesign-controls--default",
+    "redesign-appearance--playground-story"
+  ],
+  "checked": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light",
+      "filename": "redesign-controls--default-light.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "redesign-appearance--playground-story-light.png",
+      "title": "Current production/Appearance / Playground"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "dark",
+      "filename": "redesign-controls--default-dark.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "dark",
+      "filename": "redesign-appearance--playground-story-dark.png",
+      "title": "Current production/Appearance / Playground"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone",
+      "filename": "redesign-controls--default-phone.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone",
+      "filename": "redesign-appearance--playground-story-phone.png",
+      "title": "Current production/Appearance / Playground"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--default-phone-dark.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--playground-story-phone-dark.png",
+      "title": "Current production/Appearance / Playground"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "tablet",
+      "filename": "redesign-controls--default-tablet.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "tablet",
+      "filename": "redesign-appearance--playground-story-tablet.png",
+      "title": "Current production/Appearance / Playground"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-nested-icon-before-light.png",
+      "title": "Appearance after shared Controls: nested-icon-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-selected-cover-before-light.png",
+      "title": "Appearance after shared Controls: selected-cover-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-nested-icon-after-light.png",
+      "title": "Appearance after shared Controls: nested-icon-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "light",
+      "filename": "style-isolation-selected-cover-after-light.png",
+      "title": "Appearance after shared Controls: selected-cover-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "dark",
+      "filename": "style-isolation-nested-icon-before-dark.png",
+      "title": "Appearance after shared Controls: nested-icon-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "dark",
+      "filename": "style-isolation-selected-cover-before-dark.png",
+      "title": "Appearance after shared Controls: selected-cover-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "dark",
+      "filename": "style-isolation-nested-icon-after-dark.png",
+      "title": "Appearance after shared Controls: nested-icon-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "dark",
+      "filename": "style-isolation-selected-cover-after-dark.png",
+      "title": "Appearance after shared Controls: selected-cover-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone",
+      "filename": "style-isolation-nested-icon-before-phone.png",
+      "title": "Appearance after shared Controls: nested-icon-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone",
+      "filename": "style-isolation-selected-cover-before-phone.png",
+      "title": "Appearance after shared Controls: selected-cover-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone",
+      "filename": "style-isolation-nested-icon-after-phone.png",
+      "title": "Appearance after shared Controls: nested-icon-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone",
+      "filename": "style-isolation-selected-cover-after-phone.png",
+      "title": "Appearance after shared Controls: selected-cover-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark",
+      "filename": "style-isolation-nested-icon-before-phone-dark.png",
+      "title": "Appearance after shared Controls: nested-icon-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark",
+      "filename": "style-isolation-selected-cover-before-phone-dark.png",
+      "title": "Appearance after shared Controls: selected-cover-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark",
+      "filename": "style-isolation-nested-icon-after-phone-dark.png",
+      "title": "Appearance after shared Controls: nested-icon-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark",
+      "filename": "style-isolation-selected-cover-after-phone-dark.png",
+      "title": "Appearance after shared Controls: selected-cover-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "tablet",
+      "filename": "style-isolation-nested-icon-before-tablet.png",
+      "title": "Appearance after shared Controls: nested-icon-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "tablet",
+      "filename": "style-isolation-selected-cover-before-tablet.png",
+      "title": "Appearance after shared Controls: selected-cover-before"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "tablet",
+      "filename": "style-isolation-nested-icon-after-tablet.png",
+      "title": "Appearance after shared Controls: nested-icon-after"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "tablet",
+      "filename": "style-isolation-selected-cover-after-tablet.png",
+      "title": "Appearance after shared Controls: selected-cover-after"
+    }
+  ],
+  "verifications": [
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "phone: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "phone-dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "tablet: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "light: Appearance styles survive a same-document Controls visit",
+    "dark: Appearance styles survive a same-document Controls visit",
+    "phone: Appearance styles survive a same-document Controls visit",
+    "phone-dark: Appearance styles survive a same-document Controls visit",
+    "tablet: Appearance styles survive a same-document Controls visit"
+  ],
+  "failures": []
+}

@@ -1,0 +1,233 @@
+{
+  "reviewedAt": "2026-11-02T22:09:32.386Z",
+  "durationMs": 11332,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "redesign-controls--default",
+    "redesign-controls--disabled",
+    "redesign-controls--error",
+    "redesign-controls--long-modal-title"
+  ],
+  "checked": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light",
+      "filename": "redesign-controls--default-light.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "light",
+      "filename": "redesign-controls--disabled-light.png",
+      "title": "Current production/Controls / Disabled"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "light",
+      "filename": "redesign-controls--error-light.png",
+      "title": "Current production/Controls / Error"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--long-modal-title-light.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "dark",
+      "filename": "redesign-controls--default-dark.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "dark",
+      "filename": "redesign-controls--disabled-dark.png",
+      "title": "Current production/Controls / Disabled"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "dark",
+      "filename": "redesign-controls--error-dark.png",
+      "title": "Current production/Controls / Error"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--long-modal-title-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone",
+      "filename": "redesign-controls--default-phone.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "phone",
+      "filename": "redesign-controls--disabled-phone.png",
+      "title": "Current production/Controls / Disabled"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "phone",
+      "filename": "redesign-controls--error-phone.png",
+      "title": "Current production/Controls / Error"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--long-modal-title-phone.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--default-phone-dark.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--disabled-phone-dark.png",
+      "title": "Current production/Controls / Disabled"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--error-phone-dark.png",
+      "title": "Current production/Controls / Error"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--long-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "tablet",
+      "filename": "redesign-controls--default-tablet.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "tablet",
+      "filename": "redesign-controls--disabled-tablet.png",
+      "title": "Current production/Controls / Disabled"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "tablet",
+      "filename": "redesign-controls--error-tablet.png",
+      "title": "Current production/Controls / Error"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--long-modal-title-tablet.png",
+      "title": "Current production/Controls / Long Modal Title"
+    }
+  ],
+  "verifications": [
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "phone: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "phone-dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "tablet: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal"
+  ],
+  "failures": []
+}

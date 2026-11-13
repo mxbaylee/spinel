@@ -108,7 +108,12 @@ competitor review, using the existing React/Vite and plain CSS theme setup.
 Base UI supplies unstyled interaction/accessibility primitives; the redesign
 chooses visual styling, including any Material-like treatment. Shared components
 used by the mockups get stories and keyboard, focus, touch and theme verification.
-The shared controls and composed stories live in `src/ui/redesign/`. Consumer screen migrations remain in their implementation tickets. Use `npm run screenshots -- <story ids>` after building Storybook; see [review evidence](redesign.md#review-and-screenshots). Tailwind is
+The shared production controls and retained control/native fixtures live in
+`src/ui/redesign/`; screen stories sit beside their production components in
+`web/`. 🧩 SPN-087 retired the unused mock screen implementations and isolated the
+Controls specimen layout in `controlsStories.css`. The historical `redesign-*`
+story IDs remain stable. Use `npm run screenshots -- <story ids>` after building
+Storybook; see [review evidence](redesign.md#review-and-screenshots). Tailwind is
 not currently installed and is not required for this adoption. Owner, chat
 2026-10-20; [decision #120](../implementation/SPN-047.md#legacy-decision-120-unstyled-accessible-controls).
 SPN-077's icon assets/current-surface integration can land first.

@@ -1,0 +1,33 @@
+/* Layout for the retained production-control specimens only. */
+.rd-form {
+  display: grid;
+  gap: 24px;
+  margin-top: 24px;
+}
+.rd-dialog-stage {
+  min-height: 100dvh;
+  background: var(--sp-bg);
+  padding: 64px 24px;
+  display: grid;
+  place-items: start center;
+}
+.rd-dialog-example {
+  background: var(--sp-panel);
+  width: min(100%, 480px);
+  border: 1px solid var(--sp-border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 16px 64px color-mix(in srgb, var(--sp-text) 6%, transparent);
+}
+.rd-dialog-example h1 {
+  font-size: 1.25rem;
+  margin-bottom: 8px;
+}
+@media (max-width: 640px) {
+  .rd-dialog-stage {
+    padding: 24px 16px;
+  }
+  .rd-dialog-example {
+    padding: 24px 16px;
+  }
+}
