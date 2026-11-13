@@ -1,0 +1,104 @@
+# 🧾 SPN-145 activation evidence
+
+This directory preserves the original incident and the bounded local investigation.
+The [implementation decision](../../SPN-145.md) defines the hypothesis, scope,
+controlled comparison, supported disposition and acceptance that must still pass.
+The final PR description records both reviews and actual hosted results on the
+complete candidate. Nothing in this local record claims a browser acceptance pass.
+
+## 📌 Original incident
+
+`original/` contains byte-identical copies of the previously retained receipt,
+image, context and normalized log excerpt from immutable source
+`472a130c4b6fdaf7b342b0ea3d2c180cd408067e`, under
+`docs/review-assets/spn-089-ee996e95/offline-upgrade-first-failure/`.
+The receipt preserves all eight events and exact identities:
+
+| Identity | Value |
+| --- | --- |
+| Source | `ee996e95e5a1ca117f4144e5e3950341eb97c6da` |
+| Base | `7679351822caaa9535d73d656191f2a6597a3380` |
+| Tested merge | `39a9b6227e0eb4339adbe1b9e99606318e90ef21` |
+| Tested tree | `dca595ca8ef725b5f51af4732d7499af2346f4cc` |
+| Run / attempt | `41927434953` / `1` |
+| Offline-upgrade job | `126915583844` |
+| Original artifact SHA-256 | `17999c68faf55bb4ada8b4aa6f242beeba093e80e053f3d0135c20b55038e67f` |
+
+The first scenario failed attempt 0 in 129,085 ms; retry 1 passed in 13,252 ms.
+The second serial scenario was **skipped on attempt 0** and passed only on retry 1
+in 31,419 ms. `failOnFlakyTests` correctly kept the job failed. Later body-edit run
+`41929259741` passed the same source/tested merge; it is not evidence of a repair.
+
+The replacement was installed/waiting at 534 ms and still waiting at 120,000 ms
+while the original remained active. Both workers already called `skipWaiting`.
+**No first-attempt Playwright trace ZIP exists in the retained archive.** Its two
+trace ZIPs belong to retry 1. The image and context establish pending content,
+not the identity of an unfinished worker event. The complete raw archive was
+verified locally; it is not republished because it also contains session fixtures.
+
+![Original first failure: pending legacy Doc saved locally](original/first-failure.png)
+
+## 🔬 Local investigation and identities
+
+The starting main was `04baabd6a68abe7c0b225f8699681532e2205b60`. The binary
+`diagnostic-commits.bundle` preserves the exact two local diagnostic commits and
+their trees, with that main as its prerequisite:
+
+| Commit | Purpose and first result |
+| --- | --- |
+| `bab37cc3683f944dbe141410c2a3dbeab67badd6` | Declared finite plan; extracted original proxy unchanged; both real HTTP lifetime controls failed at their one-second close-event bound. |
+| `cf2d76c2da2d03e990cba38d2cc1ed97229409cb` | Added the initial emitted-worker control; browser launch was denied before any worker experiment ran. |
+
+The bundle can be verified with `git bundle verify` and fetched into a disposable
+checkout without relying on a surviving helper branch. These local commits are
+not represented as the GitHub candidate commit. Final source/tree and review/test
+identities are recorded separately in the PR.
+
+`local-checks.json` indexes commands, resource receipts, SHA-256 hashes and first
+failures. `local-checks.tar.gz` retains their original logs, the watchdog and the
+initial browser probe script. Intermediate working-tree checks are labelled as
+such; the final candidate's exact-commit checks are separately recorded in the PR.
+All local workloads used Node **26.13.0**, the repository serial runner and the
+unchanged eight-minute / 2 GiB process-tree limits. The typecheck repair used a
+smaller 1,536 MiB V8 heap to remain below that process-tree limit.
+
+### 🛠️ Findings and dispositions
+
+- **Confirmed HTTP ownership defect:** the original shared proxy left downstream
+  open on an upstream body abort and left upstream open when a completed GET's
+  downstream reader abandoned it. Both original tests failed; both passed after
+  pipeline/error/close ownership was repaired. Complete response bytes/status/
+  headers and a pre-header failure's explicit 502 are also protected.
+- **Browser mechanism remains a hosted gate:** the two-sample regression uses
+  actual emitted legacy and A workers, their real `PREPARE_SHELL`/`cache.put`
+  lifetime, the original negative proxy and the shared repaired proxy. It must
+  demonstrate waiting, exact owner release and activation, independently of a
+  green retained-client scenario.
+- **Local capability unavailable:** TCP works, but abstract Unix socket creation
+  fails with `EPERM`, blocking the required workspace lease. One pinned Chromium
+  install invocation failed to decode its download. The installed system Chromium
+  failed its singleton socket before launch. No lease/socket/browser isolation
+  control was bypassed. Actual historical builds succeeded; that is not execution.
+- **First implementation check failures retained:** TypeScript found a required
+  Window-property cast and an inferred cleanup-array type; both were corrected.
+  Lint's first run found one formatting difference after the cleanup edit; it was
+  formatted. These failed runs are not overwritten by their repaired results.
+- **Historical attribution unresolved:** the controlled shared-owner mechanism
+  cannot identify the missing original trace's pending request. The permitted
+  disposition depends on causal control **and** strict real current-head
+  acceptance, with all selected workers and all seven gates successful.
+
+## ✅ Selection and landing boundary
+
+No CI workflow, selector, retry, timeout, worker source, fixture access rule or
+historical ref is changed. The actual changed `scripts/ci/` and evidence paths
+select the existing **full** plan, including offline-upgrade, both historical
+comparison owners and sized restore. The existing planner/aggregate negative
+controls require selected missing/failed work to fail. Additional workflows keep
+their existing path filters; no unrelated native/physical-phone matrix is added.
+
+The complete reviewed candidate includes removal of `docs/todo/SPN-145.md`, its
+`grooming.completed_since` entry and the CLI-regenerated backlog index. No open
+ticket lists SPN-145 as a dependency. Bookkeeping is a landing candidate, not a
+claim that hosted acceptance already passed. Do not merge if either mechanism
+comparison or the actual old/new-host acceptance is inconclusive or fails.
