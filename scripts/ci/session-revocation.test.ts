@@ -234,6 +234,46 @@ test('failed Network.enable removes listeners and detach failure preserves its o
   assert.equal(socket?.listenerCount('close'), 0);
 });
 
+test('failed Network.enable preserves its original error when detach reaches the cleanup bound', async (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  t.after(() => t.mock.timers.reset());
+  const f = boundary();
+  const primary = new Error('Network.enable failed');
+  let socket: ReturnType<typeof f.pageSocket> | undefined;
+  f.session.send = async (command) => {
+    f.commands.push(command);
+    socket = f.pageSocket();
+    throw primary;
+  };
+  let started!: () => void;
+  const reached = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const detach = f.session.detach;
+  f.session.detach = async () => {
+    await detach();
+    started();
+    return new Promise<void>(() => {});
+  };
+  let rejected = false;
+  const rejection = assert.rejects(f.observe(), (error) => {
+    rejected = true;
+    return error === primary;
+  });
+  await reached;
+  assert.deepEqual(f.commands, ['Network.enable']);
+  assert.equal(f.detaches(), 1);
+  assert.deepEqual(f.session.eventNames(), []);
+  assert.deepEqual(f.page.eventNames(), []);
+  assert.equal(socket?.listenerCount('close'), 0);
+  t.mock.timers.tick(4999);
+  await Promise.resolve();
+  assert.equal(rejected, false);
+  t.mock.timers.tick(1);
+  await rejection;
+  assert.equal(rejected, true);
+});
+
 test('stop detaches only owned listeners and prevents late events from changing evidence', async (t) => {
   const f = await fixture(t);
   const socket = f.pageSocket();

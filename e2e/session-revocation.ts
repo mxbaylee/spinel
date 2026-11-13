@@ -117,8 +117,8 @@ export async function observeSessionRevocation(page: Page, socketURL: string) {
   try {
     await session.send('Network.enable');
   } catch (error) {
-    // Preserve the setup error, while still detaching every installed listener.
-    await stop().catch(() => {});
+    // Preserve the setup error and the normal cleanup bound even if detach stalls.
+    await cleanupSessionRevocation([{ name: 'observer', run: stop }]);
     throw error;
   }
   const isClosed = () =>
