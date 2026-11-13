@@ -5,7 +5,7 @@
   "pullRequest": 282,
   "pullRequestURL": "https://github.com/mxbaylee/spinel/pull/282",
   "recordRole": "Authoritative maintained latest source, review, run and landing record. Preserve earlier immutable entries when appending later source revisions or workflow executions.",
-  "observedAt": "2026-11-13T05:04:18.598Z",
+  "observedAt": "2026-11-13T05:16:06.083239+00:00",
   "current": {
     "source": "db24230dd4df539e2055471f55e50a402596c1fb",
     "tree": "42cd4dfe89d0281ff5b11aa984053bd0493e22bb",
@@ -13,7 +13,7 @@
     "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
     "reviewStatus": "passed",
     "initialHostedAcceptance": "passed",
-    "metadataValidation": "pending_not_started",
+    "metadataValidation": "queued",
     "overallAcceptance": "pending_metadata_validation_and_landing",
     "merge": "pending",
     "cleanup": "pending; evidence archive pin and guarded ref deletion unavailable"
@@ -620,6 +620,20 @@
       ],
       "aggregateJobId": 131692373625,
       "snapshot": "storybook-43364365751-attempt-1-final.json"
+    },
+    {
+      "purpose": "required full validation following consolidated PR description publication",
+      "workflow": "CI",
+      "run": 43370718838,
+      "runURL": "https://github.com/mxbaylee/spinel/actions/runs/43370718838",
+      "attempt": 1,
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "status": "queued",
+      "conclusion": null,
+      "createdAt": "2026-11-13T05:14:30Z",
+      "plan": "Await authoritative edited-event plan and every selected worker; no initial pass is substituted.",
+      "fixedDiagnosticSample": false
     }
   ],
   "pendingWorkflowRequirements": [
@@ -746,12 +760,13 @@
   "publication": {
     "repositoryPath": "docs/implementation/evidence/SPN-149/acceptance/",
     "branch": "refs/heads/evidence/spn-149-acceptance-20261113",
-    "branchStatus": "initial_publication_snapshot",
-    "receiptCommit": null,
+    "branchStatus": "published",
+    "receiptCommit": "0338f8c41ac45d8d34765cd9aa46c81a7fc22454",
     "plannedPRBodyEdits": 1,
     "plan": "Publish this content-free receipt on one maintained branch, then make one consolidated PR body edit linking it. Record the resulting required full CI and all later acceptance/landing updates here without recursive body edits.",
     "futureSourceUpdates": "Append complete new source/review/workflow identities and update current; do not overwrite the initial candidate, fixed sample or earlier attempts. Necessary candidate pushes still require two independent complete reviews above 95 on that exact candidate.",
-    "receiptCommitIdentity": "Resolve the maintained branch head; the initial exact receipt commit is also pinned in PR #282."
+    "receiptCommitIdentity": "Resolve the maintained branch head; the initial exact receipt commit is also pinned in PR #282.",
+    "consolidatedPRDescriptionPublishedAt": "2026-11-13T05:14:27Z"
   },
   "landing": {
     "status": "pending",

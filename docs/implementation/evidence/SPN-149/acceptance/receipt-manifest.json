@@ -4,18 +4,18 @@
   "source": "db24230dd4df539e2055471f55e50a402596c1fb",
   "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
   "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
-  "observedAt": "2026-11-13T05:04:18.598Z",
+  "observedAt": "2026-11-13T05:16:06.083239+00:00",
   "files": [
     {
       "path": "README.md",
-      "bytes": 13278,
-      "sha256": "b3078a44d8faf4d4d8888d2802555f08f3c716fbaf8392bd064e134e4f2362ac",
+      "bytes": 13426,
+      "sha256": "555b10fd6342f6367e587e022fc0b67cb50e0451b8daf81f9c0d7587db636573",
       "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
     },
     {
       "path": "acceptance.json",
-      "bytes": 32558,
-      "sha256": "36ee550e96264c4b84ea1b6f2a4dbe3a27915ce66a9f23cbc54c5a4e18cacd2b",
+      "bytes": 33261,
+      "sha256": "9936c9d2354fd907f8a40379a2a00defac51aea236b2209aaff91c7e8b1ef09f",
       "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
     },
     {

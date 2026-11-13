@@ -14,7 +14,7 @@ This README and [acceptance.json](acceptance.json) are the maintained latest sou
 | Tested PR merge | `9ee8ac68165f25e097c93f84bb2b20f00fcaf09e` |
 | CI run / attempt | [43364365825](https://github.com/mxbaylee/spinel/actions/runs/43364365825) / 1 |
 | Storybook run / attempt | [43364365751](https://github.com/mxbaylee/spinel/actions/runs/43364365751) / 1 |
-| Required follow-up metadata CI | Pending; no run or attempt has been created in this snapshot |
+| Required follow-up metadata CI | [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) / 1 — queued; final acceptance pending |
 
 ## 🔎 Exact-candidate reviews and controls
 
@@ -61,7 +61,7 @@ The exact uploaded plan digest is `e26b485c286be51036d5d213da96fea7fe251aa4600bd
 
 [Storybook](storybook-43364365751-attempt-1-final.json) completed successfully: eight successful jobs include classification, build, five view workers and aggregation; preview/main publication are explicitly inapplicable skips. No skipped publication step is counted as successful selected validation.
 
-Earlier pending observations inside the unchanged full coverage history are historical snapshots. Its final verdict and the current record above supersede those observations. Run attempt 1 is the only actual initial CI execution; the required metadata-triggered CI is a separate pending execution, not an invented second attempt.
+Earlier pending observations inside the unchanged full coverage history are historical snapshots. Its final verdict and the current record above supersede those observations. Run attempt 1 is the only actual initial CI execution; the required metadata-triggered CI is separate run 43370718838, attempt 1, following the consolidated description publication at 2026-11-13T05:14:27Z. It is not a retry of the first run.
 
 ## 🔬 Fixed native sample and diagnostic conclusion
 
@@ -90,7 +90,7 @@ The historical first attempt observed sign-in and zero page close events; it fai
 
 ## 📦 Publication, remaining acceptance and cleanup
 
-This directory is prepared for `docs/implementation/evidence/SPN-149/acceptance/` on the single maintained branch `evidence/spn-149-acceptance-20261113`. This is the initial publication snapshot; the branch head supplies its exact immutable receipt identity. The planned one consolidated PR description edit will link this authoritative maintained record and trigger the required full core CI. Preserve every resulting attempt, exact gates and selected workers here. Do not mark completion until that execution passes on the eligible current source/base, then recheck main and squash-merge with an expected-head guard. Record the final immutable receipt locator in the merge record and verify the landed result.
+This directory is prepared for `docs/implementation/evidence/SPN-149/acceptance/` on the single maintained branch `evidence/spn-149-acceptance-20261113`. This is the initial publication snapshot; the branch head supplies its exact immutable receipt identity. The one consolidated PR description edit links this authoritative maintained record and has triggered required full core CI run 43370718838. Preserve every resulting attempt, exact gates and selected workers here. Do not mark completion until that execution passes on the eligible current source/base, then recheck main and squash-merge with an expected-head guard. Record the final immutable receipt locator in the merge record and verify the landed result.
 
 If main changes, append a new complete source/review/acceptance entry here while preserving this initial candidate and fixed sample. Every candidate push intended to run CI still requires two independent complete-candidate reviews strictly above 95/100. A later green or inconclusive diagnostic result cannot waive failed current-head acceptance.
 
