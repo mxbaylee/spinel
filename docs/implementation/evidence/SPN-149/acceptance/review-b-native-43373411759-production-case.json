@@ -1,0 +1,181 @@
+{
+  "version": 1,
+  "run": 43373411759,
+  "runAttempt": 1,
+  "purpose": "Ordinary required acceptance after integrating current main; separate from the closed fixed diagnostic sample.",
+  "mergeAcceptanceEligible": true,
+  "candidate": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "expectedTestedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "fixedDiagnosticSample": {
+    "run": 43364365825,
+    "status": "closed",
+    "expansion": false,
+    "naturalOrderingDisposition": "not reproduced within the declared two-case sample"
+  },
+  "olderBaseHistoryRun": 43370718838,
+  "initialReceiptCommit": "0338f8c41ac45d8d34765cd9aa46c81a7fc22454",
+  "initialReceiptBranch": "evidence/spn-149-acceptance-20261113",
+  "reviewedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "planEvidence": {
+    "artifactId": 14013253207,
+    "archiveSHA256": "b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+    "reportMember": "ci-plan.json",
+    "rawFileSHA256": "58e7eb4d7951df39331a72b170ee55770a876d70283d507c8913f5003ad1ddff",
+    "compactJSONSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+    "verification": "Independently read the retained exact artifact member and confirmed head/base/tested merge, full mode and all 15 selections. Native job logs and diagnostics separately verify the tested merge."
+  },
+  "acceptanceScope": "Native target contract only; other gates and current-base readiness remain separate.",
+  "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "job": 131715559199,
+  "artifactId": 14014966855,
+  "artifactName": "theme-screenshots-production-1",
+  "archiveFile": "native-audit-43373411759-14014966855.zip",
+  "archiveBytes": 35342968,
+  "archiveSHA256": "b416f7184f448c900ee2abd43edbdecd8a73c587375528ce1e2b5c11fa487867",
+  "archiveDigestMatches": true,
+  "archiveMembers": 479,
+  "reportMember": "playwright-report/production-1-of-2.json",
+  "reportBytes": 1483872,
+  "reportSHA256": "f7f5fcb3d0752fcaf0b6b8bd18109f97bb82da9d954cb7a5a8c2a1ec32bcc0c6",
+  "source": {
+    "title": "revoking one login preserves another login\u2019s queued edit and stops later broadcasts",
+    "file": "collaboration.spec.ts",
+    "line": 365,
+    "column": 1,
+    "id": "960cd46fcfcce4c1b118-dd2e11699054ac42c1e3"
+  },
+  "project": "production",
+  "caseTimeoutMs": 60000,
+  "expectedStatus": "passed",
+  "overallCaseStatus": "expected",
+  "playwrightVersion": "1.64.1",
+  "configuredRetries": 2,
+  "configuredRepeatEach": 1,
+  "failOnFlakyTests": true,
+  "workers": 1,
+  "shard": {
+    "current": 1,
+    "total": 2
+  },
+  "attempts": [
+    {
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 6431,
+      "startTime": "2026-11-13T06:05:29.444Z",
+      "errorCount": 0,
+      "attachmentNames": [
+        "session-revocation-observation"
+      ],
+      "observations": [
+        {
+          "name": "session-revocation-observation",
+          "contentType": "application/json",
+          "exactDecodedFile": "review-b-native-43373411759-production-retry-0-observation.json",
+          "decodedBytes": 1538,
+          "decodedSHA256": "7e7ac010ecd97e4442e179c913ab8ae4aefb6d12d0f7890402ae98a156e3f93c",
+          "observation": {
+            "version": 1,
+            "project": "production",
+            "retry": 0,
+            "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+            "node": "v26.13.0",
+            "browser": "156.0.8078.4",
+            "contractCompleted": true,
+            "primaryFailed": false,
+            "cleanupFailures": [],
+            "observation": {
+              "targetCount": 1,
+              "closedTargets": 1,
+              "openSockets": 0,
+              "receivedFrames": 6,
+              "overflow": false,
+              "observerLost": false,
+              "reopened": false,
+              "events": [
+                {
+                  "kind": "navigation",
+                  "ms": 13
+                },
+                {
+                  "kind": "socket-created",
+                  "ms": 2123,
+                  "socket": 1
+                },
+                {
+                  "kind": "socket-opened",
+                  "ms": 2139,
+                  "socket": 1
+                },
+                {
+                  "kind": "edit-held",
+                  "ms": 3284
+                },
+                {
+                  "kind": "revocation-requested",
+                  "ms": 3284
+                },
+                {
+                  "kind": "revocation-written",
+                  "ms": 3285
+                },
+                {
+                  "kind": "page-close",
+                  "ms": 3784
+                },
+                {
+                  "kind": "socket-closed",
+                  "ms": 3785,
+                  "socket": 1
+                },
+                {
+                  "kind": "navigation",
+                  "ms": 3814
+                },
+                {
+                  "kind": "closure-observed",
+                  "ms": 4137
+                },
+                {
+                  "kind": "sign-in",
+                  "ms": 4167
+                },
+                {
+                  "kind": "request-denied",
+                  "ms": 4170
+                },
+                {
+                  "kind": "edit-released",
+                  "ms": 4170
+                },
+                {
+                  "kind": "saved",
+                  "ms": 4215
+                },
+                {
+                  "kind": "reloaded",
+                  "ms": 6243
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "reportStats": {
+    "startTime": "2026-11-13T06:02:34.454Z",
+    "duration": 680371.702,
+    "expected": 81,
+    "skipped": 3,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "retention": {
+    "createdAt": "2026-11-13T06:13:57Z",
+    "expiresAt": "2026-11-20T06:13:55Z"
+  },
+  "extraction": "Exact case identity, statuses, counts, source/runtime fields, and schema-checked content-free observer attachments only. Each original decoded attachment is also saved byte-for-byte without reserialization or added newline. No authored values, network frames, cookies, storage state, screenshots, trace bodies or unrelated case data copied.",
+  "limit": "Passing exact-source case plus contractCompleted proves the programmed assertions completed. The finite timeline records observer delivery order; it does not reconstruct the original historical failure. This ordinary required acceptance does not expand the closed fixed diagnostic sample. Eligibility for the integrated candidate is stated separately; other CI gates and current-base readiness remain independent requirements."
+}

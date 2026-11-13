@@ -2,7 +2,7 @@
 
 ## ✅ Current disposition
 
-**The current integrated candidate passed both independent reviews at 100/100 and was published for fresh current-head validation at 2026-11-13T05:39:04Z. Hosted acceptance and guarded landing remain pending.** Earlier successful executions are retained as history and do not qualify the new source/base.
+**The current integrated candidate passed both independent reviews at 100/100 and was published for fresh current-head validation at 2026-11-13T05:39:04Z. Six required gates and Storybook have passed; the remaining selected browser work, final browser aggregate and guarded landing remain pending.** Earlier successful executions are retained as history and do not qualify the new source/base.
 
 This README and [acceptance.json](acceptance.json) are the maintained latest source, review, run and landing record for [PR #282](https://github.com/mxbaylee/spinel/pull/282). Earlier source revisions, exact first attempts and the fixed diagnostic sample remain intact.
 
@@ -13,7 +13,7 @@ This README and [acceptance.json](acceptance.json) are the maintained latest sou
 | Integrated current main | `977de3a3a7608a05e2103787f4dac01ec180013e` |
 | Independent reviews | [A](review-a-integration-977de3a.md): 100/100; [B](review-b-integration-977de3a.md): 100/100 |
 | Tested PR merge | `6389a8c29b337b6e993b699d544ed2e43d86ffed`; tree equals reviewed tree |
-| Fresh CI / Storybook | [43373411759](https://github.com/mxbaylee/spinel/actions/runs/43373411759) / [43373411761](https://github.com/mxbaylee/spinel/actions/runs/43373411761), attempt 1; pending, acceptance not yet complete |
+| Fresh CI / Storybook | [43373411759](https://github.com/mxbaylee/spinel/actions/runs/43373411759) / [43373411761](https://github.com/mxbaylee/spinel/actions/runs/43373411761), attempt 1; six core gates and Storybook passed; final browser acceptance pending |
 | Landing | Pending current-head acceptance and an expected-head squash merge |
 
 The [integration record](integration-977de3a-record.json) verifies every changed path and blob. All SPN-149 implementation, regression and historical-evidence bytes remain unchanged. Current main's SPN-148 result is inherited unchanged; only the completion list and CLI-generated index required conflict resolution. Both completions remain recorded, with 21 open tickets. The six relevant local actions passed under Node 26.13.0, shared serialization and the existing memory/time watchdog; each reviewer separately passed the 19 focused controls on this exact committed head. No resource abort occurred.
@@ -34,11 +34,11 @@ The complete initial candidate passed its first hosted acceptance before main ad
 
 ## 🧾 Additional required executions
 
-The previous-source metadata run [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) has a separate [native audit](review-b-native-43370718838-audit.md) and [coverage history](hosted-coverage-43370718838.json). Its development and production revocation cases passed retry 0 in 8,853 ms and 5,385 ms, respectively, with the complete contract and clean cleanup; no actual retry occurred. They are ordinary older-base acceptance observations, separate from the fixed initial diagnostic sample. Its complete aggregate disposition remains pending in this snapshot.
+The previous-source metadata run [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) has a separate [native audit](review-b-native-43370718838-audit.md) and [coverage history](hosted-coverage-43370718838.json). Its development and production revocation cases passed retry 0 in 8,853 ms and 5,385 ms, respectively, with the complete contract and clean cleanup; no actual retry occurred. They are ordinary older-base acceptance observations, separate from the fixed initial diagnostic sample. Its [final audit](hosted-final-verdict-43370718838.json) now confirms all 33 jobs and all seven source-bound gates passed on attempt 1, with every selected worker and result artifact verified. This successful history is not current integration acceptance.
 
-The current integration run's [authoritative plan](ci-plan-43373411759.json) and [artifact audit](ci-plan-audit-43373411759.json) select all 15 suite/mode entries and all 29 expected execution workers. Canonical plan SHA-256: `091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b`. These files prove selection and immutable execution identity; current results remain pending.
+The current integration run's [authoritative plan](ci-plan-43373411759.json) and [artifact audit](ci-plan-audit-43373411759.json) select all 15 suite/mode entries and all 29 expected execution workers. Canonical plan SHA-256: `091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b`. These files prove selection and immutable execution identity. Current core gates Backlog, Pull request, Lint, Typecheck, Unit tests and Lib tests passed. The [current hosted controls](hosted-negative-controls-43373411759.json) confirm all 19 focused controls ran once and passed. [Storybook](storybook-43373411761-attempt-1-final.json) passed its build, all five review workers and aggregate. The current production revocation case passed retry 0 in 6,431 ms with the full contract and clean cleanup; development and the final browser gate remain pending.
 
-The [receipt integrity audit](receipt-integration-integrity.json) verified the prior 55-file publication against its Git tree and hashes. Its stale copied-file count and tested-merge-pending wording are corrected, and its three missing historical references are now included. The final old-run coverage snapshot will be updated when complete. The current receipt manifest recomputes exact-copy counts from its file entries.
+The [receipt integrity audit](receipt-integration-integrity.json) verified the prior 55-file publication against its Git tree and hashes. Its stale copied-file count and tested-merge-pending wording are corrected, and its three missing historical references are now included. The final older-run coverage and aggregate receipts are now included. The current receipt manifest recomputes exact-copy counts from its file entries.
 
 ## 🔎 Initial-candidate reviews and controls
 
@@ -88,6 +88,8 @@ The exact uploaded plan digest is `e26b485c286be51036d5d213da96fea7fe251aa4600bd
 Earlier pending observations inside the unchanged full coverage history are historical snapshots. Its final verdict and the current record above supersede those observations. Run attempt 1 is the only actual initial CI execution; the required metadata-triggered CI is separate run 43370718838, attempt 1, following the consolidated description publication at 2026-11-13T05:14:27Z. It is not a retry of the first run.
 
 ## 🔬 Fixed native sample and diagnostic conclusion
+
+**Diagnostic terminology:** `page-close` records the page-associated Playwright WebSocket object’s close callback, not closure of the Page or browser tab. Actual protocol termination is the separate `socket-closed` event from `Network.webSocketClosed`. See the [terminology clarification](review-b-native-event-terminology.md). Original diagnostic bytes, hashes, observed timings and historical limitations are unchanged.
 
 The [pre-execution declaration](declaration.json) records the falsifiable hypothesis, exact source/runtime identities, two controlled browser-free dispatch orderings, the fixed two-case first-attempt native sample, resource budget and stop conditions. The installed-runtime probe demonstrated a conditional observation boundary: clearing Playwright's main-frame socket map before protocol close loses the old page-level close notification. Its immutable result is linked in [candidate-evidence-links.json](candidate-evidence-links.json).
 

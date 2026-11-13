@@ -1,0 +1,56 @@
+{
+  "repository": "mxbaylee/spinel",
+  "pr": 282,
+  "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+  "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+  "sourceTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "testedTree": "b293f8c3c816415864c09f185d77e717bab11e38",
+  "run": 43373411759,
+  "runAttempt": 1,
+  "job": 131715559074,
+  "checkRunId": 131715559074,
+  "jobName": "Unit tests (remaining)",
+  "status": "passed",
+  "targetedControlCount": 19,
+  "lines": [
+    "2026-11-13T05:58:00.5896027Z \u2714 protocol closure survives close-first ordering and retains frame counts (9.5468ms)",
+    "2026-11-13T05:58:00.5904575Z \u2714 protocol closure survives navigation-first ordering and retains frame counts (0.457009ms)",
+    "2026-11-13T05:58:00.5906000Z \u2714 a socket without a successful handshake (missing) cannot prove revocation (1.358777ms)",
+    "2026-11-13T05:58:00.5907346Z \u2714 a socket without a successful handshake (403) cannot prove revocation (0.434925ms)",
+    "2026-11-13T05:58:00.5908627Z \u2714 unrelated socket closes and frames cannot satisfy the established target (1.044033ms)",
+    "2026-11-13T05:58:00.5909988Z \u2714 401, navigation and a Playwright close cannot accept a live protocol socket (0.96318ms)",
+    "2026-11-13T05:58:00.5911267Z \u2714 a protocol close cannot accept authorization that is still active (0.973567ms)",
+    "2026-11-13T05:58:00.5912510Z \u2714 every established target must close before revocation can pass (0.702448ms)",
+    "2026-11-13T05:58:00.5914033Z \u2714 post-revocation handshake status 101 preserves the establishment boundary (0.486733ms)",
+    "2026-11-13T05:58:00.5915431Z \u2714 post-revocation handshake status 401 preserves the establishment boundary (0.31217ms)",
+    "2026-11-13T05:58:00.5916720Z \u2714 losing the protocol observer invalidates completed closure evidence (2.056678ms)",
+    "2026-11-13T05:58:00.5918074Z \u2714 overflow retains bounded content-free evidence and cannot turn into acceptance (0.574866ms)",
+    "2026-11-13T05:58:00.5919481Z \u2714 too many socket identities fail closed without retaining an unbounded map (0.522928ms)",
+    "2026-11-13T05:58:00.5920919Z \u2714 failed Network.enable removes listeners and detach failure preserves its original error (0.866254ms)",
+    "2026-11-13T05:58:00.5922392Z \u2714 failed Network.enable preserves its original error when detach reaches the cleanup bound (1.164824ms)",
+    "2026-11-13T05:58:00.5924088Z \u2714 stop detaches only owned listeners and prevents late events from changing evidence (0.66383ms)",
+    "2026-11-13T05:58:00.5925538Z \u2714 cleanup runs every remaining owned phase after synchronous and asynchronous rejection (0.355085ms)",
+    "2026-11-13T05:58:00.5927406Z \u2714 a stalled cleanup phase reaches its original bound and still releases later resources (0.490339ms)",
+    "2026-11-13T05:58:00.5929850Z \u2714 revocation source and shared inputs keep unit/browser owners and fail-closed aggregates (12.086996ms)"
+  ],
+  "sourceLines": [
+    "2026-11-13T05:57:20.0752690Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +6389a8c29b337b6e993b699d544ed2e43d86ffed:refs/remotes/pull/282/merge",
+    "2026-11-13T05:57:22.2451500Z  * [new ref]         6389a8c29b337b6e993b699d544ed2e43d86ffed -> pull/282/merge",
+    "2026-11-13T05:57:22.9695383Z 6389a8c29b337b6e993b699d544ed2e43d86ffed"
+  ],
+  "runtime": {
+    "node": "v26.13.0",
+    "lines": [
+      "2026-11-13T05:57:27.7503226Z node: v26.13.0",
+      "2026-11-13T05:57:27.7503605Z npm: 11.20.0"
+    ],
+    "npm": "11.20.0"
+  },
+  "limitation": "Content-free exact targeted control lines from the successful hosted unit job. These browser-free controls are separate from native revocation acceptance; the full raw unit log is not published.",
+  "decodedFullLogSHA256": "395b29fffaa986afac01826c49179fc0aa32f84d53f908e54e8d38a2f527b796",
+  "decodedFullLogBytes": 728380,
+  "hashScope": "SHA-256 of the UTF-8 decoded complete log returned by the GitHub log connector; only the exact targeted/source/runtime lines are published.",
+  "targetedLinesSHA256": "93608cc687a5c56eadfae8e3bd47ef885bbfe85a5116965234a2c045384f1f89",
+  "targetedLinesHashScope": "The 19 exact lines in order, joined by LF with one final LF, UTF-8."
+}

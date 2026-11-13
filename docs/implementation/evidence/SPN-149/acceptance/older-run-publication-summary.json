@@ -1,0 +1,1256 @@
+{
+  "version": 1,
+  "ticket": "SPN-149",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 282,
+  "preparedAt": "2026-11-13T06:17:16+00:00",
+  "action": "Stage finalized content-free older-run evidence for the parent to incorporate into the maintained receipt.",
+  "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "sourceTree": "42cd4dfe89d0281ff5b11aa984053bd0493e22bb",
+  "run": 43370718838,
+  "attempt": 1,
+  "workflowId": 387826308,
+  "checkSuiteId": 117441910102,
+  "trigger": "pull_request.edited",
+  "observedFinalAt": "2026-11-13T06:13:00.485Z",
+  "status": "completed",
+  "conclusion": "success",
+  "executionPassed": true,
+  "disposition": {
+    "classification": "older-base execution history",
+    "eligibleForIntegratedCurrentHead": false,
+    "integratedCurrentHead": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "integratedBase": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "currentAcceptanceRun": 43373411759,
+    "reason": "Main advanced during this previous-source metadata execution. Its complete success is preserved but does not establish acceptance for the integrated candidate.",
+    "fixedDiagnosticSampleExpanded": false,
+    "initialDiagnosticSample": {
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43364365825,
+      "attempt": 1,
+      "nativeFirstAttemptCases": 2,
+      "status": "closed",
+      "naturalGap": "not_reproduced",
+      "originalFirstAttemptTimeline": "missing; original historical ordering remains unknown"
+    },
+    "noWaiver": "Older green execution, native passes and unchanged observer source cannot waive any failed, missing or pending integrated-current-head gate."
+  },
+  "acceptanceInventory": {
+    "totalJobs": 33,
+    "classifierJobId": 131705572047,
+    "executionWorkerCount": 29,
+    "aggregateCount": 3,
+    "allJobsSuccess": true,
+    "allAttempts": [
+      1
+    ],
+    "noRetryRunInvoked": true,
+    "requiredGates": [
+      {
+        "name": "Backlog",
+        "jobId": 131706614038,
+        "checkRunId": 131706614038,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614038",
+        "run": 43370718838,
+        "attempt": 1
+      },
+      {
+        "name": "Pull request",
+        "jobId": 131705572328,
+        "checkRunId": 131705572328,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131705572328",
+        "run": 43370718838,
+        "attempt": 1
+      },
+      {
+        "name": "Lint",
+        "jobId": 131706613962,
+        "checkRunId": 131706613962,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613962",
+        "run": 43370718838,
+        "attempt": 1
+      },
+      {
+        "name": "Typecheck",
+        "jobId": 131706614019,
+        "checkRunId": 131706614019,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614019",
+        "run": 43370718838,
+        "attempt": 1
+      },
+      {
+        "name": "Unit tests",
+        "jobId": 131710336179,
+        "checkRunId": 131710336179,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131710336179",
+        "run": 43370718838,
+        "attempt": 1
+      },
+      {
+        "name": "Lib tests",
+        "jobId": 131711256842,
+        "checkRunId": 131711256842,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131711256842",
+        "run": 43370718838,
+        "attempt": 1
+      },
+      {
+        "name": "Playwright smoke",
+        "jobId": 131719185560,
+        "checkRunId": 131719185560,
+        "checkSuiteId": 117441910102,
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131719185560",
+        "run": 43370718838,
+        "attempt": 1
+      }
+    ],
+    "selectedFamilies": [
+      {
+        "suite": "backlog",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Backlog",
+            "jobId": 131706614038,
+            "checkRunId": 131706614038,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614038",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "pull-request",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Pull request",
+            "jobId": 131705572328,
+            "checkRunId": 131705572328,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131705572328",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "lint",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Lint",
+            "jobId": 131706613962,
+            "checkRunId": 131706613962,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613962",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "typecheck",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Typecheck",
+            "jobId": 131706614019,
+            "checkRunId": 131706614019,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614019",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "unit-tests",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Unit tests (supervisor)",
+            "jobId": 131706613998,
+            "checkRunId": 131706613998,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613998",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Unit tests (recovery)",
+            "jobId": 131706614042,
+            "checkRunId": 131706614042,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614042",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Unit tests (remaining)",
+            "jobId": 131706614017,
+            "checkRunId": 131706614017,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614017",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "lib-test-run",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Lib tests (dense-cells)",
+            "jobId": 131706614052,
+            "checkRunId": 131706614052,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614052",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Lib tests (cells)",
+            "jobId": 131706614021,
+            "checkRunId": 131706614021,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614021",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Lib tests (mixed-fuzz)",
+            "jobId": 131706614047,
+            "checkRunId": 131706614047,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614047",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Lib tests (remaining)",
+            "jobId": 131706614082,
+            "checkRunId": 131706614082,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614082",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "playwright-run",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Playwright smoke (development 1/2)",
+            "jobId": 131706614391,
+            "checkRunId": 131706614391,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614391",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (development 2/2)",
+            "jobId": 131706614415,
+            "checkRunId": 131706614415,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614415",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (production 1/2)",
+            "jobId": 131706614259,
+            "checkRunId": 131706614259,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614259",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (production 2/2)",
+            "jobId": 131706614248,
+            "checkRunId": 131706614248,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614248",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (mobile-https)",
+            "jobId": 131706614472,
+            "checkRunId": 131706614472,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614472",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (sync-development)",
+            "jobId": 131706614272,
+            "checkRunId": 131706614272,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614272",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (sync-production)",
+            "jobId": 131706614553,
+            "checkRunId": 131706614553,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614553",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (sync-soak-sheet)",
+            "jobId": 131706614408,
+            "checkRunId": 131706614408,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614408",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (sync-soak-doc)",
+            "jobId": 131706614360,
+            "checkRunId": 131706614360,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614360",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (offline-upgrade)",
+            "jobId": 131706614441,
+            "checkRunId": 131706614441,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614441",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Playwright smoke (supervised-restore)",
+            "jobId": 131706614384,
+            "checkRunId": 131706614384,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614384",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "container-smoke",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Container smoke",
+            "jobId": 131706614016,
+            "checkRunId": 131706614016,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614016",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "restore-timing",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Sized restore acceptance",
+            "jobId": 131706613987,
+            "checkRunId": 131706613987,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613987",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "sync-transition",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Retained sync transition",
+            "jobId": 131706614059,
+            "checkRunId": 131706614059,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614059",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "doc-responsiveness",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Doc responsiveness (desktop)",
+            "jobId": 131706614078,
+            "checkRunId": 131706614078,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614078",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Doc responsiveness (mobile)",
+            "jobId": 131706614103,
+            "checkRunId": 131706614103,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614103",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      },
+      {
+        "suite": "doc-callback-lifetimes",
+        "selected": true,
+        "workers": [
+          {
+            "name": "Doc callback lifetimes (desktop)",
+            "jobId": 131706614089,
+            "checkRunId": 131706614089,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614089",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          },
+          {
+            "name": "Doc callback lifetimes (mobile)",
+            "jobId": 131706614088,
+            "checkRunId": 131706614088,
+            "conclusion": "success",
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614088",
+            "run": 43370718838,
+            "attempt": 1,
+            "source": "db24230dd4df539e2055471f55e50a402596c1fb"
+          }
+        ]
+      }
+    ],
+    "modeFlags": {
+      "responsiveness-baseline": {
+        "owners": [
+          "Doc responsiveness (desktop)",
+          "Doc responsiveness (mobile)"
+        ],
+        "mechanism": "Selected baseline first attempts and paired evidence in both existing responsiveness workers."
+      },
+      "callback-baseline": {
+        "owners": [
+          "Doc callback lifetimes (desktop)",
+          "Doc callback lifetimes (mobile)"
+        ],
+        "mechanism": "Selected baseline first attempts and paired comparison in both existing callback workers."
+      },
+      "phone-compatibility": {
+        "owners": [
+          "Playwright smoke (development 1/2)",
+          "Playwright smoke (development 2/2)",
+          "Playwright smoke (production 1/2)",
+          "Playwright smoke (production 2/2)",
+          "Playwright smoke (mobile-https)",
+          "Playwright smoke (sync-development)",
+          "Playwright smoke (sync-production)",
+          "Playwright smoke (sync-soak-sheet)",
+          "Playwright smoke (sync-soak-doc)",
+          "Playwright smoke (offline-upgrade)",
+          "Playwright smoke (supervised-restore)"
+        ],
+        "mechanism": "SPINEL_CI_FULL_COMPATIBILITY=true passed to the existing Playwright matrix; mode flag, not an additional job."
+      }
+    },
+    "noSelectedWorkerOmitted": true,
+    "allAggregateReceiptsVerified": true,
+    "allOriginalAttemptsRetained": true,
+    "sourceChecks": {
+      "total": 76,
+      "returned": 76,
+      "thisRun": 33,
+      "originalCI": 33,
+      "originalStorybook": 10
+    },
+    "allJobs": [
+      {
+        "name": "Classify changes (43370718838)",
+        "jobId": 131705572047,
+        "checkRunId": 131705572047,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131705572047"
+      },
+      {
+        "name": "Pull request",
+        "jobId": 131705572328,
+        "checkRunId": 131705572328,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131705572328"
+      },
+      {
+        "name": "Lint",
+        "jobId": 131706613962,
+        "checkRunId": 131706613962,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613962"
+      },
+      {
+        "name": "Sized restore acceptance",
+        "jobId": 131706613987,
+        "checkRunId": 131706613987,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613987"
+      },
+      {
+        "name": "Unit tests (supervisor)",
+        "jobId": 131706613998,
+        "checkRunId": 131706613998,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706613998"
+      },
+      {
+        "name": "Container smoke",
+        "jobId": 131706614016,
+        "checkRunId": 131706614016,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614016"
+      },
+      {
+        "name": "Unit tests (remaining)",
+        "jobId": 131706614017,
+        "checkRunId": 131706614017,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614017"
+      },
+      {
+        "name": "Typecheck",
+        "jobId": 131706614019,
+        "checkRunId": 131706614019,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614019"
+      },
+      {
+        "name": "Lib tests (cells)",
+        "jobId": 131706614021,
+        "checkRunId": 131706614021,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614021"
+      },
+      {
+        "name": "Backlog",
+        "jobId": 131706614038,
+        "checkRunId": 131706614038,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614038"
+      },
+      {
+        "name": "Unit tests (recovery)",
+        "jobId": 131706614042,
+        "checkRunId": 131706614042,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614042"
+      },
+      {
+        "name": "Lib tests (mixed-fuzz)",
+        "jobId": 131706614047,
+        "checkRunId": 131706614047,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614047"
+      },
+      {
+        "name": "Lib tests (dense-cells)",
+        "jobId": 131706614052,
+        "checkRunId": 131706614052,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614052"
+      },
+      {
+        "name": "Retained sync transition",
+        "jobId": 131706614059,
+        "checkRunId": 131706614059,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614059"
+      },
+      {
+        "name": "Doc responsiveness (desktop)",
+        "jobId": 131706614078,
+        "checkRunId": 131706614078,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614078"
+      },
+      {
+        "name": "Lib tests (remaining)",
+        "jobId": 131706614082,
+        "checkRunId": 131706614082,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614082"
+      },
+      {
+        "name": "Doc callback lifetimes (mobile)",
+        "jobId": 131706614088,
+        "checkRunId": 131706614088,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614088"
+      },
+      {
+        "name": "Doc callback lifetimes (desktop)",
+        "jobId": 131706614089,
+        "checkRunId": 131706614089,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614089"
+      },
+      {
+        "name": "Doc responsiveness (mobile)",
+        "jobId": 131706614103,
+        "checkRunId": 131706614103,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614103"
+      },
+      {
+        "name": "Playwright smoke (production 2/2)",
+        "jobId": 131706614248,
+        "checkRunId": 131706614248,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614248"
+      },
+      {
+        "name": "Playwright smoke (production 1/2)",
+        "jobId": 131706614259,
+        "checkRunId": 131706614259,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614259"
+      },
+      {
+        "name": "Playwright smoke (sync-development)",
+        "jobId": 131706614272,
+        "checkRunId": 131706614272,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614272"
+      },
+      {
+        "name": "Playwright smoke (sync-soak-doc)",
+        "jobId": 131706614360,
+        "checkRunId": 131706614360,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614360"
+      },
+      {
+        "name": "Playwright smoke (supervised-restore)",
+        "jobId": 131706614384,
+        "checkRunId": 131706614384,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614384"
+      },
+      {
+        "name": "Playwright smoke (development 1/2)",
+        "jobId": 131706614391,
+        "checkRunId": 131706614391,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614391"
+      },
+      {
+        "name": "Playwright smoke (sync-soak-sheet)",
+        "jobId": 131706614408,
+        "checkRunId": 131706614408,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614408"
+      },
+      {
+        "name": "Playwright smoke (development 2/2)",
+        "jobId": 131706614415,
+        "checkRunId": 131706614415,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614415"
+      },
+      {
+        "name": "Playwright smoke (offline-upgrade)",
+        "jobId": 131706614441,
+        "checkRunId": 131706614441,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614441"
+      },
+      {
+        "name": "Playwright smoke (mobile-https)",
+        "jobId": 131706614472,
+        "checkRunId": 131706614472,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614472"
+      },
+      {
+        "name": "Playwright smoke (sync-production)",
+        "jobId": 131706614553,
+        "checkRunId": 131706614553,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614553"
+      },
+      {
+        "name": "Unit tests",
+        "jobId": 131710336179,
+        "checkRunId": 131710336179,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131710336179"
+      },
+      {
+        "name": "Lib tests",
+        "jobId": 131711256842,
+        "checkRunId": 131711256842,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131711256842"
+      },
+      {
+        "name": "Playwright smoke",
+        "jobId": 131719185560,
+        "checkRunId": 131719185560,
+        "status": "completed",
+        "conclusion": "success",
+        "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+        "run": 43370718838,
+        "attempt": 1,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131719185560"
+      }
+    ]
+  },
+  "plan": {
+    "artifactId": 14012561913,
+    "mode": "full",
+    "action": "edited",
+    "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+    "planFileSHA256": "e7c36b96d2a6d65b70bab28dfdf4c9c78aa244b5e45636fc307bf65cef5cd89d",
+    "archiveSHA256": "6008b8fb4b666d50745cddf251338d9bf2ee0d0596cd422f8ffd66bc895a3bc5",
+    "extractedFile": "ci-plan-43370718838.json",
+    "auditFile": "ci-plan-audit-43370718838.json",
+    "expiresAt": "2026-12-13T05:17:21Z"
+  },
+  "aggregateArtifacts": [
+    {
+      "name": "ci-results-unit",
+      "artifactId": 14012329487,
+      "artifactBytes": 1669,
+      "archiveSHA256": "9ff6ab5aeb04b0d544f25f18e0accf804650c329b6ef2cb7d16ab39e245bf9dc",
+      "extractedFile": "ci-results-unit-43370718838-attempt-1.json",
+      "extractedSHA256": "1e85f5bd69105b88312bb28e3ee669fd59546ac8a8d5a0dc9a8dea45c2fd2094",
+      "createdAt": "2026-11-13T05:30:02Z",
+      "expiresAt": "2026-12-13T05:30:02Z",
+      "passed": true,
+      "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+      "run": 43370718838,
+      "attempt": 1
+    },
+    {
+      "name": "ci-results-lib",
+      "artifactId": 14012952962,
+      "artifactBytes": 1690,
+      "archiveSHA256": "a2b1a69ce6bdb7f26d336858dfa5b77af844e5e58efd68632b41f85e856ae880",
+      "extractedFile": "ci-results-lib-43370718838-attempt-1.json",
+      "extractedSHA256": "2d54a3a364c5720c99a0286112f250b1670afefddb29f1bc275425d7e9ad6987",
+      "createdAt": "2026-11-13T05:36:47Z",
+      "expiresAt": "2026-12-13T05:36:47Z",
+      "passed": true,
+      "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+      "run": 43370718838,
+      "attempt": 1
+    },
+    {
+      "name": "ci-results-browser",
+      "artifactId": 14014508156,
+      "artifactBytes": 1936,
+      "archiveSHA256": "33da0687fdb16a3b687b054435c81bdc24711bcbfb5788af28b569150a6045ca",
+      "extractedFile": "ci-results-browser-43370718838-attempt-1.json",
+      "extractedSHA256": "dd476a06755c6211d0a749b5263d11c467fbbad3d8aa94510f5674827e187c51",
+      "createdAt": "2026-11-13T06:11:03Z",
+      "expiresAt": "2026-12-13T06:11:02Z",
+      "passed": true,
+      "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+      "source": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+      "run": 43370718838,
+      "attempt": 1
+    }
+  ],
+  "publicationFiles": {
+    "auditorInventoryFile": "hosted-audit-manifest-43370718838.json",
+    "auditorInventorySHA256": "5c568e4d71c568c4189663646974a9b02e28e3a3b2d769cc0acb36d1cc6d91e0",
+    "auditorInventoryEntriesVerified": 21,
+    "retainedContentFreeFiles": 16,
+    "files": [
+      {
+        "path": "ci-jobs-43370718838-attempt-1-final.json",
+        "bytes": 151521,
+        "sha256": "ac5df985c1817f94328682e3631e645352728fb77835d415d0010c84206ba65f",
+        "source": "validation/ci-jobs-43370718838-attempt-1-final.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-jobs-43370718838-attempt-1-final.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "ci-run-43370718838-attempt-1-final.json",
+        "bytes": 13798,
+        "sha256": "96bf03e80e525025dfbc33128ac3f00fe56fb6afcf622facb102ca77a76a6fb7",
+        "source": "validation/ci-run-43370718838-attempt-1-final.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-run-43370718838-attempt-1-final.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "ci-artifacts-43370718838-attempt-1-final.json",
+        "bytes": 20228,
+        "sha256": "5063d60a3b256f80de07f28892d04e2d8a19771b08b65ff9a6aa63953817b64d",
+        "source": "validation/ci-artifacts-43370718838-attempt-1-final.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-artifacts-43370718838-attempt-1-final.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "source-check-runs-db24230-43370718838-attempt-1-final.json",
+        "bytes": 382374,
+        "sha256": "821a7a869dd48baa76315df9a59dbf4ed99417d35b3ce4d44658e70b8d44c3e0",
+        "source": "validation/source-check-runs-db24230-43370718838-attempt-1-final.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/source-check-runs-db24230-43370718838-attempt-1-final.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "hosted-coverage-43370718838.json",
+        "bytes": 170866,
+        "sha256": "65b9c7fb343710fc2534a6471c3f9b73378bde04a5a8903eabdb38466f1d9f74",
+        "source": "validation/hosted-coverage-43370718838.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/hosted-coverage-43370718838.json",
+        "action": "replaced_with_final_stable_source",
+        "previousBytes": 101902,
+        "previousSHA256": "aeba99e55c3351d1949371af43fdd7a9b1b2d982d61d865f8b5e1c150e588c63"
+      },
+      {
+        "path": "hosted-coverage-43370718838.md",
+        "bytes": 7983,
+        "sha256": "ea30f86aa600e0cd4ffbb600096900bb6cabce56dd307893b72a11ca696c8b9f",
+        "source": "validation/hosted-coverage-43370718838.md",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/hosted-coverage-43370718838.md",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "hosted-final-verdict-43370718838.json",
+        "bytes": 19617,
+        "sha256": "dbd49b42e56af9764a9b3cb05d22165d3795e9fd877ae24191c9d293b9ff2181",
+        "source": "validation/hosted-final-verdict-43370718838.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/hosted-final-verdict-43370718838.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "hosted-initial-43370718838-attempt-1.json",
+        "bytes": 18366,
+        "sha256": "b2fa3c97dfd90720a91fa9a5381770c182f4b9288604ffd29bf67322ff30ea32",
+        "source": "validation/hosted-initial-43370718838-attempt-1.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/hosted-initial-43370718838-attempt-1.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "ci-base-advance-43370718838.json",
+        "bytes": 996,
+        "sha256": "7be86f47e84c594d6f6af628b94871627a5b9d71235b1ea9430018888c864a32",
+        "source": "validation/ci-base-advance-43370718838.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-base-advance-43370718838.json",
+        "action": "unchanged_existing_exact_copy",
+        "previousBytes": 996,
+        "previousSHA256": "7be86f47e84c594d6f6af628b94871627a5b9d71235b1ea9430018888c864a32"
+      },
+      {
+        "path": "ci-plan-43370718838.json",
+        "bytes": 18049,
+        "sha256": "e7c36b96d2a6d65b70bab28dfdf4c9c78aa244b5e45636fc307bf65cef5cd89d",
+        "source": "validation/ci-plan-43370718838.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-plan-43370718838.json",
+        "action": "unchanged_existing_exact_copy",
+        "previousBytes": 18049,
+        "previousSHA256": "e7c36b96d2a6d65b70bab28dfdf4c9c78aa244b5e45636fc307bf65cef5cd89d"
+      },
+      {
+        "path": "ci-plan-audit-43370718838.json",
+        "bytes": 23912,
+        "sha256": "b10e36cc8f007b4366e577818dce8c408556adf9643d661afc0cb4db8fabfe4b",
+        "source": "validation/ci-plan-audit-43370718838.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-plan-audit-43370718838.json",
+        "action": "unchanged_existing_exact_copy",
+        "previousBytes": 23912,
+        "previousSHA256": "b10e36cc8f007b4366e577818dce8c408556adf9643d661afc0cb4db8fabfe4b"
+      },
+      {
+        "path": "review-b-native-43370718838-audit.md",
+        "bytes": 9212,
+        "sha256": "ff6266f6a2d400df0d9e8c4e0863ffed4ecb73e991b45997e91ec1fadfa014a9",
+        "source": "validation/review-b-native-43370718838-audit.md",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/review-b-native-43370718838-audit.md",
+        "action": "unchanged_existing_exact_copy",
+        "previousBytes": 9212,
+        "previousSHA256": "ff6266f6a2d400df0d9e8c4e0863ffed4ecb73e991b45997e91ec1fadfa014a9"
+      },
+      {
+        "path": "ci-results-unit-43370718838-attempt-1.json",
+        "bytes": 25297,
+        "sha256": "1e85f5bd69105b88312bb28e3ee669fd59546ac8a8d5a0dc9a8dea45c2fd2094",
+        "source": "validation/ci-results-unit-43370718838-attempt-1.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-results-unit-43370718838-attempt-1.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "ci-results-lib-43370718838-attempt-1.json",
+        "bytes": 25404,
+        "sha256": "2d54a3a364c5720c99a0286112f250b1670afefddb29f1bc275425d7e9ad6987",
+        "source": "validation/ci-results-lib-43370718838-attempt-1.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-results-lib-43370718838-attempt-1.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "ci-results-browser-43370718838-attempt-1.json",
+        "bytes": 41387,
+        "sha256": "dd476a06755c6211d0a749b5263d11c467fbbad3d8aa94510f5674827e187c51",
+        "source": "validation/ci-results-browser-43370718838-attempt-1.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/ci-results-browser-43370718838-attempt-1.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      },
+      {
+        "path": "hosted-audit-manifest-43370718838.json",
+        "bytes": 3963,
+        "sha256": "5c568e4d71c568c4189663646974a9b02e28e3a3b2d769cc0acb36d1cc6d91e0",
+        "source": "validation/hosted-audit-manifest-43370718838.json",
+        "destination": "docs/implementation/evidence/SPN-149/acceptance/hosted-audit-manifest-43370718838.json",
+        "action": "added",
+        "previousBytes": null,
+        "previousSHA256": null
+      }
+    ],
+    "excludedRawInputs": [
+      {
+        "path": "ci-browser-aggregate-43370718838-attempt-1.log",
+        "size": 103483,
+        "sha256": "918462c93ab403347803492d7ccd9be50f7c9bb00ea4f7e36b883592604a85af",
+        "publication": "excluded; original audit input hash retained, raw bytes not published"
+      },
+      {
+        "path": "ci-classification-43370718838.log",
+        "size": 78717,
+        "sha256": "32126b188b6dc65760de67ba4fe0c46371bf137868e5564cda69109dffabe4ca",
+        "publication": "excluded; original audit input hash retained, raw bytes not published"
+      },
+      {
+        "path": "ci-plan-43370718838.zip",
+        "size": 1294,
+        "sha256": "6008b8fb4b666d50745cddf251338d9bf2ee0d0596cd422f8ffd66bc895a3bc5",
+        "publication": "excluded; original audit input hash retained, raw bytes not published"
+      },
+      {
+        "path": "ci-results-unit-43370718838-attempt-1.zip",
+        "size": 1669,
+        "sha256": "9ff6ab5aeb04b0d544f25f18e0accf804650c329b6ef2cb7d16ab39e245bf9dc",
+        "publication": "excluded; original audit input hash retained, raw bytes not published"
+      },
+      {
+        "path": "ci-results-lib-43370718838-attempt-1.zip",
+        "size": 1690,
+        "sha256": "a2b1a69ce6bdb7f26d336858dfa5b77af844e5e58efd68632b41f85e856ae880",
+        "publication": "excluded; original audit input hash retained, raw bytes not published"
+      },
+      {
+        "path": "ci-results-browser-43370718838-attempt-1.zip",
+        "size": 1936,
+        "sha256": "33da0687fdb16a3b687b054435c81bdc24711bcbfb5788af28b569150a6045ca",
+        "publication": "excluded; original audit input hash retained, raw bytes not published"
+      }
+    ],
+    "exclusionNote": "The unchanged auditor manifest retains every omitted ZIP/raw-log identity. Those inputs are audit workspace material, not published receipt attachments; final extracted JSON and public GitHub metadata are retained.",
+    "partialCoverageReplaced": {
+      "path": "hosted-coverage-43370718838.json",
+      "bytes": 170866,
+      "sha256": "65b9c7fb343710fc2534a6471c3f9b73378bde04a5a8903eabdb38466f1d9f74",
+      "source": "validation/hosted-coverage-43370718838.json",
+      "destination": "docs/implementation/evidence/SPN-149/acceptance/hosted-coverage-43370718838.json",
+      "action": "replaced_with_final_stable_source",
+      "previousBytes": 101902,
+      "previousSHA256": "aeba99e55c3351d1949371af43fdd7a9b1b2d982d61d865f8b5e1c150e588c63"
+    }
+  },
+  "nativeEvidenceAlreadyStaged": {
+    "report": "review-b-native-43370718838-audit.md",
+    "reportSHA256": "ff6266f6a2d400df0d9e8c4e0863ffed4ecb73e991b45997e91ec1fadfa014a9",
+    "fileCount": 8,
+    "files": [
+      {
+        "path": "review-b-native-43370718838-audit.md",
+        "sha256": "ff6266f6a2d400df0d9e8c4e0863ffed4ecb73e991b45997e91ec1fadfa014a9",
+        "bytes": 9212
+      },
+      {
+        "path": "review-b-native-43370718838-development-artifact.json",
+        "sha256": "107e9126376d44fbe60b27a9ff16e2f681399d3240649826b33111e867cd961f",
+        "bytes": 2386
+      },
+      {
+        "path": "review-b-native-43370718838-development-case.json",
+        "sha256": "854f59341600d6dc1cbac7cdc827e7fcaf8a4eb81f45c91e75a723e7211250b0",
+        "bytes": 5950
+      },
+      {
+        "path": "review-b-native-43370718838-development-retry-0-observation.json",
+        "sha256": "5fee90d6f3cbff9d2c29931c5e72bfed990c3e12c8a11897751fec9752898531",
+        "bytes": 1539
+      },
+      {
+        "path": "review-b-native-43370718838-poll-receipt.json",
+        "sha256": "8f195c69375a5d5410e63791079be4aacc738d468425f34df04842e1640d1671",
+        "bytes": 13403
+      },
+      {
+        "path": "review-b-native-43370718838-production-artifact.json",
+        "sha256": "af96570956d35c3309c46630218d7a320e8321b1653ae37a890dd63c0fdb82ca",
+        "bytes": 2384
+      },
+      {
+        "path": "review-b-native-43370718838-production-case.json",
+        "sha256": "9f9ec7fc37084e20950c7df886715274fc10a0778753240b47bd090ace67f128",
+        "bytes": 5938
+      },
+      {
+        "path": "review-b-native-43370718838-production-retry-0-observation.json",
+        "sha256": "6fe44601d4ef95669b99ea05bf1a0e0685969ca41b6b0911b7dc3db299823390",
+        "bytes": 1538
+      }
+    ],
+    "allUnchanged": true,
+    "bothRetryZeroCasesPassed": true,
+    "meaning": "Required older-source metadata acceptance; separate from the initial closed diagnostic sample and from integrated-source acceptance."
+  },
+  "privacy": {
+    "status": "passed",
+    "copiedFilesScanned": 16,
+    "credentialQueryPrivateFieldHits": [],
+    "material": "Content-free audit conclusions, extracted selection/results, exact source/test/review identities and public GitHub metadata.",
+    "rawZIPsCopied": false,
+    "rawFullOrAggregateLogsCopied": false,
+    "rawTracesScreenshotsCookiesPayloadsSessionIDsCopied": false,
+    "diagnostics": "Existing clarified older-run native evidence and byte-exact bounded diagnostic files were left unchanged."
+  },
+  "unchanged": {
+    "readme": "c205bbe83a8912b7893c09eb0e4e72758ed204fbc73cf1a616813fa9a26d8e1f",
+    "acceptance": "68cbfb51ed4543ead5813190f19c5d8d07923ce879648068421dd0365f9d644f",
+    "receiptManifest": "f2f343e7cc7e7278119dd3a4d7b7b369936795944a124402c6065dd27e650702",
+    "otherProtectedFilesVerified": 69,
+    "initial433643AndFixedSampleFiles": true,
+    "currentStorybookAndNegativeControls": true,
+    "terminology": true,
+    "sourceCheckout": true
+  },
+  "remainingParentWork": "Merge this older-run summary into the maintained latest acceptance record, retain its ineligible historical disposition, recompute receipt manifest/provenance counts, and publish the updated evidence. This stage does not alter current acceptance or landing status.",
+  "workloadsRun": false,
+  "githubMutated": false,
+  "receiptReadmeAcceptanceManifestEdited": false
+}

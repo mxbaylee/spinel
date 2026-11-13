@@ -30,6 +30,8 @@ Both target jobs used Node `v26.13.0`, npm `11.20.0`, Playwright `1.64.1`, Chrom
 
 ## Ordinary acceptance observations
 
+The event named `page-close` records Playwright's WebSocket object `close` callback for the page, not closure of the Page/tab itself.
+
 Times are milliseconds relative to each observer's installation. The navigation row is the post-revocation navigation, not the initial navigation. This is recorded observer delivery order, without a claim about underlying server timing.
 
 | Event | Development | Production |
@@ -38,7 +40,7 @@ Times are milliseconds relative to each observer's installation. The navigation 
 | Queued write held | 4,792 | 3,189 |
 | Revocation requested | 4,793 | 3,190 |
 | Revocation written | 4,793 | 3,191 |
-| Playwright page close | 5,183 | 3,261 |
+| Playwright WebSocket close callback | 5,183 | 3,261 |
 | Protocol socket close | 5,183 | 3,261 |
 | Post-revocation navigation | 5,201 | 3,288 |
 | Closure assertion completed | 5,645 | 3,291 |
@@ -50,7 +52,7 @@ Times are milliseconds relative to each observer's installation. The navigation 
 
 Both final snapshots have one established target, one closed target, zero open sockets and six total received frames. Both report `contractCompleted: true`, `primaryFailed: false`, `overflow: false`, `observerLost: false`, `reopened: false` and no cleanup failures.
 
-Protocol closure is directly recorded; sign-in is a separate assertion. In these ordinary acceptance observations, page-close and protocol-close precede post-revocation navigation. This does not expand or alter the fixed diagnostic sample, and does not establish why the historical first attempt failed.
+Protocol closure is directly recorded; sign-in is a separate assertion. In these ordinary acceptance observations, the Playwright WebSocket close callback and protocol-close precede post-revocation navigation. This does not expand or alter the fixed diagnostic sample, and does not establish why the historical first attempt failed.
 
 ## Full contract assessment
 
