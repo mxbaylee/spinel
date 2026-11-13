@@ -16,6 +16,7 @@ import { runtimeDescriptor, shellFiles } from '../src/shared/offlineShell.ts';
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import type { RuntimeState } from '../web/offline/runtimeStore.ts';
 import { projectRoot, startApp } from './app-process.ts';
+import { finishUpgrade } from './offline-upgrade-cleanup.ts';
 import { linkLegacyOfflineDependencies } from './offline-upgrade-dependencies.ts';
 import { forwardUpgradeRequest } from './offline-upgrade-proxy.ts';
 import { verifyUpgradeResponseLifetime } from './offline-upgrade-lifetime.ts';
@@ -62,53 +63,6 @@ async function upgradeIdentities() {
     previousWorker: await hash(a.directory),
     candidateWorker: await hash(b.directory),
   };
-}
-
-/** Close every owned resource, retaining the first failure ahead of cleanup errors. */
-async function finishUpgrade(
-  actions: (() => unknown | Promise<unknown>)[],
-  firstFailure?: unknown,
-  observation?: Pick<Awaited<ReturnType<typeof startOfflineUpgradeObservation>>, 'finish'>,
-) {
-  const failures: unknown[] = firstFailure === undefined ? [] : [firstFailure];
-  // The observer already bounds collection/cleanup and then persistence. Await
-  // that owned sequence before browser teardown; a competing five-second timer
-  // would abandon its receipt while it is still legitimately being written.
-  if (observation)
-    try {
-      await observation.finish(firstFailure);
-    } catch (error) {
-      if (firstFailure === undefined || error !== firstFailure) {
-        if (
-          firstFailure !== undefined &&
-          error instanceof AggregateError &&
-          error.errors[0] === firstFailure
-        )
-          failures.push(...error.errors.slice(1));
-        else failures.push(error);
-      }
-    }
-  for (const action of actions) {
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    try {
-      await Promise.race([
-        Promise.resolve().then(action),
-        new Promise<never>((_resolve, reject) => {
-          timer = setTimeout(
-            () => reject(new Error('Owned upgrade cleanup exceeded five seconds.')),
-            5000,
-          );
-        }),
-      ]);
-    } catch (error) {
-      failures.push(error);
-    } finally {
-      clearTimeout(timer);
-    }
-  }
-  if (failures.length === 1) throw failures[0];
-  if (failures.length)
-    throw new AggregateError(failures, 'Offline upgrade failed; original failure is first.');
 }
 
 async function emit(directory: string, source: string, format?: 1 | 2) {
@@ -558,11 +512,26 @@ async function upgradeServer(
       sourceRoot: next.applicationSource,
     });
   };
+  const close = async () => {
+    // Both independent owners begin closing before either is awaited. A stuck
+    // proxy must not leave the app process running until the outer bound fires.
+    const results = await Promise.allSettled([
+      new Promise<void>((done, reject) => {
+        for (const socket of sockets) socket.destroy();
+        server.close((error) => (error ? reject(error) : done()));
+      }),
+      Promise.resolve().then(() => app?.close()),
+    ]);
+    const failures = results.flatMap((result) =>
+      result.status === 'rejected' ? [result.reason] : [],
+    );
+    if (failures.length === 1) throw failures[0];
+    if (failures.length) throw new AggregateError(failures, 'Upgrade hosts failed to close.');
+  };
   try {
     await replace(initial);
   } catch (error) {
-    for (const socket of sockets) socket.destroy();
-    await new Promise<void>((done) => server.close(() => done()));
+    await finishUpgrade([close], error);
     throw error;
   }
   return {
@@ -571,11 +540,7 @@ async function upgradeServer(
     fail(next?: Fault) {
       fault = next;
     },
-    async close() {
-      for (const socket of sockets) socket.destroy();
-      await new Promise<void>((done) => server.close(() => done()));
-      await app?.close();
-    },
+    close,
   };
 }
 
@@ -715,43 +680,48 @@ test('interrupted emitted updates preserve exact native work, a live old client 
   const { copy, edit, savedLocally, selectCell, stored, usableCanvas } =
     await import('./offline-fixture.ts');
   const { DOCS_NORMAL_EDITOR_UNIT_ID_KEY } = await import('@univerjs/core');
-  const directory = await mkdtemp(join(tmpdir(), 'spinel-upgrade-profile-'));
-  const databasePath = join(directory, 'app.sqlite');
-  const db = openDatabase(databasePath);
-  const auth = new AuthStore(db);
-  const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
-  const account = auth.createUser('Upgrade account');
-  const sheet = workspace.create(account.id, {
-    name: 'Upgrade Sheet',
-    kind: 'sheet',
-    parentId: null,
-  });
-  const doc = workspace.create(account.id, { name: 'Upgrade Doc', kind: 'doc', parentId: null });
-  let token = auth.createSession(account.id).token;
-  const missing = b.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
-  const lazy = a.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
-  expect(missing).toBeDefined();
-  expect(lazy).toBeDefined();
-  const server = await upgradeServer(databasePath, missing);
+  let directory: string | undefined;
+  let database: ReturnType<typeof openDatabase> | undefined;
+  let ownedServer: Awaited<ReturnType<typeof upgradeServer>> | undefined;
   let context: BrowserContext | undefined;
-  const failures: string[] = [];
-  const startBrowser = async (offline = false) => {
-    // Closing a persistent context closes its browser process; the next launch
-    // reads the same on-disk profile. No storageState fixture restores private data.
-    context = await chromium.launchPersistentContext(join(directory, 'profile'), {
-      headless: true,
-      baseURL: origin,
-      viewport: { width: 1440, height: 1100 },
-      permissions: ['clipboard-read', 'clipboard-write'],
-      offline,
-    });
-    const network = await syncNetwork(context);
-    await network.setOffline(offline);
-    const page = context.pages()[0] ?? (await context.newPage());
-    page.on('pageerror', (error) => failures.push(error.message));
-    return { page, network };
-  };
+  let failure: unknown;
   try {
+    directory = await mkdtemp(join(tmpdir(), 'spinel-upgrade-profile-'));
+    const profileDirectory = join(directory, 'profile');
+    const databasePath = join(directory, 'app.sqlite');
+    const db = (database = openDatabase(databasePath));
+    const auth = new AuthStore(db);
+    const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+    const account = auth.createUser('Upgrade account');
+    const sheet = workspace.create(account.id, {
+      name: 'Upgrade Sheet',
+      kind: 'sheet',
+      parentId: null,
+    });
+    const doc = workspace.create(account.id, { name: 'Upgrade Doc', kind: 'doc', parentId: null });
+    let token = auth.createSession(account.id).token;
+    const missing = b.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
+    const lazy = a.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
+    expect(missing).toBeDefined();
+    expect(lazy).toBeDefined();
+    const server = (ownedServer = await upgradeServer(databasePath, missing));
+    const failures: string[] = [];
+    const startBrowser = async (offline = false) => {
+      // Closing a persistent context closes its browser process; the next launch
+      // reads the same on-disk profile. No storageState fixture restores private data.
+      context = await chromium.launchPersistentContext(profileDirectory, {
+        headless: true,
+        baseURL: origin,
+        viewport: { width: 1440, height: 1100 },
+        permissions: ['clipboard-read', 'clipboard-write'],
+        offline,
+      });
+      const network = await syncNetwork(context);
+      await network.setOffline(offline);
+      const page = context.pages()[0] ?? (await context.newPage());
+      page.on('pageerror', (error) => failures.push(error.message));
+      return { page, network };
+    };
     let { page, network } = await startBrowser();
     await context!.addCookies([
       {
@@ -1157,10 +1127,17 @@ test('interrupted emitted updates preserve exact native work, a live old client 
         ),
       ),
     });
+  } catch (error) {
+    failure = error;
   } finally {
-    await context?.close();
-    await server.close();
-    db.close();
-    await rm(directory, { recursive: true, force: true });
+    await finishUpgrade(
+      [
+        () => context?.close(),
+        () => ownedServer?.close(),
+        () => database?.close(),
+        () => directory && rm(directory, { recursive: true, force: true }),
+      ],
+      failure,
+    );
   }
 });

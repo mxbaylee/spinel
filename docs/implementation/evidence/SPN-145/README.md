@@ -102,3 +102,14 @@ The complete reviewed candidate includes removal of `docs/todo/SPN-145.md`, its
 ticket lists SPN-145 as a dependency. Bookkeeping is a landing candidate, not a
 claim that hosted acceptance already passed. Do not merge if either mechanism
 comparison or the actual old/new-host acceptance is inconclusive or fails.
+
+## 🔁 Initial review and repair loop
+
+`initial-review.json` records the two independent grades on exact candidate
+`ac42137cf8e16a906df4e20ab430fa446f4a4152`: A 96/100 and B 97/100. The companion
+`initial-review.tar.gz` preserves their local receipts and A's actual collector
+probe, including the malformed-object completeness defect. These are initial
+grades, not grades for a later repaired candidate. Both local findings—trace
+envelope validation and complete first-cause resource cleanup—are repaired before
+validation publication and must be revalidated by both reviewers on the new head.
+Final grades and acceptance results belong in the PR description.

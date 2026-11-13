@@ -27,6 +27,20 @@ export function upgradeTraceBuffer() {
           malformed++;
           continue;
         }
+        const metadata = value.ph === 'M';
+        if (
+          typeof value.name !== 'string' ||
+          typeof value.ph !== 'string' ||
+          value.ph.length !== 1 ||
+          !(typeof value.cat === 'string' || (metadata && value.cat === undefined)) ||
+          !(
+            (typeof value.ts === 'number' && Number.isFinite(value.ts)) ||
+            (metadata && value.ts === undefined)
+          )
+        ) {
+          malformed++;
+          continue;
+        }
         const size = Buffer.byteLength(JSON.stringify(value));
         if (dropped || events.length === traceLimits.events || bytes + size > traceLimits.bytes) {
           dropped++;
@@ -34,7 +48,11 @@ export function upgradeTraceBuffer() {
         }
         events.push(value);
         bytes += size;
-        if (typeof value.cat === 'string' && value.cat.split(',').includes('ServiceWorker'))
+        if (
+          !metadata &&
+          typeof value.cat === 'string' &&
+          value.cat.split(',').includes('ServiceWorker')
+        )
           workerEvents++;
       }
     },

@@ -28,6 +28,37 @@ test('empty, metadata-only and malformed captures cannot imply no pending work',
   assert.equal(capture.result({ dataLossOccurred: false }).complete, false);
 });
 
+test('object-shaped malformed events cannot certify a worker capture', () => {
+  for (const events of [
+    [{ cat: 'ServiceWorker' }],
+    [worker, {}],
+    [worker, { cat: 'ServiceWorker', name: 7, ph: null, ts: 'invalid' }],
+  ]) {
+    const capture = upgradeTraceBuffer();
+    capture.append(events);
+    const result = capture.result({ dataLossOccurred: false });
+    assert.equal(result.complete, false);
+    assert.equal(result.malformed, 1);
+    assert.equal(result.workerEvents, events.length - 1);
+  }
+});
+
+test('valid metadata and raw worker payloads survive without metadata implying activity', () => {
+  const metadata = { name: 'thread_name', ph: 'M', args: { name: 'WorkerThread' } };
+  const labelledMetadata = { ...metadata, cat: 'ServiceWorker', ts: 0 };
+  const capture = upgradeTraceBuffer();
+  capture.append([metadata, labelledMetadata]);
+  assert.equal(capture.result({ dataLossOccurred: false }).complete, false);
+  const event = { ...worker, args: { requestId: 'synthetic-fixture-request' } };
+  const end = { ...worker, ph: 'E', name: '', ts: 2 };
+  capture.append([event, end]);
+  const result = capture.result({ dataLossOccurred: false });
+  assert.equal(result.complete, true);
+  assert.equal(result.workerEvents, 2);
+  assert.equal(result.malformed, 0);
+  assert.deepEqual(result.events, [metadata, labelledMetadata, event, end]);
+});
+
 test('event and byte limits preserve the prefix while explicitly rejecting overflow', () => {
   const capture = upgradeTraceBuffer();
   capture.append(Array.from({ length: 16_385 }, (_, id) => ({ ...worker, id })));
