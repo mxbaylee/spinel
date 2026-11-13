@@ -767,11 +767,11 @@ export function createDesktopBrowser(
             ),
           );
         },
-        snapshot: async () =>
+        snapshot: async (phase) =>
           JSON.parse(
             await command(
               '/usr/bin/osascript',
-              ['-l', 'JavaScript', '-e', safariPointerSnapshotScript],
+              ['-l', 'JavaScript', '-e', safariPointerSnapshotScript, phase],
               5000,
             ),
           ),
