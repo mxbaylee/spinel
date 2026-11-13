@@ -113,3 +113,35 @@ grades, not grades for a later repaired candidate. Both local findings—trace
 envelope validation and complete first-cause resource cleanup—are repaired before
 validation publication and must be revalidated by both reviewers on the new head.
 Final grades and acceptance results belong in the PR description.
+
+## 🛑 First hosted candidate: preserved failures
+
+[`hosted-81c070ad/receipt.json`](hosted-81c070ad/receipt.json) binds the failed
+source, base, tested merge, plan, jobs, artifact hashes and retained files.
+The raw control JSON for retries 0–2, first context/image, original Playwright
+report and job log are retained. Gzip files are byte-preserving compressed copies;
+the receipt hashes both their original and stored bytes. The available retry-1
+trace remains identified by the original artifact hash, and is not mislabeled
+as first-attempt evidence. The two real application scenarios did not run.
+
+The receipt also preserves the separate Storybook Viewer failure JSON, screenshot
+and worker/aggregate logs. Initial layout progress was not captured; source
+inspection supports an unsafe initial readiness boundary, not a proven historical
+layout sequence. The [repair checkpoint](../../SPN-145.md#-first-hosted-acceptance-and-bounded-repair-checkpoint)
+records both findings, the finite next step and the unchanged acceptance rules.
+This failed head cannot be merged, even though its pre-push reviews were 100/100.
+
+[`hosted-repair-local.json`](hosted-repair-local.json) and its companion archive
+retain the finite diagnostic and feasible repair checks. The exact AST-extracted
+Playwright 1.64.1 poller ended async-false evaluation after one call with zero
+queued polls, while synchronous false stayed pending and a single controlled
+animation-frame callback later resolved true. This is local execution of the
+pinned polling algorithm, not browser/worker execution. The bundle, extracted
+function, diagnostic and actual repair-source hashes are preserved.
+
+On the final repair bytes, all 46 focused tests, full typecheck and lint passed;
+the index was regenerated and backlog/PR checks passed. The largest process-tree
+RSS was 2,072,788 KiB, below the unchanged 2 GiB ceiling. Every workload used the
+pinned Node and serial watchdog with no resource abort. Earlier intermediate
+checks remain separate records. Fresh exact-commit grades and hosted acceptance
+are still required before publication and merge respectively.

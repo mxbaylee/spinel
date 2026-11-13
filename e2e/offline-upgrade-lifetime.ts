@@ -10,6 +10,12 @@ import type { Browser } from '@playwright/test';
 import { PREPARE_SHELL } from '../src/shared/offlineShell.ts';
 import { originalUpgradeRequest } from './offline-upgrade-original-proxy.ts';
 import { forwardUpgradeRequest } from './offline-upgrade-proxy.ts';
+import {
+  captureWaitingReplacement,
+  hasActivatedReplacement,
+  upgradeWorkerState,
+} from './offline-upgrade-worker-state.ts';
+import type { UpgradeWorkerControl } from './offline-upgrade-worker-state.ts';
 
 function within<T>(promise: Promise<T>, ms: number, message: string) {
   let timer: ReturnType<typeof setTimeout>;
@@ -129,42 +135,36 @@ export async function verifyUpgradeResponseLifetime(
       navigator.serviceWorker.register('/service-worker.js', { type: 'module' }),
     );
     await page.waitForFunction(() => navigator.serviceWorker.controller?.state === 'activated');
-    await page.evaluate((type) => {
-      const observation = {
-        original: navigator.serviceWorker.controller,
-        result: null as null | { ok: boolean; error?: string },
+    const control = await page.evaluateHandle(async (type) => {
+      const original = navigator.serviceWorker.controller;
+      if (!original) throw new Error('The actual legacy worker must control this page.');
+      const observation: UpgradeWorkerControl = {
+        registration: await navigator.serviceWorker.ready,
+        original,
+        replacement: null,
+        result: null,
       };
       const channel = new MessageChannel();
-      Object.assign(window, { spinelPreparationControl: observation });
       channel.port1.onmessage = (event) => {
         observation.result = event.data;
         channel.port1.close();
       };
-      observation.original!.postMessage({ type }, [channel.port2]);
+      original.postMessage({ type }, [channel.port2]);
+      return observation;
     }, PREPARE_SHELL);
     await within(partial.promise, 5000, 'The actual legacy preparation did not request its asset.');
     directory = replacementDirectory;
     await page.evaluate(async () => (await navigator.serviceWorker.ready).update());
-    await page.waitForFunction(
-      async () => (await navigator.serviceWorker.ready).waiting?.state === 'installed',
-    );
-    const state = () =>
-      page.evaluate(async () => {
-        const registration = await navigator.serviceWorker.ready;
-        const observation = (
-          window as Window & {
-            spinelPreparationControl?: { original: ServiceWorker; result: unknown };
-          }
-        ).spinelPreparationControl!;
-        return {
-          active: registration.active?.state,
-          activeIsOriginal: registration.active === observation.original,
-          original: observation.original.state,
-          waiting: registration.waiting?.state,
-          preparation: observation.result,
-        };
-      });
-    emit('replacement-waiting', await state());
+    await page.waitForFunction(captureWaitingReplacement, control);
+    const state = () => page.evaluate(upgradeWorkerState, control);
+    const waiting = await state();
+    assert.equal(waiting.waiting, 'installed');
+    assert.equal(waiting.waitingIsReplacement, true);
+    assert.equal(waiting.active, 'activated');
+    assert.equal(waiting.activeIsOriginal, true);
+    assert.equal(waiting.original, 'activated');
+    assert.equal(waiting.preparation, null);
+    emit('replacement-waiting', waiting);
     assert.ok(body && downstream);
     assert.equal((await state()).preparation, null);
     const closed = new Promise<void>((resolve) => downstream!.once('close', () => resolve()));
@@ -178,6 +178,7 @@ export async function verifyUpgradeResponseLifetime(
       assert.equal(downstream.destroyed, false);
       assert.equal(blocked.preparation, null);
       assert.equal(blocked.waiting, 'installed');
+      assert.equal(blocked.waitingIsReplacement, true);
       assert.equal(blocked.activeIsOriginal, true);
       emit('original-obstruction-confirmed', blocked);
       // Release this exact leaked HTTP owner, keeping the old page/worker alive.
@@ -186,21 +187,17 @@ export async function verifyUpgradeResponseLifetime(
       emit('release-original-response');
     }
     await within(closed, 1000, 'Interrupted response remained open.');
-    await page.waitForFunction(() =>
-      Boolean(
-        (window as Window & { spinelPreparationControl?: { result: unknown } })
-          .spinelPreparationControl?.result,
-      ),
-    );
+    await page.waitForFunction((observation) => observation.result !== null, control);
     const settled = await state();
     assert.equal((settled.preparation as { ok: boolean }).ok, false);
-    await page.waitForFunction(async () => {
-      const registration = await navigator.serviceWorker.ready;
-      return !registration.waiting && registration.active?.state === 'activated';
-    });
+    await page.waitForFunction(hasActivatedReplacement, control);
     const activated = await state();
+    assert.equal(activated.active, 'activated');
+    assert.equal(activated.activeIsReplacement, true);
     assert.equal(activated.activeIsOriginal, false);
     assert.equal(activated.original, 'redundant');
+    assert.equal(activated.waiting, null);
+    assert.equal(activated.preparation?.ok, false);
     emit('replacement-activated', activated);
   } catch (error) {
     failure = error;
