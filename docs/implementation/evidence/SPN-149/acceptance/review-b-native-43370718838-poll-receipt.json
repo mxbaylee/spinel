@@ -1,0 +1,487 @@
+{
+  "version": 1,
+  "context": {
+    "run": 43370718838,
+    "runAttempt": 1,
+    "purpose": "Ordinary required metadata-validation acceptance after publishing the PR description; now older-base execution history.",
+    "mergeAcceptanceEligible": false,
+    "candidate": "db24230dd4df539e2055471f55e50a402596c1fb",
+    "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+    "expectedTestedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+    "newerMain": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "fixedDiagnosticSample": {
+      "run": 43364365825,
+      "status": "closed",
+      "expansion": false,
+      "naturalOrderingDisposition": "not reproduced within the declared two-case sample"
+    },
+    "initialReceiptCommit": "0338f8c41ac45d8d34765cd9aa46c81a7fc22454",
+    "initialReceiptBranch": "evidence/spn-149-acceptance-20261113"
+  },
+  "polls": [
+    {
+      "time": "2026-11-13 05:15:24 UTC",
+      "run": 43370718838,
+      "jobs": []
+    },
+    {
+      "time": "2026-11-13 05:17:04 UTC",
+      "run": 43370718838,
+      "jobs": []
+    },
+    {
+      "time": "2026-11-13 05:18:24 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:19:50 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:21:10 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:22:22 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:24:19 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:25:32 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Install Chromium"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:26:55 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Install"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:28:20 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:29:45 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:31:17 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:35:44 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:37:01 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:40:07 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    },
+    {
+      "time": "2026-11-13 05:41:01 UTC",
+      "run": 43370718838,
+      "jobs": [
+        {
+          "id": 131706614248,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 131706614259,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 131706614391,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 131706614415,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null,
+          "current": "Playwright smoke"
+        }
+      ]
+    }
+  ],
+  "pollingLimitSeconds": 60,
+  "knownCadenceDeviation": {
+    "previous": "2026-11-13 05:40:07 UTC",
+    "next": "2026-11-13 05:41:01 UTC",
+    "intervalSeconds": 54,
+    "disposition": "A transition poll was six seconds early. Retained honestly; subsequent polling uses a timestamp guard."
+  }
+}

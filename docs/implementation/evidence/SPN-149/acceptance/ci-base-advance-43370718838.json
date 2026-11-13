@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-11-13T05:31:17.010Z",
+  "mainRef": {
+    "ref": "refs/heads/main",
+    "node_id": "REF_kwDOVNik2a9yZWZzL2hlYWRzL21haW4",
+    "url": "https://api.github.com/repos/mxbaylee/spinel/git/refs/heads/main",
+    "object": {
+      "sha": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "type": "commit",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/git/commits/977de3a3a7608a05e2103787f4dac01ec180013e"
+    }
+  },
+  "run": 43370718838,
+  "runAttempt": 1,
+  "runBase": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "runSource": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "runTested": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+  "mergeAcceptanceEligible": false,
+  "reason": "Main advanced during execution; this run is older-base execution history. Integration requires separate review and current-base hosted acceptance.",
+  "rootInstruction": "Continue bounded read-only audit; preserve failures and complete results under the same run-specific filenames."
+}

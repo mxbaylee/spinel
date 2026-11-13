@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "ticket": "SPN-149",
+  "kind": "bounded evidence integrity/privacy/link audit; not a code review or code grade",
+  "observedAt": "2026-11-13T05:45:39+00:00",
+  "receipt": {
+    "directory": "validation/spn149-receipt",
+    "evidenceCommit": "df241515152e109b751a95852abdcf1764a01d3d",
+    "evidenceTree": "5980f7e764a0f9616745ac2cfe713b558010e288",
+    "manifestSHA256": "13f38ffb33d050bb4d9e48ed7adb6091f7df05d133d9d84311a7806fd08a3075",
+    "manifestBytes": 15862,
+    "readmeSHA256": "c92144d5e7650ca64b5bbda13ec12ea9797b69c6bebcfdc2e5b34ff362ce51dd",
+    "acceptanceSHA256": "25e727b2e5d4f48389d09c70d976566203034ea08cbd36dec5ec3b33284490b1",
+    "fileCount": 55,
+    "manifestEntryCount": 54,
+    "manifestSelfHashExcluded": true,
+    "actualExactCopiedFiles": 51,
+    "actualGeneratedFilesExcludingManifest": 3
+  },
+  "verdict": "All published/local bytes, manifest entry hashes, original copies, identity separation and privacy checks pass. Three metadata/link findings remain for the next maintained evidence update; no candidate change or CI workload is indicated by this audit.",
+  "checks": {
+    "manifest": {
+      "status": "passed",
+      "listedEntriesVerified": 54,
+      "hashOrSizeMismatches": [],
+      "unlistedFiles": [],
+      "missingFiles": [],
+      "duplicatePaths": []
+    },
+    "publishedGitObjects": {
+      "status": "passed",
+      "commitTreeVerified": true,
+      "receiptFilesVerified": 55,
+      "localVsCommitByteMismatches": [],
+      "method": "Compared the exact provided immutable evidence commit/tree in the local Git object database and every receipt blob against the staged directory. The parent supplied current branch-head provenance; this audit did not independently repoll the remote ref."
+    },
+    "originalCopies": {
+      "status": "passed",
+      "filesVerified": 51,
+      "newIntegrationFilesVerified": 21,
+      "mismatches": [],
+      "method": "Every entry labeled byte-exact copy compared directly with its validation original, including complete new reviews, control outputs, local logs/watchdogs and integration records."
+    },
+    "readmeLinks": {
+      "status": "passed",
+      "internalLinksVerified": 22,
+      "missing": []
+    },
+    "jsonReferences": {
+      "status": "findings",
+      "explicitFileReferencesInspected": 44,
+      "missing": [
+        {
+          "path": "ci-base-advance-43370718838.json",
+          "reference": "integration-977de3a-record.json.previousHostedExecutions[1].baseAdvanceEvidence",
+          "disposition": "Stable, hashed main-advance observation; publish exact original or provide immutable durable locator."
+        },
+        {
+          "path": "ci-status-43370718838-attempt-1-direct-gates.json",
+          "reference": "integration-977de3a-record.json.previousHostedExecutions[1].lastFixedJobSnapshot.snapshot",
+          "disposition": "Stable, hashed historical worker snapshot; publish exact original or provide immutable durable locator."
+        },
+        {
+          "path": "hosted-coverage-43370718838.json",
+          "reference": "integration-977de3a-record.json.previousHostedExecutions[1].retainedRunSpecificCoverage",
+          "disposition": "Run-specific audit is still maintained in scratch; retain a labeled snapshot or publish the final stable audit when complete, preserving historical attempts."
+        }
+      ],
+      "note": "Raw ZIP/archive/aggregate-log references in immutable auditor reports are intentionally omitted and explicitly explained in the README. Those disclosed audit-input references are not counted as broken publication links."
+    },
+    "immutableCandidateLinks": {
+      "status": "passed",
+      "filesVerified": 15,
+      "method": "Every pinned GitHub blob URL, Git blob identity, SHA-256 and length verified against its immutable Git object.",
+      "mismatches": []
+    },
+    "currentIdentities": {
+      "status": "passed",
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+      "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
+      "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+      "testedTreeEqualsSourceTree": true,
+      "reviews": [
+        100,
+        100
+      ],
+      "freshRuns": [
+        {
+          "workflow": "CI",
+          "run": 43373411759,
+          "attempt": 1,
+          "acceptance": "pending"
+        },
+        {
+          "workflow": "Storybook",
+          "run": 43373411761,
+          "attempt": 1,
+          "acceptance": "pending"
+        }
+      ]
+    },
+    "historicalSeparation": {
+      "status": "passed",
+      "initialSource": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "initialCI": 43364365825,
+      "initialStorybook": 43364365751,
+      "olderMetadataCI": 43370718838,
+      "earlierRunsExplicitlyIneligibleForCurrentMerge": true,
+      "fixedSampleCases": 2,
+      "fixedSampleRun": 43364365825,
+      "naturalGap": "not_reproduced",
+      "originalFirstAttemptOrdering": "unknown",
+      "laterAcceptanceNotAddedToFixedSample": true
+    },
+    "completionClaims": {
+      "status": "passed",
+      "currentHostedAcceptance": "pending_current_head",
+      "overallAcceptance": "pending_current_head_validation_and_landing",
+      "landing": "pending",
+      "squashCommit": null,
+      "landedTreeVerified": false,
+      "falseCompletedOrMergedClaimDetected": false
+    },
+    "branchLimitations": {
+      "status": "passed",
+      "evidenceBranch": "refs/heads/evidence/spn-149-acceptance-20261113",
+      "disposition": "retain until verified durable archive pin and guarded ref deletion are available",
+      "cleanupStatus": "pending",
+      "archivePinAndDeletionLimitationsExplicit": true,
+      "initialReceiptCommitField": "publication.receiptCommit retains the initial0338f8c41ac45d8d34765cd9aa46c81a7fc22454 locator; adjoining receiptCommitIdentity and README explicitly direct readers to the maintained branch head for the current receipt."
+    },
+    "privacy": {
+      "status": "passed",
+      "allFilesScanned": 55,
+      "credentialTokenQueryOrPrivateFieldHits": [],
+      "rawArchivesTracesScreenshotsPresent": false,
+      "exactDiagnostics": [
+        {
+          "path": "review-b-native-development-retry-0-observation.json",
+          "bytes": 1540,
+          "sha256": "8d6325e0a09c8dccd61cb4c12c868032a36bf91ff0c69b946c94b33d86fef90d"
+        },
+        {
+          "path": "review-b-native-production-retry-0-observation.json",
+          "bytes": 1538,
+          "sha256": "cdf1ee55cf808d12ca90b01ae11f02f5ece85514f72cd78075873bcbe2c0cfde"
+        }
+      ],
+      "diagnosticSchema": "Only exact allowlisted top-level/observation fields, finite event kinds and integer relative times/counts. No HTTP/WebSocket URL or payload field. Socket values are ordinal integer1, not actual protocol/session/socket IDs.",
+      "byteExactDiagnostics": true,
+      "limitations": "Pattern scanning is bounded and is not a universal secret detector; diagnostic schema and full retained records were also inspected for the task-specific private data categories."
+    }
+  },
+  "findings": [
+    {
+      "id": "receipt-count",
+      "severity": "low",
+      "location": "receipt-manifest.json.exactCopiedFiles",
+      "observed": 30,
+      "expected": 51,
+      "finding": "The summary copied-file count is stale. All 54 listed file entries and all 55 actual/published files otherwise match exactly.",
+      "repair": "Recompute copied/generated summary counts from entry provenance when regenerating the next evidence manifest. No source or CI change is needed."
+    },
+    {
+      "id": "unpublished-history-references",
+      "severity": "medium",
+      "location": "integration-977de3a-record.json.previousHostedExecutions[1]",
+      "finding": "Three named historical evidence files are referenced but absent from this 55-file published receipt. All three exist in the validation workspace. This does not misstate current acceptance, which remains pending, but the receipt is not yet self-contained for those references.",
+      "references": [
+        {
+          "path": "ci-base-advance-43370718838.json",
+          "reference": "integration-977de3a-record.json.previousHostedExecutions[1].baseAdvanceEvidence",
+          "disposition": "Stable, hashed main-advance observation; publish exact original or provide immutable durable locator."
+        },
+        {
+          "path": "ci-status-43370718838-attempt-1-direct-gates.json",
+          "reference": "integration-977de3a-record.json.previousHostedExecutions[1].lastFixedJobSnapshot.snapshot",
+          "disposition": "Stable, hashed historical worker snapshot; publish exact original or provide immutable durable locator."
+        },
+        {
+          "path": "hosted-coverage-43370718838.json",
+          "reference": "integration-977de3a-record.json.previousHostedExecutions[1].retainedRunSpecificCoverage",
+          "disposition": "Run-specific audit is still maintained in scratch; retain a labeled snapshot or publish the final stable audit when complete, preserving historical attempts."
+        }
+      ],
+      "repair": "Publish the two fixed snapshots and retain the old run-specific audit with its final attempt/worker results before final completion, or replace these references with verified immutable repository URLs. Keep the old run explicitly ineligible for current-source merge acceptance."
+    },
+    {
+      "id": "stale-tested-identity-pending-text",
+      "severity": "low",
+      "location": "acceptance.json.sourceRevisions[1].pending",
+      "observed": "Fresh current-head hosted acceptance and tested merge identity.",
+      "finding": "The same entry already records tested merge6389a8c29b337b6e993b699d544ed2e43d86ffed and its reviewed tree. Only hosted acceptance remains pending, so the prose still lists a known identity as pending.",
+      "repair": "Change the maintained latest-entry prose to pending fresh current-head hosted acceptance; preserve the exact recorded tested merge."
+    }
+  ],
+  "workPerformed": {
+    "sourceModified": false,
+    "receiptModified": false,
+    "githubMutated": false,
+    "testsOrValidationWorkloadsRun": false,
+    "onlyWrittenFile": "validation/receipt-integration-integrity.json"
+  },
+  "acceptanceLimit": "This audit verifies the named evidence snapshot. It does not certify completion of the pending hosted workflows, grant merge eligibility, or replace either independent code review."
+}

@@ -1,0 +1,491 @@
+{
+  "artifact": {
+    "id": 14012561913,
+    "node_id": "MDg6QXJ0aWZhY3QxNDAxMjU2MTkxMw==",
+    "name": "ci-plan",
+    "size_in_bytes": 1294,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14012561913",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14012561913/zip",
+    "expired": false,
+    "digest": "sha256:6008b8fb4b666d50745cddf251338d9bf2ee0d0596cd422f8ffd66bc895a3bc5",
+    "created_at": "2026-11-13T05:17:22Z",
+    "updated_at": "2026-11-13T05:17:22Z",
+    "expires_at": "2026-12-13T05:17:21Z",
+    "workflow_run": {
+      "id": 43370718838,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-149-revocation-evidence",
+      "head_sha": "db24230dd4df539e2055471f55e50a402596c1fb"
+    }
+  },
+  "zipSHA256": "6008b8fb4b666d50745cddf251338d9bf2ee0d0596cd422f8ffd66bc895a3bc5",
+  "planFileSHA256": "e7c36b96d2a6d65b70bab28dfdf4c9c78aa244b5e45636fc307bf65cef5cd89d",
+  "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
+  "plan": {
+    "version": 1,
+    "event": "pull_request",
+    "action": "edited",
+    "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+    "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+    "tested": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+    "mode": "full",
+    "labels": [],
+    "paths": [
+      "THIRD-PARTY-NOTICES.md",
+      "docs/collaboration.md",
+      "docs/implementation/SPN-149.md",
+      "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+      "docs/implementation/evidence/SPN-149/local-validation.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+      "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+      "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+      "docs/implementation/grooming-2026-11-12.md",
+      "docs/todo/SPN-149.md",
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md",
+      "e2e/collaboration.spec.ts",
+      "e2e/session-revocation.ts",
+      "scripts/ci/session-revocation.test.ts"
+    ],
+    "suites": {
+      "backlog": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "pull-request": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "lint": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "typecheck": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "unit-tests": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "lib-test-run": {
+        "selected": true,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "playwright-run": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "container-smoke": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "restore-timing": {
+        "selected": true,
+        "dependencies": [
+          "server/**",
+          "src/{server,shared}/**",
+          "lib/**",
+          "web/** and src/ui/** (shared application/authentication bundle)",
+          "e2e restore/shared helpers",
+          "runtime/build/dependency/workflow inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "sync-transition": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "doc-responsiveness": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "doc-callback-lifetimes": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "responsiveness-baseline": {
+        "selected": true,
+        "dependencies": [
+          "web/**",
+          "server/**",
+          "lib/**",
+          "e2e/**",
+          "src/shared/**",
+          "src/server/{sync,history,collaboration}/**",
+          "scripts/{ci,dependencies,sync-transition}/**",
+          "build/runtime/dependency/workflow configuration"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "callback-baseline": {
+        "selected": true,
+        "dependencies": [
+          "web/**",
+          "server/**",
+          "lib/**",
+          "e2e/**",
+          "src/shared/**",
+          "src/server/{sync,history,collaboration}/**",
+          "scripts/{ci,dependencies,sync-transition}/**",
+          "build/runtime/dependency/workflow configuration"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      },
+      "phone-compatibility": {
+        "selected": true,
+        "dependencies": [
+          "full plan backstop; ordinary phone owners remain in routine browser coverage"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "PR edits require fresh full coverage until protected metadata isolation is proven."
+      }
+    }
+  },
+  "diffKeysFromOpenedPlan": [
+    "action",
+    "suites"
+  ]
+}

@@ -32,6 +32,14 @@ The complete initial candidate passed its first hosted acceptance before main ad
 | Storybook run / attempt | [43364365751](https://github.com/mxbaylee/spinel/actions/runs/43364365751) / 1 |
 | Metadata CI on the earlier base | [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) / 1 — retained history; not current integration acceptance |
 
+## 🧾 Additional required executions
+
+The previous-source metadata run [43370718838](https://github.com/mxbaylee/spinel/actions/runs/43370718838) has a separate [native audit](review-b-native-43370718838-audit.md) and [coverage history](hosted-coverage-43370718838.json). Its development and production revocation cases passed retry 0 in 8,853 ms and 5,385 ms, respectively, with the complete contract and clean cleanup; no actual retry occurred. They are ordinary older-base acceptance observations, separate from the fixed initial diagnostic sample. Its complete aggregate disposition remains pending in this snapshot.
+
+The current integration run's [authoritative plan](ci-plan-43373411759.json) and [artifact audit](ci-plan-audit-43373411759.json) select all 15 suite/mode entries and all 29 expected execution workers. Canonical plan SHA-256: `091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b`. These files prove selection and immutable execution identity; current results remain pending.
+
+The [receipt integrity audit](receipt-integration-integrity.json) verified the prior 55-file publication against its Git tree and hashes. Its stale copied-file count and tested-merge-pending wording are corrected, and its three missing historical references are now included. The final old-run coverage snapshot will be updated when complete. The current receipt manifest recomputes exact-copy counts from its file entries.
+
 ## 🔎 Initial-candidate reviews and controls
 
 [Review A](review-a-2.md) and [Review B](review-b-2.md) are complete independent nonimplementing agent reviews of the initial source above. Each scores **100/100**, with no unresolved findings. They were completed before the validation publication. Their original statements that hosted acceptance was pending remain intact as evidence of that timing; the later audited results below supply hosted acceptance separately. Both reviewers independently passed all **19 focused controls**, with their exact logs and bounded watchdog receipts retained here.

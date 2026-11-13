@@ -5,7 +5,7 @@
   "pullRequest": 282,
   "pullRequestURL": "https://github.com/mxbaylee/spinel/pull/282",
   "recordRole": "Authoritative maintained latest source, review, run and landing record. Preserve earlier immutable entries when appending later source revisions or workflow executions.",
-  "observedAt": "2026-11-13T05:40:29.181632+00:00",
+  "observedAt": "2026-11-13T05:53:54.960550+00:00",
   "current": {
     "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
     "tree": "b293f8c3c816415864c09f185d77e717bab11e38",
@@ -172,7 +172,7 @@
         "docs/todo/backlog.json",
         "docs/todo/readme.md"
       ],
-      "pending": "Fresh current-head hosted acceptance and tested merge identity."
+      "pending": "Fresh current-head hosted acceptance."
     }
   ],
   "workflowExecutions": [
@@ -730,7 +730,39 @@
       "eligibleForCurrentMerge": false,
       "disposition": "Main advanced to 977de3a; this previous-source execution is retained history, not acceptance for current source64d85c1.",
       "planSHA256": "c4c4f94d3d94f21f13ad5fa131e595970127f6f04a226489a9dcffd5eb93b097",
-      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e"
+      "testedMerge": "9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+      "coverageHistory": "hosted-coverage-43370718838.json",
+      "planFile": "ci-plan-43370718838.json",
+      "planAudit": "ci-plan-audit-43370718838.json",
+      "nativeAudit": "review-b-native-43370718838-audit.md",
+      "nativeFirstAttempts": [
+        {
+          "project": "development",
+          "job": 131706614391,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8853,
+          "contractCompleted": true,
+          "cleanupFailures": [],
+          "caseReport": "review-b-native-43370718838-development-case.json",
+          "artifactRecord": "review-b-native-43370718838-development-artifact.json",
+          "exactDiagnostic": "review-b-native-43370718838-development-retry-0-observation.json"
+        },
+        {
+          "project": "production",
+          "job": 131706614259,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5385,
+          "contractCompleted": true,
+          "cleanupFailures": [],
+          "caseReport": "review-b-native-43370718838-production-case.json",
+          "artifactRecord": "review-b-native-43370718838-production-artifact.json",
+          "exactDiagnostic": "review-b-native-43370718838-production-retry-0-observation.json"
+        }
+      ],
+      "nativeActualRetries": 0,
+      "finalRunAudit": "pending; complete later without changing this run/source identity"
     },
     {
       "purpose": "Required current-base integration acceptance",
@@ -747,7 +779,16 @@
       "status": "queued",
       "conclusion": null,
       "eligibleForCurrentMerge": "pending_all_selected_results",
-      "fixedDiagnosticSample": false
+      "fixedDiagnosticSample": false,
+      "planSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+      "planFile": "ci-plan-43373411759.json",
+      "planAudit": "ci-plan-audit-43373411759.json",
+      "planArtifactId": 14013253207,
+      "planArtifactDigest": "b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+      "selectedPlanEntries": 15,
+      "expectedExecutionWorkers": 29,
+      "allExpectedWorkersDispatched": true,
+      "allSelectedWorkersPassed": false
     },
     {
       "purpose": "Required current-base integration acceptance",
@@ -905,6 +946,11 @@
       "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
       "at": "2026-11-13T05:39:04Z",
       "bothQualifyingReviewsBeforePublication": true
+    },
+    "reviewedSourceRetention": {
+      "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+      "mechanism": "Additional parent of the receipt publication commit, preserving the exact reviewed integration source in the maintained evidence branch ancestry.",
+      "initialSourceAlreadyInReceiptAncestry": "db24230dd4df539e2055471f55e50a402596c1fb"
     }
   },
   "landing": {
@@ -941,5 +987,26 @@
     ],
     "rawAuditInventory": "hosted-audit-manifest-43364365825.json preserves the auditor original inventory and digests. ZIPs and raw aggregate logs named there remain audit inputs, deliberately omitted from this published directory. The content-free extracted plan/results and public GitHub metadata are retained.",
     "verification": "Credential/query/private-field pattern scan and diagnostic schema checks completed on retained files; all copied bytes match originals."
-  }
+  },
+  "receiptQualityReviews": [
+    {
+      "audit": "receipt-integration-integrity.json",
+      "auditedReceiptCommit": "df241515152e109b751a95852abdcf1764a01d3d",
+      "sourceUnchanged": true,
+      "findings": [
+        {
+          "finding": "Stale exactCopiedFiles summary",
+          "disposition": "Recompute from all current manifest provenance entries at each publication."
+        },
+        {
+          "finding": "Missing historical snapshot links",
+          "disposition": "All three referenced files are published, with their recorded snapshot times. Final old-run aggregate audit/results will be appended when complete."
+        },
+        {
+          "finding": "Known tested merge still called pending",
+          "disposition": "Corrected; only fresh current-head hosted acceptance is pending."
+        }
+      ]
+    }
+  ]
 }

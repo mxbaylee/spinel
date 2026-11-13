@@ -1,0 +1,493 @@
+{
+  "artifact": {
+    "id": 14013253207,
+    "node_id": "MDg6QXJ0aWZhY3QxNDAxMzI1MzIwNw==",
+    "name": "ci-plan",
+    "size_in_bytes": 1267,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14013253207",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14013253207/zip",
+    "expired": false,
+    "digest": "sha256:b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+    "created_at": "2026-11-13T05:43:01Z",
+    "updated_at": "2026-11-13T05:43:01Z",
+    "expires_at": "2026-12-13T05:43:00Z",
+    "workflow_run": {
+      "id": 43373411759,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-149-revocation-evidence",
+      "head_sha": "64d85c15288017bbfe3434d91fe0647eb2a2d613"
+    }
+  },
+  "zipSHA256": "b18b7b0849cefed15e967f64b5b79f80c8123054a50cbf0d10ffc35ddff62b84",
+  "planFileSHA256": "58e7eb4d7951df39331a72b170ee55770a876d70283d507c8913f5003ad1ddff",
+  "planSHA256": "091ffd83314226a908cfb65ce03c796cd4e7002391da676946efbdeae0ce4e9b",
+  "plan": {
+    "version": 1,
+    "event": "pull_request",
+    "action": "synchronize",
+    "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
+    "head": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+    "tested": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
+    "mode": "full",
+    "labels": [],
+    "paths": [
+      "THIRD-PARTY-NOTICES.md",
+      "docs/collaboration.md",
+      "docs/implementation/SPN-149.md",
+      "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+      "docs/implementation/evidence/SPN-149/local-validation.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+      "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+      "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+      "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+      "docs/implementation/grooming-2026-11-12.md",
+      "docs/todo/SPN-149.md",
+      "docs/todo/backlog.json",
+      "docs/todo/readme.md",
+      "e2e/collaboration.spec.ts",
+      "e2e/session-revocation.ts",
+      "scripts/ci/session-revocation.test.ts"
+    ],
+    "suites": {
+      "backlog": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "pull-request": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "lint": {
+        "selected": true,
+        "dependencies": [
+          "complete immutable change range and current event metadata"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "typecheck": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "unit-tests": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "lib-test-run": {
+        "selected": true,
+        "dependencies": [
+          "lib/**",
+          "scripts/dependencies/**",
+          "package{,-lock}.json",
+          "vitest.config.ts",
+          "tsconfig.json",
+          ".nvmrc",
+          ".github/workflows/ci.yml"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "playwright-run": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "container-smoke": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "restore-timing": {
+        "selected": true,
+        "dependencies": [
+          "server/**",
+          "src/{server,shared}/**",
+          "lib/**",
+          "web/** and src/ui/** (shared application/authentication bundle)",
+          "e2e restore/shared helpers",
+          "runtime/build/dependency/workflow inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "sync-transition": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "doc-responsiveness": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "doc-callback-lifetimes": {
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "responsiveness-baseline": {
+        "selected": true,
+        "dependencies": [
+          "web/**",
+          "server/**",
+          "lib/**",
+          "e2e/**",
+          "src/shared/**",
+          "src/server/{sync,history,collaboration}/**",
+          "scripts/{ci,dependencies,sync-transition}/**",
+          "build/runtime/dependency/workflow configuration"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "callback-baseline": {
+        "selected": true,
+        "dependencies": [
+          "web/**",
+          "server/**",
+          "lib/**",
+          "e2e/**",
+          "src/shared/**",
+          "src/server/{sync,history,collaboration}/**",
+          "scripts/{ci,dependencies,sync-transition}/**",
+          "build/runtime/dependency/workflow configuration"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      },
+      "phone-compatibility": {
+        "selected": true,
+        "dependencies": [
+          "full plan backstop; ordinary phone owners remain in routine browser coverage"
+        ],
+        "inputs": [
+          "THIRD-PARTY-NOTICES.md",
+          "docs/collaboration.md",
+          "docs/implementation/SPN-149.md",
+          "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+          "docs/implementation/evidence/SPN-149/local-validation.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+          "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+          "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+          "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+          "docs/implementation/grooming-2026-11-12.md",
+          "docs/todo/SPN-149.md",
+          "docs/todo/backlog.json",
+          "docs/todo/readme.md",
+          "e2e/collaboration.spec.ts",
+          "e2e/session-revocation.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "reason": "Unknown paths require full coverage."
+      }
+    }
+  },
+  "diffKeysFromOpenedPlan": [
+    "action",
+    "base",
+    "head",
+    "tested"
+  ]
+}

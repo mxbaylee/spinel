@@ -1,0 +1,42 @@
+{
+  "id": 14013696153,
+  "name": "theme-screenshots-development-1",
+  "size_in_bytes": 33566189,
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14013696153",
+  "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14013696153/zip",
+  "expired": false,
+  "created_at": "2026-11-13T05:40:05Z",
+  "expires_at": "2026-11-20T05:40:02Z",
+  "updated_at": "2026-11-13T05:40:05Z",
+  "digest": "sha256:51a1d8b8ac1a7bb4345f78a3a131a196fddf65bf4daf08a426ff6658031d040d",
+  "workflow_run": {
+    "id": 43370718838,
+    "repository_id": 1423484121,
+    "head_repository_id": 1423484121,
+    "head_branch": "codex/spn-149-revocation-evidence",
+    "head_sha": "db24230dd4df539e2055471f55e50a402596c1fb"
+  },
+  "runAttempt": 1,
+  "job": {
+    "id": 131706614391,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/43370718838/job/131706614391",
+    "name": "Playwright smoke (development 1/2)"
+  },
+  "runUrl": "https://github.com/mxbaylee/spinel/actions/runs/43370718838",
+  "runtimeEvidenceLines": [
+    "2026-11-13T05:26:46.9064010Z Version: 20261028.624",
+    "2026-11-13T05:26:46.9069181Z Ubuntu",
+    "2026-11-13T05:26:46.9069621Z 24.04.5",
+    "2026-11-13T05:26:46.9071706Z Image: ubuntu-24.04",
+    "2026-11-13T05:26:46.9072189Z Version: 20261101.360.1",
+    "2026-11-13T05:26:48.1702244Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9ee8ac68165f25e097c93f84bb2b20f00fcaf09e:refs/remotes/pull/282/merge",
+    "2026-11-13T05:26:52.6785353Z  * [new ref]         9ee8ac68165f25e097c93f84bb2b20f00fcaf09e -> pull/282/merge",
+    "2026-11-13T05:26:53.4100183Z HEAD is now at 9ee8ac6 Merge db24230dd4df539e2055471f55e50a402596c1fb into 04baabd6a68abe7c0b225f8699681532e2205b60",
+    "2026-11-13T05:26:53.4269564Z 9ee8ac68165f25e097c93f84bb2b20f00fcaf09e",
+    "2026-11-13T05:26:58.5984364Z node: v26.13.0",
+    "2026-11-13T05:26:58.5984713Z npm: 11.20.0",
+    "2026-11-13T05:27:29.6304080Z Downloading Chrome for Testing 156.0.8078.4 (playwright chromium v1248) from https://cdn.playwright.dev/builds/cft/156.0.8078.4/linux64/chrome-linux64.zip",
+    "2026-11-13T05:27:33.6437470Z Chrome for Testing 156.0.8078.4 (playwright chromium v1248) downloaded to /home/runner/.cache/ms-playwright/chromium-1248",
+    "2026-11-13T05:40:01.9198812Z   74 passed (12.4m)"
+  ]
+}

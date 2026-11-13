@@ -4,18 +4,18 @@
   "source": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
   "base": "977de3a3a7608a05e2103787f4dac01ec180013e",
   "testedMerge": "6389a8c29b337b6e993b699d544ed2e43d86ffed",
-  "observedAt": "2026-11-13T05:41:02.033388+00:00",
+  "observedAt": "2026-11-13T05:53:54.960550+00:00",
   "files": [
     {
       "path": "README.md",
-      "bytes": 15110,
-      "sha256": "c92144d5e7650ca64b5bbda13ec12ea9797b69c6bebcfdc2e5b34ff362ce51dd",
+      "bytes": 16548,
+      "sha256": "6984859ffd4fd2f522be9d339a93f3a55975b6e72c19656f8bcadd017b7c86d6",
       "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
     },
     {
       "path": "acceptance.json",
-      "bytes": 39263,
-      "sha256": "25e727b2e5d4f48389d09c70d976566203034ea08cbd36dec5ec3b33284490b1",
+      "bytes": 42288,
+      "sha256": "be4f0d081d69d0fcc04ff32903158c3a8c4b0b3f48c96433b3113f37d327938d",
       "provenance": "receipt assembly; source facts from retained audits and commit-pinned repository files"
     },
     {
@@ -31,6 +31,12 @@
       "provenance": "byte-exact copy of validation/ci-artifacts-43364365825-attempt-1-final.json"
     },
     {
+      "path": "ci-base-advance-43370718838.json",
+      "bytes": 996,
+      "sha256": "7be86f47e84c594d6f6af628b94871627a5b9d71235b1ea9430018888c864a32",
+      "provenance": "byte-exact copy of validation/ci-base-advance-43370718838.json"
+    },
+    {
       "path": "ci-jobs-43364365825-attempt-1-final.json",
       "bytes": 151521,
       "sha256": "a1ba7fe1a4b5e9f43aecbcfdfddc5b1a89373764092e5ca67b8c216f3f04953e",
@@ -41,6 +47,30 @@
       "bytes": 17359,
       "sha256": "078f6e5dfd36b69b8b7cb9c5007236c1044ea132a324318a67d74da2a574b5ca",
       "provenance": "byte-exact copy of validation/ci-plan-43364365825.json"
+    },
+    {
+      "path": "ci-plan-43370718838.json",
+      "bytes": 18049,
+      "sha256": "e7c36b96d2a6d65b70bab28dfdf4c9c78aa244b5e45636fc307bf65cef5cd89d",
+      "provenance": "byte-exact copy of validation/ci-plan-43370718838.json"
+    },
+    {
+      "path": "ci-plan-43373411759.json",
+      "bytes": 17364,
+      "sha256": "58e7eb4d7951df39331a72b170ee55770a876d70283d507c8913f5003ad1ddff",
+      "provenance": "byte-exact copy of validation/ci-plan-43373411759.json"
+    },
+    {
+      "path": "ci-plan-audit-43370718838.json",
+      "bytes": 23912,
+      "sha256": "b10e36cc8f007b4366e577818dce8c408556adf9643d661afc0cb4db8fabfe4b",
+      "provenance": "byte-exact copy of validation/ci-plan-audit-43370718838.json"
+    },
+    {
+      "path": "ci-plan-audit-43373411759.json",
+      "bytes": 23251,
+      "sha256": "91a65d6e03946fee8f39e6525e5f0072dd29a7859601cfd913874301d609a1af",
+      "provenance": "byte-exact copy of validation/ci-plan-audit-43373411759.json"
     },
     {
       "path": "ci-results-browser-43364365825-attempt-1.json",
@@ -65,6 +95,12 @@
       "bytes": 13798,
       "sha256": "ab172d1c9601f5f0bcb7be28cbae0783046d3345f4b96fd24ce89e1f581ec0f1",
       "provenance": "byte-exact copy of validation/ci-run-43364365825-attempt-1-final.json"
+    },
+    {
+      "path": "ci-status-43370718838-attempt-1-direct-gates.json",
+      "bytes": 10279,
+      "sha256": "4e8254e2a19fd2415c8dda0f582974c4fa18f3bfee037ddf8abe55e40bde671a",
+      "provenance": "byte-exact copy of validation/ci-status-43370718838-attempt-1-direct-gates.json"
     },
     {
       "path": "current-head-check-runs-db24230-attempt-1-final.json",
@@ -95,6 +131,12 @@
       "bytes": 8481,
       "sha256": "b97008e5291e3c2b3e1f8f594c857dd7e53f43a887801f5aec94720de0406f2c",
       "provenance": "byte-exact copy of validation/hosted-coverage-43364365825.md"
+    },
+    {
+      "path": "hosted-coverage-43370718838.json",
+      "bytes": 101902,
+      "sha256": "aeba99e55c3351d1949371af43fdd7a9b1b2d982d61d865f8b5e1c150e588c63",
+      "provenance": "byte-exact copy of validation/hosted-coverage-43370718838.json"
     },
     {
       "path": "hosted-final-verdict-43364365825.json",
@@ -199,6 +241,12 @@
       "provenance": "byte-exact copy of validation/pr-282-acceptance-audit-final.json"
     },
     {
+      "path": "receipt-integration-integrity.json",
+      "bytes": 10465,
+      "sha256": "fcc9b27450d2e4dfacca46ef48519cfbb71778a9afceeee58503b4d4e3f54285",
+      "provenance": "byte-exact copy of validation/receipt-integration-integrity.json"
+    },
+    {
       "path": "review-a-2-controls-watchdog.json",
       "bytes": 501,
       "sha256": "95095f83d383be60df5c9d5d4fe90ad2e45a3372f316a0c1a3c963493bc6c77a",
@@ -277,6 +325,54 @@
       "provenance": "byte-exact copy of validation/review-b-integration-977de3a.md"
     },
     {
+      "path": "review-b-native-43370718838-audit.md",
+      "bytes": 9034,
+      "sha256": "f9d122baf2a32cc805edb3e4958db19e276c8fe1a30ee159b0c9a5782cf33d6d",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-audit.md"
+    },
+    {
+      "path": "review-b-native-43370718838-development-artifact.json",
+      "bytes": 2386,
+      "sha256": "107e9126376d44fbe60b27a9ff16e2f681399d3240649826b33111e867cd961f",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-development-artifact.json"
+    },
+    {
+      "path": "review-b-native-43370718838-development-case.json",
+      "bytes": 5950,
+      "sha256": "854f59341600d6dc1cbac7cdc827e7fcaf8a4eb81f45c91e75a723e7211250b0",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-development-case.json"
+    },
+    {
+      "path": "review-b-native-43370718838-development-retry-0-observation.json",
+      "bytes": 1539,
+      "sha256": "5fee90d6f3cbff9d2c29931c5e72bfed990c3e12c8a11897751fec9752898531",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-development-retry-0-observation.json"
+    },
+    {
+      "path": "review-b-native-43370718838-poll-receipt.json",
+      "bytes": 13403,
+      "sha256": "8f195c69375a5d5410e63791079be4aacc738d468425f34df04842e1640d1671",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-poll-receipt.json"
+    },
+    {
+      "path": "review-b-native-43370718838-production-artifact.json",
+      "bytes": 2384,
+      "sha256": "af96570956d35c3309c46630218d7a320e8321b1653ae37a890dd63c0fdb82ca",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-production-artifact.json"
+    },
+    {
+      "path": "review-b-native-43370718838-production-case.json",
+      "bytes": 5938,
+      "sha256": "9f9ec7fc37084e20950c7df886715274fc10a0778753240b47bd090ace67f128",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-production-case.json"
+    },
+    {
+      "path": "review-b-native-43370718838-production-retry-0-observation.json",
+      "bytes": 1538,
+      "sha256": "6fe44601d4ef95669b99ea05bf1a0e0685969ca41b6b0911b7dc3db299823390",
+      "provenance": "byte-exact copy of validation/review-b-native-43370718838-production-retry-0-observation.json"
+    },
+    {
       "path": "review-b-native-audit.md",
       "bytes": 9285,
       "sha256": "0948114b552e1134a81ffda670eb1673f53a8f87de2ba424839e4f288a8c7be5",
@@ -331,7 +427,7 @@
       "provenance": "byte-exact copy of validation/storybook-43364365751-attempt-1-final.json"
     }
   ],
-  "exactCopiedFiles": 30,
+  "exactCopiedFiles": 67,
   "generatedFiles": 3,
   "selfHashExcluded": true,
   "excludedAuditorInputs": [

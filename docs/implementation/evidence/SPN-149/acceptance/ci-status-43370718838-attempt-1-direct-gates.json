@@ -1,0 +1,312 @@
+{
+  "observedAt": "2026-11-13T05:24:34.468Z",
+  "run": 43370718838,
+  "attempt": 1,
+  "checkSuite": 117441910102,
+  "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+  "total": 30,
+  "returned": 30,
+  "jobs": [
+    {
+      "id": 131705572047,
+      "name": "Classify changes (43370718838)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131705572047"
+    },
+    {
+      "id": 131705572328,
+      "name": "Pull request",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131705572328"
+    },
+    {
+      "id": 131706613962,
+      "name": "Lint",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706613962"
+    },
+    {
+      "id": 131706613987,
+      "name": "Sized restore acceptance",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706613987"
+    },
+    {
+      "id": 131706613998,
+      "name": "Unit tests (supervisor)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706613998"
+    },
+    {
+      "id": 131706614016,
+      "name": "Container smoke",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614016"
+    },
+    {
+      "id": 131706614017,
+      "name": "Unit tests (remaining)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614017"
+    },
+    {
+      "id": 131706614019,
+      "name": "Typecheck",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614019"
+    },
+    {
+      "id": 131706614021,
+      "name": "Lib tests (cells)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614021"
+    },
+    {
+      "id": 131706614038,
+      "name": "Backlog",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614038"
+    },
+    {
+      "id": 131706614042,
+      "name": "Unit tests (recovery)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614042"
+    },
+    {
+      "id": 131706614047,
+      "name": "Lib tests (mixed-fuzz)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614047"
+    },
+    {
+      "id": 131706614052,
+      "name": "Lib tests (dense-cells)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614052"
+    },
+    {
+      "id": 131706614059,
+      "name": "Retained sync transition",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614059"
+    },
+    {
+      "id": 131706614078,
+      "name": "Doc responsiveness (desktop)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614078"
+    },
+    {
+      "id": 131706614082,
+      "name": "Lib tests (remaining)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614082"
+    },
+    {
+      "id": 131706614088,
+      "name": "Doc callback lifetimes (mobile)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614088"
+    },
+    {
+      "id": 131706614089,
+      "name": "Doc callback lifetimes (desktop)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614089"
+    },
+    {
+      "id": 131706614103,
+      "name": "Doc responsiveness (mobile)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614103"
+    },
+    {
+      "id": 131706614248,
+      "name": "Playwright smoke (production 2/2)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614248"
+    },
+    {
+      "id": 131706614259,
+      "name": "Playwright smoke (production 1/2)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614259"
+    },
+    {
+      "id": 131706614272,
+      "name": "Playwright smoke (sync-development)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614272"
+    },
+    {
+      "id": 131706614360,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614360"
+    },
+    {
+      "id": 131706614384,
+      "name": "Playwright smoke (supervised-restore)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614384"
+    },
+    {
+      "id": 131706614391,
+      "name": "Playwright smoke (development 1/2)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614391"
+    },
+    {
+      "id": 131706614408,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614408"
+    },
+    {
+      "id": 131706614415,
+      "name": "Playwright smoke (development 2/2)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614415"
+    },
+    {
+      "id": 131706614441,
+      "name": "Playwright smoke (offline-upgrade)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614441"
+    },
+    {
+      "id": 131706614472,
+      "name": "Playwright smoke (mobile-https)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614472"
+    },
+    {
+      "id": 131706614553,
+      "name": "Playwright smoke (sync-production)",
+      "head": "db24230dd4df539e2055471f55e50a402596c1fb",
+      "run": 43370718838,
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "checkRunUrl": "https://api.github.com/repos/mxbaylee/spinel/check-runs/131706614553"
+    }
+  ],
+  "acceptance": "pending"
+}
