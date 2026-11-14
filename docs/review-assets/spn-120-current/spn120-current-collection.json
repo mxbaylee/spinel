@@ -1,0 +1,28 @@
+{
+  "name": "spn120-current-collection",
+  "args": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "e2e/doc-phone-navigation.spec.ts",
+    "e2e/offline-sign-out.spec.ts",
+    "e2e/passkey-management.spec.ts",
+    "e2e/offline-recovery.spec.ts",
+    "e2e/sync-client.spec.ts",
+    "--project=production",
+    "--project=development",
+    "--project=sync-production",
+    "--grep",
+    "phone Doc (light|dark) native pan, zoom and (editor|guest-viewer) behavior preserve the document|ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie|profile signs out another browser, then verifies and removes its passkey without losing the current account|an unfinished native Sheet draft remains copyable before recovery freezes the queued edits|native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+    "--repeat-each=2",
+    "--retries=0",
+    "--workers=1",
+    "--list",
+    "--reporter=json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 3229,
+  "peakKiB": 452512
+}

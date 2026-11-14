@@ -1,0 +1,8 @@
+{
+  "reviewedSource": "a1beeea115610a14b12f09e913b2f2f713b0fc79",
+  "integratedMain": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "scope": "Every tracked path outside docs/, comparing file mode and Git object ID",
+  "identical": true,
+  "entries": 1349,
+  "canonicalMapSha256": "dec28a6491dcd76d527cd0f335f20c58e830368ad8bf2005a7362a7c176301b8"
+}

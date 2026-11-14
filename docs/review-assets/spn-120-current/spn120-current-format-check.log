@@ -1,0 +1,8 @@
+
+> format:check
+> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/e2e-server.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts
+
+Checking formatting...
+serial: SIGTERM; killing the run.
+serial: waiting for remaining workers.
+{"name":"spn120-current-format-check","args":["npm","run","format:check"],"code":1,"signal":null,"reason":"Resource guard","elapsedMs":8424,"peakKiB":559488}

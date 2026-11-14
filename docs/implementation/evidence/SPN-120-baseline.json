@@ -1,0 +1,459 @@
+{
+  "runId": 41340400081,
+  "runAttempt": 1,
+  "driverCommit": "27ff4585a3efdc9b9b97064236e8791eef611f59",
+  "baseCommit": "e63956c7ec214af03c825104a81f63517eb87d0b",
+  "qualification": "Main plus the retained diagnostic-only maxRetries:1 to 0 patch. Original Playwright JSON groups repeated cases without repeatEachIndex; sampleOrdinal is report order, not an invented repeat index. Exact manifest, two distinct starts per case, command/configuration, and all first-attempt statuses are retained.",
+  "baselinePatch": "diff --git a/e2e/sync-client.spec.ts b/e2e/sync-client.spec.ts\nindex a3a3680..8dd755c 100644\n--- a/e2e/sync-client.spec.ts\n+++ b/e2e/sync-client.spec.ts\n@@ -157,7 +157,7 @@ async function fixture(\n       `/sync-api/items/${item.id}/snapshot?unitId=${encodeURIComponent(data.unitId)}`,\n       // Repeat only this read-only observation after ECONNRESET. HTTP failures,\n       // authored writes and native/content assertions retain their failure gates.\n-      { maxRetries: 1 },\n+      { maxRetries: 0 },\n     );\n     expect(response.ok()).toBe(true);\n     return (await response.json()) as { revision: number; snapshot: IWorkbookData & IDocumentData };\n",
+  "records": [
+    {
+      "source": {
+        "source": "baseline",
+        "project": "production",
+        "sourceSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+        "sourceTree": "6af10323bca2285e7a768c378196d995f87c7c45",
+        "driverSha256": "813ced6ca1dd05fad2cf8252838683cb82d6c81d7ed421638a8070f54e07741e",
+        "lockSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+        "node": "v26.12.1",
+        "repetitions": 2,
+        "retries": 0,
+        "setupRecoveryAllowed": false,
+        "startedAt": "2026-11-01T19:15:17.733Z",
+        "baselineDeltaSha256": "6731bb2b78a7e86b0848a928baeac8481ca5ba278302367a599ca7d295f7ecdb"
+      },
+      "browserVersion": "156.0.8078.4",
+      "originalComplete": true,
+      "validated": {
+        "complete": true,
+        "reasons": [],
+        "attempts": [
+          {
+            "specId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+            "testId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 15694,
+            "startTime": "2026-11-01T19:15:23.723Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+            "testId": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 13436,
+            "startTime": "2026-11-01T19:15:39.502Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+            "testId": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 19245,
+            "startTime": "2026-11-01T19:15:52.950Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+            "testId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 18668,
+            "startTime": "2026-11-01T19:16:12.209Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+            "testId": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 13553,
+            "startTime": "2026-11-01T19:16:31.398Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+            "testId": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 13121,
+            "startTime": "2026-11-01T19:16:45.033Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+            "testId": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 19063,
+            "startTime": "2026-11-01T19:16:58.164Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+            "testId": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 19750,
+            "startTime": "2026-11-01T19:17:17.241Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "ccad38f60b47bfc68793-fb6ba15ca0b3fd54f74e",
+            "testId": "ccad38f60b47bfc68793-fb6ba15ca0b3fd54f74e",
+            "file": "offline-sign-out.spec.ts",
+            "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+            "project": "production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 3756,
+            "startTime": "2026-11-01T19:17:37.941Z",
+            "workerIndex": 2
+          },
+          {
+            "specId": "ccad38f60b47bfc68793-4a3bda8d3f2e3265ffee",
+            "testId": "ccad38f60b47bfc68793-4a3bda8d3f2e3265ffee",
+            "file": "offline-sign-out.spec.ts",
+            "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+            "project": "production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 5181,
+            "startTime": "2026-11-01T19:17:57.916Z",
+            "workerIndex": 3
+          },
+          {
+            "specId": "5af9f0c6976febdaf1f3-10f89779a9b1249a18ad",
+            "testId": "5af9f0c6976febdaf1f3-10f89779a9b1249a18ad",
+            "file": "passkey-management.spec.ts",
+            "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+            "project": "production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 15214,
+            "startTime": "2026-11-01T19:17:41.786Z",
+            "workerIndex": 2
+          },
+          {
+            "specId": "5af9f0c6976febdaf1f3-ab5fca7c09247b6a77ff",
+            "testId": "5af9f0c6976febdaf1f3-ab5fca7c09247b6a77ff",
+            "file": "passkey-management.spec.ts",
+            "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+            "project": "production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 15189,
+            "startTime": "2026-11-01T19:18:03.184Z",
+            "workerIndex": 3
+          }
+        ]
+      },
+      "stats": {
+        "startTime": "2026-11-01T19:15:18.680Z",
+        "duration": 179787.596,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "source": {
+        "source": "baseline",
+        "project": "development",
+        "sourceSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+        "sourceTree": "6af10323bca2285e7a768c378196d995f87c7c45",
+        "driverSha256": "813ced6ca1dd05fad2cf8252838683cb82d6c81d7ed421638a8070f54e07741e",
+        "lockSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+        "node": "v26.12.1",
+        "repetitions": 2,
+        "retries": 0,
+        "setupRecoveryAllowed": false,
+        "startedAt": "2026-11-01T19:12:02.721Z",
+        "baselineDeltaSha256": "6731bb2b78a7e86b0848a928baeac8481ca5ba278302367a599ca7d295f7ecdb"
+      },
+      "browserVersion": "156.0.8078.4",
+      "originalComplete": true,
+      "validated": {
+        "complete": true,
+        "reasons": [],
+        "attempts": [
+          {
+            "specId": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+            "testId": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 22645,
+            "startTime": "2026-11-01T19:12:09.498Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+            "testId": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 22602,
+            "startTime": "2026-11-01T19:12:32.226Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+            "testId": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 29145,
+            "startTime": "2026-11-01T19:12:54.841Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+            "testId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 29250,
+            "startTime": "2026-11-01T19:13:24.000Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+            "testId": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 21157,
+            "startTime": "2026-11-01T19:13:53.796Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+            "testId": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 21314,
+            "startTime": "2026-11-01T19:14:15.042Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+            "testId": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 29595,
+            "startTime": "2026-11-01T19:14:36.370Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+            "testId": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+            "file": "doc-phone-navigation.spec.ts",
+            "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+            "project": "development",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 30236,
+            "startTime": "2026-11-01T19:15:05.981Z",
+            "workerIndex": 1
+          }
+        ]
+      },
+      "stats": {
+        "startTime": "2026-11-01T19:12:03.759Z",
+        "duration": 212624.05800000002,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "source": {
+        "source": "baseline",
+        "project": "sync-production",
+        "sourceSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+        "sourceTree": "6af10323bca2285e7a768c378196d995f87c7c45",
+        "driverSha256": "813ced6ca1dd05fad2cf8252838683cb82d6c81d7ed421638a8070f54e07741e",
+        "lockSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf",
+        "node": "v26.12.1",
+        "repetitions": 2,
+        "retries": 0,
+        "setupRecoveryAllowed": false,
+        "startedAt": "2026-11-01T19:12:06.053Z",
+        "baselineDeltaSha256": "6731bb2b78a7e86b0848a928baeac8481ca5ba278302367a599ca7d295f7ecdb"
+      },
+      "browserVersion": "156.0.8078.4",
+      "originalComplete": true,
+      "validated": {
+        "complete": true,
+        "reasons": [],
+        "attempts": [
+          {
+            "specId": "d4610c33918c0d3d6a19-e8f212c4d02eb5f016e5",
+            "testId": "d4610c33918c0d3d6a19-e8f212c4d02eb5f016e5",
+            "file": "offline-recovery.spec.ts",
+            "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+            "project": "sync-production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 10264,
+            "startTime": "2026-11-01T19:12:11.358Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "d4610c33918c0d3d6a19-553772f3554083558906",
+            "testId": "d4610c33918c0d3d6a19-553772f3554083558906",
+            "file": "offline-recovery.spec.ts",
+            "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+            "project": "sync-production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 10561,
+            "startTime": "2026-11-01T19:12:37.715Z",
+            "workerIndex": 1
+          },
+          {
+            "specId": "542c6445fd575a52fb22-a81ba36148a7f10b9e84",
+            "testId": "542c6445fd575a52fb22-a81ba36148a7f10b9e84",
+            "file": "sync-client.spec.ts",
+            "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+            "project": "sync-production",
+            "sampleOrdinal": 0,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 15017,
+            "startTime": "2026-11-01T19:12:21.917Z",
+            "workerIndex": 0
+          },
+          {
+            "specId": "542c6445fd575a52fb22-160544952a2daaff1643",
+            "testId": "542c6445fd575a52fb22-160544952a2daaff1643",
+            "file": "sync-client.spec.ts",
+            "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+            "project": "sync-production",
+            "sampleOrdinal": 1,
+            "repeatEachIndex": null,
+            "retry": 0,
+            "status": "passed",
+            "durationMs": 12226,
+            "startTime": "2026-11-01T19:12:48.502Z",
+            "workerIndex": 1
+          }
+        ]
+      },
+      "stats": {
+        "startTime": "2026-11-01T19:12:07.020Z",
+        "duration": 53828.013999999996,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "archives": [
+    {
+      "project": "production",
+      "artifactId": 13097346981,
+      "sha256": "3ab179568ab3a07e48b8666f03fb5d36799d7d4c57508a70dca6dffe110209cc"
+    },
+    {
+      "project": "development",
+      "artifactId": 13097182795,
+      "sha256": "00bbb2645fad56b00213ecd5182d1c89a8bdda4407d631aa129a1e8ec7af0af8"
+    },
+    {
+      "project": "sync-production",
+      "artifactId": 13096774061,
+      "sha256": "87aa70b242ba822c26edb25794a9f344f8d869e1d4761b1c0ad51a76ea08f60c"
+    }
+  ]
+}

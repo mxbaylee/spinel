@@ -1,0 +1,13 @@
+{
+  "name": "spn120-current-format-check",
+  "args": [
+    "npm",
+    "run",
+    "format:check"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 8424,
+  "peakKiB": 559488
+}

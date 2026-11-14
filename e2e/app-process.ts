@@ -1,5 +1,9 @@
 import { spawn } from 'node:child_process';
 import { resolve } from 'node:path';
+import { observeAppProcess } from './owned-process.ts';
+
+export { AppProcessError, withFixtureCleanup } from './owned-process.ts';
+export type { AppProcessEvidence, OwnedAppProcess } from './owned-process.ts';
 
 export const projectRoot = resolve(import.meta.dirname, '..');
 
@@ -18,6 +22,8 @@ export async function startApp(options: {
   /** Recovery tests opt in with a disposable private destination and key. */
   backupConfigPath?: string;
   image?: string;
+  /** A fixture wrapper can stop startup as well as an already-ready child. */
+  signal?: AbortSignal;
 }) {
   const env: NodeJS.ProcessEnv = {
     ...process.env,
@@ -44,63 +50,7 @@ export async function startApp(options: {
     ],
     { cwd: options.sourceRoot ?? projectRoot, env, stdio: ['ignore', 'pipe', 'pipe'] },
   );
-  let output = '';
-  let startupError: Error | undefined;
-  child.on('error', (error) => {
-    startupError = error;
+  return observeAppProcess(child, `Spinel is running at ${options.origin}`, {
+    signal: options.signal,
   });
-  // Playwright can retire a failed worker while fixture cleanup is in flight.
-  // Terminate only this worker's own server, including that final exit path.
-  const stopOnExit = () => {
-    child.kill('SIGKILL');
-  };
-  process.once('exit', stopOnExit);
-  const exited = new Promise<void>((done) =>
-    child.once('close', () => {
-      process.off('exit', stopOnExit);
-      done();
-    }),
-  );
-  const close = async () => {
-    if (child.exitCode !== null || child.signalCode !== null) return exited;
-    child.kill('SIGTERM');
-    const timer = setTimeout(() => child.kill('SIGKILL'), 5000);
-    try {
-      await exited;
-    } finally {
-      clearTimeout(timer);
-    }
-  };
-  try {
-    await new Promise<void>((ready, reject) => {
-      const timer = setTimeout(
-        () => finish(new Error(`App startup timed out.\n${output}`)),
-        30_000,
-      );
-      const onClose = () =>
-        finish(startupError ?? new Error(`App exited before ready.\n${output}`));
-      const onData = (chunk: Buffer) => {
-        output = (output + chunk.toString()).slice(-16_384);
-        if (output.includes(`Spinel is running at ${options.origin}`)) finish();
-      };
-      const finish = (error?: Error) => {
-        clearTimeout(timer);
-        child.off('close', onClose);
-        child.stdout.off('data', onData);
-        child.stderr.off('data', onData);
-        // Continue draining pipes so a noisy child cannot block on output.
-        child.stdout.resume();
-        child.stderr.resume();
-        if (error) reject(error);
-        else ready();
-      };
-      child.once('close', onClose);
-      child.stdout.on('data', onData);
-      child.stderr.on('data', onData);
-    });
-    return { close };
-  } catch (error) {
-    await close();
-    throw error;
-  }
 }

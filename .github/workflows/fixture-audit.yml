@@ -1,0 +1,91 @@
+name: Browser fixture audit
+
+on:
+  pull_request:
+    branches: [main]
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      source:
+        description: Audit the current source or its main baseline
+        type: choice
+        options: [candidate, baseline]
+        default: candidate
+      baseline:
+        description: Immutable baseline commit (required for a manual baseline audit)
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       (github.event.label.name == 'ci-fixture-baseline' ||
+        github.event.label.name == 'ci-fixture-audit'))
+    name: Fixture audit (${{ matrix.project }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [production, development, sync-production]
+    env:
+      AUDIT_SOURCE: ${{ github.event.label.name == 'ci-fixture-baseline' && 'baseline' || inputs.source || 'candidate' }}
+      AUDIT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      AUDIT_BASE: ${{ github.event.pull_request.base.sha || inputs.baseline }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.AUDIT_HEAD }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Retain the candidate's audit driver and select immutable source
+        run: |
+          cp scripts/ci/fixture-audit.ts "$RUNNER_TEMP/fixture-audit.ts"
+          cp scripts/ci/fixture-audit-reporter.ts "$RUNNER_TEMP/fixture-audit-reporter.ts"
+          [[ "$AUDIT_HEAD" =~ ^[a-f0-9]{40}$ ]]
+          if [ "$AUDIT_SOURCE" = baseline ]; then
+            [[ "$AUDIT_BASE" =~ ^[a-f0-9]{40}$ ]]
+            git checkout --detach "$AUDIT_BASE"
+          fi
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Install pinned Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Build the selected source
+        if: matrix.project != 'development'
+        env:
+          VITE_SYNC_EVIDENCE: ${{ matrix.project == 'sync-production' && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+        run: npm run build
+      - name: Execute the predeclared first-attempt sample
+        env:
+          SPINEL_E2E_PROJECT: ${{ matrix.project }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+        run: node "$RUNNER_TEMP/fixture-audit.ts"
+      - name: Retain every attempt and process observation
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: fixture-audit-${{ env.AUDIT_SOURCE }}-${{ matrix.project }}
+          path: |
+            fixture-audit/
+            playwright-report/
+            test-results/**/fixture-evidence.json
+            test-results/**/sync-diagnostics.json
+            test-results/**/phone-doc-caret-events*.json
+            test-results/**/phone-doc-selection-evidence*.json
+            test-results/**/test-failed-*.png
+            test-results/**/error-context.md
+            test-results/**/trace.zip
+          retention-days: 14
+          if-no-files-found: error
