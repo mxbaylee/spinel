@@ -13,6 +13,7 @@ import {
   withOfflineEditorAdmission,
 } from '../../web/offline/offlineStore.ts';
 import type { OfflineStore } from '../../web/offline/offlineStore.ts';
+import { createReplayAdmission } from '../../web/offline/replayAdmission.ts';
 
 const accountId = 'writer-handoff-account';
 const itemId = 'second-prepared-document';
@@ -48,6 +49,276 @@ function deferred() {
   });
   return { promise, resolve };
 }
+
+/** Independent event targets/module instances share only actual runtime locks and storage delivery. */
+function replayTabs(manager: LockManager = locks as unknown as LockManager) {
+  const targets: EventTarget[] = [];
+  let deliver = true;
+  let denied = false;
+  const tabs = [0, 1].map(() => {
+    const target = new EventTarget();
+    targets.push(target);
+    const localStorage = {
+      setItem(key: string, newValue: string) {
+        if (denied) throw new Error('Storage denied');
+        if (deliver)
+          for (const other of targets) {
+            if (other !== target)
+              queueMicrotask(() =>
+                other.dispatchEvent(Object.assign(new Event('storage'), { key, newValue })),
+              );
+          }
+      },
+    } as Storage;
+    return {
+      target,
+      admission: createReplayAdmission(Object.assign(target, { localStorage }), manager),
+    };
+  });
+  return {
+    tabs,
+    drop: () => {
+      deliver = false;
+    },
+    deny: () => {
+      denied = true;
+    },
+  };
+}
+
+test.each(['editor', 'maintenance'] as const)(
+  'another tab joins replay cleanup before %s item-writer admission',
+  async (next) => {
+    const { tabs } = replayTabs();
+    const entered = deferred();
+    const stopping = deferred();
+    const persisted = deferred();
+    const finish = deferred();
+    const events: string[] = [];
+    const replay = tabs[0].admission.replay(
+      accountId,
+      itemId,
+      async () => {
+        events.push('quiet');
+        stopping.resolve();
+        await persisted.promise;
+        events.push('persisted');
+        finish.resolve();
+      },
+      () =>
+        locks.request(lockName, async () => {
+          entered.resolve();
+          await finish.promise;
+          events.push('disposed');
+        }),
+    );
+    await entered.promise;
+    const foreground = tabs[1].admission.foreground(
+      accountId,
+      itemId,
+      () => {},
+      async () => {},
+      () =>
+        locks.request(lockName, { ifAvailable: true }, async (lock) => {
+          expect(lock).not.toBeNull();
+          events.push(next);
+        }),
+    );
+    try {
+      await Promise.race([
+        stopping.promise,
+        foreground.then(() => {
+          throw new Error('Foreground admitted before replay stopped.');
+        }),
+      ]);
+      expect(events).toEqual(['quiet']);
+      const competing = vi.fn(async () => {});
+      await tabs[0].admission.replay(accountId, itemId, async () => {}, competing);
+      expect(competing).not.toHaveBeenCalled();
+      persisted.resolve();
+      await foreground;
+      await replay;
+      expect(events).toEqual(['quiet', 'persisted', 'disposed', next]);
+    } finally {
+      persisted.resolve();
+      finish.resolve();
+      await Promise.allSettled([replay, foreground]);
+    }
+  },
+);
+
+test.each(['wrong account', 'wrong item', 'stale request'])(
+  'a %s cannot stop a different replay lifetime',
+  async (reason) => {
+    const { tabs } = replayTabs();
+    const entered = deferred();
+    const release = deferred();
+    const stop = vi.fn(async () => {});
+    const replay = tabs[0].admission.replay(accountId, itemId, stop, async () => {
+      entered.resolve();
+      await release.promise;
+    });
+    await entered.promise;
+    const queued =
+      reason === 'stale request'
+        ? undefined
+        : locks.request(
+            `spinel-offline-replay-admission:${JSON.stringify([accountId, itemId])}`,
+            async () => {},
+          );
+    try {
+      if (queued) expect((await locks.query()).pending).toHaveLength(1);
+      const account = reason === 'wrong account' ? 'other-account' : accountId;
+      const item = reason === 'wrong item' ? 'other-item' : itemId;
+      tabs[0].target.dispatchEvent(
+        Object.assign(new Event('storage'), {
+          key: 'spinel.offline.replay-stop',
+          newValue: JSON.stringify({ account, item, request: 'old' }),
+        }),
+      );
+      await locks.query();
+      expect(stop).not.toHaveBeenCalled();
+    } finally {
+      release.resolve();
+      await replay;
+      await queued;
+    }
+  },
+);
+
+test.each(['denied', 'missing', 'account change'])(
+  'cross-tab %s admission fails closed and permits subsequent exclusive admission',
+  async (reason) => {
+    const queued = deferred();
+    const nativeLocks = locks as unknown as LockManager;
+    const manager = {
+      query: () => nativeLocks.query(),
+      request: ((name: string, options: LockOptions, callback: LockGrantedCallback<unknown>) => {
+        const result = nativeLocks.request(name, options, callback);
+        if (options.signal) queued.resolve();
+        return result;
+      }) as LockManager['request'],
+    };
+    const transport = replayTabs(manager);
+    const { tabs } = transport;
+    const entered = deferred();
+    const release = deferred();
+    let current = true;
+    const replay = tabs[0].admission.replay(
+      accountId,
+      itemId,
+      async () => {},
+      async () => {
+        entered.resolve();
+        await release.promise;
+      },
+    );
+    await entered.promise;
+    if (reason === 'denied') transport.deny();
+    else transport.drop();
+    const operation = vi.fn(async () => {});
+    const foreground = tabs[1].admission.foreground(
+      accountId,
+      itemId,
+      () => {
+        if (!current) throw new DOMException('Account changed', 'AbortError');
+      },
+      async () => {},
+      operation,
+    );
+    const rejected = expect(foreground).rejects.toThrow(
+      reason === 'denied'
+        ? 'Storage denied'
+        : reason === 'account change'
+          ? 'Account changed'
+          : 'Close this document',
+    );
+    try {
+      // Observe the real request call, without polling query until a desired state.
+      if (reason !== 'denied') {
+        await queued.promise;
+        if (reason === 'account change') {
+          current = false;
+          tabs[1].target.dispatchEvent(new Event('spinel-offline-account-changed'));
+        }
+      }
+      await rejected;
+      expect(operation).not.toHaveBeenCalled();
+      release.resolve();
+      await replay;
+      // Node's intermediate aborted-query snapshot is not an ownership oracle.
+      // Actual subsequent acquisition proves no orphaned reservation remains.
+      let acquired = false;
+      await nativeLocks.request(
+        `spinel-offline-replay-admission:${JSON.stringify([accountId, itemId])}`,
+        { signal: AbortSignal.timeout(1_000) },
+        () => {
+          acquired = true;
+        },
+      );
+      expect(acquired).toBe(true);
+      expect(operation).not.toHaveBeenCalled();
+      expect(await manager.query()).toEqual({ held: [], pending: [] });
+    } finally {
+      release.resolve();
+      await replay;
+      await foreground.catch(() => {});
+    }
+  },
+  7_000,
+);
+
+test('a live foreground editor remains an immediate busy refusal across tabs', async () => {
+  const { tabs } = replayTabs();
+  const entered = deferred();
+  const release = deferred();
+  const writer = locks.request(lockName, async () => {
+    entered.resolve();
+    await release.promise;
+  });
+  await entered.promise;
+  try {
+    await tabs[1].admission.foreground(
+      accountId,
+      itemId,
+      () => {},
+      async () => {},
+      () => locks.request(lockName, { ifAvailable: true }, (lock) => expect(lock).toBeNull()),
+    );
+    expect((await locks.query()).pending).toEqual([]);
+  } finally {
+    release.resolve();
+    await writer;
+  }
+});
+
+test('failed replay cleanup releases its gate and retires its remote stop listener', async () => {
+  const { tabs } = replayTabs();
+  const stop = vi.fn(async () => {});
+  await expect(
+    tabs[0].admission.replay(accountId, itemId, stop, async () => {
+      throw new Error('Native disposal failed');
+    }),
+  ).rejects.toThrow('Native disposal failed');
+  const acquired = vi.fn(async () => {});
+  await tabs[1].admission.foreground(
+    accountId,
+    itemId,
+    () => {},
+    async () => {},
+    acquired,
+  );
+  expect(acquired).toHaveBeenCalledOnce();
+  tabs[0].target.dispatchEvent(
+    Object.assign(new Event('storage'), {
+      key: 'spinel.offline.replay-stop',
+      newValue: JSON.stringify({ account: accountId, item: itemId, request: 'retired' }),
+    }),
+  );
+  await locks.query();
+  expect(stop).not.toHaveBeenCalled();
+  expect((await locks.query()).held).toEqual([]);
+});
 
 const bundle: OfflineBundle = {
   version: 1,

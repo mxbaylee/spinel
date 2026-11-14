@@ -12,6 +12,7 @@ import { openExistingDatabase } from './existingDatabase.ts';
 import { releaseAccountRuntime } from './runtime.ts';
 import type { AccountRuntimeRequirement } from './runtime.ts';
 import { isAccessUpgrade } from '../../src/shared/accessUpgrade.ts';
+import { offlineReplayAdmission } from './replayAdmission.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -778,10 +779,20 @@ export async function withOfflineEditorAdmission<T>(
   const key = itemWriterKey(accountId, itemId);
   editorAdmissions.set(key, (editorAdmissions.get(key) ?? 0) + 1);
   try {
-    await replayWriters.get(key)?.();
     await Promise.all(temporaryItemWriters.get(key) ?? []);
-    verifyCurrent();
-    return await acquire();
+    if (!navigator.locks) {
+      verifyCurrent();
+      return await acquire();
+    }
+    return await offlineReplayAdmission().foreground(
+      accountId,
+      itemId,
+      verifyCurrent,
+      async () => {
+        await replayWriters.get(key)?.();
+      },
+      acquire,
+    );
   } finally {
     const count = editorAdmissions.get(key)!;
     if (count === 1) editorAdmissions.delete(key);
@@ -808,18 +819,27 @@ export async function withOfflineItemWriter<T>(
   writers.add(completed);
   temporaryItemWriters.set(key, writers);
   let changes: AccountOfflineChange[] | undefined;
+  const verify = offlineEpoch();
   try {
-    await replayWriters.get(key)?.();
-    return await navigator.locks.request(
-      `spinel-offline:${accountId}:${itemId}`,
-      { ifAvailable: true },
-      async (lock) => {
-        if (!lock)
-          throw new Error('Close this document in every tab before changing its device copy.');
-        changes = [];
-        itemWriterChanges.set(key, changes);
-        return operation();
+    return await offlineReplayAdmission().foreground(
+      accountId,
+      itemId,
+      verify,
+      async () => {
+        await replayWriters.get(key)?.();
       },
+      () =>
+        navigator.locks.request(
+          `spinel-offline:${accountId}:${itemId}`,
+          { ifAvailable: true },
+          async (lock) => {
+            if (!lock)
+              throw new Error('Close this document in every tab before changing its device copy.');
+            changes = [];
+            itemWriterChanges.set(key, changes);
+            return operation();
+          },
+        ),
     );
   } finally {
     writers.delete(completed);

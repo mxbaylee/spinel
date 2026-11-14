@@ -453,9 +453,18 @@ test('real browser quota failure retains pending work and images without a parti
     await f.network.setOffline(true);
     await edit(f.page, 'sheet', '552');
     await savedLocally(f.page);
+    await expect
+      .poll(async () =>
+        JSON.stringify(
+          (await deviceCopy(f.page, f.actor.id, f.item.id))?.item?.outbox?.checkpoint?.buffer,
+        ),
+      )
+      .toContain('"v":552');
     const retained = await deviceCopy(f.page, f.actor.id, f.item.id);
     expect(pending(retained?.item?.outbox?.checkpoint)).toBe(true);
     await device(f.page);
+    // Keep the original queue pending while HTTP image downloads exercise quota.
+    f.network.holdResume();
     await f.network.setOffline(false);
     const target = await importImages(f, baseURL!, 'Large offline image', true);
     await f.page.goto('/');
@@ -519,6 +528,7 @@ test('real browser quota failure retains pending work and images without a parti
     const failedCopy = await deviceCopy(f.page, f.actor.id, target.id);
     expect(failedCopy?.item).toBeUndefined();
     expect(failedCopy?.images).toEqual([]);
+    expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
     assertImageBytes(retained!);
     expect(await f.read()).toEqual(original);
@@ -529,6 +539,8 @@ test('real browser quota failure retains pending work and images without a parti
     expect(copied?.item?.bundle.itemId).toBe(target.id);
     assertImageBytes(copied!);
     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
+    expect(await f.read()).toEqual(original);
     expect(f.errors).toEqual([]);
   } finally {
     await cdp.send('Storage.overrideQuotaForOrigin', { origin: baseURL! }).catch(() => {});
@@ -852,7 +864,15 @@ test('writer locks and a newly pending copy prevent clean removal; explicit disc
     await f.network.setOffline(true);
     await edit(f.page, 'sheet', '556');
     await savedLocally(f.page);
+    await expect
+      .poll(async () =>
+        JSON.stringify(
+          (await deviceCopy(f.page, f.actor.id, f.item.id))?.item?.outbox?.checkpoint?.buffer,
+        ),
+      )
+      .toContain('"v":556');
     const retained = await deviceCopy(f.page, f.actor.id, f.item.id);
+    expect(pending(retained?.item?.outbox?.checkpoint)).toBe(true);
     await device(f.page); // Retire the real writer, keeping its committed pending queue.
     await management.getByRole('button', { name: 'Remove from device', exact: true }).click();
     const protectedDialog = management.getByRole('dialog', {
@@ -877,6 +897,22 @@ test('writer locks and a newly pending copy prevent clean removal; explicit disc
       `/?offlineRecovery=${f.item.id}`,
     );
     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    await expect.poll(() => f.network.resumeHeld()).toBe(true);
+    await expect
+      .poll(() =>
+        f.page.evaluate(
+          async ({ account, item }) =>
+            (await navigator.locks.query()).held?.some(
+              (lock) =>
+                lock.name ===
+                  `spinel-offline-replay-admission:${JSON.stringify([account, item])}` &&
+                lock.mode === 'shared',
+            ),
+          { account: f.actor.id, item: f.item.id },
+        ),
+      )
+      .toBe(true);
+    expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
     await removeDialog(management, f.item.name);
     await management.getByRole('button', { name: 'Discard offline changes…', exact: true }).click();
     await management.getByRole('button', { name: 'Discard offline changes', exact: true }).click();
@@ -884,6 +920,7 @@ test('writer locks and a newly pending copy prevent clean removal; explicit disc
       'was removed from this device',
     );
     expect((await deviceCopy(management, f.actor.id, f.item.id))?.item).toBeUndefined();
+    expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
     expect(await f.read()).toEqual(original);
     expect(f.errors).toEqual([]);
   } finally {

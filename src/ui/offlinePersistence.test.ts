@@ -434,8 +434,11 @@ test.each(['read-only', 'no writer'] as const)(
     else
       vi.stubGlobal('navigator', {
         locks: {
-          request: async (_name: string, _options: unknown, work: (lock: null) => unknown) =>
-            work(null),
+          request: async (
+            name: string,
+            _options: unknown,
+            work: (lock: object | null) => unknown,
+          ) => work(name.startsWith('spinel-offline-replay-admission:') ? {} : null),
         },
       });
     const f = session(download);
