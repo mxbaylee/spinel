@@ -1,0 +1,279 @@
+{
+  "status": "Local implementation checkpoint, not published or Linux acceptance",
+  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "sourceHashes": {
+    "src/server/maintenance/http.test.ts": "209ec3c1c18d4045ade193aecd375cbf125c80d64a57176545863c77200b44f4",
+    "src/server/maintenance/restore-http-test-client.ts": "44eeb0d2d7ea264bcbdded9a7e49b86841d041cd62b448407377e42f92fc3504",
+    "src/server/maintenance/restore-crash.integration.test.ts": "214024d2ba68a45d57ae4e9a5d92c31a9ffff179d2090a4bf2836fa35cea1604"
+  },
+  "sourceAttribution": "The passing focused controls and detecting negative use the unchanged HTTP test/helper hashes. The final crash-file wrapper adds last-observation diagnostics after Vitest subset-diff inspection; final lint/format and full Typecheck cover all three current files. Actual Linux crash execution remains pending.",
+  "node": "26.13.0",
+  "vitest": "5.1.0",
+  "contract": "The exact shared readiness predicate rejects HTTP200 maintenance / HTTP401 session while admission is paused; one caller deadline cancels the pending read and closes its socket.",
+  "checks": [
+    {
+      "attempt": "spn158-format",
+      "outcome": "passed",
+      "elapsedMs": 428,
+      "peakKiB": 244736
+    },
+    {
+      "attempt": "spn158-http-initial",
+      "outcome": "resource-aborted; no verdict",
+      "elapsedMs": 844,
+      "peakKiB": 461728
+    },
+    {
+      "attempt": "spn158-http-focused",
+      "outcome": "2 passed; 9 unrelated cases filtered",
+      "elapsedMs": 3442,
+      "peakKiB": 1049200
+    },
+    {
+      "attempt": "spn158-negative-session-only",
+      "outcome": "resource-aborted; no detecting-negative verdict",
+      "elapsedMs": 427,
+      "peakKiB": 266720
+    },
+    {
+      "attempt": "spn158-negative-private-cache",
+      "outcome": "expected failure: ready true while phase paused, exact original session-only predicate; source restored and hash verified",
+      "elapsedMs": 3448,
+      "peakKiB": 1175584
+    },
+    {
+      "attempt": "spn158-target-lint",
+      "outcome": "passed",
+      "elapsedMs": 178,
+      "peakKiB": null,
+      "memoryNote": "Finished before the first 200ms RSS sample; receipt0 is not a zero-memory claim"
+    },
+    {
+      "attempt": "spn158-target-format",
+      "outcome": "passed",
+      "elapsedMs": 285,
+      "peakKiB": 192752
+    },
+    {
+      "attempt": "spn158-types-bounded",
+      "outcome": "pre-start pressure refusal; no compiler or watcher receipt spawned",
+      "environment": {
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "attempt": "spn158-backlog-index",
+      "outcome": "passed",
+      "elapsedMs": 170,
+      "peakKiB": null,
+      "memoryNote": "Finished before first RSS sample; not a zero-memory claim."
+    },
+    {
+      "attempt": "spn158-final-format",
+      "outcome": "passed",
+      "elapsedMs": 322,
+      "peakKiB": 185504
+    },
+    {
+      "attempt": "spn158-final-lint",
+      "outcome": "passed",
+      "elapsedMs": 124,
+      "peakKiB": null,
+      "memoryNote": "Finished before first RSS sample; not a zero-memory claim."
+    },
+    {
+      "attempt": "spn158-types-integrated",
+      "outcome": "passed",
+      "elapsedMs": 8498,
+      "peakKiB": 1717968,
+      "environment": {
+        "GOMEMLIMIT": "1GiB",
+        "GOMAXPROCS": "2"
+      }
+    },
+    {
+      "attempt": "spn158-backlog-check",
+      "outcome": "passed",
+      "elapsedMs": 147,
+      "peakKiB": null,
+      "memoryNote": "Finished before first RSS sample; not a zero-memory claim."
+    }
+  ],
+  "dependencyReuse": "Verified identical lock/dependency manifest sections/239 patch and workspace source files, seven matching workspace links; no install or dependency-source changes. Initial Vitest runs wrote transient default result/module caches through the shared dependency symlink. Subsequent runs disable results cache and use /tmp/spn158-vitest-cache. Shared caches were not deleted.",
+  "cleanup": "Explicit ps/starttime/command and lsof cwd audits found no task-owned remaining processes after aborts or final checks; no process was killed outside the watchdog.",
+  "pending": [
+    "Exact committed-head PR check (recorded separately with the SHA)",
+    "Two independent exact-head reviews",
+    "Current-source real Linux postcommit acknowledgement/cut/SIGKILL/reconciliation and required hosted gates"
+  ],
+  "files": [
+    {
+      "path": "spn158-format.log.gz",
+      "sha256": "136d749533377c3eff72d92acecb27211b8247c1b997757a50a9b10199770429",
+      "bytes": 290
+    },
+    {
+      "path": "spn158-format.json",
+      "sha256": "0a6278dfe3665c3f5a405078f27f827c2d2bbd1820423485269776a014d9e73c",
+      "bytes": 439
+    },
+    {
+      "path": "spn158-http-initial.log.gz",
+      "sha256": "500c0d8a7994b08284d6249c7bdf15833e095d58fed5f246bc4ca043e1255573",
+      "bytes": 291
+    },
+    {
+      "path": "spn158-http-initial.json",
+      "sha256": "921f5700f0d2d41b9315891a38d79df67d4604c01d6a75d4a3f0650cf0ccd3df",
+      "bytes": 323
+    },
+    {
+      "path": "spn158-http-initial-cleanup.json",
+      "sha256": "37968e7ae6f0924947166c3704b5ee6d9ebc8f4634e5e073ea964105cc699fcc",
+      "bytes": 176
+    },
+    {
+      "path": "spn158-http-focused.log.gz",
+      "sha256": "2e44c2962feb69a697c87f0cccb84728b624d10cf915346868297327d2793d38",
+      "bytes": 376
+    },
+    {
+      "path": "spn158-http-focused.json",
+      "sha256": "4703a302110dcda3423baf30056b42130fbaf22ed57eb6e79de22eda113b4e29",
+      "bytes": 377
+    },
+    {
+      "path": "spn158-negative-session-only.log.gz",
+      "sha256": "756864b0141743d711805dff2ccdbc9423d08d5af2a19e2e73adba39db0dadc8",
+      "bytes": 313
+    },
+    {
+      "path": "spn158-negative-session-only.json",
+      "sha256": "f2849c62cd1e8e0b175195b152c10467dee2760d9f1a48d8b6cd5dd47a919af3",
+      "bytes": 370
+    },
+    {
+      "path": "spn158-negative-session-only-source.json",
+      "sha256": "2d8b943e366d21c37a3de114d07626856f22ca08ecc0097d2fdcbb7800c37fc4",
+      "bytes": 484
+    },
+    {
+      "path": "spn158-negative-session-only-cleanup.json",
+      "sha256": "c60f6cfd3319f34197690e5fb0795a6f0ff7935f3d10e881cd42acb183bd21f2",
+      "bytes": 98
+    },
+    {
+      "path": "spn158-negative-private-cache.log.gz",
+      "sha256": "9077b22d8429dd8a130a2733cbd18b388591a5045a9b16355289033f94baba70",
+      "bytes": 946
+    },
+    {
+      "path": "spn158-negative-private-cache.json",
+      "sha256": "84d4b0e36a81092a96a8866bb6f20c71b238df9fb464960c5b85a5ca1e296b27",
+      "bytes": 441
+    },
+    {
+      "path": "spn158-negative-private-cache-source.json",
+      "sha256": "d5970a3bb4257e3672d4a526643b5c193bfd73fbdc01625d931813c3d2aff35a",
+      "bytes": 556
+    },
+    {
+      "path": "spn158-target-lint.log.gz",
+      "sha256": "729d670465c2b41b452067991eb753734caf3a71d8c1f129c78df51466733719",
+      "bytes": 197
+    },
+    {
+      "path": "spn158-target-lint.json",
+      "sha256": "9a6eff2b613960e772e952d67ba2a375fe846c9df937cb63a88061d571afc012",
+      "bytes": 356
+    },
+    {
+      "path": "spn158-target-format.log.gz",
+      "sha256": "7b6881b0ea7afb6b3250748bc81641709455cf93c05e37ac69a5bf4d1969f884",
+      "bytes": 296
+    },
+    {
+      "path": "spn158-target-format.json",
+      "sha256": "df316a4a9a9bb57424dc7bbd7d22ccf29a1e946a288b1fb5a6ce451dbdc4aa12",
+      "bytes": 446
+    },
+    {
+      "path": "spn158-types-bounded.log.gz",
+      "sha256": "cc6fda3dcc4fcdacf6086fe97a6212003b63d97f10dc4278f53e6a1884be03c8",
+      "bytes": 273
+    },
+    {
+      "path": "spn158-final-local-cleanup.json",
+      "sha256": "dbf9a0c7a4f9da2cff3858858b390f5f099edf203d0bc347af53af12a14253c4",
+      "bytes": 114
+    },
+    {
+      "path": "spn158-dependency-source.json",
+      "sha256": "a3fb6cbc2c1bec0ec387b9808da637aee780c17ed1387df5a9cd15aefcd24241",
+      "bytes": 658
+    },
+    {
+      "path": "spn158-backlog-index.json",
+      "sha256": "4ba8c3153bcd03e63a3ef7ec7bd36e6305cd136144b84785d1c420f0df128cc9",
+      "bytes": 258
+    },
+    {
+      "path": "spn158-backlog-index.log.gz",
+      "sha256": "379c54f5b00da531b817471bcd5edf026f022048795cb7893ef27070a039bdef",
+      "bytes": 375
+    },
+    {
+      "path": "spn158-final-format.json",
+      "sha256": "ef49322b77456a36a1c0fc720bda69c445ff875e22c1056360f241c8637fdaa3",
+      "bytes": 445
+    },
+    {
+      "path": "spn158-final-format.log.gz",
+      "sha256": "d0ba254a11c53910c94631b460e949d2f23e53fa193d2dd507f47ff79ecfe732",
+      "bytes": 297
+    },
+    {
+      "path": "spn158-final-lint.json",
+      "sha256": "16cfa9d07417e9aa78c2c1cca8aa41e9bba68ef9fd66d368aceedbc04baffe78",
+      "bytes": 355
+    },
+    {
+      "path": "spn158-final-lint.log.gz",
+      "sha256": "4e04a84843da8c484073da5a407051973677ef1858cbe3fbf475b749b5b881f1",
+      "bytes": 196
+    },
+    {
+      "path": "spn158-types-integrated.json",
+      "sha256": "53d65954d63b3fcb0734f4c6480704001c1f5f31157b07d6d009a6e0457c4fe1",
+      "bytes": 283
+    },
+    {
+      "path": "spn158-types-integrated.log.gz",
+      "sha256": "aaf50eff33666ac7795c93cd3c2913f09a10332891721f790e235bec8f795804",
+      "bytes": 199
+    },
+    {
+      "path": "spn158-backlog-check.json",
+      "sha256": "8c545fdffd5c5cf3ec591ca909f543e69105286462f77a5ecbb1580d3799c788",
+      "bytes": 258
+    },
+    {
+      "path": "spn158-backlog-check.log.gz",
+      "sha256": "76b28a6b16af7468c331916c5913527618927ebc1e74820bdd3cabb8257f949a",
+      "bytes": 370
+    },
+    {
+      "path": "spn158-integrated-cleanup.json",
+      "sha256": "1416229130421097f9808c96d4a9dd4f213648e71c40c4bea5b5cdbe0fdbb6d3",
+      "bytes": 176
+    }
+  ],
+  "originalBase": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "registration": "PR284 squash89e4426d, fast-forward integrated; code files identical across registration.",
+  "initialControlSourceHashes": {
+    "src/server/maintenance/http.test.ts": "209ec3c1c18d4045ade193aecd375cbf125c80d64a57176545863c77200b44f4",
+    "src/server/maintenance/restore-http-test-client.ts": "44eeb0d2d7ea264bcbdded9a7e49b86841d041cd62b448407377e42f92fc3504",
+    "src/server/maintenance/restore-crash.integration.test.ts": "dfab20fc2eb87d4d47f3a89cfaab84ba15795b83d3554e70e2eece0983ef2d47"
+  }
+}
