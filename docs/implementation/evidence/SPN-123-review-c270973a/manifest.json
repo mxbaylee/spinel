@@ -1,0 +1,78 @@
+{
+  "source": "c270973a522822876ca615cca1ef24f2cd9555e4",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "sourceTree": "393579bf43eca7ec18bd59f9ba5c6bcb198c99ae",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "f3ac062a6432211e1a7c6d5964994acc7851b82acd2c84f926ec965654bc80f2",
+      "bytes": 2650
+    },
+    {
+      "path": "diagnostics-failed6ef.ts",
+      "sha256": "bc181cbe13e6617315d9466f61d85d2cfb9c7822a69cf3c5964ecce7bafba028",
+      "bytes": 53929
+    },
+    {
+      "path": "diagnostics-landedmain.ts",
+      "sha256": "aa05dfa145fc0d0926d575e58ca239e4ab733ce9078d67453832f0ed69baec63",
+      "bytes": 43038
+    },
+    {
+      "path": "diagnostics-repairedc270.ts",
+      "sha256": "4f34b5a1765a21921386dea72a2bc4b516fe1d1bdd84dc61a844bd22aa43b7b3",
+      "bytes": 53940
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "5da3baf9341dd3cfc56c5ddcbd364ed82b81e1bf78c5faf415e61c0baabd639f",
+      "bytes": 840
+    },
+    {
+      "path": "repair-source.diff",
+      "sha256": "e349c72b27d8858600fa7492288b4a7144e0e6da53726aa194740d83728eade2",
+      "bytes": 477
+    },
+    {
+      "path": "spn123-review-6ef945ea-a.md",
+      "sha256": "12aedd5dcd3bb15bb4fd769080e09f2e0b62d297d6bfc4793b53e1858fb148f3",
+      "bytes": 15513
+    },
+    {
+      "path": "spn123-review-6ef945ea-b.md",
+      "sha256": "b61ec2170be37dd1df4456440e0c8a68e9c74a863c191b133312b0ca57a9ba2c",
+      "bytes": 15584
+    },
+    {
+      "path": "spn123-review-archive-c270973a.tar.gz",
+      "sha256": "7e06651f6e02f351d7a563cf2ed701824ab7ec20fcbda9acef0ee436ff0e5f6d",
+      "bytes": 495070
+    },
+    {
+      "path": "spn123-review-c270-a-lint.json",
+      "sha256": "271fce6c6d7660296117af66b80a003c96b85a5c637caa3b250613cabb7cda39",
+      "bytes": 311
+    },
+    {
+      "path": "spn123-review-c270-a-lint.log",
+      "sha256": "442def30b67861d6f6f30894c231f6459e9b376b7624ef9af692b7655c0dec48",
+      "bytes": 259
+    },
+    {
+      "path": "spn123-review-c270973a-a.md",
+      "sha256": "d8e9cb0357f623eee09b08b7acfaab8e35b76782d9f9b27f5bcd57e3f9830174",
+      "bytes": 12980
+    },
+    {
+      "path": "spn123-review-c270973a-b.md",
+      "sha256": "5d62c0131c959b1fb8971bd64021a7ea8be39987bdf834baa1ab94cec38a3283",
+      "bytes": 12751
+    },
+    {
+      "path": "spn123-review-packet-c270973a.tar.gz",
+      "sha256": "43c4f0c34b404adda2677f3e80deb892f6c61ce191ed345fec31409d559e23af",
+      "bytes": 4917199
+    }
+  ],
+  "status": "Exact-current review provenance only; original6ef terminal and currentc270 hosted acceptance remain separate pending gates."
+}

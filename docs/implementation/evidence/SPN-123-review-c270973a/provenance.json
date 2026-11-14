@@ -1,0 +1,18 @@
+{
+  "source": "c270973a522822876ca615cca1ef24f2cd9555e4",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "directParentRequired": "c270973a522822876ca615cca1ef24f2cd9555e4",
+  "reports": {
+    "a": "d8e9cb0357f623eee09b08b7acfaab8e35b76782d9f9b27f5bcd57e3f9830174",
+    "b": "5d62c0131c959b1fb8971bd64021a7ea8be39987bdf834baa1ab94cec38a3283"
+  },
+  "completePacket": "spn123-review-packet-c270973a.tar.gz",
+  "originalAndMaskBindings": "spn123-review-archive-c270973a.tar.gz",
+  "priorImmutableArchive": "archive/spn-123-review-6ef945ea-20261114 at607e36f0ac70db7d65879f0dc0699e4f31cf2cd6",
+  "counts": {
+    "evidence": 11269,
+    "otherDocs": 1745,
+    "runtimeTestsConfig": 6088
+  },
+  "status": "Review assets prepared; original6ef terminal archive and final body still pending collection. No new source/ref/remote mutation."
+}

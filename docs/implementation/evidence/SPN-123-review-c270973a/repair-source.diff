@@ -1,0 +1,11 @@
+diff --git a/e2e/diagnostics.spec.ts b/e2e/diagnostics.spec.ts
+index f4e99a8a..f9f71b02 100644
+--- a/e2e/diagnostics.spec.ts
++++ b/e2e/diagnostics.spec.ts
+@@ -1,5 +1,5 @@
+ import { randomUUID } from 'node:crypto';
+-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
++import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+ import { tmpdir } from 'node:os';
+ import { join } from 'node:path';
+ import { expect, test } from '@playwright/test';
