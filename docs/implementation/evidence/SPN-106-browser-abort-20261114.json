@@ -1,0 +1,55 @@
+{
+  "source": "cc13952f619b7650220d946180259f17a12e5225",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "fixtureSha256": "1124673a8cc920c5077007cc1322365a5b277509bc90dfeec619fb65f785b94c",
+  "environment": {
+    "node": "26.13.0",
+    "project": "development",
+    "CI": "unset",
+    "privateDependencies": true,
+    "pressureBefore": 1
+  },
+  "watchdog": {
+    "name": "spn106-browser-json-repair-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=development",
+      "e2e/documents.spec.ts",
+      "--grep",
+      "desktop account Doc viewer opens plain and dated documents without a protection warning$",
+      "--reporter=line,json"
+    ],
+    "code": 1,
+    "signal": null,
+    "reason": "Resource guard",
+    "elapsedMs": 6301,
+    "peakKiB": 1762576
+  },
+  "log": "[WebServer] (node:48387) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n\nRunning 1 test using 1 worker\n\n(node:48553) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\n\n[1/1] [development] › e2e/documents.spec.ts:43:5 › desktop account Doc viewer opens plain and dated documents without a protection warning\nserial: SIGTERM; killing the run.\n{\"name\":\"spn106-browser-json-repair-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/@playwright/test/cli.js\",\"test\",\"--project=development\",\"e2e/documents.spec.ts\",\"--grep\",\"desktop account Doc viewer opens plain and dated documents without a protection warning$\",\"--reporter=line,json\"],\"code\":1,\"signal\":null,\"reason\":\"Resource guard\",\"elapsedMs\":6301,\"peakKiB\":1762576}\n",
+  "reporter": {
+    "path": "/tmp/spn106-browser-json-repair-20261114-results.json",
+    "exists": false,
+    "result": "No reporter JSON or assertion result before resource abort"
+  },
+  "cleanup": {
+    "escapedServer": {
+      "pid": 48387,
+      "pgid": 48387,
+      "ppid": 1,
+      "start": "Sat Nov 14 12:41:02 2026",
+      "command": "node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open",
+      "cwd": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114",
+      "identity": "PID is recorded in attempt log; cwd/command/start/group checked again before cleanup",
+      "groupMembersBeforeSignal": [
+        48387
+      ]
+    },
+    "action": "SIGTERM only to revalidated task-owned group48387",
+    "after": "Port3100, PID48387 and candidate-path process search absent",
+    "worker48553": "Absent after initial abort",
+    "pressureAfter": 1
+  },
+  "disposition": "Incomplete resource-aborted attempt, not product failure or runtime pass. Recorded peak below2GiB and elapsed below8min imply a pressure trigger under this watchdog; exact triggering pressure level unavailable. No unchanged repeat; browser/native/visual acceptance stays pending."
+}
