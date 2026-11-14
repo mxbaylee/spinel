@@ -11,8 +11,10 @@ records exact hashes, raw results and build/source equivalence.
 Chromium touch/mobile emulation at390×844, production test build from
 `141fa3aca4b4fb3a127e4983a21e975fe9e333ec`, with every retained input/output
 verified unchanged. These images show the stale-field branch after initial
-load/reload integrity assertions. The case also executed plain content,
-anonymous dashboard denial, concurrent owner editing and live link revocation.
+load/reload integrity assertions. Both plain and stale-field branches checked
+anonymous dashboard GET denial (401). The plain branch also executed concurrent
+owner editing and live guest-link revocation. HTTP PUT denial belongs to the
+account cases, not this guest case.
 The canvas displays body text; saved date fields are proven by exact snapshot
 assertions. No physical-device claim.
 

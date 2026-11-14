@@ -22,4 +22,6 @@ notice even if it disappeared earlier. No notice was dismissed or hidden.
 The [receipt](../../implementation/evidence/SPN-106-production-20261114/receipt.json)
 contains original PNG hashes, exact source/build identities and full compressed
 raw test/build evidence. These images are **not independent visual approval**.
-Phone, guest and mounted native denied-edit state evidence remain pending.
+Phone, guest and mounted native denied-edit evidence was pending at this earlier
+desktop checkpoint. The [later phone/Storybook gallery](../spn-106-guest-storybook-20261114/README.md)
+preserves those actual captures and their separate source identities.
