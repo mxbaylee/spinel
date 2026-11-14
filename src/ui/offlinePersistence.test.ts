@@ -8,6 +8,8 @@ import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import * as offlineStorage from '../../web/offline/offlineStore.ts';
 import type { OfflineStore } from '../../web/offline/offlineStore.ts';
+import { replayOfflineItem } from '../../web/offline/replayHost.ts';
+import * as binding from '../../web/spinelSync.ts';
 
 const cleanup: (() => void)[] = [];
 const scope = {
@@ -143,6 +145,145 @@ function native(active: OfflineSession) {
     },
   };
 }
+
+test.each([false, true])(
+  'the actual background session drains before foreground admission, even when native cleanup throws (%s)',
+  async (cleanupFails) => {
+    const download = downloaded();
+    download.outbox = {
+      version: 1, ...scope,
+      checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Saved offline')]] },
+    };
+    session(download);
+    const watching = Promise.withResolvers<void>();
+    const stopping = Promise.withResolvers<void>();
+    const committed = Promise.withResolvers<void>();
+    const cleanupError = new Error('Native cleanup failed after disposal');
+    const originalDispose = NativeReplica.prototype.dispose;
+    const disposed = vi.spyOn(NativeReplica.prototype, 'dispose').mockImplementation(function (this: NativeReplica) {
+      originalDispose.call(this);
+      if (cleanupFails) throw cleanupError;
+    });
+    vi.spyOn(binding, 'attachSpinelSync').mockImplementation((options) => {
+      const dispose = () => options.offline?.dispose();
+      return {
+        watch() {
+          watching.resolve();
+          return { retry() {}, recover() {}, exportRecovery() {}, discardRecovery() {}, dispose };
+        },
+        async stop() {
+          stopping.resolve();
+          await committed.promise;
+        },
+        dispose,
+      };
+    });
+    const replay = replayOfflineItem(scope.account, {
+      itemId: scope.item, spaceId: scope.spaceId, name: bundle.name, kind: 'doc',
+      readOnly: false, revision: bundle.revision, downloadedAt: 0, pending: true,
+    }, () => true);
+    const outcome = replay.done.then(() => undefined, (error: unknown) => error);
+    const foreground = new OfflineSession(scope.account, scope.item, scope.spaceId, () => true);
+    cleanup.push(() => foreground.dispose());
+    let opening: Promise<void> | undefined;
+    try {
+      await Promise.race([
+        watching.promise,
+        replay.done.then(() => { throw new Error('Replay ended before binding admission.'); }),
+      ]);
+      let opened = false;
+      opening = foreground.activate().then(() => { opened = true; });
+      await stopping.promise;
+      expect(opened).toBe(false);
+      expect(disposed).not.toHaveBeenCalled();
+      committed.resolve();
+      expect(await outcome).toBe(cleanupFails ? cleanupError : undefined);
+      await opening;
+      expect(foreground.enabled).toBe(true);
+      expect(foreground.readOnly).toBe(false);
+      expect(foreground.checkpoint?.buffer).toEqual(download.outbox.checkpoint.buffer);
+      expect(disposed).toHaveBeenCalledOnce();
+    } finally {
+      committed.resolve();
+      await replay.stop();
+      await outcome;
+      await opening;
+      foreground.dispose();
+    }
+  },
+);
+
+test.each(['account change', 'copy removal'] as const)(
+  'background admission stops after delayed device lookup and %s',
+  async (change) => {
+    const download = downloaded();
+    download.outbox = {
+      version: 1, ...scope,
+      checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Retain original')]] },
+    };
+    const f = session(download);
+    const reading = Promise.withResolvers<void>();
+    const result = Promise.withResolvers<Download | undefined>();
+    f.store.bundle.mockImplementation(async () => {
+      reading.resolve();
+      return result.promise;
+    });
+    const attached = vi.spyOn(binding, 'attachSpinelSync');
+    const lifetime = offlineStorage.offlinePreparation(scope.account, () => true);
+    const replay = replayOfflineItem(scope.account, {
+      itemId: scope.item, spaceId: scope.spaceId, name: bundle.name, kind: 'doc',
+      readOnly: false, revision: bundle.revision, downloadedAt: 0, pending: true,
+    }, lifetime.isCurrent);
+    const outcome = replay.done.then(() => undefined, (error: unknown) => error);
+    try {
+      await reading.promise;
+      if (change === 'account change') offlineStorage.setPreparedAccount('replacement-account');
+      result.resolve(change === 'copy removal' ? undefined : download);
+      const error = await outcome;
+      if (change === 'account change') expect(error).toMatchObject({ name: 'AbortError' });
+      else expect(error).toBeUndefined();
+      expect(attached).not.toHaveBeenCalled();
+      expect(f.store.saveCheckpoint).not.toHaveBeenCalled();
+      expect(await locks.request(`spinel-offline:${scope.account}:${scope.item}`, { ifAvailable: true }, (lock) => Boolean(lock))).toBe(true);
+    } finally {
+      result.resolve(undefined);
+      await replay.stop();
+      await outcome;
+    }
+  },
+);
+
+test('a background host never binds a pending copy owned by another tab', async () => {
+  const download = downloaded();
+  download.outbox = {
+    version: 1, ...scope,
+    checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Other writer owns this')]] },
+  };
+  const f = session(download);
+  const held = Promise.withResolvers<void>();
+  const release = Promise.withResolvers<void>();
+  const other = locks.request(`spinel-offline:${scope.account}:${scope.item}`, async () => {
+    held.resolve();
+    await release.promise;
+  });
+  const attached = vi.spyOn(binding, 'attachSpinelSync');
+  await held.promise;
+  const replay = replayOfflineItem(scope.account, {
+    itemId: scope.item, spaceId: scope.spaceId, name: bundle.name, kind: 'doc',
+    readOnly: false, revision: bundle.revision, downloadedAt: 0, pending: true,
+  }, () => true);
+  try {
+    await replay.done;
+    expect(attached).not.toHaveBeenCalled();
+    expect(f.store.saveCheckpoint).not.toHaveBeenCalled();
+    expect(download.outbox.checkpoint.buffer).toEqual([[insertText('Other writer owns this')]]);
+  } finally {
+    release.resolve();
+    await other;
+    await replay.stop();
+    await replay.done.catch(() => {});
+  }
+});
 
 test.each([false, true])(
   'inactive persistence captures no confirmed snapshots (prepared account=%s)',

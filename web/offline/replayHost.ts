@@ -76,11 +76,20 @@ export function replayOfflineItem(
       try {
         await binding?.stop();
       } finally {
-        binding?.dispose();
-        session?.dispose();
-        native?.dispose();
-        reservation();
-        completed.resolve();
+        try {
+          binding?.dispose();
+        } finally {
+          try {
+            session?.dispose();
+          } finally {
+            try {
+              native?.dispose();
+            } finally {
+              reservation();
+              completed.resolve();
+            }
+          }
+        }
       }
     }
   })();
