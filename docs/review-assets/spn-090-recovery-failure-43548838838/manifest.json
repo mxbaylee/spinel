@@ -1,0 +1,52 @@
+{
+  "source": "67111d9c106c6518b813c6f1cf332068526c254c",
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "tested": "3a97ee4dcf0bc60c9918575f0d8cf4eced7bc1d4",
+  "run": 43548838838,
+  "attempt": 1,
+  "job": 132306723772,
+  "result": "failure",
+  "case": "real SIGKILL at postcommit preserves the durable restore decision and all retained evidence",
+  "caseMs": 9956,
+  "tests": {
+    "passed": 606,
+    "failed": 1,
+    "total": 607
+  },
+  "files": {
+    "passed": 46,
+    "failed": 1,
+    "total": 47
+  },
+  "suiteSeconds": 239.11,
+  "stage": "Post-commit owner authentication options returned503 after candidate-committed and session401, before acknowledgement write or postcommit-cut. Cause unproved.",
+  "sourceHashes": {
+    "src/server/maintenance/restore-crash.integration.test.ts": "a8aae9a08110a6d89a8b5cd581ef6c99826b87a3eadd62f04351822ddb8d95e4",
+    "src/server/maintenance/restore-http-test-client.ts": "e2de5edf9a64a77743ba91c74506224de00c778ac14b90e578b71625402fe35f",
+    "src/server/maintenance/restore-crash-fixture.ts": "3be0a4b54d72db0b1cd8b433ea19a35cdea0c5fd7945811b8540c2b34f542bf2",
+    "server/app.ts": "6ca19c7e3e6fb26a5aaab19dd12df6e1df88d84b9d31a51e10a6d600ed459006",
+    "src/server/maintenance/gate.ts": "0ae91cde616da89791dfd207e722d1626769c8412c941ddbba142d199e615d0a",
+    "src/server/maintenance/supervisor.ts": "c5b56cfb29da91cb2ee6e36e9a35304075ebaf704bb93d58e2f5e9e7e3ba88a4",
+    "src/server/maintenance/http.test.ts": "b39df342ad3a43509c10c8af7bae0b7d863e2febc6dab4cbd9becee6f2fdf029"
+  },
+  "retainedFiles": {
+    "README.md": "b686fc44263d6f8b2e8ce94b7c511f73aa7a8c571a4ba6e86b63eff759092c4b",
+    "ci-plan.json.gz": "f6b00071c6d4e781d54b613ef469223cffbec9950b9b63a1ff5fa2a1c9aeaa73",
+    "jobs-first-observation.json.gz": "18a2d6f854b281f247b820da757876b11768bd399ea86aee138080c3236b93db",
+    "partial-checkpoint-031128.json.gz": "d4f21e9da42714fad72da509853358c7359f1f2d2ab31fdc67118b558696ba62",
+    "privacy-audit.json": "a5e66932bfcb4be4003fe0eb115917a3deee7464cc00295b5060cdf62293805b",
+    "recovery-job.log.gz": "3ff40d2196b346d0fac56ffedf3c6e54bae892745fc3a12e8322409cfe8c762d",
+    "run.json.gz": "ecb2f977cd3c10db7dc4d76f3b3b6ae8c86c262f0cce2b2c0ab1dc8858773689",
+    "source/server/app.ts.gz": "119933a1d58a7bc6ffaa13de7ef6b7d6b494c921ffe73a34d69b7e8de1903431",
+    "source/src/server/maintenance/gate.ts.gz": "6385440ed831423c5e3dae95a7b41303b012976c909d268bdfed91f20529cd48",
+    "source/src/server/maintenance/http.test.ts.gz": "7dadbe665ad62a43af8fc8ddaf92b2e701565196cd4eb86c8e5b1361940a0b8c",
+    "source/src/server/maintenance/restore-crash-fixture.ts.gz": "c9afcb48741bfdaa8f7b8c7786ded1cf6eb33d7248a1f34c9a0d0a78702dd2aa",
+    "source/src/server/maintenance/restore-crash.integration.test.ts.gz": "f9e936502a4cb7f0080ea26c01859276688b89dd8b02909e4e11b796fb1937f1",
+    "source/src/server/maintenance/restore-http-test-client.ts.gz": "0f388988ee896c4c22017522bd800742c261aad125fed3590bdc0a5d139a0101",
+    "source/src/server/maintenance/supervisor.ts.gz": "3271f61db7cadb359f6efd99be0ad306c8a0e541e26e1fd9f9a577609b982ee9",
+    "source-audit.md": "8c291bbd7d8af84dd949d3e3dafc723c638723e08226536c0567352449318bd3"
+  },
+  "archivePreparedAt": "2026-11-14T03:14:23.887334+00:00",
+  "partialCheckpointAt": "2026-11-14T03:11:28.902704+00:00",
+  "scope": "First failed recovery job and partial run provenance, exact source and bounded audit; not final workflow acceptance."
+}

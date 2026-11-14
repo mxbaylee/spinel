@@ -1,0 +1,28 @@
+{
+  "preparedAt": "2026-11-14T03:14:23.887334+00:00",
+  "scope": "All curated text payloads, decompressed logs/metadata/source. Original bytes preserved. No databases/profiles/environment files included.",
+  "automatedPatterns": [
+    "privateKey",
+    "githubToken",
+    "personalHomePath",
+    "unmaskedBearerLiteral"
+  ],
+  "findings": [],
+  "manualReview": "Job environment and source credential references are masked checkout authentication, fixture-generated authenticators, request-header construction or source interfaces; no live credential literal observed. Hosted runner paths and GitHub run/actor metadata are relevant provenance; no personal home path was found. No document-content payload is included.",
+  "scanned": [
+    "README.md",
+    "ci-plan.json.gz",
+    "jobs-first-observation.json.gz",
+    "partial-checkpoint-031128.json.gz",
+    "recovery-job.log.gz",
+    "run.json.gz",
+    "source/server/app.ts.gz",
+    "source/src/server/maintenance/gate.ts.gz",
+    "source/src/server/maintenance/http.test.ts.gz",
+    "source/src/server/maintenance/restore-crash-fixture.ts.gz",
+    "source/src/server/maintenance/restore-crash.integration.test.ts.gz",
+    "source/src/server/maintenance/restore-http-test-client.ts.gz",
+    "source/src/server/maintenance/supervisor.ts.gz",
+    "source-audit.md"
+  ]
+}
