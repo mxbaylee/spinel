@@ -151,7 +151,14 @@ async function guestOnly(
     await expect(await canvas.findByRole('heading', { name: title, level: 1 })).toBeVisible();
     await expect(canvas.getByText('Guest', { exact: true })).toBeVisible();
   }
-  for (const name of ['My files', 'Spinel home', 'New Space', 'Versions', 'Your profile'])
+  for (const name of [
+    'My files',
+    'Spinel home',
+    'New Space',
+    'Versions',
+    'Your profile',
+    'Account actions',
+  ])
     await expect(canvas.queryByRole('button', { name })).not.toBeInTheDocument();
   await expect(canvas.queryByRole('link', { name: 'Space Trash' })).not.toBeInTheDocument();
   await expect(

@@ -1,0 +1,9 @@
+{
+  "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+  "checkedStates": 220,
+  "captures": 220,
+  "failures": 0,
+  "originalManifestBytes": 76596,
+  "originalManifestSha256": "e7766d1ea10f4c0032aa00e70b25b6c917ecfca5b30fcd04fd92e7c46f080289",
+  "retainedImages": 16
+}

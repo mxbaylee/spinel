@@ -4,6 +4,7 @@ import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { AdminRequestError, adminResponse, operatorDenied } from './adminRequest.ts';
 import { healthBytes } from './ServerHealth.tsx';
 import './diagnostics.css';
+import { diagnosticsClearedEvent } from './AdminFeedback.tsx';
 
 export function AdminDiagnostics({ onBusyChange }: { onBusyChange?: (busy: boolean) => void }) {
   const [status, setStatus] = useState<DiagnosticsStatus | null>(null);
@@ -166,6 +167,7 @@ export function AdminDiagnostics({ onBusyChange }: { onBusyChange?: (busy: boole
       await response.json();
       job.current();
       setConfirmation(null);
+      window.dispatchEvent(new Event(diagnosticsClearedEvent));
       setNotice('Diagnostics cleared. Collection can continue; new records may already appear.');
       await refresh();
     } catch (cause) {
