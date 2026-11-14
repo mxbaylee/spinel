@@ -87,8 +87,14 @@ The owner removed BrowserStack from SPN-090's acceptance provider requirements.
 The [current immutable candidate reconciliation](https://github.com/mxbaylee/spinel/blob/67111d9c106c6518b813c6f1cf332068526c254c/docs/implementation/SPN-090.md#-current-branch-integration-and-remaining-outcomes)
 records the exact own-phone observations, missing versions/build identity and
 verification judgment. This registration carries the superseding decision into
-the still-open ticket without importing the unmerged runtime or claiming a full
-physical-phone matrix pass. SPN-090's own required current-head gates remain.
+the still-open ticket: targeted installed-lifecycle observations plus current
+deterministic/shared native owners replace the older repeated three-platform
+physical matrix and capability-harness method, with explicitly lower integrated
+phone confidence. Product content/edit/reopen/replay/creation/authority contracts
+remain with their mapped owners; the final known-offline sign-in shortcut was not
+phone-retested. This imports no unmerged runtime and claims no full physical-phone
+matrix pass. SPN-090's own required current-head gates remain, SPN-152 stays after
+launch, and SPN-154/156 retain complete pre-launch outcomes.
 
 SPN-157's wording now distinguishes matching supervisor source files from causal
 independence: broader SPN-098 startup/drain behavior may still contribute. No
