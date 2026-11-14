@@ -98,7 +98,7 @@ test('the opt-in SPN-146 A/B stays tested without widening to full or performanc
       assert.equal(alone.suites[id].selected, true, `${path} ${id}`);
   }
   // Neighbouring workflow and CI script paths keep their full-coverage rule.
-  for (const path of ['.github/workflows/browserstack.yml', 'scripts/ci/patch-ab-other.ts'])
+  for (const path of ['.github/workflows/spaces-acceptance.yml', 'scripts/ci/patch-ab-other.ts'])
     assert.equal(coveragePlan('pull_request', pr(), [path], head).mode, 'full', path);
   assert.equal(
     coveragePlan('pull_request', pr(), [...experiment, 'web/App.tsx'], head).mode,

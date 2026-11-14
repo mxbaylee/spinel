@@ -83,8 +83,8 @@ with their saved permissions. SPN-053 uses the native Sheet/Doc editor and a
 durable local queue; **Saved on this device** follows its storage commit, and
 **Synced** follows server acknowledgement plus local cleanup. Viewer downloads
 remain read-only. Pages that need the server, guest links and unprepared devices still
-get the generic offline page above. Real-phone verification runs on BrowserStack
-([rules](offline.md#real-phone-verification-rules)); [SPN-055](implementation/SPN-055.md) implements the shared storage
+get the generic offline page above. Real-phone verification runs on the owner's own phones
+([rules](offline.md#-real-phone-verification)); [SPN-055](implementation/SPN-055.md) implements the shared storage
 lifecycle. CI phone viewports do not prove
 installed Android/iPhone behavior. The earlier global no-offline-feature policy is superseded
 for this feature, while guests keep the generic fallback ([decision #83](implementation/SPN-039.md#legacy-decision-83-complete-opted-in-offline-product)).
@@ -114,8 +114,8 @@ Public retention is bounded to two complete compatible runtimes plus one candida
 Live tabs retain their lazy editor assets, signed-out accounts retain compatibility
 requirements, and a failed update keeps the earlier complete editor. Activation
 does not reload unfinished input. This does not establish installed-device storage
-sharing or physical phone retention; BrowserStack phone runs own those checks
-([rules](offline.md#real-phone-verification-rules)).
+sharing or physical phone retention; real-phone runs own those checks
+([rules](offline.md#-real-phone-verification)).
 
 ## Verification and deployment
 
@@ -181,7 +181,7 @@ public DNS, certificates or deployment readiness.
   [owner's 2026-10-26 scope revision](implementation/SPN-072.md#owner-revision-responsive-browser-acceptance).
   Actual keyboard, physical touch and IME checks stay honestly unperformed in
   the checklist above. Offline storage/account lifecycle remains SPN-055, and
-  real-phone offline launch, persistence and reconnect run on BrowserStack
-  ([rules](offline.md#real-phone-verification-rules)).
+  real-phone offline launch, persistence and reconnect run on real phones
+  ([rules](offline.md#-real-phone-verification)).
 
 Public SDK guidance: [mobile installation](https://docs.univer.ai/guides/sheets/getting-started/installation#mobile-support).

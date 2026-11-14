@@ -18,7 +18,7 @@ import { AuthStore, COOKIE_NAME } from '../../src/server/auth/store.ts';
 import { WorkspaceStore } from '../../src/server/workspace/store.ts';
 import { docImageSnapshot } from '../../e2e/doc-image-fixture.ts';
 import { offlineSheetImages } from '../../e2e/offline-fixture.ts';
-import { parseFixtureOrigin } from './browserstack-fixture.ts';
+import { parseFixtureOrigin } from './desktop-fixture-origin.ts';
 
 export type DesktopSnapshot = { unitId: string; revision: number; snapshot: NativeSnapshot };
 export type DesktopItem = {
