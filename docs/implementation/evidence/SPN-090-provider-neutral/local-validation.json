@@ -1,0 +1,340 @@
+{
+  "date": "2026-11-13",
+  "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "node": "26.13.0",
+  "environment": "macOS arm64 local; one shared serial workload at a time",
+  "watchdog": "shared scripts/serial.ts;200ms process-tree RSS/pressure monitoring;2GiB;8min;normal pressure before start",
+  "resourceDisposition": "Reduced-source typecheck and Storybook were resource-aborted, not passes. Peak RSS was below2GiB and elapsed below8min; pressure was observed2 after Storybook, consistent with runtime pressure guard. No current screenshots produced.",
+  "attempts": [
+    {
+      "name": "spn090-resume-install",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-install",
+        "args": [
+          "npm",
+          "ci"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 7320,
+        "peakKiB": 1211552
+      },
+      "log": "spn090-resume-install.log.gz",
+      "sha256": "d3472a96d42c0493933e0515417c57fa2ee46fd374b45dc4ac3542ee50f53ef8",
+      "gzipSha256": "665e4e8cb6f9e9f48f1858b0dbd73ff2899c3e787e704935151ccb4c9cb6f417"
+    },
+    {
+      "name": "spn090-resume-node",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-node",
+        "args": [
+          "node",
+          "--test",
+          "scripts/ci/browserstack-acceptance.test.ts",
+          "scripts/ci/browserstack-build-graph.test.ts",
+          "scripts/ci/browserstack-capability.test.ts",
+          "scripts/ci/browserstack-chrome-readiness.test.ts",
+          "scripts/ci/browserstack-fixture.test.ts",
+          "scripts/ci/browserstack-initial-storage.test.ts",
+          "scripts/ci/browserstack-input-observation.test.ts",
+          "scripts/ci/browserstack-offline-preparation.test.ts",
+          "scripts/ci/browserstack-session-diagnostics.test.ts",
+          "scripts/ci/browserstack.test.ts",
+          "scripts/ci/bootstrap-evidence.test.ts",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/plan.test.ts",
+          "scripts/ci/renderer-chunks.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 37202,
+        "peakKiB": 814368
+      },
+      "log": "spn090-resume-node.log.gz",
+      "sha256": "3292e223890415b366d639fc7f15703e16dba7d7c54a31636da06f0fb5a2cdbd",
+      "gzipSha256": "b3f03965c245981cfa7e54f10d33452acfe7981833325fee2aa574d9bf0a44d2"
+    },
+    {
+      "name": "spn090-resume-vitest",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-vitest",
+        "args": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "src/ui/offlineProtection.test.ts",
+          "src/ui/offlineRuntime.test.ts",
+          "src/ui/spinelSync.test.ts",
+          "src/shared/offlineShell.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 1328,
+        "peakKiB": 457600
+      },
+      "log": "spn090-resume-vitest.log.gz",
+      "sha256": "9e0d28812e9468b04bb6c520bf766d746ffa66e7f6df6b00d8bd6ceb0bbcca0a",
+      "gzipSha256": "533bdeb8523e09d81f6d60e81ae83001ca7c60ac1f7611815f6b65b7a2c2b58f"
+    },
+    {
+      "name": "spn090-resume-types",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-types",
+        "args": [
+          "node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 3093,
+        "peakKiB": 1749920
+      },
+      "log": "spn090-resume-types.log.gz",
+      "sha256": "dbd1c1ee17838733bca0a9b3c4addf5d07b1c22091fadd6882667fc07d035a44",
+      "gzipSha256": "4111e0cf100964fae84466be5c5caa0eef0b1aadc079d4f42e83aa2c493ac029"
+    },
+    {
+      "name": "spn090-resume-lint",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-lint",
+        "args": [
+          "npm",
+          "run",
+          "lint"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 12326,
+        "peakKiB": 790288
+      },
+      "log": "spn090-resume-lint.log.gz",
+      "sha256": "aa1557f53dbe5e04b13440b6f67da67c46f97f083ef3575710a3cfb0c81156f7",
+      "gzipSha256": "79548a2d12dffc4e51a002c0906caef1f38909f1018fd8b4be215223087b4b9a"
+    },
+    {
+      "name": "spn090-resume-backlog",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-backlog",
+        "args": [
+          "npm",
+          "run",
+          "backlog:check"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 228,
+        "peakKiB": 253088
+      },
+      "log": "spn090-resume-backlog.log.gz",
+      "sha256": "69ff2c5d78032a815623091ee977bc323f7a74142f51f1ffd9b2264c80b096dc",
+      "gzipSha256": "e1c8f35ebccf62461e7b787a058bb14c35b7b479d5fc81d41d0435e2ae069b7f"
+    },
+    {
+      "name": "spn090-resume-pr",
+      "stage": "uncommitted pre-retirement integration (not final source evidence)",
+      "source": null,
+      "watchdog": {
+        "name": "spn090-resume-pr",
+        "args": [
+          "npm",
+          "run",
+          "backlog:pr",
+          "--",
+          "--base",
+          "origin/main",
+          "--title",
+          "\ud83e\uddea SPN-090 Verify offline launches on real phones"
+        ],
+        "code": 1,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 500,
+        "peakKiB": 257760
+      },
+      "log": "spn090-resume-pr.log.gz",
+      "sha256": "a08b11b45b633a6be06ba6da447c5ac3d0d22bd1c1a082b2d6379e0ebf2916a5",
+      "gzipSha256": "f79e0ce570a31911296078b52b83bb3c64818ba20ace92be9a0c8035442561c2"
+    },
+    {
+      "name": "spn090-reduced-node",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-node",
+        "args": [
+          "node",
+          "--test",
+          "scripts/ci/browserstack.test.ts",
+          "scripts/ci/renderer-chunks.test.ts",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/plan.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 262,
+        "peakKiB": 342048
+      },
+      "log": "spn090-reduced-node.log.gz",
+      "sha256": "3acf03cdf6b12572825c040ef9edc629c45a301e9c1053b1c3c472388741b46e",
+      "gzipSha256": "591c0ea720abfcbc23178b0e38bb6a89d926fea8e80e1d0512b03b417ac75161"
+    },
+    {
+      "name": "spn090-reduced-runtime",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-runtime",
+        "args": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "src/ui/offlineProtection.test.ts",
+          "src/ui/offlineRuntime.test.ts",
+          "src/ui/spinelSync.test.ts",
+          "src/shared/offlineShell.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 991,
+        "peakKiB": 398912
+      },
+      "log": "spn090-reduced-runtime.log.gz",
+      "sha256": "2cee7a130cc6d0b2140c72784fc14ff7a856f09cea9bd9c799b5b46b43d9a69f",
+      "gzipSha256": "4542114b500a4efc82bcb000c33c4be00e2ce363632d9700c357beb9f3835879"
+    },
+    {
+      "name": "spn090-reduced-types",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-types",
+        "args": [
+          "node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "code": 1,
+        "signal": null,
+        "reason": "Resource guard",
+        "elapsedMs": 2350,
+        "peakKiB": 1628272
+      },
+      "log": "spn090-reduced-types.log.gz",
+      "sha256": "98dc833ff060ad5298fd67f80c1643f90c35178953561c8c7ccc7d47606c9652",
+      "gzipSha256": "ce4712c12f1e9509a27fcb45dd2c71ce7600e5dc766ff68a424c27e43f8776f6"
+    },
+    {
+      "name": "spn090-reduced-lint",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-lint",
+        "args": [
+          "npm",
+          "run",
+          "lint"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 11046,
+        "peakKiB": 730160
+      },
+      "log": "spn090-reduced-lint.log.gz",
+      "sha256": "3b6d88512a1ab34d2db30b5af43b5cf2838102b87061156dd15b75b9569774c0",
+      "gzipSha256": "78b87c10353203db4ec196032d23547632702338dc50eb8bf0ebbefbb4ce3ffc"
+    },
+    {
+      "name": "spn090-reduced-backlog",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-backlog",
+        "args": [
+          "npm",
+          "run",
+          "backlog:check"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 259,
+        "peakKiB": 236864
+      },
+      "log": "spn090-reduced-backlog.log.gz",
+      "sha256": "1d1155aaec77828d9b002887c6a61682b1ced26b70478b13fb5743f6e57b8d3c",
+      "gzipSha256": "aa914579e1799095e8868fbd30049cf861c8a22e31730942cb305a14c87a003e"
+    },
+    {
+      "name": "spn090-reduced-pr",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-pr",
+        "args": [
+          "npm",
+          "run",
+          "backlog:pr",
+          "--",
+          "--base",
+          "origin/main",
+          "--title",
+          "\ud83e\uddea SPN-090 Verify offline launches on real phones"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 492,
+        "peakKiB": 258144
+      },
+      "log": "spn090-reduced-pr.log.gz",
+      "sha256": "201f94b301e7aa81be087c1651a376db9a6f73cfb01b3aa9bb0cc1c100b1f4fd",
+      "gzipSha256": "9243ac153c986d18c70d47949cdb02b90f2462c40bee58d01401a7a833412238"
+    },
+    {
+      "name": "spn090-reduced-storybook",
+      "stage": "reduced committed source",
+      "source": "c5f0c1d05844d8c60568883a048c691020e01ba4",
+      "watchdog": {
+        "name": "spn090-reduced-storybook",
+        "args": [
+          "npm",
+          "run",
+          "build-storybook"
+        ],
+        "code": 1,
+        "signal": null,
+        "reason": "Resource guard",
+        "elapsedMs": 7999,
+        "peakKiB": 1549952
+      },
+      "log": "spn090-reduced-storybook.log.gz",
+      "sha256": "4dcfeb00e5af76a58f8a8f6a32759c19e374b78802b99e4f94232469f780ec0c",
+      "gzipSha256": "85a9020ac56a2b4f9a7647c033e365fd34b5d34b97e5072e00440670d27a073d"
+    }
+  ]
+}
