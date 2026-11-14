@@ -1,0 +1,644 @@
+{
+  "schema": 1,
+  "record": "Local diagnostic and intermediate implementation evidence; exact final candidate checks and hosted acceptance belong in the PR.",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "limits": {
+    "node": "26.13.0",
+    "processTreeKiB": 2097152,
+    "elapsedMs": 480000,
+    "availableMemoryFloorKiB": 524288
+  },
+  "archive": {
+    "file": "local-checks.tar.gz",
+    "sha256": "cc28579b4be7a1d4f322041ea44ddfb378478b0785854348df46932384cfa07d"
+  },
+  "diagnosticBundle": {
+    "file": "diagnostic-commits.bundle",
+    "sha256": "da48ec519fb2ef56da1d6f7c2e411cd0af8faa6f5a47cc180020459c78763cd4",
+    "prerequisite": "04baabd6a68abe7c0b225f8699681532e2205b60",
+    "head": "cf2d76c2da2d03e990cba38d2cc1ed97229409cb"
+  },
+  "files": [
+    {
+      "path": "capability-watchdog.json",
+      "sha256": "bcc8e25a2eddc74e22da010647e00f61130880170cb69de35a0d99a3f55509dd",
+      "bytes": 1082
+    },
+    {
+      "path": "capability.log",
+      "sha256": "e08b4cfb182bfbcc702fb66fce8daaae1d5cc74c08c1bca3e825d64c707ad0ca",
+      "bytes": 1367
+    },
+    {
+      "path": "chromium-install-watchdog.json",
+      "sha256": "8209f9fa739cd98af59518312f0b0e54e4dadb0bdf0fffefa43f33b2e0b676b1",
+      "bytes": 436
+    },
+    {
+      "path": "chromium-install.log",
+      "sha256": "11a46a5414421ff91b1a6f177c407cb386c1238d98d4b3a2d4b320d6980e4f20",
+      "bytes": 5296
+    },
+    {
+      "path": "final-format-watchdog.json",
+      "sha256": "04cce9027d5aacf200f047c84b03f0cfde6e35096667039ec4706858e5a32a10",
+      "bytes": 725
+    },
+    {
+      "path": "final-format.log",
+      "sha256": "f5f059cc98537af9d881a8283afd67a28a93138c8a41622dda6ed930152eb6d0",
+      "bytes": 950
+    },
+    {
+      "path": "focused-controls-watchdog.json",
+      "sha256": "f1a91d96100cc45ab4727a026f3337d24649463ff7c8a64a42ffc75b257b91b4",
+      "bytes": 536
+    },
+    {
+      "path": "focused-controls.log",
+      "sha256": "bc40dd0dfee32378fdf13f97088d42494e9bd04f8b920e556e2f21ab319576e9",
+      "bytes": 2043
+    },
+    {
+      "path": "format-work-watchdog.json",
+      "sha256": "b5c11b424f32e7061c1487785b9424ba81b7edb3d1ac0b98c287debb5b5455e7",
+      "bytes": 594
+    },
+    {
+      "path": "legacy-build-watchdog.json",
+      "sha256": "821e48bce5e138cc2709887e39f7fae6456841341abbc13ac47406019cb6ca8b",
+      "bytes": 575
+    },
+    {
+      "path": "legacy-build.log",
+      "sha256": "86f73f089b8491e82990cf55a89d4d9101d265fc95c11d79537c5f58ecff4b17",
+      "bytes": 3611
+    },
+    {
+      "path": "legacy-install-watchdog.json",
+      "sha256": "b3ee9f7a819c1a8a0422f84ad3da08ce91200b4a4d46e602898cb2432ea5ef3c",
+      "bytes": 457
+    },
+    {
+      "path": "legacy-install.log",
+      "sha256": "200fe940e85daa3a06f3491bc3aba46d0b295322c54801ac20216527cc890af0",
+      "bytes": 1109
+    },
+    {
+      "path": "lifetime-baseline-watchdog.json",
+      "sha256": "a8ba64b9990aa5adf08eb6b6806e4ab58c968f44cb9ee7bc94bb4ee9cfe46f70",
+      "bytes": 447
+    },
+    {
+      "path": "lifetime-baseline.log",
+      "sha256": "5999c2a3a67f2c2d9c1cbf627ad0be0416f0ac243750180ad3100c23fa1bdeda",
+      "bytes": 7997
+    },
+    {
+      "path": "lint-first-watchdog.json",
+      "sha256": "4c301d16eb7a09a479f73fe88f1a6f5a03bb1292e6bb3f854161c7e959dd5d6b",
+      "bytes": 389
+    },
+    {
+      "path": "lint-first.log",
+      "sha256": "b2e98ae9b55a154d19fba8975d6b5922339b4739b50d76ba2d7a844ffde43beb",
+      "bytes": 1463
+    },
+    {
+      "path": "npm-ci-watchdog.json",
+      "sha256": "0e1f662b64de4ac03672ff7514175e5aac0f6126690e9b0dfb84da858b493794",
+      "bytes": 411
+    },
+    {
+      "path": "npm-ci.log",
+      "sha256": "763e21cdfe6b4380bf669a78746ce96326ad14cad7a5c5fdad526e2592af9691",
+      "bytes": 1166
+    },
+    {
+      "path": "previous-build-watchdog.json",
+      "sha256": "f6b318cbabc8a680c905b994875e97b960f851c8697df34fe17747aa801b6c6e",
+      "bytes": 616
+    },
+    {
+      "path": "previous-build.log",
+      "sha256": "04f31ead41005414e2cb82f56dcd954549594a99428af680c7d848fa55c4abf7",
+      "bytes": 6137
+    },
+    {
+      "path": "previous-install-watchdog.json",
+      "sha256": "844b104251a1fb1e22c66a68c5677bbe75010fdaa626cbec09933f285e144bb4",
+      "bytes": 460
+    },
+    {
+      "path": "previous-install.log",
+      "sha256": "4257bb994b79a2d4d85bbd6e317b469fe0c1948906139389d5551080396e7163",
+      "bytes": 1215
+    },
+    {
+      "path": "proxy-baseline-watchdog.json",
+      "sha256": "f7c7728aa89af6ffb1e34eb51472f56b6d0708871de6356b0d86827b6aa97cf1",
+      "bytes": 428
+    },
+    {
+      "path": "proxy-baseline.log",
+      "sha256": "9e9de88886967f648f1d8c13e64d3e7d5e5d73bf6ebb531d48b59fa57994be2e",
+      "bytes": 2772
+    },
+    {
+      "path": "proxy-repair-watchdog.json",
+      "sha256": "dd5dbe8371200609914c1a9695f54f3d44e3c256f8843e78b4de401442987074",
+      "bytes": 427
+    },
+    {
+      "path": "proxy-repair.log",
+      "sha256": "c36106541252353d17907ac642ceef6cfc698c2361caacede6ebe4c73e22df4b",
+      "bytes": 640
+    },
+    {
+      "path": "run-lifetime.ts",
+      "sha256": "59167ab147351c06c6fb0ae13d45193c4ca30b7267cc7b55862c1ef065f7d6f4",
+      "bytes": 881
+    },
+    {
+      "path": "source-format-watchdog.json",
+      "sha256": "452641dab4db97a299211044d6cbc431b41de12255df3e8b292ad335d12b70cb",
+      "bytes": 500
+    },
+    {
+      "path": "source-format.log",
+      "sha256": "a62f9c99778db00e0244c5bb6873cf832812d150ea08bd56b651f70e974902cd",
+      "bytes": 489
+    },
+    {
+      "path": "typecheck-first-watchdog.json",
+      "sha256": "976282ebf12e1e7ef6aa91fe0fdd08a783711ee325246a9008425a7660376fbf",
+      "bytes": 425
+    },
+    {
+      "path": "typecheck-first.log",
+      "sha256": "4f2b238676040823b2a2fadfbda9d5d0f494f0e0895ef1a7527519b7fa3a7f11",
+      "bytes": 1007
+    },
+    {
+      "path": "typecheck-repair-watchdog.json",
+      "sha256": "34f1c0ee842185d4b6cc3839ed3ac7d58841575f80b558f6be206a10b2507801",
+      "bytes": 458
+    },
+    {
+      "path": "typecheck-repair.log",
+      "sha256": "e87ec13a2a46898f98fcc867b8171a3f929f45fa82085b32b182b0ad8376880c",
+      "bytes": 376
+    },
+    {
+      "path": "watchdog.ts",
+      "sha256": "5ef6b43a27ae1ea212c9d3250445f1e951b765dea1b221fbf847e57f0a1d6760",
+      "bytes": 2406
+    }
+  ],
+  "original": [
+    {
+      "path": "original/first-failure-context.md",
+      "sha256": "bab3f93ed037e9565e9fe21073c87065941c15cadf5acac1d1d604e485255578",
+      "bytes": 3735
+    },
+    {
+      "path": "original/first-failure-log-excerpt.txt",
+      "sha256": "f6c8ce4c50668af9518933e1735d99265f4438041497a155e1a001a70ace4d3b",
+      "bytes": 5526
+    },
+    {
+      "path": "original/first-failure.png",
+      "sha256": "874917c2ba43685d885eaf3fb0799feeb1c2e3cff7f31d0063e43ff970789a40",
+      "bytes": 38586
+    },
+    {
+      "path": "original/receipt.json",
+      "sha256": "2ee5d0d381ea655f5f126c3705a667d553f5c3e4b0e54a59b156f67c6fc59cb1",
+      "bytes": 10017
+    }
+  ],
+  "checks": [
+    {
+      "label": "capability",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T03:49:07.761Z",
+        "finishedAt": "2026-11-13T03:49:08.406Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--input-type=module",
+          "-e",
+          "import net from \"node:net\"; import { chromium } from \"playwright\"; import { existsSync } from \"node:fs\"; for (const endpoint of [{host:\"127.0.0.1\",port:0}, {path:\"\\u0000spn145-capability-\"+process.pid}]) { const server=net.createServer(); const result=await new Promise(resolve=>{server.once(\"error\",e=>resolve({endpoint,ok:false,error:String(e)}));server.listen(endpoint,()=>resolve({endpoint,ok:true,address:server.address()}));}); console.log(JSON.stringify(result)); if(server.listening) await new Promise(resolve=>server.close(resolve)); } console.log(JSON.stringify({chromium:chromium.executablePath(),installed:existsSync(chromium.executablePath())}));"
+        ],
+        "elapsedMs": 645,
+        "initialMemAvailableKiB": 9141496,
+        "peakKiB": 286632,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "chromium-install",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T03:49:36.187Z",
+        "finishedAt": "2026-11-13T03:50:07.335Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/playwright/cli.js",
+          "install",
+          "chromium"
+        ],
+        "elapsedMs": 31148,
+        "initialMemAvailableKiB": 8810092,
+        "peakKiB": 456236,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "final-format",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T04:04:04.081Z",
+        "finishedAt": "2026-11-13T04:04:04.940Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "e2e/offline-upgrade.spec.ts",
+          "e2e/offline-upgrade-lifetime.ts",
+          "e2e/offline-upgrade-proxy.ts",
+          "e2e/offline-upgrade-original-proxy.ts",
+          "e2e/offline-upgrade-observation.ts",
+          "scripts/ci/offline-upgrade-proxy.test.ts",
+          "scripts/ci/offline-upgrade-observation.test.ts"
+        ],
+        "elapsedMs": 858,
+        "initialMemAvailableKiB": 8538776,
+        "peakKiB": 290820,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "focused-controls",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T04:00:57.724Z",
+        "finishedAt": "2026-11-13T04:00:58.125Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--test",
+          "scripts/ci/offline-upgrade-proxy.test.ts",
+          "scripts/ci/offline-upgrade-observation.test.ts",
+          "scripts/ci/offline-upgrade-dependencies.test.ts"
+        ],
+        "elapsedMs": 400,
+        "initialMemAvailableKiB": 8067500,
+        "peakKiB": 398480,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "format-work",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T03:58:15.089Z",
+        "finishedAt": "2026-11-13T03:58:15.777Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "e2e/offline-upgrade-proxy.ts",
+          "e2e/offline-upgrade-original-proxy.ts",
+          "e2e/offline-upgrade-lifetime.ts",
+          "scripts/ci/offline-upgrade-proxy.test.ts"
+        ],
+        "elapsedMs": 688,
+        "initialMemAvailableKiB": 8256272,
+        "peakKiB": 281732,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "legacy-build",
+      "source": "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+      "receipt": {
+        "startedAt": "2026-11-13T03:51:33.828Z",
+        "finishedAt": "2026-11-13T03:51:36.750Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/legacy-source",
+        "command": "node",
+        "args": [
+          "/workspace/scratch/cece61e42934/spinel/scripts/serial.ts",
+          "node",
+          "--max-old-space-size=1024",
+          "node_modules/vite/bin/vite.js",
+          "build",
+          "--outDir",
+          "/workspace/scratch/cece61e42934/validation/legacy-build"
+        ],
+        "elapsedMs": 2920,
+        "initialMemAvailableKiB": 8930892,
+        "peakKiB": 1138400,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "legacy-install",
+      "source": "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+      "receipt": {
+        "startedAt": "2026-11-13T03:50:26.183Z",
+        "finishedAt": "2026-11-13T03:50:37.983Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/legacy-source",
+        "command": "node",
+        "args": [
+          "/workspace/scratch/cece61e42934/spinel/scripts/serial.ts",
+          "npm",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsedMs": 11800,
+        "initialMemAvailableKiB": 9131992,
+        "peakKiB": 845728,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "lifetime-baseline",
+      "source": "cf2d76c2da2d03e990cba38d2cc1ed97229409cb",
+      "receipt": {
+        "startedAt": "2026-11-13T03:54:11.633Z",
+        "finishedAt": "2026-11-13T03:54:16.291Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "../validation/run-lifetime.ts",
+          "../validation/lifetime-baseline.json"
+        ],
+        "elapsedMs": 4657,
+        "initialMemAvailableKiB": 6782556,
+        "peakKiB": 307728,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "lint-first",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T04:05:38.295Z",
+        "finishedAt": "2026-11-13T04:06:03.647Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "lint"
+        ],
+        "elapsedMs": 25352,
+        "initialMemAvailableKiB": 8562080,
+        "peakKiB": 800244,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "npm-ci",
+      "source": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "receipt": {
+        "startedAt": "2026-11-13T03:47:51.697Z",
+        "finishedAt": "2026-11-13T03:48:10.033Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsedMs": 18335,
+        "initialMemAvailableKiB": 9289920,
+        "peakKiB": 768832,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "previous-build",
+      "source": "3a0e2238fb5be3907d04120eabda2aafd6565d63",
+      "receipt": {
+        "startedAt": "2026-11-13T03:53:02.415Z",
+        "finishedAt": "2026-11-13T03:53:05.631Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/previous-source",
+        "command": "node",
+        "args": [
+          "/workspace/scratch/cece61e42934/spinel/scripts/serial.ts",
+          "node",
+          "--max-old-space-size=1024",
+          "node_modules/vite/bin/vite.js",
+          "build",
+          "--mode",
+          "offline-upgrade",
+          "--outDir",
+          "/workspace/scratch/cece61e42934/validation/previous-build"
+        ],
+        "elapsedMs": 3216,
+        "initialMemAvailableKiB": 8119948,
+        "peakKiB": 1059924,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "previous-install",
+      "source": "3a0e2238fb5be3907d04120eabda2aafd6565d63",
+      "receipt": {
+        "startedAt": "2026-11-13T03:51:15.699Z",
+        "finishedAt": "2026-11-13T03:51:27.493Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/previous-source",
+        "command": "node",
+        "args": [
+          "/workspace/scratch/cece61e42934/spinel/scripts/serial.ts",
+          "npm",
+          "ci",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "elapsedMs": 11794,
+        "initialMemAvailableKiB": 9000928,
+        "peakKiB": 1320112,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "proxy-baseline",
+      "source": "bab37cc3683f944dbe141410c2a3dbeab67badd6",
+      "receipt": {
+        "startedAt": "2026-11-13T03:51:07.830Z",
+        "finishedAt": "2026-11-13T03:51:10.173Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--test",
+          "scripts/ci/offline-upgrade-proxy.test.ts"
+        ],
+        "elapsedMs": 2343,
+        "initialMemAvailableKiB": 8976656,
+        "peakKiB": 306136,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "proxy-repair",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T03:56:46.874Z",
+        "finishedAt": "2026-11-13T03:56:47.336Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--test",
+          "scripts/ci/offline-upgrade-proxy.test.ts"
+        ],
+        "elapsedMs": 462,
+        "initialMemAvailableKiB": 8258732,
+        "peakKiB": 303000,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "source-format",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T04:10:18.700Z",
+        "finishedAt": "2026-11-13T04:10:19.451Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "e2e/offline-upgrade.spec.ts",
+          "e2e/offline-upgrade-lifetime.ts"
+        ],
+        "elapsedMs": 751,
+        "initialMemAvailableKiB": 8179092,
+        "peakKiB": 293508,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "typecheck-first",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T04:01:16.410Z",
+        "finishedAt": "2026-11-13T04:01:22.908Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "elapsedMs": 6498,
+        "initialMemAvailableKiB": 8253912,
+        "peakKiB": 2089880,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      }
+    },
+    {
+      "label": "typecheck-repair",
+      "source": "working tree based on cf2d76c2da2d03e990cba38d2cc1ed97229409cb; not an exact committed acceptance claim",
+      "receipt": {
+        "startedAt": "2026-11-13T04:01:51.478Z",
+        "finishedAt": "2026-11-13T04:01:57.508Z",
+        "node": "v26.13.0",
+        "cwd": "/workspace/scratch/cece61e42934/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--max-old-space-size=1536",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "elapsedMs": 6030,
+        "initialMemAvailableKiB": 8230716,
+        "peakKiB": 1993380,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      }
+    }
+  ]
+}

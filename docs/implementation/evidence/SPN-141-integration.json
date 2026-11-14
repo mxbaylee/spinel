@@ -1,0 +1,831 @@
+{
+  "schema": 1,
+  "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+  "previousSource": "2f1c9304b15adfef833e53f12c4facff9ce14821",
+  "sourceSha256": {
+    "scripts/ci/desktop-browser.ts": "bd7d596b45e4d6ff0a358987bd5b4731cd75c96354a434f5bc111f3b14987e4e",
+    "scripts/ci/desktop-offline-fixture.ts": "877575d990cddf802a2b5ac6e7b1f799104c35f30add6af6184f585c6c3d2cff",
+    "scripts/ci/desktop-offline.ts": "fe4d76c2910d8d5972cc5368cf73cec91b6e536448283613d4505c6aba21ca85",
+    "scripts/ci/desktop-storage.ts": "fc063b9a5077fe3f7246d34c72c434acf07d1f4f2a6d7c687efe267710c499b7",
+    "scripts/ci/desktop-storage.test.ts": "1a756b5159bcaddb343d326035f09368d9ec62dccab53715816522f4d0053c76"
+  },
+  "records": {
+    "controls": {
+      "log": "✔ window inventory compares handle membership independently of driver ordering (8.766166ms)\n✔ serialized browser deletion removes every store and proves the resulting state (5.16875ms)\n✔ workers pending names the first failing operation (4.222333ms)\n✔ workers rejection names the first failing operation (0.911166ms)\n✔ unregister pending names the first failing operation (1.642083ms)\n✔ unregister rejection names the first failing operation (0.807708ms)\n✔ cache-names pending names the first failing operation (0.739416ms)\n✔ cache-names rejection names the first failing operation (0.715334ms)\n✔ cache-delete pending names the first failing operation (0.7745ms)\n✔ cache-delete rejection names the first failing operation (0.82975ms)\n✔ database-delete pending names the first failing operation (0.787541ms)\n✔ database-delete rejection names the first failing operation (0.72625ms)\n✔ database-names pending names the first failing operation (0.733875ms)\n✔ database-names rejection names the first failing operation (0.772667ms)\n✔ blocked IndexedDB fails immediately and retains that cause (0.668958ms)\n✔ a reported deletion success cannot conceal a retained database (0.573916ms)\n✔ synchronous storage rejection is retained without continuing to database deletion (0.53225ms)\n✔ crashed or timed-out driver propagates the first error without another diagnostic request (0.265958ms)\n✔ unregistration reports the still-live controller and never starts storage deletion (0.536041ms)\n✔ a worker registered again during preparation fails before deletion (0.462667ms)\n✔ wrong-url refuses storage deletion before any mutation (0.480792ms)\n✔ wrong-document refuses storage deletion before any mutation (0.594417ms)\n✔ app-script refuses storage deletion before any mutation (0.470208ms)\n✔ registered refuses storage deletion before any mutation (0.491084ms)\n✔ controlled refuses storage deletion before any mutation (0.431625ms)\n✔ reported cache deletion success cannot conceal recreation or cause another deletion (0.612417ms)\n✔ tab inventory rejects incomplete or active fixture clients: [] (0.142833ms)\n✔ tab inventory rejects incomplete or active fixture clients: [\"about:blank\"] (0.082542ms)\n✔ tab inventory rejects incomplete or active fixture clients: [\"https://localhost/_desktop-storage-loss\",\"https://localhost/?item=background\"] (0.160791ms)\n✔ tab inventory rejects incomplete or active fixture clients: [\"https://localhost/_desktop-storage-loss\",\"\"] (0.064708ms)\n✔ inert fixture tabs and unrelated origins are explicitly accounted for (0.058083ms)\n✔ native Safari preparation moves background fixture tabs once and preserves unrelated tabs (0.919584ms)\n✔ post-restart Safari inventory refuses a restored producer without navigating it again (0.663542ms)\n✔ a background navigation that never settles fails within its bound without another mutation (0.7145ms)\nℹ tests 34\nℹ suites 0\nℹ pass 34\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.798459\nWATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":310,\"peakKiB\":90592}\n",
+      "watchdog": {
+        "root": 74967,
+        "started": 1793821275846,
+        "elapsedMs": 310,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 90592,
+        "peakKiB": 90592,
+        "live": [
+          {
+            "pid": 74967,
+            "parent": 74932,
+            "group": 74967,
+            "rssKiB": 89024,
+            "started": "Wed Nov  4 11:41:15 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-integration-controls-watchdog.json node --max-old-space-size=700 --test scripts/ci/desktop-storage.test.ts"
+          },
+          {
+            "pid": 75019,
+            "parent": 74967,
+            "group": 74967,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:16 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 74967,
+            "parent": 74932,
+            "group": 74967,
+            "rssKiB": 89024,
+            "started": "Wed Nov  4 11:41:15 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-integration-controls-watchdog.json node --max-old-space-size=700 --test scripts/ci/desktop-storage.test.ts"
+          },
+          {
+            "pid": 74986,
+            "parent": 74967,
+            "group": 74967,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:15 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75019,
+            "parent": 74967,
+            "group": 74967,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:16 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    "lint": {
+      "log": "\n> lint\n> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check\n\n\n> dependencies:check\n> node scripts/dependencies/no-univer-pro.ts\n\nNo Univer Pro dependencies in 8 manifests or the resolved lockfile.\n\n> format:check\n> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts\n\nChecking formatting...\nAll matched files use Prettier code style!\nWATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":16810,\"peakKiB\":734256}\n",
+      "watchdog": {
+        "root": 75063,
+        "started": 1793821282181,
+        "elapsedMs": 16810,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 84832,
+        "peakKiB": 734256,
+        "live": [
+          {
+            "pid": 75063,
+            "parent": 75027,
+            "group": 75063,
+            "rssKiB": 83264,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-integration-lint-watchdog.json npm run lint"
+          },
+          {
+            "pid": 76037,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:38 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 75063,
+            "parent": 75027,
+            "group": 75063,
+            "rssKiB": 83264,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-integration-lint-watchdog.json npm run lint"
+          },
+          {
+            "pid": 75082,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75108,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 54992,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "npm run lint   "
+          },
+          {
+            "pid": 75120,
+            "parent": 75108,
+            "group": 75063,
+            "rssKiB": 1040,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "sh -c npm run dependencies:check && oxlint --deny-warnings . && npm run format:check"
+          },
+          {
+            "pid": 75121,
+            "parent": 75120,
+            "group": 75063,
+            "rssKiB": 74848,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "npm run dependencies:check   "
+          },
+          {
+            "pid": 75127,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75153,
+            "parent": 75120,
+            "group": 75063,
+            "rssKiB": 93040,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "node /Users/mxbaylee/projects/spinel-spn-141/node_modules/.bin/oxlint --deny-warnings ."
+          },
+          {
+            "pid": 75159,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1616,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75167,
+            "parent": 75120,
+            "group": 75063,
+            "rssKiB": 54992,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "npm run format:check   "
+          },
+          {
+            "pid": 75185,
+            "parent": 75167,
+            "group": 75063,
+            "rssKiB": 493008,
+            "started": "Wed Nov  4 11:41:22 2026",
+            "command": "node /Users/mxbaylee/projects/spinel-spn-141/node_modules/.bin/prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts playwright.config.ts prettier.config.ts vite.config.ts vitest.config.ts"
+          },
+          {
+            "pid": 75191,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75215,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75228,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75241,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:23 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75254,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75267,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75280,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75293,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:24 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75306,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:25 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75319,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:25 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75332,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:25 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75345,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:25 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75358,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:26 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75371,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:26 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75384,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:26 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75397,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:26 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75410,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:27 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75423,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:27 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75436,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:27 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75449,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:27 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75462,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:28 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75475,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:28 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75488,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:28 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75501,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:28 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75514,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:29 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75527,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:29 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75540,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:29 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75553,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:29 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75566,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:30 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75579,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:30 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75592,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:30 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75605,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:30 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75618,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75631,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75644,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75659,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:31 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75672,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:32 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75685,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:32 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75698,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:32 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75711,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:32 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75724,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:33 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75737,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:33 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75750,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:33 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75763,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:33 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75776,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:34 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75789,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:34 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75802,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:34 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75815,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:34 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75829,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75842,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75855,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75868,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:35 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75881,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:36 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75894,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:36 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75907,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:36 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75920,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:36 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75933,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:37 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75946,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:37 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75959,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:37 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75972,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:37 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75985,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:38 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 75998,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:38 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76011,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:38 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76024,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:38 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76037,
+            "parent": 75063,
+            "group": 75063,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:38 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    "types": {
+      "log": "WATCHDOG: {\"code\":0,\"signal\":null,\"elapsedMs\":1453,\"peakKiB\":643968}\n",
+      "watchdog": {
+        "root": 76094,
+        "started": 1793821307371,
+        "elapsedMs": 1453,
+        "outcome": "command-passed",
+        "pressure": "1",
+        "rssKiB": 92176,
+        "peakKiB": 643968,
+        "live": [
+          {
+            "pid": 76094,
+            "parent": 76059,
+            "group": 76094,
+            "rssKiB": 90608,
+            "started": "Wed Nov  4 11:41:47 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-integration-types-watchdog.json node_modules/.bin/tsc -p /tmp/spn141-integration-types.json"
+          },
+          {
+            "pid": 76192,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "known": [
+          {
+            "pid": 76094,
+            "parent": 76059,
+            "group": 76094,
+            "rssKiB": 90608,
+            "started": "Wed Nov  4 11:41:47 2026",
+            "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn141-integration-types-watchdog.json node_modules/.bin/tsc -p /tmp/spn141-integration-types.json"
+          },
+          {
+            "pid": 76113,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76121,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 551840,
+            "started": "Wed Nov  4 11:41:47 2026",
+            "command": "/Users/mxbaylee/projects/spinel/node_modules/@typescript/typescript-darwin-arm64/lib/tsc -p /tmp/spn141-integration-types.json"
+          },
+          {
+            "pid": 76127,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76140,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:47 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76153,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1584,
+            "started": "Wed Nov  4 11:41:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76166,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76179,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          },
+          {
+            "pid": 76192,
+            "parent": 76094,
+            "group": 76094,
+            "rssKiB": 1568,
+            "started": "Wed Nov  4 11:41:48 2026",
+            "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+          }
+        ],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    }
+  },
+  "typecheckConfig": {
+    "extends": "/Users/mxbaylee/projects/spinel-spn-141/tsconfig.json",
+    "compilerOptions": {
+      "typeRoots": [
+        "/Users/mxbaylee/projects/spinel-spn-141/node_modules/@types"
+      ]
+    },
+    "include": [
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-browser.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-offline-fixture.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-offline.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-storage.ts",
+      "/Users/mxbaylee/projects/spinel-spn-141/scripts/ci/desktop-storage.test.ts"
+    ]
+  },
+  "disposition": {
+    "controls": "34 storage/inventory controls passed on integrated working tree.",
+    "lint": "Full lint/dependency/format passed.",
+    "types": "All five changed TypeScript roots and their imports passed with repository compiler options; full project hosted types still required.",
+    "scope": "Storage implementation unchanged from previous reviewed source. Integration takes accepted SPN134 diagnostic repair from main and preserves both original failure histories.",
+    "hosted": "New exact-source reviews and one declared synchronization/native workflow remain pending; old green jobs are not reused."
+  }
+}

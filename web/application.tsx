@@ -7,11 +7,12 @@ import '../src/ui/theme.css';
 import { initializeTheme } from '../src/ui/theme.ts';
 import { installRuntimeHost } from './offline/runtime.ts';
 import type { RuntimeHost, RuntimeCompatibility } from './offline/runtime.ts';
+import { CURRENT_SDK_VERSION } from '../src/shared/offlineShell.ts';
 
 declare const __SPINEL_RUNTIME_COMPATIBILITY__: RuntimeCompatibility;
 export const compatibility: RuntimeCompatibility =
   typeof __SPINEL_RUNTIME_COMPATIBILITY__ === 'undefined'
-    ? { format: 1, sdkVersion: '1.1.0' }
+    ? { format: 1, sdkVersion: CURRENT_SDK_VERSION }
     : __SPINEL_RUNTIME_COMPATIBILITY__;
 
 /** Only the tiny public loader calls this, after selecting a compatible build. */

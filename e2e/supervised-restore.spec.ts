@@ -10,6 +10,22 @@ import { startMaintenanceFixture } from './maintenance-fixture.ts';
  * selection, double-click, cancel, a lost confirmation reply, an admitted upload
  * outlasting its passkey window, and old clients meeting the restored workspace. */
 
+const startupEvidence = new WeakMap<BrowserContext, string[]>();
+async function observeStartup(context: BrowserContext) {
+  const events: string[] = [];
+  startupEvidence.set(context, events);
+  // These contexts are created manually, so the project trace setting does not
+  // cover them. Capture the original attempt, before any page can navigate.
+  await context.tracing.start({ screenshots: true, snapshots: true });
+  context.on('page', (page) => {
+    page.on('console', (message) => {
+      if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))
+        events.push(message.text());
+    });
+    page.on('pageerror', (error) => events.push(`pageerror: ${error.name}`));
+  });
+}
+
 type Fixture = Awaited<ReturnType<typeof startMaintenanceFixture>>;
 
 async function passkey(context: BrowserContext, page: Page) {
@@ -126,6 +142,7 @@ async function enrollOperator(browser: Browser, app: Fixture) {
     colorScheme: 'light',
     reducedMotion: 'reduce',
   });
+  await observeStartup(context);
   const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   const key = await passkey(context, page);
@@ -161,6 +178,7 @@ async function joinWorkspace(
     colorScheme: 'light',
     reducedMotion: 'reduce',
   });
+  await observeStartup(context);
   const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   const key = await passkey(context, page);
@@ -225,22 +243,55 @@ async function chooseSavedBackup(page: Page) {
 }
 
 async function attachFailure(browser: Browser | undefined, info: TestInfo) {
-  let index = 0;
-  for (const context of browser?.contexts() ?? [])
-    for (const page of context.pages()) {
-      if (page.isClosed()) continue;
-      await info.attach(`restore-failure-${index}`, {
-        body: await page.screenshot({ animations: 'disabled' }).catch(() => Buffer.alloc(0)),
-        contentType: 'image/png',
-      });
-      await info.attach(`restore-state-${index++}`, {
-        body: await page
-          .locator('body')
-          .ariaSnapshot()
-          .catch(() => 'Page unavailable.'),
-        contentType: 'text/plain',
-      });
+  const collectionFailures: string[] = [];
+  const capture = async (name: string, collect: () => Promise<void>) => {
+    try {
+      await collect();
+    } catch {
+      // A broken context/trace or attachment must not replace the test's
+      // original rejection or prevent evidence from other contexts/pages.
+      collectionFailures.push(name);
     }
+  };
+  let contextIndex = 0;
+  for (const context of browser?.contexts() ?? []) {
+    const index = contextIndex++;
+    await capture(`startup-${index}`, () =>
+      info.attach(`restore-startup-${index}`, {
+        body: JSON.stringify(startupEvidence.get(context) ?? [], null, 2),
+        contentType: 'application/json',
+      }),
+    );
+    await capture(`trace-${index}`, async () => {
+      const path = info.outputPath(`restore-first-failure-${index}.zip`);
+      await context.tracing.stop({ path });
+      await info.attach(`restore-first-failure-${index}`, { path, contentType: 'application/zip' });
+    });
+    let pageIndex = 0;
+    for (const page of context.pages()) {
+      const id = `${index}-${pageIndex++}`;
+      if (page.isClosed()) continue;
+      await capture(`screenshot-${id}`, async () =>
+        info.attach(`restore-failure-${id}`, {
+          body: await page.screenshot({ animations: 'disabled' }),
+          contentType: 'image/png',
+        }),
+      );
+      await capture(`state-${id}`, async () =>
+        info.attach(`restore-state-${id}`, {
+          body: await page.locator('body').ariaSnapshot(),
+          contentType: 'text/plain',
+        }),
+      );
+    }
+  }
+  if (collectionFailures.length)
+    await info
+      .attach('restore-diagnostic-collection-failures', {
+        body: JSON.stringify(collectionFailures),
+        contentType: 'application/json',
+      })
+      .catch(() => {});
 }
 
 const skipUnsupported = (info: TestInfo) =>

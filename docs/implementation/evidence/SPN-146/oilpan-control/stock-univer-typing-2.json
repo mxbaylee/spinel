@@ -1,0 +1,17 @@
+{
+  "kind": "stock-univer-doc-typing",
+  "throttle": 4,
+  "keys": 2086,
+  "documentLength": 2088,
+  "typingSeconds": 57.5,
+  "keysPerSecond": 36,
+  "growth": {
+    "gcs": 388,
+    "spanSeconds": 57.4,
+    "allocatedMB": 159.6,
+    "allocatedMBPerSecond": 2.8,
+    "peakMB": 77
+  },
+  "allocatedKBPerKey": 76.5,
+  "majorsOfAtLeast5ms": 4
+}

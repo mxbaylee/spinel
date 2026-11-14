@@ -13,6 +13,11 @@ import {
 } from './doc-callback-comparison.ts';
 import type { DocCallbackManifest, LoadedDocCallbackEvidence } from './doc-callback-comparison.ts';
 import { analyzeDocCallbackLifetimes, DOC_CALLBACK_MARKERS } from './doc-callback-lifetimes.ts';
+import { docTraceProcessorAuthority } from './doc-trace-processor.ts';
+import {
+  DOC_CALLBACK_CLEAN_STATS,
+  DOC_CALLBACK_STATS_SQL,
+} from '../../e2e/doc-responsiveness-callback-converter.ts';
 
 const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 const candidateSource = 'f'.repeat(40);
@@ -80,6 +85,52 @@ const raw = {
   ],
 };
 const rawBytes = gzipSync(JSON.stringify(raw));
+// Opaque inner bytes deliberately exercise only provenance/framing at this layer.
+// Native known-fixture and application acceptance own converter semantic fidelity.
+const proto = Buffer.from([0x0a, 2, 0x08, 1]);
+const protoBytes = gzipSync(proto);
+const convertedTrace = {
+  file: 'spn144-derived.json.gz',
+  bytes: rawBytes.length,
+  sha256: hash(rawBytes),
+  storage: { compression: 'gzip' as const, producer: 'node:zlib' as const, level: 1 },
+  decoded: { bytes: Buffer.byteLength(JSON.stringify(raw)), sha256: hash(JSON.stringify(raw)) },
+};
+function conversionRecord(output = convertedTrace) {
+  const input = { bytes: proto.length, sha256: hash(proto) };
+  const command = {
+    code: 0,
+    signal: null,
+    stderr: '',
+    stdout: '',
+    diagnosticsTruncated: false,
+    elapsedMs: 1,
+    childClosed: true,
+    outputRemoved: false,
+    outputCloseFailure: null,
+  };
+  return {
+    authority: docTraceProcessorAuthority('linux', 'x64'),
+    input,
+    framing: { ...input, packets: 1, emptyPackets: 0 },
+    output,
+    conversion: { ...command, args: ['convert', 'json', '/owned/input.pftrace'] },
+    statistics: {
+      ...command,
+      args: ['query', '--format', 'csv', '/owned/input.pftrace', DOC_CALLBACK_STATS_SQL],
+      stdout: DOC_CALLBACK_CLEAN_STATS,
+    },
+    passed: true,
+    temporaryRemoved: true,
+  };
+}
+const receiptBytes = (output = convertedTrace) =>
+  Buffer.from(JSON.stringify(conversionRecord(output)));
+const receiptArtifact = (bytes: Buffer) => ({
+  file: 'spn144-conversion.json',
+  bytes: bytes.length,
+  sha256: hash(bytes),
+});
 const sourceFiles = [
   { file: 'bundle.js', content: '/* retained built code */', kind: 'runtime' },
   { file: 'bundle.js.map', content: '{"sourcesContent":["original"]}', kind: 'source-map' },
@@ -95,7 +146,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
     callsites,
   });
   const manifest: DocCallbackManifest = {
-    schema: 1,
+    schema: 2,
     role,
     preset: 'desktop',
     attempt: 0,
@@ -113,12 +164,17 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
         'e2e/doc-responsiveness-callbacks.spec.ts',
         'e2e/doc-responsiveness-callback-sources.ts',
         'e2e/doc-responsiveness-callback-trace.ts',
+        'e2e/doc-responsiveness-callback-proto.ts',
+        'e2e/doc-responsiveness-callback-converter.ts',
+        'scripts/ci/doc-trace-processor.ts',
+        'e2e/doc-responsiveness-callback-progress.ts',
         'e2e/doc-responsiveness-fixture.ts',
         'e2e/doc-responsiveness.ts',
         'scripts/ci/doc-callback-lifetimes.ts',
         'web/docResponsivenessEvidence.ts',
         'src/ui/docIdleEpisode.ts',
         'src/ui/nativeDocFlush.ts',
+        'src/ui/nativeDocFlushDiagnostic.ts',
         'playwright.config.ts',
         'package-lock.json',
       ].map((path) => [path, hash(path)]),
@@ -133,6 +189,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
       input: 'original native keyboard workload',
     },
     instrumentation: {
+      converterAuthority: docTraceProcessorAuthority('linux', 'x64'),
       categories,
       traceConfig: {
         recordMode: 'recordUntilFull',
@@ -140,9 +197,10 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
         includedCategories: categories,
       },
       transferMode: 'ReturnAsStream',
-      streamFormat: 'json',
-      streamCompression: 'gzip',
+      streamFormat: 'proto',
+      streamCompression: 'none',
       bufferUsageReportingInterval: 1000,
+      storage: { compression: 'gzip', producer: 'node:zlib', level: 1 },
       cpuThrottle: 1,
       mountedEditors: 1,
       deviceScaleFactor: 1,
@@ -155,11 +213,18 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
     textSha256: hash(text),
     frameId: 'frame',
     trace: {
-      file: 'spn113-trace.json.gz',
-      sha256: hash(rawBytes),
-      bytes: rawBytes.length,
-      completion: { dataLossOccurred: false, traceFormat: 'json', streamCompression: 'gzip' },
+      file: 'spn144-trace.pftrace.gz',
+      sha256: hash(protoBytes),
+      bytes: protoBytes.length,
+      completion: { dataLossOccurred: false, traceFormat: 'proto', streamCompression: 'none' },
+      storage: { compression: 'gzip', producer: 'node:zlib', level: 1 },
+      transport: {
+        bytes: proto.length,
+        sha256: hash(proto),
+      },
     },
+    convertedTrace,
+    conversionReceipt: receiptArtifact(receiptBytes()),
     attribution: {
       callsites,
       unmapped: [],
@@ -172,6 +237,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
     },
     analysis,
     errors: [],
+    cleanup: { sessionDetached: true, fixtureClosed: true },
     input: {
       keydownAt: Array.from({ length: 2086 }, (_, index) => index + 1),
       keyToFrameMs: Array(2086).fill(8),
@@ -316,7 +382,22 @@ test('matching capture omissions or changes cannot replace the registered lossle
       value.manifest.instrumentation.bufferUsageReportingInterval = 0;
     },
     (value) => {
-      value.manifest.trace.completion.streamCompression = 'none';
+      value.manifest.trace.completion.streamCompression = 'gzip';
+    },
+    (value) => {
+      value.manifest.trace.storage.level = 9;
+    },
+    (value) => {
+      value.manifest.cleanup.fixtureClosed = false;
+    },
+    (value) => {
+      value.manifest.cleanup.sessionDetached = false;
+    },
+    (value) => {
+      value.manifest.trace.transport.sha256 = '';
+    },
+    (value) => {
+      delete value.manifest.instrumentation.storage;
     },
     (value) => {
       delete value.manifest.harnessSha256['e2e/doc-responsiveness-callback-trace.ts'];
@@ -444,11 +525,15 @@ test('allows only controlled matched baseline harness copies, including trimmed 
   }
 });
 
-test('CI overlays exactly the declared callback harness, preserving unrelated baseline source', async () => {
+test('CI pins the declared baseline and overlays only the matched callback harness', async () => {
   const workflow = await readFile(
     new URL('../../.github/workflows/ci.yml', import.meta.url),
     'utf8',
   );
+  const checkout = workflow
+    .split('      - name: Immutable merged SPN-108 baseline\n')[1]
+    ?.split('      - name:')[0];
+  assert.equal(checkout?.match(/^          ref: ([a-f0-9]{40})$/m)?.[1], DOC_CALLBACK_BASELINE);
   const overlay = workflow
     .split('      - name: Match callback workload and read-only observations\n')[1]
     ?.split('      - name:')[0];
@@ -475,8 +560,20 @@ async function temporary(t: { after: (callback: () => Promise<void>) => void }) 
 
 async function retain(directory: string) {
   const value = evidence('candidate');
-  await writeFile(join(directory, value.manifest.trace.file), rawBytes);
+  await writeFile(join(directory, value.manifest.trace.file), protoBytes);
+  await writeFile(join(directory, value.manifest.convertedTrace.file), rawBytes);
+  await writeFile(join(directory, value.manifest.conversionReceipt.file), receiptBytes());
   for (const source of sourceFiles) await writeFile(join(directory, source.file), source.content);
+  await writeFile(
+    join(directory, 'spn134-progress.json'),
+    JSON.stringify({
+      schema: 1,
+      terminal: 'passed',
+      firstFailure: null,
+      persistenceFailure: null,
+      events: [{ phase: 'fixture-cleanup-complete' }],
+    }),
+  );
   await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(value.manifest));
   return value.manifest;
 }
@@ -524,9 +621,16 @@ test('stored accepted analysis is checked against raw lifetimes, even when the r
     return !(value.name === 'TimerRemove' && value.args?.data?.timerId === 1);
   });
   const bytes = gzipSync(JSON.stringify(altered));
-  await writeFile(join(directory, manifest.trace.file), bytes);
-  manifest.trace.sha256 = hash(bytes);
-  manifest.trace.bytes = Buffer.byteLength(bytes);
+  await writeFile(join(directory, manifest.convertedTrace.file), bytes);
+  manifest.convertedTrace.sha256 = hash(bytes);
+  manifest.convertedTrace.bytes = Buffer.byteLength(bytes);
+  manifest.convertedTrace.decoded = {
+    bytes: Buffer.byteLength(JSON.stringify(altered)),
+    sha256: hash(JSON.stringify(altered)),
+  };
+  const receipt = receiptBytes(manifest.convertedTrace);
+  manifest.conversionReceipt = receiptArtifact(receipt);
+  await writeFile(join(directory, manifest.conversionReceipt.file), receipt);
   await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
   const loaded = await loadDocCallbackEvidence(directory);
   assert.equal(loaded.analysis?.accepted, false);
@@ -589,4 +693,179 @@ test('candidate-only callback evidence retains first-attempt/source/content/boun
       false,
     );
   }
+});
+
+test('stored gzip provenance and decoded transport identity cannot be borrowed or omitted', async (t) => {
+  const directory = await temporary(t);
+  for (const change of [
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.transport.sha256 = '0'.repeat(64);
+    },
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.transport.bytes++;
+    },
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.storage.level = 9;
+    },
+    (manifest: DocCallbackManifest) => {
+      manifest.trace.completion.streamCompression = 'gzip';
+    },
+  ]) {
+    const manifest = await retain(directory);
+    change(manifest);
+    await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+    const loaded = await loadDocCallbackEvidence(directory);
+    assert.ok(loaded.failures.length);
+    assert.equal(
+      compareDocCallbackEvidence(
+        'desktop',
+        evidence('baselineObservation'),
+        loaded,
+        candidateSource,
+      ).accepted,
+      false,
+    );
+  }
+});
+
+test('a stale passing manifest cannot override missing, timed-out or failed terminal progress', async (t) => {
+  const directory = await temporary(t);
+  for (const terminal of [undefined, 'timedOut', 'failed']) {
+    await retain(directory);
+    if (terminal === undefined) await rm(join(directory, 'spn134-progress.json'));
+    else
+      await writeFile(
+        join(directory, 'spn134-progress.json'),
+        JSON.stringify({
+          schema: 1,
+          terminal,
+          firstFailure: { kind: terminal },
+          persistenceFailure: null,
+          events: [{ phase: 'fixture-cleanup-complete' }],
+        }),
+      );
+    const loaded = await loadDocCallbackEvidence(directory);
+    assert.equal(loaded.manifest.passed, true);
+    assert.ok(loaded.failures.length);
+    assert.equal(
+      compareDocCallbackEvidence(
+        'desktop',
+        evidence('baselineObservation'),
+        loaded,
+        candidateSource,
+      ).accepted,
+      false,
+    );
+  }
+});
+
+test('missing or modified conversion authority, statistics and cleanup cannot borrow passing analysis', async (t) => {
+  const directory = await temporary(t);
+  for (const mutate of [
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.authority.sha256 = '0'.repeat(64) as typeof record.authority.sha256;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.input.sha256 = '0'.repeat(64);
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.framing.packets++;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.output.sha256 = '0'.repeat(64);
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.passed = false;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.temporaryRemoved = false;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.statistics.args[3] = '/different/input.pftrace';
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.statistics.stdout = '';
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.statistics.stdout += '"lost","data_loss",1\n';
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.statistics.stdout = 'name,severity,value\n';
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.statistics.code = 1;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.conversion.childClosed = false;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      record.conversion.diagnosticsTruncated = true;
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      Object.assign(record, { inputCloseFailure: 'late close failed' });
+    },
+    (record: ReturnType<typeof conversionRecord>) => {
+      Object.assign(record.conversion, { outputCloseFailure: 'late output close failed' });
+    },
+  ]) {
+    const manifest = await retain(directory);
+    const record = conversionRecord(structuredClone(manifest.convertedTrace));
+    mutate(record);
+    const bytes = Buffer.from(JSON.stringify(record));
+    manifest.conversionReceipt = receiptArtifact(bytes);
+    await writeFile(join(directory, manifest.conversionReceipt.file), bytes);
+    await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+    const loaded = await loadDocCallbackEvidence(directory);
+    assert.ok(loaded.failures.length, JSON.stringify(record));
+    assert.equal(
+      compareDocCallbackEvidence('desktop', null, loaded, candidateSource).accepted,
+      false,
+    );
+  }
+  const manifest = await retain(directory);
+  await rm(join(directory, manifest.conversionReceipt.file));
+  assert.ok((await loadDocCallbackEvidence(directory)).failures.length);
+});
+
+test('complete-looking raw protobuf truncation cannot be hidden by updating its stored checksum', async (t) => {
+  const directory = await temporary(t),
+    manifest = await retain(directory);
+  const truncated = gzipSync(proto.subarray(0, proto.length - 1));
+  await writeFile(join(directory, manifest.trace.file), truncated);
+  manifest.trace.bytes = truncated.length;
+  manifest.trace.sha256 = hash(truncated);
+  await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+  const loaded = await loadDocCallbackEvidence(directory);
+  assert.match(loaded.failures.join('\n'), /Truncated/);
+  assert.equal(
+    compareDocCallbackEvidence('desktop', null, loaded, candidateSource).accepted,
+    false,
+  );
+});
+
+test('individually supported converter artifacts still must match across the pair', async (t) => {
+  const directory = await temporary(t),
+    manifest = await retain(directory);
+  const record = conversionRecord();
+  record.authority = docTraceProcessorAuthority('darwin', 'arm64');
+  const bytes = Buffer.from(JSON.stringify(record));
+  manifest.conversionReceipt = receiptArtifact(bytes);
+  await writeFile(join(directory, manifest.conversionReceipt.file), bytes);
+  // A valid alternative binary cannot silently replace the declared instrument.
+  await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+  assert.match((await loadDocCallbackEvidence(directory)).failures.join('\n'), /authority/);
+  manifest.instrumentation.converterAuthority = record.authority;
+  await writeFile(join(directory, 'spn113-evidence.json'), JSON.stringify(manifest));
+  const candidate = await loadDocCallbackEvidence(directory);
+  assert.deepEqual(candidate.failures, []);
+  const baseline = evidence('baselineObservation');
+  assert.match(
+    compareDocCallbackEvidence('desktop', baseline, candidate, candidateSource).failures.join('\n'),
+    /Paired instrumentation differs/,
+  );
+  baseline.manifest.instrumentation.converterAuthority = record.authority;
+  assert.equal(
+    compareDocCallbackEvidence('desktop', baseline, candidate, candidateSource).accepted,
+    true,
+  );
 });

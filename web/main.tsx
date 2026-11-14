@@ -1,5 +1,9 @@
 import { registerAppWorker } from './installApp.ts';
-import { parseShellManifest, sameCompatibility } from '../src/shared/offlineShell.ts';
+import {
+  CURRENT_SDK_VERSION,
+  parseShellManifest,
+  sameCompatibility,
+} from '../src/shared/offlineShell.ts';
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import { installRuntimeHost, runtimeRequest } from './offline/runtime.ts';
 import type { RuntimeHost } from './offline/runtime.ts';
@@ -13,6 +17,7 @@ const descriptor = document.getElementById('spinel-runtime')?.textContent;
 const current = descriptor ? parseShellManifest(descriptor) : null;
 let retire: (() => void) | undefined;
 let sequence = 0;
+let startupStage = 'bootstrap';
 const styles = new Map<string, HTMLLinkElement>();
 
 async function loadStyles(manifest: ShellManifest, verify: () => void) {
@@ -54,7 +59,7 @@ async function loadStyles(manifest: ShellManifest, verify: () => void) {
 
 const host: RuntimeHost = {
   manifest: current,
-  compatibility: current?.compatibility ?? { format: 1, sdkVersion: '1.1.0' },
+  compatibility: current?.compatibility ?? { format: 1, sdkVersion: CURRENT_SDK_VERSION },
   async switchTo(manifest, verifyCurrent) {
     await start(manifest, verifyCurrent);
   },
@@ -62,7 +67,11 @@ const host: RuntimeHost = {
 installRuntimeHost(host);
 registerAppWorker();
 
-async function start(manifest: ShellManifest | null, verifyCurrent: () => void) {
+async function start(
+  manifest: ShellManifest | null,
+  verifyCurrent: () => void,
+  stage: (value: string) => void = () => {},
+) {
   const operation = ++sequence;
   const verify = () => {
     verifyCurrent();
@@ -71,12 +80,15 @@ async function start(manifest: ShellManifest | null, verifyCurrent: () => void) 
   verify();
   // The production entry is a public descriptor URL; the bootstrap has no static
   // dependency on React, the application, native editor code, or any private data.
+  stage('application-import');
   const application = (
     manifest ? await import(/* @vite-ignore */ manifest.entry) : await import('./application.tsx')
   ) as Application;
   verify();
+  stage('compatibility');
   if (manifest && !sameCompatibility(manifest.compatibility, application.compatibility))
     throw new Error('This saved editor does not match its app version.');
+  stage('styles');
   const prepared = manifest ? await loadStyles(manifest, verify) : [];
   try {
     verify();
@@ -98,6 +110,7 @@ async function start(manifest: ShellManifest | null, verifyCurrent: () => void) 
     link.media = 'all';
     styles.set(new URL(link.href).pathname, link);
   }
+  stage('application-start');
   retire = application.startApplication(root, host);
   if (manifest) void runtimeRequest('claim', manifest.version).catch(() => {});
 }
@@ -119,9 +132,26 @@ async function boot() {
       /* App admission independently checks retained data before exposure. */
     }
   }
-  await start(selected, () => {});
+  await start(
+    selected,
+    () => {},
+    (stage) => {
+      startupStage = stage;
+    },
+  );
 }
-void boot().catch(() => {
+void boot().catch((error: unknown) => {
+  // Report only bounded public identities: exception text/stack may contain
+  // document content, URLs or account identifiers. Keep saved data untouched.
+  const names = ['Error', 'TypeError', 'ReferenceError', 'SyntaxError', 'AbortError'];
+  const name = error instanceof Error ? error.name : '';
+  console.error(
+    '[spinel:startup]',
+    JSON.stringify({
+      stage: startupStage,
+      errorName: names.includes(name) ? name : 'UnknownError',
+    }),
+  );
   root.textContent =
     'Spinel could not start. Connect and reload to try again. Your saved device data has not been changed.';
 });

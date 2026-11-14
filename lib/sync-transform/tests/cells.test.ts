@@ -822,10 +822,9 @@ describe('a drag against a concurrent edit of its cells', () => {
 });
 
 describe('a number format against a write to its cell that sets no value', () => {
-  // Once dense seed 627, shrunk: SetNumfmtCommand '@' sends no retype, so the
-  // cell keeps its boolean under text format. Bold written under '@' turns it
-  // to text "1", which '0%' then types as a number; bold written after '0%'
-  // leaves the boolean.
+  // Once dense seed 627, shrunk: SetNumfmtCommand '@' sends no retype.
+  // Univer 1.3.1's mergeCellData preserves an existing value/type for style-only
+  // writes when their number format does not change, including bold under '@'.
   const setup = [
     set({ 2: { 1: { s: { n: { pattern: '0.00' } }, v: 'TRUE' } } }, { isOverrideStyle: true }),
     setNumfmt('@', [range(2, 1, 3, 1)]),
@@ -833,16 +832,15 @@ describe('a number format against a write to its cell that sets no value', () =>
   const percent = setNumfmt('0%', [range(2, 1, 3, 1)]);
   const sides = ['left', 'right'] as const;
 
-  // No format race is left to refuse. Both orders land the cell Univer makes
-  // of the loser, then the winner: bold under '@' turns the boolean to text
-  // "1", which '0%' then types as a number.
+  // No format race is left to refuse. Both orders must still match the real
+  // native loser-then-winner result, retaining the boolean on either side.
   test('converges, both ways and on either side', () => {
     const bold = cell(2, 1, { s: { bl: 0 } });
     landsInTurn(bold, percent, 2, 1, setup);
     landsInTurn(percent, bold, 2, 1, setup);
     const s = { bl: 0, n: { pattern: '0%' } };
     expect(merged(bold, percent, 'left', setup)[2][1]).toEqual({ v: 1, t: 3, s });
-    expect(merged(bold, percent, 'right', setup)[2][1]).toEqual({ v: '1', t: 1, s });
+    expect(merged(bold, percent, 'right', setup)[2][1]).toEqual({ v: 1, t: 3, s });
   });
 
   // Once seed 13 of the cuts to other sheets, shrunk: '0%' as a style and a

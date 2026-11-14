@@ -77,13 +77,17 @@ the exact Space root and host child when the historical Doc belongs to a Space.
 Importing a native file keeps source-bound expressions as ordinary text and
 removes their active bindings, so foreign IDs cannot attach to unrelated local
 files. Source-free formulas can remain active. Reinsert a source-bound expression
-using local sources to activate it. Bulk import/remapping is SPN-067.
+using local sources to activate it. [Owned workspace archives](files.md#doc-formulas-in-files)
+use SPN-067's deliberate reference remapping instead of native-file detachment.
 MCP plain-text edits cannot split a Formula object; replacing its whole range
 removes the annotation along with its text.
 
-Current printing uses unavailable/source-expression output for formulas rather
-than cached results. The replacement PDF renderer (SPN-075) and optional format
-plugins (SPN-094) must authorize all sources before emitting any calculated result.
+📄 [PDF export](files.md#export-as-pdf) evaluates Formula values and complete tables
+under the requesting reader's current permissions. An unavailable source replaces
+the whole Formula with **Unavailable**, without its source name or expression.
+Source loss after rendering discards the old PDF bytes and rebuilds once with the
+Formula unavailable; another change fails. Host/session/link loss aborts generation.
+Optional format plugins (SPN-094) must preserve the same source-access boundary.
 Social cards continue to show only the host title and document type.
 
 ## Bounds and layout

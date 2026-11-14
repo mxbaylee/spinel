@@ -82,7 +82,39 @@ test invented to mirror the prose.
   traces. Performance acceptance uses its existing unprofiled first attempts;
   profiled diagnostics and successful retries cannot replace those samples.
 
+## 🔬 Callback trace conversion
+
+The callback lifetime project keeps its original420-second observation budget,
+categories,1GiB non-overwriting buffer and full native workload. SPN-144's guarded
+candidate retains original protobuf separately from derived Chrome JSON; both
+have stored/decoded hashes. Complete framing, pinned converter identity, strict
+parser statistics, source attribution and owned cleanup are all required. See
+[the implementation and acceptance checkpoint](implementation/SPN-144.md#-guarded-integration-decision).
+
+CI prepares the official pinned converter before either paired observation. For
+local capability work, explicitly install it into a new task-owned path with
+`node scripts/ci/doc-trace-processor.ts <new-binary-path>` and set
+`SPINEL_TRACE_PROCESSOR` to that absolute path. The harness verifies its platform
+hash before execution and never downloads during an observation. Only the pinned
+Linux x64 CI and macOS arm64 development binaries are supported. Installing the
+tool or passing a small retained-data probe does not establish native acceptance.
+
 ## Give each browser execution a reason
+
+### 🔄 Offline-upgrade worker ownership
+
+The existing Chromium `offline-upgrade` project owns emitted-worker activation.
+Its SPN-145 response-lifetime comparison uses the actual historical worker's
+`PREPARE_SHELL`/`cache.put` owner and the shared real HTTP proxy; it must not be
+replaced with an injected `waitUntil` or mock worker. The retained-client scenario
+keeps pending content, lazy assets, the missing-asset negative case, strict
+activation, access checks and existing budgets. Passive first-attempt worker
+diagnostics must be complete and owned cleanup must preserve the first failure.
+See [the repair and historical attribution limit](implementation/SPN-145.md#-original-incident-disposition-and-new-evidence).
+Retries and later green runs cannot establish the historical cause or waive a
+failed current-head worker.
+
+### Environment ownership
 
 Before adding a project, tag or duplicate execution, record which contract each
 environment owns: development/production, HTTP/HTTPS, ordinary/instrumented

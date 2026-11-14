@@ -1,0 +1,130 @@
+{
+  "source": "81c070ad8c9763e60fb80d19236be6974d941962",
+  "tree": "ab0a7af6f2de3f683545667907e3670e8263a585",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "tested": "8fe1ab79a49e206368a5e5ec336dad4877ce35b0",
+  "ciRun": 43365713715,
+  "storybookRun": 43365713676,
+  "attempt": 1,
+  "offlineJob": 131690315932,
+  "storybookJob": 131690669547,
+  "storybookAggregateJob": 131696016739,
+  "ciPlanDigest": "08a6493c412251af4753765e8a46d7c3c14e6b6ebca07b6ad06435c2fc189437",
+  "artifacts": [
+    {
+      "id": 14010624519,
+      "sha256": "6491e3f183295ed4609be433707178bc37dbc23f03ec42450abfa0e99136f57d",
+      "bytes": 3900635
+    },
+    {
+      "id": 14010872192,
+      "sha256": "6c17fa32a347ebf32ec6b4239a9c281312e2d0e490af8eddede03e4a65afd683",
+      "bytes": 62314
+    }
+  ],
+  "disposition": "Failed current-head acceptance; no manual rerun. Repair required, not qualified.",
+  "limitations": [
+    "Offline control async waitForFunction predicates ended their polls prematurely; emitted-worker activation is not proved on this source.",
+    "Control failed retries 0, 1 and 2; the two real application scenarios did not run.",
+    "First-attempt trace ZIP absent; available trace belongs to retry 1.",
+    "Storybook lacks initial skeleton progress snapshot; incomplete initial baseline is source-supported, not a proven historical event ordering."
+  ],
+  "files": [
+    {
+      "file": "offline-control-retry-0.json",
+      "source": "hosted-43365713715/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade/spn-055-worker-response-control.json",
+      "sourceBytes": 4293,
+      "sourceSha256": "af317d7257feb975488cedab25ad740736a1a28d8af3695ab254de620e24f085",
+      "storedSha256": "af317d7257feb975488cedab25ad740736a1a28d8af3695ab254de620e24f085",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "offline-control-retry-1.json",
+      "source": "hosted-43365713715/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade-retry1/spn-055-worker-response-control.json",
+      "sourceBytes": 4294,
+      "sourceSha256": "9c57b9cf6f748dd196627f3ef365d2087430e3564688f5d6c74c6146a7ee45a1",
+      "storedSha256": "9c57b9cf6f748dd196627f3ef365d2087430e3564688f5d6c74c6146a7ee45a1",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "offline-control-retry-2.json",
+      "source": "hosted-43365713715/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade-retry2/spn-055-worker-response-control.json",
+      "sourceBytes": 4293,
+      "sourceSha256": "d6e448ca24399a7d4e30644dd91ba11fdf244a4b7529f60f0b0a8f78aba5c84a",
+      "storedSha256": "d6e448ca24399a7d4e30644dd91ba11fdf244a4b7529f60f0b0a8f78aba5c84a",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "offline-error-context.md",
+      "source": "hosted-43365713715/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade/error-context.md",
+      "sourceBytes": 7200,
+      "sourceSha256": "25cd73910499780e68037ea4f363d6f8718bf09ec00d4fb8467f1c69649a2b5d",
+      "storedSha256": "25cd73910499780e68037ea4f363d6f8718bf09ec00d4fb8467f1c69649a2b5d",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "offline-first-failure.png",
+      "source": "hosted-43365713715/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade/test-failed-1.png",
+      "sourceBytes": 4254,
+      "sourceSha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+      "storedSha256": "3878570f4a62a0d65f57cf1754e0269e56ec797f4e36e26b44c172eb6e800401",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "offline-upgrade-report.json.gz",
+      "source": "hosted-43365713715/offline-first-failure/extracted/playwright-report/offline-upgrade.json",
+      "sourceBytes": 1424218,
+      "sourceSha256": "f010698969a09e9a3fbca457782ead41a0ce595892802e6ffe7b3b2d0f5a9890",
+      "storedSha256": "aa1e55d0ab4a105884216697761564218238ed552b395f89d5a8d692d4ae0732",
+      "encoding": "gzip"
+    },
+    {
+      "file": "offline-job.log.gz",
+      "source": "hosted-43365713715/offline-first-failure/job-131690315932.log",
+      "sourceBytes": 95680,
+      "sourceSha256": "22fba68fb9346c9a61a46dbfc78d9097454ff55bb4d83a85833661715fed85a8",
+      "storedSha256": "83792d2ce99b4baa44f0757f8db12b24b114440d8cc02f6cb292f4fa282282c3",
+      "encoding": "gzip"
+    },
+    {
+      "file": "storybook-viewer.json",
+      "source": "hosted-43365713676/failed-docs-mobile--viewer-phone-dark.json",
+      "sourceBytes": 8795,
+      "sourceSha256": "b5914420245c7ae18a99fc071e50a1d520d6e1d68cf909925f0f643408ddbae1",
+      "storedSha256": "b5914420245c7ae18a99fc071e50a1d520d6e1d68cf909925f0f643408ddbae1",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "storybook-viewer.png",
+      "source": "hosted-43365713676/failed-docs-mobile--viewer-phone-dark.png",
+      "sourceBytes": 44219,
+      "sourceSha256": "2089ecb7392824bf1a59d1053bc86a73c280a66d2134e76b991eae458e2d3f55",
+      "storedSha256": "2089ecb7392824bf1a59d1053bc86a73c280a66d2134e76b991eae458e2d3f55",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "storybook-job.log.gz",
+      "source": "hosted-43365713676/job-131690669547.log",
+      "sourceBytes": 160495,
+      "sourceSha256": "072ae9ac65b49145fcfabc718d0d7fb7e54504c69c0f8fb1e9a4441f1c09700c",
+      "storedSha256": "21decdc145255dd0a445c7d64f82cd1e84ed0c125b615d691e954048001b26b1",
+      "encoding": "gzip"
+    },
+    {
+      "file": "storybook-aggregate.log.gz",
+      "source": "hosted-43365713676/job-131696016739.log",
+      "sourceBytes": 18721,
+      "sourceSha256": "d0c595945182d1abdf64ff06a7d46a3095bb816ff1b2791475acdb3c136771f0",
+      "storedSha256": "4eeda5cf4a648cc6718e5c903c63159526b49a9828176d48b6b478d0938d1df0",
+      "encoding": "gzip"
+    },
+    {
+      "file": "ci-plan.json",
+      "source": "hosted-43365713715/ci-plan.compact.json",
+      "sourceBytes": 20974,
+      "sourceSha256": "08a6493c412251af4753765e8a46d7c3c14e6b6ebca07b6ad06435c2fc189437",
+      "storedSha256": "08a6493c412251af4753765e8a46d7c3c14e6b6ebca07b6ad06435c2fc189437",
+      "encoding": "unchanged"
+    }
+  ]
+}

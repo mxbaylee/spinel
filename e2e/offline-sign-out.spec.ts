@@ -217,8 +217,8 @@ test('offline exit locks both tabs, keeps exact Space changes, drains before an 
         .filter({ hasText: `${nextItem.name} is available offline on this device.` }),
     ).toHaveText(`${nextItem.name} is available offline on this device.`, { timeout: 120_000 });
     const holds = await runtimeAccounts(profile);
-    expect(holds[f.actor.id]).toEqual({ format: 1, sdkVersion: '1.1.0' });
-    expect(holds[nextAccount]).toEqual({ format: 1, sdkVersion: '1.1.0' });
+    expect(holds[f.actor.id]).toEqual({ format: 1, sdkVersion: '1.3.1' });
+    expect(holds[nextAccount]).toEqual({ format: 1, sdkVersion: '1.3.1' });
     expect(
       await profile.evaluate(
         async () => (await caches.keys()).filter((name) => name.startsWith('spinel-shell-')).length,

@@ -264,13 +264,14 @@ test('F4: a style override past a null font colour clears the lines’ colour', 
 
 // Once refused as a format race; resolved on the cell (under '@'), both land
 // in either order, the loser then the winner, and keep what each wrote.
+// Univer 1.3.1's value-less fd write preserves the already-resolved text type.
 test('F5: a value written with a format clear and a write of no value both land', () => {
   const [a, b] = [write(2, 1, { v: '7', s: { n: null } }), write(2, 1, { fd: 1 })];
   expect(transform([a], [b], 'left', options)).toEqual([a]);
   expect(transform([b], [a], 'left', options)).toEqual([b]);
   expect(transform([a], [b], 'right', options)).toEqual([
-    absoluteWrite(2, 1, { v: 7, t: 2, fd: 1 }, { v: 7, t: 2, s: { n: null } }),
-    tail(2, 1, { fd: 1 }, 2),
+    absoluteWrite(2, 1, { v: '7', t: 1, fd: 1 }, { v: '7', t: 1, s: { n: null } }),
+    tail(2, 1, { fd: 1 }, 1),
   ]);
   expect(transform([b], [a], 'right', options)).toEqual([
     absoluteWrite(2, 1, { v: '7', t: 1, fd: 1 }, { fd: 1 }),

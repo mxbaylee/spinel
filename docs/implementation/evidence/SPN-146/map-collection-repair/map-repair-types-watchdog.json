@@ -1,0 +1,86 @@
+{
+  "root": 94601,
+  "started": 1793887692299,
+  "elapsedMs": 988,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90688,
+  "peakKiB": 307664,
+  "live": [
+    {
+      "pid": 94601,
+      "parent": 94367,
+      "group": 94601,
+      "rssKiB": 89168,
+      "started": "Thu Nov  5 06:08:12 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-types-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node --max-old-space-size=512 /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc -p /tmp/spn146-investigation/tsconfig-window.json"
+    },
+    {
+      "pid": 94677,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:13 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 94601,
+      "parent": 94367,
+      "group": 94601,
+      "rssKiB": 89168,
+      "started": "Thu Nov  5 06:08:12 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-types-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node --max-old-space-size=512 /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc -p /tmp/spn146-investigation/tsconfig-window.json"
+    },
+    {
+      "pid": 94620,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94632,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 217344,
+      "started": "Thu Nov  5 06:08:12 2026",
+      "command": "/Users/mxbaylee/projects/spinel/node_modules/@typescript/typescript-darwin-arm64/lib/tsc -p /tmp/spn146-investigation/tsconfig-window.json"
+    },
+    {
+      "pid": 94638,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94651,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:12 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94664,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:13 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94677,
+      "parent": 94601,
+      "group": 94601,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:08:13 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

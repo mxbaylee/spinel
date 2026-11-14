@@ -1,0 +1,147 @@
+{
+  "sourceSha": "32330c01cb26dfd19e1ee4a0ec474930d223279e",
+  "testedSha": "c9f497530e2d8225e340e7cc1f6ade9e9ef0648e",
+  "baseSha": "f2e36db45a4cd10f3ff2e1358c5a3c457344856a",
+  "run": 43222001951,
+  "attempt": 1,
+  "job": 131195571227,
+  "artifact": 13945309684,
+  "files": [
+    {
+      "path": "safari.zip",
+      "bytes": 1314764,
+      "sha256": "5cbd4d880e7fc2cc2efdae7b0e5524e500de232fba5e417dd552a234b0037c76"
+    },
+    {
+      "path": "job.log.gz",
+      "bytes": 41706,
+      "sha256": "bd23d46ab9754da531c367d42307a8aa32a449176e6784099bdea0c08b73ec68"
+    }
+  ],
+  "decodedLog": {
+    "bytes": 314740,
+    "sha256": "bff2e1fd2f6fa6a9627b24f2a09937b1ee7f05a6c3d6e8826aec62b87d8e0543"
+  },
+  "members": [
+    {
+      "path": "safari/1e9777ea-918f-4fba-bc3f-6f9442844b22-before-doc-input.png",
+      "bytes": 81608,
+      "crc32": "74b76dec",
+      "sha256": "4183a052ba5e716d2278db7a3c7d296ebe831a209de5dbb6cc11d760ecb7b980"
+    },
+    {
+      "path": "safari/acceptance.json",
+      "bytes": 40826,
+      "crc32": "e2eef358",
+      "sha256": "bd3d7ba8615b58d80d11c260baddcedc335438698bd11b4d0bef10208434ec7b"
+    },
+    {
+      "path": "safari/doc-conflict-offline.png",
+      "bytes": 83358,
+      "crc32": "951e0600",
+      "sha256": "8f55158384306e7416c4048af2a78fef8951a22e6aabd0667da63abcacb6ab2b"
+    },
+    {
+      "path": "safari/b9a6aaaf-7dd0-4ad1-9124-790c9583db50-before-doc-input.png",
+      "bytes": 81966,
+      "crc32": "888ad9be",
+      "sha256": "046f9eabf4eabd655224405b0240f493ebc3503c42c6cbff27ed32e7d553ddc7"
+    },
+    {
+      "path": "safari/doc-normal-offline.png",
+      "bytes": 83092,
+      "crc32": "4cac8d86",
+      "sha256": "0a4c46497f38fd9c8837f5f1acd68d37a3c5d6a1be2857e0a40ea84ac5f9f3a3"
+    },
+    {
+      "path": "safari/doc-online-before-download.png",
+      "bytes": 81888,
+      "crc32": "41a0acfa",
+      "sha256": "bdeb7f1544c68f838358bfeb9a1b1a27e6ed227fd7e96e6a2ab865961f470276"
+    },
+    {
+      "path": "safari/failure-screen.png",
+      "bytes": 221801,
+      "crc32": "a4e0f973",
+      "sha256": "7ff5616424c2cd041ac382b5c38a0d6b1c82720ecfe1b8445455a702ad9d3d94"
+    },
+    {
+      "path": "safari/doc-recovered-copy.png",
+      "bytes": 86453,
+      "crc32": "114b7146",
+      "sha256": "e7a71e98e2d4c92b962cb0e159264d207c53482f87c4c74af58ce2d5399cfb77"
+    },
+    {
+      "path": "safari/failure.png",
+      "bytes": 86453,
+      "crc32": "114b7146",
+      "sha256": "e7a71e98e2d4c92b962cb0e159264d207c53482f87c4c74af58ce2d5399cfb77"
+    },
+    {
+      "path": "safari/safari-pointer.jsonl",
+      "bytes": 20706,
+      "crc32": "6592d754",
+      "sha256": "b66fb179b9089c77dec0d28f91fa1fe1552057647ba4606c490abaccd2695b3d"
+    },
+    {
+      "path": "safari/safari-render-state.jsonl",
+      "bytes": 42184,
+      "crc32": "7e4499b6",
+      "sha256": "b5b9b2ba5d0177882382a66b01fcd0a3bd8a4e54e2d5b5e403493d6e93cdd61f"
+    },
+    {
+      "path": "safari/sheet-conflict-offline.png",
+      "bytes": 92656,
+      "crc32": "a425122a",
+      "sha256": "e648511409718df9a778b620a52d09cf7f28f8bbd15481b53a642ae3f228aaa8"
+    },
+    {
+      "path": "safari/sheet-normal-offline.png",
+      "bytes": 91795,
+      "crc32": "e5b00b84",
+      "sha256": "1be5744bdf93335a72d9b2fa2f83839dd4c6b4243f3b0a7f7a82e94476230580"
+    },
+    {
+      "path": "safari/sheet-online-before-download.png",
+      "bytes": 92165,
+      "crc32": "a2df5cdd",
+      "sha256": "d6c0077ff8a704d817c902dc1ed0741b0513a22ebd323f121fd0956e9eae0722"
+    },
+    {
+      "path": "safari/sheet-recovered-copy.png",
+      "bytes": 96594,
+      "crc32": "8b91ba6f",
+      "sha256": "06fbc0d2163f0c1093db4c360b9f0e27bd0591c0f7046fa0aa70ca78a495cb93"
+    },
+    {
+      "path": "safari/versions.json",
+      "bytes": 858,
+      "crc32": "3d282315",
+      "sha256": "18c8f49d02224cd38e7d00fe48156d8bd000a728409c1040be57f7e5e92cc7d8"
+    },
+    {
+      "path": "safari-automation-prompt-1.png",
+      "bytes": 294323,
+      "crc32": "ee010605",
+      "sha256": "df8c418a2b3733b102e897ad56d72750c09e9a8fd8872b7ed5324ad94212099e"
+    },
+    {
+      "path": "safari-profile-probe-offline.png",
+      "bytes": 65047,
+      "crc32": "fd7de4b1",
+      "sha256": "2573edd4aad43b11ddcd609597b5378fd919e02432df7d23c2326f9dcda8c7c1"
+    },
+    {
+      "path": "safari-profile-probe-online.png",
+      "bytes": 65204,
+      "crc32": "6dc48c8e",
+      "sha256": "ee0d6e9156bc5d93c2ca9c3d9f822b15e101334f4cc478af99c550bce849e042"
+    },
+    {
+      "path": "safari-profile-probe.json",
+      "bytes": 171479,
+      "crc32": "11d89acb",
+      "sha256": "ace6380407728fd5a161768c59d4d9e6342cf711903e5dba5b8939d2f1f7349a"
+    }
+  ]
+}

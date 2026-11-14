@@ -181,6 +181,10 @@ try {
               pixelsHigh: (node as HTMLCanvasElement).height,
             }));
           const initialCanvasSize = await canvasSize();
+          await writeFile(
+            resolve(directory, `${id}-${variant}-initial-geometry.json`),
+            JSON.stringify(await nativeEditorGeometry(page), null, 2),
+          );
           await page.setViewportSize({ width, height: testHeight });
           if (width === 390) {
             await expect
@@ -534,6 +538,7 @@ async function recordCaptureFailure(page: Page, id: string, variant: string, err
       undefined,
       { timeout: 5000 },
     ),
+    nativeEditorGeometry(page),
   ]);
   const failure = {
     id,
@@ -562,10 +567,40 @@ async function recordCaptureFailure(page: Page, id: string, variant: string, err
           evidence[1].status === 'fulfilled'
             ? evidence[1].value.slice(0, 16000)
             : String(evidence[1].reason).slice(0, 1000),
+        nativeGeometry:
+          evidence[3].status === 'fulfilled'
+            ? evidence[3].value
+            : String(evidence[3].reason).slice(0, 1000),
       },
       null,
       2,
     ),
+  );
+}
+
+async function nativeEditorGeometry(page: Page) {
+  return page.locator('html').evaluate(
+    () => {
+      const editor = document.querySelector('.rd-native-editor');
+      const canvas = editor?.querySelector<HTMLCanvasElement>('canvas[aria-label]');
+      const statistics = editor?.querySelector('[aria-label="View document statistics"]');
+      const bounds = (node: Element | null | undefined) => node?.getBoundingClientRect().toJSON();
+      return {
+        viewport: { width: innerWidth, height: innerHeight, scale: devicePixelRatio },
+        host: bounds(editor),
+        layout: bounds(
+          editor?.querySelector('[data-u-comp="app-layout"], [data-u-comp="workbench-layout"]'),
+        ),
+        toolbar: bounds(editor?.querySelector('[role="toolbar"]')),
+        statistics: bounds(statistics),
+        statisticsParent: bounds(statistics?.parentElement),
+        mount: bounds(canvas?.parentElement),
+        canvas: bounds(canvas),
+        bitmap: canvas ? { width: canvas.width, height: canvas.height } : undefined,
+      };
+    },
+    undefined,
+    { timeout: 5000 },
   );
 }
 
@@ -591,6 +626,15 @@ async function waitForNativeEditor(page: Page) {
       const canvas = editor.locator('canvas[aria-label]');
       await expect(canvas).toBeVisible();
       await expect(editor.locator('[data-u-comp="workbench-skeleton-toolbar"]')).toBeHidden();
+      if ((await canvas.getAttribute('aria-label')) === 'Document canvas') {
+        // The Doc footer mounts from rootUnitType$ after native ready. Sampling
+        // before its real controls appear can record a canvas 40px too tall.
+        await expect(editor.getByRole('toolbar', { name: 'Start', exact: true })).toBeVisible();
+        await expect(
+          editor.getByRole('button', { name: 'View document statistics', exact: true }),
+        ).toBeVisible();
+        await expect(editor.getByRole('textbox', { name: 'Zoom', exact: true })).toBeVisible();
+      }
       // Ready can precede the SDK's two-frame skeleton dismissal and idle resize.
       // Match its public DOM mount dimensions before taking a baseline or capture.
       await expect
@@ -598,9 +642,14 @@ async function waitForNativeEditor(page: Page) {
           canvas.evaluate((node) => {
             const parent = getComputedStyle(node.parentElement!);
             const box = node.getBoundingClientRect();
+            const bitmap = node as HTMLCanvasElement;
             return (
               Math.abs(box.width - parseFloat(parent.width)) <= 1 &&
-              Math.abs(box.height - parseFloat(parent.height)) <= 1
+              Math.abs(box.height - parseFloat(parent.height)) <= 1 &&
+              Math.abs(bitmap.width - Math.round(parseFloat(parent.width) * devicePixelRatio)) <=
+                1 &&
+              Math.abs(bitmap.height - Math.round(parseFloat(parent.height) * devicePixelRatio)) <=
+                1
             );
           }),
         )
