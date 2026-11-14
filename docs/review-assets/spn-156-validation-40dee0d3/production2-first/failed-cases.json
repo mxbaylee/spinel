@@ -1,0 +1,542 @@
+[
+  {
+    "title": "real browser quota failure retains pending work and images without a partial new download",
+    "ok": false,
+    "tags": [],
+    "tests": [
+      {
+        "timeout": 240000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "production",
+        "projectName": "production",
+        "results": [
+          {
+            "workerIndex": 1,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 33931,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"107163c1-a703-420e-9d94-573e00a1619a\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/c276e7df-fcb8-4045-ab68-67cb6bdcb29b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"VhXutE\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"VhXutE\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[22m",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"107163c1-a703-420e-9d94-573e00a1619a\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/c276e7df-fcb8-4045-ab68-67cb6bdcb29b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"VhXutE\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"VhXutE\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[22m\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:522:61",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                "column": 61,
+                "line": 522
+              },
+              "snippet": "\u001b[0m \u001b[90m 520 |\u001b[39m     expect(failedCopy\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mitem)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\n \u001b[90m 521 |\u001b[39m     expect(failedCopy\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mimages)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 522 |\u001b[39m     expect(\u001b[36mawait\u001b[39m deviceCopy(f\u001b[33m.\u001b[39mpage\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mactor\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mitem\u001b[33m.\u001b[39mid))\u001b[33m.\u001b[39mtoEqual(retained)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 523 |\u001b[39m     assertImageBytes(retained\u001b[33m!\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 524 |\u001b[39m     expect(\u001b[36mawait\u001b[39m f\u001b[33m.\u001b[39mread())\u001b[33m.\u001b[39mtoEqual(original)\u001b[33m;\u001b[39m\n \u001b[90m 525 |\u001b[39m     \u001b[36mawait\u001b[39m cdp\u001b[33m.\u001b[39msend(\u001b[32m'Storage.overrideQuotaForOrigin'\u001b[39m\u001b[33m,\u001b[39m { origin\u001b[33m:\u001b[39m baseURL\u001b[33m!\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                  "column": 61,
+                  "line": 522
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"107163c1-a703-420e-9d94-573e00a1619a\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/c276e7df-fcb8-4045-ab68-67cb6bdcb29b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"VhXutE\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"VhXutE\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"c276e7df-fcb8-4045-ab68-67cb6bdcb29b\",\u001b[22m\n\n  520 |     expect(failedCopy?.item).toBeUndefined();\n  521 |     expect(failedCopy?.images).toEqual([]);\n> 522 |     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);\n      |                                                             ^\n  523 |     assertImageBytes(retained!);\n  524 |     expect(await f.read()).toEqual(original);\n  525 |     await cdp.send('Storage.overrideQuotaForOrigin', { origin: baseURL! });\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:522:61"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 0,
+            "startTime": "2026-11-14T08:14:02.533Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "spn-055-quota-boundary",
+                "contentType": "application/json",
+                "body": "ewogICJiZWZvcmUiOiB7CiAgICAidXNhZ2UiOiAyNTgyMTk4NSwKICAgICJxdW90YSI6IDEwNDgwODMwMTgsCiAgICAib3ZlcnJpZGVBY3RpdmUiOiBmYWxzZSwKICAgICJ1c2FnZUJyZWFrZG93biI6IFsKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJmaWxlX3N5c3RlbXMiLAogICAgICAgICJ1c2FnZSI6IDAKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJpbmRleGVkZGIiLAogICAgICAgICJ1c2FnZSI6IDMwMzEwNAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImNhY2hlX3N0b3JhZ2UiLAogICAgICAgICJ1c2FnZSI6IDI1NDkzNTg3CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAic2VydmljZV93b3JrZXJzIiwKICAgICAgICAidXNhZ2UiOiAyNTI5NAogICAgICB9CiAgICBdCiAgfSwKICAiZXhoYXVzdGVkIjogewogICAgInVzYWdlIjogMzM0NDA1NDUsCiAgICAicXVvdGEiOiAyNTg4NzUyMSwKICAgICJvdmVycmlkZUFjdGl2ZSI6IHRydWUsCiAgICAidXNhZ2VCcmVha2Rvd24iOiBbCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiZmlsZV9zeXN0ZW1zIiwKICAgICAgICAidXNhZ2UiOiAwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiaW5kZXhlZGRiIiwKICAgICAgICAidXNhZ2UiOiA3OTIxNjY0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTM1ODcKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9LAogICJhcm1lZCI6IHsKICAgICJ1c2FnZSI6IDMzNDQwNTQ1LAogICAgInF1b3RhIjogMzM5NjQ4MzMsCiAgICAib3ZlcnJpZGVBY3RpdmUiOiB0cnVlLAogICAgInVzYWdlQnJlYWtkb3duIjogWwogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImZpbGVfc3lzdGVtcyIsCiAgICAgICAgInVzYWdlIjogMAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImluZGV4ZWRkYiIsCiAgICAgICAgInVzYWdlIjogNzkyMTY2NAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImNhY2hlX3N0b3JhZ2UiLAogICAgICAgICJ1c2FnZSI6IDI1NDkzNTg3CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAic2VydmljZV93b3JrZXJzIiwKICAgICAgICAidXNhZ2UiOiAyNTI5NAogICAgICB9CiAgICBdCiAgfQp9"
+              },
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/error-context.md"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+              "column": 61,
+              "line": 522
+            }
+          },
+          {
+            "workerIndex": 2,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 34496,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"f850b89f-1918-4665-af6e-431742b8e58d\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/537058c8-49a8-416b-8004-9eb5fee3b59e/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"gUMbt7\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"gUMbt7\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[22m",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"f850b89f-1918-4665-af6e-431742b8e58d\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/537058c8-49a8-416b-8004-9eb5fee3b59e/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"gUMbt7\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"gUMbt7\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[22m\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:522:61",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                "column": 61,
+                "line": 522
+              },
+              "snippet": "\u001b[0m \u001b[90m 520 |\u001b[39m     expect(failedCopy\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mitem)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\n \u001b[90m 521 |\u001b[39m     expect(failedCopy\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mimages)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 522 |\u001b[39m     expect(\u001b[36mawait\u001b[39m deviceCopy(f\u001b[33m.\u001b[39mpage\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mactor\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mitem\u001b[33m.\u001b[39mid))\u001b[33m.\u001b[39mtoEqual(retained)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 523 |\u001b[39m     assertImageBytes(retained\u001b[33m!\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 524 |\u001b[39m     expect(\u001b[36mawait\u001b[39m f\u001b[33m.\u001b[39mread())\u001b[33m.\u001b[39mtoEqual(original)\u001b[33m;\u001b[39m\n \u001b[90m 525 |\u001b[39m     \u001b[36mawait\u001b[39m cdp\u001b[33m.\u001b[39msend(\u001b[32m'Storage.overrideQuotaForOrigin'\u001b[39m\u001b[33m,\u001b[39m { origin\u001b[33m:\u001b[39m baseURL\u001b[33m!\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                  "column": 61,
+                  "line": 522
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"f850b89f-1918-4665-af6e-431742b8e58d\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/537058c8-49a8-416b-8004-9eb5fee3b59e/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"gUMbt7\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"gUMbt7\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"537058c8-49a8-416b-8004-9eb5fee3b59e\",\u001b[22m\n\n  520 |     expect(failedCopy?.item).toBeUndefined();\n  521 |     expect(failedCopy?.images).toEqual([]);\n> 522 |     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);\n      |                                                             ^\n  523 |     assertImageBytes(retained!);\n  524 |     expect(await f.read()).toEqual(original);\n  525 |     await cdp.send('Storage.overrideQuotaForOrigin', { origin: baseURL! });\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:522:61"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 1,
+            "startTime": "2026-11-14T08:14:37.498Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "spn-055-quota-boundary",
+                "contentType": "application/json",
+                "body": "ewogICJiZWZvcmUiOiB7CiAgICAidXNhZ2UiOiAyNTgyMDY4OSwKICAgICJxdW90YSI6IDk3MTc2NDk3OCwKICAgICJvdmVycmlkZUFjdGl2ZSI6IGZhbHNlLAogICAgInVzYWdlQnJlYWtkb3duIjogWwogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImZpbGVfc3lzdGVtcyIsCiAgICAgICAgInVzYWdlIjogMAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImluZGV4ZWRkYiIsCiAgICAgICAgInVzYWdlIjogMzAzMTA0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTIyOTEKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9LAogICJleGhhdXN0ZWQiOiB7CiAgICAidXNhZ2UiOiAzMjkxNDk2MSwKICAgICJxdW90YSI6IDI1ODg2MjI1LAogICAgIm92ZXJyaWRlQWN0aXZlIjogdHJ1ZSwKICAgICJ1c2FnZUJyZWFrZG93biI6IFsKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJmaWxlX3N5c3RlbXMiLAogICAgICAgICJ1c2FnZSI6IDAKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJpbmRleGVkZGIiLAogICAgICAgICJ1c2FnZSI6IDczOTczNzYKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJjYWNoZV9zdG9yYWdlIiwKICAgICAgICAidXNhZ2UiOiAyNTQ5MjI5MQogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogInNlcnZpY2Vfd29ya2VycyIsCiAgICAgICAgInVzYWdlIjogMjUyOTQKICAgICAgfQogICAgXQogIH0sCiAgImFybWVkIjogewogICAgInVzYWdlIjogMzI5MTQ5NjEsCiAgICAicXVvdGEiOiAzMzQzOTI0OSwKICAgICJvdmVycmlkZUFjdGl2ZSI6IHRydWUsCiAgICAidXNhZ2VCcmVha2Rvd24iOiBbCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiZmlsZV9zeXN0ZW1zIiwKICAgICAgICAidXNhZ2UiOiAwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiaW5kZXhlZGRiIiwKICAgICAgICAidXNhZ2UiOiA3Mzk3Mzc2CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTIyOTEKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9Cn0="
+              },
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production-retry1/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production-retry1/error-context.md"
+              },
+              {
+                "name": "trace",
+                "contentType": "application/zip",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production-retry1/trace.zip"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+              "column": 61,
+              "line": 522
+            }
+          },
+          {
+            "workerIndex": 3,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 33088,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"ad5af733-bc4e-4095-9c98-ef7682aa685f\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/94585f83-500f-448f-888c-592e25b8f90b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"8run6L\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"8run6L\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[22m",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"ad5af733-bc4e-4095-9c98-ef7682aa685f\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/94585f83-500f-448f-888c-592e25b8f90b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"8run6L\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"8run6L\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[22m\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:522:61",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                "column": 61,
+                "line": 522
+              },
+              "snippet": "\u001b[0m \u001b[90m 520 |\u001b[39m     expect(failedCopy\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mitem)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\n \u001b[90m 521 |\u001b[39m     expect(failedCopy\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mimages)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 522 |\u001b[39m     expect(\u001b[36mawait\u001b[39m deviceCopy(f\u001b[33m.\u001b[39mpage\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mactor\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mitem\u001b[33m.\u001b[39mid))\u001b[33m.\u001b[39mtoEqual(retained)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 523 |\u001b[39m     assertImageBytes(retained\u001b[33m!\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 524 |\u001b[39m     expect(\u001b[36mawait\u001b[39m f\u001b[33m.\u001b[39mread())\u001b[33m.\u001b[39mtoEqual(original)\u001b[33m;\u001b[39m\n \u001b[90m 525 |\u001b[39m     \u001b[36mawait\u001b[39m cdp\u001b[33m.\u001b[39msend(\u001b[32m'Storage.overrideQuotaForOrigin'\u001b[39m\u001b[33m,\u001b[39m { origin\u001b[33m:\u001b[39m baseURL\u001b[33m!\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                  "column": 61,
+                  "line": 522
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 32\u001b[39m\n\u001b[31m+ Received  + 16\u001b[39m\n\n\u001b[33m@@ -957,42 +957,13 @@\u001b[39m\n\u001b[2m      \"kind\": \"sheet\",\u001b[22m\n\u001b[2m      \"name\": \"Sheet images\",\u001b[22m\n\u001b[2m      \"outbox\": Object {\u001b[22m\n\u001b[2m        \"account\": \"ad5af733-bc4e-4095-9c98-ef7682aa685f\",\u001b[22m\n\u001b[2m        \"checkpoint\": Object {\u001b[22m\n\u001b[32m-         \"buffer\": Array [\u001b[39m\n\u001b[32m-           Array [\u001b[39m\n\u001b[32m-             Object {\u001b[39m\n\u001b[32m-               \"id\": \"sheet.mutation.set-range-values\",\u001b[39m\n\u001b[32m-               \"params\": Object {\u001b[39m\n\u001b[32m-                 \"cellValue\": Object {\u001b[39m\n\u001b[32m-                   \"0\": Object {\u001b[39m\n\u001b[32m-                     \"3\": Object {\u001b[39m\n\u001b[32m-                       \"f\": null,\u001b[39m\n\u001b[32m-                       \"fd\": null,\u001b[39m\n\u001b[32m-                       \"ft\": null,\u001b[39m\n\u001b[32m-                       \"p\": undefined,\u001b[39m\n\u001b[32m-                       \"s\": Object {\u001b[39m\n\u001b[32m-                         \"cl\": Object {\u001b[39m\n\u001b[32m-                           \"rgb\": \"#221832\",\u001b[39m\n\u001b[32m-                         },\u001b[39m\n\u001b[32m-                       },\u001b[39m\n\u001b[32m-                       \"si\": null,\u001b[39m\n\u001b[32m-                       \"t\": 2,\u001b[39m\n\u001b[32m-                       \"v\": 552,\u001b[39m\n\u001b[32m-                     },\u001b[39m\n\u001b[32m-                   },\u001b[39m\n\u001b[32m-                 },\u001b[39m\n\u001b[32m-                 \"subUnitId\": \"tab\",\u001b[39m\n\u001b[32m-                 \"trigger\": \"sheet.command.set-range-values\",\u001b[39m\n\u001b[32m-                 \"unitId\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[39m\n\u001b[32m-               },\u001b[39m\n\u001b[32m-             },\u001b[39m\n\u001b[32m-           ],\u001b[39m\n\u001b[32m-         ],\u001b[39m\n\u001b[31m+         \"buffer\": Array [],\u001b[39m\n\u001b[2m          \"inflight\": Array [],\u001b[22m\n\u001b[32m-         \"revision\": 1,\u001b[39m\n\u001b[31m+         \"revision\": 2,\u001b[39m\n\u001b[2m          \"sent\": null,\u001b[22m\n\u001b[2m          \"snapshot\": Object {\u001b[22m\n\u001b[2m            \"appVersion\": \"1.1.0\",\u001b[22m\n\u001b[2m            \"calculationSettings\": Object {\u001b[22m\n\u001b[2m              \"iterativeCalculation\": false,\u001b[22m\n\u001b[33m@@ -1041,10 +1012,17 @@\u001b[39m\n\u001b[2m                \"backgroundImage\": Object {\u001b[22m\n\u001b[2m                  \"imageSourceType\": \"URL\",\u001b[22m\n\u001b[2m                  \"source\": \"/api/items/94585f83-500f-448f-888c-592e25b8f90b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f\",\u001b[22m\n\u001b[2m                },\u001b[22m\n\u001b[2m                \"cellData\": Object {\u001b[22m\n\u001b[31m+                 \"0\": Object {\u001b[39m\n\u001b[31m+                   \"3\": Object {\u001b[39m\n\u001b[31m+                     \"s\": \"8run6L\",\u001b[39m\n\u001b[31m+                     \"t\": 2,\u001b[39m\n\u001b[31m+                     \"v\": 552,\u001b[39m\n\u001b[31m+                   },\u001b[39m\n\u001b[31m+                 },\u001b[39m\n\u001b[2m                  \"1\": Object {\u001b[22m\n\u001b[2m                    \"0\": Object {\u001b[22m\n\u001b[2m                      \"p\": Object {\u001b[22m\n\u001b[2m                        \"body\": Object {\u001b[22m\n\u001b[2m                          \"customBlocks\": Array [\u001b[22m\n\u001b[33m@@ -1145,11 +1123,17 @@\u001b[39m\n\u001b[2m                \"showGridlines\": 1,\u001b[22m\n\u001b[2m                \"tabColor\": \"\",\u001b[22m\n\u001b[2m                \"zoomRatio\": 1,\u001b[22m\n\u001b[2m              },\u001b[22m\n\u001b[2m            },\u001b[22m\n\u001b[32m-           \"styles\": Object {},\u001b[39m\n\u001b[31m+           \"styles\": Object {\u001b[39m\n\u001b[31m+             \"8run6L\": Object {\u001b[39m\n\u001b[31m+               \"cl\": Object {\u001b[39m\n\u001b[31m+                 \"rgb\": \"#221832\",\u001b[39m\n\u001b[31m+               },\u001b[39m\n\u001b[31m+             },\u001b[39m\n\u001b[31m+           },\u001b[39m\n\u001b[2m          },\u001b[22m\n\u001b[2m          \"unitId\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[22m\n\u001b[2m          \"version\": 1,\u001b[22m\n\u001b[2m        },\u001b[22m\n\u001b[2m        \"item\": \"94585f83-500f-448f-888c-592e25b8f90b\",\u001b[22m\n\n  520 |     expect(failedCopy?.item).toBeUndefined();\n  521 |     expect(failedCopy?.images).toEqual([]);\n> 522 |     expect(await deviceCopy(f.page, f.actor.id, f.item.id)).toEqual(retained);\n      |                                                             ^\n  523 |     assertImageBytes(retained!);\n  524 |     expect(await f.read()).toEqual(original);\n  525 |     await cdp.send('Storage.overrideQuotaForOrigin', { origin: baseURL! });\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:522:61"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 2,
+            "startTime": "2026-11-14T08:15:14.219Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "spn-055-quota-boundary",
+                "contentType": "application/json",
+                "body": "ewogICJiZWZvcmUiOiB7CiAgICAidXNhZ2UiOiAyNTgyMDc4NSwKICAgICJxdW90YSI6IDkwOTM0NTMzMCwKICAgICJvdmVycmlkZUFjdGl2ZSI6IGZhbHNlLAogICAgInVzYWdlQnJlYWtkb3duIjogWwogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImZpbGVfc3lzdGVtcyIsCiAgICAgICAgInVzYWdlIjogMAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImluZGV4ZWRkYiIsCiAgICAgICAgInVzYWdlIjogMzAzMTA0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTIzODcKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9LAogICJleGhhdXN0ZWQiOiB7CiAgICAidXNhZ2UiOiAzMzQzOTM0NSwKICAgICJxdW90YSI6IDI1ODg2MzIxLAogICAgIm92ZXJyaWRlQWN0aXZlIjogdHJ1ZSwKICAgICJ1c2FnZUJyZWFrZG93biI6IFsKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJmaWxlX3N5c3RlbXMiLAogICAgICAgICJ1c2FnZSI6IDAKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJpbmRleGVkZGIiLAogICAgICAgICJ1c2FnZSI6IDc5MjE2NjQKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJjYWNoZV9zdG9yYWdlIiwKICAgICAgICAidXNhZ2UiOiAyNTQ5MjM4NwogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogInNlcnZpY2Vfd29ya2VycyIsCiAgICAgICAgInVzYWdlIjogMjUyOTQKICAgICAgfQogICAgXQogIH0sCiAgImFybWVkIjogewogICAgInVzYWdlIjogMzM0MzkzNDUsCiAgICAicXVvdGEiOiAzMzk2MzYzMywKICAgICJvdmVycmlkZUFjdGl2ZSI6IHRydWUsCiAgICAidXNhZ2VCcmVha2Rvd24iOiBbCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiZmlsZV9zeXN0ZW1zIiwKICAgICAgICAidXNhZ2UiOiAwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiaW5kZXhlZGRiIiwKICAgICAgICAidXNhZ2UiOiA3OTIxNjY0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTIzODcKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9Cn0="
+              },
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production-retry2/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production-retry2/error-context.md"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+              "column": 61,
+              "line": 522
+            }
+          }
+        ],
+        "status": "unexpected"
+      }
+    ],
+    "id": "ab2fe326f81a2e139708-9955a5de7218c0ac4a4f",
+    "file": "offline-device.spec.ts",
+    "line": 442,
+    "column": 1
+  },
+  {
+    "title": "writer locks and a newly pending copy prevent clean removal; explicit discard preserves the original",
+    "ok": false,
+    "tags": [],
+    "tests": [
+      {
+        "timeout": 240000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "production",
+        "projectName": "production",
+        "results": [
+          {
+            "workerIndex": 4,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 13166,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:883:57",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                "column": 57,
+                "line": 883
+              },
+              "snippet": "\u001b[0m \u001b[90m 881 |\u001b[39m     \u001b[36mawait\u001b[39m management\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Discard offline changes\u2026'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 882 |\u001b[39m     \u001b[36mawait\u001b[39m management\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Discard offline changes'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 883 |\u001b[39m     \u001b[36mawait\u001b[39m expect(panel(management)\u001b[33m.\u001b[39mgetByRole(\u001b[32m'status'\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\n \u001b[90m     |\u001b[39m                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 884 |\u001b[39m       \u001b[32m'was removed from this device'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 885 |\u001b[39m     )\u001b[33m;\u001b[39m\n \u001b[90m 886 |\u001b[39m     expect((\u001b[36mawait\u001b[39m deviceCopy(management\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mactor\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mitem\u001b[33m.\u001b[39mid))\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mitem)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                  "column": 57,
+                  "line": 883
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n\n\n  881 |     await management.getByRole('button', { name: 'Discard offline changes\u2026', exact: true }).click();\n  882 |     await management.getByRole('button', { name: 'Discard offline changes', exact: true }).click();\n> 883 |     await expect(panel(management).getByRole('status')).toContainText(\n      |                                                         ^\n  884 |       'was removed from this device',\n  885 |     );\n  886 |     expect((await deviceCopy(management, f.actor.id, f.item.id))?.item).toBeUndefined();\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:883:57"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 0,
+            "startTime": "2026-11-14T08:16:08.565Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/test-failed-1.png"
+              },
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/test-failed-2.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/error-context.md"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+              "column": 57,
+              "line": 883
+            }
+          },
+          {
+            "workerIndex": 5,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 17610,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:883:57",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                "column": 57,
+                "line": 883
+              },
+              "snippet": "\u001b[0m \u001b[90m 881 |\u001b[39m     \u001b[36mawait\u001b[39m management\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Discard offline changes\u2026'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 882 |\u001b[39m     \u001b[36mawait\u001b[39m management\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Discard offline changes'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 883 |\u001b[39m     \u001b[36mawait\u001b[39m expect(panel(management)\u001b[33m.\u001b[39mgetByRole(\u001b[32m'status'\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\n \u001b[90m     |\u001b[39m                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 884 |\u001b[39m       \u001b[32m'was removed from this device'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 885 |\u001b[39m     )\u001b[33m;\u001b[39m\n \u001b[90m 886 |\u001b[39m     expect((\u001b[36mawait\u001b[39m deviceCopy(management\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mactor\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mitem\u001b[33m.\u001b[39mid))\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mitem)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                  "column": 57,
+                  "line": 883
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n\n\n  881 |     await management.getByRole('button', { name: 'Discard offline changes\u2026', exact: true }).click();\n  882 |     await management.getByRole('button', { name: 'Discard offline changes', exact: true }).click();\n> 883 |     await expect(panel(management).getByRole('status')).toContainText(\n      |                                                         ^\n  884 |       'was removed from this device',\n  885 |     );\n  886 |     expect((await deviceCopy(management, f.actor.id, f.item.id))?.item).toBeUndefined();\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:883:57"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 1,
+            "startTime": "2026-11-14T08:16:22.770Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry1/test-failed-1.png"
+              },
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry1/test-failed-2.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry1/error-context.md"
+              },
+              {
+                "name": "trace",
+                "contentType": "application/zip",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry1/trace.zip"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+              "column": 57,
+              "line": 883
+            }
+          },
+          {
+            "workerIndex": 6,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 13159,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:883:57",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                "column": 57,
+                "line": 883
+              },
+              "snippet": "\u001b[0m \u001b[90m 881 |\u001b[39m     \u001b[36mawait\u001b[39m management\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Discard offline changes\u2026'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 882 |\u001b[39m     \u001b[36mawait\u001b[39m management\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Discard offline changes'\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 883 |\u001b[39m     \u001b[36mawait\u001b[39m expect(panel(management)\u001b[33m.\u001b[39mgetByRole(\u001b[32m'status'\u001b[39m))\u001b[33m.\u001b[39mtoContainText(\n \u001b[90m     |\u001b[39m                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 884 |\u001b[39m       \u001b[32m'was removed from this device'\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 885 |\u001b[39m     )\u001b[33m;\u001b[39m\n \u001b[90m 886 |\u001b[39m     expect((\u001b[36mawait\u001b[39m deviceCopy(management\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mactor\u001b[33m.\u001b[39mid\u001b[33m,\u001b[39m f\u001b[33m.\u001b[39mitem\u001b[33m.\u001b[39mid))\u001b[33m?\u001b[39m\u001b[33m.\u001b[39mitem)\u001b[33m.\u001b[39mtoBeUndefined()\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+                  "column": 57,
+                  "line": 883
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\nExpected substring: \u001b[32m\"was removed from this device\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: 'Offline documents', exact: true }).getByRole('status')\u001b[22m\n\n\n  881 |     await management.getByRole('button', { name: 'Discard offline changes\u2026', exact: true }).click();\n  882 |     await management.getByRole('button', { name: 'Discard offline changes', exact: true }).click();\n> 883 |     await expect(panel(management).getByRole('status')).toContainText(\n      |                                                         ^\n  884 |       'was removed from this device',\n  885 |     );\n  886 |     expect((await deviceCopy(management, f.actor.id, f.item.id))?.item).toBeUndefined();\n    at /home/runner/work/spinel/spinel/e2e/offline-device.spec.ts:883:57"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 2,
+            "startTime": "2026-11-14T08:16:42.223Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry2/test-failed-1.png"
+              },
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry2/test-failed-2.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production-retry2/error-context.md"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-device.spec.ts",
+              "column": 57,
+              "line": 883
+            }
+          }
+        ],
+        "status": "unexpected"
+      }
+    ],
+    "id": "ab2fe326f81a2e139708-070f4f9aa7cf4439b6de",
+    "file": "offline-device.spec.ts",
+    "line": 819,
+    "column": 1
+  },
+  {
+    "title": "offline exit locks both tabs, keeps exact Space changes, drains before an invitation and isolates the next account",
+    "ok": false,
+    "tags": [],
+    "tests": [
+      {
+        "timeout": 180000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "production",
+        "projectName": "production",
+        "results": [
+          {
+            "workerIndex": 7,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 11858,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n\n    at /home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts:230:7",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+                "column": 7,
+                "line": 230
+              },
+              "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m 229 |\u001b[39m       profile\u001b[33m.\u001b[39mgetByRole(\u001b[32m'link'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m`Recover ${f.item.name}`\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     \u001b[36mawait\u001b[39m f\u001b[33m.\u001b[39mnetwork\u001b[33m.\u001b[39msetOffline(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 232 |\u001b[39m     \u001b[36mawait\u001b[39m profile\u001b[33m.\u001b[39mgoto(f\u001b[33m.\u001b[39mhref)\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m     \u001b[36mawait\u001b[39m usableCanvas(profile)\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+                  "column": 7,
+                  "line": 230
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n\n\n  228 |     await expect(\n  229 |       profile.getByRole('link', { name: `Recover ${f.item.name}`, exact: true }),\n> 230 |     ).toBeVisible();\n      |       ^\n  231 |     await f.network.setOffline(true);\n  232 |     await profile.goto(f.href);\n  233 |     await usableCanvas(profile);\n    at /home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts:230:7"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 0,
+            "startTime": "2026-11-14T08:16:56.620Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/error-context.md"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+              "column": 7,
+              "line": 230
+            }
+          },
+          {
+            "workerIndex": 8,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 16639,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n\n    at /home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts:230:7",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+                "column": 7,
+                "line": 230
+              },
+              "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m 229 |\u001b[39m       profile\u001b[33m.\u001b[39mgetByRole(\u001b[32m'link'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m`Recover ${f.item.name}`\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     \u001b[36mawait\u001b[39m f\u001b[33m.\u001b[39mnetwork\u001b[33m.\u001b[39msetOffline(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 232 |\u001b[39m     \u001b[36mawait\u001b[39m profile\u001b[33m.\u001b[39mgoto(f\u001b[33m.\u001b[39mhref)\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m     \u001b[36mawait\u001b[39m usableCanvas(profile)\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+                  "column": 7,
+                  "line": 230
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n\n\n  228 |     await expect(\n  229 |       profile.getByRole('link', { name: `Recover ${f.item.name}`, exact: true }),\n> 230 |     ).toBeVisible();\n      |       ^\n  231 |     await f.network.setOffline(true);\n  232 |     await profile.goto(f.href);\n  233 |     await usableCanvas(profile);\n    at /home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts:230:7"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 1,
+            "startTime": "2026-11-14T08:17:09.704Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production-retry1/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production-retry1/error-context.md"
+              },
+              {
+                "name": "trace",
+                "contentType": "application/zip",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production-retry1/trace.zip"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+              "column": 7,
+              "line": 230
+            }
+          },
+          {
+            "workerIndex": 9,
+            "parallelIndex": 0,
+            "status": "failed",
+            "duration": 11720,
+            "error": {
+              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n",
+              "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n\n    at /home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts:230:7",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+                "column": 7,
+                "line": 230
+              },
+              "snippet": "\u001b[0m \u001b[90m 228 |\u001b[39m     \u001b[36mawait\u001b[39m expect(\n \u001b[90m 229 |\u001b[39m       profile\u001b[33m.\u001b[39mgetByRole(\u001b[32m'link'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m`Recover ${f.item.name}`\u001b[39m\u001b[33m,\u001b[39m exact\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 230 |\u001b[39m     )\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 231 |\u001b[39m     \u001b[36mawait\u001b[39m f\u001b[33m.\u001b[39mnetwork\u001b[33m.\u001b[39msetOffline(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 232 |\u001b[39m     \u001b[36mawait\u001b[39m profile\u001b[33m.\u001b[39mgoto(f\u001b[33m.\u001b[39mhref)\u001b[33m;\u001b[39m\n \u001b[90m 233 |\u001b[39m     \u001b[36mawait\u001b[39m usableCanvas(profile)\u001b[33m;\u001b[39m\u001b[0m"
+            },
+            "errors": [
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+                  "column": 7,
+                  "line": 230
+                },
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Recover Offline doc', exact: true })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Recover Offline doc', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Recover Offline doc', exact: true })\u001b[22m\n\n\n  228 |     await expect(\n  229 |       profile.getByRole('link', { name: `Recover ${f.item.name}`, exact: true }),\n> 230 |     ).toBeVisible();\n      |       ^\n  231 |     await f.network.setOffline(true);\n  232 |     await profile.goto(f.href);\n  233 |     await usableCanvas(profile);\n    at /home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts:230:7"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 2,
+            "startTime": "2026-11-14T08:17:28.293Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production-retry2/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production-retry2/error-context.md"
+              }
+            ],
+            "errorLocation": {
+              "file": "/home/runner/work/spinel/spinel/e2e/offline-sign-out.spec.ts",
+              "column": 7,
+              "line": 230
+            }
+          }
+        ],
+        "status": "unexpected"
+      }
+    ],
+    "id": "ccad38f60b47bfc68793-ce031142f7067623cb53",
+    "file": "offline-sign-out.spec.ts",
+    "line": 98,
+    "column": 1
+  }
+]

@@ -1,0 +1,18 @@
+{
+  "artifact": 14104554609,
+  "artifactName": "desktop-offline-safari-macos-15-intel-43572863994-1",
+  "zipSha256": "e8cbdfa20731cfb3fb946a8466a283d87bdad135faadeaf42257800375a47b59",
+  "records": [
+    {
+      "path": "safari/acceptance.json",
+      "sha256": "47f6b5b1eb1a21a135741342116da1af33375b6d0cb2d223b0fb9eb4225d4d21",
+      "bytes": 53160
+    },
+    {
+      "path": "safari/versions.json",
+      "sha256": "a3cd6b915c92b0af20dd520a3a4d2e624ea3d08d57352677e726c80483ee7ecb",
+      "bytes": 858
+    }
+  ],
+  "imageRetention": "Successful routine captures omitted; acceptance JSON retains exact stages/content/hash/cleanup. Chrome first failure images preserved separately."
+}

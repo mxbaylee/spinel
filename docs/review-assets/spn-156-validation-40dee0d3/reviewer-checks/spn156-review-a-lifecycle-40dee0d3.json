@@ -1,0 +1,22 @@
+{
+  "name": "spn156-review-a-lifecycle-40dee0d3",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/offlineLifecycle.test.ts",
+    "src/ui/offlineTransactionErrors.test.ts",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/offlineReplay.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-review-a-cache-40dee0d3"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 4477,
+  "peakKiB": 907392
+}

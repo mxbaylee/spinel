@@ -1,0 +1,49 @@
+{
+  "doc-sheet-replay": {
+    "pageUrl": "http://localhost:3105/",
+    "editorLayout": [],
+    "capturedItemKind": "doc",
+    "checkpointRevision": 2,
+    "sent": null,
+    "inflight": [],
+    "bufferLength": 0,
+    "failure": null,
+    "snapshotDocText": "File-list replay e685a0f85c7f5c4f492d-ad20d37de5c110e26e76\r\n",
+    "submitIds": [
+      "eeeaa4c7-d059-45f3-a535-fe4d8dc87165",
+      "0e759afd-0d8f-4ea7-a4cb-24408d88ee94"
+    ],
+    "incomingTypes": [
+      "resume",
+      "presence",
+      "edit",
+      "ack",
+      "resume",
+      "presence",
+      "edit",
+      "ack"
+    ],
+    "pageErrors": [],
+    "consoleMessagesRetainedInRawDiagnostics": 14
+  },
+  "revoked-replay": {
+    "pageUrl": "http://localhost:3105/",
+    "editorLayout": [],
+    "capturedItemKind": "doc",
+    "checkpointRevision": 1,
+    "sent": null,
+    "inflight": [],
+    "bufferLength": 1,
+    "failure": "stale",
+    "snapshotDocText": "\r\n",
+    "submitIds": [],
+    "incomingTypes": [
+      "resume",
+      "presence",
+      "presence"
+    ],
+    "pageErrors": [],
+    "consoleMessagesRetainedInRawDiagnostics": 10
+  },
+  "limits": "Final fixture diagnostics capture the primary Doc item. The passed exact-source browser case separately asserts both Doc and Sheet durable acknowledgements, server revisions/content and second-viewer native/clipboard content. This summary does not invent a separate Sheet final-store artifact or an installed-phone observation."
+}

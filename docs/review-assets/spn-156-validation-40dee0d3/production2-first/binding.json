@@ -1,0 +1,13 @@
+{
+  "source": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "tested": "eaaf75f393ab91d9fd1120cbff63c034b481bada",
+  "run": 43572864010,
+  "runAttempt": 1,
+  "job": 132380984914,
+  "artifact": 14106362554,
+  "artifactSha256": "0c6bf77a4c817a1d2dc5843f7cd8b2a172947bdcc29f011fcd6cad4c643da8c8",
+  "reportSha256": "31355c5d10aed0ed429217f599b586b1887398476652e518453a35189cec2247",
+  "result": "failure",
+  "configuredAttempts": "retry0, retry1, retry2 retained for each of three cases; trace configured on retry1 only",
+  "cleanup": "Each finally collected diagnostics then closed contexts and database. Raw job log retained. No separate process-empty audit emitted."
+}

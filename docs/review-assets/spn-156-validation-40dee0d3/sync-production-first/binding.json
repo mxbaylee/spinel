@@ -1,0 +1,145 @@
+{
+  "source": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "tested": "eaaf75f393ab91d9fd1120cbff63c034b481bada",
+  "tree": "e5a4a18403609e80332137266365993a32abc93e",
+  "run": 43572864010,
+  "attempt": 1,
+  "job": 132380984871,
+  "artifact": 14106192016,
+  "artifactSha256": "98133cc68ec42dc8b00258a21feda8e8e4d77f3bc2eb39c96bf66d0e0adc5830",
+  "reportSha256": "bb5a6f95268e2f6725237ef965bffca5db673ae83b6310dc0543e380699a1baf",
+  "jobLogSha256": "ba1a948066632301d93fba3a37bd27868f4a04aa5bf059a91a57dc396aac7401",
+  "caseDiagnostics": [
+    {
+      "archivePath": "test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/sync-diagnostics.json",
+      "record": "doc-sheet-replay-diagnostics.json.gz",
+      "sha256": "53dc7741262c5378d5ad9d445c128b9fcfd6af29db694cb2d5f58cec0de2d9e7",
+      "bytes": 49514,
+      "errors": [],
+      "consoleErrors": [
+        {
+          "page": "http://localhost:3105/",
+          "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "page": "http://localhost:3105/",
+          "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=8367b9e2-1a3b-4700-a4f4-95226b3e92ea",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        }
+      ],
+      "observations": 1,
+      "outgoing": 2,
+      "incoming": 8
+    },
+    {
+      "archivePath": "test-results/sync-production/offline-editing-downloaded-f7beb-or-creating-a-recovery-copy-sync-production/sync-diagnostics.json",
+      "record": "revoked-replay-diagnostics.json.gz",
+      "sha256": "3d46368b19f16caab8e060fcae742a735b43d161d6f8f771ad0ad2e428f29638",
+      "bytes": 37079,
+      "errors": [],
+      "consoleErrors": [
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/?item=58c01737-a5ac-43bf-a7b0-f4805ee998de",
+          "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+        },
+        {
+          "page": "http://localhost:3105/",
+          "message": "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+        }
+      ],
+      "observations": 1,
+      "outgoing": 1,
+      "incoming": 3
+    }
+  ],
+  "buildLogEntry": "dist/assets/application-DjvUEl9z.js",
+  "buildStep": "passed on same job before Playwright execution",
+  "fullPartition": {
+    "expected": 100,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "selectedCases": "Both passed retry0 once; selected-cases.json preserves exact IDs/source lines/durations.",
+  "cleanup": "Both test finally blocks completed successfully; maintained fixture closes all owned contexts then database. Job completed and raw log retains runner cleanup. No separate empty-process audit was emitted by this Playwright job; do not infer one.",
+  "phone": "Not exercised; installed-phone prerequisite remains distinct."
+}

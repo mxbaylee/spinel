@@ -1,0 +1,70 @@
+[
+  {
+    "title": "the file list replays queued Doc and Sheet edits without reopening either editor",
+    "ok": true,
+    "tags": [],
+    "tests": [
+      {
+        "timeout": 180000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "sync-production",
+        "projectName": "sync-production",
+        "results": [
+          {
+            "workerIndex": 0,
+            "parallelIndex": 0,
+            "status": "passed",
+            "duration": 10042,
+            "errors": [],
+            "stdout": [],
+            "stderr": [],
+            "retry": 0,
+            "startTime": "2026-11-14T08:12:43.629Z",
+            "annotations": [],
+            "attachments": []
+          }
+        ],
+        "status": "expected"
+      }
+    ],
+    "id": "e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+    "file": "offline-editing.spec.ts",
+    "line": 53,
+    "column": 3
+  },
+  {
+    "title": "file-list replay retains revoked edits without sending them or creating a recovery copy",
+    "ok": true,
+    "tags": [],
+    "tests": [
+      {
+        "timeout": 180000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "sync-production",
+        "projectName": "sync-production",
+        "results": [
+          {
+            "workerIndex": 0,
+            "parallelIndex": 0,
+            "status": "passed",
+            "duration": 3009,
+            "errors": [],
+            "stdout": [],
+            "stderr": [],
+            "retry": 0,
+            "startTime": "2026-11-14T08:12:53.683Z",
+            "annotations": [],
+            "attachments": []
+          }
+        ],
+        "status": "expected"
+      }
+    ],
+    "id": "e685a0f85c7f5c4f492d-14b05d72e5c01f03cbc0",
+    "file": "offline-editing.spec.ts",
+    "line": 167,
+    "column": 3
+  }
+]

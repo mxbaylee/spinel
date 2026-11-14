@@ -1,0 +1,10 @@
+{
+  "source": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "artifactSha256": "98133cc68ec42dc8b00258a21feda8e8e4d77f3bc2eb39c96bf66d0e0adc5830",
+  "zipCrc": "verified",
+  "reportHash": "verified",
+  "caseDiagnostics": "both match original ZIP bytes",
+  "selectedCases": "both passed retry0 once",
+  "contractInspection": "exact Doc/Sheet content, revisions, pending drain, separate peer and original file list; revoked work retained with no submit or recovery copy",
+  "priorAuditAttempt": "Python hashlib.file_digest unavailable before hash execution; verifier switched to supported streaming SHA256; no artifact or product mutation"
+}

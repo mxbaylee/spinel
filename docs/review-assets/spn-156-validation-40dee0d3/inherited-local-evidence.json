@@ -1,0 +1,407 @@
+{
+  "application": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "recordsInheritedFromParent": [
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-fifth/console.txt",
+      "sha256": "84d4bd45baa128ebe6752360996c8bc8535d46cba20e2a633b937603e48e7091",
+      "bytes": 3531
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-fifth/spn156-browser-fifth.json",
+      "sha256": "bbc7f5b0c232534a813fdcd2129004adc87eb72950ebafa013ed84b7cc41f610",
+      "bytes": 457
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-fifth/spn156-reduced-fixture-typecheck.json",
+      "sha256": "d91968659ae9a6d445c576e7731ce4133ec9d8a4e400807c1482f9faab7fbab5",
+      "bytes": 299
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-first/console.txt",
+      "sha256": "0c7b0b8655499590f755bbd49584d96114e26b0090760d98601de2353671e7af",
+      "bytes": 5755
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-first/error-context.md",
+      "sha256": "ce485f004988efd1475cd8a3ebb3412a5411278a0d8ba801b1d7c8776dc2b995",
+      "bytes": 10738
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-first/spn156-browser-first.json",
+      "sha256": "70e1a78123e31a1c6c0f4a2cfa559cd307a67005905d4197b4f122e0769d4825",
+      "bytes": 446
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-first/sync-diagnostics.json",
+      "sha256": "2a059fd44efd86cd4733c398ed5492d3e55387729eb78a0e28e969bdbce0eca8",
+      "bytes": 38489
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-first/test-failed-1.png",
+      "sha256": "79b4cf64e24526b388daeb645fdcb4a94c9dab168d07904ee89746d11c751f54",
+      "bytes": 82217
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-fourth/console.txt",
+      "sha256": "b9fbecee86e70d80d274989309d6788b8a325c2d87e6e9537bcc6042a0016eb7",
+      "bytes": 3709
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-fourth/spn156-browser-fourth.json",
+      "sha256": "c7232296581c93fe832363c3eff27cf7d10857be95d7622c9de4373a604d2908",
+      "bytes": 459
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-second/console.txt",
+      "sha256": "b4bb4793968d346e6a991ab348d2a48a506259802b17031a128c7eee1f155fcf",
+      "bytes": 3708
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-second/spn156-browser-second.json",
+      "sha256": "f44d78bbccc61dc147f3a71a401226f66e05cbfc9857a396450cb60a849a0b26",
+      "bytes": 459
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/cleanup.json",
+      "sha256": "0f6571830dadb80a6ad542424860ff0f20e1c57e22fb26c1e835eee6834708ee",
+      "bytes": 486
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/dependency-source.json",
+      "sha256": "72462cd03b4a7e8c65ff4e9dc86ff362127796a7dc973897f0ca43d6edc47151",
+      "bytes": 27832
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/identity.json",
+      "sha256": "1e58d2be51aec51295436aa922159df2e706b02b5f8a37e2b325f46054b8fe80",
+      "bytes": 575
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/spn156-browser-sixth-console.txt",
+      "sha256": "c37a6f7e86e5a3589fe50f24269ebe0212ccd3ca549037c2a674458e80a6f75c",
+      "bytes": 3709
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/spn156-browser-sixth.json",
+      "sha256": "6001c0bd48eb4636287dbb861c83240975f21b408c41d17aabdee153bd8f6596",
+      "bytes": 459
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/spn156-integrated-build-console.txt",
+      "sha256": "a9e189034356933f7e4bc2297a9c6efba4eddeae8bb6c9248188c53f05546353",
+      "bytes": 4813
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-sixth/spn156-integrated-build.json",
+      "sha256": "9fd2263baff657284b1dcca5003a191e0ec47c651828d70a2a9de7eea31d9c04",
+      "bytes": 310
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-third/console.txt",
+      "sha256": "f68b85381b5920403969900d1afc68afbebe40ec7f43fcd178c2f851c1693bf9",
+      "bytes": 520
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/browser-third/spn156-browser-third.json",
+      "sha256": "2db2d928198a7b7e365750944d0cf3dd258e4c957b74db57eb10cada9447f3e6",
+      "bytes": 444
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/build/identity.json",
+      "sha256": "83644dabb42e827a910afc586721f6a934efb13d8372a5ae751ca11a9b68d580",
+      "bytes": 378
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/build/spn156-native-build-first.json",
+      "sha256": "92688958ec4b980121f9446c3d35a62e61dc7e801ceaa5b924ca1549794df309",
+      "bytes": 312
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/capability/spn156-native-probe-fifth.json",
+      "sha256": "8eae74dbf844dfdcfa88280a341f598669790d5bac9666e962f3b71334ab84bb",
+      "bytes": 419
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/capability/spn156-native-probe-first.json",
+      "sha256": "b52643547e6303b3ab8108f03984cc03056fbafb3803c2c82598b88a9a61297d",
+      "bytes": 430
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/capability/spn156-native-probe-fourth.json",
+      "sha256": "75e21f5fe4a953ed8b8a941320ba8988d0990e0a117d90a07cc64c6ece6fa710",
+      "bytes": 420
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/capability/spn156-native-probe-negative.json",
+      "sha256": "ad1e29e6f16a3c8abd6d927b2e13717ada26f9e0073e268c42840cd58e436eb6",
+      "bytes": 421
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/capability/spn156-native-probe-second.json",
+      "sha256": "402cc13295a5c0331f825902b75ee563f713bb82249a734e3dbe382022400157",
+      "bytes": 420
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/capability/spn156-native-probe-third.json",
+      "sha256": "e09808b17dd5a9a7a8605409ecd0507c7c3c58fa2f64d620297e18d96d9a540d",
+      "bytes": 431
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/identity.json",
+      "sha256": "fd2899a8b921e99539696e1292c40431e8c8938eed75a2f0e1271ad06f36126e",
+      "bytes": 833
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-backlog-console.txt",
+      "sha256": "ae45d48315b7c92a2df2f3b7a7a349bf3e0e2816da41bad1119fa17603abb3a5",
+      "bytes": 2152
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-backlog.json",
+      "sha256": "f63359084a43c812c83777e4cb47c02500ea812d1d0cfccf2bfb8677fa7cda63",
+      "bytes": 260
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-dependencies-console.txt",
+      "sha256": "61420ed79b8f8a51a6043c0fb9fab2de06f2ef71cc5336ba9cc64632bcbcb7c9",
+      "bytes": 293
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-dependencies.json",
+      "sha256": "28b0ca46a64fb91be47e63e844d4b5c90ea66bc1f538c7ad29d225af8065a4f7",
+      "bytes": 267
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-format-console.txt",
+      "sha256": "0a7bb9f71ae1ad45c63828070c0fb6a00a8d7ecf099566207ccaadcd880e46f6",
+      "bytes": 802
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-format.json",
+      "sha256": "226c5998a7d78761aa671e95e0aee2d8b59917e9b7461677c6da2c61a67c425f",
+      "bytes": 863
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-lifecycle-console.txt",
+      "sha256": "f039a4e0ba80e3baebf0fa1dd8abf0e8470d0fb36007bf0effa25a9f672d1de7",
+      "bytes": 894
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-lifecycle.json",
+      "sha256": "cf521d043fd31faa4b9e5cd34e85566b84723cd4f02d8cd4c0128ec91d3094de",
+      "bytes": 595
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-lint-console.txt",
+      "sha256": "7fbd9d304c36df9aa8767a4445a335209aaa1cf5e10dc7968c62a9c84bc645eb",
+      "bytes": 729
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-lint.json",
+      "sha256": "0276c22f5172d23b0d28d22435614e29ffd061522c9a4ccce9ad23f5bae907eb",
+      "bytes": 856
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-types-bounded-console.txt",
+      "sha256": "a2ae825b6e98e0d8c45ff7dd1189fb31db45f40e45f94bc2fbff7b765cc135ff",
+      "bytes": 236
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/current-source/spn156-current-types-bounded.json",
+      "sha256": "000cc0f4abb9bee8b3be710096e0ae2025540da0b810f5386211899c9eed4e71",
+      "bytes": 288
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/donor-recheck.json",
+      "sha256": "ef1538176762fda3de144f1a317f7ef0d51a234d7b9f6ac09f67036e317335a9",
+      "bytes": 569
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/source-identity.json",
+      "sha256": "abd7df9715b92e836e1d85d9638e46c6fee7b0bb71602d298eefc5d1f0bbbc04",
+      "bytes": 20595
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-check.json",
+      "sha256": "d67040e073e473bdc4eda805a1fa46962787e05a610405dee0768ebdbe591a2d",
+      "bytes": 258
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-check.txt",
+      "sha256": "fc07c0d5db4c56f99a5874e5b25cb621054db9cb6e04ae5a5f57bff4b6983cab",
+      "bytes": 2059
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-dependencies.json",
+      "sha256": "b85e92ad90a2f89a5bd87003add6e9b740bf67dfd01972a58e65ac43b9612551",
+      "bytes": 267
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-dependencies.txt",
+      "sha256": "4b54e03418ce2aa91452edc98693fe22d74928204634a60dc43927f3cb51c75f",
+      "bytes": 293
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-format.json",
+      "sha256": "7d8d93f0072630311b3fd4417f06dc2d2916444035082ac9f19fb73e8b1e4c68",
+      "bytes": 863
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-format.txt",
+      "sha256": "c6dcd58182fbe5732fa8e63be9e097a4932c71ef086e8ef5e1e1e347cc786fbe",
+      "bytes": 802
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-index.json",
+      "sha256": "6d92a84838e1127e509d144e76ed8788cd3642d70274259114e4118d16d8ff85",
+      "bytes": 258
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-index.txt",
+      "sha256": "c597a2e48f98dc339a45c5ae060ff7cdfd849c5aacba6dde3c6d088533e6b516",
+      "bytes": 2057
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-lint.json",
+      "sha256": "1cb2adcad6c40c06ef598e5179c2acd84a6d92085bfc28a9a28d568a24a7a1cb",
+      "bytes": 856
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-lint.txt",
+      "sha256": "334adc87dc2c8f57885ba2c30827c702722c3ec3d94cfaf47a02c3a1ee29f16f",
+      "bytes": 729
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-pr.json",
+      "sha256": "30e385af4b5d4eb6f1b52896cbebefffc7d99d01760aa7068f8bc2629d348a6b",
+      "bytes": 399
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-pr.txt",
+      "sha256": "4b5689d193d96450eb28cd413f1d6195c08045bdedc4ccfe2a3672f5f029ff22",
+      "bytes": 348
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-typecheck.json",
+      "sha256": "5b4848f53e27d6f76d0e281feca510239b50e338a4d855c52b39ec4843041111",
+      "bytes": 284
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/integration-754e6531/spn156-main754-typecheck.txt",
+      "sha256": "e33c8afe70811246be860b1e41a72ef90d9521e605f37f3dd6c2d6369cdaadb5",
+      "bytes": 232
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/lifecycle/spn156-lifecycle-first.json",
+      "sha256": "bea01e035aa7458a0c3aff00c950bbb47bf1ef827492893ba84f3e33be905203",
+      "bytes": 469
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/lifecycle/spn156-lifecycle-second.json",
+      "sha256": "1caf247beffed2c2ee403c727ba979299a31ee27b0e7884107056ae3675e33ef",
+      "bytes": 469
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/lifecycle/spn156-source-lint.json",
+      "sha256": "13d742d3c3d1443fdfaeb66199476124684da53a98b4eb3aca21dbec948a8b23",
+      "bytes": 767
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/lifecycle/spn156-source-typecheck.json",
+      "sha256": "1fe10e74b08f7ed76c8639734b7fa71a813fe53ce7e5f36ef351ba9ad7f15df5",
+      "bytes": 280
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/lifecycle/spn156-updated-typecheck.json",
+      "sha256": "1d64a1a234ecd3b7a3d7e732e82cb92e19c34b7853d801a1333395e022d8f6b4",
+      "bytes": 281
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/source-equivalence.json",
+      "sha256": "94917f816c879f8c893467e739471f2268d22e1aca4c4f7f83f21a1fe0695c8f",
+      "bytes": 3964
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-check-console.txt",
+      "sha256": "55cdf488ad731198f5879057677381f7229d2e341c5729a1a44075b10c38b43c",
+      "bytes": 2243
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-check.json",
+      "sha256": "c390a0f6dad23db3b0fff27175c02c9b5558ab1c01c40622f6e12798cebaa2e0",
+      "bytes": 260
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-index-console.txt",
+      "sha256": "ff891e68efba9f30b67cb7cc3c9e937c6764b54ed0247c0d5ffe3d715e8ef06c",
+      "bytes": 2241
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-index.json",
+      "sha256": "651f321ed3772bb50484a669ebf88715f3dfc9951d4c042ec493dcc201118121",
+      "bytes": 260
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-pr-console.txt",
+      "sha256": "0bb76ad9ba5d9d39eba259fa42cc134ea3cadafd1e835a4b1561a8710198a6cd",
+      "bytes": 350
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-pr.json",
+      "sha256": "cc5d7e5f78b1ff1f1972159df0aa0f86ae6b8191badefb735c0c4903a0a354a4",
+      "bytes": 401
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-typecheck-console.txt",
+      "sha256": "c3e5394f2f1c85a6f202ce7b6e6521d9cb68522350531663235efa88bfa41e84",
+      "bytes": 234
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/review-candidate/spn156-candidate-typecheck.json",
+      "sha256": "8e7f752bcd893ebffa32b26b246854836d8d2b0af6c25493b2d50691f14c53c2",
+      "bytes": 286
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/host-old-cleanup-negative-console.txt",
+      "sha256": "6be3cdb453ae7f1edfa059823adac515e66a95563876648ef3ecc42d5065c079",
+      "bytes": 2495
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/host-release-positive-console.txt",
+      "sha256": "775f3d5e18fa5db53d72d42cd77c6596508058d42d726789c3fc1fb2d685e350",
+      "bytes": 565
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/host-session-first-console.txt",
+      "sha256": "cf2d01d0670a9e950f1ab3aba51a53474537dd02aa7de28b838414e46742c478",
+      "bytes": 612
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/spn156-host-old-cleanup-negative.json",
+      "sha256": "c8c89a373edc20d5784f290fcd95b07f1e54b7a6260e36d1361cf95baf2e5418",
+      "bytes": 450
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/spn156-host-release-positive.json",
+      "sha256": "0430b3481cc52dd5f37939d449cdc4499a6b9666fd2d2513b7e81f3de51e94bb",
+      "bytes": 440
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/spn156-host-session-first.json",
+      "sha256": "a61d4c484297381f1ac6a0dccf97c5a0a10da7560beb811e8494068e54e1a176",
+      "bytes": 488
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/spn156-store-notification-first.json",
+      "sha256": "f497104d9a5645f3a4b4851a58dddaea7dbf31e38ef7f1877c89d4581cfe6555",
+      "bytes": 408
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-156/store-host/store-notification-first-console.txt",
+      "sha256": "d66e4b23a187e3bb3e7a01de3c241a59230e5b17a291013df8d19ceb8b4fe32f",
+      "bytes": 531
+    }
+  ],
+  "rootPRReceipt": "root-final-pr.json",
+  "rootPRConsoleLog": "No separate raw log exists; do not infer or fabricate one."
+}

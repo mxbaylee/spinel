@@ -1,0 +1,17 @@
+{
+  "name": "spn156-review-a-native-40dee0d3",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "lib/sync-client/tests/headless-checkpoint.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-review-a-native-cache-40dee0d3"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1903,
+  "peakKiB": 1057872
+}

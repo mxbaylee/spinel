@@ -1,0 +1,72 @@
+{
+  "application": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "base": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "testedMerge": "eaaf75f393ab91d9fd1120cbff63c034b481bada",
+  "testedAndApplicationTree": "e5a4a18403609e80332137266365993a32abc93e",
+  "run": 43572864010,
+  "attempt": 1,
+  "ciPlanArtifact": 14105037592,
+  "ciPlanZipSha256": "9d27ade3157bb8dec220d4b614345dc75023fe637aefe778e4b8823e4f3bc6d3",
+  "requiredGates": [
+    "Backlog",
+    "Pull request",
+    "Lint",
+    "Typecheck",
+    "Unit tests",
+    "Playwright smoke",
+    "Lib tests"
+  ],
+  "phone": "Unavailable authorized installed-phone execution; not inferable from hosted records.",
+  "terminalGates": [
+    {
+      "id": 132380800540,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132380800540"
+    },
+    {
+      "id": 132380984584,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132380984584"
+    },
+    {
+      "id": 132380984631,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132380984631"
+    },
+    {
+      "id": 132380984647,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132380984647"
+    },
+    {
+      "id": 132386022738,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132386022738"
+    },
+    {
+      "id": 132386529366,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132386529366"
+    },
+    {
+      "id": 132389941081,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43572864010/job/132389941081"
+    }
+  ],
+  "overall": "Not accepted: Playwright aggregate failed; Desktop Chrome failed; installed-phone observation unavailable."
+}

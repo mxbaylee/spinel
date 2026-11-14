@@ -1,0 +1,18 @@
+{
+  "artifact": 14105047673,
+  "artifactName": "desktop-offline-firefox-macos-26-43572863994-1",
+  "zipSha256": "672be879c6275375af1532147b39afcb77bd59b0b269c9225b51ce3f6d99d050",
+  "records": [
+    {
+      "path": "firefox/acceptance.json",
+      "sha256": "b2c4af10eac092abafb43aabc3baa7d9d5518475583425d210e82ffebd688a13",
+      "bytes": 56424
+    },
+    {
+      "path": "firefox/versions.json",
+      "sha256": "b653595b93e7e29d49ba8d82150c2385450461473be6437f5a16c1b13d3d7b63",
+      "bytes": 644
+    }
+  ],
+  "imageRetention": "Successful routine captures omitted; acceptance JSON retains exact stages/content/hash/cleanup. Chrome first failure images preserved separately."
+}

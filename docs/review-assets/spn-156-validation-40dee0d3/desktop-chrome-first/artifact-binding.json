@@ -1,0 +1,13 @@
+{
+  "artifact": 14105073087,
+  "name": "desktop-offline-chrome-macos-26-43572863994-1",
+  "zipSha256": "c7887b140a624c9387eae654ca1a376cf0beee1e031739eeeba379acacf3b479",
+  "job": 132380800458,
+  "run": 43572863994,
+  "attempt": 1,
+  "source": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "tested": "eaaf75f393ab91d9fd1120cbff63c034b481bada",
+  "conclusion": "failure",
+  "failureBoundary": "named Save details action at desktop-offline.ts623; visible top-center permission warning intercepts WebDriver click; product trigger not established",
+  "cleanup": "acceptance.json browser-stop stage proves browser5058 and driver5054 exited; no complete success or later storage-loss execution inferred"
+}
