@@ -1,0 +1,1096 @@
+{
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "run": 43628363829,
+  "attempt": 1,
+  "projects": [
+    {
+      "project": "sync-production",
+      "attempts": 4,
+      "namedCases": 2,
+      "retries": 0,
+      "setupRecovery": false,
+      "workers": 1,
+      "allPassed": true,
+      "durationMs": 44697,
+      "start": "2026-11-14T18:47:10.980Z",
+      "end": "2026-11-14T18:48:01.127Z",
+      "sourceTree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+      "artifact": "14127123465",
+      "zipSha256": "2ab32bceb01b1df0c86f5021ac46b21f9a9e49811928ce1f9976ec8ab76fc4dd"
+    },
+    {
+      "project": "development",
+      "attempts": 8,
+      "namedCases": 4,
+      "retries": 0,
+      "setupRecovery": false,
+      "workers": 1,
+      "allPassed": true,
+      "durationMs": 171077,
+      "start": "2026-11-14T18:47:02.474Z",
+      "end": "2026-11-14T18:50:00.107Z",
+      "sourceTree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+      "artifact": "14127133836",
+      "zipSha256": "13b018c8a93cd490d91c8fcec1e5d988f5a931ed4e13c4984cfcc40fd6da7d6a"
+    },
+    {
+      "project": "production",
+      "attempts": 12,
+      "namedCases": 6,
+      "retries": 0,
+      "setupRecovery": false,
+      "workers": 1,
+      "allPassed": true,
+      "durationMs": 161073,
+      "start": "2026-11-14T18:46:54.950Z",
+      "end": "2026-11-14T18:49:44.914Z",
+      "sourceTree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+      "artifact": "14126994045",
+      "zipSha256": "89a2f09dd2d066cee6db22ec5684bda2fcf707cd0862bd5ac6b9a19139fa5ffe"
+    }
+  ],
+  "payloads": [
+    {
+      "artifact": "14127123465",
+      "path": "fixture-audit/results.json",
+      "bytes": 3171,
+      "sha256": "d81c39b0aa886895eb12d869d98e4708a57cb2c673b75644a23ad4c343a73b15"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "fixture-audit/attempt-identities.json",
+      "bytes": 1809,
+      "sha256": "98f86b50584d58959c9ffba16a3fbc9ec45e785d18ea7623eb59caaf0094238b"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "fixture-audit/source.json",
+      "bytes": 819,
+      "sha256": "1713faf3c25c925b9cd171daed19c815fe0de975ea6f6fa5bf452e29ca05ef00"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "playwright-report/server-3105.json",
+      "bytes": 474,
+      "sha256": "a24f442597a2fb0cd9cade2d24e279fc07cafd44b3fb150e56876e841c089d16"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "playwright-report/sync-production.json",
+      "bytes": 28057,
+      "sha256": "5a1b477fbcca811d4b841d08ba8c8887b48f5bb8d986694a79855899e2ead56c"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production/fixture-evidence.json",
+      "bytes": 2530,
+      "sha256": "ab968bddab86457bdc0492f9bbd42b2b1a52d90708ea88ac5e9ebc96654237b1"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production/sync-diagnostics.json",
+      "bytes": 201996,
+      "sha256": "b1c15a58b6a7a125972dcb82843010b00b95b2641170712741dfb8e7c784256a"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production-repeat1/fixture-evidence.json",
+      "bytes": 2531,
+      "sha256": "a49bbe5e41c8967d8d1b6b98b2d18ddfd563a05d1f1d22a3f6679de67095f250"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production-repeat1/sync-diagnostics.json",
+      "bytes": 10957,
+      "sha256": "fa792e19283c4cf2cb47541d6077e9d70fff4d5f383008cbed7992b06ea88c83"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production/fixture-evidence.json",
+      "bytes": 2535,
+      "sha256": "edb4205a45fa939eaa92127f4f75dae63320382db8adfaf258d9aa3fa45fda36"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production/sync-diagnostics.json",
+      "bytes": 530134,
+      "sha256": "2453cfe539703f346bc26862c98137560b2641609757d6fe1263664b13526ee2"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production-repeat1/fixture-evidence.json",
+      "bytes": 2534,
+      "sha256": "4a855f8a9cb7ddebaa68e59d0251d901fca690c74d1b73ab764e58430bcd7b96"
+    },
+    {
+      "artifact": "14127123465",
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production-repeat1/sync-diagnostics.json",
+      "bytes": 530134,
+      "sha256": "866847b1bae872a948982fb43e2ba0b4a4357ecd870f2e1b532d24bab21b97af"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "fixture-audit/attempt-identities.json",
+      "bytes": 3399,
+      "sha256": "1b55dd158446716ea269e2d693a10fb203e5b1fbfe59e94989546b43fe69e496"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "fixture-audit/results.json",
+      "bytes": 5073,
+      "sha256": "cbb27ee361a0c70a3aad6dc63dbf2a22a026f151bf43d3138154a0865d33a877"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "fixture-audit/source.json",
+      "bytes": 815,
+      "sha256": "b6b68951e18744d3fdff43fcde725d9bab8313955aba3a1774f7bd2e16a3cf7c"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "playwright-report/development.json",
+      "bytes": 30793,
+      "sha256": "78bc31ae0ecac41909a0340fdc298cc74592baa63f7da82da30cf9cb3dbc2719"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "playwright-report/server-3100.json",
+      "bytes": 494,
+      "sha256": "cd056b9bebd65bfe5ac23aad8c86f65b17dbf4c89ca4ec9762d094e3c657e9fc"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-development/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "fbff58617180bfba0c7bcf4091d93d6b6c51205ab350826f39421e3e8b302642"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "45b6027903362f6384f1a6c07087664495eb9f702400713bdb10a6786e9a1f9a"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-development/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "a0cc0bbd264c24476755c74322617de7aa7188e531160837daea85e24ebb6727"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "2ee25d0df55b68519c6585764409a6a6d982e6b54ecee88b3b863a61ff077408"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-8794b-avior-preserve-the-document-development/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "34398e4e76bd6ef3c214b3891af69c3bade3ab1fbb6e3e894d391a3ffbbd2d68"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-8794b-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "68812b21878a9fd1a88efface5b77c9395ea5713ec9774b92994d71296d17774"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-cf057-avior-preserve-the-document-development/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "075a8a89a9958992fb311a06ddc77f896eabf96c39c877c236601ab2c28754d1"
+    },
+    {
+      "artifact": "14127133836",
+      "path": "test-results/development/doc-phone-navigation-phone-cf057-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+      "bytes": 2228,
+      "sha256": "7f2f6503b37ac106769a9b0aa88e38f5ed3855640aad6da8a15e1acc6fab01af"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "fixture-audit/attempt-identities.json",
+      "bytes": 5169,
+      "sha256": "61d7f2706ef7ee85fc93e76d1a574fe8f5629ce4f64c1dc438c2e66df360004d"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "fixture-audit/source.json",
+      "bytes": 814,
+      "sha256": "0162378e28372b934993d5fc2eacb9761b8d37bc80247a723e8e7e8959c6b643"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "fixture-audit/results.json",
+      "bytes": 7159,
+      "sha256": "4a3cac9c043aa98e3ecaa9f1ea9f437e1e9b1807b9ace9efe407a78f63cffc3f"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "playwright-report/production.json",
+      "bytes": 36602,
+      "sha256": "ffe8462ab481d319b691b3e77e123155d369889ff1798ac3441fccf105ca3ee5"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "playwright-report/server-3101.json",
+      "bytes": 474,
+      "sha256": "864ddb5d70d271b48494ba9b29913ee5e9cb05119599e090a896e39953644a87"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-production/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "55fc81d534f246a6a34afa3f7dd36d554414f472cbf34f588ed95cd37cc7b877"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "ebc892d6fc98c549753b68406c0f63663d8224100bf6b5d24f458f4b86cbc982"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-production/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "daa86beb0166f5b52e5658b0322469b2c0569f3d3eb9bf509d3480b46952ba88"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "73e6d98963f581fdc7bd4c503011626f0774777b912ef14a7e332db2efa0d44b"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-8794b-avior-preserve-the-document-production/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "d04deaef6bae263dd28b37504482aafe8269d06d949ed18ba2aa5c423a3b59fa"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-8794b-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "279c6ebe23792b533af0f2740ebb9078503e1e7e90840b3d5862e1b8e17ad0d5"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "f010c35854fa103ad619c55007cc85c2ce1aa52d9c2aed97f0a563084d5a41c7"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+      "bytes": 2187,
+      "sha256": "b0cd73b37bd6a88852d80483e4d8458cd5ca6f3120ffcb568f953d3020b0e53c"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/offline-sign-out-Recorded--855e9-cannot-clear-the-new-cookie-production/fixture-evidence.json",
+      "bytes": 2029,
+      "sha256": "c4a8bc9adc1bcc156cfde35a1bef88d5b303905672c1c36fa828717172617196"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/offline-sign-out-Recorded--855e9-cannot-clear-the-new-cookie-production-repeat1/fixture-evidence.json",
+      "bytes": 2029,
+      "sha256": "b03f141858a434a50cd10b01731c321253d28ff4d7e670d9906c10c253103fc1"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/passkey-management-Recorde-94ca3--losing-the-current-account-production/fixture-evidence.json",
+      "bytes": 2031,
+      "sha256": "c868fbcce76495f486812ba1634d86c9449e928d46424e66772b14c7222c715d"
+    },
+    {
+      "artifact": "14126994045",
+      "path": "test-results/production/passkey-management-Recorde-94ca3--losing-the-current-account-production-repeat1/fixture-evidence.json",
+      "bytes": 2031,
+      "sha256": "6683fe49a65a6e3d6d720a9074b1af497a54325d2ab9f0254c1284370313dec6"
+    }
+  ],
+  "rootVerified": "Exact source/driver/base,24genuineattempts,twoeach,zero retry/recovery,allreportstats/oneworker,allZIPCRC/payloadhashes; ordinaryCI stillpending",
+  "serverCleanup": [
+    {
+      "artifact": "14127123465",
+      "server": {
+        "ready": true,
+        "expectedClose": true,
+        "exited": true,
+        "unexpectedExit": false,
+        "closed": true,
+        "firstFailure": null,
+        "exitCode": 0,
+        "signal": null
+      }
+    },
+    {
+      "artifact": "14127133836",
+      "server": {
+        "ready": true,
+        "expectedClose": true,
+        "exited": true,
+        "unexpectedExit": false,
+        "closed": true,
+        "firstFailure": null,
+        "exitCode": 0,
+        "signal": null
+      }
+    },
+    {
+      "artifact": "14126994045",
+      "server": {
+        "ready": true,
+        "expectedClose": true,
+        "exited": true,
+        "unexpectedExit": false,
+        "closed": true,
+        "firstFailure": null,
+        "exitCode": 0,
+        "signal": null
+      }
+    }
+  ],
+  "fixtureEvidence": [
+    {
+      "artifact": "14127123465",
+      "records": 4,
+      "phases": {
+        "server-ready": 4,
+        "authenticated-setup": 8,
+        "offline-download": 2,
+        "snapshot-observation": 14,
+        "cleanup": 4,
+        "scenario-finished": 4
+      },
+      "tails": [
+        {
+          "testId": "d4610c33918c0d3d6a19-c2031c9a72e169522ee1",
+          "tail": {
+            "elapsedMs": 10939,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2986,
+              "runId": "a21891ed-4c52-4578-882d-f3e3eb35dcae",
+              "updatedAt": 1794682045786,
+              "pid": 2997,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+          "tail": {
+            "elapsedMs": 10254,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2986,
+              "runId": "a21891ed-4c52-4578-882d-f3e3eb35dcae",
+              "updatedAt": 1794682069832,
+              "pid": 2997,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+          "tail": {
+            "elapsedMs": 12669,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2986,
+              "runId": "a21891ed-4c52-4578-882d-f3e3eb35dcae",
+              "updatedAt": 1794682058563,
+              "pid": 2997,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "542c6445fd575a52fb22-08bba0e21594e3c6e808",
+          "tail": {
+            "elapsedMs": 10799,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2986,
+              "runId": "a21891ed-4c52-4578-882d-f3e3eb35dcae",
+              "updatedAt": 1794682080857,
+              "pid": 2997,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "artifact": "14127133836",
+      "records": 8,
+      "phases": {
+        "server-ready": 8,
+        "authenticated-setup": 8,
+        "phone-seed": 8,
+        "phone-reload": 8,
+        "cleanup": 8,
+        "scenario-finished": 8
+      },
+      "tails": [
+        {
+          "testId": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+          "tail": {
+            "elapsedMs": 18754,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682046713,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+          "tail": {
+            "elapsedMs": 17991,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682132385,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+          "tail": {
+            "elapsedMs": 17665,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682064501,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+          "tail": {
+            "elapsedMs": 17694,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682150174,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+          "tail": {
+            "elapsedMs": 24724,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682089303,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+          "tail": {
+            "elapsedMs": 24834,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682174969,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+          "tail": {
+            "elapsedMs": 24281,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682113845,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+          "tail": {
+            "elapsedMs": 24596,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 2949,
+              "runId": "9c893806-5fc4-4bfa-987d-0a1af31bc250",
+              "updatedAt": 1794682199779,
+              "pid": 2960,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 154,
+                "tail": "[ready]\n[output redacted]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "artifact": "14126994045",
+      "records": 12,
+      "phases": {
+        "server-ready": 12,
+        "authenticated-setup": 8,
+        "phone-seed": 8,
+        "phone-reload": 8,
+        "cleanup": 12,
+        "scenario-finished": 12,
+        "invitation-enrollment": 4,
+        "invitation-heading": 4
+      },
+      "tails": [
+        {
+          "testId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+          "tail": {
+            "elapsedMs": 13467,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682035878,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+          "tail": {
+            "elapsedMs": 13427,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682116790,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+          "tail": {
+            "elapsedMs": 13056,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682048900,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+          "tail": {
+            "elapsedMs": 13066,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682129808,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+          "tail": {
+            "elapsedMs": 18175,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682067189,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+          "tail": {
+            "elapsedMs": 18561,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682148346,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+          "tail": {
+            "elapsedMs": 18185,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682085471,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+          "tail": {
+            "elapsedMs": 18393,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682166868,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "ccad38f60b47bfc68793-dc2ce66896d5e230117f",
+          "tail": {
+            "elapsedMs": 3225,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682088976,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "ccad38f60b47bfc68793-7be8898b7f5fb244873f",
+          "tail": {
+            "elapsedMs": 3417,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682170625,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "5af9f0c6976febdaf1f3-f44b12a4dca4651b84e8",
+          "tail": {
+            "elapsedMs": 13642,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682102772,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        },
+        {
+          "testId": "5af9f0c6976febdaf1f3-3464d5456fcdb271e02f",
+          "tail": {
+            "elapsedMs": 13899,
+            "phase": "scenario-finished",
+            "server": {
+              "ownerPid": 3149,
+              "runId": "922ae144-b915-42a7-af7b-fe0dfe14c4a9",
+              "updatedAt": 1794682184655,
+              "pid": 3160,
+              "ready": true,
+              "expectedClose": false,
+              "exited": false,
+              "unexpectedExit": false,
+              "closed": false,
+              "firstFailure": null,
+              "exitCode": null,
+              "signal": null,
+              "stdout": {
+                "bytes": 43,
+                "tail": "[ready]"
+              },
+              "stderr": {
+                "bytes": 870,
+                "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

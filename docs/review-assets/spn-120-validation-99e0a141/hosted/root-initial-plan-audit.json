@@ -1,0 +1,10 @@
+{
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tested": "c7ddc1edefc1f814bc17f1611c38077bae6a851a",
+  "tree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+  "planDigest": "e818c3a1180462da23a6e3c661b3f5ad7c95b9846492bcce758b6369026883e3",
+  "selectedSuites": 15,
+  "zipVerified": true,
+  "initialOnly": true
+}

@@ -1,0 +1,17 @@
+{
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "validation": {
+    "tag": "archive/spn-120-validation-99e0a141-20261114",
+    "path": "docs/review-assets/spn-120-validation-99e0a141",
+    "parent": "99e0a141778ba1552c7ae14b58441e253110978e",
+    "published": false
+  },
+  "completion": {
+    "tag": "archive/spn-120-completion-99e0a141-20261114",
+    "path": "docs/review-assets/spn-120-completion-99e0a141",
+    "published": false,
+    "purpose": "Only actual verified squash and guarded branch cleanup, never advance claims."
+  },
+  "previousFailedValidation": "4bd84e3be7645a3b18c794c966e0007e6770cc9c"
+}

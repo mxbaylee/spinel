@@ -1,0 +1,57 @@
+{
+  "previousPacket": "/tmp/spn120-review-packet-99e0a141-v1",
+  "previousManifestSha256": "fc127f261e8caf1d66329b5d9fada7c58f033975837c9a0cafb2121ab688c221",
+  "updatedFiles": [
+    "source/docs/implementation/SPN-140.md",
+    "source/docs/implementation/SPN-141.md",
+    "source/docs/design/component-review.md"
+  ],
+  "manifestSha256": "6dd61556769475c136faa3483d452ba471dc62404104bb01b69a41578dcae366",
+  "remainingNumericalAssessmentMatches": [],
+  "remainingDimensionVectors": [
+    {
+      "path": "source/docs/design/redesign.md",
+      "line": 97,
+      "classification": "Design typography/spacing/icon dimensions, not assessment"
+    },
+    {
+      "path": "source/docs/design/redesign.md",
+      "line": 99,
+      "classification": "Design typography/spacing/icon dimensions, not assessment"
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 40,
+      "classification": "Design typography/spacing/icon dimensions, not assessment"
+    },
+    {
+      "path": "source/docs/design/README.md",
+      "line": 176,
+      "classification": "Design typography/spacing/icon dimensions, not assessment"
+    }
+  ],
+  "otherManuallyClassifiedMatches": [
+    {
+      "path": "source/AGENTS.md",
+      "line": 99,
+      "classification": "Repository review threshold, not a historical assessment"
+    },
+    {
+      "path": "source/.github/pull_request_template.md",
+      "line": 33,
+      "classification": "Repository review threshold, not a historical assessment"
+    },
+    {
+      "path": "source/src/server/auth/passkey-provider-names.json",
+      "line": 47,
+      "classification": "Unchanged provider GUID"
+    },
+    {
+      "path": "source/lib/sync-transform/tests/cells.test.ts",
+      "line": 906,
+      "classification": "Spreadsheet B100 cell address in unchanged test"
+    }
+  ],
+  "repositoryHead": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "repositoryClean": true
+}

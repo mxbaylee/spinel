@@ -1,0 +1,19 @@
+{
+  "source": "candidate",
+  "project": "development",
+  "sourceSha": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "sourceTree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+  "driverSha256": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+  "driverCommit": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "eventHead": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "eventBase": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "workflowRunId": "43628363829",
+  "workflowRunAttempt": "1",
+  "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+  "node": "v26.13.0",
+  "repetitions": 2,
+  "retries": 0,
+  "setupRecoveryAllowed": false,
+  "startedAt": "2026-11-14T18:47:02.474Z",
+  "baselineDeltaSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

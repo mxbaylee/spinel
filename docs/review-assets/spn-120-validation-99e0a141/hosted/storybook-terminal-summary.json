@@ -1,0 +1,57 @@
+[
+  {
+    "artifact": 14128075113,
+    "viewport": "mobile",
+    "theme": "dark",
+    "requested": 1041,
+    "checked": 1041,
+    "failures": [],
+    "docDrawingCaptureChecked": true,
+    "durationMs": 446557,
+    "captureScreenshots": false
+  },
+  {
+    "artifact": 14127625870,
+    "viewport": "mobile",
+    "theme": "light",
+    "requested": 1041,
+    "checked": 1041,
+    "failures": [],
+    "docDrawingCaptureChecked": true,
+    "durationMs": 459267,
+    "captureScreenshots": false
+  },
+  {
+    "artifact": 14127520655,
+    "viewport": "desktop",
+    "theme": "light",
+    "requested": 1041,
+    "checked": 1041,
+    "failures": [],
+    "docDrawingCaptureChecked": true,
+    "durationMs": 473766,
+    "captureScreenshots": false
+  },
+  {
+    "artifact": 14127520487,
+    "viewport": "desktop",
+    "theme": "dark",
+    "requested": 1041,
+    "checked": 1041,
+    "failures": [],
+    "docDrawingCaptureChecked": true,
+    "durationMs": 387331,
+    "captureScreenshots": false
+  },
+  {
+    "artifact": 14127341781,
+    "viewport": "tablet",
+    "theme": "all",
+    "requested": 1041,
+    "checked": 1041,
+    "failures": [],
+    "docDrawingCaptureChecked": true,
+    "durationMs": 417638,
+    "captureScreenshots": false
+  }
+]

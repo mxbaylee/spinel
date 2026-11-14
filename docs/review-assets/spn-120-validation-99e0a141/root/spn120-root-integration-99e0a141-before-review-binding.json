@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-14T18:37:34.129426+00:00",
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "runtimeInputs": 1359,
+  "allByteIdenticalToD777": true,
+  "trackedClean": true,
+  "only120Completion": true,
+  "SPN122ExactMain": true,
+  "packetManifest": "6dd61556769475c136faa3483d452ba471dc62404104bb01b69a41578dcae366",
+  "localEvidence": "d777 exact controls/type/deps/lint/targetedformat source retained; fresh99 PR/backlog; reviews underway",
+  "hosted": "pending final head"
+}

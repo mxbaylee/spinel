@@ -1,0 +1,1572 @@
+{
+  "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+  "sourceSha": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "testedSha": "c7ddc1edefc1f814bc17f1611c38077bae6a851a",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/43628346851",
+  "attempt": "1",
+  "runner": {
+    "label": "macos-26",
+    "arch": "arm64",
+    "imageOS": "macos26",
+    "imageVersion": "20261102.0473.1"
+  },
+  "browser": "firefox",
+  "status": "passed",
+  "stages": [
+    {
+      "name": "browser-start",
+      "time": "2026-11-14T18:46:52.475Z",
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 5204,
+      "previousBrowserPid": null,
+      "driverPid": 5202,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:46:52.454Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "all-four-downloads-complete",
+      "time": "2026-11-14T18:47:10.264Z"
+    },
+    {
+      "name": "transport-disabled-before-quit",
+      "time": "2026-11-14T18:47:10.319Z",
+      "forwardedRequests": 246,
+      "blockedRequests": 11,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 1,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "exact-records-captured-before-quit",
+      "time": "2026-11-14T18:47:11.396Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-14T18:47:12.670Z",
+      "kind": "firefox",
+      "browserPid": 5204,
+      "driverPid": 5202,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-14T18:47:12.669Z"
+    },
+    {
+      "name": "transport-disabled-before-relaunch",
+      "time": "2026-11-14T18:47:12.691Z",
+      "forwardedRequests": 246,
+      "blockedRequests": 81,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 2,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-14T18:47:18.056Z",
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 5855,
+      "previousBrowserPid": 5204,
+      "driverPid": 5832,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:47:18.034Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": true
+    },
+    {
+      "name": "offline-catalog-and-original-records-retained",
+      "time": "2026-11-14T18:47:18.827Z"
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-14T18:47:27.404Z",
+      "itemId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+      "before": {
+        "anchor": {
+          "height": 18.000000000000014,
+          "left": 444.08333174387616,
+          "top": 132.66666666666669,
+          "visible": true,
+          "width": 0
+        },
+        "bounds": {
+          "bottom": 311.6666666666667,
+          "left": 444.08333174387616,
+          "right": 444.08333174387616,
+          "top": 247.66666666666669
+        },
+        "commands": [
+          {
+            "at": 1788,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          },
+          {
+            "at": 1914,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          },
+          {
+            "at": 2264,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          }
+        ],
+        "currentLogicalRange": {
+          "collapsed": true,
+          "end": 20,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 20
+        },
+        "currentUnitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+        "editing": false,
+        "end": 20,
+        "hasAnchor": true,
+        "inputConnected": true,
+        "inputFocused": true,
+        "layout": {
+          "firstNode": {
+            "column": 0,
+            "divide": 0,
+            "glyph": 0,
+            "isBack": true,
+            "line": 0,
+            "page": 0,
+            "pageType": 0,
+            "path": [
+              "pages",
+              0
+            ],
+            "section": 0,
+            "segmentPage": -1
+          },
+          "progress": null,
+          "viewportReady": true
+        },
+        "mobile": false,
+        "nativeRange": {
+          "collapsed": true,
+          "end": 20,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 20
+        },
+        "observedAt": 2292,
+        "pendingSelection": false,
+        "pointerSelection": false,
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "scroll": 0,
+        "shortcutContext": {
+          "activated": false,
+          "doc": true,
+          "drawing": false,
+          "editor": true,
+          "formulaBar": false
+        },
+        "start": 20,
+        "text": "\bRecovery base notes\r\n",
+        "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+        "unitLogicalRanges": [
+          {
+            "collapsed": true,
+            "end": 20,
+            "segmentId": "",
+            "segmentPage": -1,
+            "start": 20
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "fill": "rgba(103, 176, 255, 0.498)",
+            "stroke": "rgba(0, 0, 0, 1)"
+          }
+        ],
+        "viewport": {
+          "active": true,
+          "bounds": {
+            "bottom": 402,
+            "left": 0,
+            "right": 1280,
+            "top": 0
+          },
+          "height": 402,
+          "key": "viewMain",
+          "scrollX": 0,
+          "scrollY": 0,
+          "width": 1280
+        }
+      },
+      "caret": {
+        "anchor": {
+          "height": 60,
+          "left": 226.66666666666669,
+          "top": 86.66666666666667,
+          "visible": true,
+          "width": 0
+        },
+        "bounds": {
+          "bottom": 311.6666666666667,
+          "left": 226.66666666666669,
+          "right": 226.66666666666669,
+          "top": 247.66666666666669
+        },
+        "commands": [
+          {
+            "at": 1788,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          },
+          {
+            "at": 1914,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          },
+          {
+            "at": 2264,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          },
+          {
+            "at": 2299,
+            "direction": 0,
+            "granularity": "document",
+            "id": "doc.operation.move-cursor",
+            "unitId": null,
+            "zoomRatio": null
+          },
+          {
+            "at": 2304,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+            "zoomRatio": null
+          }
+        ],
+        "currentLogicalRange": {
+          "collapsed": true,
+          "end": 0,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "currentUnitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+        "editing": false,
+        "end": 0,
+        "hasAnchor": true,
+        "inputConnected": true,
+        "inputFocused": true,
+        "layout": {
+          "firstNode": {
+            "column": 0,
+            "divide": 0,
+            "glyph": 0,
+            "isBack": true,
+            "line": 0,
+            "page": 0,
+            "pageType": 0,
+            "path": [
+              "pages",
+              0
+            ],
+            "section": 0,
+            "segmentPage": -1
+          },
+          "progress": null,
+          "viewportReady": true
+        },
+        "mobile": false,
+        "nativeRange": {
+          "collapsed": true,
+          "end": 0,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "observedAt": 2324,
+        "pendingSelection": false,
+        "pointerSelection": false,
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "scroll": 0,
+        "shortcutContext": {
+          "activated": false,
+          "doc": true,
+          "drawing": false,
+          "editor": true,
+          "formulaBar": false
+        },
+        "start": 0,
+        "text": "\bRecovery base notes\r\n",
+        "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+        "unitLogicalRanges": [
+          {
+            "collapsed": true,
+            "end": 0,
+            "segmentId": "",
+            "segmentPage": -1,
+            "start": 0
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "fill": "rgba(103, 176, 255, 0.498)",
+            "stroke": "rgba(0, 0, 0, 1)"
+          }
+        ],
+        "viewport": {
+          "active": true,
+          "bounds": {
+            "bottom": 402,
+            "left": 0,
+            "right": 1280,
+            "top": 0
+          },
+          "height": 402,
+          "key": "viewMain",
+          "scrollX": 0,
+          "scrollY": 0,
+          "width": 1280
+        }
+      },
+      "visual": {
+        "file": "2f061078-7a98-4382-96ee-b6a7ed3b6226-before-doc-input.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-14T18:47:31.239Z",
+      "itemId": "877d42a7-e637-4499-b2a0-2eff04148355",
+      "before": {
+        "anchor": {
+          "height": 18.000000000000014,
+          "left": 444.08333174387616,
+          "top": 132.66666666666669,
+          "visible": true,
+          "width": 0
+        },
+        "bounds": {
+          "bottom": 311.6666666666667,
+          "left": 444.08333174387616,
+          "right": 444.08333174387616,
+          "top": 247.66666666666669
+        },
+        "commands": [
+          {
+            "at": 1824,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          },
+          {
+            "at": 1908,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          },
+          {
+            "at": 2137,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          }
+        ],
+        "currentLogicalRange": {
+          "collapsed": true,
+          "end": 20,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 20
+        },
+        "currentUnitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+        "editing": false,
+        "end": 20,
+        "hasAnchor": true,
+        "inputConnected": true,
+        "inputFocused": true,
+        "layout": {
+          "firstNode": {
+            "column": 0,
+            "divide": 0,
+            "glyph": 0,
+            "isBack": true,
+            "line": 0,
+            "page": 0,
+            "pageType": 0,
+            "path": [
+              "pages",
+              0
+            ],
+            "section": 0,
+            "segmentPage": -1
+          },
+          "progress": null,
+          "viewportReady": true
+        },
+        "mobile": false,
+        "nativeRange": {
+          "collapsed": true,
+          "end": 20,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 20
+        },
+        "observedAt": 2203,
+        "pendingSelection": false,
+        "pointerSelection": false,
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "scroll": 0,
+        "shortcutContext": {
+          "activated": false,
+          "doc": true,
+          "drawing": false,
+          "editor": true,
+          "formulaBar": false
+        },
+        "start": 20,
+        "text": "\bRecovery base notes\r\n",
+        "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+        "unitLogicalRanges": [
+          {
+            "collapsed": true,
+            "end": 20,
+            "segmentId": "",
+            "segmentPage": -1,
+            "start": 20
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "fill": "rgba(103, 176, 255, 0.498)",
+            "stroke": "rgba(0, 0, 0, 1)"
+          }
+        ],
+        "viewport": {
+          "active": true,
+          "bounds": {
+            "bottom": 402,
+            "left": 0,
+            "right": 1280,
+            "top": 0
+          },
+          "height": 402,
+          "key": "viewMain",
+          "scrollX": 0,
+          "scrollY": 0,
+          "width": 1280
+        }
+      },
+      "caret": {
+        "anchor": {
+          "height": 60,
+          "left": 226.66666666666669,
+          "top": 86.66666666666667,
+          "visible": true,
+          "width": 0
+        },
+        "bounds": {
+          "bottom": 311.6666666666667,
+          "left": 226.66666666666669,
+          "right": 226.66666666666669,
+          "top": 247.66666666666669
+        },
+        "commands": [
+          {
+            "at": 1824,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          },
+          {
+            "at": 1908,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          },
+          {
+            "at": 2137,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          },
+          {
+            "at": 2216,
+            "direction": 0,
+            "granularity": "document",
+            "id": "doc.operation.move-cursor",
+            "unitId": null,
+            "zoomRatio": null
+          },
+          {
+            "at": 2235,
+            "direction": null,
+            "granularity": null,
+            "id": "doc.operation.set-selections",
+            "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+            "zoomRatio": null
+          }
+        ],
+        "currentLogicalRange": {
+          "collapsed": true,
+          "end": 0,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "currentUnitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+        "editing": false,
+        "end": 0,
+        "hasAnchor": true,
+        "inputConnected": true,
+        "inputFocused": true,
+        "layout": {
+          "firstNode": {
+            "column": 0,
+            "divide": 0,
+            "glyph": 0,
+            "isBack": true,
+            "line": 0,
+            "page": 0,
+            "pageType": 0,
+            "path": [
+              "pages",
+              0
+            ],
+            "section": 0,
+            "segmentPage": -1
+          },
+          "progress": null,
+          "viewportReady": true
+        },
+        "mobile": false,
+        "nativeRange": {
+          "collapsed": true,
+          "end": 0,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "observedAt": 2284,
+        "pendingSelection": false,
+        "pointerSelection": false,
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "scroll": 0,
+        "shortcutContext": {
+          "activated": false,
+          "doc": true,
+          "drawing": false,
+          "editor": true,
+          "formulaBar": false
+        },
+        "start": 0,
+        "text": "\bRecovery base notes\r\n",
+        "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+        "unitLogicalRanges": [
+          {
+            "collapsed": true,
+            "end": 0,
+            "segmentId": "",
+            "segmentPage": -1,
+            "start": 0
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "fill": "rgba(103, 176, 255, 0.498)",
+            "stroke": "rgba(0, 0, 0, 1)"
+          }
+        ],
+        "viewport": {
+          "active": true,
+          "bounds": {
+            "bottom": 402,
+            "left": 0,
+            "right": 1280,
+            "top": 0
+          },
+          "height": 402,
+          "key": "viewMain",
+          "scrollX": 0,
+          "scrollY": 0,
+          "width": 1280
+        }
+      },
+      "visual": {
+        "file": "877d42a7-e637-4499-b2a0-2eff04148355-before-doc-input.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-offline-edits-committed",
+      "time": "2026-11-14T18:47:33.152Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-14T18:47:34.677Z",
+      "kind": "firefox",
+      "browserPid": 5855,
+      "driverPid": 5832,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-14T18:47:34.677Z"
+    },
+    {
+      "name": "transport-still-disabled-before-pending-relaunch",
+      "time": "2026-11-14T18:47:34.692Z",
+      "forwardedRequests": 246,
+      "blockedRequests": 677,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 3,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-14T18:47:39.064Z",
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 6476,
+      "previousBrowserPid": 5855,
+      "driverPid": 6474,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:47:39.058Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": true
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-14T18:47:42.016Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-14T18:47:42.016Z",
+      "itemId": "c9fc559a-04d7-4653-9083-5b835f045d5c",
+      "kind": "sheet",
+      "outcome": "normal",
+      "checkpointSha256": "d7782119800cd745fc718327713fd5bf1555d2eab4bfa0cc84bebb0436efa8a3",
+      "imageHashes": [
+        {
+          "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "size": 248,
+          "source": "/api/items/c9fc559a-04d7-4653-9083-5b835f045d5c/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+        },
+        {
+          "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "size": 242,
+          "source": "/api/items/c9fc559a-04d7-4653-9083-5b835f045d5c/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+        },
+        {
+          "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "size": 247,
+          "source": "/api/items/c9fc559a-04d7-4653-9083-5b835f045d5c/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+        }
+      ],
+      "visual": {
+        "file": "sheet-normal-offline.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          340266
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-14T18:47:45.143Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-14T18:47:45.143Z",
+      "itemId": "8a61928c-6a43-474b-9b8b-8e438c28490b",
+      "kind": "sheet",
+      "outcome": "conflict",
+      "checkpointSha256": "ace2456ed0e319fdd73aeaaae26efd84bab4dc187ec83d03763543321fc5e0c1",
+      "imageHashes": [
+        {
+          "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "size": 248,
+          "source": "/api/items/8a61928c-6a43-474b-9b8b-8e438c28490b/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+        },
+        {
+          "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "size": 242,
+          "source": "/api/items/8a61928c-6a43-474b-9b8b-8e438c28490b/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+        },
+        {
+          "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "size": 247,
+          "source": "/api/items/8a61928c-6a43-474b-9b8b-8e438c28490b/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+        }
+      ],
+      "visual": {
+        "file": "sheet-conflict-offline.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          340266
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-14T18:47:47.945Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+        "nativeRange": {
+          "collapsed": false,
+          "end": 40,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "logicalRange": {
+          "collapsed": false,
+          "end": 40,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-14T18:47:47.945Z",
+      "itemId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+      "kind": "doc",
+      "outcome": "normal",
+      "checkpointSha256": "3b40f2e3070171c505a03ed3ed535bf0704339021b541c75415daf33483ea3a6",
+      "imageHashes": [
+        {
+          "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "size": 243,
+          "source": "/api/items/2f061078-7a98-4382-96ee-b6a7ed3b6226/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+        },
+        {
+          "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "size": 244,
+          "source": "/api/items/2f061078-7a98-4382-96ee-b6a7ed3b6226/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+        },
+        {
+          "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "size": 244,
+          "source": "/api/items/2f061078-7a98-4382-96ee-b6a7ed3b6226/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+        }
+      ],
+      "visual": {
+        "file": "doc-normal-offline.png",
+        "colorPixelCounts": [
+          4720
+        ],
+        "captures": 2
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-14T18:47:50.260Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "877d42a7-e637-4499-b2a0-2eff04148355",
+        "nativeRange": {
+          "collapsed": false,
+          "end": 40,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "logicalRange": {
+          "collapsed": false,
+          "end": 40,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-14T18:47:50.260Z",
+      "itemId": "877d42a7-e637-4499-b2a0-2eff04148355",
+      "kind": "doc",
+      "outcome": "conflict",
+      "checkpointSha256": "5867e308f5f4aef22392113f6e2e293430d73aeb5a7024d745cca7257c530bb0",
+      "imageHashes": [
+        {
+          "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "size": 243,
+          "source": "/api/items/877d42a7-e637-4499-b2a0-2eff04148355/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+        },
+        {
+          "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "size": 244,
+          "source": "/api/items/877d42a7-e637-4499-b2a0-2eff04148355/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+        },
+        {
+          "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "size": 244,
+          "source": "/api/items/877d42a7-e637-4499-b2a0-2eff04148355/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+        }
+      ],
+      "visual": {
+        "file": "doc-conflict-offline.png",
+        "colorPixelCounts": [
+          4720
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "transport-restored",
+      "time": "2026-11-14T18:47:50.615Z"
+    },
+    {
+      "name": "normal-reconnect-exact-content-once",
+      "time": "2026-11-14T18:47:55.718Z",
+      "itemId": "c9fc559a-04d7-4653-9083-5b835f045d5c",
+      "revision": 2,
+      "snapshotSha256": "d6ba67adf04add1b7ea3bdc1689541dcac640748c72d27a999353ec7e77ac81c",
+      "images": [
+        {
+          "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+        },
+        {
+          "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+        },
+        {
+          "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+        }
+      ]
+    },
+    {
+      "name": "recovered-original-reconnect-outage",
+      "time": "2026-11-14T18:48:00.481Z",
+      "itemId": "8a61928c-6a43-474b-9b8b-8e438c28490b",
+      "forwardedRequests": 329,
+      "blockedRequests": 1191,
+      "forwardedUpgrades": 8,
+      "blockedUpgrades": 4,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-14T18:48:08.246Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "conflict-copy-preserves-original",
+      "time": "2026-11-14T18:48:08.249Z",
+      "itemId": "8a61928c-6a43-474b-9b8b-8e438c28490b",
+      "copyId": "bc38157a-f065-46e0-846c-c76eaf868514",
+      "receipts": [
+        {
+          "user_id": "516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+          "recovery_id": "eaf4d45e-c69f-4e48-b062-6bc55409c5ed",
+          "request_hash": "ba785b3d112cedc2168c87d788099202b0d284ad25c67b7ac67b1eeb49de8ae6",
+          "item_id": "bc38157a-f065-46e0-846c-c76eaf868514",
+          "possible_replay_crash": 0
+        }
+      ],
+      "snapshotSha256": "3accdc331e3f9520990491feb3add4ea11889466ebe45981144a42b683d2d6b1",
+      "images": [
+        {
+          "id": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000AA494441546881EDD751114431084351B4D4D3F3EFE06A5813DBE1A3670601904012E67C3D55B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BDFBE61B0A56E4030EB9063B8AB10CC3AE4180EC359E9DC70442B2ACD96CE0335EB1D18380C67A573C311ADA8345B3ADB2629782469255A264BE779C8B7F4ED1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C3707F84E007B28A2747CECEEFC40000000049454E44AE426082"
+        },
+        {
+          "id": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A4494441546881EDD7D11144310842D1DB7F07AFDA6C139BE12367C6021414B0F3F55435EFC0C061382B9D1B8E6845A5D9D2599BA4E091A49568992C9DE721DFD2B7370CB6D40D089A438EE1AE42D01C720C87E1AC746E38A21595664BE7816ADE8181C370563A371CD18A4AB3A5B33649C123492BD132593ACF43BEA56F6F186CA91B1034871CC35D85A039E4180EC359E9DC70442B2ACD96CE03D5BC030387E1FE08C10F1913E3B4726E676D0000000049454E44AE426082"
+        },
+        {
+          "id": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A9494441546881EDD751114431084351B454DC35F9CCAD89EDF0D133830048200973BE9EAA59EFC0C061382B9D1B8E6845A5D9D2D93649C123492BD132593ACF43BEA56FDF30D85237209875C831DC5508661D720C87E1AC746E38A21595664BE7819AF50E0C1C86B3D2B9E18856549A2D9D6D93143C92B4122D93A5F33CE45BFAF60D832D75038259871CC35D8560D621C77018CE4AE786235A5169B6741EA859EFC0C061B83F42F00324F8A99A8D1E4F480000000049454E44AE426082"
+        }
+      ],
+      "visual": {
+        "file": "sheet-recovered-copy.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          338286
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "normal-reconnect-exact-content-once",
+      "time": "2026-11-14T18:48:11.889Z",
+      "itemId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+      "revision": 2,
+      "snapshotSha256": "1eae7bc6ab0e27a79ad2ffe53916c110b732045894ebb873067cc6487ad2e3b1",
+      "images": [
+        {
+          "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+        },
+        {
+          "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+        },
+        {
+          "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+        }
+      ]
+    },
+    {
+      "name": "recovered-original-reconnect-outage",
+      "time": "2026-11-14T18:48:17.969Z",
+      "itemId": "877d42a7-e637-4499-b2a0-2eff04148355",
+      "forwardedRequests": 476,
+      "blockedRequests": 1202,
+      "forwardedUpgrades": 14,
+      "blockedUpgrades": 5,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-14T18:48:22.860Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "2c39ae95-cfc5-4fba-ade0-ab29a5552ef9",
+        "nativeRange": {
+          "collapsed": false,
+          "end": 40,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "logicalRange": {
+          "collapsed": false,
+          "end": 40,
+          "segmentId": "",
+          "segmentPage": -1,
+          "start": 0
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "conflict-copy-preserves-original",
+      "time": "2026-11-14T18:48:22.861Z",
+      "itemId": "877d42a7-e637-4499-b2a0-2eff04148355",
+      "copyId": "2c39ae95-cfc5-4fba-ade0-ab29a5552ef9",
+      "receipts": [
+        {
+          "user_id": "516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+          "recovery_id": "ce0df79c-6888-47fd-8837-da76af74a0d2",
+          "request_hash": "51777e0f00c2299a9823a89846f5ecd2e504421b9d40e3db918512c5a9d74955",
+          "item_id": "2c39ae95-cfc5-4fba-ade0-ab29a5552ef9",
+          "possible_replay_crash": 0
+        },
+        {
+          "user_id": "516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+          "recovery_id": "eaf4d45e-c69f-4e48-b062-6bc55409c5ed",
+          "request_hash": "ba785b3d112cedc2168c87d788099202b0d284ad25c67b7ac67b1eeb49de8ae6",
+          "item_id": "bc38157a-f065-46e0-846c-c76eaf868514",
+          "possible_replay_crash": 0
+        }
+      ],
+      "snapshotSha256": "3a02f898fb55c0fdb777e6e4fbe419f0222c9dfe37caac88849cffae5d1f29b8",
+      "images": [
+        {
+          "id": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A5494441546881EDD7810D03010842D1B7FF289DC5A1BAC43524D79F38808202F2B9FF2AF30E1A580C6BA575C3122DA9B46CE9F63E59F050D252B45496D6F3A06FE9F69E912D791C0273C863D84F2130873C86C5B0565A372CD1924ACB96EEFD65DE41038B61ADB46E58A22595962DDDDE270B1E4A5A8A96CAD27A1EF42DDDDE33B2258F43600E790CFB2904E690C7B018D64AEB86255A5269D9D2BDBFCC3B686031EC3908BEF49E6616807987790000000049454E44AE426082"
+        },
+        {
+          "id": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BADE2653D43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C1075A5DA99A778587790000000049454E44AE426082"
+        },
+        {
+          "id": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "mime": "image/png",
+          "bytes": "89504E470D0A1A0A0000000D49484452000000500000003C08020000007E45AADB0000000970485973000003E8000003E801B57B526B000000A6494441546881EDD7C10D0031080341BA4E935BD43571118F8C440160836DE64C4FD5AC7760E0309C95CE0D47B4A2D26CE96C9BA4E091A49568992C9DE721DFD2EC1B065BEA0604B30E3986BB0AC1AC438EE1309C95CE0D47B4A2D26CE93C50B3DE8181C370563A371CD18A4AB3A5B36D9282479256A265B2749E877C4BB36F186CA91B10CC3AE418EE2A04B30E3986C370563A371CD18A4AB3A5F340CD7A07060EC3FD08C107E61AA99AB09E4A1E0000000049454E44AE426082"
+        }
+      ],
+      "visual": {
+        "file": "doc-recovered-copy.png",
+        "colorPixelCounts": [
+          4720
+        ],
+        "captures": 2
+      }
+    },
+    {
+      "name": "storage-loss-tabs-prepared",
+      "time": "2026-11-14T18:48:24.060Z",
+      "before": [
+        "https://localhost:8176/_desktop-storage-loss"
+      ],
+      "after": [
+        "https://localhost:8176/_desktop-storage-loss"
+      ]
+    },
+    {
+      "name": "storage-loss-unregistration",
+      "time": "2026-11-14T18:48:24.068Z",
+      "preparation": {
+        "database": "spinel-offline-516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-14T18:48:24.061Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss"
+            }
+          },
+          {
+            "elapsedMs": 0,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-14T18:48:24.062Z",
+            "status": "passed",
+            "value": [
+              "https://localhost:8176/"
+            ]
+          },
+          {
+            "elapsedMs": 3,
+            "name": "serviceWorker.unregister:https://localhost:8176/",
+            "startedAt": "2026-11-14T18:48:24.063Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 1,
+            "name": "verify-unregistered",
+            "startedAt": "2026-11-14T18:48:24.067Z",
+            "status": "passed",
+            "value": {
+              "controller": "https://localhost:8176/service-worker.js",
+              "workers": []
+            }
+          }
+        ],
+        "phase": "unregister",
+        "status": "passed",
+        "timeoutMs": 28000
+      }
+    },
+    {
+      "name": "storage-loss-tabs-handed-off",
+      "time": "2026-11-14T18:48:24.118Z",
+      "before": [
+        "https://localhost:8176/_desktop-storage-loss"
+      ],
+      "after": [
+        "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+      ],
+      "documents": [
+        {
+          "controller": null,
+          "fresh": true,
+          "marker": "inert",
+          "ready": "complete",
+          "scripts": 0,
+          "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+        }
+      ]
+    },
+    {
+      "name": "storage-loss-quiescence-before-stop",
+      "time": "2026-11-14T18:48:24.123Z",
+      "quiescence": {
+        "database": "spinel-offline-516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+        "operations": [
+          {
+            "elapsedMs": 0,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-14T18:48:24.121Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+            }
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-14T18:48:24.121Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-14T18:48:24.122Z",
+            "status": "passed",
+            "value": {
+              "controller": null,
+              "workers": []
+            }
+          }
+        ],
+        "phase": "verify",
+        "status": "passed",
+        "timeoutMs": 28000
+      }
+    },
+    {
+      "name": "browser-stop-before-storage-loss",
+      "time": "2026-11-14T18:48:24.696Z",
+      "kind": "firefox",
+      "browserPid": 6476,
+      "driverPid": 6474,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-14T18:48:24.696Z"
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-14T18:48:28.998Z",
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 7878,
+      "previousBrowserPid": 6476,
+      "driverPid": 7876,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:48:28.990Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": true
+    },
+    {
+      "name": "storage-loss-tabs-restarted",
+      "time": "2026-11-14T18:48:29.018Z",
+      "before": [
+        "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+      ],
+      "after": [
+        "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+      ]
+    },
+    {
+      "name": "storage-deletion",
+      "time": "2026-11-14T18:48:29.046Z",
+      "deletion": {
+        "database": "spinel-offline-516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+        "operations": [
+          {
+            "elapsedMs": 1,
+            "name": "verify-preparation-document",
+            "startedAt": "2026-11-14T18:48:29.022Z",
+            "status": "passed",
+            "value": {
+              "marker": "inert",
+              "scripts": 0,
+              "url": "https://localhost:8176/_desktop-storage-loss?phase=uncontrolled"
+            }
+          },
+          {
+            "elapsedMs": 1,
+            "name": "serviceWorker.getRegistrations",
+            "startedAt": "2026-11-14T18:48:29.022Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-uncontrolled",
+            "startedAt": "2026-11-14T18:48:29.024Z",
+            "status": "passed",
+            "value": {
+              "controller": null,
+              "workers": []
+            }
+          },
+          {
+            "elapsedMs": 7,
+            "name": "caches.keys",
+            "startedAt": "2026-11-14T18:48:29.024Z",
+            "status": "passed",
+            "value": [
+              "spinel-shell-98ac16227794ec89"
+            ]
+          },
+          {
+            "elapsedMs": 2,
+            "name": "caches.delete:spinel-shell-98ac16227794ec89",
+            "startedAt": "2026-11-14T18:48:29.031Z",
+            "status": "passed",
+            "value": true
+          },
+          {
+            "elapsedMs": 1,
+            "name": "localStorage.clear",
+            "startedAt": "2026-11-14T18:48:29.034Z",
+            "status": "passed",
+            "value": 0
+          },
+          {
+            "elapsedMs": 3,
+            "name": "indexedDB.deleteDatabase:spinel-offline-516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+            "startedAt": "2026-11-14T18:48:29.034Z",
+            "status": "passed",
+            "value": null
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-service-workers",
+            "startedAt": "2026-11-14T18:48:29.036Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 4,
+            "name": "verify-cache-names",
+            "startedAt": "2026-11-14T18:48:29.036Z",
+            "status": "passed",
+            "value": []
+          },
+          {
+            "elapsedMs": 2,
+            "name": "verify-database-names",
+            "startedAt": "2026-11-14T18:48:29.040Z",
+            "status": "passed",
+            "value": [
+              "UniverLocalStorage",
+              "spinel-offline-runtime"
+            ]
+          },
+          {
+            "elapsedMs": 0,
+            "name": "verify-storage-empty",
+            "startedAt": "2026-11-14T18:48:29.042Z",
+            "status": "passed",
+            "value": {
+              "cacheNames": [],
+              "databases": [
+                "UniverLocalStorage",
+                "spinel-offline-runtime"
+              ],
+              "localStorageEntries": 0,
+              "workers": []
+            }
+          }
+        ],
+        "phase": "delete",
+        "status": "passed",
+        "timeoutMs": 28000
+      }
+    },
+    {
+      "name": "cleared-storage-is-not-advertised",
+      "time": "2026-11-14T18:48:30.157Z",
+      "lost": {
+        "account": null,
+        "available": 0
+      }
+    },
+    {
+      "name": "post-deletion-outage",
+      "time": "2026-11-14T18:48:30.198Z",
+      "forwardedRequests": 585,
+      "blockedRequests": 1203,
+      "forwardedUpgrades": 16,
+      "blockedUpgrades": 6,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "missing-data-cannot-open-offline",
+      "time": "2026-11-14T18:48:30.299Z",
+      "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+    },
+    {
+      "name": "complete",
+      "time": "2026-11-14T18:48:30.299Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-14T18:48:30.779Z",
+      "kind": "firefox",
+      "browserPid": 7878,
+      "driverPid": 7876,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-14T18:48:30.779Z"
+    }
+  ],
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G332",
+  "machine": "arm64",
+  "release": {
+    "sourceSha": "99e0a141778ba1552c7ae14b58441e253110978e",
+    "checkedAt": "2026-11-14T18:45:38.972Z",
+    "kind": "firefox",
+    "status": "passed",
+    "before": "159.0",
+    "releaseSource": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+    "requiredStable": "160.0",
+    "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+    "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-firefox/Firefox.app: accepted\nsource=Notarized Developer ID\n",
+    "download": "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US",
+    "installed": "160.0"
+  },
+  "actor": {
+    "id": "516016ce-4cc8-4f57-8f7d-0a0cc6ee095c",
+    "role": "Collaborator with editor grants",
+    "ownerId": "f72311e9-e437-40a8-94dd-38d3bbc2f88b"
+  },
+  "persistence": [
+    {
+      "itemId": "c9fc559a-04d7-4653-9083-5b835f045d5c",
+      "before": false,
+      "after": true,
+      "permission": {
+        "action": "allow",
+        "observedText": "Allow localhost:8176 to store data in persistent storage?",
+        "button": "Allow",
+        "reason": "observed-localhost-storage-permission",
+        "process": {
+          "pid": 5204,
+          "name": "firefox",
+          "bundleIdentifier": "org.mozilla.firefox",
+          "applicationRole": "AXApplication"
+        },
+        "screenshot": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/firefox/firefox-storage-prompt-1.png",
+        "accessibility": "/Users/runner/work/spinel/spinel/artifacts/desktop-offline/firefox/firefox-storage-prompt-1.json"
+      },
+      "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+    },
+    {
+      "itemId": "8a61928c-6a43-474b-9b8b-8e438c28490b",
+      "before": true,
+      "after": true,
+      "permission": null,
+      "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+    },
+    {
+      "itemId": "2f061078-7a98-4382-96ee-b6a7ed3b6226",
+      "before": true,
+      "after": true,
+      "permission": null,
+      "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+    },
+    {
+      "itemId": "877d42a7-e637-4499-b2a0-2eff04148355",
+      "before": true,
+      "after": true,
+      "permission": null,
+      "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser granted storage protection. Device copies are not a backup.Done"
+    }
+  ],
+  "transport": {
+    "forwardedRequests": 585,
+    "blockedRequests": 1213,
+    "forwardedUpgrades": 16,
+    "blockedUpgrades": 6,
+    "logins": 1,
+    "offline": true,
+    "activeBrowserSockets": 0
+  },
+  "launches": [
+    {
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 5204,
+      "previousBrowserPid": null,
+      "driverPid": 5202,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:46:52.454Z"
+    },
+    {
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 5855,
+      "previousBrowserPid": 5204,
+      "driverPid": 5832,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:47:18.034Z"
+    },
+    {
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 6476,
+      "previousBrowserPid": 5855,
+      "driverPid": 6474,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:47:39.058Z"
+    },
+    {
+      "kind": "firefox",
+      "version": "160.0",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+      "profile": {
+        "mode": "explicit-directory",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+        "directoryDevice": "16777226",
+        "directoryInode": "3086586"
+      },
+      "browserPid": 7878,
+      "previousBrowserPid": 6476,
+      "driverPid": 7876,
+      "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+      "startedAt": "2026-11-14T18:48:28.990Z"
+    }
+  ]
+}

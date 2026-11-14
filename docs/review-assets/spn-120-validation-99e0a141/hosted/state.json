@@ -1,0 +1,392 @@
+{
+  "observedAt": "2026-11-14T19:26:47.314945+00:00",
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+  "testedMerge": "c7ddc1edefc1f814bc17f1611c38077bae6a851a",
+  "testedTree": "5d9a87929eaa43bc592532b4566c685a61f958d2",
+  "ordinaryMergeTreeEqualsSource": true,
+  "planFileSha256": "6542922b568feec2836a2291eddd5dca5f677b3d37fdbfa96562ae34f444a603",
+  "planCanonicalSha256": "e818c3a1180462da23a6e3c661b3f5ad7c95b9846492bcce758b6369026883e3",
+  "plan": "Full15 suites, conservative metadata/range fallback; no labels",
+  "runs": [
+    {
+      "id": 43628346812,
+      "name": "\ud83d\udc8e CI",
+      "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created": "2026-11-14T18:45:14Z",
+      "jobs": [
+        {
+          "id": 132549179177,
+          "name": "Classify changes (43628346812)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549179476,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465706,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465728,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465740,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465749,
+          "name": "Doc responsiveness (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465763,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465773,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465794,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465826,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465894,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465911,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465921,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465922,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465926,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465930,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465932,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465941,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465965,
+          "name": "Playwright smoke (sync-production)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465970,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549465988,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466019,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466025,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466029,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466044,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466049,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466062,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466066,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466221,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549466361,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132553330636,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132554144356,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132559891339,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 43628346822,
+      "name": "\ud83e\udd88 DigitalOcean Spaces",
+      "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created": "2026-11-14T18:45:14Z",
+      "jobs": [
+        {
+          "id": 132549178874,
+          "name": "\ud83e\udd88 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 43628346829,
+      "name": "\ud83d\udcda Storybook",
+      "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created": "2026-11-14T18:45:14Z",
+      "jobs": [
+        {
+          "id": 132549178950,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549440628,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549604220,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549604231,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549604243,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549604265,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549604314,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549605271,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132552772766,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132552853963,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "id": 43628346851,
+      "name": "\ud83d\udcbb Desktop offline",
+      "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created": "2026-11-14T18:45:14Z",
+      "jobs": [
+        {
+          "id": 132549179163,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549179345,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549179390,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 43628363829,
+      "name": "Browser fixture audit",
+      "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "created": "2026-11-14T18:45:24Z",
+      "jobs": [
+        {
+          "id": 132549231445,
+          "name": "Fixture audit (production)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549231669,
+          "name": "Fixture audit (development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132549231700,
+          "name": "Fixture audit (sync-production)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "manualAudit": {
+    "run": 43628363829,
+    "workflow": 403808598,
+    "source": "candidate",
+    "baseline": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+    "dispatchCount": 1,
+    "sourceCheckout": "Manual github.sha=head99; raw source records pending artifact",
+    "noBaselineExecution": true
+  },
+  "archive": {
+    "path": "docs/review-assets/spn-120-validation-99e0a141",
+    "tag": "archive/spn-120-validation-99e0a141-20261114",
+    "directParent": "99e0a141778ba1552c7ae14b58441e253110978e",
+    "status": "Preparation only until every run/job terminal and root verification"
+  },
+  "firstFailures": [],
+  "collectionNotes": [
+    "Spaces artifact first local download redirection failed because concurrently-created artifact directory was not ready; no API request/test ran in that call. Retried GET-only download after directory existed, verified GitHub digest.",
+    "First local Storybook summary parser assumed checked entries were strings; TypeError before writing. Corrected to checked[].id and independently verified exact requested/checked sets. No browser rerun or test failure."
+  ],
+  "status": "Terminal successful validation for exact99/basec525 only; later main advanced, no merge or future-head acceptance claimed.",
+  "root24Audit": "root-24-case-audit.json; original ZIPs reused, independent metadata digest/CRC checked before extraction",
+  "laterMain": "ec42f0741415e4e712395fb47c30b911bc4e64ea; source99 runs retain original c525 base, never relabelled."
+}

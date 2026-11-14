@@ -1,0 +1,10 @@
+{
+  "job": 132549465740,
+  "run": 43628346812,
+  "attempt": 1,
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "tested": "c7ddc1edefc1f814bc17f1611c38077bae6a851a",
+  "fullLogSha256": "f84cf80e92e4e8dc3eaa962e9352a59938e2b6a5cf19221df251e9ffb3bf1487",
+  "firstRetainedLine": 218,
+  "totalLines": 244
+}

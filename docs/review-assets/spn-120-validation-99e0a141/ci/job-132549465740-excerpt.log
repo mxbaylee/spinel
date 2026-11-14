@@ -1,0 +1,27 @@
+2026-11-14T18:49:05.7193559Z ##[group]Run npm run typecheck
+2026-11-14T18:49:05.7193869Z [36;1mnpm run typecheck[0m
+2026-11-14T18:49:05.7245513Z shell: /usr/bin/bash -e {0}
+2026-11-14T18:49:05.7245877Z ##[endgroup]
+2026-11-14T18:49:05.8262322Z 
+2026-11-14T18:49:05.8262902Z > typecheck
+2026-11-14T18:49:05.8263287Z > tsc -p .
+2026-11-14T18:49:05.8263464Z 
+2026-11-14T18:49:12.8823756Z Post job cleanup.
+2026-11-14T18:49:13.1173079Z Post job cleanup.
+2026-11-14T18:49:13.2026948Z [command]/usr/bin/git version
+2026-11-14T18:49:13.2079801Z git version 2.56.1
+2026-11-14T18:49:13.2153378Z Temporarily overriding HOME='/home/runner/work/_temp/cc80173c-4020-4d05-bf8c-8a5d13b4a05e' before making global git config changes
+2026-11-14T18:49:13.2155042Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T18:49:13.2159809Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T18:49:13.2218497Z Removing SSH command configuration
+2026-11-14T18:49:13.2221008Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T18:49:13.2306496Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T18:49:13.2681695Z Removing HTTP extra header
+2026-11-14T18:49:13.2682874Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T18:49:13.2738315Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T18:49:13.3069945Z Removing includeIf entries pointing to credentials config files
+2026-11-14T18:49:13.3076654Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T18:49:13.3112142Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T18:49:13.3532619Z Evaluate and set job outputs
+2026-11-14T18:49:13.3583048Z Set output 'evidence'
+2026-11-14T18:49:13.3585728Z Cleaning up orphan processes

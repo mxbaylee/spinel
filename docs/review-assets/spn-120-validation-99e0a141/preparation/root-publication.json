@@ -1,0 +1,59 @@
+{
+  "at": "2026-11-14T18:46:21.935819+00:00",
+  "source": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "previousRemote": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+  "branch": "codex/spn-120-fixture-reliability",
+  "pr": 228,
+  "draft": true,
+  "bodySha256": "34c9c115a943d1d9ac90a25282dd73a1acbdc0538339760292b490b065206063",
+  "bodyExactRemoteVerified": true,
+  "push": "normal fast-forward, no force",
+  "reviews": {
+    "a": {
+      "path": "/tmp/spn120-review-99e0a141-a.md",
+      "sha256": "ebf7b10ba374649a3ffeb6d5430fb13ea2cee61984b34809e4cd6ca27fa19887",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "rootReadFullReport": true
+    },
+    "b": {
+      "path": "/tmp/spn120-review-99e0a141-b.md",
+      "sha256": "2df01ecf87b858fed7152c738c88bb7411cead20254b30cd781177c904c9f5a1",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "rootReadFullReport": true
+    }
+  },
+  "runs": {
+    "ci": 43628346812,
+    "storybook": 43628346829,
+    "desktop": 43628346851,
+    "spaces": 43628346822,
+    "fixtureAudit": 43628363829
+  },
+  "fixtureDispatch": {
+    "workflow": 403808598,
+    "source": "candidate",
+    "baseline": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+    "observedHead": "99e0a141778ba1552c7ae14b58441e253110978e",
+    "dispatchCount": 1
+  },
+  "firstAttemptOnly": true,
+  "supersededMetadataRun": "none observed; no cancellation",
+  "acceptance": "pending; Spaces initial run success"
+}

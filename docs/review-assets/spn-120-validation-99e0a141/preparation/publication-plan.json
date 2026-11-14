@@ -1,0 +1,20 @@
+{
+  "status": "Both complete original reviews qualify on exact99; publication held by root pending actual-main guard. All current hosted outcomes pending.",
+  "workflowId": 403808598,
+  "ref": "codex/spn-120-fixture-reliability",
+  "dispatchInputs": {
+    "source": "candidate",
+    "baseline": "c525aa933505d6e78b8fdd7a89940d87506d5cb3"
+  },
+  "reason": "Manual candidate audit uses exact pushed branch source via github.sha; baseline input only records eventBase, no baseline execution.",
+  "sequence": [
+    "Verify both fresh complete independent reviews qualify on99 and actual base unchanged.",
+    "Root alone updates final PR body and verifies obsolete audit labels absent before normal fast-forward push.",
+    "Verify remote PR head exactly99; capture ordinary CI merge/head/tree identities.",
+    "Root dispatches exactly one manual candidate audit on workflow403808598/ref with declared inputs; no label-triggered duplicate.",
+    "Retain every first attempt/failure/abort and all terminal workers with distinct source identities.",
+    "Seal validation evidence-only child99 at reserved path/tag after verification.",
+    "Only after all gates/acceptance and actual current-base guard, root may squash and preserve completion/cleanup record."
+  ],
+  "localWorkloads": "None; SPN123 owns local slot."
+}

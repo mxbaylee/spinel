@@ -1,0 +1,100 @@
+{
+  "sourceSha": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "testId": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+  "project": "sync-production",
+  "retry": 0,
+  "repeatEachIndex": 0,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 2986,
+        "runId": "a21891ed-4c52-4578-882d-f3e3eb35dcae",
+        "updatedAt": 1794682046036,
+        "pid": 2997,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    },
+    {
+      "elapsedMs": 24,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 34,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 7427,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 7891,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 8261,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 10739,
+      "phase": "snapshot-observation"
+    },
+    {
+      "elapsedMs": 12668,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 2
+    },
+    {
+      "elapsedMs": 12669,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 2986,
+        "runId": "a21891ed-4c52-4578-882d-f3e3eb35dcae",
+        "updatedAt": 1794682058563,
+        "pid": 2997,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}
