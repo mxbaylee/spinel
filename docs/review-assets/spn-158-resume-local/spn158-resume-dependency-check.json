@@ -1,0 +1,12 @@
+{
+  "name": "spn158-resume-dependency-check",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/dependencies/no-univer-pro.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 114,
+  "peakKiB": 0
+}

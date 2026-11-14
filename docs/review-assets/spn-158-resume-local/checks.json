@@ -1,0 +1,231 @@
+{
+  "createdAt": "2026-11-14T05:47:59.818580+00:00",
+  "testedSource": "0e32180a77a22466e6bfaa9f4c2a1b6a5769a139",
+  "priorCandidate": "bfeb0b23953a67aae8afcba8af6eadd8b24f1040",
+  "actualMain": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "runtimeChangedByEvidenceCommit": false,
+  "checks": [
+    {
+      "name": "spn158-resume-index",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "scripts/backlog/cli.ts",
+        "index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 147,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn158-resume-http",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/server/maintenance/http.test.ts",
+        "-t",
+        "postcommit readiness|shared readiness deadline",
+        "--cache=false",
+        "--fsModuleCachePath=/tmp/spn158-resume-vitest-cache"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 2898,
+      "peakKiB": 1306848
+    },
+    {
+      "name": "spn158-resume-types",
+      "args": [
+        "/usr/bin/env",
+        "GOMEMLIMIT=640MiB",
+        "GOGC=50",
+        "GOMAXPROCS=2",
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 8845,
+      "peakKiB": 1777920
+    },
+    {
+      "name": "spn158-resume-lint",
+      "args": [
+        "node_modules/.bin/oxlint",
+        "--deny-warnings",
+        "src/server/maintenance/http.test.ts",
+        "src/server/maintenance/restore-http-test-client.ts",
+        "src/server/maintenance/restore-crash.integration.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 270,
+      "peakKiB": 127712
+    },
+    {
+      "name": "spn158-resume-format",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--check",
+        "src/server/maintenance/http.test.ts",
+        "src/server/maintenance/restore-http-test-client.ts",
+        "src/server/maintenance/restore-crash.integration.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 257,
+      "peakKiB": 201712
+    },
+    {
+      "name": "spn158-resume-dependency-check",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "scripts/dependencies/no-univer-pro.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 114,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn158-resume-backlog",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 146,
+      "peakKiB": 0
+    }
+  ],
+  "payloads": [
+    {
+      "path": "README.md",
+      "bytes": 2425,
+      "sha256": "1e14b4e4f4fd10bea12c771c93bd61f8cefd11cdd198e85d67a7966df1eeb167"
+    },
+    {
+      "path": "source-identity.json",
+      "bytes": 1421,
+      "sha256": "74e65caae3c806afa05b3900af3a49b8c66f3dbc3f99fe9beeb47ae1949b8dc3"
+    },
+    {
+      "path": "spn158-resume-backlog.json",
+      "bytes": 259,
+      "sha256": "b3bad94a3f92dfab29623fe934e3978aed87c96a89781af61f45d85d134c490b"
+    },
+    {
+      "path": "spn158-resume-backlog.log.gz",
+      "bytes": 384,
+      "sha256": "f90c90174aff1ee49f9bf70403f541cbd89fbade341df96e4451697ec99353f9",
+      "decompressedBytes": 2242,
+      "decompressedSha256": "393bb1d5e36e9378c0e792bb1a27b94ae7eae6d7b584b5b161f25efc8b09ddfd"
+    },
+    {
+      "path": "spn158-resume-cleanup.json",
+      "bytes": 292,
+      "sha256": "3dd867a3a8ac4a18040f38f4713ea041fa3c7c3bc8fc13e853dabf7bd11f9eda"
+    },
+    {
+      "path": "spn158-resume-dependencies.json",
+      "bytes": 1213,
+      "sha256": "fe375a7fabad7b315825bc8537751d71bec259c748f4c7e47f1aba023ff561ba"
+    },
+    {
+      "path": "spn158-resume-dependency-check.json",
+      "bytes": 270,
+      "sha256": "1d92cb8c844271c0bc63c5c123a422a34729530670d863ab6bff0720c9260ec4"
+    },
+    {
+      "path": "spn158-resume-dependency-check.log.gz",
+      "bytes": 236,
+      "sha256": "4bfda21c2d1ec59c0ae5a2aae302f25fa7e5a66d8732abc0f29024e43fe1165c",
+      "decompressedBytes": 296,
+      "decompressedSha256": "f9e98a053acdf95bafd73b88e7b3529ca3e8ac1ca47ba66506500bb6154e5dc9"
+    },
+    {
+      "path": "spn158-resume-format.json",
+      "bytes": 446,
+      "sha256": "35c63e2ded4d1d2ba98e7b11a595b8757b494b986e20200da55600016d63468e"
+    },
+    {
+      "path": "spn158-resume-format.log.gz",
+      "bytes": 296,
+      "sha256": "d4adda46c44d31b307a5832beb5da7f71fdd229d53ef99b70792b4b0c973b579",
+      "decompressedBytes": 450,
+      "decompressedSha256": "32b1626261d156456c3f63f7b4c22d3ba531b2d1391f2f748fdcbd03b373bbe6"
+    },
+    {
+      "path": "spn158-resume-http.json",
+      "bytes": 456,
+      "sha256": "6f9f9104d6a7f6c818a5740052b7c13a7efb83f670fc0af3745af2df223262f9"
+    },
+    {
+      "path": "spn158-resume-http.log.gz",
+      "bytes": 411,
+      "sha256": "9542973cd93d2f12b3c79e1ab0808d3904972e2aa4190f2cb3c08fa997894607",
+      "decompressedBytes": 585,
+      "decompressedSha256": "187591df343538ad78d0786d6abcb5f8936fe41987e4d6ad7d0f45f46a58a388"
+    },
+    {
+      "path": "spn158-resume-index.json",
+      "bytes": 257,
+      "sha256": "93e4ad9f63677dabf969ba59753bef2e2753032fb49171cc5efdae0de23fe191"
+    },
+    {
+      "path": "spn158-resume-index.log.gz",
+      "bytes": 389,
+      "sha256": "33f5e01809c7f77c3873c6299242754c3debfc31db42ee112055b0c9bc73e36e",
+      "decompressedBytes": 2238,
+      "decompressedSha256": "59a12ec0f17012ea7f13c66203e48f3715957bb64073b1d5f933e4957612442c"
+    },
+    {
+      "path": "spn158-resume-lint.json",
+      "bytes": 361,
+      "sha256": "705b3e406d93433cde23a396394a70cd3047403d63e359eaae2fa6a623caafe2"
+    },
+    {
+      "path": "spn158-resume-lint.log.gz",
+      "bytes": 203,
+      "sha256": "5a127f5ccb98aa47c25cdc1f7e3db166ef3525dc11e73185eeeb39c40300ddd5",
+      "decompressedBytes": 304,
+      "decompressedSha256": "96eac8d9e1c489505b88b523a4b312462545746131cdba61a54c146ed4164909"
+    },
+    {
+      "path": "spn158-resume-types.json",
+      "bytes": 359,
+      "sha256": "a505b4eb52759be3ab129f364dea2d2f79f7e6ba27ab4d60999e37d949714a54"
+    },
+    {
+      "path": "spn158-resume-types.log.gz",
+      "bytes": 243,
+      "sha256": "56d320ee3567c5b532516cb71e6afeaee368023325d9cfa73dcd99ca77f23946",
+      "decompressedBytes": 287,
+      "decompressedSha256": "8e218021fe500c5848ea1aa2c3614f9aea11806746750e19c334b08963c1fc42"
+    }
+  ],
+  "executionContexts": {
+    "index": "Merged working tree before integration commit0e32180a; generated index is retained unchanged.",
+    "runtimeTypesAndQuality": "Exact integrated source0e32180a.",
+    "backlog": "Final ticket/index bytes after maintained-document updates; evidence payload assembly followed.",
+    "finalPr": "Run separately on the complete committed candidate and retained in its review/publication evidence."
+  },
+  "backlogInputHashes": {
+    "docs/todo/backlog.json": "b45c7ce638d57be19f259a1b57f550513b1e2224ca0efab42f62258968191965",
+    "docs/todo/readme.md": "62b33957e42420f5db143e68a1f1239cf3501ef1deb3d99b3e1aee7834397e0a",
+    "docs/todo/SPN-120.md": "f1c3c95829012acaccbef7df64e8716ae74c807fc2c3d6c359ec90e1d14ea8a3"
+  }
+}

@@ -1,5 +1,5 @@
 import { mkdtemp, readdir, rm, writeFile } from 'node:fs/promises';
-import { request as httpRequest } from 'node:http';
+import { createServer, request as httpRequest } from 'node:http';
 import { createHash, randomUUID } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -22,6 +22,7 @@ import type {
   MaintenancePublicStatus,
 } from '../../shared/maintenance.ts';
 import { publicMaintenance } from '../../shared/maintenance.ts';
+import { authenticator, restoreHttpClient } from './restore-http-test-client.ts';
 
 vi.setConfig({ testTimeout: 30_000 });
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
@@ -156,6 +157,85 @@ async function fixture() {
     failed,
   };
 }
+
+test('postcommit readiness waits for writable admission while session reads remain available', async () => {
+  const f = await fixture();
+  const client = restoreHttpClient(f.root, f.owner.id, authenticator());
+  const signal = new AbortController().signal;
+  const rows = () => ({
+    sessions: f.db.prepare('SELECT COUNT(*) AS total FROM auth_sessions').get()!.total,
+    challenges: f.db.prepare('SELECT COUNT(*) AS total FROM auth_challenges').get()!.total,
+  });
+  const before = rows();
+  f.set({ phase: 'draining', epoch: 'after' });
+  await expect.poll(() => f.bridge.status().phase).toBe('paused');
+  // The old session-only predicate would pass this deliberately held state.
+  expect(await client.restoredAdmission(signal)).toEqual({
+    stage: 'complete',
+    sessionStatus: 401,
+    maintenanceStatus: 200,
+    available: true,
+    phase: 'paused',
+    ready: false,
+  });
+  await expect(client.authenticate()).rejects.toMatchObject({
+    message: 'Restore authentication-options failed: {"status":503,"phase":"paused"}',
+  });
+  expect(rows()).toEqual(before);
+  f.set({ phase: 'running' });
+  expect(await client.restoredAdmission(signal)).toMatchObject({
+    sessionStatus: 401,
+    phase: 'running',
+    ready: true,
+  });
+  const options = await f.send('/api/auth/authentication/options', {
+    body: {},
+    headers: { Cookie: '', 'X-Spinel-Epoch': 'after' },
+  });
+  expect(options.status).toBe(200);
+  await options.body?.cancel();
+  expect(rows()).toEqual({
+    sessions: Number(before.sessions) + 1,
+    challenges: Number(before.challenges) + 1,
+  });
+});
+
+test('the shared readiness deadline aborts a held HTTP response and closes its request', async () => {
+  const held = deferred(),
+    closed = deferred();
+  const controller = new AbortController();
+  const paths: string[] = [];
+  const server = createServer((request, response) => {
+    paths.push(request.url!);
+    if (request.url === '/api/auth/session') response.writeHead(401).end();
+    else {
+      response.once('close', closed.resolve);
+      held.resolve();
+    }
+  });
+  cleanups.push(async () => {
+    controller.abort();
+    server.closeAllConnections();
+    if (server.listening) await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+  const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const client = restoreHttpClient(base, 'fixture-owner', authenticator());
+  const probe = client.restoredAdmission(controller.signal);
+  await held.promise;
+  // The caller's one deadline expires while the second read is pending. It is
+  // not replaced by a fresh per-request budget or an authentication retry.
+  controller.abort();
+  await expect(probe).resolves.toMatchObject({
+    stage: 'maintenance',
+    sessionStatus: 401,
+    maintenanceStatus: 0,
+    ready: false,
+    failure: 'request-failed',
+  });
+  await closed.promise;
+  expect(paths).toEqual(['/api/auth/session', '/api/maintenance']);
+});
 
 test.each(['sheet', 'space'] as const)(
   'paused %s guest metadata still enforces expiry without opening any writer route',
