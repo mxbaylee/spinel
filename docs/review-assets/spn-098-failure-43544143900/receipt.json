@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "capturedAt": "2026-11-14T02:17:11.472745+00:00",
+  "source": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "tested": "62bc0229c5675ff519b733cfc8f3c9a7e6e918d8",
+  "run": 43544143900,
+  "attempt": 1,
+  "event": "pull_request/edited",
+  "runStatusAtCapture": "in_progress",
+  "failedJobs": [
+    {
+      "id": 132291548937,
+      "name": "Unit tests (supervisor)",
+      "passed": 129,
+      "failed": 2,
+      "total": 131
+    },
+    {
+      "id": 132293846852,
+      "name": "Unit tests",
+      "result": "failure"
+    }
+  ],
+  "planSha256": "d915e21eecc19926dfe89e9f8f97087f2f4b6a53138b8e606e6866f774d105b7",
+  "planArtifact": {
+    "id": 14093535987,
+    "bytes": 930,
+    "sha256": "efb9343a2e3a17bea254e19e472dde6a17a34f68a6ca08bc7fcd1d58ae631ec5"
+  },
+  "failures": [
+    {
+      "test": "SIGKILL at durable running reconciles into maintenance with original rows and closed orphan handles",
+      "durationMs": 8814,
+      "observedError": "Maintenance could not complete this operation. Check its current status with the recovery CLI.",
+      "previousSuccessMs": 824
+    },
+    {
+      "test": "complete application and authenticated archive commit and release the selected candidate: readiness-first",
+      "durationMs": 23720,
+      "observedError": "ready:false at supervisor.test.ts:2600; reporter hides phase/jobPhase/controllerFailure",
+      "previousSuccessMs": 10181
+    }
+  ],
+  "additionalLogObservation": {
+    "at": "2026-11-14T02:06:51.8620487Z",
+    "location": "src/server/maintenance/ownership.ts:221",
+    "error": "Workspace ownership handoff timed out.",
+    "causalMapping": "Unproved: log has no case-correlated protocol progress."
+  },
+  "localAttempt": {
+    "purpose": "Single focused unchanged reproduction, not acceptance",
+    "platform": "darwin arm64",
+    "result": "Linux-only supervisor child rejected platform; fixture-message timeout; real-app case explicitly skipped",
+    "elapsedMs": 10782,
+    "peakKiB": 494608,
+    "guardReason": null
+  },
+  "disposition": "Latest required Unit tests gate blocks merge. Keep original first-success acceptance separate. No unchanged rerun, deadline increase, source repair, permission bypass or feedback-specific cause claim. Remaining selected original jobs still running at capture.",
+  "originalAcceptanceArchive": "https://github.com/mxbaylee/spinel/tree/32a4694e773e3bcabd6472fd27747b044ee7b0dc/docs/review-assets/spn-098-acceptance-2204b8c4",
+  "repairOwner": {
+    "ticket": "SPN-157",
+    "scope": "Pre-launch supervisor handoff/recovery outcome",
+    "effort": "L",
+    "checkpoint": "Reassess at Linux/IPC/persistence capability checkpoint",
+    "registration": "Assigned by manager; SPN-090 worker owns exclusive allocation/registration and SPN-098 prerequisite link; pending registration on main",
+    "implementation": "No SPN-098 implementation expansion"
+  }
+}
