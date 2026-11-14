@@ -151,7 +151,8 @@ test.each([false, true])(
   async (cleanupFails) => {
     const download = downloaded();
     download.outbox = {
-      version: 1, ...scope,
+      version: 1,
+      ...scope,
       checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Saved offline')]] },
     };
     session(download);
@@ -160,7 +161,9 @@ test.each([false, true])(
     const committed = Promise.withResolvers<void>();
     const cleanupError = new Error('Native cleanup failed after disposal');
     const originalDispose = NativeReplica.prototype.dispose;
-    const disposed = vi.spyOn(NativeReplica.prototype, 'dispose').mockImplementation(function (this: NativeReplica) {
+    const disposed = vi.spyOn(NativeReplica.prototype, 'dispose').mockImplementation(function (
+      this: NativeReplica,
+    ) {
       originalDispose.call(this);
       if (cleanupFails) throw cleanupError;
     });
@@ -178,21 +181,38 @@ test.each([false, true])(
         dispose,
       };
     });
-    const replay = replayOfflineItem(scope.account, {
-      itemId: scope.item, spaceId: scope.spaceId, name: bundle.name, kind: 'doc',
-      readOnly: false, revision: bundle.revision, downloadedAt: 0, pending: true,
-    }, () => true);
-    const outcome = replay.done.then(() => undefined, (error: unknown) => error);
+    const replay = replayOfflineItem(
+      scope.account,
+      {
+        itemId: scope.item,
+        spaceId: scope.spaceId,
+        name: bundle.name,
+        kind: 'doc',
+        readOnly: false,
+        revision: bundle.revision,
+        downloadedAt: 0,
+        pending: true,
+      },
+      () => true,
+    );
+    const outcome = replay.done.then(
+      () => undefined,
+      (error: unknown) => error,
+    );
     const foreground = new OfflineSession(scope.account, scope.item, scope.spaceId, () => true);
     cleanup.push(() => foreground.dispose());
     let opening: Promise<void> | undefined;
     try {
       await Promise.race([
         watching.promise,
-        replay.done.then(() => { throw new Error('Replay ended before binding admission.'); }),
+        replay.done.then(() => {
+          throw new Error('Replay ended before binding admission.');
+        }),
       ]);
       let opened = false;
-      opening = foreground.activate().then(() => { opened = true; });
+      opening = foreground.activate().then(() => {
+        opened = true;
+      });
       await stopping.promise;
       expect(opened).toBe(false);
       expect(disposed).not.toHaveBeenCalled();
@@ -218,7 +238,8 @@ test.each(['account change', 'copy removal'] as const)(
   async (change) => {
     const download = downloaded();
     download.outbox = {
-      version: 1, ...scope,
+      version: 1,
+      ...scope,
       checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Retain original')]] },
     };
     const f = session(download);
@@ -230,11 +251,24 @@ test.each(['account change', 'copy removal'] as const)(
     });
     const attached = vi.spyOn(binding, 'attachSpinelSync');
     const lifetime = offlineStorage.offlinePreparation(scope.account, () => true);
-    const replay = replayOfflineItem(scope.account, {
-      itemId: scope.item, spaceId: scope.spaceId, name: bundle.name, kind: 'doc',
-      readOnly: false, revision: bundle.revision, downloadedAt: 0, pending: true,
-    }, lifetime.isCurrent);
-    const outcome = replay.done.then(() => undefined, (error: unknown) => error);
+    const replay = replayOfflineItem(
+      scope.account,
+      {
+        itemId: scope.item,
+        spaceId: scope.spaceId,
+        name: bundle.name,
+        kind: 'doc',
+        readOnly: false,
+        revision: bundle.revision,
+        downloadedAt: 0,
+        pending: true,
+      },
+      lifetime.isCurrent,
+    );
+    const outcome = replay.done.then(
+      () => undefined,
+      (error: unknown) => error,
+    );
     try {
       await reading.promise;
       if (change === 'account change') offlineStorage.setPreparedAccount('replacement-account');
@@ -244,7 +278,13 @@ test.each(['account change', 'copy removal'] as const)(
       else expect(error).toBeUndefined();
       expect(attached).not.toHaveBeenCalled();
       expect(f.store.saveCheckpoint).not.toHaveBeenCalled();
-      expect(await locks.request(`spinel-offline:${scope.account}:${scope.item}`, { ifAvailable: true }, (lock) => Boolean(lock))).toBe(true);
+      expect(
+        await locks.request(
+          `spinel-offline:${scope.account}:${scope.item}`,
+          { ifAvailable: true },
+          (lock) => Boolean(lock),
+        ),
+      ).toBe(true);
     } finally {
       result.resolve(undefined);
       await replay.stop();
@@ -256,8 +296,12 @@ test.each(['account change', 'copy removal'] as const)(
 test('a background host never binds a pending copy owned by another tab', async () => {
   const download = downloaded();
   download.outbox = {
-    version: 1, ...scope,
-    checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Other writer owns this')]] },
+    version: 1,
+    ...scope,
+    checkpoint: {
+      ...structuredClone(checkpoint),
+      buffer: [[insertText('Other writer owns this')]],
+    },
   };
   const f = session(download);
   const held = Promise.withResolvers<void>();
@@ -268,10 +312,20 @@ test('a background host never binds a pending copy owned by another tab', async 
   });
   const attached = vi.spyOn(binding, 'attachSpinelSync');
   await held.promise;
-  const replay = replayOfflineItem(scope.account, {
-    itemId: scope.item, spaceId: scope.spaceId, name: bundle.name, kind: 'doc',
-    readOnly: false, revision: bundle.revision, downloadedAt: 0, pending: true,
-  }, () => true);
+  const replay = replayOfflineItem(
+    scope.account,
+    {
+      itemId: scope.item,
+      spaceId: scope.spaceId,
+      name: bundle.name,
+      kind: 'doc',
+      readOnly: false,
+      revision: bundle.revision,
+      downloadedAt: 0,
+      pending: true,
+    },
+    () => true,
+  );
   try {
     await replay.done;
     expect(attached).not.toHaveBeenCalled();
