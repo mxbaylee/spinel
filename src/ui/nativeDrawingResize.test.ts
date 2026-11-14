@@ -89,7 +89,10 @@ test.each(['narrow', 'restore'] as const)(
   (phase) => {
     const retained = JSON.parse(
       readFileSync(
-        new URL(`../../docs/implementation/evidence/SPN-159/controls-${phase}.json`, import.meta.url),
+        new URL(
+          `../../docs/implementation/evidence/SPN-159/controls-${phase}.json`,
+          import.meta.url,
+        ),
         'utf8',
       ),
     ).result;
