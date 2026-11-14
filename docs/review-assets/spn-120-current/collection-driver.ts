@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { auditCases } from '/Users/mxbaylee/projects/spinel-spn-120-production/scripts/ci/fixture-audit.ts';
+import { auditCases } from '../../../scripts/ci/fixture-audit.ts';
 
 const results: object[] = [];
 for (const project of ['production', 'development', 'sync-production'] as const) {
