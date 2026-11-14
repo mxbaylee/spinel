@@ -162,6 +162,7 @@ test('optional infrastructure smoke has no schedule or automatic code-push alloc
     'utf8',
   );
   assert.doesNotMatch(workflow, /schedule:|cron:|types:.*(?:opened|synchronize|reopened)/);
+  assert.doesNotMatch(workflow, /^  push:/m);
   assert.match(workflow, /types: \[labeled\]/);
   assert.match(workflow, /github\.event\.label\.name == 'ci-real-devices'/);
   assert.match(

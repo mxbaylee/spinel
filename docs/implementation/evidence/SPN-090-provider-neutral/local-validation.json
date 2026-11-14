@@ -5,7 +5,7 @@
   "node": "26.13.0",
   "environment": "macOS arm64 local; one shared serial workload at a time",
   "watchdog": "shared scripts/serial.ts;200ms process-tree RSS/pressure monitoring;2GiB;8min;normal pressure before start",
-  "resourceDisposition": "Reduced-source typecheck and Storybook were resource-aborted, not passes. Peak RSS was below2GiB and elapsed below8min; pressure was observed2 after Storybook, consistent with runtime pressure guard. No current screenshots produced.",
+  "resourceDisposition": "Reduced-source typecheck and Storybook were resource-aborted, not passes. Peak RSS was below2GiB and elapsed below8min; pressure was observed2 after Storybook, consistent with runtime pressure guard. No current screenshots produced. After manager observed normal1 with other workloads stopped, one compiler retry passed. Storybook retry resource-aborted again; no further local build retry, current visual remains hosted-pending.",
   "attempts": [
     {
       "name": "spn090-resume-install",
@@ -335,6 +335,79 @@
       "log": "spn090-reduced-storybook.log.gz",
       "sha256": "4dcfeb00e5af76a58f8a8f6a32759c19e374b78802b99e4f94232469f780ec0c",
       "gzipSha256": "85a9020ac56a2b4f9a7647c033e365fd34b5d34b97e5072e00440670d27a073d"
+    },
+    {
+      "name": "spn090-normal-types",
+      "stage": "normal-pressure recovery; no raised limits",
+      "source": "c43a328a6a68d8ad515b205b0d4dd019b3bf7b88",
+      "watchdog": {
+        "name": "spn090-normal-types",
+        "args": [
+          "node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 2375,
+        "peakKiB": 1786992
+      },
+      "log": "spn090-normal-types.log.gz",
+      "sha256": "d89118cdcf24c57bb24dcf843a5286c9641ede17235a475ce5509df679f8659b",
+      "gzipSha256": "f9a6ce6d8056487cb42bfacdc93e3975dd3bdc7d8abae2aedd0264e28f86855c"
+    },
+    {
+      "name": "spn090-normal-storybook",
+      "stage": "normal-pressure recovery; no raised limits",
+      "source": "c43a328a6a68d8ad515b205b0d4dd019b3bf7b88",
+      "watchdog": {
+        "name": "spn090-normal-storybook",
+        "args": [
+          "npm",
+          "run",
+          "build-storybook"
+        ],
+        "code": 1,
+        "signal": null,
+        "reason": "Resource guard",
+        "elapsedMs": 7204,
+        "peakKiB": 1550592
+      },
+      "log": "spn090-normal-storybook.log.gz",
+      "sha256": "f23ae3145906ed93ce54c828a140765241d1acc5e098c7e83ef0052846b115fd",
+      "gzipSha256": "a6c484fac67b6af00013373c9254d2baabd6498a3dc69c0e17a71dd48e7b72aa"
+    },
+    {
+      "name": "spn090-trigger-control",
+      "stage": "normal-pressure recovery; no raised limits",
+      "source": "c43a328a6a68d8ad515b205b0d4dd019b3bf7b88",
+      "watchdog": {
+        "name": "spn090-trigger-control",
+        "args": [
+          "node",
+          "--test",
+          "scripts/ci/browserstack.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 235,
+        "peakKiB": 241856
+      },
+      "log": "spn090-trigger-control.log.gz",
+      "sha256": "0292683ecc02b2e0ddb4e06eb8d3737cbc9ed736b2a33961d6d74eb361cf65ad",
+      "gzipSha256": "bb6a4aef1923b6adf188a25b33a1e0b9dfefed7fbeb04a6c46b55cce54f41299",
+      "workingTreeDelta": {
+        "file": "scripts/ci/browserstack.test.ts",
+        "sha256": "83668627675cb8b9e14a509183b83b3287c8dcf63d4ca537dce7c177cb3bc3f3",
+        "description": "one added assertion rejects top-level push trigger"
+      }
     }
-  ]
+  ],
+  "watchdogSource": {
+    "file": "watchdog.ts.gz",
+    "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+  }
 }
