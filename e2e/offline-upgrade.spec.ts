@@ -1,9 +1,10 @@
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
-import { createServer, request } from 'node:http';
+import { createHash } from 'node:crypto';
+import { createServer } from 'node:http';
 import { connect } from 'node:net';
 import type { Socket } from 'node:net';
-import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { chromium, expect, test } from '@playwright/test';
@@ -15,7 +16,11 @@ import { runtimeDescriptor, shellFiles } from '../src/shared/offlineShell.ts';
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import type { RuntimeState } from '../web/offline/runtimeStore.ts';
 import { projectRoot, startApp } from './app-process.ts';
+import { finishUpgrade } from './offline-upgrade-cleanup.ts';
 import { linkLegacyOfflineDependencies } from './offline-upgrade-dependencies.ts';
+import { forwardUpgradeRequest } from './offline-upgrade-proxy.ts';
+import { verifyUpgradeResponseLifetime } from './offline-upgrade-lifetime.ts';
+import { startOfflineUpgradeObservation } from './offline-upgrade-observation.ts';
 import { syncNetwork } from './sync-network.ts';
 
 // This project owns its sequential builds and its real server. No ordinary
@@ -40,6 +45,25 @@ let buildDirectory: string;
 let legacy: LegacyBuild;
 let a: EmittedBuild;
 let b: EmittedBuild;
+
+async function upgradeIdentities() {
+  const hash = async (directory: string) =>
+    createHash('sha256')
+      .update(await readFile(join(directory, 'service-worker.js')))
+      .digest('hex');
+  return {
+    tested: execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: projectRoot,
+      encoding: 'utf8',
+      timeout: 5000,
+    }).trim(),
+    legacy: legacyCommit,
+    previous: previousCommit,
+    legacyWorker: await hash(legacy.directory),
+    previousWorker: await hash(a.directory),
+    candidateWorker: await hash(b.directory),
+  };
+}
 
 async function emit(directory: string, source: string, format?: 1 | 2) {
   await new Promise<void>((done, reject) => {
@@ -214,6 +238,48 @@ test.beforeAll(async ({ browserName }, info) => {
   expect(b.manifest.files.some((path) => a.manifest.files.includes(path))).toBe(false);
 });
 
+test('an interrupted real legacy preparation releases its worker before replacement activation', async ({
+  browserName,
+}, info) => {
+  test.setTimeout(90_000);
+  expect(browserName).toBe('chromium');
+  const entries: Record<string, unknown>[] = [];
+  const identities = await upgradeIdentities();
+  let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
+  let failure: unknown;
+  try {
+    browser = await chromium.launch({ headless: true });
+    for (const mode of ['original', 'repaired'] as const)
+      await verifyUpgradeResponseLifetime(browser, legacy.directory, a.directory, mode, (entry) =>
+        entries.push(entry),
+      );
+  } catch (error) {
+    failure = error;
+  } finally {
+    await finishUpgrade(
+      [
+        () =>
+          writeFile(
+            info.outputPath('spn-055-worker-response-control.json'),
+            JSON.stringify(
+              {
+                identities,
+                browser: browser?.version(),
+                retry: info.retry,
+                entries,
+                firstFailure: failure === undefined ? null : String(failure),
+              },
+              null,
+              2,
+            ) + '\n',
+          ),
+        () => browser?.close(),
+      ],
+      failure,
+    );
+  }
+});
+
 test('the actual SPN-054 eager client keeps its pending Doc and lazy files during new-host adoption', async ({
   browserName,
 }, info) => {
@@ -227,117 +293,138 @@ test('the actual SPN-054 eager client keeps its pending Doc and lazy files durin
   const lazy = legacy.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
   expect(missing).toBeDefined();
   expect(lazy).toBeDefined();
-  const server = await upgradeServer(databasePath, missing, {
-    ...legacy,
-    applicationSource: a.applicationSource,
-  });
+  let server: Awaited<ReturnType<typeof upgradeServer>> | undefined;
   let browser: Awaited<ReturnType<typeof chromium.launch>> | undefined;
+  let f: Awaited<ReturnType<typeof fixture>> | undefined;
+  let observation: Awaited<ReturnType<typeof startOfflineUpgradeObservation>> | undefined;
+  let failure: unknown;
   try {
+    server = await upgradeServer(databasePath, missing, {
+      ...legacy,
+      applicationSource: a.applicationSource,
+    });
     browser = await chromium.launch({ headless: true });
-    const f = await fixture(browser, origin, info, 'doc', { databasePath });
-    try {
-      await f.download();
-      expect(await f.page.evaluate(() => window.__spinelRuntimeHost)).toBeUndefined();
-      const oldCaches = await f.page.evaluate(async () =>
-        (await caches.keys()).filter((name) => name.startsWith('spinel-shell-')),
-      );
-      expect(oldCaches).toHaveLength(1);
-      const old = { version: oldCaches[0].slice('spinel-shell-'.length), files: legacy.files };
-      expect(await cachedFiles(f.page, old)).toEqual([...legacy.files, '/']);
-      expect(
-        await f.page.evaluate(async () => (await indexedDB.databases()).map((entry) => entry.name)),
-      ).not.toContain('spinel-offline-runtime');
-      const original = await f.read();
-      await f.network.setOffline(true);
-      const draft = 'Legacy native Doc kept through host adoption 5521 ';
-      await edit(f.page, 'doc', draft);
-      await savedLocally(f.page);
-      const retained = await stored(f.page, f.actor.id, f.item.id);
-      expect(retained?.outbox?.checkpoint.buffer.length).toBeGreaterThan(0);
-      const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
-      const oldClient = await actualClientId(f.context, f.page);
+    f = await fixture(browser, origin, info, 'doc', { databasePath });
+    observation = await startOfflineUpgradeObservation(
+      browser,
+      f.context,
+      info,
+      await upgradeIdentities(),
+    );
+    observation.mark('legacy-download');
+    await f.download();
+    expect(await f.page.evaluate(() => window.__spinelRuntimeHost)).toBeUndefined();
+    const oldCaches = await f.page.evaluate(async () =>
+      (await caches.keys()).filter((name) => name.startsWith('spinel-shell-')),
+    );
+    expect(oldCaches).toHaveLength(1);
+    const old = { version: oldCaches[0].slice('spinel-shell-'.length), files: legacy.files };
+    expect(await cachedFiles(f.page, old)).toEqual([...legacy.files, '/']);
+    expect(
+      await f.page.evaluate(async () => (await indexedDB.databases()).map((entry) => entry.name)),
+    ).not.toContain('spinel-offline-runtime');
+    const original = await f.read();
+    await f.network.setOffline(true);
+    const draft = 'Legacy native Doc kept through host adoption 5521 ';
+    await edit(f.page, 'doc', draft);
+    await savedLocally(f.page);
+    const retained = await stored(f.page, f.actor.id, f.item.id);
+    expect(retained?.outbox?.checkpoint.buffer.length).toBeGreaterThan(0);
+    const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
+    const oldClient = await actualClientId(f.context, f.page);
 
-      server.fail('missing-lazy');
-      await server.replace(a);
-      f.network.holdResume();
-      await f.network.setOffline(false);
-      expect(await updateWorker(f.page)).toBe('redundant');
-      const interrupted = await publicState(f.page);
-      expect(interrupted.builds).toEqual([]);
-      expect(interrupted.candidate?.version).toBe(a.manifest.version);
-      expect(interrupted.legacyCompatibility).toEqual(a.manifest.compatibility);
-      expect(await cachedFiles(f.page, old)).toEqual([...legacy.files, '/']);
-      expect(await cachedFiles(f.page, a.manifest)).not.toContain('/');
-      expect(await stored(f.page, f.actor.id, f.item.id)).toEqual(retained);
-      expect(await f.page.evaluate(() => window.__spinelRuntimeHost)).toBeUndefined();
+    server.fail('missing-lazy');
+    observation.mark('replace-server-with-missing-lazy-asset');
+    await server.replace(a);
+    f.network.holdResume();
+    await f.network.setOffline(false);
+    expect(await updateWorker(f.page)).toBe('redundant');
+    observation.mark('missing-asset-rejected');
+    const interrupted = await publicState(f.page);
+    expect(interrupted.builds).toEqual([]);
+    expect(interrupted.candidate?.version).toBe(a.manifest.version);
+    expect(interrupted.legacyCompatibility).toEqual(a.manifest.compatibility);
+    expect(await cachedFiles(f.page, old)).toEqual([...legacy.files, '/']);
+    expect(await cachedFiles(f.page, a.manifest)).not.toContain('/');
+    expect(await stored(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    expect(await f.page.evaluate(() => window.__spinelRuntimeHost)).toBeUndefined();
 
-      server.fail();
-      expect(await updateWorker(f.page)).toBe('activated');
-      const adopted = await publicState(f.page);
-      expect(adopted.builds.map((build) => build.version)).toEqual([a.manifest.version]);
-      expect(adopted.legacyCompatibility).toEqual(a.manifest.compatibility);
-      // The eager base client never speaks the new host protocol. Its actual
-      // still-live, unknown Client.id therefore protects the legacy cache.
-      expect(await actualClientId(f.context, f.page)).toBe(oldClient);
-      expect(Object.hasOwn(adopted.clients, oldClient)).toBe(false);
-      expect(await cachedFiles(f.page, old)).toEqual([...legacy.files, '/']);
-      expect(
-        await f.page
-          .locator('.univer-container canvas')
-          .first()
-          .evaluate((node, original) => node === original, canvas!),
-      ).toBe(true);
-      expect(await f.page.evaluate(() => window.__spinelRuntimeHost)).toBeUndefined();
-      expect(await stored(f.page, f.actor.id, f.item.id)).toEqual(retained);
-      const removedPath = await f.control.request.get(lazy);
-      expect(removedPath.status()).toBe(404);
-      await f.network.setOffline(true);
-      expect(
-        await f.page.evaluate(
-          (path) => performance.getEntriesByName(location.origin + path).length,
-          lazy,
+    server.fail();
+    observation.mark('missing-asset-cleared-request-activation');
+    expect(await updateWorker(f.page)).toBe('activated');
+    observation.mark('replacement-activated');
+    const adopted = await publicState(f.page);
+    expect(adopted.builds.map((build) => build.version)).toEqual([a.manifest.version]);
+    expect(adopted.legacyCompatibility).toEqual(a.manifest.compatibility);
+    // The eager base client never speaks the new host protocol. Its actual
+    // still-live, unknown Client.id therefore protects the legacy cache.
+    expect(await actualClientId(f.context, f.page)).toBe(oldClient);
+    expect(Object.hasOwn(adopted.clients, oldClient)).toBe(false);
+    expect(await cachedFiles(f.page, old)).toEqual([...legacy.files, '/']);
+    expect(
+      await f.page
+        .locator('.univer-container canvas')
+        .first()
+        .evaluate((node, original) => node === original, canvas!),
+    ).toBe(true);
+    expect(await f.page.evaluate(() => window.__spinelRuntimeHost)).toBeUndefined();
+    expect(await stored(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    const removedPath = await f.control.request.get(lazy);
+    expect(removedPath.status()).toBe(404);
+    await f.network.setOffline(true);
+    expect(
+      await f.page.evaluate(
+        (path) => performance.getEntriesByName(location.origin + path).length,
+        lazy,
+      ),
+    ).toBe(0);
+    expect(await f.page.evaluate(async (path) => Object.keys(await import(path)), lazy)).toContain(
+      'HistoryBrowser',
+    );
+
+    // Only a user navigation starts the complete new host. It reads the
+    // retained real format-1 Doc without rewriting the legacy checkpoint.
+    await f.page.reload();
+    await usableCanvas(f.page);
+    await savedLocally(f.page);
+    expect(await f.page.evaluate(() => window.__spinelRuntimeHost?.manifest?.version)).toBe(
+      a.manifest.version,
+    );
+    expect(await copy(f.page, 'doc')).toContain(draft);
+    expect(await stored(f.page, f.actor.id, f.item.id)).toEqual(retained);
+    expect((await publicState(f.page)).accounts[f.actor.id]).toEqual(a.manifest.compatibility);
+    expect(await f.read()).toEqual(original);
+    expect(f.errors).toEqual([]);
+    observation.mark('retained-content-and-lazy-assets-verified');
+    await info.attach('spn-055-legacy-runtime-adoption', {
+      contentType: 'application/json',
+      body: Buffer.from(
+        JSON.stringify(
+          {
+            source: legacyCommit,
+            legacyCache: oldCaches[0],
+            legacyFiles: legacy.files,
+            adopted: a.manifest.version,
+            interruptedCandidatePreserved: true,
+          },
+          null,
+          2,
         ),
-      ).toBe(0);
-      expect(
-        await f.page.evaluate(async (path) => Object.keys(await import(path)), lazy),
-      ).toContain('HistoryBrowser');
-
-      // Only a user navigation starts the complete new host. It reads the
-      // retained real format-1 Doc without rewriting the legacy checkpoint.
-      await f.page.reload();
-      await usableCanvas(f.page);
-      await savedLocally(f.page);
-      expect(await f.page.evaluate(() => window.__spinelRuntimeHost?.manifest?.version)).toBe(
-        a.manifest.version,
-      );
-      expect(await copy(f.page, 'doc')).toContain(draft);
-      expect(await stored(f.page, f.actor.id, f.item.id)).toEqual(retained);
-      expect((await publicState(f.page)).accounts[f.actor.id]).toEqual(a.manifest.compatibility);
-      expect(await f.read()).toEqual(original);
-      expect(f.errors).toEqual([]);
-      await info.attach('spn-055-legacy-runtime-adoption', {
-        contentType: 'application/json',
-        body: Buffer.from(
-          JSON.stringify(
-            {
-              source: legacyCommit,
-              legacyCache: oldCaches[0],
-              legacyFiles: legacy.files,
-              adopted: a.manifest.version,
-              interruptedCandidatePreserved: true,
-            },
-            null,
-            2,
-          ),
-        ),
-      });
-    } finally {
-      await f.close();
-    }
+      ),
+    });
+  } catch (error) {
+    failure = error;
   } finally {
-    await browser?.close();
-    await server.close();
-    await rm(directory, { recursive: true, force: true });
+    await finishUpgrade(
+      [
+        () => f?.close(),
+        () => browser?.close(),
+        () => server?.close(),
+        () => rm(directory, { recursive: true, force: true }),
+      ],
+      failure,
+      observation,
+    );
   }
 });
 test.afterAll(async () => {
@@ -382,25 +469,7 @@ async function upgradeServer(
       } else outgoing.end(a.html);
       return;
     }
-    const upstream = request(
-      {
-        hostname: '127.0.0.1',
-        port: 3111,
-        path: incoming.url,
-        method: incoming.method,
-        headers: incoming.headers,
-      },
-      (response) => {
-        outgoing.writeHead(response.statusCode ?? 502, response.headers);
-        response.pipe(outgoing);
-      },
-    );
-    upstream.on('error', () => {
-      if (!outgoing.headersSent) outgoing.writeHead(502);
-      outgoing.end();
-    });
-    incoming.on('aborted', () => upstream.destroy());
-    incoming.pipe(upstream);
+    forwardUpgradeRequest(incoming, outgoing, 3111);
   });
   server.on('connection', (socket) => {
     sockets.add(socket);
@@ -443,11 +512,26 @@ async function upgradeServer(
       sourceRoot: next.applicationSource,
     });
   };
+  const close = async () => {
+    // Both independent owners begin closing before either is awaited. A stuck
+    // proxy must not leave the app process running until the outer bound fires.
+    const results = await Promise.allSettled([
+      new Promise<void>((done, reject) => {
+        for (const socket of sockets) socket.destroy();
+        server.close((error) => (error ? reject(error) : done()));
+      }),
+      Promise.resolve().then(() => app?.close()),
+    ]);
+    const failures = results.flatMap((result) =>
+      result.status === 'rejected' ? [result.reason] : [],
+    );
+    if (failures.length === 1) throw failures[0];
+    if (failures.length) throw new AggregateError(failures, 'Upgrade hosts failed to close.');
+  };
   try {
     await replace(initial);
   } catch (error) {
-    for (const socket of sockets) socket.destroy();
-    await new Promise<void>((done) => server.close(() => done()));
+    await finishUpgrade([close], error);
     throw error;
   }
   return {
@@ -456,11 +540,7 @@ async function upgradeServer(
     fail(next?: Fault) {
       fault = next;
     },
-    async close() {
-      for (const socket of sockets) socket.destroy();
-      await new Promise<void>((done) => server.close(() => done()));
-      await app?.close();
-    },
+    close,
   };
 }
 
@@ -533,7 +613,7 @@ async function updateWorker(page: Page) {
         record('timeout');
         finish(
           new Error(
-            `The emitted worker did not finish installing. ${JSON.stringify(observations)}`,
+            `The emitted worker did not finish installing or activating. ${JSON.stringify(observations)}`,
           ),
         );
       }, 120_000);
@@ -600,43 +680,48 @@ test('interrupted emitted updates preserve exact native work, a live old client 
   const { copy, edit, savedLocally, selectCell, stored, usableCanvas } =
     await import('./offline-fixture.ts');
   const { DOCS_NORMAL_EDITOR_UNIT_ID_KEY } = await import('@univerjs/core');
-  const directory = await mkdtemp(join(tmpdir(), 'spinel-upgrade-profile-'));
-  const databasePath = join(directory, 'app.sqlite');
-  const db = openDatabase(databasePath);
-  const auth = new AuthStore(db);
-  const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
-  const account = auth.createUser('Upgrade account');
-  const sheet = workspace.create(account.id, {
-    name: 'Upgrade Sheet',
-    kind: 'sheet',
-    parentId: null,
-  });
-  const doc = workspace.create(account.id, { name: 'Upgrade Doc', kind: 'doc', parentId: null });
-  let token = auth.createSession(account.id).token;
-  const missing = b.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
-  const lazy = a.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
-  expect(missing).toBeDefined();
-  expect(lazy).toBeDefined();
-  const server = await upgradeServer(databasePath, missing);
+  let directory: string | undefined;
+  let database: ReturnType<typeof openDatabase> | undefined;
+  let ownedServer: Awaited<ReturnType<typeof upgradeServer>> | undefined;
   let context: BrowserContext | undefined;
-  const failures: string[] = [];
-  const startBrowser = async (offline = false) => {
-    // Closing a persistent context closes its browser process; the next launch
-    // reads the same on-disk profile. No storageState fixture restores private data.
-    context = await chromium.launchPersistentContext(join(directory, 'profile'), {
-      headless: true,
-      baseURL: origin,
-      viewport: { width: 1440, height: 1100 },
-      permissions: ['clipboard-read', 'clipboard-write'],
-      offline,
-    });
-    const network = await syncNetwork(context);
-    await network.setOffline(offline);
-    const page = context.pages()[0] ?? (await context.newPage());
-    page.on('pageerror', (error) => failures.push(error.message));
-    return { page, network };
-  };
+  let failure: unknown;
   try {
+    directory = await mkdtemp(join(tmpdir(), 'spinel-upgrade-profile-'));
+    const profileDirectory = join(directory, 'profile');
+    const databasePath = join(directory, 'app.sqlite');
+    const db = (database = openDatabase(databasePath));
+    const auth = new AuthStore(db);
+    const workspace = new WorkspaceStore(auth, { spacesEnabled: true });
+    const account = auth.createUser('Upgrade account');
+    const sheet = workspace.create(account.id, {
+      name: 'Upgrade Sheet',
+      kind: 'sheet',
+      parentId: null,
+    });
+    const doc = workspace.create(account.id, { name: 'Upgrade Doc', kind: 'doc', parentId: null });
+    let token = auth.createSession(account.id).token;
+    const missing = b.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
+    const lazy = a.manifest.files.find((path) => /\/HistoryBrowser-.*\.js$/.test(path))!;
+    expect(missing).toBeDefined();
+    expect(lazy).toBeDefined();
+    const server = (ownedServer = await upgradeServer(databasePath, missing));
+    const failures: string[] = [];
+    const startBrowser = async (offline = false) => {
+      // Closing a persistent context closes its browser process; the next launch
+      // reads the same on-disk profile. No storageState fixture restores private data.
+      context = await chromium.launchPersistentContext(profileDirectory, {
+        headless: true,
+        baseURL: origin,
+        viewport: { width: 1440, height: 1100 },
+        permissions: ['clipboard-read', 'clipboard-write'],
+        offline,
+      });
+      const network = await syncNetwork(context);
+      await network.setOffline(offline);
+      const page = context.pages()[0] ?? (await context.newPage());
+      page.on('pageerror', (error) => failures.push(error.message));
+      return { page, network };
+    };
     let { page, network } = await startBrowser();
     await context!.addCookies([
       {
@@ -1042,10 +1127,17 @@ test('interrupted emitted updates preserve exact native work, a live old client 
         ),
       ),
     });
+  } catch (error) {
+    failure = error;
   } finally {
-    await context?.close();
-    await server.close();
-    db.close();
-    await rm(directory, { recursive: true, force: true });
+    await finishUpgrade(
+      [
+        () => context?.close(),
+        () => ownedServer?.close(),
+        () => database?.close(),
+        () => directory && rm(directory, { recursive: true, force: true }),
+      ],
+      failure,
+    );
   }
 });
