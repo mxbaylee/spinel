@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-11-14T06:30:51.256542+00:00",
+  "pr": "https://github.com/mxbaylee/spinel/pull/285",
+  "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+  "base": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "testedMerge": "6506eeebf195a4f53e15212584892fa9f9bbb818",
+  "squash": "b1b18165543ed800c0847a63201504c90c46272c",
+  "sourceTestedSquashTree": "43f29c59840828ab89b62840a2537707a7901c1d",
+  "mergedAt": "2026-11-14T06:27:12Z",
+  "validationArchive": "3309b88a08f3a4bb29020cb7f0a803c8e0f61e65",
+  "archiveParent": "3309b88a08f3a4bb29020cb7f0a803c8e0f61e65",
+  "priorFailedArchive": "0cadd4707e659fcc79b26f15ea9802fb7fd45e7f",
+  "cleanupComplete": true,
+  "remoteBranchDisposition": "Already absent at fresh post-merge inventory; no remote mutation and no deletion actor inferred.",
+  "localRefDisposition": "Own implementation and stale tracking refs deleted with expected3d8 SHA guards after detaching clean worktree.",
+  "worktreeRemoved": false,
+  "filesRemoved": false,
+  "unrelatedRefsMutated": false,
+  "activePrOwnershipMatches": 0,
+  "accessBlockedCleanup": false,
+  "payloads": [
+    {
+      "path": "README.md",
+      "bytes": 3670,
+      "sha256": "b972294c86684f907c4c6c1307a5c54972d8723bd5b67d37ccc6073881d42fa6"
+    },
+    {
+      "path": "active-owner-prs-before.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "active-pr-ownership.json",
+      "bytes": 2767,
+      "sha256": "d42cc457bcda8aeacfb46ab7c0e370b18a6f76a29ed79a23d483ef9fbe0352e8"
+    },
+    {
+      "path": "cleanup-actions.json",
+      "bytes": 1076,
+      "sha256": "c208919e19b5bc4a51dd56027278036f1ebffb2b3bb6ffd0c6da0c00ac3ddceb"
+    },
+    {
+      "path": "cleanup-after.json",
+      "bytes": 596,
+      "sha256": "e8233c8b9037fa107241156dcc40b4c75ff1bcc87ae3f86780ea30eb911610a5"
+    },
+    {
+      "path": "cleanup-before.json",
+      "bytes": 1062,
+      "sha256": "195b30030ffb439fa89c67eca3baa5968f157d2fbfea578232c4e5924e482b69"
+    },
+    {
+      "path": "main-ref-before.json",
+      "bytes": 328,
+      "sha256": "7e7ea803500420281491ef2a69a7a75df89c7d36f28913e85098ee26be8d66de"
+    },
+    {
+      "path": "merged-pr-285.json",
+      "bytes": 23704,
+      "sha256": "e014f318dd728d9baccee87cef97f537799b67a6bea82a901f8511c489ce6c51"
+    },
+    {
+      "path": "root-validation-audit.json",
+      "bytes": 491,
+      "sha256": "054460b8b7c4ed449a68dc3fe30b10d0b96056491b6f1e17fe4d64091ccd0a9f"
+    },
+    {
+      "path": "squash-commit.json",
+      "bytes": 2268,
+      "sha256": "f89938e27338bc2d1fd82b1ba5aa9c4f95805ea461e96e51d2e2eb24112ced17"
+    },
+    {
+      "path": "worktrees-after.txt.gz",
+      "bytes": 3072,
+      "sha256": "ec979bee2459792d41eaf2fd4cb60129bbef6c336bccc11fb102be330a8791ad",
+      "decompressedBytes": 11077,
+      "decompressedSha256": "2d931ed24b7ea753bf84bd61a9df18e05be4ccd9cb3590ad0a5d9bde2b8322fb"
+    },
+    {
+      "path": "worktrees-before.txt.gz",
+      "bytes": 3085,
+      "sha256": "f55884c592db207f9e02efca70db7cd120bc0b2ea85bc9aec58b61c1d06288ea",
+      "decompressedBytes": 11118,
+      "decompressedSha256": "50ada559d2adb4c13999c35e23557f194925f1bee8cecfcb17cb1db6e0e3bb02"
+    }
+  ]
+}

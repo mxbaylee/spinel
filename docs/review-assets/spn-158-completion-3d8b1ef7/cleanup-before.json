@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-14T06:28:15.866809+00:00",
+  "head": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+  "branch": "refs/heads/codex/spn-158-restore-admission",
+  "status": "",
+  "ticketLocalRefs": [
+    "refs/heads/codex/spn-158-restore-admission 3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+    "refs/remotes/origin/codex/spn-158-restore-admission 3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+  ],
+  "ticketRemoteRefs": [
+    "3309b88a08f3a4bb29020cb7f0a803c8e0f61e65\trefs/tags/archive/spn-158-validation-3d8b1ef7-20261114",
+    "0cadd4707e659fcc79b26f15ea9802fb7fd45e7f\trefs/tags/archive/spn-158-validation-bfeb0b23-20261114"
+  ],
+  "activePullRequests": [],
+  "main": "b1b18165543ed800c0847a63201504c90c46272c",
+  "ticketRemoteBranches": [],
+  "localRefExact": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb refs/heads/codex/spn-158-restore-admission",
+  "inventoryMethod": "Enumerate all branch/tracking refs and remote heads, filter ticket158; verify exact known implementation ref. Initial glob omitted slash-nested refs and was corrected before mutation."
+}

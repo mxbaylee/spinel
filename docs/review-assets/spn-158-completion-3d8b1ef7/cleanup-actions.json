@@ -1,0 +1,30 @@
+{
+  "performedAt": "2026-11-14T06:29:16.646803+00:00",
+  "actions": [
+    {
+      "action": "detach clean retained worktree",
+      "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "stdout": ""
+    },
+    {
+      "action": "delete local implementation ref with expected-old-SHA guard",
+      "ref": "refs/heads/codex/spn-158-restore-admission",
+      "expected": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+    },
+    {
+      "action": "delete stale remote-tracking ref with expected-old-SHA guard",
+      "ref": "refs/remotes/origin/codex/spn-158-restore-admission",
+      "expected": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+    },
+    {
+      "action": "remote branch already absent",
+      "ref": "refs/heads/codex/spn-158-restore-admission",
+      "mutationPerformed": false,
+      "deletionActor": "not inferred"
+    }
+  ],
+  "worktreeRemoved": false,
+  "filesRemoved": false,
+  "unrelatedRefsMutated": false,
+  "preservation": "Published validation3309b88 has original source3d8 as direct parent; old failed validation0cadd remains separately published."
+}

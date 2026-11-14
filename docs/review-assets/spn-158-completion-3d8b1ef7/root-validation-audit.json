@@ -1,0 +1,10 @@
+{
+  "archive": "3309b88a08f3a4bb29020cb7f0a803c8e0f61e65",
+  "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+  "payloadsVerified": 115,
+  "decodedVerified": 104,
+  "archiveOnlyPaths": 116,
+  "threePlanBindingsVerified": true,
+  "sourceTestedTree": "43f29c59840828ab89b62840a2537707a7901c1d",
+  "auditSetup": "Initial read-only verification lacked local tested-merge object; fetched unchanged refs/pull/285/merge, then full verification passed. No publication preceded verification."
+}

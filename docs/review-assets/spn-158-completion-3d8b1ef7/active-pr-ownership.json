@@ -1,0 +1,96 @@
+{
+  "checkedAt": "2026-11-14T06:29:13.856856+00:00",
+  "openCount": 11,
+  "ticketBranch": "codex/spn-158-restore-admission",
+  "matches": [],
+  "openPullRequests": [
+    {
+      "number": 281,
+      "url": "https://github.com/mxbaylee/spinel/pull/281",
+      "headRef": "codex/spn-087-storybook-layout-cleanup",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 260,
+      "url": "https://github.com/mxbaylee/spinel/pull/260",
+      "headRef": "codex/spn-089-dialog-title-icons",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 247,
+      "url": "https://github.com/mxbaylee/spinel/pull/247",
+      "headRef": "codex/spn-110-diagnostic-retention",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 246,
+      "url": "https://github.com/mxbaylee/spinel/pull/246",
+      "headRef": "codex/spn-106-viewer-startup",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 230,
+      "url": "https://github.com/mxbaylee/spinel/pull/230",
+      "headRef": "codex/spn-068-sheet-images",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 229,
+      "url": "https://github.com/mxbaylee/spinel/pull/229",
+      "headRef": "codex/spn-128-original-recovery",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 228,
+      "url": "https://github.com/mxbaylee/spinel/pull/228",
+      "headRef": "codex/spn-120-fixture-reliability",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 227,
+      "url": "https://github.com/mxbaylee/spinel/pull/227",
+      "headRef": "codex/spn-098-feedback-diagnostics",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 224,
+      "url": "https://github.com/mxbaylee/spinel/pull/224",
+      "headRef": "codex/spn-090-real-devices",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 223,
+      "url": "https://github.com/mxbaylee/spinel/pull/223",
+      "headRef": "codex/spn-099-stock-core",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    },
+    {
+      "number": 220,
+      "url": "https://github.com/mxbaylee/spinel/pull/220",
+      "headRef": "codex/spn-123-operation-diagnostics",
+      "headRepository": "mxbaylee/spinel",
+      "baseRef": "main",
+      "state": "open"
+    }
+  ]
+}
