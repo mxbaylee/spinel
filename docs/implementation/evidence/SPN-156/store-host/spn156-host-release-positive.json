@@ -1,0 +1,19 @@
+{
+  "name": "spn156-host-release-positive",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlinePersistence.test.ts",
+    "-t",
+    "actual background session",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-vitest-host"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 894,
+  "peakKiB": 731680
+}

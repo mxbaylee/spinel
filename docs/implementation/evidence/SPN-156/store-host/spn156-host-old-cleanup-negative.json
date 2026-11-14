@@ -1,0 +1,19 @@
+{
+  "name": "spn156-host-old-cleanup-negative",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlinePersistence.test.ts",
+    "-t",
+    "actual background session.*true",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-vitest-host"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 849,
+  "peakKiB": 746976
+}
