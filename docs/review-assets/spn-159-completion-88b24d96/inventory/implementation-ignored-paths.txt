@@ -1,0 +1,4 @@
+docs/implementation/evidence/SPN-159/diagnostic-build-correct-cli.log
+docs/implementation/evidence/SPN-159/diagnostic-build.log
+node_modules
+test-results/

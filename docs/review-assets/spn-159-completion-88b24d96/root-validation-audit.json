@@ -1,0 +1,216 @@
+{
+  "archive": "ed5b49191305b8d1371e064c9a840ea1fa010039",
+  "parent": "88b24d96a65cdb92712c94674399a86b129c57b3",
+  "base": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "testedMerge": "b7d51a6f3a2fb3d98da5dd230ea4387fad989804",
+  "tree": "282a23bdaa6ba293fb9836d98694cbdd0fa5609c",
+  "manifestPayloads": 134,
+  "scopedChangedFiles": 135,
+  "artifactZipBindings": [
+    {
+      "artifact": 14107385136,
+      "sha256": "222f18fe5c33f1a5e0f13cfeb960194543b21b9bd6e76feca2d89ff237cc4582",
+      "bytes": 2992,
+      "members": 1
+    },
+    {
+      "artifact": 14106397613,
+      "sha256": "51b960d08c7892f9a98d638540f2263facc9be7ac603db6bb1b13901172af6a6",
+      "bytes": 2413,
+      "members": 1
+    },
+    {
+      "artifact": 14106288681,
+      "sha256": "3d2f7836875576c2792be77ba006d5486c883dbe466744612ac274084e9c027d",
+      "bytes": 2353,
+      "members": 1
+    },
+    {
+      "artifact": 14105952176,
+      "sha256": "ece8af70e849e0ec5f6851d449ed573778d5197021601c87eb50b5743f43d533",
+      "bytes": 1717,
+      "members": 1
+    },
+    {
+      "artifact": 14106193346,
+      "sha256": "997e062436b3cf5d5ae78f42204e21744a4605b37bd60798ca060767cd67964c",
+      "bytes": 17167,
+      "members": 5
+    },
+    {
+      "artifact": 14105998629,
+      "sha256": "f436fe7746514156a00bab05109154bf46de52c660b7e45f8f9aa639e295aa47",
+      "bytes": 17170,
+      "members": 5
+    },
+    {
+      "artifact": 14105743439,
+      "sha256": "c2cd7837606af8c9f1434ad48dc405ebac4992f8aca9ad299d325254d84ae632",
+      "bytes": 17229,
+      "members": 5
+    },
+    {
+      "artifact": 14105653733,
+      "sha256": "b227019a0a65d6d6ec70c88c585fb39bbabf7bb21b285b822f15a9cb2fd505d7",
+      "bytes": 17232,
+      "members": 5
+    },
+    {
+      "artifact": 14105603776,
+      "sha256": "31f25b0ee48578c817b90d9ab4c04b4d90cf71cbfe096dab02cc9c4c6d44b73b",
+      "bytes": 17148,
+      "members": 5
+    },
+    {
+      "artifact": 14106151612,
+      "sha256": "fa843d1523ded80f6de9af84b93e6aee57ef80d9dc2b73a45102e25f07570cdb",
+      "bytes": 221342,
+      "members": 14
+    },
+    {
+      "artifact": 14106146989,
+      "sha256": "396fc2aad3876de0872e12a309221ad615dc1e4808e6c87b4b13dde8c3642a4b",
+      "bytes": 455823,
+      "members": 16
+    },
+    {
+      "artifact": 14105384197,
+      "sha256": "4f5fcc74919f4563055490eba54f567aaab6ebdf475ce2493427f3d28a7f1391",
+      "bytes": 1024098,
+      "members": 18
+    }
+  ],
+  "originalExtractedPayloads": 35,
+  "fullLogMembers": 574,
+  "runs": [
+    {
+      "run": 43574921187,
+      "attempt": 1,
+      "success": true,
+      "jobs": 33,
+      "logZipSha256": "d807b6f410d3cfff5eb624c48e9f4a89c451d041e81e32b56dc811295f8692bd",
+      "logMembers": 434
+    },
+    {
+      "run": 43574921255,
+      "attempt": 1,
+      "success": true,
+      "jobs": 10,
+      "logZipSha256": "aaf0bd92015762142898dd22c60929ef672b5f1aa715a49020d4e1285df3a0d7",
+      "logMembers": 97
+    },
+    {
+      "run": 43574921249,
+      "attempt": 1,
+      "success": true,
+      "jobs": 3,
+      "logZipSha256": "0f9a3c376cfda6bcc7c40eac243bc7a6c96c790a927ff9eda7d429282935b05f",
+      "logMembers": 43
+    }
+  ],
+  "planDigest": "a564fc7a248b88614008a6ebb1c320c2c3fbd955c31c5002ec7558d03b850e19",
+  "selectedSuites": 15,
+  "aggregates": {
+    "unit": {
+      "passed": true,
+      "evidenceKeys": [
+        "planSha256",
+        "plan",
+        "gateResults",
+        "results"
+      ]
+    },
+    "lib": {
+      "passed": true,
+      "evidenceKeys": [
+        "planSha256",
+        "plan",
+        "gateResults",
+        "results"
+      ]
+    },
+    "browser": {
+      "passed": true,
+      "evidenceKeys": [
+        "planSha256",
+        "plan",
+        "gateResults",
+        "results"
+      ]
+    }
+  },
+  "storyVariants": [
+    "desktop-light",
+    "desktop-dark",
+    "mobile-light",
+    "mobile-dark",
+    "tablet"
+  ],
+  "storiesPerVariant": 1041,
+  "sourceHashBindings": 11,
+  "nativeSampleSource": "5108adb55c2de303af7146a0f24402be72430b3a",
+  "prBodyExact": true,
+  "status": "verified-and-published",
+  "verifiedAt": "2026-11-14T08:57:59.037584+00:00",
+  "selectedResultOwners": {
+    "unit": [
+      "unit-tests"
+    ],
+    "lib": [
+      "lib-test-run"
+    ],
+    "browser": [
+      "backlog",
+      "pull-request",
+      "lint",
+      "typecheck",
+      "unit-tests",
+      "lib-test-run",
+      "playwright-run",
+      "container-smoke",
+      "restore-timing",
+      "sync-transition",
+      "doc-responsiveness",
+      "doc-callback-lifetimes"
+    ]
+  },
+  "nestedModes": [
+    {
+      "job": 132387217196,
+      "name": "Doc responsiveness (mobile)",
+      "passedSteps": [
+        "Observe baseline first attempts",
+        "Verify candidate responsiveness and boundaries",
+        "Verify candidate evidence and selected paired comparison"
+      ]
+    },
+    {
+      "job": 132387217283,
+      "name": "Doc callback lifetimes (desktop)",
+      "passedSteps": [
+        "Retain baseline first attempt",
+        "Verify candidate first attempt"
+      ]
+    },
+    {
+      "job": 132387217300,
+      "name": "Doc responsiveness (desktop)",
+      "passedSteps": [
+        "Observe baseline first attempts",
+        "Verify candidate responsiveness and boundaries",
+        "Verify candidate evidence and selected paired comparison"
+      ]
+    },
+    {
+      "job": 132387217336,
+      "name": "Doc callback lifetimes (mobile)",
+      "passedSteps": [
+        "Retain baseline first attempt",
+        "Verify candidate first attempt"
+      ]
+    }
+  ],
+  "phoneCompatibilityEnabled": true,
+  "verificationSetupNote": "Initial generic verifier assumed two ignored raw setup logs were source-parent files. Checked exact local originals for those two; all other copied canonical evidence matched parent Git blobs.",
+  "tag": "archive/spn-159-validation-88b24d96-20261114"
+}
