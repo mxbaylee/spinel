@@ -6,6 +6,11 @@
   "files": [
     {
       "path": "README.md",
+      "bytes": 5148,
+      "sha256": "a510eb32bb9a3535319fa158fd0a6dfdff265dff6e28ee05680b3bd6a85b3469"
+    },
+    {
+      "path": "historical-cleanup-checkpoint.md",
       "bytes": 5035,
       "sha256": "b8e978449d5bf69ec288f52b3abd76f8a05b5667b837cdc3e5455205e5143359"
     },
@@ -38,6 +43,26 @@
       "path": "inventory/implementation-status.txt",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "inventory/post-active-prs.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "inventory/post-refs.txt",
+      "bytes": 24007,
+      "sha256": "e2e42700160e4646fa85312ed656a2e4884e1b44d753b467a7965c78f2a6b68b"
+    },
+    {
+      "path": "inventory/post-remote-refs.txt",
+      "bytes": 153,
+      "sha256": "e830d3cd376cda298d0525996e801da58de6dc6bde99b26d6953ae6aba5904e8"
+    },
+    {
+      "path": "inventory/post-worktrees.txt",
+      "bytes": 11241,
+      "sha256": "b4708ca792f3282d5ec392eb7e1e8206f1a5b091fc6c35ad00653b1de94f8561"
     },
     {
       "path": "inventory/pr-290.json",
@@ -73,6 +98,11 @@
       "path": "proposed-cleanup.md",
       "bytes": 2382,
       "sha256": "8fb4734dbfebfbe8163354e43e8f5a6c8221f84e412d3cbb38822e1079d431ec"
+    },
+    {
+      "path": "root-cleanup-receipt.json",
+      "bytes": 13200,
+      "sha256": "9e390a5c2f51b19bbee26eaf42cba3d39cd4cd19ea2f6bf0fee96e32965822ff"
     },
     {
       "path": "root-validation-audit.json",

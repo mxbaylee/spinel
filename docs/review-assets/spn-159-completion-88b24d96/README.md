@@ -1,6 +1,6 @@
-# 📐 SPN-159 — merged completion and cleanup checkpoint
+# 📐 SPN-159 — merged completion and completed branch cleanup
 
-[PR #290](https://github.com/mxbaylee/spinel/pull/290) was squash merged at **2026-11-14 08:58:59 UTC** as **87c34e30ed810e6789d876e55b23dcbb349fa506**. [Raw merged PR](inventory/pr-290.json) retains exact source **88b24d96a65cdb92712c94674399a86b129c57b3** and base **754e65317744e5ce97ede501935c6586e4875f2a**. The squash, accepted source and tested merge **b7d51a6f3a2fb3d98da5dd230ea4387fad989804** all have tree **282a23bdaa6ba293fb9836d98694cbdd0fa5609c**. This record adds evidence only, directly above the accepted squash.
+[PR #290](https://github.com/mxbaylee/spinel/pull/290) was squash merged at **2026-11-14 08:58:59 UTC** as **87c34e30ed810e6789d876e55b23dcbb349fa506**. [Raw merged PR](inventory/pr-290.json) retains exact source **88b24d96a65cdb92712c94674399a86b129c57b3** and base **754e65317744e5ce97ede501935c6586e4875f2a**. The squash, accepted source and tested merge **b7d51a6f3a2fb3d98da5dd230ea4387fad989804** all have tree **282a23bdaa6ba293fb9836d98694cbdd0fa5609c**. This evidence-only record descends from the accepted squash through the preserved pre-cleanup checkpoint.
 
 ## ✅ Preserved acceptance and history
 
@@ -10,16 +10,19 @@ Root independently verified and published the [terminal validation archive](http
 
 The merged tree closes only SPN-159's complete M outcome. SPN-120 retains its own finite combined-acceptance obligation. The committed completion list is [148,145,149,158,160,159], next ID161 and grooming date2026-11-12. No new authority, production visual change or server-save claim was introduced.
 
-## 🧹 Fresh inventory and exact cleanup boundary
+## 🧹 Actual completed cleanup
 
-The [complete local ref inventory](inventory/all-local-refs.txt), [worktree inventory after detach](inventory/worktrees-after-detach.txt), [live remote refs](inventory/remote-refs.txt) and empty active-PR queries for [implementation](inventory/active-implementation-prs.json) and [registration](inventory/active-registration-prs.json) were collected after merge.
+Root completed guarded cleanup at **2026-11-14 09:02:50 UTC**, after independently verifying checkpoint **7a8468ce7adc7ed6c013af24252c009b0245d601**, all 15 payloads, all 13 preserved ancestors, live published validation tag, merged PR/tree and detached clean implementation. Root also queried all open PRs for both head and base ownership; none owned the obsolete refs. The unchanged [actual cleanup receipt](root-cleanup-receipt.json) records the actions.
 
-- Implementation worktree `/Users/mxbaylee/projects/spinel-spn159` is clean and **detached at88b24**. The local `codex/spn-159-native-resize` and stale `origin/codex/spn-159-native-resize` refs still point to exact88. Remote implementation branch is already absent; no remote deletion command is needed. No active PR owns the head.
-- Ignored original `diagnostic-build.log`, `diagnostic-build-correct-cli.log`, `node_modules` symlink and entire `test-results/` directory are **retained in place**. [Ignored-path inventory](inventory/implementation-ignored-paths.txt) and preservation hashes document them. Do not remove this worktree or run a broad clean. The dependency target belongs to another worktree.
-- Registration worktree `/Users/mxbaylee/projects/spinel-drawing-registration` remains clean and detached at **fa39c086e8df8a542c2703ffcc614dfc17afd030**; former local/remote registration refs are absent and no active PR owns that former branch. Preserve this detached history; it is not part of the proposed deletion. Its accepted file content was already verified equal to registration squash7c38.
-- Validation helper `/Users/mxbaylee/projects/spinel-spn159-validation-archive` is clean/detached at **ed5b4919**, now durably published. It may be removed with ordinary guarded worktree removal after root rechecks it; no force or prune is proposed.
-- This new completion helper `/Users/mxbaylee/projects/spinel-spn159-completion-archive` is detached at the completion archive commit when sealed. Retain it until its reserved tag is independently verified and published. No separate implementation/review/integration/evidence branch for159 was found. Unrelated worktrees/refs are outside this cleanup.
+- Atomically deleted local implementation ref `refs/heads/codex/spn-159-native-resize` and stale tracking ref `refs/remotes/origin/codex/spn-159-native-resize`, each conditioned on expected source88. The remote branch was already absent. No branch configuration existed to remove.
+- Removed only the clean detached validation helper at `/Users/mxbaylee/projects/spinel-spn159-validation-archive`, whose exact ed5b contents were already published and independently verified.
+- Retained clean detached implementation at **88b24d96a65cdb92712c94674399a86b129c57b3**, including both ignored original logs, the donor dependency symlink and complete build/test-results directory. This finalizer rechecked the original log hashes and dependency/build presence. No broad clean or unrelated worktree change occurred.
+- Retained clean detached registration worktree at **fa39c086e8df8a542c2703ffcc614dfc17afd030**. Former registration refs remain absent. No other named SPN-159 implementation/review/integration/evidence branch remained.
 
-[Exact proposed commands](proposed-cleanup.md) are **not executed** by this checkpoint. Root must recheck ownership/head and publication, then run compare-and-delete operations. Local branch/tracking-ref removal and optional validation-helper removal remain pending root review; this record does not claim them complete. No permission/access failure has occurred. Reserved completion publication tag: `archive/spn-159-completion-88b24d96-20261114`.
+Fresh post-cleanup [local refs](inventory/post-refs.txt), [remote refs](inventory/post-remote-refs.txt), [worktrees](inventory/post-worktrees.txt) and [empty active head ownership](inventory/post-active-prs.json) corroborate the receipt. Branch cleanup is complete, with no access-blocked action. The [earlier checkpoint](historical-cleanup-checkpoint.md), [proposed commands](proposed-cleanup.md) and initial inventory are preserved unchanged as history; their pending language is superseded by this actual receipt, not retroactively rewritten.
 
-No PR body edit, push, tag, branch deletion or workload occurred during preparation. Authorized detachment was the only implementation-worktree change. [Manifest](manifest.json) binds every payload except itself. Final post-cleanup evidence should supersede this explicitly pending checkpoint before completion publication.
+## 📦 Final publication boundary
+
+Reserved completion tag: `archive/spn-159-completion-88b24d96-20261114`. Root will independently verify and publish this final evidence commit. The clean detached completion helper at `/Users/mxbaylee/projects/spinel-spn159-completion-archive` remains solely to permit that verification. Its ordinary local removal is pending **after verified tag publication**, separately from the already completed branch cleanup; no unique evidence should be removed before that publication. Preserve all durable validation/completion/original-failure tags and retained ignored originals.
+
+The finalizer changed only this archive directory, ran no validation workload, and performed no tag/push/PR edit or deletion. [Manifest](manifest.json) binds every payload except itself. Root's actual merge and cleanup receipts, rather than earlier planned actions, establish completion.
