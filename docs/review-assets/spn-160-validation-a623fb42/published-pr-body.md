@@ -1,0 +1,39 @@
+A maintenance transition that rejects before its intended crash barrier currently loses the original error and eventually reports a message timeout. This **M** change preserves that first contextual cause immediately, retains immutable bounded sender/receiver progress, and records readiness/action/journal context before cleanup. It keeps the existing protocol, authority, persistence, process containment and deadlines.
+
+SPN-157 remains **open at L** with both original causal investigations and all durable-row, authenticated selected-candidate, orphan-cleanup and Linux recovery requirements. SPN-098 still depends on it. This independently useful diagnostic outcome does not establish the cause of either original incident or complete SPN-123's production telemetry or SPN-128's recovery commands.
+
+## 🧭 Complete outcome and retained boundaries
+
+Complete diff: **47 files, +3,043 / −120 lines**, including retained evidence; six runtime/test files. The exact-base PR size/scope check passed.
+
+Exact publication candidate **`a623fb42aa58096695ec4d4c09e9111e42d99386`**, actual base **`b1b18165543ed800c0847a63201504c90c46272c`**. The existing test-only transition helper installs the barrier wait before the action, rejects immediately with its original cause before that barrier, tolerates the expected post-barrier crash rejection, and clears its listener/timer on success, failure and timeout. Late rejection remains handled. The original ten-second message deadline and recovery assertions remain.
+
+New internal ownership receipts copy only fixed flags/counts at first failure and remain frozen after late callbacks. The extractor supports the existing single Error.cause wrapper through own data descriptors without invoking arbitrary getters or walking unbounded/cyclic causes. No observer callback, awaited protocol work, timer, new telemetry service or broader authority is introduced. Public errors stay generic. Native receiver assertions retain no SQLite open, original bytes and closed late handles.
+
+Operator gains useful private failure evidence. Owner and Collaborator retain data and authenticated fail-closed guarantees; Link guest gains no authority or diagnostic visibility. No product UI design changes or routine new captures are proposed. **Agent review only.**
+
+## 🔎 Original failure and causal limits
+
+[Retained SPN-098 first-failure evidence](https://github.com/mxbaylee/spinel/tree/5e1b7a9fac17c69ff9174caa9da9f8d13713737d/docs/review-assets/spn-098-failure-43544143900) records run `43544143900` at source `2204b8c40ce6feb8ad03c65720c976510535ad00`. The failed durable-running case may have failed before the crash; the observed child handoff timeout is not causally attributed. The earlier successful comparator never supersedes that failure. An instrumented pass without recurrence is not causal repair. A first instrumented failure remains a failing validation and must be retained and investigated, never rerun unchanged until green.
+
+The local predecessor `44f9a536` and its incomplete SPN-157 full-L review history remain separate and untouched. Current implementation reuse, setup failures, compiler fixes, resource-aborted work and exact check identities are retained in the canonical SPN-160 record. Neither an old portable pass nor a prior grade is substituted for this publication candidate's acceptance.
+
+## 🧪 Local verification and independent review
+
+The reconciled runtime at **d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a** passed **10/10** portable controls (647 ms, 277,696 KiB), full typecheck (9,125 ms, 1,743,344 KiB), six-file formatting/lint, no-Pro and backlog checks under pinned Node 26.13.0 and the shared normal-pressure / 2 GiB / eight-minute watchdog. Native Go compiler tuning was `GOMEMLIMIT=640MiB GOGC=50 GOMAXPROCS=2`. The dependency audit checked 241 tracked manifest/postinstall/workspace files, 53 installed direct versions and 7 workspace links before reusing the verified install; no new installation occurred.
+
+One detecting counterfactual discarded the pre-barrier error: both cases failed directly at the original-cause assertion (undefined versus contextual error), in 6 ms / 2 ms test bodies, guarded 488 ms / 359,648 KiB. It was not a test timeout or resource abort. Original/restored source SHA-256 was `8d0cebfe643491dd45dae18f1861ffbdf3c2086ad7e538011cd2484ff57ef295`. The source was restored in `finally`, and owned process inventories were empty. The maintained 17-payload manifest binds the source, driver, logs, receipts and cleanup.
+
+**Current-head integration checks:** The integrated source2ed1e39f passed10/10 portable controls (655ms,278128KiB), full tuned types (9013ms,1793968KiB), CLI index/backlog (159/149ms, RSS unsampled). Final publication head a623fb42aa58096695ec4d4c09e9111e42d99386 passed the exact-base PR checker (638ms,182496KiB). All six runtime/test files remain identical to d2a0ae20;241dependency input hashes unchanged. SPN-158 admission-fixture changes are integrated; no new runtime conflict. Committed manifests bind17+4+10payloads. No owned workload remained. Main selects160highesteligible; separate159drawing work adds no prerequisite.
+
+**Both exact publication-head reviews and findings:** Both independent nonimplementing reviewers graded exact `a623fb42aa58096695ec4d4c09e9111e42d99386` against actual main `b1b18165543ed800c0847a63201504c90c46272c` **100/100**, each rubric **35/25/20/10/10**, with no actionable findings or remaining repair steps. Each inspected the complete original contract, six unchanged runtime identities, all 31 retained payloads, integration/bookkeeping and all four personas. Each independently ran the 10 controls: A **707 ms / 298,432 KiB**; B **489 ms / 302,240 KiB**, with pinned runtime, private cache, shared resource guard and explicit clean owned-process audit. Full reports and raw receipts will be retained in the reserved validation archive. These assessments do not certify pending Linux acceptance.
+
+Existing CI `recovery` owns the portable controls, while `supervisor` owns actual Linux Node 26.13.0/Tini/private PID namespace/kernel leases/real receiver IPC/SQLite and interrupted/durable/readiness scenarios. Shared maintenance/source routing and fail-closed aggregate selection are unchanged. **Current-head native Linux acceptance and all seven required gates are pending at PR creation.** Portable controls, pre-push reviews and an eventual unrelated suite pass cannot replace them.
+
+## 📋 Landing and durable evidence
+
+The landing candidate removes only SPN-160 and its prerequisite edge from SPN-157, preserves SPN-157's full L requirements and SPN-098 dependency, advances no ID beyond registered 161, preserves the current main completion history and appends 160, and regenerates the index through the CLI. Full-groom date remains 2026-11-12. This is conditional landing bookkeeping, not a claim of completed acceptance or merge.
+
+The [reserved validation record](https://github.com/mxbaylee/spinel/blob/archive/spn-160-validation-a623fb42-2026-11-14/docs/review-assets/spn-160-validation-a623fb42/README.md) is **pending** at PR creation. It becomes authoritative only after verified publication, before merge, with exact source/base/tested merge/tree, first native outcome, plan/aggregate/job identities, current reviews, measurements and failure dispositions. Its published terminal result supersedes this pre-push pending checkpoint; a missing link is not a pass.
+
+The [reserved completion record](https://github.com/mxbaylee/spinel/blob/archive/spn-160-completion-a623fb42-2026-11-14/docs/review-assets/spn-160-completion-a623fb42/README.md) is also **pending**. Only after the actual guarded squash and guarded branch cleanup may it record the merged identity, preserved unique work and cleanup results. The SPN-157 branch and unrelated refs/worktrees remain untouched. No merge or cleanup is claimed at PR creation.

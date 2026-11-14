@@ -1,0 +1,17 @@
+{
+  "name": "spn160-review-b-a623-controls",
+  "args": [
+    "node",
+    "node_modules/.bin/vitest",
+    "run",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath=/tmp/spinel-dependabot-2026-11-11/spn160-review-b-a623-module-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 489,
+  "peakKiB": 302240
+}

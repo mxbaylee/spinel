@@ -1,0 +1,20 @@
+{
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "base": "b1b18165543ed800c0847a63201504c90c46272c",
+  "tested": "0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e",
+  "tree": "199f2ebc08e56de9805caad7eba79e8a9e6dba1a",
+  "run": 43567177401,
+  "attempt": 1,
+  "all33JobsSuccess": true,
+  "bodyUnchangedFromCreation": true,
+  "sourceAndBaseUnchanged": true,
+  "reviewedAndTestedTreeIdentical": true,
+  "nativeSupervisorTests": 131,
+  "nativeRecoveryFiles": 49,
+  "nativeRecoveryTests": 619,
+  "spacesProviderAcceptance": "passed",
+  "spacesCleanup": "complete",
+  "noOriginalIncidentRecurrence": true,
+  "historical157CausalRepair": false,
+  "mergeAndCleanup": "Not performed; root owns verified archive publication and guarded merge/cleanup."
+}

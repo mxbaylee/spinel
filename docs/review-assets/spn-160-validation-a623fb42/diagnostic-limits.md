@@ -1,0 +1,7 @@
+# 🔎 Diagnostic limits and retained original failures
+
+This first instrumented run validates only the SPN-160 diagnostic contract. Neither a pass nor a more precise failing receipt alone demonstrates the causal repairs required by open L SPN-157. Original failed run43544143900/source2204b8c/archive5e1b7a9 remains authoritative for its observed failure; the successful comparator never replaces it.
+
+Source inspection by the independent SPN-157 investigation identifies two interpretation limits. In readiness-first, the fixture deliberately buffers a valid held event until private readiness, and that local buffer is absent from readinessSnapshot. Consequently sender heldReceived:false alone cannot establish lost IPC or ACK. Ordinary start schedules its start timer before the handoff timer, so a generic startWaiter rejection can win Promise.all and obscure a later ownership rejection; lastFailure can subsequently become start-failed. Any first observed context must be retained literally, without inferring an unobserved causal event. These are measurement limitations, not diagnoses or repairs.
+
+SPN-160 retains the original ten-second barrier deadline, existing process/handle ownership, authority and public generic errors. The first pre-barrier RPC rejection source bug is independently covered by the direct detecting control; the old native incidents require separate observation and demonstrated repair in SPN-157.

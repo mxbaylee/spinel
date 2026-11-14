@@ -1,0 +1,18 @@
+{
+  "name": "spn160-review-a-controls-a623fb42",
+  "args": [
+    "node",
+    "node_modules/.bin/vitest",
+    "run",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn160-review-a-cache-a623fb42"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 707,
+  "peakKiB": 298432
+}

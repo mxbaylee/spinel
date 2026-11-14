@@ -1,0 +1,44 @@
+{
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "base": "b1b18165543ed800c0847a63201504c90c46272c",
+  "run": 43567177401,
+  "attempt": 1,
+  "passed": true,
+  "gates": [
+    {
+      "name": "Backlog",
+      "id": 132363729884,
+      "conclusion": "success"
+    },
+    {
+      "name": "Pull request",
+      "id": 132363441654,
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint",
+      "id": 132363729924,
+      "conclusion": "success"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132363729896,
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132366959002,
+      "conclusion": "success"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132366798139,
+      "conclusion": "success"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132372437415,
+      "conclusion": "success"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "artifact": "ci-results-lib",
+    "id": 14102874212,
+    "zipSha256": "8d7ad8742ff5ee454817f14fadea8e249ddec3083b70323fc35cc0d295998d90",
+    "jsonSha256": "c7683b677b7cd3fae235ca10c36a35120647ba9c3cf89cf612871d6085e23f9a",
+    "planSha256": "d024c4b76d3361752cdd6df33f460c8988dfa3553edf949a8f0a1e47e405dda9",
+    "passed": true
+  },
+  {
+    "artifact": "ci-results-unit",
+    "id": 14102469051,
+    "zipSha256": "bca1432750d26a2b48f2a3dd4453f2e0c6b31d23e97e8357f12f8d1439d22b41",
+    "jsonSha256": "15fdff6ed07c963798e8cda3ff90145c38e0754c87472a206526d981f344a3e6",
+    "planSha256": "d024c4b76d3361752cdd6df33f460c8988dfa3553edf949a8f0a1e47e405dda9",
+    "passed": true
+  }
+]

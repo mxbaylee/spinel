@@ -1,0 +1,23 @@
+{
+  "runId": 43567177401,
+  "attempt": 1,
+  "jobId": 132363730015,
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "base": "b1b18165543ed800c0847a63201504c90c46272c",
+  "tested": "0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e",
+  "result": "success",
+  "files": 49,
+  "tests": 619,
+  "node": "26.13.0",
+  "logSha256": "46df2ccd39227f4559bfb20ce8a0d75a7ff2fc16cae6f0726b0a20b1ebef2175",
+  "selectedEvidence": [
+    "2026-11-14T06:48:45.4006094Z  \u2713 src/server/maintenance/http.test.ts (11 tests) 1327ms",
+    "2026-11-14T06:50:04.5016314Z  \u2713 src/server/maintenance/restore-crash.integration.test.ts (11 tests) 78897ms",
+    "2026-11-14T06:50:56.7129187Z  \u2713 src/server/maintenance/ownership.test.ts (6 tests) 15ms",
+    "2026-11-14T06:50:58.7172336Z  \u2713 src/server/maintenance/supervisor-test-control.test.ts (4 tests) 8ms",
+    "2026-11-14T06:51:04.1958413Z  Test Files  49 passed (49)",
+    "2026-11-14T06:51:04.1960588Z       Tests  619 passed (619)"
+  ],
+  "historicalCause": "No original incident recurrence; no causal repair inference.",
+  "remaining": "Selected browser acceptance still pending at this checkpoint."
+}

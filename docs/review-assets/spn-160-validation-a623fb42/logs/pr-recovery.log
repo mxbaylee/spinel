@@ -1,0 +1,810 @@
+﻿2026-11-14T06:47:40.7449615Z Current runner version: '2.338.2'
+2026-11-14T06:47:40.7466808Z ##[group]Runner Image Provisioner
+2026-11-14T06:47:40.7467408Z Hosted Compute Agent
+2026-11-14T06:47:40.7467742Z Version: 20261103.629
+2026-11-14T06:47:40.7468091Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-14T06:47:40.7468584Z Build Date: 2026-11-03T17:26:59Z
+2026-11-14T06:47:40.7468969Z Worker ID: {3a2036a6-7305-4c69-95cc-eb65677d8bc9}
+2026-11-14T06:47:40.7469382Z Region: centralus
+2026-11-14T06:47:40.7469709Z Cloud: Azure
+2026-11-14T06:47:40.7470019Z ##[endgroup]
+2026-11-14T06:47:40.7470796Z ##[group]Operating System
+2026-11-14T06:47:40.7471165Z Ubuntu
+2026-11-14T06:47:40.7471503Z 26.04.1
+2026-11-14T06:47:40.7471804Z LTS
+2026-11-14T06:47:40.7472096Z ##[endgroup]
+2026-11-14T06:47:40.7472470Z ##[group]Runner Image
+2026-11-14T06:47:40.7472803Z Image: ubuntu-26.04
+2026-11-14T06:47:40.7473116Z Version: 20261111.196.1
+2026-11-14T06:47:40.7473866Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-14T06:47:40.7474928Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-14T06:47:40.7475457Z ##[endgroup]
+2026-11-14T06:47:40.7476115Z ##[group]GITHUB_TOKEN Permissions
+2026-11-14T06:47:40.7477238Z Contents: read
+2026-11-14T06:47:40.7477589Z Metadata: read
+2026-11-14T06:47:40.7477965Z ##[endgroup]
+2026-11-14T06:47:40.7479425Z Secret source: Actions
+2026-11-14T06:47:40.7480000Z Cache mode: write
+2026-11-14T06:47:40.7480435Z Prepare workflow directory
+2026-11-14T06:47:40.7690525Z Prepare all required actions
+2026-11-14T06:47:40.7722061Z Getting action download info
+2026-11-14T06:47:40.9916905Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-14T06:47:41.0840161Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-14T06:47:41.1355543Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-14T06:47:41.2692140Z Complete job name: Unit tests (recovery)
+2026-11-14T06:47:41.3224304Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-14T06:47:41.3224837Z with:
+2026-11-14T06:47:41.3225076Z   persist-credentials: false
+2026-11-14T06:47:41.3225352Z   repository: mxbaylee/spinel
+2026-11-14T06:47:41.3227241Z   token: ***
+2026-11-14T06:47:41.3227467Z   ssh-strict: true
+2026-11-14T06:47:41.3227698Z   ssh-user: git
+2026-11-14T06:47:41.3227918Z   clean: true
+2026-11-14T06:47:41.3228156Z   sparse-checkout-cone-mode: true
+2026-11-14T06:47:41.3228427Z   fetch-depth: 1
+2026-11-14T06:47:41.3228652Z   fetch-tags: false
+2026-11-14T06:47:41.3228885Z   show-progress: true
+2026-11-14T06:47:41.3229123Z   lfs: false
+2026-11-14T06:47:41.3229339Z   submodules: false
+2026-11-14T06:47:41.3229573Z   set-safe-directory: true
+2026-11-14T06:47:41.3229838Z   allow-unsafe-pr-checkout: false
+2026-11-14T06:47:41.3230184Z ##[endgroup]
+2026-11-14T06:47:41.5371185Z Syncing repository: mxbaylee/spinel
+2026-11-14T06:47:41.5372995Z ##[group]Getting Git version info
+2026-11-14T06:47:41.5373897Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-14T06:47:41.5375061Z [command]/usr/bin/git version
+2026-11-14T06:47:41.5380722Z git version 2.56.1
+2026-11-14T06:47:41.5393084Z ##[endgroup]
+2026-11-14T06:47:41.5400976Z Temporarily overriding HOME='/home/runner/work/_temp/f02943e4-fe53-40b8-8843-b8899b81751c' before making global git config changes
+2026-11-14T06:47:41.5402242Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T06:47:41.5404833Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T06:47:41.5466989Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-14T06:47:41.5469052Z ##[group]Determining repository object format
+2026-11-14T06:47:41.5470355Z ##[endgroup]
+2026-11-14T06:47:41.5471452Z ##[group]Initializing the repository
+2026-11-14T06:47:41.5473679Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-14T06:47:41.5559556Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-14T06:47:41.5560561Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-14T06:47:41.5561262Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-14T06:47:41.5561721Z hint: call:
+2026-11-14T06:47:41.5562105Z hint:
+2026-11-14T06:47:41.5562469Z hint: 	git config --global init.defaultBranch <name>
+2026-11-14T06:47:41.5562851Z hint:
+2026-11-14T06:47:41.5563263Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-14T06:47:41.5563813Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-14T06:47:41.5564482Z hint:
+2026-11-14T06:47:41.5564789Z hint: 	git branch -m <name>
+2026-11-14T06:47:41.5565110Z hint:
+2026-11-14T06:47:41.5565552Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-14T06:47:41.5578346Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-14T06:47:41.5594377Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-14T06:47:41.5635335Z ##[endgroup]
+2026-11-14T06:47:41.5636074Z ##[group]Disabling automatic garbage collection
+2026-11-14T06:47:41.5638007Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-14T06:47:41.5667348Z ##[endgroup]
+2026-11-14T06:47:41.5668425Z ##[group]Setting up auth
+2026-11-14T06:47:41.5672451Z Removing SSH command configuration
+2026-11-14T06:47:41.5675037Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T06:47:41.5703359Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T06:47:41.6059335Z Removing HTTP extra header
+2026-11-14T06:47:41.6063183Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T06:47:41.6091852Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T06:47:41.6297020Z Removing includeIf entries pointing to credentials config files
+2026-11-14T06:47:41.6300712Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T06:47:41.6326935Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T06:47:41.6536992Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-14T06:47:41.6567792Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:41.6594390Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:41.6623541Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:41.6649394Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:41.6674685Z ##[endgroup]
+2026-11-14T06:47:41.6675613Z ##[group]Fetching the repository
+2026-11-14T06:47:41.6679852Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e:refs/remotes/pull/288/merge
+2026-11-14T06:47:44.7597483Z From https://github.com/mxbaylee/spinel
+2026-11-14T06:47:44.7599232Z  * [new ref]         0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e -> pull/288/merge
+2026-11-14T06:47:44.7602363Z ##[endgroup]
+2026-11-14T06:47:44.7603211Z ##[group]Determining the checkout info
+2026-11-14T06:47:44.7604393Z ##[endgroup]
+2026-11-14T06:47:44.7606657Z [command]/usr/bin/git sparse-checkout disable
+2026-11-14T06:47:44.7711833Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-14T06:47:44.7737480Z ##[group]Checking out the ref
+2026-11-14T06:47:44.7739553Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/288/merge
+2026-11-14T06:47:45.2337146Z Note: switching to 'refs/remotes/pull/288/merge'.
+2026-11-14T06:47:45.2337516Z 
+2026-11-14T06:47:45.2337955Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-14T06:47:45.2338518Z changes and commit them, and you can discard any commits you make in this
+2026-11-14T06:47:45.2339121Z state without impacting any branches by switching back to a branch.
+2026-11-14T06:47:45.2339492Z 
+2026-11-14T06:47:45.2339769Z If you want to create a new branch to retain commits you create, you may
+2026-11-14T06:47:45.2340265Z do so (now or later) by using -c with the switch command. Example:
+2026-11-14T06:47:45.2340554Z 
+2026-11-14T06:47:45.2340769Z   git switch -c <new-branch-name>
+2026-11-14T06:47:45.2341002Z 
+2026-11-14T06:47:45.2341194Z Or undo this operation with:
+2026-11-14T06:47:45.2341376Z 
+2026-11-14T06:47:45.2341537Z   git switch -
+2026-11-14T06:47:45.2398407Z 
+2026-11-14T06:47:45.2398826Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-14T06:47:45.2399177Z 
+2026-11-14T06:47:45.2399491Z HEAD is now at 0df4921 Merge a623fb42aa58096695ec4d4c09e9111e42d99386 into b1b18165543ed800c0847a63201504c90c46272c
+2026-11-14T06:47:45.2402630Z ##[endgroup]
+2026-11-14T06:47:45.2415365Z [command]/usr/bin/git log -1 --format=%H
+2026-11-14T06:47:45.2436059Z 0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e
+2026-11-14T06:47:45.2442610Z ##[group]Removing auth
+2026-11-14T06:47:45.2442920Z Removing SSH command configuration
+2026-11-14T06:47:45.2445261Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T06:47:45.2469201Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T06:47:45.2679421Z Removing HTTP extra header
+2026-11-14T06:47:45.2681807Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T06:47:45.2707295Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T06:47:45.2910278Z Removing includeIf entries pointing to credentials config files
+2026-11-14T06:47:45.2912495Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T06:47:45.2932874Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T06:47:45.2933392Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T06:47:45.2933739Z includeif.gitdir:/github/workspace/.git.path
+2026-11-14T06:47:45.2934014Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T06:47:45.2938901Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T06:47:45.2957917Z /home/runner/work/_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:45.2965771Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-c38e5150\-45c2\-4e57\-a171\-5cb5b3f6b362\.config
+2026-11-14T06:47:45.2997066Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T06:47:45.3017143Z /home/runner/work/_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:45.3023219Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-c38e5150\-45c2\-4e57\-a171\-5cb5b3f6b362\.config
+2026-11-14T06:47:45.3049698Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-14T06:47:45.3068190Z /github/runner_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:45.3073365Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-c38e5150\-45c2\-4e57\-a171\-5cb5b3f6b362\.config
+2026-11-14T06:47:45.3104865Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T06:47:45.3123427Z /github/runner_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config
+2026-11-14T06:47:45.3129755Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-c38e5150\-45c2\-4e57\-a171\-5cb5b3f6b362\.config
+2026-11-14T06:47:45.3155946Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T06:47:45.3355667Z Removing credentials config '/home/runner/work/_temp/git-credentials-c38e5150-45c2-4e57-a171-5cb5b3f6b362.config'
+2026-11-14T06:47:45.3362359Z ##[endgroup]
+2026-11-14T06:47:45.3542085Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-14T06:47:45.3542368Z with:
+2026-11-14T06:47:45.3542536Z   node-version-file: .nvmrc
+2026-11-14T06:47:45.3542731Z   package-manager-cache: false
+2026-11-14T06:47:45.3542923Z   check-latest: false
+2026-11-14T06:47:45.3544459Z   token: ***
+2026-11-14T06:47:45.3544640Z ##[endgroup]
+2026-11-14T06:47:45.4285182Z Node version file is not JSON file
+2026-11-14T06:47:45.4287728Z Node version file is not TOML file
+2026-11-14T06:47:45.4288047Z Resolved .nvmrc as 26.13.0
+2026-11-14T06:47:45.4299900Z Attempting to download 26.13.0...
+2026-11-14T06:47:46.1148587Z Acquiring 26.13.0 - x64 from https://github.com/actions/node-versions/releases/download/26.13.0-41378513395/node-26.13.0-linux-x64.tar.gz
+2026-11-14T06:47:46.5324876Z Extracting ...
+2026-11-14T06:47:46.5417755Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/1d6e2935-4002-4a73-84b9-031fee5d0f1a -f /home/runner/work/_temp/135b1724-4690-493d-900a-ce83f3a48406
+2026-11-14T06:47:47.1350826Z Adding to the cache ...
+2026-11-14T06:47:50.2002371Z ##[group]Environment details
+2026-11-14T06:47:50.3635327Z node: v26.13.0
+2026-11-14T06:47:50.3635613Z npm: 11.20.0
+2026-11-14T06:47:50.3635782Z yarn: 1.22.22
+2026-11-14T06:47:50.3636511Z ##[endgroup]
+2026-11-14T06:47:50.3804554Z ##[group]Run npm ci
+2026-11-14T06:47:50.3804835Z [36;1mnpm ci[0m
+2026-11-14T06:47:50.3851824Z shell: /usr/bin/bash -e {0}
+2026-11-14T06:47:50.3851989Z ##[endgroup]
+2026-11-14T06:47:56.8229427Z 
+2026-11-14T06:47:56.8235109Z > postinstall
+2026-11-14T06:47:56.8236382Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-14T06:47:56.8236903Z 
+2026-11-14T06:47:57.2037211Z 
+2026-11-14T06:47:57.2038124Z added 505 packages, and audited 513 packages in 7s
+2026-11-14T06:47:57.2038412Z 
+2026-11-14T06:47:57.2038547Z 135 packages are looking for funding
+2026-11-14T06:47:57.2038833Z   run `npm fund` for details
+2026-11-14T06:47:57.2165828Z 
+2026-11-14T06:47:57.2166396Z 6 moderate severity vulnerabilities
+2026-11-14T06:47:57.2166581Z 
+2026-11-14T06:47:57.2166812Z To address issues that do not require attention, run:
+2026-11-14T06:47:57.2167416Z   npm audit fix
+2026-11-14T06:47:57.2167494Z 
+2026-11-14T06:47:57.2167616Z To address all issues (including breaking changes), run:
+2026-11-14T06:47:57.2167831Z   npm audit fix --force
+2026-11-14T06:47:57.2167921Z 
+2026-11-14T06:47:57.2167997Z Run `npm audit` for details.
+2026-11-14T06:47:57.2172455Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-14T06:47:57.2172995Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-14T06:47:57.2173358Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-14T06:47:57.2173609Z npm warn install-scripts
+2026-11-14T06:47:57.2173929Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-14T06:47:57.2837061Z ##[group]Run node scripts/ci/prefer-ubuntu-archive.ts
+2026-11-14T06:47:57.2837364Z [36;1mnode scripts/ci/prefer-ubuntu-archive.ts[0m
+2026-11-14T06:47:57.2837563Z [36;1msudo apt-get update[0m
+2026-11-14T06:47:57.2837749Z [36;1msudo apt-get install -y --no-install-recommends tini[0m
+2026-11-14T06:47:57.2879677Z shell: /usr/bin/bash -e {0}
+2026-11-14T06:47:57.2879827Z ##[endgroup]
+2026-11-14T06:47:57.3400385Z {
+2026-11-14T06:47:57.3400810Z   "kind": "ubuntu-mirror-input",
+2026-11-14T06:47:57.3401097Z   "imageOS": "ubuntu26",
+2026-11-14T06:47:57.3401336Z   "imageVersion": "20261111.196.1",
+2026-11-14T06:47:57.3401561Z   "bytes": 144,
+2026-11-14T06:47:57.3401884Z   "sha256": "e0d6b0af979e4662d16357a27ae456cc6f21e26da031540f4df8706ebed1d583",
+2026-11-14T06:47:57.3402224Z   "lines": [
+2026-11-14T06:47:57.3402414Z     {
+2026-11-14T06:47:57.3402581Z       "line": 1,
+2026-11-14T06:47:57.3402864Z       "text": "http://azure.archive.ubuntu.com/ubuntu/\tpriority:1"
+2026-11-14T06:47:57.3403277Z     },
+2026-11-14T06:47:57.3403435Z     {
+2026-11-14T06:47:57.3403590Z       "line": 2,
+2026-11-14T06:47:57.3403859Z       "text": "https://archive.ubuntu.com/ubuntu/\tpriority:2"
+2026-11-14T06:47:57.3404398Z     },
+2026-11-14T06:47:57.3404615Z     {
+2026-11-14T06:47:57.3404773Z       "line": 3,
+2026-11-14T06:47:57.3405029Z       "text": "https://security.ubuntu.com/ubuntu/\tpriority:3"
+2026-11-14T06:47:57.3405314Z     },
+2026-11-14T06:47:57.3405462Z     {
+2026-11-14T06:47:57.3405615Z       "line": 4,
+2026-11-14T06:47:57.3405783Z       "text": ""
+2026-11-14T06:47:57.3405952Z     }
+2026-11-14T06:47:57.3406103Z   ]
+2026-11-14T06:47:57.3406254Z }
+2026-11-14T06:47:57.3501121Z Preferred the official Ubuntu archive; the hosted mirror remains the fallback.
+2026-11-14T06:47:57.4149234Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-14T06:47:57.4366912Z Get:6 https://packages.microsoft.com/ubuntu/26.04/prod resolute InRelease [3964 B]
+2026-11-14T06:47:57.4605246Z Get:7 https://packages.microsoft.com/ubuntu/26.04/prod resolute/main arm64 Packages [143 kB]
+2026-11-14T06:47:57.4725788Z Get:8 https://packages.microsoft.com/ubuntu/26.04/prod resolute/main amd64 Packages [158 kB]
+2026-11-14T06:47:58.0826072Z Hit:2 https://archive.ubuntu.com/ubuntu resolute InRelease
+2026-11-14T06:47:58.2284646Z Get:3 https://archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]
+2026-11-14T06:47:58.7577603Z Get:4 https://archive.ubuntu.com/ubuntu resolute-backports InRelease [137 kB]
+2026-11-14T06:47:58.9844536Z Get:5 https://archive.ubuntu.com/ubuntu resolute-security InRelease [137 kB]
+2026-11-14T06:47:59.1981700Z Get:9 https://archive.ubuntu.com/ubuntu resolute-updates/main amd64v3 Packages [869 kB]
+2026-11-14T06:47:59.6683213Z Get:10 https://archive.ubuntu.com/ubuntu resolute-updates/main Translation-en [195 kB]
+2026-11-14T06:47:59.8223364Z Get:11 https://archive.ubuntu.com/ubuntu resolute-updates/universe amd64v3 Packages [390 kB]
+2026-11-14T06:47:59.9953723Z Get:12 https://archive.ubuntu.com/ubuntu resolute-updates/universe Translation-en [122 kB]
+2026-11-14T06:48:00.1424897Z Get:13 https://archive.ubuntu.com/ubuntu resolute-security/main amd64v3 Packages [718 kB]
+2026-11-14T06:48:00.3916084Z Get:14 https://archive.ubuntu.com/ubuntu resolute-security/main Translation-en [157 kB]
+2026-11-14T06:48:00.5912569Z Get:15 https://archive.ubuntu.com/ubuntu resolute-security/universe amd64v3 Packages [220 kB]
+2026-11-14T06:48:00.7497287Z Get:16 https://archive.ubuntu.com/ubuntu resolute-security/universe Translation-en [72.5 kB]
+2026-11-14T06:48:00.8992195Z Get:17 https://archive.ubuntu.com/ubuntu resolute-security/restricted amd64v3 Packages [590 kB]
+2026-11-14T06:48:01.1796197Z Get:18 https://archive.ubuntu.com/ubuntu resolute-security/restricted Translation-en [122 kB]
+2026-11-14T06:48:03.3897241Z Fetched 4172 kB in 4s (1098 kB/s)
+2026-11-14T06:48:03.7855724Z Reading package lists...
+2026-11-14T06:48:03.8444530Z Reading package lists...
+2026-11-14T06:48:03.9602527Z Building dependency tree...
+2026-11-14T06:48:03.9608157Z Reading state information...
+2026-11-14T06:48:04.0208235Z Solving dependencies...
+2026-11-14T06:48:04.0856602Z Suggested packages:
+2026-11-14T06:48:04.0856876Z   tini-static
+2026-11-14T06:48:04.1011941Z The following NEW packages will be installed:
+2026-11-14T06:48:04.1012323Z   tini
+2026-11-14T06:48:04.1172722Z 0 upgraded, 1 newly installed, 0 to remove and 24 not upgraded.
+2026-11-14T06:48:04.1173363Z Need to get 10.9 kB of archives.
+2026-11-14T06:48:04.1173976Z After this operation, 38.9 kB of additional disk space will be used.
+2026-11-14T06:48:04.1174531Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-11-14T06:48:04.4346976Z Get:2 https://archive.ubuntu.com/ubuntu resolute/universe amd64v3 tini amd64 0.19.0-6 [10.9 kB]
+2026-11-14T06:48:04.7448154Z Fetched 10.9 kB in 0s (30.3 kB/s)
+2026-11-14T06:48:04.7977448Z Selecting previously unselected package tini.
+2026-11-14T06:48:04.8326186Z (Reading database ... 
+2026-11-14T06:48:04.8326364Z (Reading database ... 5%
+2026-11-14T06:48:04.8326531Z (Reading database ... 10%
+2026-11-14T06:48:04.8326668Z (Reading database ... 15%
+2026-11-14T06:48:04.8326806Z (Reading database ... 20%
+2026-11-14T06:48:04.8327020Z (Reading database ... 25%
+2026-11-14T06:48:04.8327234Z (Reading database ... 30%
+2026-11-14T06:48:04.8328393Z (Reading database ... 35%
+2026-11-14T06:48:04.8328591Z (Reading database ... 40%
+2026-11-14T06:48:04.8328787Z (Reading database ... 45%
+2026-11-14T06:48:04.8328965Z (Reading database ... 50%
+2026-11-14T06:48:04.9288271Z (Reading database ... 55%
+2026-11-14T06:48:05.0822889Z (Reading database ... 60%
+2026-11-14T06:48:05.2237571Z (Reading database ... 65%
+2026-11-14T06:48:05.4240883Z (Reading database ... 70%
+2026-11-14T06:48:05.5715964Z (Reading database ... 75%
+2026-11-14T06:48:05.7726706Z (Reading database ... 80%
+2026-11-14T06:48:05.9809282Z (Reading database ... 85%
+2026-11-14T06:48:06.1671023Z (Reading database ... 90%
+2026-11-14T06:48:06.3339940Z (Reading database ... 95%
+2026-11-14T06:48:06.3340139Z (Reading database ... 100%
+2026-11-14T06:48:06.3340393Z (Reading database ... 213946 files and directories currently installed.)
+2026-11-14T06:48:06.3376654Z Preparing to unpack .../tini_0.19.0-6_amd64v3.deb ...
+2026-11-14T06:48:06.3436446Z Unpacking tini (0.19.0-6) ...
+2026-11-14T06:48:06.3741968Z Setting up tini (0.19.0-6) ...
+2026-11-14T06:48:06.8009259Z 
+2026-11-14T06:48:06.8009824Z Running kernel seems to be up-to-date.
+2026-11-14T06:48:06.8010066Z 
+2026-11-14T06:48:06.8010163Z Restarting services...
+2026-11-14T06:48:06.8078264Z 
+2026-11-14T06:48:06.8078691Z Service restarts being deferred:
+2026-11-14T06:48:06.8081936Z  systemctl restart hosted-compute-agent.service
+2026-11-14T06:48:06.8082150Z 
+2026-11-14T06:48:06.8082481Z No containers need to be restarted.
+2026-11-14T06:48:06.8082665Z 
+2026-11-14T06:48:06.8082824Z No user sessions are running outdated binaries.
+2026-11-14T06:48:06.8083008Z 
+2026-11-14T06:48:06.8083244Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-14T06:48:07.5167300Z ##[group]Run case "$SUITE" in
+2026-11-14T06:48:07.5167501Z [36;1mcase "$SUITE" in[0m
+2026-11-14T06:48:07.5167630Z [36;1m  supervisor)[0m
+2026-11-14T06:48:07.5167873Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts[0m
+2026-11-14T06:48:07.5168237Z [36;1m    ;;[0m
+2026-11-14T06:48:07.5168346Z [36;1m  recovery)[0m
+2026-11-14T06:48:07.5168577Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \[0m
+2026-11-14T06:48:07.5168886Z [36;1m      --exclude 'src/server/maintenance/supervisor.test.ts'[0m
+2026-11-14T06:48:07.5169064Z [36;1m    ;;[0m
+2026-11-14T06:48:07.5169175Z [36;1m  remaining)[0m
+2026-11-14T06:48:07.5169348Z [36;1m    # Exact exclusions keep future test files in this partition; it[0m
+2026-11-14T06:48:07.5169562Z [36;1m    # also runs the node:test script suites.[0m
+2026-11-14T06:48:07.5169808Z [36;1m    node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \[0m
+2026-11-14T06:48:07.5170029Z [36;1m      --exclude 'src/server/maintenance/**' \[0m
+2026-11-14T06:48:07.5170202Z [36;1m      --exclude 'src/server/backup/**'[0m
+2026-11-14T06:48:07.5170350Z [36;1m    ;;[0m
+2026-11-14T06:48:07.5170455Z [36;1m  *)[0m
+2026-11-14T06:48:07.5170585Z [36;1m    echo "Unknown unit partition: $SUITE" >&2[0m
+2026-11-14T06:48:07.5170741Z [36;1m    exit 1[0m
+2026-11-14T06:48:07.5170853Z [36;1m    ;;[0m
+2026-11-14T06:48:07.5170960Z [36;1mesac[0m
+2026-11-14T06:48:07.5210713Z shell: /usr/bin/bash -e {0}
+2026-11-14T06:48:07.5210852Z env:
+2026-11-14T06:48:07.5210959Z   SUITE: recovery
+2026-11-14T06:48:07.5211077Z ##[endgroup]
+2026-11-14T06:48:07.9873163Z 
+2026-11-14T06:48:07.9875008Z [1m[30m[46m RUN [49m[39m[22m [36mv5.1.0 [39m[90m/home/runner/work/spinel/spinel[39m
+2026-11-14T06:48:07.9875373Z 
+2026-11-14T06:48:11.2480262Z  [32m✓[39m src/server/maintenance/restore-jobs.test.ts [2m([22m[2m56 tests[22m[2m)[22m[33m 2994[2mms[22m[39m
+2026-11-14T06:48:11.2481194Z    [33m[2m✓[22m[39m planned shutdown preserves intent and journals witness before physical-stop completion[33m 463[2mms[22m[39m
+2026-11-14T06:48:13.4232623Z  [32m✓[39m src/server/backup/restore-registry.test.ts [2m([22m[2m81 tests[22m[2m)[22m[33m 1685[2mms[22m[39m
+2026-11-14T06:48:14.7334437Z  [32m✓[39m src/server/maintenance/restore-files.test.ts [2m([22m[2m55 tests[22m[2m)[22m[33m 1197[2mms[22m[39m
+2026-11-14T06:48:16.4063626Z [90mstderr[2m | src/server/backup/restore-candidate.test.ts
+2026-11-14T06:48:16.4064739Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.4065616Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.4066485Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.4066982Z 
+2026-11-14T06:48:16.4906600Z [90mstderr[2m | src/server/backup/restore-candidate.test.ts
+2026-11-14T06:48:16.4907319Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.4907991Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.4908580Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.4908772Z 
+2026-11-14T06:48:16.5620912Z [90mstderr[2m | src/server/backup/restore-candidate.test.ts
+2026-11-14T06:48:16.5621663Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.5622309Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.5622704Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:16.5622897Z 
+2026-11-14T06:48:33.1632500Z  [32m✓[39m src/server/backup/restore-candidate.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 16100[2mms[22m[39m
+2026-11-14T06:48:33.1633089Z    [33m[2m✓[22m[39m source verification reads its authenticated private copy after the transfer path changes[33m 520[2mms[22m[39m
+2026-11-14T06:48:33.1633778Z    [33m[2m✓[22m[39m real rollback worker prepares a closed private original and retires attempted native identities[33m 1676[2mms[22m[39m
+2026-11-14T06:48:33.1634536Z    [33m[2m✓[22m[39m a wrong original witness is rejected by the actual rollback worker with complete staging cleanup[33m 474[2mms[22m[39m
+2026-11-14T06:48:33.1635140Z    [33m[2m✓[22m[39m isolated startup refuses wrong content, absent assets, malformed results and late cancellation without altering its source[33m 3706[2mms[22m[39m
+2026-11-14T06:48:33.1635701Z    [33m[2m✓[22m[39m actual rollback growth beyond the admitted disk cap fails without retaining output[33m 524[2mms[22m[39m
+2026-11-14T06:48:33.1636202Z    [33m[2m✓[22m[39m rollback cancellation at source-cleanup never publishes an otherwise valid result[33m 580[2mms[22m[39m
+2026-11-14T06:48:33.1636712Z    [33m[2m✓[22m[39m rollback retains original ownership, filing and content with only attempted negative evidence[33m 379[2mms[22m[39m
+2026-11-14T06:48:33.1637305Z    [33m[2m✓[22m[39m future constructor row side effects are detected even without a schema change[33m 510[2mms[22m[39m
+2026-11-14T06:48:33.1637884Z    [33m[2m✓[22m[39m late semantic failure publishes no result and makes the partially transformed candidate unusable for an in-place retry[33m 528[2mms[22m[39m
+2026-11-14T06:48:33.1638668Z    [33m[2m✓[22m[39m real isolated reconciliation publishes only the closed verified candidate, preserves inputs and removes current authority staging[33m 6350[2mms[22m[39m
+2026-11-14T06:48:35.0098856Z  [32m✓[39m src/server/backup/export-jobs.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 1670[2mms[22m[39m
+2026-11-14T06:48:35.5084315Z [90mstderr[2m | src/server/backup/verification.test.ts
+2026-11-14T06:48:35.5085505Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5086071Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5086483Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5086770Z 
+2026-11-14T06:48:35.5255413Z [90mstderr[2m | src/server/backup/verification.test.ts
+2026-11-14T06:48:35.5256113Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5256765Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5257315Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5257506Z 
+2026-11-14T06:48:35.5394769Z [90mstderr[2m | src/server/backup/verification.test.ts
+2026-11-14T06:48:35.5395424Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5396060Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5396785Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:35.5397036Z 
+2026-11-14T06:48:41.0944042Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2ma small container and host memory pressure refuse verification before an OOM
+2026-11-14T06:48:41.0946843Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921093,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0948142Z 
+2026-11-14T06:48:41.0948534Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2ma small container and host memory pressure refuse verification before an OOM
+2026-11-14T06:48:41.0950105Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921094,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0950917Z 
+2026-11-14T06:48:41.0951255Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2ma small container and host memory pressure refuse verification before an OOM
+2026-11-14T06:48:41.0953320Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921094,"phase":"running","probes":["rejected","rejected","fulfilled","rejected"],"maximumBytes":null,"usedBytes":null,"chargedBytes":null,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":102400,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":false,"hostRefused":true}
+2026-11-14T06:48:41.0954660Z 
+2026-11-14T06:48:41.0955290Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0957621Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":0,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0958872Z 
+2026-11-14T06:48:41.0959474Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0961853Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":314572800,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0963153Z 
+2026-11-14T06:48:41.0963799Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0966382Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":314572800,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0967738Z 
+2026-11-14T06:48:41.0968399Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0971072Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":314572800,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0972306Z 
+2026-11-14T06:48:41.0972946Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0975561Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":209715200,"writebackBytes":104857600,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0976810Z 
+2026-11-14T06:48:41.0977335Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0979672Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":314572800,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":314572800,"cacheCountersValid":true,"availableKiB":102400,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":false,"hostRefused":true}
+2026-11-14T06:48:41.0981029Z 
+2026-11-14T06:48:41.0981695Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0984296Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921095,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":0,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0985592Z 
+2026-11-14T06:48:41.0986259Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0987794Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921096,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":314572800,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0988855Z 
+2026-11-14T06:48:41.0989497Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0993116Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921096,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":314572800,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0994696Z 
+2026-11-14T06:48:41.0995501Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.0998016Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921096,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":314572800,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.0999370Z 
+2026-11-14T06:48:41.0999784Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.1001395Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921096,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":209715200,"writebackBytes":104857600,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1002455Z 
+2026-11-14T06:48:41.1002859Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T06:48:41.1004482Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921096,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":681574400,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":314572800,"cacheCountersValid":true,"availableKiB":102400,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":false,"hostRefused":true}
+2026-11-14T06:48:41.1005300Z 
+2026-11-14T06:48:41.1005666Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1007098Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1007899Z 
+2026-11-14T06:48:41.1008258Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1009785Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1010595Z 
+2026-11-14T06:48:41.1011115Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1012758Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1013732Z 
+2026-11-14T06:48:41.1014318Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1015892Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1016894Z 
+2026-11-14T06:48:41.1017263Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1019380Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1020709Z 
+2026-11-14T06:48:41.1021328Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1023018Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1023874Z 
+2026-11-14T06:48:41.1024582Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1026172Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1027214Z 
+2026-11-14T06:48:41.1027838Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1029451Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1030534Z 
+2026-11-14T06:48:41.1030949Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1032375Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1033267Z 
+2026-11-14T06:48:41.1033627Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1035241Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":1073741824,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1036045Z 
+2026-11-14T06:48:41.1036504Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1038002Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921097,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":315621376,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1038896Z 
+2026-11-14T06:48:41.1039255Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1040734Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":315621376,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1041536Z 
+2026-11-14T06:48:41.1041986Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1043713Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":315621376,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1044720Z 
+2026-11-14T06:48:41.1045085Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1046668Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":315621376,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1047478Z 
+2026-11-14T06:48:41.1047837Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1049322Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1050132Z 
+2026-11-14T06:48:41.1050553Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1051990Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1052803Z 
+2026-11-14T06:48:41.1053222Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1054836Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":null,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1055628Z 
+2026-11-14T06:48:41.1055989Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1057508Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":null,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1058402Z 
+2026-11-14T06:48:41.1058872Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1060466Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1061455Z 
+2026-11-14T06:48:41.1061826Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1063309Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1064268Z 
+2026-11-14T06:48:41.1064644Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1066141Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1066948Z 
+2026-11-14T06:48:41.1067390Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1068881Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921098,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1069685Z 
+2026-11-14T06:48:41.1070157Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1071594Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1072405Z 
+2026-11-14T06:48:41.1072772Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1074440Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1075254Z 
+2026-11-14T06:48:41.1075623Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1077389Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1078243Z 
+2026-11-14T06:48:41.1078695Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1080209Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1081015Z 
+2026-11-14T06:48:41.1081482Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1083007Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1083878Z 
+2026-11-14T06:48:41.1084449Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1085978Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1086844Z 
+2026-11-14T06:48:41.1087212Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1088742Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":1073741824,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1089613Z 
+2026-11-14T06:48:41.1090077Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1091678Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":315621376,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1092651Z 
+2026-11-14T06:48:41.1093022Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1094709Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":315621376,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1095573Z 
+2026-11-14T06:48:41.1095938Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1097459Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":315621376,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1098400Z 
+2026-11-14T06:48:41.1098760Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1100344Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":315621376,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1101243Z 
+2026-11-14T06:48:41.1101610Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1103175Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1103976Z 
+2026-11-14T06:48:41.1104530Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1106168Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1107118Z 
+2026-11-14T06:48:41.1107484Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1109072Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":null,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1109936Z 
+2026-11-14T06:48:41.1110302Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1111854Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":null,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1112766Z 
+2026-11-14T06:48:41.1113166Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T06:48:41.1114752Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794638921099,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T06:48:41.1115558Z 
+2026-11-14T06:48:43.2213597Z  [32m✓[39m src/server/backup/verification.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 7638[2mms[22m[39m
+2026-11-14T06:48:43.2214846Z    [33m[2m✓[22m[39m a real isolated process authenticates inventory, native content, image bytes and access structure[33m 483[2mms[22m[39m
+2026-11-14T06:48:43.2215808Z    [33m[2m✓[22m[39m restore preparation retains verified bytes without activating data or returning deployment secrets[33m 481[2mms[22m[39m
+2026-11-14T06:48:43.2216835Z    [33m[2m✓[22m[39m encrypted candidate preparation preserves a populated recovery hold and permits later authorized recovery[33m 488[2mms[22m[39m
+2026-11-14T06:48:43.2217755Z    [33m[2m✓[22m[39m incompatible or interrupted preparation leaves no candidate and preserves the encrypted source[33m 867[2mms[22m[39m
+2026-11-14T06:48:43.2218606Z    [33m[2m✓[22m[39m a freshly authenticated but semantically broken snapshot is rejected[33m 496[2mms[22m[39m
+2026-11-14T06:48:43.2219355Z    [33m[2m✓[22m[39m an online snapshot preserves an interrupted staged generation without activating it[33m 985[2mms[22m[39m
+2026-11-14T06:48:43.2220164Z    [33m[2m✓[22m[39m a completed imported head verifies before and after a real native edit, but missing receipts fail[33m 1546[2mms[22m[39m
+2026-11-14T06:48:43.2220989Z    [33m[2m✓[22m[39m wrong key, incompatible image, bounded decompression and killed worker preserve the source[33m 1638[2mms[22m[39m
+2026-11-14T06:48:43.2222079Z    [33m[2m✓[22m[39m an old encrypted bundle restores unchanged but cannot claim complete verification coverage[33m 439[2mms[22m[39m
+2026-11-14T06:48:43.7282263Z [90mstderr[2m | src/server/maintenance/http.test.ts
+2026-11-14T06:48:43.7283564Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7284529Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7285252Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7285589Z 
+2026-11-14T06:48:43.7448062Z [90mstderr[2m | src/server/maintenance/http.test.ts
+2026-11-14T06:48:43.7475392Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7504913Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7514682Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7521933Z 
+2026-11-14T06:48:43.7631225Z [90mstderr[2m | src/server/maintenance/http.test.ts
+2026-11-14T06:48:43.7631718Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7632193Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7632591Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:48:43.7632780Z 
+2026-11-14T06:48:45.4006094Z  [32m✓[39m src/server/maintenance/http.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 1327[2mms[22m[39m
+2026-11-14T06:50:04.5016314Z  [32m✓[39m src/server/maintenance/restore-crash.integration.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 78897[2mms[22m[39m
+2026-11-14T06:50:04.5016965Z    [33m[2m✓[22m[39m real SIGKILL at admission preserves the durable restore decision and all retained evidence[33m 4140[2mms[22m[39m
+2026-11-14T06:50:04.5017488Z    [33m[2m✓[22m[39m real SIGKILL at custody preserves the durable restore decision and all retained evidence[33m 4157[2mms[22m[39m
+2026-11-14T06:50:04.5018381Z    [33m[2m✓[22m[39m real SIGKILL at freeze preserves the durable restore decision and all retained evidence[33m 4657[2mms[22m[39m
+2026-11-14T06:50:04.5019163Z    [33m[2m✓[22m[39m real SIGKILL at activation-plan preserves the durable restore decision and all retained evidence[33m 7396[2mms[22m[39m
+2026-11-14T06:50:04.5019977Z    [33m[2m✓[22m[39m real SIGKILL at staging preserves the durable restore decision and all retained evidence[33m 7413[2mms[22m[39m
+2026-11-14T06:50:04.5020808Z    [33m[2m✓[22m[39m real SIGKILL at activation preserves the durable restore decision and all retained evidence[33m 6548[2mms[22m[39m
+2026-11-14T06:50:04.5021713Z    [33m[2m✓[22m[39m real SIGKILL at private-open preserves the durable restore decision and all retained evidence[33m 7261[2mms[22m[39m
+2026-11-14T06:50:04.5022544Z    [33m[2m✓[22m[39m real SIGKILL at commit preserves the durable restore decision and all retained evidence[33m 8229[2mms[22m[39m
+2026-11-14T06:50:04.5023349Z    [33m[2m✓[22m[39m real SIGKILL at postcommit preserves the durable restore decision and all retained evidence[33m 8451[2mms[22m[39m
+2026-11-14T06:50:04.5024686Z    [33m[2m✓[22m[39m real SIGKILL at original-activation preserves the durable restore decision and all retained evidence[33m 9427[2mms[22m[39m
+2026-11-14T06:50:04.5025598Z    [33m[2m✓[22m[39m real SIGKILL at original-commit preserves the durable restore decision and all retained evidence[33m 11216[2mms[22m[39m
+2026-11-14T06:50:04.6476872Z  [32m✓[39m src/server/maintenance/supervisor-client.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+2026-11-14T06:50:10.2292270Z  [32m✓[39m src/server/backup/service.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 5368[2mms[22m[39m
+2026-11-14T06:50:10.2293137Z    [33m[2m✓[22m[39m actual scheduling publishes and verifies encrypted local archives, catches up and avoids duplicate jobs[33m 917[2mms[22m[39m
+2026-11-14T06:50:10.2293869Z    [33m[2m✓[22m[39m failed newest recovery retains source and last success; old and new keys remain verifiable after rotation[33m 2038[2mms[22m[39m
+2026-11-14T06:50:10.2294578Z    [33m[2m✓[22m[39m resource refusal reports a safe reason, stops key retries and preserves the last recovery point[33m 466[2mms[22m[39m
+2026-11-14T06:50:10.2295066Z    [33m[2m✓[22m[39m backup and verifier share a real lease, and shutdown drains active retrieval[33m 433[2mms[22m[39m
+2026-11-14T06:50:10.2295669Z    [33m[2m✓[22m[39m a destination cleanup failure releases the lease and keeps the published backup recoverable[33m 449[2mms[22m[39m
+2026-11-14T06:50:10.2296514Z    [33m[2m✓[22m[39m expired verification is visible, retry reconciles only owned staging and preserves foreign paths[33m 830[2mms[22m[39m
+2026-11-14T06:50:17.0769454Z  [32m✓[39m src/server/backup/restore-http.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 6728[2mms[22m[39m
+2026-11-14T06:50:17.0770398Z    [33m[2m✓[22m[39m real Operator HTTP confirmation crosses custody ACK and Begin into committed private release[33m 6727[2mms[22m[39m
+2026-11-14T06:50:21.2232930Z  [32m✓[39m src/server/backup/routes.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 3886[2mms[22m[39m
+2026-11-14T06:50:21.2233525Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after disconnect[33m 857[2mms[22m[39m
+2026-11-14T06:50:21.2236014Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after revocation[33m 1778[2mms[22m[39m
+2026-11-14T06:50:21.2236717Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after maintenance[33m 814[2mms[22m[39m
+2026-11-14T06:50:21.4155216Z  [32m✓[39m src/server/maintenance/restore-prepare.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 85[2mms[22m[39m
+2026-11-14T06:50:21.8766165Z [90mstderr[2m | src/server/backup/restore-generations.test.ts
+2026-11-14T06:50:21.8767234Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.8768108Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.8768989Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.8769428Z 
+2026-11-14T06:50:21.8901299Z [90mstderr[2m | src/server/backup/restore-generations.test.ts
+2026-11-14T06:50:21.8901875Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.8902322Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.8902724Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.8902915Z 
+2026-11-14T06:50:21.9033571Z [90mstderr[2m | src/server/backup/restore-generations.test.ts
+2026-11-14T06:50:21.9034305Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.9034778Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.9035152Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:21.9035339Z 
+2026-11-14T06:50:22.6680620Z  [32m✓[39m src/server/backup/restore-generations.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 702[2mms[22m[39m
+2026-11-14T06:50:23.1578852Z [90mstderr[2m | src/server/backup/restore-receipts.test.ts
+2026-11-14T06:50:23.1579895Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1581369Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1582114Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1582628Z 
+2026-11-14T06:50:23.1718287Z [90mstderr[2m | src/server/backup/restore-receipts.test.ts
+2026-11-14T06:50:23.1718974Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1719661Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1720288Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1720593Z 
+2026-11-14T06:50:23.1852291Z [90mstderr[2m | src/server/backup/restore-receipts.test.ts
+2026-11-14T06:50:23.1852717Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1853153Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1853537Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:23.1853736Z 
+2026-11-14T06:50:24.3643786Z  [32m✓[39m src/server/backup/restore-receipts.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 1142[2mms[22m[39m
+2026-11-14T06:50:25.0508281Z  [32m✓[39m src/server/backup/restore-grants.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 501[2mms[22m[39m
+2026-11-14T06:50:25.8777123Z  [32m✓[39m src/server/backup/restore-ownership.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 698[2mms[22m[39m
+2026-11-14T06:50:26.5400343Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5401515Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5402446Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5415362Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5416250Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5416915Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5425577Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5426398Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:26.5427563Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1590466Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1591449Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1592321Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1606665Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1607517Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1608251Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1617733Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1620132Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:28.1620830Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6316720Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6317748Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6318707Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6333042Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6336401Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6337071Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6344365Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6346991Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:29.6347391Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1445199Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1446092Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1446796Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1464985Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1466029Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1466715Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1473555Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1476033Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:31.1476599Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6482583Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6483497Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6484361Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6502422Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6503513Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6504544Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6514806Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6516142Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:32.6517037Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2371560Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2372496Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2373170Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2392706Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2393404Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2394559Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2405819Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2407578Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:34.2408437Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7386438Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7387454Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7388091Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7402507Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7404870Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7406359Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7412710Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7416341Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:35.7417125Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2397813Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2398713Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2399415Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2414315Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2417168Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2418145Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2424825Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2428450Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:37.2429134Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:38.2331807Z  [32m✓[39m src/server/maintenance/restore-trial.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 12261[2mms[22m[39m
+2026-11-14T06:50:38.2332431Z    [33m[2m✓[22m[39m real trial stays private until exact release after barrier cleanup, and repeated release is harmless[33m 1550[2mms[22m[39m
+2026-11-14T06:50:38.2332974Z    [33m[2m✓[22m[39m an unexpected running state cannot open trial HTTP or rehabilitate readiness[33m 1536[2mms[22m[39m
+2026-11-14T06:50:38.2333489Z    [33m[2m✓[22m[39m an unexpected unavailable state cannot open trial HTTP or rehabilitate readiness[33m 1515[2mms[22m[39m
+2026-11-14T06:50:38.2333955Z    [33m[2m✓[22m[39m an unexpected expired state cannot open trial HTTP or rehabilitate readiness[33m 1486[2mms[22m[39m
+2026-11-14T06:50:38.2334853Z    [33m[2m✓[22m[39m permit validation refuses non-scalar role and a process identity that no longer exists[33m 1580[2mms[22m[39m
+2026-11-14T06:50:38.2335664Z    [33m[2m✓[22m[39m a permitted handoff with mismatched bytes never opens SQLite or reports health[33m 1534[2mms[22m[39m
+2026-11-14T06:50:38.2336448Z    [33m[2m✓[22m[39m a permitted handoff with mismatched policy never opens SQLite or reports health[33m 1491[2mms[22m[39m
+2026-11-14T06:50:38.2337281Z    [33m[2m✓[22m[39m failed real app trial records terminal content after expired opening and waits for its exact ACK[33m 1569[2mms[22m[39m
+2026-11-14T06:50:39.1116963Z  [32m✓[39m src/server/backup/restore-credentials.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 692[2mms[22m[39m
+2026-11-14T06:50:39.7875321Z  [32m✓[39m src/server/backup/backup.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 486[2mms[22m[39m
+2026-11-14T06:50:40.1778062Z  [32m✓[39m src/server/maintenance/restore-activate.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 299[2mms[22m[39m
+2026-11-14T06:50:40.3558577Z  [32m✓[39m src/server/backup/spaces.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+2026-11-14T06:50:41.2227344Z  [32m✓[39m src/server/backup/restore-routes.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 606[2mms[22m[39m
+2026-11-14T06:50:41.2228231Z    [33m[2m✓[22m[39m only the owned upload continues after the passkey and ordinary HTTP body window[33m 498[2mms[22m[39m
+2026-11-14T06:50:41.4105790Z  [32m✓[39m src/server/maintenance/gate.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+2026-11-14T06:50:41.6709419Z  [32m✓[39m src/server/maintenance/restore-failed-custody.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 161[2mms[22m[39m
+2026-11-14T06:50:41.7806702Z  [32m✓[39m src/server/maintenance/restore-capacity.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-11-14T06:50:49.7613248Z  [32m✓[39m src/server/backup/restore-admission.integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 7861[2mms[22m[39m
+2026-11-14T06:50:49.7613904Z    [33m[2m✓[22m[39m real published-failure admission releases only its logical hold and permits a new Operator preparation[33m 3699[2mms[22m[39m
+2026-11-14T06:50:49.7614627Z    [33m[2m✓[22m[39m real full-journal admission releases only its logical hold and permits a new Operator preparation[33m 4161[2mms[22m[39m
+2026-11-14T06:50:50.0523452Z  [32m✓[39m src/server/backup/filesystem.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 167[2mms[22m[39m
+2026-11-14T06:50:50.1723003Z  [32m✓[39m src/server/maintenance/restore-authority.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+2026-11-14T06:50:52.7056441Z  [32m✓[39m src/server/backup/restore-freeze.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 2446[2mms[22m[39m
+2026-11-14T06:50:52.7057333Z    [33m[2m✓[22m[39m isolated freeze preserves WAL-only authority changes and never modifies original custody[33m 442[2mms[22m[39m
+2026-11-14T06:50:52.7058190Z    [33m[2m✓[22m[39m a clean earlier WAL commit cannot replace the independent current-state witness[33m 385[2mms[22m[39m
+2026-11-14T06:50:52.7058926Z    [33m[2m✓[22m[39m freezes a checkpointed main with an explicitly false empty WAL[33m 393[2mms[22m[39m
+2026-11-14T06:50:52.7059598Z    [33m[2m✓[22m[39m freezes a checkpointed main with an explicitly true empty WAL[33m 383[2mms[22m[39m
+2026-11-14T06:50:52.7060381Z    [33m[2m✓[22m[39m freeze rechecks the original passkey proof against witnessed current data (revoked=false)[33m 419[2mms[22m[39m
+2026-11-14T06:50:52.7061250Z    [33m[2m✓[22m[39m freeze rechecks the original passkey proof against witnessed current data (revoked=true)[33m 413[2mms[22m[39m
+2026-11-14T06:50:52.8962764Z  [32m✓[39m src/server/backup/restore-input.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 108[2mms[22m[39m
+2026-11-14T06:50:56.0893495Z  [32m✓[39m src/server/backup/restore-registry.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 3056[2mms[22m[39m
+2026-11-14T06:50:56.0894261Z    [33m[2m✓[22m[39m complete-app catalog and manual upload converge on the real encrypted preparation boundary[33m 3055[2mms[22m[39m
+2026-11-14T06:50:56.6079146Z  [32m✓[39m src/server/backup/restore-fences.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 404[2mms[22m[39m
+2026-11-14T06:50:56.7129187Z  [32m✓[39m src/server/maintenance/ownership.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+2026-11-14T06:50:57.0039822Z  [32m✓[39m src/server/backup/transfer.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 153[2mms[22m[39m
+2026-11-14T06:50:57.5946239Z [90mstderr[2m | src/server/maintenance/restore-rich-fixture.test.ts
+2026-11-14T06:50:57.5947049Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.5948000Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.5948676Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.5948991Z 
+2026-11-14T06:50:57.6083661Z [90mstderr[2m | src/server/maintenance/restore-rich-fixture.test.ts
+2026-11-14T06:50:57.6084537Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.6085222Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.6085845Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.6086136Z 
+2026-11-14T06:50:57.6221321Z [90mstderr[2m | src/server/maintenance/restore-rich-fixture.test.ts
+2026-11-14T06:50:57.6222034Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.6222753Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.6223380Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:50:57.6223671Z 
+2026-11-14T06:50:58.0709730Z  [32m✓[39m src/server/maintenance/restore-rich-fixture.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 257[2mms[22m[39m
+2026-11-14T06:50:58.1631074Z  [32m✓[39m src/server/maintenance/process-exit.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-11-14T06:50:58.4799408Z  [32m✓[39m src/server/backup/restore-operations.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 157[2mms[22m[39m
+2026-11-14T06:50:58.6285561Z  [32m✓[39m src/server/backup/config.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+2026-11-14T06:50:58.7172336Z  [32m✓[39m src/server/maintenance/supervisor-test-control.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-14T06:50:58.8098051Z  [32m✓[39m src/server/maintenance/restore-job-intent.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+2026-11-14T06:50:58.9049254Z  [32m✓[39m src/server/maintenance/cold-files.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-14T06:51:02.4353958Z  [32m✓[39m src/server/backup/recovery-rows.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 3448[2mms[22m[39m
+2026-11-14T06:51:02.4354664Z    [33m[2m✓[22m[39m a native process inventories 512 MiB of payloads below the unchanged 512 MiB worker ceiling[33m 3441[2mms[22m[39m
+2026-11-14T06:51:03.0121040Z [90mstderr[2m | src/server/backup/restore-drain-app.test.ts
+2026-11-14T06:51:03.0121908Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0122702Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0123394Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0123897Z 
+2026-11-14T06:51:03.0259484Z [90mstderr[2m | src/server/backup/restore-drain-app.test.ts
+2026-11-14T06:51:03.0260205Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0260893Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0261523Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0261826Z 
+2026-11-14T06:51:03.0393213Z [90mstderr[2m | src/server/backup/restore-drain-app.test.ts
+2026-11-14T06:51:03.0394481Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0395198Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0395841Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T06:51:03.0396345Z 
+2026-11-14T06:51:03.4536860Z  [32m✓[39m src/server/backup/restore-drain-app.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 234[2mms[22m[39m
+2026-11-14T06:51:03.5342953Z  [32m✓[39m src/server/maintenance/restore-failure.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-11-14T06:51:03.6268193Z  [32m✓[39m src/server/backup/restore-notice.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-11-14T06:51:03.7206929Z  [32m✓[39m src/server/backup/restore-drain.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+2026-11-14T06:51:03.7968788Z  [32m✓[39m src/server/maintenance/restore-stop.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-14T06:51:04.1920060Z  [32m✓[39m src/server/maintenance/cli.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 313[2mms[22m[39m
+2026-11-14T06:51:04.1920616Z    [33m[2m✓[22m[39m cold setup and backup failures exit promptly and release ownership of a corrupt file[33m 312[2mms[22m[39m
+2026-11-14T06:51:04.1954378Z 
+2026-11-14T06:51:04.1958413Z [2m Test Files [22m [1m[32m49 passed[39m[22m[90m (49)[39m
+2026-11-14T06:51:04.1960588Z [2m      Tests [22m [1m[32m619 passed[39m[22m[90m (619)[39m
+2026-11-14T06:51:04.1961068Z [2m   Start at [22m 06:48:08
+2026-11-14T06:51:04.1963970Z [2m   Duration [22m 176.19s[2m (tests 95%, import 4%, transform 1%)[22m
+2026-11-14T06:51:04.1972040Z 
+2026-11-14T06:51:04.2523842Z Post job cleanup.
+2026-11-14T06:51:04.3404386Z Post job cleanup.
+2026-11-14T06:51:04.3977733Z [command]/usr/bin/git version
+2026-11-14T06:51:04.4011428Z git version 2.56.1
+2026-11-14T06:51:04.4031685Z Temporarily overriding HOME='/home/runner/work/_temp/f2e30837-cb5d-45f6-b4ae-0f104e0b3aba' before making global git config changes
+2026-11-14T06:51:04.4032420Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T06:51:04.4034419Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T06:51:04.4062229Z Removing SSH command configuration
+2026-11-14T06:51:04.4066495Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T06:51:04.4097914Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T06:51:04.4340973Z Removing HTTP extra header
+2026-11-14T06:51:04.4346242Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T06:51:04.4377639Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T06:51:04.4614361Z Removing includeIf entries pointing to credentials config files
+2026-11-14T06:51:04.4620595Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T06:51:04.4654803Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T06:51:04.4997348Z Cleaning up orphan processes

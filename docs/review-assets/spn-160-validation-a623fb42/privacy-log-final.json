@@ -1,0 +1,31 @@
+{
+  "scope": "Five direct raw job logs, supplemented by full-ci-log-integrity.json scanning all 434 archive members. Source review limits new receipts to fixed flags/counts/codes. GitHub masks setup credentials; tests use synthetic fixtures.",
+  "files": [
+    {
+      "path": "logs/main-recovery.log",
+      "bytes": 105145,
+      "sha256": "ec198c0c816a731e7cfaf48cc13035ccefdacab20cc834bfcb76dbdecc08375f"
+    },
+    {
+      "path": "logs/main-supervisor.log",
+      "bytes": 136233,
+      "sha256": "b7db773eb0795166325ef9cbed0084d58695ec7aadd135a7afc4da0308306d38"
+    },
+    {
+      "path": "logs/pr-recovery.log",
+      "bytes": 106018,
+      "sha256": "46df2ccd39227f4559bfb20ce8a0d75a7ff2fc16cae6f0726b0a20b1ebef2175"
+    },
+    {
+      "path": "logs/pr-supervised-restore.log",
+      "bytes": 57725,
+      "sha256": "9a50a6d913e5f2de52dec908177d4a202428acb4b86622fa450d4339925cde08"
+    },
+    {
+      "path": "logs/pr-supervisor.log",
+      "bytes": 137670,
+      "sha256": "e730b9740b99dc036ba5dd841bc0251ef4a744287451a7e327ed97e60188b0e6"
+    }
+  ],
+  "unmaskedCredentialPatternMatches": []
+}

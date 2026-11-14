@@ -1,0 +1,30 @@
+{
+  "runId": 43567177401,
+  "attempt": 1,
+  "jobId": 132363730052,
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "base": "b1b18165543ed800c0847a63201504c90c46272c",
+  "tested": "0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e",
+  "tree": "199f2ebc08e56de9805caad7eba79e8a9e6dba1a",
+  "result": "success",
+  "tests": 131,
+  "node": "26.13.0",
+  "environment": "Existing Linux supervisor job installs Tini and invokes scripts/ci/pid-namespace.ts; real IPC, kernel leases and SQLite fixture assertions run unchanged.",
+  "logSha256": "e730b9740b99dc036ba5dd841bc0251ef4a744287451a7e327ed97e60188b0e6",
+  "selectedEvidence": [
+    "2026-11-14T06:46:24.8574038Z    \u2713 parent death after 0 ownership handles never admits a SQLite open 353ms",
+    "2026-11-14T06:46:24.8575145Z    \u2713 parent death after 2 ownership handles never admits a SQLite open 352ms",
+    "2026-11-14T06:46:24.8584404Z    \u2713 SIGKILL at durable starting reconciles into maintenance with original rows and closed orphan handles 628ms",
+    "2026-11-14T06:46:24.8585847Z    \u2713 SIGKILL at durable running reconciles into maintenance with original rows and closed orphan handles 744ms",
+    "2026-11-14T06:46:24.8587288Z    \u2713 SIGKILL at durable draining reconciles into maintenance with original rows and closed orphan handles 750ms",
+    "2026-11-14T06:46:24.8588688Z    \u2713 SIGKILL at durable paused reconciles into maintenance with original rows and closed orphan handles 808ms",
+    "2026-11-14T06:46:24.8589873Z    \u2713 SIGKILL at durable stopping reconciles into maintenance with original rows and closed orphan handles 830ms",
+    "2026-11-14T06:46:24.8591937Z    \u2713 SIGKILL at durable stopped reconciles into maintenance with original rows and closed orphan handles 864ms",
+    "2026-11-14T06:46:24.8627934Z    \u2713 complete application and authenticated archive commit and release the selected candidate: ownership-first 8825ms",
+    "2026-11-14T06:46:24.8629165Z    \u2713 complete application and authenticated archive commit and release the selected candidate: readiness-first 8813ms",
+    "2026-11-14T06:46:24.8715717Z  Test Files  1 passed (1)",
+    "2026-11-14T06:46:24.8716301Z       Tests  131 passed (131)"
+  ],
+  "historicalCause": "No recurrence; no causal inference or repair of either original SPN-157 incident.",
+  "remaining": "Recovery portable partition and all selected current-head gates remain pending."
+}

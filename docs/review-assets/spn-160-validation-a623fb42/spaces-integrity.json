@@ -1,0 +1,10 @@
+{
+  "runId": 43567177400,
+  "attempt": 1,
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "jobId": 132363440969,
+  "conclusion": "success",
+  "artifactId": 14102317945,
+  "zipSha256": "4e35e22f75a7bfc70e66c6ae5c2630df0e94530ee77110a560c0fd083b2b6072",
+  "jsonSha256": "b6ca951dc43ef65182e6988250882600c0db836173423bfa23a7a61f01f1f960"
+}
