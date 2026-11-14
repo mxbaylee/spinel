@@ -1,0 +1,14 @@
+{
+  "name": "spn128-8e9-types",
+  "args": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9093,
+  "peakKiB": 1794624
+}
