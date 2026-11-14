@@ -1,0 +1,14 @@
+{
+  "name": "spn156-epoch-typecheck",
+  "args": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9364,
+  "peakKiB": 1706048
+}

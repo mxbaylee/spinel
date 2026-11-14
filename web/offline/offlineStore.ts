@@ -811,6 +811,8 @@ export async function withOfflineItemWriter<T>(
   const key = itemWriterKey(accountId, itemId);
   if (editorAdmissions.has(key))
     throw new Error('Close this document in every tab before changing its device copy.');
+  // A denied storage fence must not leave a registered writer with no finally.
+  const verify = offlineEpoch();
   let finish!: () => void;
   const completed = new Promise<void>((resolve) => {
     finish = resolve;
@@ -819,7 +821,6 @@ export async function withOfflineItemWriter<T>(
   writers.add(completed);
   temporaryItemWriters.set(key, writers);
   let changes: AccountOfflineChange[] | undefined;
-  const verify = offlineEpoch();
   try {
     return await offlineReplayAdmission().foreground(
       accountId,

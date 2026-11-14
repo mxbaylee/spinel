@@ -50,6 +50,32 @@ function deferred() {
   return { promise, resolve };
 }
 
+test('a denied writer epoch leaves replay and editor admission available after storage returns', async () => {
+  const operation = vi.fn(async () => {});
+  const denied = vi.spyOn(window.localStorage, 'getItem').mockImplementation(() => {
+    throw new DOMException('Storage denied', 'SecurityError');
+  });
+  await expect(withOfflineItemWriter(accountId, itemId, operation)).rejects.toThrow(
+    'Offline downloads need browser storage.',
+  );
+  expect(operation).not.toHaveBeenCalled();
+  denied.mockRestore();
+
+  const replay = reserveOfflineReplay(accountId, itemId, async () => {});
+  // This invariant detects the original ordering directly, before any blocked
+  // editor wait could turn a leaked registration into a test timeout.
+  expect(replay).toBeTypeOf('function');
+  replay!();
+  const editor = vi.fn(() =>
+    locks.request(lockName, { ifAvailable: true }, (lock) => Boolean(lock)),
+  );
+  expect(await withOfflineEditorAdmission(accountId, itemId, () => {}, editor)).toBe(true);
+  expect(editor).toHaveBeenCalledOnce();
+  await withOfflineItemWriter(accountId, itemId, operation);
+  expect(operation).toHaveBeenCalledOnce();
+  expect(await locks.query()).toEqual({ held: [], pending: [] });
+});
+
 /** Independent event targets/module instances share only actual runtime locks and storage delivery. */
 function replayTabs(manager: LockManager = locks as unknown as LockManager) {
   const targets: EventTarget[] = [];
