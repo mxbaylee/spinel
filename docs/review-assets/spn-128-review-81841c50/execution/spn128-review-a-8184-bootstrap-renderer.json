@@ -1,0 +1,15 @@
+{
+  "name": "spn128-review-a-8184-bootstrap-renderer",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/bootstrap-evidence.test.ts",
+    "scripts/ci/renderer-chunks.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 380,
+  "peakKiB": 145184
+}

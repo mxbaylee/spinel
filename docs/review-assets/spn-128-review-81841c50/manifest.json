@@ -1,0 +1,146 @@
+{
+  "source": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4578,
+      "sha256": "7b19308a46dd785605238daf3816952dd9b984196d91b3f1935eb2a21e5bc88f"
+    },
+    {
+      "path": "audit/spn128-review-b-cleanup-81841c50.json",
+      "bytes": 314,
+      "sha256": "6bb2b8876355da8c8bdbb4c43742cbd71f438fa76f086370bcec84eba998ae6b"
+    },
+    {
+      "path": "audit/spn128-review-b-provenance-81841c50.json",
+      "bytes": 1300,
+      "sha256": "312977031e8dac346b903b1f04a057474e9c7bf762c23701c4f2b6afadb5bc82"
+    },
+    {
+      "path": "audit/spn128-review-b-source-equivalence-81841c50.json",
+      "bytes": 75780,
+      "sha256": "2ef9e18233170e459c77eae33cc47839e6fb9ffb93cffdf3fa6a9b4d2967a5f3"
+    },
+    {
+      "path": "audit/spn128-root-packet-audit-81841c50.json",
+      "bytes": 600,
+      "sha256": "60f3d746fd0628a66c564021ba1b6cf98e6b67c678e9f8dff5810c96032f432f"
+    },
+    {
+      "path": "execution/spn128-review-a-8184-bootstrap-renderer.json",
+      "bytes": 303,
+      "sha256": "5e69fbf308f9a63f4ce7186d0ad9f487944751ff03dee57a7ff24993b8af9052"
+    },
+    {
+      "path": "execution/spn128-review-a-8184-bootstrap-renderer.log",
+      "bytes": 826,
+      "sha256": "b4d46914e58f87933ecf4a74fa4fe083a172afd1789d994836a26958dd038e84"
+    },
+    {
+      "path": "execution/spn128-review-a-8184-scripts.log",
+      "bytes": 502,
+      "sha256": "0715d8cdd4b7fa59657c6fbfe2fa0d8050a60a18b573f231c7f5b356b1ecbd71"
+    },
+    {
+      "path": "execution/spn128-review-b-contracts-81841c50.json",
+      "bytes": 567,
+      "sha256": "d8f81bf231f3930c748ae56aa65cc623680ecc2f7dbe58dd8c4664dbf8d69a57"
+    },
+    {
+      "path": "execution/spn128-review-b-contracts-81841c50.log",
+      "bytes": 705,
+      "sha256": "29bbda2c22155d9775501b5abdd308c3df9a8bc03fb5752cb8ece1dfd9d05b45"
+    },
+    {
+      "path": "execution/spn128-review-b-scripts-81841c50.json",
+      "bytes": 439,
+      "sha256": "aff88f5e09d2082281ef631a7c8bf15ef8621ae07f77591c7e49221e6655dde0"
+    },
+    {
+      "path": "execution/spn128-review-b-scripts-81841c50.log",
+      "bytes": 2620,
+      "sha256": "a1a252e17270f85884e0a7637a64d5740174db9d7487117c12f80dfba578a3f3"
+    },
+    {
+      "path": "execution/spn128-vitest.config.ts",
+      "bytes": 211,
+      "sha256": "df7efab78de6e1bdb25bcc87ec6e0ee8edb120cb9fa6770a842d9a68de12505d"
+    },
+    {
+      "path": "execution/watch.ts",
+      "bytes": 1412,
+      "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+    },
+    {
+      "path": "packet-bindings/README.md",
+      "bytes": 8804,
+      "sha256": "bc158d9fec360b8ade51e7dc6247893cbf6baca8599f945658b2d5a56f498e51"
+    },
+    {
+      "path": "packet-bindings/blinding-audit.json",
+      "bytes": 7295,
+      "sha256": "2f294b9eea370eac9fd976f3fb7d58aa54692db649547e50d20057d1a8239b45"
+    },
+    {
+      "path": "packet-bindings/packet-manifest.json",
+      "bytes": 241448,
+      "sha256": "9213b65ec42143110c1215b79d2c5d65e3e34dd78562e89894cbe503d652ee87"
+    },
+    {
+      "path": "packet-bindings/source-bindings.txt",
+      "bytes": 14015,
+      "sha256": "3083bae8de66efba9e9c986c477a8c5a82ed2c542bdf0cca98308d2938f7979c"
+    },
+    {
+      "path": "packet-bindings/source-manifest.json",
+      "bytes": 716458,
+      "sha256": "74362eb4bc8a782d8c415d48c841d992a099c4ab6f8f3e71ce819885f48b0498"
+    },
+    {
+      "path": "prior-source-a-execution/spn128-review-a-3812-contracts-admitted.json",
+      "bytes": 519,
+      "sha256": "a8f88995eac55918f3c00fca4d638c1b1f7943b9d5b66a8f2fcace576fc343bb"
+    },
+    {
+      "path": "prior-source-a-execution/spn128-review-a-3812-contracts-admitted.log",
+      "bytes": 571,
+      "sha256": "1202547105dea617ba6c07f4b54ef96bf6a8ce2e82c10c75d1164193cb8ed363"
+    },
+    {
+      "path": "prior-source-a-execution/spn128-review-a-3812-contracts.log",
+      "bytes": 502,
+      "sha256": "0715d8cdd4b7fa59657c6fbfe2fa0d8050a60a18b573f231c7f5b356b1ecbd71"
+    },
+    {
+      "path": "prior-source-a-execution/spn128-review-a-3812-privacy.json",
+      "bytes": 224,
+      "sha256": "1d7bc316d331315e149a8d39e67efe69fe50265e5d39c4777140b6b6b6e15809"
+    },
+    {
+      "path": "prior-source-a-execution/spn128-review-a-3812-privacy.log",
+      "bytes": 766,
+      "sha256": "a38bb95ae3776c79b71b0b3523da1ea0b3d5ec5357b2448cbd8fc9237c67c598"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 10184,
+      "sha256": "7c95d02c770d2224c14cff0bc2e6b76131fea12813a99645c477b6e7e065419a"
+    },
+    {
+      "path": "review-packet-81841c50.tar.gz",
+      "bytes": 7094162,
+      "sha256": "f514738fc8a22cb7e66a9f6b19cdec7c113e762f8eb245a832295f70263f77ae"
+    },
+    {
+      "path": "reviews/spn128-review-81841c50-a.md",
+      "bytes": 12376,
+      "sha256": "cf360fca5290cb086d075f53739315c6a391a2f87f2756a4e0859ef23a519233"
+    },
+    {
+      "path": "reviews/spn128-review-81841c50-b.md",
+      "bytes": 11847,
+      "sha256": "d485e7dc62fbbb93c6863bc82955743640b04ba0b34af03e27326d3de51d49c7"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "spn128-review-b-contracts-81841c50",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "/tmp/spn128-vitest.config.ts",
+    "--configLoader",
+    "native",
+    "--cache=false",
+    "src/server/maintenance/restore-crash-clock.test.ts",
+    "src/server/maintenance/restore-cold-custody.test.ts",
+    "src/server/maintenance/restore-cold-state.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1255,
+  "peakKiB": 391584
+}

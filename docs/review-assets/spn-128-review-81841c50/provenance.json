@@ -1,0 +1,251 @@
+{
+  "source": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "archiveParent": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "archiveRef": "refs/tags/archive/spn-128-review-81841c50-20261114",
+  "path": "docs/review-assets/spn-128-review-81841c50",
+  "status": "Preservation preparation only; no new source qualification, validation or publication. A later base integration needs same-reviewer revalidation.",
+  "reviews": [
+    {
+      "agent": "/root/spn128_current_a",
+      "source": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+      "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "stepsTo100": []
+    },
+    {
+      "agent": "/root/spn128_current_b",
+      "source": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+      "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "stepsTo100": []
+    }
+  ],
+  "currentExecution": {
+    "a": [
+      {
+        "attempt": "scripts",
+        "result": "Preflight memory-pressure refusal; no test or serial child, no verdict, no JSON receipt created",
+        "log": "execution/spn128-review-a-8184-scripts.log"
+      },
+      {
+        "attempt": "bootstrap-renderer",
+        "result": "4 passed; separately granted distinct smaller check, not retry of refused21-control batch",
+        "elapsedMs": 380,
+        "peakKiB": 145184
+      }
+    ],
+    "b": [
+      {
+        "attempt": "contracts",
+        "result": "30 passed,21 Linux-only skipped",
+        "elapsedMs": 1255,
+        "peakKiB": 391584
+      },
+      {
+        "attempt": "scripts",
+        "result": "21 passed",
+        "elapsedMs": 417,
+        "peakKiB": 248400
+      }
+    ]
+  },
+  "priorASourceQualifiedExecution": {
+    "source": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+    "contractAttempt": "Initial preflight refusal then separate admitted Vitest resource-abort;1134ms/366784KiB,no completed test summary. Neither a product failure nor a pass.",
+    "privacy": "5 passed;257ms/227120KiB. Source-equivalent inputs verified in current review; not a fresh8184 execution.",
+    "archive": "ba660d31d96949680e48ba44f33e2a46caac0dd8"
+  },
+  "packetManifestSha256": "9213b65ec42143110c1215b79d2c5d65e3e34dd78562e89894cbe503d652ee87",
+  "historicalArchiveLinks": [
+    {
+      "commit": "ba660d31d96949680e48ba44f33e2a46caac0dd8",
+      "path": "docs/implementation/evidence/SPN-128-review-3812ed9b",
+      "role": "Original prior reviews, execution failures/receipts, full prior packet and provenance; not recopied wholesale"
+    },
+    {
+      "commit": "7447da12a6c1a2f29c4b4d9b870b901f15c501bb",
+      "path": "docs/review-assets/spn-128-current-local",
+      "role": "Original2fc local evidence"
+    },
+    {
+      "commit": "ba5c9fd5868e5448882e976edc202ede4b234dd3",
+      "path": "docs/review-assets/spn-128-current-local",
+      "role": "Originala6dd local evidence"
+    },
+    {
+      "commit": "41e2a2868be914adec6da5eeccc0faba589c3ef2",
+      "path": "docs/review-assets/spn-128-previous-ci",
+      "role": "Original failed CI reports/profiles/redacted logs"
+    }
+  ],
+  "remaining": "Corrected current-head Linux crash/cold recovery, selected first-attempt browser/native/build/operational checks and all seven CI gates remain pending. Earlier failed/cancelled/reset/latency/resource outcomes retain original identities; reviews are not CI passes.",
+  "originals": [
+    {
+      "originalPath": "/tmp/spn128-review-81841c50-a.md",
+      "archivePath": "reviews/spn128-review-81841c50-a.md",
+      "bytes": 12376,
+      "sha256": "cf360fca5290cb086d075f53739315c6a391a2f87f2756a4e0859ef23a519233"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-81841c50-b.md",
+      "archivePath": "reviews/spn128-review-81841c50-b.md",
+      "bytes": 11847,
+      "sha256": "d485e7dc62fbbb93c6863bc82955743640b04ba0b34af03e27326d3de51d49c7"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-8184-scripts.log",
+      "archivePath": "execution/spn128-review-a-8184-scripts.log",
+      "bytes": 502,
+      "sha256": "0715d8cdd4b7fa59657c6fbfe2fa0d8050a60a18b573f231c7f5b356b1ecbd71"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-8184-bootstrap-renderer.log",
+      "archivePath": "execution/spn128-review-a-8184-bootstrap-renderer.log",
+      "bytes": 826,
+      "sha256": "b4d46914e58f87933ecf4a74fa4fe083a172afd1789d994836a26958dd038e84"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-contracts-81841c50.log",
+      "archivePath": "execution/spn128-review-b-contracts-81841c50.log",
+      "bytes": 705,
+      "sha256": "29bbda2c22155d9775501b5abdd308c3df9a8bc03fb5752cb8ece1dfd9d05b45"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-scripts-81841c50.log",
+      "archivePath": "execution/spn128-review-b-scripts-81841c50.log",
+      "bytes": 2620,
+      "sha256": "a1a252e17270f85884e0a7637a64d5740174db9d7487117c12f80dfba578a3f3"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-8184-bootstrap-renderer.json",
+      "archivePath": "execution/spn128-review-a-8184-bootstrap-renderer.json",
+      "bytes": 303,
+      "sha256": "5e69fbf308f9a63f4ce7186d0ad9f487944751ff03dee57a7ff24993b8af9052"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-contracts-81841c50.json",
+      "archivePath": "execution/spn128-review-b-contracts-81841c50.json",
+      "bytes": 567,
+      "sha256": "d8f81bf231f3930c748ae56aa65cc623680ecc2f7dbe58dd8c4664dbf8d69a57"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-scripts-81841c50.json",
+      "archivePath": "execution/spn128-review-b-scripts-81841c50.json",
+      "bytes": 439,
+      "sha256": "aff88f5e09d2082281ef631a7c8bf15ef8621ae07f77591c7e49221e6655dde0"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-source-equivalence-81841c50.json",
+      "archivePath": "audit/spn128-review-b-source-equivalence-81841c50.json",
+      "bytes": 75780,
+      "sha256": "2ef9e18233170e459c77eae33cc47839e6fb9ffb93cffdf3fa6a9b4d2967a5f3"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-cleanup-81841c50.json",
+      "archivePath": "audit/spn128-review-b-cleanup-81841c50.json",
+      "bytes": 314,
+      "sha256": "6bb2b8876355da8c8bdbb4c43742cbd71f438fa76f086370bcec84eba998ae6b"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-provenance-81841c50.json",
+      "archivePath": "audit/spn128-review-b-provenance-81841c50.json",
+      "bytes": 1300,
+      "sha256": "312977031e8dac346b903b1f04a057474e9c7bf762c23701c4f2b6afadb5bc82"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-81841c50.json",
+      "archivePath": "audit/spn128-root-packet-audit-81841c50.json",
+      "bytes": 600,
+      "sha256": "60f3d746fd0628a66c564021ba1b6cf98e6b67c678e9f8dff5810c96032f432f"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-3812-contracts.log",
+      "archivePath": "prior-source-a-execution/spn128-review-a-3812-contracts.log",
+      "bytes": 502,
+      "sha256": "0715d8cdd4b7fa59657c6fbfe2fa0d8050a60a18b573f231c7f5b356b1ecbd71"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-3812-contracts-admitted.log",
+      "archivePath": "prior-source-a-execution/spn128-review-a-3812-contracts-admitted.log",
+      "bytes": 571,
+      "sha256": "1202547105dea617ba6c07f4b54ef96bf6a8ce2e82c10c75d1164193cb8ed363"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-3812-privacy.log",
+      "archivePath": "prior-source-a-execution/spn128-review-a-3812-privacy.log",
+      "bytes": 766,
+      "sha256": "a38bb95ae3776c79b71b0b3523da1ea0b3d5ec5357b2448cbd8fc9237c67c598"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-3812-contracts-admitted.json",
+      "archivePath": "prior-source-a-execution/spn128-review-a-3812-contracts-admitted.json",
+      "bytes": 519,
+      "sha256": "a8f88995eac55918f3c00fca4d638c1b1f7943b9d5b66a8f2fcace576fc343bb"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-3812-privacy.json",
+      "archivePath": "prior-source-a-execution/spn128-review-a-3812-privacy.json",
+      "bytes": 224,
+      "sha256": "1d7bc316d331315e149a8d39e67efe69fe50265e5d39c4777140b6b6b6e15809"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-81841c50/README.md",
+      "archivePath": "packet-bindings/README.md",
+      "bytes": 8804,
+      "sha256": "bc158d9fec360b8ade51e7dc6247893cbf6baca8599f945658b2d5a56f498e51"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-81841c50/packet-manifest.json",
+      "archivePath": "packet-bindings/packet-manifest.json",
+      "bytes": 241448,
+      "sha256": "9213b65ec42143110c1215b79d2c5d65e3e34dd78562e89894cbe503d652ee87"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-81841c50/source-manifest.json",
+      "archivePath": "packet-bindings/source-manifest.json",
+      "bytes": 716458,
+      "sha256": "74362eb4bc8a782d8c415d48c841d992a099c4ab6f8f3e71ce819885f48b0498"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-81841c50/blinding-audit.json",
+      "archivePath": "packet-bindings/blinding-audit.json",
+      "bytes": 7295,
+      "sha256": "2f294b9eea370eac9fd976f3fb7d58aa54692db649547e50d20057d1a8239b45"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-81841c50/source-bindings.txt",
+      "archivePath": "packet-bindings/source-bindings.txt",
+      "bytes": 14015,
+      "sha256": "3083bae8de66efba9e9c986c477a8c5a82ed2c542bdf0cca98308d2938f7979c"
+    },
+    {
+      "originalPath": "/tmp/spn128-vitest.config.ts",
+      "archivePath": "execution/spn128-vitest.config.ts",
+      "bytes": 211,
+      "sha256": "df7efab78de6e1bdb25bcc87ec6e0ee8edb120cb9fa6770a842d9a68de12505d"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+      "archivePath": "execution/watch.ts",
+      "bytes": 1412,
+      "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+    }
+  ]
+}

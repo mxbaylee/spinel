@@ -1,0 +1,30 @@
+✔ hosted ordinary and opt-in startup owners receive the exact build evidence flag (1.064708ms)
+✔ initial bootstrap evidence distinguishes pending work and failure without mutable or later-operation contamination (0.535875ms)
+✔ bounded evidence keeps overflow/failure explicit and rejects invalid clocks or private payloads (0.207417ms)
+✔ optional process evidence failure is reported once without failing fixture setup (0.927792ms)
+✔ fixture log evidence retains fixed failure signals without cookies or content (0.3035ms)
+✔ log tails and memory counters have fixed bounds and content-free fields (0.200334ms)
+✔ journal evidence excludes authority and treats process identity as historical selection (0.205667ms)
+✔ status observation retains only the HTTP status and recognized phase (14.521916ms)
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (2.244959ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.183291ms)
+✔ the opt-in SPN-146 A/B stays tested without widening to full or performance coverage (0.282459ms)
+✔ sized restore participates in the immutable plan and fails closed (0.578625ms)
+✔ the extracted Doc touch raster keeps every browser owner and the sized restore dependency (0.166666ms)
+✔ shared offline image assertions retain ordinary CI and native desktop coverage (0.352167ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.183583ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.133625ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.161542ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.231791ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.236458ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (0.757125ms)
+✔ actual renderer grouping leaves shared startup code outside the lazy renderer and preserves initialization (49.556ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 330.481791
+{"name":"spn128-review-b-scripts-81841c50","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","--test","--test-concurrency=1","scripts/ci/maintenance-evidence.test.ts","scripts/ci/bootstrap-evidence.test.ts","scripts/ci/renderer-chunks.test.ts","scripts/ci/plan.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":417,"peakKiB":248400}

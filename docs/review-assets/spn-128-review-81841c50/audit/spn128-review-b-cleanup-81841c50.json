@@ -1,0 +1,8 @@
+{
+  "head": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "status": "",
+  "serialLockExists": false,
+  "serialBreakerExists": false,
+  "pressure": "1",
+  "observedOwnedProcesses": "No watchdog/serial/vitest/Node workload from either B command remained; ps observation included only its inspecting shell and rg."
+}

@@ -1,0 +1,13 @@
+✔ hosted ordinary and opt-in startup owners receive the exact build evidence flag (1.470583ms)
+✔ initial bootstrap evidence distinguishes pending work and failure without mutable or later-operation contamination (0.417416ms)
+✔ bounded evidence keeps overflow/failure explicit and rejects invalid clocks or private payloads (1.785709ms)
+✔ actual renderer grouping leaves shared startup code outside the lazy renderer and preserves initialization (106.3615ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 266.59975
+{"name":"spn128-review-a-8184-bootstrap-renderer","args":["node","--test","--test-concurrency=1","scripts/ci/bootstrap-evidence.test.ts","scripts/ci/renderer-chunks.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":380,"peakKiB":145184}

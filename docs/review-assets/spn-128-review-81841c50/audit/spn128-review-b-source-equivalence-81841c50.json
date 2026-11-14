@@ -1,0 +1,1939 @@
+{
+  "head": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "priorSource": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+  "verified": 241,
+  "incoming": 61,
+  "recoveryClosure": 180,
+  "mismatches": [],
+  "checks": [
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": ".github/workflows/browserstack.yml",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": null,
+      "actual": null,
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": ".github/workflows/ci.yml",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "daf54c3c2110fc4ad1078c4ed30b81056ee1e657",
+      "actual": "daf54c3c2110fc4ad1078c4ed30b81056ee1e657",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": ".github/workflows/desktop-offline.yml",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "6b02b0eef601cd2049e58f77ed092f5b9ec0556c",
+      "actual": "6b02b0eef601cd2049e58f77ed092f5b9ec0556c",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/admin-layout.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "a6c8c80c98c25391b7ad77e7710233c9e0510b0f",
+      "actual": "a6c8c80c98c25391b7ad77e7710233c9e0510b0f",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/doc-touch-raster.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "ebf1e9b9f3da200d9be5fb2770a3a45a526b2532",
+      "actual": "ebf1e9b9f3da200d9be5fb2770a3a45a526b2532",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/doc-touch.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "d71b3f368d7d36b17448c4d0191098f10d30e587",
+      "actual": "d71b3f368d7d36b17448c4d0191098f10d30e587",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/maintenance.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "4cce00987f133cb058def30d461b7f329429c12d",
+      "actual": "4cce00987f133cb058def30d461b7f329429c12d",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/offline-device.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "cf9246ec2363af2212670cf8403f01aa3f36a69a",
+      "actual": "cf9246ec2363af2212670cf8403f01aa3f36a69a",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/offline.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "00522cfe3d47edbbf27ec29aed42b8615a304174",
+      "actual": "00522cfe3d47edbbf27ec29aed42b8615a304174",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/pwa.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "3a45fd6f4e3e9d81cc451aa5854cce67a1f91bf9",
+      "actual": "3a45fd6f4e3e9d81cc451aa5854cce67a1f91bf9",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/startup-lifecycle.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "b489f6df8fe00f88abb6181367c0a261b7c79667",
+      "actual": "b489f6df8fe00f88abb6181367c0a261b7c79667",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "e2e/sync-client.spec.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "4e46674081da8a1653caf6f2fe7f027b048fd1c0",
+      "actual": "4e46674081da8a1653caf6f2fe7f027b048fd1c0",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/bootstrap-evidence.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "07f5b3469d32530616d5d68dfde9d235ee9ab52a",
+      "actual": "07f5b3469d32530616d5d68dfde9d235ee9ab52a",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/browserstack.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": null,
+      "actual": null,
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/browserstack.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": null,
+      "actual": null,
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/desktop-fixture-origin.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "4db25aa8b145d0046b13692e1b2f130214dee2f5",
+      "actual": "4db25aa8b145d0046b13692e1b2f130214dee2f5",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/desktop-fixture-origin.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "bfe32fa541ab0f34ce8289008366bdf061570be9",
+      "actual": "bfe32fa541ab0f34ce8289008366bdf061570be9",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/desktop-offline-fixture.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "e45ea0a6cbfe7d3c28d1f20819a552639288626a",
+      "actual": "e45ea0a6cbfe7d3c28d1f20819a552639288626a",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/desktop-offline.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "f15ac804d226a4456302596709df0575f0228bfc",
+      "actual": "f15ac804d226a4456302596709df0575f0228bfc",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/offline-image-pixels.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "43d3452858c7f7cf29a9c8c92e3eae98196d1b00",
+      "actual": "43d3452858c7f7cf29a9c8c92e3eae98196d1b00",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/offline-image-pixels.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "91731c67e0adc326310495e7cd17c1e6ddf327f1",
+      "actual": "91731c67e0adc326310495e7cd17c1e6ddf327f1",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/plan.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "ab9096c8d0873a36552332b3cf13a3cd5a8d7467",
+      "actual": "ab9096c8d0873a36552332b3cf13a3cd5a8d7467",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/plan.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "bfe88cb5b45b8cbd6febb3db9d584effafd5a253",
+      "actual": "bfe88cb5b45b8cbd6febb3db9d584effafd5a253",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "scripts/ci/renderer-chunks.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "ac5bf26e69c1bb4f51065f9c24f4bdb3ec2ad323",
+      "actual": "ac5bf26e69c1bb4f51065f9c24f4bdb3ec2ad323",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/build/rendererChunks.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "03099fd2dea4996f12899d3b5ccf924c64bddc57",
+      "actual": "03099fd2dea4996f12899d3b5ccf924c64bddc57",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/server/pwa.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "9b48e3af94149bd2a840c8fbb1a8a1aa0953a6da",
+      "actual": "9b48e3af94149bd2a840c8fbb1a8a1aa0953a6da",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/shared/bootstrapEvidence.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "7dbca051480c5454e8f58dd1536d53a05d20e8aa",
+      "actual": "7dbca051480c5454e8f58dd1536d53a05d20e8aa",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/shared/offlineShell.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "1aec2ddadd318150f538fcdcc45bb8d335291a1a",
+      "actual": "1aec2ddadd318150f538fcdcc45bb8d335291a1a",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/shared/offlineShell.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "9554ed0654c0ddc98377fa93183d7e4f01e673fb",
+      "actual": "9554ed0654c0ddc98377fa93183d7e4f01e673fb",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/shared/pwa.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "1cfe5b8fdb00ad6b804eca5ec3f8be67cbb2674b",
+      "actual": "1cfe5b8fdb00ad6b804eca5ec3f8be67cbb2674b",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/shared/serviceWorker.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "1a17e7990fc73fbd39b99b7800b6eccbf6c0b535",
+      "actual": "1a17e7990fc73fbd39b99b7800b6eccbf6c0b535",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/appIcon.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "bf7ced035f8e05fb5ede922d9414cfc7e263047d",
+      "actual": "bf7ced035f8e05fb5ede922d9414cfc7e263047d",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/appIcon.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "49236caeac2f9a66a1e355d10661e30080dd5e17",
+      "actual": "49236caeac2f9a66a1e355d10661e30080dd5e17",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/bootstrapFailure.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "be8c56d3f36a62c104cef4ce408a57cf0d3b7dbc",
+      "actual": "be8c56d3f36a62c104cef4ce408a57cf0d3b7dbc",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/offlineDownload.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "c16fcda245f7656de0d52568ecd3f095ba25f0a5",
+      "actual": "c16fcda245f7656de0d52568ecd3f095ba25f0a5",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/offlineProtection.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "19cc0b1d51a88ae4461e317e47675b83249105d3",
+      "actual": "19cc0b1d51a88ae4461e317e47675b83249105d3",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/offlineRuntime.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "cd82fdb22655742340ea13cc7410d241b7e02924",
+      "actual": "cd82fdb22655742340ea13cc7410d241b7e02924",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/spinelSync.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "97cd4701dc5ff6d506076aca36d66ca184067ead",
+      "actual": "97cd4701dc5ff6d506076aca36d66ca184067ead",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/startupDeadlines.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "77be054660dc82f76b64e79a5c156c4678227598",
+      "actual": "77be054660dc82f76b64e79a5c156c4678227598",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/warmCatalog.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "4ff2f137d93e6bcdd3a9c9ae7e5a87444b876aeb",
+      "actual": "4ff2f137d93e6bcdd3a9c9ae7e5a87444b876aeb",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "src/ui/warmOpen.test.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "9240f17fdfdbe40e468f0554decf3172bad4eba1",
+      "actual": "9240f17fdfdbe40e468f0554decf3172bad4eba1",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "vite.config.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "802e39fcca424501740fac6daf233bd14031f9b6",
+      "actual": "802e39fcca424501740fac6daf233bd14031f9b6",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/App.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "96c327a6496d0d0b47e16f50e0d03b6e928ef400",
+      "actual": "96c327a6496d0d0b47e16f50e0d03b6e928ef400",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/Dashboard.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "ae0983b3ec949ff91078b9d7f0426f02acfae926",
+      "actual": "ae0983b3ec949ff91078b9d7f0426f02acfae926",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/GuestApp.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "2f30f60f51bbba539b2e40d30dbbbc56e9a24aad",
+      "actual": "2f30f60f51bbba539b2e40d30dbbbc56e9a24aad",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/SpaceOfflineActions.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "d7269c468225a33391d43326c34c041da3b6fa72",
+      "actual": "d7269c468225a33391d43326c34c041da3b6fa72",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/StartupStage.stories.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "15e2dc396df7f90ef03e6742ac517f293d5ec2aa",
+      "actual": "15e2dc396df7f90ef03e6742ac517f293d5ec2aa",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/itemsApi.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "0008904d90b79da56b84766af57db279880876d3",
+      "actual": "0008904d90b79da56b84766af57db279880876d3",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/main.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "100d6dc9c78347102ba21032919a8d264aa966c8",
+      "actual": "100d6dc9c78347102ba21032919a8d264aa966c8",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/OfflineAvailability.stories.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "7a69d9437f266d766e3bd972305c433d6df06278",
+      "actual": "7a69d9437f266d766e3bd972305c433d6df06278",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/OfflineAvailability.tsx",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "6d826068d162f02dac1040ca398d7e7604ae49f7",
+      "actual": "6d826068d162f02dac1040ca398d7e7604ae49f7",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/deadlines.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "7c7b390b8d64683d07b0748708e4009a8ff7e9aa",
+      "actual": "7c7b390b8d64683d07b0748708e4009a8ff7e9aa",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/localStart.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "42419edd358d8a2a0cde06b10e0f9828602f3c73",
+      "actual": "42419edd358d8a2a0cde06b10e0f9828602f3c73",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/protection.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "449324682e74e3e0d1fe174d1d39f858cfc58bac",
+      "actual": "449324682e74e3e0d1fe174d1d39f858cfc58bac",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/runtimeCache.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "d141f04da5381b08bdea4a574b62a143f131ac34",
+      "actual": "d141f04da5381b08bdea4a574b62a143f131ac34",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/useOfflineDownloads.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "7b926a33f1bb7d92c95a3e0a88b98b436ece9a1c",
+      "actual": "7b926a33f1bb7d92c95a3e0a88b98b436ece9a1c",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/warmCatalog.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "2e1e4da26d9d27a7db25a35374dfda4efa05dea2",
+      "actual": "2e1e4da26d9d27a7db25a35374dfda4efa05dea2",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/offline/warmOpen.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "6fe13150d023e3c1b0d4eef55321fc30947c1b18",
+      "actual": "6fe13150d023e3c1b0d4eef55321fc30947c1b18",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/service-worker.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "41afdb8617c74ac05040cd9ba27858733e26e47d",
+      "actual": "41afdb8617c74ac05040cd9ba27858733e26e47d",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/spinelSync.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "33fad896773d710ce1181f25dbca5195f42ee8d5",
+      "actual": "33fad896773d710ce1181f25dbca5195f42ee8d5",
+      "equal": true
+    },
+    {
+      "group": "incomingNonDocumentPaths",
+      "path": "web/startupStage.ts",
+      "reference": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "expected": "0f2704cd727c44b2a5720a641030e7ce333d13a9",
+      "actual": "0f2704cd727c44b2a5720a641030e7ce333d13a9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": ".nvmrc",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1dda03ddb06ad1c7da5b913539290187eb7fc5aa",
+      "actual": "1dda03ddb06ad1c7da5b913539290187eb7fc5aa",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "e2e/maintenance-evidence.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "cee2057f7f59cc83f86243bf486b496e395188d1",
+      "actual": "cee2057f7f59cc83f86243bf486b496e395188d1",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "e2e/maintenance-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c1a924521f4bd664b9092a29574d61d187c2a460",
+      "actual": "c1a924521f4bd664b9092a29574d61d187c2a460",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "e2e/supervised-restore.spec.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c3494b49ae8ff40fd397a594cec71f854b6e6d5b",
+      "actual": "c3494b49ae8ff40fd397a594cec71f854b6e6d5b",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "package-lock.json",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0",
+      "actual": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "package.json",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be",
+      "actual": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "scripts/ci/maintenance-evidence.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "8118f0d5dfc680d89842a7b47b4c82f7658012e7",
+      "actual": "8118f0d5dfc680d89842a7b47b4c82f7658012e7",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "scripts/deploy/maintenance.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "bfc73627fc38d6be5eb284740c9725649a31688d",
+      "actual": "bfc73627fc38d6be5eb284740c9725649a31688d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "server/index.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ede16b21fcf8d3544e8b8ae24076bc645b7267dd",
+      "actual": "ede16b21fcf8d3544e8b8ae24076bc645b7267dd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/admin-http.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "0f5db96ab30a2fc24e7f4c0020af221f763c38ed",
+      "actual": "0f5db96ab30a2fc24e7f4c0020af221f763c38ed",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/admin-recovery-http.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1ac5f8890f26a4c1539363f8ad104e1ed9c1de0d",
+      "actual": "1ac5f8890f26a4c1539363f8ad104e1ed9c1de0d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/admin.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "dbc6d02434724b9b5ed66cf5a54868556a60f526",
+      "actual": "dbc6d02434724b9b5ed66cf5a54868556a60f526",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/admin.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "41fa9ad090312bf9848559e9a989bd3cbdf52ff1",
+      "actual": "41fa9ad090312bf9848559e9a989bd3cbdf52ff1",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/auth.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ac0b74c060483ba8b5f0aebc7b651ed2fcb811f9",
+      "actual": "ac0b74c060483ba8b5f0aebc7b651ed2fcb811f9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/console-recovery.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "344a8e96e80c98e5e7d2c1508f5b563d9e048ae6",
+      "actual": "344a8e96e80c98e5e7d2c1508f5b563d9e048ae6",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/console-recovery.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "9d0840ecc945b0054ea0fab39a6a1e0ea77c31f9",
+      "actual": "9d0840ecc945b0054ea0fab39a6a1e0ea77c31f9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/invitations.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "51e51f12881241799056bb6cc3cb53997d5cc4d3",
+      "actual": "51e51f12881241799056bb6cc3cb53997d5cc4d3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/invitations.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "4207dcc1ddb31f356e40791f6e96432debcc856d",
+      "actual": "4207dcc1ddb31f356e40791f6e96432debcc856d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/mcpIdentity.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5448ffcd1d6911d92861c2c27c00ae39c768f65e",
+      "actual": "5448ffcd1d6911d92861c2c27c00ae39c768f65e",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/oauth.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a1bb49839d9b37a95617c2ec485143202f111b11",
+      "actual": "a1bb49839d9b37a95617c2ec485143202f111b11",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/oauth.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "db0174ad645ffaff3451486a7e1fc8633bf461d3",
+      "actual": "db0174ad645ffaff3451486a7e1fc8633bf461d3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/oauthRoutes.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a515f909dde4539d2512ffaf595ba0f5f4784e18",
+      "actual": "a515f909dde4539d2512ffaf595ba0f5f4784e18",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/ownership.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ac9420efa13d61cda0d2504c3a78140d68f814aa",
+      "actual": "ac9420efa13d61cda0d2504c3a78140d68f814aa",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/ownership.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "357f391f7da6222a8faa66b4f82ba464376f5c48",
+      "actual": "357f391f7da6222a8faa66b4f82ba464376f5c48",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/passkey-names.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ab870667df448b5ff9136ff4ef38b688505d3f81",
+      "actual": "ab870667df448b5ff9136ff4ef38b688505d3f81",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/passkey-provider-names.json",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ee518ac596da7efb081fd588f7f0afaaec38147a",
+      "actual": "ee518ac596da7efb081fd588f7f0afaaec38147a",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/profile.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "08615b67d3875bfbd0d8e3cd5e8602102e2639bd",
+      "actual": "08615b67d3875bfbd0d8e3cd5e8602102e2639bd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/profile.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "b13beda7b7c5b6f1fbf23e0f9d610592905b9cbe",
+      "actual": "b13beda7b7c5b6f1fbf23e0f9d610592905b9cbe",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/routes.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "b96fe34634ae5a0946548dc6eb6967c30be2d24c",
+      "actual": "b96fe34634ae5a0946548dc6eb6967c30be2d24c",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/self-access-http.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "729e9f3a4d671605cf6ee30ab185b7b724015000",
+      "actual": "729e9f3a4d671605cf6ee30ab185b7b724015000",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/self-access.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "797a6bad302d1133763466ed083f7591d349d806",
+      "actual": "797a6bad302d1133763466ed083f7591d349d806",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/service.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e7887c46a194cd5bdb032fe64b4ce87084de52c7",
+      "actual": "e7887c46a194cd5bdb032fe64b4ce87084de52c7",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/setup.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "440ad421ec8324babf19efa26b026662de3f0e33",
+      "actual": "440ad421ec8324babf19efa26b026662de3f0e33",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/setup.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "b376a999947ca6632c97c0615196896d9cef14c1",
+      "actual": "b376a999947ca6632c97c0615196896d9cef14c1",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/sign-out-http.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "de1d15fe599f5ad8a2ff76750385ea34afa46e78",
+      "actual": "de1d15fe599f5ad8a2ff76750385ea34afa46e78",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/store.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "38d6f2c7584bd86e51e31f56633cda5becf1fc11",
+      "actual": "38d6f2c7584bd86e51e31f56633cda5becf1fc11",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/auth/tokens.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "cf115587bb11afe180eab43620c64fc8971a9a10",
+      "actual": "cf115587bb11afe180eab43620c64fc8971a9a10",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/archive.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "379e242d9a650aac7274dbd3dfd1889338cf91ed",
+      "actual": "379e242d9a650aac7274dbd3dfd1889338cf91ed",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/backup.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e88e6c9514253dec417c0ced4026966c14167691",
+      "actual": "e88e6c9514253dec417c0ced4026966c14167691",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/config.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "21a6768981fced4200eafd70e9acea40a79a9dcd",
+      "actual": "21a6768981fced4200eafd70e9acea40a79a9dcd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/config.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "60bffccb4dc0834e82b7f49dc2bc670d5db26a2d",
+      "actual": "60bffccb4dc0834e82b7f49dc2bc670d5db26a2d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/destination.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "30c51009d56940cd7a80bb2d8b0ba4675e404465",
+      "actual": "30c51009d56940cd7a80bb2d8b0ba4675e404465",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/export-jobs.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5f2395c032c71ed820d6321565cb9ec3b239b163",
+      "actual": "5f2395c032c71ed820d6321565cb9ec3b239b163",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/export-jobs.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e49d6adef1f0d29a98e8edfcb57490565ea6f5e3",
+      "actual": "e49d6adef1f0d29a98e8edfcb57490565ea6f5e3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/export-process-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "be16012d8c8f477c5cf65ce27db5c1c0792de2ec",
+      "actual": "be16012d8c8f477c5cf65ce27db5c1c0792de2ec",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/filesystem-crash-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "76e98334ae399ff118d2388f32426de8ea15eef6",
+      "actual": "76e98334ae399ff118d2388f32426de8ea15eef6",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/filesystem.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ae7c668b896eae2840b9c828cfd9b3897b0f80f5",
+      "actual": "ae7c668b896eae2840b9c828cfd9b3897b0f80f5",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/filesystem.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a5a116dec3daf9a5bc7c96e46843f6d0c1adf005",
+      "actual": "a5a116dec3daf9a5bc7c96e46843f6d0c1adf005",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/inventory.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "662a62c248c8e0fb9e2eafa467cc416ed45f7a58",
+      "actual": "662a62c248c8e0fb9e2eafa467cc416ed45f7a58",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/recovery-rows-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "4bce270e49bbf7443e98c14fde4d24ea7c2e51a0",
+      "actual": "4bce270e49bbf7443e98c14fde4d24ea7c2e51a0",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/recovery-rows.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "6c5ae5e88d94945bfc020bcdbb136062fde3a24a",
+      "actual": "6c5ae5e88d94945bfc020bcdbb136062fde3a24a",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/recovery-rows.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "75e28b875b5c862cec09fc4446f3fd177d409f78",
+      "actual": "75e28b875b5c862cec09fc4446f3fd177d409f78",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/recovery-worker.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "b7b9f3b67857b87b5d2148d5c6b48990f4e493ff",
+      "actual": "b7b9f3b67857b87b5d2148d5c6b48990f4e493ff",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/resource-error.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "649f844330767b64be3a0a51271dc87e9ac43cfd",
+      "actual": "649f844330767b64be3a0a51271dc87e9ac43cfd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-admission.integration.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "fc394151c12f84a68388bec057325e5c6b311b26",
+      "actual": "fc394151c12f84a68388bec057325e5c6b311b26",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-candidate.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e3b373533009c3bf37b2bf628e3dc716fa34a71e",
+      "actual": "e3b373533009c3bf37b2bf628e3dc716fa34a71e",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-candidate.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c2d1f5f0acd3cb511fd25b9ec94808f2c07b47da",
+      "actual": "c2d1f5f0acd3cb511fd25b9ec94808f2c07b47da",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-control.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "3af06b68a54cc15a3aa78a7ff9a7b05fbfa4cab1",
+      "actual": "3af06b68a54cc15a3aa78a7ff9a7b05fbfa4cab1",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-credentials.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c09d239b94661a6e011aaeea5e33517aeb5dd18f",
+      "actual": "c09d239b94661a6e011aaeea5e33517aeb5dd18f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-credentials.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1f411c612a6905adba128908c38ad774afbcade8",
+      "actual": "1f411c612a6905adba128908c38ad774afbcade8",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-drain-app.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "55ceb8964ba7c303dda9b41a0555393cb497e28f",
+      "actual": "55ceb8964ba7c303dda9b41a0555393cb497e28f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-drain.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "4c086247ca0e7cb80fe10890fb512009e197cb57",
+      "actual": "4c086247ca0e7cb80fe10890fb512009e197cb57",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-drain.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "54418c79f0024ebd7d48767baf580d217900e23f",
+      "actual": "54418c79f0024ebd7d48767baf580d217900e23f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-evidence.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "d1a03b9ce8e9dffcf0498ece0aa299aacb6edee4",
+      "actual": "d1a03b9ce8e9dffcf0498ece0aa299aacb6edee4",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-fences.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "71ba1512d7b4b09e3d532bc48cfe077e3079e7d2",
+      "actual": "71ba1512d7b4b09e3d532bc48cfe077e3079e7d2",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-fences.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "b5bfac92ce5324d4f88466e7fbdca3bf59826592",
+      "actual": "b5bfac92ce5324d4f88466e7fbdca3bf59826592",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-freeze-worker.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "3bd9282a6c859559c5167758f0a6368cb07b1f94",
+      "actual": "3bd9282a6c859559c5167758f0a6368cb07b1f94",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-freeze.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "df272b2dd29d93cadd578bf3daedfaf96ac9c941",
+      "actual": "df272b2dd29d93cadd578bf3daedfaf96ac9c941",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-freeze.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a94ce13312df78da0321db40027bdc1041d13976",
+      "actual": "a94ce13312df78da0321db40027bdc1041d13976",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-generations.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1b18589c97b5a7b3fdfa2a3fc04796ad687c10a3",
+      "actual": "1b18589c97b5a7b3fdfa2a3fc04796ad687c10a3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-generations.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e91584847fc1222fad70f1df6d664cd81ef7acf8",
+      "actual": "e91584847fc1222fad70f1df6d664cd81ef7acf8",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-grants.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5b2bbbf51e4491423ba61986d3ce1b77d921119d",
+      "actual": "5b2bbbf51e4491423ba61986d3ce1b77d921119d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-grants.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "06fb6abdb529c4fe815b30a7f5e3ff4005078c2c",
+      "actual": "06fb6abdb529c4fe815b30a7f5e3ff4005078c2c",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-http.integration.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "325ae7563edb1f58958f563742b3d6110d235370",
+      "actual": "325ae7563edb1f58958f563742b3d6110d235370",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-input.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "4921bf8702d455ff79b57a05b5cdae69ece6ef76",
+      "actual": "4921bf8702d455ff79b57a05b5cdae69ece6ef76",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-input.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ecd002fac429a299756166ca7a50b6bc4ecab9bd",
+      "actual": "ecd002fac429a299756166ca7a50b6bc4ecab9bd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-notice.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "15e08fdf09dbe0974ca2f1a43713fb6060d73940",
+      "actual": "15e08fdf09dbe0974ca2f1a43713fb6060d73940",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-notice.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2d470b07f22dfa202291d22e973992605182b438",
+      "actual": "2d470b07f22dfa202291d22e973992605182b438",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-operations.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ae6672c4cd2d052aeecbf635f84add78045f034d",
+      "actual": "ae6672c4cd2d052aeecbf635f84add78045f034d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-operations.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2c9bd2b486b4d9c40d84ffafd83050921b32c9ae",
+      "actual": "2c9bd2b486b4d9c40d84ffafd83050921b32c9ae",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-ownership.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "40fffe155870ed64ddfb8cb362123bdc58e915e3",
+      "actual": "40fffe155870ed64ddfb8cb362123bdc58e915e3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-ownership.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2539179b100af47a70ae717203a6815835fff9ca",
+      "actual": "2539179b100af47a70ae717203a6815835fff9ca",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-receipts.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "67d7988eae25c628a302144a27752c875cef605d",
+      "actual": "67d7988eae25c628a302144a27752c875cef605d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-receipts.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "4568f7d844c8dc60aeb4e87461a5be7cf7b738f7",
+      "actual": "4568f7d844c8dc60aeb4e87461a5be7cf7b738f7",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-registry.integration.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "8585839b1db49cd97256ccaed414a67011019066",
+      "actual": "8585839b1db49cd97256ccaed414a67011019066",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-registry.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2e23ff6802e7e37080372d66c052b3fd0abf8421",
+      "actual": "2e23ff6802e7e37080372d66c052b3fd0abf8421",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-registry.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5e10631ed74bfbe6888f4ed4699cc83053eac666",
+      "actual": "5e10631ed74bfbe6888f4ed4699cc83053eac666",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-rollback-worker.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "fe1ebd6971f26d70a54877245ade6e26f42b52be",
+      "actual": "fe1ebd6971f26d70a54877245ade6e26f42b52be",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-rollback.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "6153aff1cfc3acb449e0f5472b43ab887a3f26da",
+      "actual": "6153aff1cfc3acb449e0f5472b43ab887a3f26da",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-routes.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "660aea9e8908ddea35b38ab3c218c17e90e26fa9",
+      "actual": "660aea9e8908ddea35b38ab3c218c17e90e26fa9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-routes.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "0adfd794d9e50881f453d736c629f7f8e64a38b1",
+      "actual": "0adfd794d9e50881f453d736c629f7f8e64a38b1",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-startup-worker.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "264043c342e77fb24a29c0c06e0afeb083541bba",
+      "actual": "264043c342e77fb24a29c0c06e0afeb083541bba",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/restore-startup.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2a3af58dc10206c780e5f9ef9a98c0eff7b154f7",
+      "actual": "2a3af58dc10206c780e5f9ef9a98c0eff7b154f7",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/routes.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "8e01461b86158fe9849af22fbbe8d49ca6d1f09b",
+      "actual": "8e01461b86158fe9849af22fbbe8d49ca6d1f09b",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/routes.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1d1b9a348c5978b744f4d17aa03a7d0d59e4ee70",
+      "actual": "1d1b9a348c5978b744f4d17aa03a7d0d59e4ee70",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/service.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "36f9934308b94aa29347d9ae055f1e51e2b03b9c",
+      "actual": "36f9934308b94aa29347d9ae055f1e51e2b03b9c",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/service.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "0fb8ec4ef02f3fd1286e598e1816d8f8e15ef0eb",
+      "actual": "0fb8ec4ef02f3fd1286e598e1816d8f8e15ef0eb",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/spaces.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "f2510a04b32a33ee5776cf748aaf6c20bfe183e2",
+      "actual": "f2510a04b32a33ee5776cf748aaf6c20bfe183e2",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/spaces.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2b1bea2fbacb6385ab39e932bef0cdd473d9ac17",
+      "actual": "2b1bea2fbacb6385ab39e932bef0cdd473d9ac17",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/transfer.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "87027fe90b504d5d01402e2cf9cdded45dcc2840",
+      "actual": "87027fe90b504d5d01402e2cf9cdded45dcc2840",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/transfer.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "f762a019a70ffac53990e91fa1c7b439372e6b62",
+      "actual": "f762a019a70ffac53990e91fa1c7b439372e6b62",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/verification-semantics.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "54804da867d903e6b494ed44d9a325c4eb60d0d5",
+      "actual": "54804da867d903e6b494ed44d9a325c4eb60d0d5",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/verification-worker.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c424cdaba11a0ea0e469453e90f3663f7bf7e015",
+      "actual": "c424cdaba11a0ea0e469453e90f3663f7bf7e015",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/verification.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ba77692a9b703c52902f28e80e4047a0c9d606a8",
+      "actual": "ba77692a9b703c52902f28e80e4047a0c9d606a8",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/backup/verification.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "bd53f2bda8304211b8c978d95cf60b91a996b032",
+      "actual": "bd53f2bda8304211b8c978d95cf60b91a996b032",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/app-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "6a3aa5380f654576aa462915176b95b57d553639",
+      "actual": "6a3aa5380f654576aa462915176b95b57d553639",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/cli.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "8e7a048413badd9e460c7e0de56154b2bdcd2940",
+      "actual": "8e7a048413badd9e460c7e0de56154b2bdcd2940",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/cold-files.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "93049d5c1ce6d1e7cd6bb6ff11fe296d3e831bfd",
+      "actual": "93049d5c1ce6d1e7cd6bb6ff11fe296d3e831bfd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/gate.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "452f2b7f2cad4961e682fa6a183c33f74ec4bc22",
+      "actual": "452f2b7f2cad4961e682fa6a183c33f74ec4bc22",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/gate.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "61cae40beb34170fa3c553a00ab92e01c2ae2fd9",
+      "actual": "61cae40beb34170fa3c553a00ab92e01c2ae2fd9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/http.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2cc67155d5c6496da616d3a87c0a4c5a84a23619",
+      "actual": "2cc67155d5c6496da616d3a87c0a4c5a84a23619",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/journal.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "15b70c6aaa86328bcca3645a408a2c613a1bf6fb",
+      "actual": "15b70c6aaa86328bcca3645a408a2c613a1bf6fb",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/lease-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a28447fa0a2b6b29a92bc4bc63e7382a8eb0d1d9",
+      "actual": "a28447fa0a2b6b29a92bc4bc63e7382a8eb0d1d9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/ownership-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "07c5ebd7e495e5df6d7b5ff4d606df2bc23a73ef",
+      "actual": "07c5ebd7e495e5df6d7b5ff4d606df2bc23a73ef",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/ownership.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "da510751e25edba4f6c9e690fdd00cabb489924f",
+      "actual": "da510751e25edba4f6c9e690fdd00cabb489924f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/ownership.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "db5a7d706fe67c054098ab17615203c0c541f523",
+      "actual": "db5a7d706fe67c054098ab17615203c0c541f523",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/process-exit.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e8bbd85a14ad07b466fd872bdbc5b1c01db22738",
+      "actual": "e8bbd85a14ad07b466fd872bdbc5b1c01db22738",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/process-exit.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "101cc1a9a9c14a8059018443a8d5e14d8125bf46",
+      "actual": "101cc1a9a9c14a8059018443a8d5e14d8125bf46",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-activate.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "511642023d6fe6e704ac7820576cdc01bdc77b01",
+      "actual": "511642023d6fe6e704ac7820576cdc01bdc77b01",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-activate.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ae0e0370c19859ea7f65a144f264bf99365a2f6a",
+      "actual": "ae0e0370c19859ea7f65a144f264bf99365a2f6a",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-authority.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "7bd6067b7ae699b235a9833078c9ad6b2e07fd27",
+      "actual": "7bd6067b7ae699b235a9833078c9ad6b2e07fd27",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-authority.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a1b58085dfbd9a86e81efdf87466034aadb7c349",
+      "actual": "a1b58085dfbd9a86e81efdf87466034aadb7c349",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-barrier.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5b83e9551083fbec9f4060ab6626d1a48a5a4bb2",
+      "actual": "5b83e9551083fbec9f4060ab6626d1a48a5a4bb2",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-capacity.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "7cb185d3eddda4646e743c68e282273a58a54fa8",
+      "actual": "7cb185d3eddda4646e743c68e282273a58a54fa8",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-capacity.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "93498cd710171c65ab92502ebe7e319d4ff590b4",
+      "actual": "93498cd710171c65ab92502ebe7e319d4ff590b4",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-cold-custody.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a4e579f4d86786d6f899985fbbae578799ce5d06",
+      "actual": "a4e579f4d86786d6f899985fbbae578799ce5d06",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-cold-state.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "67354bbbe8f17694ae07de38668858ca40a1e56a",
+      "actual": "67354bbbe8f17694ae07de38668858ca40a1e56a",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-cold-state.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "eb1a261d489533087608a1fa58b75b6ee31a16b9",
+      "actual": "eb1a261d489533087608a1fa58b75b6ee31a16b9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-cold.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "ae455109f9cd392ee224be2b20efa38e664c66db",
+      "actual": "ae455109f9cd392ee224be2b20efa38e664c66db",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-controller-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "a924298033decee93c35088053beb71e09744391",
+      "actual": "a924298033decee93c35088053beb71e09744391",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-controller-observer-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "3bbef0498dcffcde781efb21f14695bd12bd2cbe",
+      "actual": "3bbef0498dcffcde781efb21f14695bd12bd2cbe",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-app-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "6f5352a473df36408cb1e59c223835c578ba5386",
+      "actual": "6f5352a473df36408cb1e59c223835c578ba5386",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-cleanup-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "be5334ea29252a2434011342e821d43d856b601d",
+      "actual": "be5334ea29252a2434011342e821d43d856b601d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-clock-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c4d85b21c24567c2d6be0336ab54a2043c9f26bc",
+      "actual": "c4d85b21c24567c2d6be0336ab54a2043c9f26bc",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-clock.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "da08d2a3bc47bbad6cca300a99517e2ce8dcf8cb",
+      "actual": "da08d2a3bc47bbad6cca300a99517e2ce8dcf8cb",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e1c35a13375190bbbfb2f364b78846475faeff7c",
+      "actual": "e1c35a13375190bbbfb2f364b78846475faeff7c",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-owner-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "b2d08f01b6932de3032d2fde0f73543121ae8481",
+      "actual": "b2d08f01b6932de3032d2fde0f73543121ae8481",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-security-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "3395eeb1c1c8c1a781952058608b0e877760031d",
+      "actual": "3395eeb1c1c8c1a781952058608b0e877760031d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash-tamper-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "df3e3d0a7215aeb8c8185e31d0c223035727cff1",
+      "actual": "df3e3d0a7215aeb8c8185e31d0c223035727cff1",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "e84b2036915ced4e10fd2e01379e9e7d9b531abb",
+      "actual": "e84b2036915ced4e10fd2e01379e9e7d9b531abb",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-failed-custody.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "16137bdd8fdbf41d63abd713fb8d14c7272641ac",
+      "actual": "16137bdd8fdbf41d63abd713fb8d14c7272641ac",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-failed-custody.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "f0c87b352d0eaa8b9d93deb6880d22e50c885f56",
+      "actual": "f0c87b352d0eaa8b9d93deb6880d22e50c885f56",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-failure.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "79613d9ef05ea9dd9038fc6920cd79b613d91517",
+      "actual": "79613d9ef05ea9dd9038fc6920cd79b613d91517",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-failure.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "0a4c1d3ad8d1088288e3e1895ff88c0861120ba3",
+      "actual": "0a4c1d3ad8d1088288e3e1895ff88c0861120ba3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-files.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "f3729951f107544ba2589fe752025d371f34074f",
+      "actual": "f3729951f107544ba2589fe752025d371f34074f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-files.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "79535d67d3be4965c6aa09c37227b6b982138109",
+      "actual": "79535d67d3be4965c6aa09c37227b6b982138109",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-http-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5d03d461be02c327bd08de2a27088f3bd48282ae",
+      "actual": "5d03d461be02c327bd08de2a27088f3bd48282ae",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-http-test-client.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5de1f1880f50f2e86612971cca7ed6723b56eab5",
+      "actual": "5de1f1880f50f2e86612971cca7ed6723b56eab5",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-job-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "904bd9cd3ab49eec152808a3aa045c30267b1bd3",
+      "actual": "904bd9cd3ab49eec152808a3aa045c30267b1bd3",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-job-intent.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "d95d32f34814edfdbae0f34886e2eda7de88d2e9",
+      "actual": "d95d32f34814edfdbae0f34886e2eda7de88d2e9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-job-intent.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "0d741476743e133b437d1eb088ac17d05acb440f",
+      "actual": "0d741476743e133b437d1eb088ac17d05acb440f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-jobs-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "11e11af20438d40bf5c5c3ddb14c9895b12c1664",
+      "actual": "11e11af20438d40bf5c5c3ddb14c9895b12c1664",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-jobs.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "7dfe80ba36c0f7a1bde26328638a4878a9b03ca5",
+      "actual": "7dfe80ba36c0f7a1bde26328638a4878a9b03ca5",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-jobs.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "55b693759a2a10edf0f731074b48d6ac7c22f006",
+      "actual": "55b693759a2a10edf0f731074b48d6ac7c22f006",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-original.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "fa455708455a087f432b58a818d28abad0be5a1e",
+      "actual": "fa455708455a087f432b58a818d28abad0be5a1e",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-postcommit-edit-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "3f829cc326e088b2919243dba3842dbb51e537a0",
+      "actual": "3f829cc326e088b2919243dba3842dbb51e537a0",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-prepare.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "55b4d8092764a3803a38bad2f595e7152546f704",
+      "actual": "55b4d8092764a3803a38bad2f595e7152546f704",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-prepare.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2225940a26194533d4d6c512191b2a47e63a00ae",
+      "actual": "2225940a26194533d4d6c512191b2a47e63a00ae",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-rich-fixture.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "cf09c77159b53bba836b155745e96d553189c4be",
+      "actual": "cf09c77159b53bba836b155745e96d553189c4be",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-rich-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "9523d43397017b3816bc424f49924a578e7934d4",
+      "actual": "9523d43397017b3816bc424f49924a578e7934d4",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-rpc.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "894e94b56334d9f3464de2fb9a0f4eb917319c39",
+      "actual": "894e94b56334d9f3464de2fb9a0f4eb917319c39",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-stop.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "02ca766c7dcce7adfb3b0160b3f75adade89d65f",
+      "actual": "02ca766c7dcce7adfb3b0160b3f75adade89d65f",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-stop.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "6ed68ed3b1fc4df43a8bb35928386890f5a90600",
+      "actual": "6ed68ed3b1fc4df43a8bb35928386890f5a90600",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-trial-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "128c89de3d4e6f406e71cfdc5bade544c9fb8dce",
+      "actual": "128c89de3d4e6f406e71cfdc5bade544c9fb8dce",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-trial-stop.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "fd1b783bb297766d1ec60c3a8509dabf72fbd7e9",
+      "actual": "fd1b783bb297766d1ec60c3a8509dabf72fbd7e9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-trial.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "c8b444903f9f0f510489bbae45f9fe59de3676cd",
+      "actual": "c8b444903f9f0f510489bbae45f9fe59de3676cd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/restore-trial.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "31f7f0481fa03f43a6781b820fa5f62a8e54ee25",
+      "actual": "31f7f0481fa03f43a6781b820fa5f62a8e54ee25",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/router.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "cbca8f45682f8b062dc01cb16a92dbbe8064058c",
+      "actual": "cbca8f45682f8b062dc01cb16a92dbbe8064058c",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/routes.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "cef4ecea90cee04d3039f2927cc22094fde48477",
+      "actual": "cef4ecea90cee04d3039f2927cc22094fde48477",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/seed-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "2364db3827abb51a9417ca9a92b4bae98fd7fe42",
+      "actual": "2364db3827abb51a9417ca9a92b4bae98fd7fe42",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor-client.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "62052d88da11eef426be185309ff5286f7c4a1b7",
+      "actual": "62052d88da11eef426be185309ff5286f7c4a1b7",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor-client.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "938caeeb10cbfca17580c236150a994458074f38",
+      "actual": "938caeeb10cbfca17580c236150a994458074f38",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "aec311a5aa41211c0908f1d03bb555e501ba4d57",
+      "actual": "aec311a5aa41211c0908f1d03bb555e501ba4d57",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor-test-control.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "930dcfaf48a2d93f13c88764b374c50b1eceb243",
+      "actual": "930dcfaf48a2d93f13c88764b374c50b1eceb243",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor-test-control.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "5a771bf516749e0fc8f042e617a6acf9ecb3a7a9",
+      "actual": "5a771bf516749e0fc8f042e617a6acf9ecb3a7a9",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor.test.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1e309107e5a00132018d1c946399859291ded46e",
+      "actual": "1e309107e5a00132018d1c946399859291ded46e",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/supervisor.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "74c04e7fcc711e25d5dbab35a41156559261b34d",
+      "actual": "74c04e7fcc711e25d5dbab35a41156559261b34d",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/verify-worker.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "649a198fe9423903f7c3d50c521a0e965e547dcd",
+      "actual": "649a198fe9423903f7c3d50c521a0e965e547dcd",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/server/maintenance/wal-fixture.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "af5ae273fadee8d90571697b288d7568d0aeba57",
+      "actual": "af5ae273fadee8d90571697b288d7568d0aeba57",
+      "equal": true
+    },
+    {
+      "group": "unchangedRecoveryClosure",
+      "path": "src/shared/restore.ts",
+      "reference": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+      "expected": "1d58f63c174f3ee20f81e15e186a7b868e48236c",
+      "actual": "1d58f63c174f3ee20f81e15e186a7b868e48236c",
+      "equal": true
+    }
+  ]
+}

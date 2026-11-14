@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-14T21:20:00.648Z",
+  "source": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "packetFiles": 1561,
+  "sourceBindings": 1555,
+  "gzipDecoded": 13,
+  "exactTypeScript": 1235,
+  "fullDiffByteExact": true,
+  "manifestSHA256": "9213b65ec42143110c1215b79d2c5d65e3e34dd78562e89894cbe503d652ee87",
+  "sourceManifestSHA256": "74362eb4bc8a782d8c415d48c841d992a099c4ab6f8f3e71ce819885f48b0498",
+  "fullBriefRead": true,
+  "readerCorrection": "Derived diff/binding records have no Git sourcePath; handled separately rather than as blobs"
+}
