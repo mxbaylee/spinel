@@ -52,6 +52,16 @@ Setup logs preserve the missing CLI entry, duplicate executable argument and
 pressure preflight refusal; none executed a native sample. The watchdog JSON records the successful
 diagnostic build/controls, 15 passing focused unit tests and resource-aborted
 full typecheck and corrected static build. Neither resource abort is a pass. The
-one corrected browser sample never ran. Owned processes and port
+one corrected browser sample had not run at that checkpoint. Owned processes and port
 6019 were checked after the stopped batch, with no survivors. All fixture content
 is synthetic; diagnostics contain command IDs, bounded geometry and event order.
+
+## ✅ Integrated corrected result
+
+`integrated/` preserves source `5108adb55c2de303af7146a0f24402be72430b3a` and its
+first corrected desktop-light sample, successful static build, 15 focused tests,
+full typecheck, quality/backlog checks and owned cleanup. Its source-identity JSON
+binds the build asset, probe/config and native package hashes. Both width
+transitions and their subsequent native control refresh passed; all authored
+pending work remained unchanged. Hosted theme/viewport compatibility and exact-head
+reviews remain separate gates. Earlier resource-aborted receipts are preserved.

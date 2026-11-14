@@ -1,0 +1,13 @@
+{
+  "name": "spn159-integrated-corrected-native",
+  "args": [
+    "node",
+    "test-results/spn159/experiment.ts",
+    "corrected"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2484,
+  "peakKiB": 780208
+}
