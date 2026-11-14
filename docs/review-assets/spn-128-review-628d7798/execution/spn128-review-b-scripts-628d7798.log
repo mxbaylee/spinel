@@ -1,0 +1,45 @@
+✔ only the complete exact readiness line admits work, including split writes (29.844958ms)
+✔ post-readiness pipes keep bounded private tails and publish only safe diagnostics (28.495584ms)
+✔ withheld readiness ("no readiness") fails and closes within its budget (256.618041ms)
+✔ withheld readiness ("Spinel is running at http://localhost:39990\n") fails and closes within its budget (259.104375ms)
+✔ withheld readiness ("Spinel is running at http://localhost:3999") fails and closes within its budget (261.846791ms)
+✔ a crash before readiness preserves the actual exit and its first diagnostic (53.10625ms)
+✔ a wrapper can cancel startup without waiting for the readiness deadline (30.649458ms)
+✔ a post-readiness exit notifies the wrapper and fails its health check (29.724667ms)
+✔ repeated wrapper cancellation closes a ready child without inventing a crash (26.285625ms)
+✔ cleanup is idempotent and forces a child that ignores graceful termination (434.21225ms)
+✔ failed spawn rejects promptly and does not await a nonexistent process forever (1.697542ms)
+✔ an inherited pipe cannot keep cleanup pending beyond its original budget (300.955ms)
+✔ a feature error remains the original error when cleanup succeeds (0.378875ms)
+✔ cleanup errors retain the initial failure first and as the cause (0.809291ms)
+✔ cleanup alone remains a failure and a successful value survives successful cleanup (0.145042ms)
+✔ hosted ordinary and opt-in startup owners receive the exact build evidence flag (0.591416ms)
+✔ initial bootstrap evidence distinguishes pending work and failure without mutable or later-operation contamination (0.367208ms)
+✔ bounded evidence keeps overflow/failure explicit and rejects invalid clocks or private payloads (0.216125ms)
+✔ optional process evidence failure is reported once without failing fixture setup (0.808083ms)
+✔ fixture log evidence retains fixed failure signals without cookies or content (0.24975ms)
+✔ log tails and memory counters have fixed bounds and content-free fields (0.212375ms)
+✔ journal evidence excludes authority and treats process identity as historical selection (0.193667ms)
+✔ status observation retains only the HTTP status and recognized phase (12.622666ms)
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (2.169167ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.1635ms)
+✔ the opt-in SPN-146 A/B stays tested without widening to full or performance coverage (0.272834ms)
+✔ sized restore participates in the immutable plan and fails closed (0.494792ms)
+✔ the extracted Doc touch raster keeps every browser owner and the sized restore dependency (0.15275ms)
+✔ shared offline image assertions retain ordinary CI and native desktop coverage (0.142583ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.170958ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.123291ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.153625ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.225959ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.219625ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (0.206167ms)
+✔ actual renderer grouping leaves shared startup code outside the lazy renderer and preserves initialization (53.21475ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2121.830333
+{"name":"spn128-review-b-scripts-628d7798","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","--test","--test-concurrency=1","scripts/ci/maintenance-evidence.test.ts","scripts/ci/bootstrap-evidence.test.ts","scripts/ci/renderer-chunks.test.ts","scripts/ci/plan.test.ts","scripts/ci/app-process.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":2207,"peakKiB":286704}

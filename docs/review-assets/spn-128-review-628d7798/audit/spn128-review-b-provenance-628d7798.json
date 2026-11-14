@@ -1,0 +1,38 @@
+{
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "reviewer": "/root/spn128_current_b",
+  "node": "26.13.0",
+  "files": [
+    {
+      "path": "/tmp/spn128-review-b-portable-628d7798.log",
+      "bytes": 1064,
+      "sha256": "58101e89dccfc6689093546a8080aae1387159bd092413ae65fdffe8ea6aafb4"
+    },
+    {
+      "path": "/tmp/spn128-review-b-scripts-628d7798.log",
+      "bytes": 4089,
+      "sha256": "68e3acabb2bbb8f59db25afbb69e1aff8c0e9cc4d4ad475d162a2eca5ab50cfc"
+    },
+    {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-portable-628d7798.json",
+      "bytes": 748,
+      "sha256": "9de29c6a7c4b688d4f0482c6d72b33e642d4fe39796de7cdbf2ba2487e2fe1dd"
+    },
+    {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-scripts-628d7798.json",
+      "bytes": 478,
+      "sha256": "e53784ced6afab232e0b9cbacc3c3170129e2eb71de12b4cdf3345937c1c3d25"
+    },
+    {
+      "path": "/tmp/spn128-review-b-cleanup-628d7798.json",
+      "bytes": 314,
+      "sha256": "9f3e80a2da56946707dd6cc9cc17a9142762a0bf1bce0aa499633ec3347cca4c"
+    },
+    {
+      "path": "/tmp/spn128-review-b-source-equivalence-628d7798.json",
+      "bytes": 125610,
+      "sha256": "d02e10bd0f5e252d48cacd85279fe3479a28137533ebafe6700a028f11928cbd"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-128-production
+
+
+ Test Files  7 passed (7)
+      Tests  58 passed | 21 skipped (79)
+   Start at  15:28:33
+   Duration  1.51s (tests 81%, import 14%, transform 4%, worker 1%)
+
+    Isolate  7 workers spawned · ~56ms startup each (spawn + environment, per file)
+             at least ~336ms faster with isolate: false — reuses workers across files instead of one per file
+
+{"name":"spn128-review-b-portable-628d7798","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/vitest/vitest.mjs","run","--config","/tmp/spn128-vitest.config.ts","--configLoader","native","--cache=false","src/server/maintenance/restore-crash-clock.test.ts","src/server/maintenance/restore-cold-custody.test.ts","src/server/maintenance/restore-cold-state.test.ts","src/server/maintenance/gate.test.ts","src/server/diagnostics/supervisor.test.ts","src/server/diagnostics/store.test.ts","src/server/diagnostics/runtime.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":1821,"peakKiB":387024}

@@ -1,0 +1,8 @@
+{
+  "stage": "Before read-tree, seal or ref mutation",
+  "failure": "Preparation helper used uninitialized private index for status guard, reporting Candidate changed from synthetic missing-index deletions.",
+  "actualCandidate": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "actualNormalIndexClean": true,
+  "privateIndexCreated": false,
+  "disposition": "Check candidate using normal Git index, then initialize private archive index. Source and packet never changed; tar already verified1610 exact members."
+}

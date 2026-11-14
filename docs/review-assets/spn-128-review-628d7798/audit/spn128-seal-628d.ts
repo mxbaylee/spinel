@@ -1,0 +1,24 @@
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, copyFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { join } from 'node:path';
+const cwd='/Users/mxbaylee/projects/spinel-spn-128-production', staging='/tmp/spn128-preservation-628d7798', root=join(staging,'archive');
+const source='628d77987e7d9a08863465a7553a2ed82579728b',base='8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d',target='docs/review-assets/spn-128-review-628d7798',ref='refs/tags/archive/spn-128-review-628d7798-20261114';
+const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+const walk=(p:string):string[]=>readdirSync(p).flatMap(n=>{const f=join(p,n);return statSync(f).isDirectory()?walk(f):[f];});
+const normal=(args:string[])=>execFileSync('git',args,{cwd,encoding:'utf8'}).trim();
+if(normal(['rev-parse','HEAD'])!==source||normal(['status','--porcelain']))throw Error('Actual candidate changed');
+copyFileSync('/tmp/spn128-preserve-628d-corrected.ts',join(root,'audit/spn128-preserve-628d-corrected.ts'));
+copyFileSync('/tmp/spn128-seal-628d.ts',join(root,'audit/spn128-seal-628d.ts'));
+writeFileSync(join(root,'audit/private-index-preflight-correction.json'),JSON.stringify({stage:'Before read-tree, seal or ref mutation',failure:'Preparation helper used uninitialized private index for status guard, reporting Candidate changed from synthetic missing-index deletions.',actualCandidate:source,actualNormalIndexClean:true,privateIndexCreated:false,disposition:'Check candidate using normal Git index, then initialize private archive index. Source and packet never changed; tar already verified1610 exact members.'},null,2)+'\n');
+const payload=walk(root).filter(p=>p!==join(root,'manifest.json')).sort().map(p=>({path:p.slice(root.length+1),bytes:statSync(p).size,sha256:hash(readFileSync(p))}));
+writeFileSync(join(root,'manifest.json'),JSON.stringify({source,base,files:payload},null,2)+'\n');
+const index=join(staging,'archive.index');if(existsSync(index))throw Error('Private index exists');
+const env={...process.env,GIT_INDEX_FILE:index};const git=(args:string[],input?:Buffer)=>execFileSync('git',args,{cwd,env,input,encoding:'utf8',maxBuffer:100*1024*1024}).trim();
+git(['read-tree',source]);for(const p of walk(root).sort()){const blob=git(['hash-object','-w','--stdin'],readFileSync(p));git(['update-index','--add','--cacheinfo',`100644,${blob},${target}/${p.slice(root.length+1)}`]);}
+const tree=git(['write-tree']);const commit=git(['commit-tree',tree,'-p',source,'-m','🌷 SPN-128 Preserve integrated exact-head independent review evidence']);
+const paths=git(['diff','--name-only',source,commit]).split('\n');if(paths.length!==payload.length+1||paths.some(p=>!p.startsWith(target+'/')))throw Error('Archive path isolation');
+git(['update-ref',ref,commit,'0000000000000000000000000000000000000000']);
+if(normal(['rev-parse','HEAD'])!==source||normal(['status','--porcelain']))throw Error('Candidate changed after archive');
+const result={commit,parent:source,tree,ref,target,totalFiles:paths.length,originalCopies:JSON.parse(readFileSync(join(root,'provenance.json'),'utf8')).originals.length,manifestSha256:hash(readFileSync(join(root,'manifest.json'))),packetArchive:JSON.parse(readFileSync(join(root,'packet-archive-verification.json'),'utf8')),packetManifestSha256:hash(readFileSync('/tmp/spn128-review-packet-628d7798/packet-manifest.json')),status:'Local-only awaiting root audit',preparationLimits:'Original tar rejected AppleDouble extras, preserved separately; private-index guard corrected before any seal/ref. Both preparation failures documented, candidate untouched.'};
+writeFileSync(join(staging,'archive-ref.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

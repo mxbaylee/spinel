@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T23:30:00.527Z",
+  "head": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "manifestSha256": "412da891417cff6d99ca32c46bcb84e0fceb2eb36b0edb41f811c8585769a5f9",
+  "payloads": 1609,
+  "sourceManifestEntries": 1602,
+  "actualGitSourceBindings": 1599,
+  "exactSourceCopies": 1594,
+  "exactTypeScriptCopies": 1258,
+  "decodedGzipSources": 21,
+  "maskedMarkdown": [
+    "source/docs/design/component-review.md",
+    "source/docs/implementation/SPN-112.md",
+    "source/docs/implementation/SPN-115.md",
+    "source/docs/implementation/SPN-120.md",
+    "source/docs/implementation/grooming-2026-10-26.md"
+  ],
+  "fullBinaryDiffExact": true,
+  "readerCorrection": "Corrected reader schema assumptions: compressed versus decoded hashes; optional historical blob IDs (actual Git commit/path bytes still checked); three derived diff/binding entries carry commit-range metadata rather than source paths. All four original reader versions preserved. No packet/source changes."
+}

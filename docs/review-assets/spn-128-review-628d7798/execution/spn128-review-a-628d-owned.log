@@ -1,0 +1,29 @@
+✔ only the complete exact readiness line admits work, including split writes (35.387625ms)
+✔ post-readiness pipes keep bounded private tails and publish only safe diagnostics (32.101209ms)
+✔ withheld readiness ("no readiness") fails and closes within its budget (316.545583ms)
+✔ withheld readiness ("Spinel is running at http://localhost:39990\n") fails and closes within its budget (256.910458ms)
+✔ withheld readiness ("Spinel is running at http://localhost:3999") fails and closes within its budget (254.954292ms)
+✔ a crash before readiness preserves the actual exit and its first diagnostic (35.9795ms)
+✔ a wrapper can cancel startup without waiting for the readiness deadline (30.782375ms)
+✔ a post-readiness exit notifies the wrapper and fails its health check (29.974708ms)
+✔ repeated wrapper cancellation closes a ready child without inventing a crash (28.756333ms)
+✔ cleanup is idempotent and forces a child that ignores graceful termination (430.787708ms)
+✔ failed spawn rejects promptly and does not await a nonexistent process forever (0.719583ms)
+✔ an inherited pipe cannot keep cleanup pending beyond its original budget (281.7ms)
+✔ a feature error remains the original error when cleanup succeeds (0.169459ms)
+✔ cleanup errors retain the initial failure first and as the cause (0.416ms)
+✔ cleanup alone remains a failure and a successful value survives successful cleanup (0.075167ms)
+✔ optional process evidence failure is reported once without failing fixture setup (0.961125ms)
+✔ fixture log evidence retains fixed failure signals without cookies or content (0.264375ms)
+✔ log tails and memory counters have fixed bounds and content-free fields (0.211375ms)
+✔ journal evidence excludes authority and treats process identity as historical selection (0.204333ms)
+✔ status observation retains only the HTTP status and recognized phase (13.520042ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1887.640584
+{"name":"spn128-review-a-628d-owned","args":["node","--test","--test-concurrency=1","scripts/ci/maintenance-evidence.test.ts","scripts/ci/app-process.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":1975,"peakKiB":285776}

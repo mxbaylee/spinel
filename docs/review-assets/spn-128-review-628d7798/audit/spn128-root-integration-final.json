@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-14T23:25:07.104Z",
+  "final": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "ae97ca8b6587617ecccce5bbb80e0da4a4aa295a",
+  "nonDocumentationBindingsUnchangedAfterTest": 1397,
+  "incomingSourcePathsEqualMain": 84,
+  "retainedSourcePathsEqualPrior": 20,
+  "sourceOverlap": [
+    "src/server/maintenance/supervisor.ts"
+  ],
+  "overlapDisposition": "Root inspected complete integration diff; existing recovery method and landed phase/verification implementations combined. Maintained explicit diagnostic inventory clarification.",
+  "allAssertionsPassed": true
+}

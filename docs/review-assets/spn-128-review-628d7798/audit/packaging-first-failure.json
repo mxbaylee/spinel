@@ -1,0 +1,12 @@
+{
+  "stage": "Before seal/index/ref mutation",
+  "failure": "Exact tar membership assertion rejected macOS AppleDouble metadata entries",
+  "extraMembers": 1716,
+  "firstExamples": [
+    "._.",
+    "./._source-manifest.json"
+  ],
+  "originalTarSha256": "266ccb427117079e1c21fb9af616e2f5ec270140d8b85d746ce6e29cd674a877",
+  "preservedTar": "/tmp/spn128-preservation-628d7798/prior-preparation/review-packet-with-appledouble.tar.gz",
+  "disposition": "Disable macOS copyfile metadata and rerun packaging, then require exact packet membership and byte equality. No source/packet/test result changed."
+}

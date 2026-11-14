@@ -1,0 +1,264 @@
+{
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "archiveParent": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "path": "docs/review-assets/spn-128-review-628d7798",
+  "ref": "refs/tags/archive/spn-128-review-628d7798-20261114",
+  "status": "Local sealed preservation pending root audit/publication; no candidate or remote mutation.",
+  "reviews": [
+    {
+      "agent": "/root/spn128_current_a",
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "passed": 48,
+      "skipped": 0,
+      "firstAttempts": true
+    },
+    {
+      "agent": "/root/spn128_current_b",
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "passed": 94,
+      "skipped": 21,
+      "skipReason": "Linux-only cases on Mac",
+      "firstAttempts": true
+    }
+  ],
+  "packetManifestSha256": "412da891417cff6d99ca32c46bcb84e0fceb2eb36b0edb41f811c8585769a5f9",
+  "historicalArchiveLinks": [
+    "https://github.com/mxbaylee/spinel/tree/568c42e30022e9dadb3f6c9f84d7fa979b76fe7e/docs/review-assets/spn-128-review-81841c50",
+    "https://github.com/mxbaylee/spinel/tree/ba660d31d96949680e48ba44f33e2a46caac0dd8/docs/implementation/evidence/SPN-128-review-3812ed9b",
+    "https://github.com/mxbaylee/spinel/tree/7447da12a6c1a2f29c4b4d9b870b901f15c501bb/docs/review-assets/spn-128-current-local",
+    "https://github.com/mxbaylee/spinel/tree/ba5c9fd5868e5448882e976edc202ede4b234dd3/docs/review-assets/spn-128-current-local",
+    "https://github.com/mxbaylee/spinel/tree/41e2a2868be914adec6da5eeccc0faba589c3ef2/docs/review-assets/spn-128-previous-ci"
+  ],
+  "originals": [
+    {
+      "originalPath": "/tmp/spn128-review-628d7798-a.md",
+      "archivePath": "reviews/spn128-review-628d7798-a.md",
+      "bytes": 10464,
+      "sha256": "7ad5dc040ba2de02f00da1ed57b774c26d47a9aa681383e463b65699728a7450"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-628d7798-b.md",
+      "archivePath": "reviews/spn128-review-628d7798-b.md",
+      "bytes": 13795,
+      "sha256": "2255528c911df0aae706c4f95d044c01bd6b7bafd34b99aef300aab868f57bed"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-628d-observers.log",
+      "archivePath": "execution/spn128-review-a-628d-observers.log",
+      "bytes": 625,
+      "sha256": "0cf4afc727a8dea5cfdd045e24458e43c4d83c77c55a82948d0c7d5146f74966"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-628d-observers.json",
+      "archivePath": "execution/spn128-review-a-628d-observers.json",
+      "bytes": 505,
+      "sha256": "93ba55f9137a6996340ad63c56dc670a73cf5a29bb87988068756b0527ae0154"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-628d-owned.log",
+      "archivePath": "execution/spn128-review-a-628d-owned.log",
+      "bytes": 2253,
+      "sha256": "84f97c4fb61fd9939bfc32b4c79b028c8a55f099303dcc39ea8b05581fb44c08"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-628d-owned.json",
+      "archivePath": "execution/spn128-review-a-628d-owned.json",
+      "bytes": 289,
+      "sha256": "6e81fbb869bd21a893e3ee72d54c98a951090b669521c3ca98fc2ab9b3b32399"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-portable-628d7798.log",
+      "archivePath": "execution/spn128-review-b-portable-628d7798.log",
+      "bytes": 1064,
+      "sha256": "58101e89dccfc6689093546a8080aae1387159bd092413ae65fdffe8ea6aafb4"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-portable-628d7798.json",
+      "archivePath": "execution/spn128-review-b-portable-628d7798.json",
+      "bytes": 748,
+      "sha256": "9de29c6a7c4b688d4f0482c6d72b33e642d4fe39796de7cdbf2ba2487e2fe1dd"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-scripts-628d7798.log",
+      "archivePath": "execution/spn128-review-b-scripts-628d7798.log",
+      "bytes": 4089,
+      "sha256": "68e3acabb2bbb8f59db25afbb69e1aff8c0e9cc4d4ad475d162a2eca5ab50cfc"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-scripts-628d7798.json",
+      "archivePath": "execution/spn128-review-b-scripts-628d7798.json",
+      "bytes": 478,
+      "sha256": "e53784ced6afab232e0b9cbacc3c3170129e2eb71de12b4cdf3345937c1c3d25"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-provenance-628d7798.json",
+      "archivePath": "audit/spn128-review-b-provenance-628d7798.json",
+      "bytes": 1321,
+      "sha256": "62199179b7b53b35d2c481bde378d06aa94fbe6980abbc80620893fc0c9931a2"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-source-equivalence-628d7798.json",
+      "archivePath": "audit/spn128-review-b-source-equivalence-628d7798.json",
+      "bytes": 125610,
+      "sha256": "d02e10bd0f5e252d48cacd85279fe3479a28137533ebafe6700a028f11928cbd"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-cleanup-628d7798.json",
+      "archivePath": "audit/spn128-review-b-cleanup-628d7798.json",
+      "bytes": 314,
+      "sha256": "9f3e80a2da56946707dd6cc9cc17a9142762a0bf1bce0aa499633ec3347cca4c"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-integration-final.json",
+      "archivePath": "audit/spn128-root-integration-final.json",
+      "bytes": 641,
+      "sha256": "08bd8609d2031d28ad62154a42b348758710198c5db14505c36b93d3c428b175"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-628d7798.json",
+      "archivePath": "audit/spn128-root-packet-audit-628d7798.json",
+      "bytes": 1039,
+      "sha256": "fc545e4fb50e84d22725494eca47ca2d9518df4543c335add7e996aed0279cb1"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-first.ts",
+      "archivePath": "audit/readers/spn128-root-packet-audit-first.ts",
+      "bytes": 1809,
+      "sha256": "f8fc432536a4462aa895ad1ca8f2427e1a3f8ef777dbdcc226c569fa34d90468"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-second.ts",
+      "archivePath": "audit/readers/spn128-root-packet-audit-second.ts",
+      "bytes": 2210,
+      "sha256": "54e7e0427df70a048f17b39e7a6ff1cdebc491df951cfae759871cb0f8dfbbb2"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-third.ts",
+      "archivePath": "audit/readers/spn128-root-packet-audit-third.ts",
+      "bytes": 2384,
+      "sha256": "3058e844e3b3531487c664afa711be252b40fdd15f06b863a4daf26c103dc1fb"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-fourth.ts",
+      "archivePath": "audit/readers/spn128-root-packet-audit-fourth.ts",
+      "bytes": 2601,
+      "sha256": "c454c1a4594c49fabb0fff628a80680ff07c4637b5cbf1480550d582a1f5d087"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit.ts",
+      "archivePath": "audit/readers/spn128-root-packet-audit.ts",
+      "bytes": 2650,
+      "sha256": "a94d13e9960b64b72fbc05e07ecc443972969204f6ffa8a40dbd955ce58859d3"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-628d7798/README.md",
+      "archivePath": "packet-bindings/README.md",
+      "bytes": 8510,
+      "sha256": "44ebf4b6333a18a7e7cfae1f3e1a5bf0784c29f1c85c5e5789b6e7776f09fa67"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-628d7798/source-bindings.txt",
+      "archivePath": "packet-bindings/source-bindings.txt",
+      "bytes": 15784,
+      "sha256": "cabf521afd7c2377e9f206353f1ac4ff611424bec647e6f26c15bc092d8e3cfd"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-628d7798/source-manifest.json",
+      "archivePath": "packet-bindings/source-manifest.json",
+      "bytes": 740766,
+      "sha256": "693f033246c8b229bdb28734fd14c7f9ff46c2368ea8265fa505df7b81f13316"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-628d7798/final-source-equivalence.json",
+      "archivePath": "packet-bindings/final-source-equivalence.json",
+      "bytes": 111473,
+      "sha256": "2f5efcbd022795aeb03893618253a2664c6228189918c247f5a9321e1f35e02c"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-628d7798/blinding-audit.json",
+      "archivePath": "packet-bindings/blinding-audit.json",
+      "bytes": 7313,
+      "sha256": "169613789970e7c30ca51276457f17814459be104dbb83aa0987061d86916a43"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-628d7798/packet-manifest.json",
+      "archivePath": "packet-bindings/packet-manifest.json",
+      "bytes": 249245,
+      "sha256": "412da891417cff6d99ca32c46bcb84e0fceb2eb36b0edb41f811c8585769a5f9"
+    },
+    {
+      "originalPath": "/tmp/spn128-vitest.config.ts",
+      "archivePath": "execution/spn128-vitest.config.ts",
+      "bytes": 211,
+      "sha256": "df7efab78de6e1bdb25bcc87ec6e0ee8edb120cb9fa6770a842d9a68de12505d"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+      "archivePath": "execution/watch.ts",
+      "bytes": 1412,
+      "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+    },
+    {
+      "originalPath": "/tmp/spn128-8e9-integration-checks/final-pr.log",
+      "archivePath": "execution/final-pr.log",
+      "bytes": 380,
+      "sha256": "21e71d16ffef571859ed1bf8792e5b89f323a42d4567e883ac50212a1fdb7b24"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-8e9-final-pr.json",
+      "archivePath": "execution/final-pr.json",
+      "bytes": 353,
+      "sha256": "468f47f7ae95ef9592031dabee6f3326412e72d472794cf61e27ed21a8dd4527"
+    },
+    {
+      "originalPath": "/tmp/spn128-build-628d-packet.ts",
+      "archivePath": "audit/packet-builder.ts",
+      "bytes": 8355,
+      "sha256": "154d7a49f53cc0be579605f62f56ff21f65481960d16ee17adc8130d56ae4c9e"
+    },
+    {
+      "originalPath": "/tmp/spn128-audit-628d-packet.ts",
+      "archivePath": "audit/packet-blinding-audit.ts",
+      "bytes": 3854,
+      "sha256": "3a22e7a2cc098b5b8fe9dfb3809bfcdde623c7e3ceddb28b40097f693249dc00"
+    },
+    {
+      "originalPath": "/tmp/spn128-preservation-628d7798/prior-preparation/packaging-first-failure.json",
+      "archivePath": "audit/packaging-first-failure.json",
+      "bytes": 600,
+      "sha256": "4a578bf3b448a49196fc5eeb4e55947f9e33c55bde7949d36b1dd68818655411"
+    },
+    {
+      "originalPath": "/tmp/spn128-preservation-628d7798/prior-preparation/spn128-preserve-628d-first.ts",
+      "archivePath": "audit/spn128-preserve-628d-first.ts",
+      "bytes": 9369,
+      "sha256": "a28c74cacd38a5b88ae783b6774ccd15093155266007e745f5bb5bb78c03a31d"
+    }
+  ],
+  "limits": [
+    "Current reviews are source-qualified, not hosted CI passes.",
+    "Current Linux crash/native/browser acceptance and all seven hosted gates remain pending.",
+    "Historical preflight/setup/resource outcomes and missing receipts are preserved by linked archives; not reclassified.",
+    "Four initial root audit readers corrected manifest schema assumptions; no packet/source mutation.",
+    "Earlier pending-index420/62 audit is stage-specific; final proof and root non-document audit separately bind current source."
+  ]
+}

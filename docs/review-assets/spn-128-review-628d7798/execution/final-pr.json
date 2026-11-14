@@ -1,0 +1,17 @@
+{
+  "name": "spn128-8e9-final-pr",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+    "--title",
+    "🌷 SPN-128 Reinstall the preserved original after an interrupted restore"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 361,
+  "peakKiB": 178880
+}

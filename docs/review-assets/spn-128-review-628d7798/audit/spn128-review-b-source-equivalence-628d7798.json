@@ -1,0 +1,3396 @@
+{
+  "head": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "prior": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+  "pathChecks": 481,
+  "mismatches": [],
+  "methods": [
+    {
+      "start": "private async recoverOriginalOwned(",
+      "reference": "81841c50916aa6038df16f4598c0d1d37b0c0b71",
+      "equal": true,
+      "sha256": "009a2a289c46e925b4f79e3a83da60e4798cbfa0e7383c77e08c08fdfef0fe3f"
+    },
+    {
+      "start": "private transition(",
+      "reference": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+      "equal": true,
+      "sha256": "12d64edd4b09758965d43e1d6b53b658ee6dd1a480a1740f269312c48713309a"
+    },
+    {
+      "start": "private async verify()",
+      "reference": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+      "equal": true,
+      "sha256": "8ecf5018a237571e7ffaad9fa00daa5bdb11844853674b87c6a3d5a21655ba17"
+    }
+  ],
+  "checks": [
+    {
+      "group": "incoming",
+      "path": ".github/pull_request_template.md",
+      "expected": "999f91ad9fa7fe7997f14402957b2235ce3a9bdb",
+      "actual": "999f91ad9fa7fe7997f14402957b2235ce3a9bdb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": ".github/workflows/ci.yml",
+      "expected": "2199b2fa7a97ae6ee90d27d3bbde1dfbe4e74bf0",
+      "actual": "2199b2fa7a97ae6ee90d27d3bbde1dfbe4e74bf0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": ".github/workflows/fixture-audit.yml",
+      "expected": "d815508a500924500050a8bde0f38b2ab9dfc7a1",
+      "actual": "d815508a500924500050a8bde0f38b2ab9dfc7a1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": ".gitignore",
+      "expected": "19acfacf0af88e1d234f1d5e5a31330ee5cfccb2",
+      "actual": "19acfacf0af88e1d234f1d5e5a31330ee5cfccb2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "AGENTS.md",
+      "expected": "43ce6ad6e2569eeaa0769a6717b9e715ed7ee341",
+      "actual": "43ce6ad6e2569eeaa0769a6717b9e715ed7ee341",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "THIRD-PARTY-NOTICES.md",
+      "expected": "376786a48dc7b4fe34c103a1a00c00266f2bb597",
+      "actual": "376786a48dc7b4fe34c103a1a00c00266f2bb597",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/development.md",
+      "expected": "90891bcec628070451fa1c69a82588fb9c7da626",
+      "actual": "90891bcec628070451fa1c69a82588fb9c7da626",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/SPN-070.md",
+      "expected": "cf6f3e545a5e18b14ed412a79bad4aca7337a8dc",
+      "actual": "cf6f3e545a5e18b14ed412a79bad4aca7337a8dc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/SPN-116.md",
+      "expected": "7a74431fb8e3bd2800d0ce74c3c8e78490ac7cd1",
+      "actual": "7a74431fb8e3bd2800d0ce74c3c8e78490ac7cd1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/SPN-120.md",
+      "expected": "47b701ca13e451285ba955fc7346ab7268cc4c25",
+      "actual": "47b701ca13e451285ba955fc7346ab7268cc4c25",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/SPN-121.md",
+      "expected": "396dc84f5d2aaa839640a6b2245573f34b03d053",
+      "actual": "396dc84f5d2aaa839640a6b2245573f34b03d053",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/SPN-123.md",
+      "expected": "a40cc57c15be27a77486b644fb67e186822c3d0b",
+      "actual": "a40cc57c15be27a77486b644fb67e186822c3d0b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/ci-reliability-2026-10-28.md",
+      "expected": "3be64362ed184e70a9b8073b0a922725bfac3748",
+      "actual": "3be64362ed184e70a9b8073b0a922725bfac3748",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-120-baseline.json",
+      "expected": "338c3c1e7f6105e26a15c6ec7d2cdcd3cb8abd96",
+      "actual": "338c3c1e7f6105e26a15c6ec7d2cdcd3cb8abd96",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/manifest.json",
+      "expected": "7e1cfcf1e979f2cada1dfc4bcc990214084c43b0",
+      "actual": "7e1cfcf1e979f2cada1dfc4bcc990214084c43b0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-audit-correction.json.gz",
+      "expected": "f825e66f691089435a106e998cde6ab6ab5fe16b",
+      "actual": "f825e66f691089435a106e998cde6ab6ab5fe16b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-fixture-contracts.json.gz",
+      "expected": "b650b58484ec57687a3aa65c862f80a63e78b951",
+      "actual": "b650b58484ec57687a3aa65c862f80a63e78b951",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-fixture-contracts.log.gz",
+      "expected": "c8f913b206ec122b9d20be0c1bf113e611d30a6a",
+      "actual": "c8f913b206ec122b9d20be0c1bf113e611d30a6a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-format-corrected.json.gz",
+      "expected": "4fbb08879ddcbe5dfb725919ec62570f707fd45b",
+      "actual": "4fbb08879ddcbe5dfb725919ec62570f707fd45b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-format-corrected.log.gz",
+      "expected": "ba512970f16059088e047fb9bfec632bb1445eaf",
+      "actual": "ba512970f16059088e047fb9bfec632bb1445eaf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-format.json.gz",
+      "expected": "e8f02b7546d7fdd89ee4d8db6daebc8c98ad6eef",
+      "actual": "e8f02b7546d7fdd89ee4d8db6daebc8c98ad6eef",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-format.log.gz",
+      "expected": "e0d80247acd4a88075c107106cea94d356cd8ea6",
+      "actual": "e0d80247acd4a88075c107106cea94d356cd8ea6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-index.json.gz",
+      "expected": "1e68c52c3f425e981481e8d623947f46dc7fec26",
+      "actual": "1e68c52c3f425e981481e8d623947f46dc7fec26",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-index.log.gz",
+      "expected": "715bf1f44680d68c09f47936d576795835c052a1",
+      "actual": "715bf1f44680d68c09f47936d576795835c052a1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-integration-audit.initial.ts.gz",
+      "expected": "87fa5d7acd040129cbffaa29d30802ca0f009e49",
+      "actual": "87fa5d7acd040129cbffaa29d30802ca0f009e49",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-integration-audit.json.gz",
+      "expected": "d64533bc0e7fc6fb61bd8b440933e1f12ce780c6",
+      "actual": "d64533bc0e7fc6fb61bd8b440933e1f12ce780c6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-integration-audit.log.gz",
+      "expected": "92313d9710fc18f0ee4e718c42a3c3b10425f0fe",
+      "actual": "92313d9710fc18f0ee4e718c42a3c3b10425f0fe",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-integration-audit.ts.gz",
+      "expected": "f471cef6c152830e431e798cb8bde0e58de88d97",
+      "actual": "f471cef6c152830e431e798cb8bde0e58de88d97",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-lint.json.gz",
+      "expected": "2047ecc3168205f5a3f541376f264ebc00c08406",
+      "actual": "2047ecc3168205f5a3f541376f264ebc00c08406",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-lint.log.gz",
+      "expected": "60f2c949c97c2725aed4c2401ae550a1a44441f2",
+      "actual": "60f2c949c97c2725aed4c2401ae550a1a44441f2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-policy-result.json.gz",
+      "expected": "c846a9cb3b066ff35e2a3e9151c40a9ee8943c70",
+      "actual": "c846a9cb3b066ff35e2a3e9151c40a9ee8943c70",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-policy.json.gz",
+      "expected": "6b42147b23c050b63b3d659ba31d635297c357c4",
+      "actual": "6b42147b23c050b63b3d659ba31d635297c357c4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-policy.log.gz",
+      "expected": "36825cb472d732c349affdffe955a439647cf4c5",
+      "actual": "36825cb472d732c349affdffe955a439647cf4c5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-policy.ts.gz",
+      "expected": "aea224b74245c95235d162805878c57812770357",
+      "actual": "aea224b74245c95235d162805878c57812770357",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-tested-source.json.gz",
+      "expected": "335655ca575b0fd915362e5d3048f3da456cd21b",
+      "actual": "335655ca575b0fd915362e5d3048f3da456cd21b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-types.json.gz",
+      "expected": "b48528d5a68c255517feae34d5787df1e113a121",
+      "actual": "b48528d5a68c255517feae34d5787df1e113a121",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-312-integration/spn123-312-types.log.gz",
+      "expected": "b4c423def9d2b0d5e28b7b38556f5019ee3e2a14",
+      "actual": "b4c423def9d2b0d5e28b7b38556f5019ee3e2a14",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/manifest.json",
+      "expected": "bf3800eab60b9369214c40ed108b279be825a86a",
+      "actual": "bf3800eab60b9369214c40ed108b279be825a86a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-contracts.json",
+      "expected": "974da887b3a4b7929fa4d402605b71700967c1c0",
+      "actual": "974da887b3a4b7929fa4d402605b71700967c1c0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-contracts.log.gz",
+      "expected": "e0674db98ef1c1f72ba58818cb0ffac09d62a82d",
+      "actual": "e0674db98ef1c1f72ba58818cb0ffac09d62a82d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-format-check-v2.json",
+      "expected": "c26fb33ad823c95a55e0717bc22c3f927115170a",
+      "actual": "c26fb33ad823c95a55e0717bc22c3f927115170a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-format-check-v2.log.gz",
+      "expected": "fb739eed422bfea43c631f05d22772826ac54dd0",
+      "actual": "fb739eed422bfea43c631f05d22772826ac54dd0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-format-check.json",
+      "expected": "278b7d4b450a0a4e632700799555dd1b75f5cab6",
+      "actual": "278b7d4b450a0a4e632700799555dd1b75f5cab6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-format-check.log.gz",
+      "expected": "c7289a4b55041e5d2e88ae15a7a8653a7e199132",
+      "actual": "c7289a4b55041e5d2e88ae15a7a8653a7e199132",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-format.json",
+      "expected": "a73441d475746c79c4e75a758192d94de3eb13c6",
+      "actual": "a73441d475746c79c4e75a758192d94de3eb13c6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-format.log.gz",
+      "expected": "0cbe99f2b11409c44617990648f51e3de25dfe32",
+      "actual": "0cbe99f2b11409c44617990648f51e3de25dfe32",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-lint.json",
+      "expected": "40a682e0d0a60785b3b70b53267e6f0133cffe46",
+      "actual": "40a682e0d0a60785b3b70b53267e6f0133cffe46",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-lint.log.gz",
+      "expected": "aef47a4401b935c4668963b66ada1b169a90976d",
+      "actual": "aef47a4401b935c4668963b66ada1b169a90976d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-negative-identity.json",
+      "expected": "107218fa2a824924a3f37da21798976861c83392",
+      "actual": "107218fa2a824924a3f37da21798976861c83392",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-negative.json",
+      "expected": "9102bfecf88f680bb085d736b4e6e3e92696b592",
+      "actual": "9102bfecf88f680bb085d736b4e6e3e92696b592",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-negative.log.gz",
+      "expected": "461a0adb4c08cd79416cb720a4e34849ff4e0152",
+      "actual": "461a0adb4c08cd79416cb720a4e34849ff4e0152",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-negative.ts.gz",
+      "expected": "cdf0d85b87213235723f724f74680fd0e4aa7f78",
+      "actual": "cdf0d85b87213235723f724f74680fd0e4aa7f78",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-overhead-sample.json.gz",
+      "expected": "1175eeaf32b9f2c28d06c7ef32e26a1f56e8ed60",
+      "actual": "1175eeaf32b9f2c28d06c7ef32e26a1f56e8ed60",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-overhead.json",
+      "expected": "5987b4e3c202014821816f736f00a52a87df408b",
+      "actual": "5987b4e3c202014821816f736f00a52a87df408b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-overhead.log.gz",
+      "expected": "1ebcbd1cff62e82dcebd9f951879c6c03174013a",
+      "actual": "1ebcbd1cff62e82dcebd9f951879c6c03174013a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-record-format.json",
+      "expected": "0db9b0d4c6504eb9f274bc6ab75788330ed7dd89",
+      "actual": "0db9b0d4c6504eb9f274bc6ab75788330ed7dd89",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-record-format.log.gz",
+      "expected": "aa40f3ec94041778fed84951ddf26d2dbd8493d5",
+      "actual": "aa40f3ec94041778fed84951ddf26d2dbd8493d5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-source-identity.json",
+      "expected": "ba7930e6a12279e36f95edaca7f368f8514c6b81",
+      "actual": "ba7930e6a12279e36f95edaca7f368f8514c6b81",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-types.json",
+      "expected": "b2983c2f9bc7872d3258a44ef189f4f62a0b625e",
+      "actual": "b2983c2f9bc7872d3258a44ef189f4f62a0b625e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-ack-types.log.gz",
+      "expected": "b74c8c7267fa9f27db3429b4d65050dce54ccd40",
+      "actual": "b74c8c7267fa9f27db3429b4d65050dce54ccd40",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-b-cae5a586-supported.json",
+      "expected": "9f97ba3f952fba3c5693831c7f27b764fced3464",
+      "actual": "9f97ba3f952fba3c5693831c7f27b764fced3464",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-b-cae5a586-supported.log.gz",
+      "expected": "aadece3fb6c2c06364476e1a987e4313940d007b",
+      "actual": "aadece3fb6c2c06364476e1a987e4313940d007b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-b-cae5a586.json",
+      "expected": "f832dcc0adcc81b157e8cc0abd8143ba9fcb7da0",
+      "actual": "f832dcc0adcc81b157e8cc0abd8143ba9fcb7da0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-b-cae5a586.log.gz",
+      "expected": "a10ac5be4151456262b471e59702c0ba01d90ec5",
+      "actual": "a10ac5be4151456262b471e59702c0ba01d90ec5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5-a-stale-ack.json",
+      "expected": "f67414a09b3160658f3d3ec23b32221438c80e2a",
+      "actual": "f67414a09b3160658f3d3ec23b32221438c80e2a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5-a-stale-ack.log.gz",
+      "expected": "b3fd11a2a9cb71810fbc1614573ac1a52874e70e",
+      "actual": "b3fd11a2a9cb71810fbc1614573ac1a52874e70e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5-a-stale-ack.ts.gz",
+      "expected": "66f786d8c0ccaae96d3a4c0e00c2633a9828b1d8",
+      "actual": "66f786d8c0ccaae96d3a4c0e00c2633a9828b1d8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5-a.json",
+      "expected": "677477dfde1fc569717ea24a3be9eee5ba489e44",
+      "actual": "677477dfde1fc569717ea24a3be9eee5ba489e44",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5-a.log.gz",
+      "expected": "ae2519a463d1b9d9ef762beca2ee05b0fe0ad6bb",
+      "actual": "ae2519a463d1b9d9ef762beca2ee05b0fe0ad6bb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5a586-a.md.gz",
+      "expected": "6337fcd2661f59c8cb2ec128ce1dd9eb469ccde6",
+      "actual": "6337fcd2661f59c8cb2ec128ce1dd9eb469ccde6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ack-repair/spn123-review-cae5a586-b.md.gz",
+      "expected": "b0412131f7a1dcf87eda855ef008c212464da058",
+      "actual": "b0412131f7a1dcf87eda855ef008c212464da058",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/manifest.json",
+      "expected": "898c6b6add63680ee25351815b7a32207e29dacd",
+      "actual": "898c6b6add63680ee25351815b7a32207e29dacd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-contracts.json.gz",
+      "expected": "70cc77abbdba0ba1bfd5a41b9b260d2e50fc7e27",
+      "actual": "70cc77abbdba0ba1bfd5a41b9b260d2e50fc7e27",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-contracts.log.gz",
+      "expected": "dc0129536f9d04ed97cea9dde5927c1217311ec5",
+      "actual": "dc0129536f9d04ed97cea9dde5927c1217311ec5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-format.json.gz",
+      "expected": "05e33b4e294d223e0b38240542fb4fe126a14548",
+      "actual": "05e33b4e294d223e0b38240542fb4fe126a14548",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-format.log.gz",
+      "expected": "5e6612e76d0166492b9033a7d0dc5c47a8f1e0bd",
+      "actual": "5e6612e76d0166492b9033a7d0dc5c47a8f1e0bd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-index.json.gz",
+      "expected": "1fd7de8ada482eaf8706ccaf48c58c0adc0b2772",
+      "actual": "1fd7de8ada482eaf8706ccaf48c58c0adc0b2772",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-index.log.gz",
+      "expected": "f477544cb62a9b3915c875809a7555068345c97c",
+      "actual": "f477544cb62a9b3915c875809a7555068345c97c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-integration-audit.json.gz",
+      "expected": "0fb189ca4f57b35b6211d8e82670a58ae9ec4b0d",
+      "actual": "0fb189ca4f57b35b6211d8e82670a58ae9ec4b0d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-lint.json.gz",
+      "expected": "62f1e7a1fd6be71ea39cfb235879843d52f41b2d",
+      "actual": "62f1e7a1fd6be71ea39cfb235879843d52f41b2d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-lint.log.gz",
+      "expected": "d9274ed072dddbe62eb062b7040ea176e4011115",
+      "actual": "d9274ed072dddbe62eb062b7040ea176e4011115",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead-input-audit.json.gz",
+      "expected": "4d7386d1afb35e1a9b25e099e3f5c3ebd80e33eb",
+      "actual": "4d7386d1afb35e1a9b25e099e3f5c3ebd80e33eb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead-sample.json.gz",
+      "expected": "dd08facbf060c443fbd395a23604e8661332e3f4",
+      "actual": "dd08facbf060c443fbd395a23604e8661332e3f4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead.json.gz",
+      "expected": "b955df60bf6979676bcbaf8dfcc8fddc7fdefa5a",
+      "actual": "b955df60bf6979676bcbaf8dfcc8fddc7fdefa5a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead.log.gz",
+      "expected": "df3611aa3a919790bd8269fe9d4efd6ed6dad412",
+      "actual": "df3611aa3a919790bd8269fe9d4efd6ed6dad412",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy-result.json.gz",
+      "expected": "a42d9de91c2da968263048f3a07b1467f31687cf",
+      "actual": "a42d9de91c2da968263048f3a07b1467f31687cf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy.json.gz",
+      "expected": "4892f77592f9a5a95168f0752bac79a48c433187",
+      "actual": "4892f77592f9a5a95168f0752bac79a48c433187",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy.log.gz",
+      "expected": "86abf8407798a91645d46fe85a7e386be7d68ca2",
+      "actual": "86abf8407798a91645d46fe85a7e386be7d68ca2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy.ts.gz",
+      "expected": "47e363726ef0dde2333f63d31f749e55fc152c81",
+      "actual": "47e363726ef0dde2333f63d31f749e55fc152c81",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-precommit-whitespace.json.gz",
+      "expected": "5f79c2bfa6696c52d36cce062629c116bc6cb0c0",
+      "actual": "5f79c2bfa6696c52d36cce062629c116bc6cb0c0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-types.json.gz",
+      "expected": "6fd0635c1d5ea92f20c1042ec3bb550968d31ab4",
+      "actual": "6fd0635c1d5ea92f20c1042ec3bb550968d31ab4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-types.log.gz",
+      "expected": "d3d8d7e563d94eec22e31c376fb0e79b16c035e2",
+      "actual": "d3d8d7e563d94eec22e31c376fb0e79b16c035e2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-c1-integration/tested-source.json.gz",
+      "expected": "64ff33189c5727a31bf61e52cae0db28b15f267f",
+      "actual": "64ff33189c5727a31bf61e52cae0db28b15f267f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/manifest.json",
+      "expected": "5170e57093cd557f98633ffa9ba247ece2ecffe4",
+      "actual": "5170e57093cd557f98633ffa9ba247ece2ecffe4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-contracts.json",
+      "expected": "da03c08150b5e3dc523867993ad1fe358931636d",
+      "actual": "da03c08150b5e3dc523867993ad1fe358931636d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-contracts.log.gz",
+      "expected": "c4d4334b6e04455b9aef3754451b17bc648ec3ca",
+      "actual": "c4d4334b6e04455b9aef3754451b17bc648ec3ca",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-format.json",
+      "expected": "d5df4e8270cc74c348600fc9325e5a36dc5c4030",
+      "actual": "d5df4e8270cc74c348600fc9325e5a36dc5c4030",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-format.log.gz",
+      "expected": "a69a23e37d47e3f5852fd63eddbcc13fe2c297f5",
+      "actual": "a69a23e37d47e3f5852fd63eddbcc13fe2c297f5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-index.json",
+      "expected": "38dee76129a9eaf535e51915e3386f1409b270bf",
+      "actual": "38dee76129a9eaf535e51915e3386f1409b270bf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-index.log.gz",
+      "expected": "2b96e07e7475b93898ffb1b4a3c8dadc1a505611",
+      "actual": "2b96e07e7475b93898ffb1b4a3c8dadc1a505611",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-integration-source-audit.json.gz",
+      "expected": "4ea6444db43afa69b879699541aa000dfdbbf7e5",
+      "actual": "4ea6444db43afa69b879699541aa000dfdbbf7e5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-lint.json",
+      "expected": "9317424d0574031975c9d9a9449c78e91726f62c",
+      "actual": "9317424d0574031975c9d9a9449c78e91726f62c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-lint.log.gz",
+      "expected": "7959ccaaf835757b3f5d6c6dbef5c1d1bc71dda2",
+      "actual": "7959ccaaf835757b3f5d6c6dbef5c1d1bc71dda2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-quality-v2.json",
+      "expected": "eaa08a829e91dbe4df38608ae4f32b6c403b4a1b",
+      "actual": "eaa08a829e91dbe4df38608ae4f32b6c403b4a1b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-quality-v2.log.gz",
+      "expected": "231f54cd2499caf618c18a7db5788d05485a2c57",
+      "actual": "231f54cd2499caf618c18a7db5788d05485a2c57",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-quality.json",
+      "expected": "46f68fabd1ec9277bb6bfb22a383e3a7ddd59fa7",
+      "actual": "46f68fabd1ec9277bb6bfb22a383e3a7ddd59fa7",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-ec42-integration/spn123-ec42-quality.log.gz",
+      "expected": "25ffbb97c1c0a979bd072aa7e17d5ad244d3a41d",
+      "actual": "25ffbb97c1c0a979bd072aa7e17d5ad244d3a41d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/manifest.json",
+      "expected": "546b56aa6799afab8733abf993a519cb918018b6",
+      "actual": "546b56aa6799afab8733abf993a519cb918018b6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-docs-sdk.json",
+      "expected": "51921edd73ef7f86149be3067e673ef0dd1036f1",
+      "actual": "51921edd73ef7f86149be3067e673ef0dd1036f1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-docs-sdk.log.gz",
+      "expected": "db687f7f4e5d1c1c8d79af7112671dc08fd1948a",
+      "actual": "db687f7f4e5d1c1c8d79af7112671dc08fd1948a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-index.json",
+      "expected": "0e50e562d5b8d45094c4fc0030a966d8fec64abc",
+      "actual": "0e50e562d5b8d45094c4fc0030a966d8fec64abc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-index.log.gz",
+      "expected": "9cc4baf0cfea9134de76913e514039fdc1d4fc86",
+      "actual": "9cc4baf0cfea9134de76913e514039fdc1d4fc86",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-overhead-sample.json",
+      "expected": "ec218d7b4c80af9569c43af7bd2970253254eae0",
+      "actual": "ec218d7b4c80af9569c43af7bd2970253254eae0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-overhead.json",
+      "expected": "57acbd74d3778c4a993346862f31af9bd926f8c2",
+      "actual": "57acbd74d3778c4a993346862f31af9bd926f8c2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-overhead.log.gz",
+      "expected": "a50a3e07c7ea530496849c3a48c3a4b355182356",
+      "actual": "a50a3e07c7ea530496849c3a48c3a4b355182356",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-production-contracts.json",
+      "expected": "8691cf285f7b51ee98e0cc04250de4440ab810e3",
+      "actual": "8691cf285f7b51ee98e0cc04250de4440ab810e3",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-production-contracts.log.gz",
+      "expected": "13bcecf7318edcfc55e2caac55d5e043fdcac424",
+      "actual": "13bcecf7318edcfc55e2caac55d5e043fdcac424",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-quality.json",
+      "expected": "54c95c818eb1cc317fa13bdacb112d7d88798053",
+      "actual": "54c95c818eb1cc317fa13bdacb112d7d88798053",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-quality.log.gz",
+      "expected": "c1b1902e33257a540aacface000f1753393bafd4",
+      "actual": "c1b1902e33257a540aacface000f1753393bafd4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-quality.ts.gz",
+      "expected": "a2dc70dee8a1ba5a8ef050baf76a51ebb6384158",
+      "actual": "a2dc70dee8a1ba5a8ef050baf76a51ebb6384158",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-routing-tests.json",
+      "expected": "9d66391e262176c0bc58931149458e20fa6ec9c2",
+      "actual": "9d66391e262176c0bc58931149458e20fa6ec9c2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-routing-tests.log.gz",
+      "expected": "18df98a90d53be2e55d42bb39fbce0e6263c9b8a",
+      "actual": "18df98a90d53be2e55d42bb39fbce0e6263c9b8a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-final-source-reuse.json",
+      "expected": "863ee7fcbb9ddd40120bce3db3954ef0d25b2fea",
+      "actual": "863ee7fcbb9ddd40120bce3db3954ef0d25b2fea",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-pr220-original.json.gz",
+      "expected": "e5aefe2ab63ab921513a80946be14bcec0657a78",
+      "actual": "e5aefe2ab63ab921513a80946be14bcec0657a78",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-final-local/spn123-root-integration-e0ba8a1b.json",
+      "expected": "cd7ac84e7f928d3feeb6de1941d81ac23983e488",
+      "actual": "cd7ac84e7f928d3feeb6de1941d81ac23983e488",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-mobile-475f656-first-attempt.json",
+      "expected": "1f57f149dc9bf038d3bea23869a96a08e00a6693",
+      "actual": "1f57f149dc9bf038d3bea23869a96a08e00a6693",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-mobile-first-attempt.json",
+      "expected": "3e01f36821cb3ac8b3845980b6c5897fdb2c5ad2",
+      "actual": "3e01f36821cb3ac8b3845980b6c5897fdb2c5ad2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-native-marker-proof.json",
+      "expected": "9dd17cf66e7f2b5cd6fcf3be3065e9c26d84e004",
+      "actual": "9dd17cf66e7f2b5cd6fcf3be3065e9c26d84e004",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-native-marker-proof.zip",
+      "expected": "0aa64b8c45384203b9394599d5ab6a17461be0ac",
+      "actual": "0aa64b8c45384203b9394599d5ab6a17461be0ac",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/README.md",
+      "expected": "10ee49b0b075b5f400627029dae17ee6f841f660",
+      "actual": "10ee49b0b075b5f400627029dae17ee6f841f660",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/callback-job.log.gz",
+      "expected": "07d01359d382c2b55e787109473f84154308f6ee",
+      "actual": "07d01359d382c2b55e787109473f84154308f6ee",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/ci-artifacts.json",
+      "expected": "eb616a8cc6f94e7e2e832592517bd60ebd4c6e8d",
+      "actual": "eb616a8cc6f94e7e2e832592517bd60ebd4c6e8d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/ci-jobs.json",
+      "expected": "90aa1df1fc3a9036b772ce602034995660359bf4",
+      "actual": "90aa1df1fc3a9036b772ce602034995660359bf4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/ci-run.json",
+      "expected": "c5dda2986123d0642e1a24da124d3361d4228e46",
+      "actual": "c5dda2986123d0642e1a24da124d3361d4228e46",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/install-resource-abort.json",
+      "expected": "d2cf0f97ce21fce516492d2b6198d9ae4000a960",
+      "actual": "d2cf0f97ce21fce516492d2b6198d9ae4000a960",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/install-resource-abort.log.gz",
+      "expected": "e0d56422e477f1eb42413b2b37bd8f6b555ea6a2",
+      "actual": "e0d56422e477f1eb42413b2b37bd8f6b555ea6a2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/integrated-native-controls-watchdog.json",
+      "expected": "e7ba40997066418f2c9e3e9e501580ef6440970d",
+      "actual": "e7ba40997066418f2c9e3e9e501580ef6440970d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/integrated-native-controls.log.gz",
+      "expected": "8306efb13764bb23efeae64b8b64eda1a64585f8",
+      "actual": "8306efb13764bb23efeae64b8b64eda1a64585f8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-format-watchdog.json",
+      "expected": "97cfa8c623a9967148f4b7a42886816c3c611cf4",
+      "actual": "97cfa8c623a9967148f4b7a42886816c3c611cf4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-format.log.gz",
+      "expected": "97d579b09f557b4a0e24a01f119c14bd9f66ece1",
+      "actual": "97d579b09f557b4a0e24a01f119c14bd9f66ece1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-probe-watchdog.json",
+      "expected": "ebff319c4897a96ed7761796ad28aee8ec01f91e",
+      "actual": "ebff319c4897a96ed7761796ad28aee8ec01f91e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-probe.json",
+      "expected": "b5a3022b206bb5a405877e426a86b4f9642b4eec",
+      "actual": "b5a3022b206bb5a405877e426a86b4f9642b4eec",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-probe.log.gz",
+      "expected": "4907ff7bae6b49d31cf6f96cfc2a6a80317f5f33",
+      "actual": "4907ff7bae6b49d31cf6f96cfc2a6a80317f5f33",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-tests-watchdog.json",
+      "expected": "601fe3fe59b92d18835669b77464b1091ab760aa",
+      "actual": "601fe3fe59b92d18835669b77464b1091ab760aa",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-tests.log.gz",
+      "expected": "da95fa4af096414f33952617c1506c3226cb719d",
+      "actual": "da95fa4af096414f33952617c1506c3226cb719d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-types-watchdog.json",
+      "expected": "cb0bf60f4c1289798b73a93d74cc839723055502",
+      "actual": "cb0bf60f4c1289798b73a93d74cc839723055502",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/loader-types.log.gz",
+      "expected": "b4cdd4937d07fc257ab5160da3e1321142d2ea30",
+      "actual": "b4cdd4937d07fc257ab5160da3e1321142d2ea30",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/manifest.json",
+      "expected": "4a4ca13a7590b6a549cf158da2588a9b8604af11",
+      "actual": "4a4ca13a7590b6a549cf158da2588a9b8604af11",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/mobile-13387921236.zip",
+      "expected": "07b5c0ad4da48e6b1bacbf3b8210ba78a2ff1751",
+      "actual": "07b5c0ad4da48e6b1bacbf3b8210ba78a2ff1751",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/mobile-job.log.gz",
+      "expected": "66f7a89f3d6b47500014e47823228b7576f5052f",
+      "actual": "66f7a89f3d6b47500014e47823228b7576f5052f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/native-artifacts.json",
+      "expected": "b4d3dbf577237e8c7c78c92930ca314da38860dd",
+      "actual": "b4d3dbf577237e8c7c78c92930ca314da38860dd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/native-jobs.json",
+      "expected": "a048d4fddef3b53e7b17723af85f8d86617df551",
+      "actual": "a048d4fddef3b53e7b17723af85f8d86617df551",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/native-run.json",
+      "expected": "aee67a942d0e1d910a56063423333acb3b2325b1",
+      "actual": "aee67a942d0e1d910a56063423333acb3b2325b1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/pointer-equality-watchdog.json",
+      "expected": "5bfa83b10cf2aa18711b707d9d5ed4ba83a33bc2",
+      "actual": "5bfa83b10cf2aa18711b707d9d5ed4ba83a33bc2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/pointer-equality.json",
+      "expected": "70c217ba333e2727ba7bf0804ce8383293ffec6c",
+      "actual": "70c217ba333e2727ba7bf0804ce8383293ffec6c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/pointer-equality.log.gz",
+      "expected": "3e04f815b40cb96de53b8a83a5b6dae0381204ec",
+      "actual": "3e04f815b40cb96de53b8a83a5b6dae0381204ec",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/probe-loader.ts",
+      "expected": "5ecf08ad1a01a28dd658f715efe67c75e55a51ba",
+      "actual": "5ecf08ad1a01a28dd658f715efe67c75e55a51ba",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/probe-pointer-equality.ts",
+      "expected": "1e38f7428e933abb01644707a501444fa788097e",
+      "actual": "1e38f7428e933abb01644707a501444fa788097e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/provisional-review-a.md",
+      "expected": "fe360e5700436dfa1f5f1a1e9816faeea44621a1",
+      "actual": "fe360e5700436dfa1f5f1a1e9816faeea44621a1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/safari-13386315405.zip",
+      "expected": "5297f3ce07d068dd3c06d9ccce06c8d8cd6c006c",
+      "actual": "5297f3ce07d068dd3c06d9ccce06c8d8cd6c006c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-null-loader/safari-job.log.gz",
+      "expected": "d09c899a6781af4638b2a5161e817467f834dce8",
+      "actual": "d09c899a6781af4638b2a5161e817467f834dce8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-overhead.json",
+      "expected": "0c7daffd725fb8cbddaeb9b101e60aa0d4b64754",
+      "actual": "0c7daffd725fb8cbddaeb9b101e60aa0d4b64754",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/manifest.json",
+      "expected": "229a58bd4c5a42af735791c93ddc55b9db07894c",
+      "actual": "229a58bd4c5a42af735791c93ddc55b9db07894c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-dependencies.json",
+      "expected": "dfdc87ad7420fee41d77c8ed508ffc32263ba527",
+      "actual": "dfdc87ad7420fee41d77c8ed508ffc32263ba527",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-native-controls.json",
+      "expected": "52d9d4892f84d629f2815dd9636c9697b62952f0",
+      "actual": "52d9d4892f84d629f2815dd9636c9697b62952f0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-native-controls.log.gz",
+      "expected": "a7a8e949fa9a14464ba232181c65984fb9bcfcc2",
+      "actual": "a7a8e949fa9a14464ba232181c65984fb9bcfcc2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-sources.json",
+      "expected": "e0bfdd41d732f2ff1170b12466874a8abcaa6505",
+      "actual": "e0bfdd41d732f2ff1170b12466874a8abcaa6505",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-sync-native.json",
+      "expected": "a98043842bc5e0a7ecb02a7138d9b7cc39341ef0",
+      "actual": "a98043842bc5e0a7ecb02a7138d9b7cc39341ef0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-sync-native.log.gz",
+      "expected": "de3c38d5025aef39d51512f6a2911ce56708aa1d",
+      "actual": "de3c38d5025aef39d51512f6a2911ce56708aa1d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-types.json",
+      "expected": "72a0e88fa44c46d64ec46537da905c9e5b3a4cdc",
+      "actual": "72a0e88fa44c46d64ec46537da905c9e5b3a4cdc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-resume-types.log.gz",
+      "expected": "2603b2ab5b25a8dab43b9d43d0fd3c8fa1c3bc15",
+      "actual": "2603b2ab5b25a8dab43b9d43d0fd3c8fa1c3bc15",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-production-resume/spn123-vitest.config.ts.gz",
+      "expected": "2e6fdfc592bae92782e58b7f6369928ba2f9e569",
+      "actual": "2e6fdfc592bae92782e58b7f6369928ba2f9e569",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/firefox-deletion-local.json",
+      "expected": "3efc742931e3a3623efc06ce1a6fc67044a043f4",
+      "actual": "3efc742931e3a3623efc06ce1a6fc67044a043f4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/firefox-deletion-local.zip",
+      "expected": "719488381e480e63edcf6064d33b627f1c703b8d",
+      "actual": "719488381e480e63edcf6064d33b627f1c703b8d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/firefox-first-attempt.json",
+      "expected": "1c742d0a29040d7145949f64adc4add8fc75f9de",
+      "actual": "1c742d0a29040d7145949f64adc4add8fc75f9de",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/history-error-context.md.gz",
+      "expected": "3f0debe68428d06c9bbee22df87cbbdc6737cde6",
+      "actual": "3f0debe68428d06c9bbee22df87cbbdc6737cde6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/history-first-attempt.json",
+      "expected": "71e8f8acd7a4ed6b242d7426753ef0bd5bb6337f",
+      "actual": "71e8f8acd7a4ed6b242d7426753ef0bd5bb6337f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/loader-restore-local.json",
+      "expected": "23ec76051e5df65a2d340406a46868945c3cf5a5",
+      "actual": "23ec76051e5df65a2d340406a46868945c3cf5a5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/loader-restore-local.zip",
+      "expected": "31ef886ed06b773ec7ab962c1a83bbba1cb1e0d6",
+      "actual": "31ef886ed06b773ec7ab962c1a83bbba1cb1e0d6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/local-validation.json",
+      "expected": "bbb944869e35d713e01a56f76f9023c87cc25c7d",
+      "actual": "bbb944869e35d713e01a56f76f9023c87cc25c7d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/local-validation.zip",
+      "expected": "5a79457202d0ab750fb643e77f6f17b257547c1f",
+      "actual": "5a79457202d0ab750fb643e77f6f17b257547c1f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/overhead.json",
+      "expected": "5044737ef4be05279bffc1e70cb1714509862a02",
+      "actual": "5044737ef4be05279bffc1e70cb1714509862a02",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/restore-navigation-first-attempt.json",
+      "expected": "92ed923b8300b9279ce8e967d71fa96582ff6d7e",
+      "actual": "92ed923b8300b9279ce8e967d71fa96582ff6d7e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/restore-navigation-first-attempt.zip",
+      "expected": "a2ecd8df223a645a351b674abc7e21a587b3cabc",
+      "actual": "a2ecd8df223a645a351b674abc7e21a587b3cabc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/safari-loader-first-attempt.json",
+      "expected": "979386baa69e66fda1b054520213f4fc6f836270",
+      "actual": "979386baa69e66fda1b054520213f4fc6f836270",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-resume/safari-loader-first-attempt.zip",
+      "expected": "85fc408f4f1870c93fccabb035f2e89d6d6189bf",
+      "actual": "85fc408f4f1870c93fccabb035f2e89d6d6189bf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/collector-original.ts.gz",
+      "expected": "509e3ee9242632b894018483f63403d0f5cc6d55",
+      "actual": "509e3ee9242632b894018483f63403d0f5cc6d55",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/initial-hosted-checkpoint.tar.gz",
+      "expected": "93687f5d735f9b2f987032c64ae3024224398c46",
+      "actual": "93687f5d735f9b2f987032c64ae3024224398c46",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/manifest.json",
+      "expected": "bdaa80ef3f62054b36c0148ace83a97d12bafd30",
+      "actual": "bdaa80ef3f62054b36c0148ace83a97d12bafd30",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-format.json.gz",
+      "expected": "f7f6b565baa32a76da8156b50430c3a9d04b4e67",
+      "actual": "f7f6b565baa32a76da8156b50430c3a9d04b4e67",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-format.log.gz",
+      "expected": "9707ec1a87406106ab588d1df2853cc63a0565e0",
+      "actual": "9707ec1a87406106ab588d1df2853cc63a0565e0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-lint.json.gz",
+      "expected": "09b7efc990c7e4554556f02c50cdaa3045943446",
+      "actual": "09b7efc990c7e4554556f02c50cdaa3045943446",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-lint.log.gz",
+      "expected": "146a42c78e27828f700d10df60e98080c1bfb2af",
+      "actual": "146a42c78e27828f700d10df60e98080c1bfb2af",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-source.json.gz",
+      "expected": "63542e84cd08b82625991bc1d7cd12c37e62e812",
+      "actual": "63542e84cd08b82625991bc1d7cd12c37e62e812",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-types.json.gz",
+      "expected": "023d9045c6905caf68b27d895236a8bbd0b6cccd",
+      "actual": "023d9045c6905caf68b27d895236a8bbd0b6cccd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/implementation/evidence/SPN-123-writefile-repair/spn123-writefile-types.log.gz",
+      "expected": "5d2903c2afd24d058c39ce2c6fa2b59a6d3cfe90",
+      "actual": "5d2903c2afd24d058c39ce2c6fa2b59a6d3cfe90",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/accepted-prerequisite-integration.json",
+      "expected": "26fd66cc3919006e3a61ded735e95f340b124b13",
+      "actual": "26fd66cc3919006e3a61ded735e95f340b124b13",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/accepted-prerequisite-local-checks.json",
+      "expected": "7f016ad9af352c0fac3cf672d88b6028bdb4fc16",
+      "actual": "7f016ad9af352c0fac3cf672d88b6028bdb4fc16",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/c1-local-checks.json",
+      "expected": "06c91ee329b79f438d65512248b12aeab1b02fed",
+      "actual": "06c91ee329b79f438d65512248b12aeab1b02fed",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/c1-source-identity.json",
+      "expected": "351efe4732f2ab410838433490582f74d7050837",
+      "actual": "351efe4732f2ab410838433490582f74d7050837",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/collection-driver.ts",
+      "expected": "b54eef3ec6dbf4da891d9a82775728527c8b5288",
+      "actual": "b54eef3ec6dbf4da891d9a82775728527c8b5288",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/ec42-local-checks.json",
+      "expected": "4a37844a75192ca3bdd9e08bb83f87fb3606cf27",
+      "actual": "4a37844a75192ca3bdd9e08bb83f87fb3606cf27",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/ec42-source-identity.json",
+      "expected": "32fe1a887fe66c2358d0af6d83400ee3ac2bff3f",
+      "actual": "32fe1a887fe66c2358d0af6d83400ee3ac2bff3f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/final-base-identity.json",
+      "expected": "3815b368e7ff43af004229925005ede5187785d9",
+      "actual": "3815b368e7ff43af004229925005ede5187785d9",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/hosted-tested-merge-d9afd471.json",
+      "expected": "b743652b1b886ae1571efd980c39604725824664",
+      "actual": "b743652b1b886ae1571efd980c39604725824664",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/hosted-typecheck-43554616516.log",
+      "expected": "e21e1a706ae18cc3f99eea60786df32d35b58d1c",
+      "actual": "e21e1a706ae18cc3f99eea60786df32d35b58d1c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/hosted-typecheck-first-failure.json",
+      "expected": "ac2b4924e83f5058584c79815aac1e949490f8dd",
+      "actual": "ac2b4924e83f5058584c79815aac1e949490f8dd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/jobs-41875200026.json",
+      "expected": "2d4aea6f3a04d3879b5907f05c335e0119d6f7b2",
+      "actual": "2d4aea6f3a04d3879b5907f05c335e0119d6f7b2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/jobs-41875200422.json",
+      "expected": "3f50f4f95d1a5d17585016c47bc89c9bcba1d72d",
+      "actual": "3f50f4f95d1a5d17585016c47bc89c9bcba1d72d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/jobs-41875200679.json",
+      "expected": "2fcf90b80f1cb3e0d70b675a09d5f6a118f3a108",
+      "actual": "2fcf90b80f1cb3e0d70b675a09d5f6a118f3a108",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/jobs-41875292847.json",
+      "expected": "5862aa3ad7096c39626391645f76704cfa799467",
+      "actual": "5862aa3ad7096c39626391645f76704cfa799467",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/jobs-41878041443.json",
+      "expected": "025f06f9d8d0a0dc3b3f02e6902dfc5aef2fa565",
+      "actual": "025f06f9d8d0a0dc3b3f02e6902dfc5aef2fa565",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/jobs-41878643243.json",
+      "expected": "395d4633424c19ada22337d2ac2278e295a93552",
+      "actual": "395d4633424c19ada22337d2ac2278e295a93552",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/local-checks.json",
+      "expected": "e6f6ebfca8c195416ad3b7817f79f9d4f33000fb",
+      "actual": "e6f6ebfca8c195416ad3b7817f79f9d4f33000fb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/portable-repair-checks.json",
+      "expected": "a26eb0a5f87361cc19fa1c74ee823e233f27f42a",
+      "actual": "a26eb0a5f87361cc19fa1c74ee823e233f27f42a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/registration-source-identity.json",
+      "expected": "ba2f45dd723c43472ee9387b38dda5a691edf3cb",
+      "actual": "ba2f45dd723c43472ee9387b38dda5a691edf3cb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/review-a-a1beeea1.md",
+      "expected": "a1fe0263278608b9fddaaa1573e563884e58263b",
+      "actual": "a1fe0263278608b9fddaaa1573e563884e58263b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/root-integration-c03e7d6f.json",
+      "expected": "7f90bc10223faab78db77850a1d4089f8a519821",
+      "actual": "7f90bc10223faab78db77850a1d4089f8a519821",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/root-terminal-99-archive-audit.json",
+      "expected": "aa24610b7f4254e441d5c5ce87083bd78d6274c6",
+      "actual": "aa24610b7f4254e441d5c5ce87083bd78d6274c6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/root-terminal-archive-audit-5356f085.json",
+      "expected": "0b54ff6020e0c798ccbb995a5947554a99953e16",
+      "actual": "0b54ff6020e0c798ccbb995a5947554a99953e16",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/run-41875200026.json",
+      "expected": "59e5afc37eb25fa7f14b13e4ab079ab5286dfc03",
+      "actual": "59e5afc37eb25fa7f14b13e4ab079ab5286dfc03",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/run-41875200422.json",
+      "expected": "c8f128a88e12129554739fd17f3972cf8e672f12",
+      "actual": "c8f128a88e12129554739fd17f3972cf8e672f12",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/run-41875200679.json",
+      "expected": "72739c532728b1dd8f5e866771f4628e6ffbe370",
+      "actual": "72739c532728b1dd8f5e866771f4628e6ffbe370",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/run-41875292847.json",
+      "expected": "b2aef366438c7ba1c3faca9c5eb1a0aa2ff14587",
+      "actual": "b2aef366438c7ba1c3faca9c5eb1a0aa2ff14587",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/run-41878041443.json",
+      "expected": "3346952f8ebfa2922085dd84907fd1eaca7cba67",
+      "actual": "3346952f8ebfa2922085dd84907fd1eaca7cba67",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/run-41878643243.json",
+      "expected": "cf1e13dc9eb9d03f43891853eb06c495db115ec3",
+      "actual": "cf1e13dc9eb9d03f43891853eb06c495db115ec3",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-backlog.json",
+      "expected": "2826da60534dbe47b829c8d8be83763594372977",
+      "actual": "2826da60534dbe47b829c8d8be83763594372977",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-backlog.log",
+      "expected": "02baa1d0807e4aef1503e9f940c8fd4bccc0fc2f",
+      "actual": "02baa1d0807e4aef1503e9f940c8fd4bccc0fc2f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-cleanup.json",
+      "expected": "f679ebb7794beedad5da891dca18b473b2fbd7c5",
+      "actual": "f679ebb7794beedad5da891dca18b473b2fbd7c5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-controls.json",
+      "expected": "e5e8d072403dbf0062138ba9fe583e111fa220f4",
+      "actual": "e5e8d072403dbf0062138ba9fe583e111fa220f4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-controls.log",
+      "expected": "b383c85ef5383da0ea94ac605a966c5f8210046a",
+      "actual": "b383c85ef5383da0ea94ac605a966c5f8210046a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-dependencies.json",
+      "expected": "2415f0126a9a3fb9f66d39c5ce37b40e376f5e0e",
+      "actual": "2415f0126a9a3fb9f66d39c5ce37b40e376f5e0e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-dependencies.log",
+      "expected": "1bfef5c98c08c600fcff0f3fe4696d92e7c28267",
+      "actual": "1bfef5c98c08c600fcff0f3fe4696d92e7c28267",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-format-write.json",
+      "expected": "b310e8c62c36f8a0642fb4148d34a694e1a68434",
+      "actual": "b310e8c62c36f8a0642fb4148d34a694e1a68434",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-format-write.log",
+      "expected": "9d936b210a98e1acbf4ca84c920f945c04f32c61",
+      "actual": "9d936b210a98e1acbf4ca84c920f945c04f32c61",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-format.json",
+      "expected": "faeb4587da6f8db29bc98b8468de902a58530103",
+      "actual": "faeb4587da6f8db29bc98b8468de902a58530103",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-format.log",
+      "expected": "a4db7f1c0f49a341a60b45ecc8975c8f9815b018",
+      "actual": "a4db7f1c0f49a341a60b45ecc8975c8f9815b018",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-index.json",
+      "expected": "4e9381b04bba74caacdb70125eb4a525266cc334",
+      "actual": "4e9381b04bba74caacdb70125eb4a525266cc334",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-index.log",
+      "expected": "d411d6e76a19d2ecf8a72c882f5506c1b2f24749",
+      "actual": "d411d6e76a19d2ecf8a72c882f5506c1b2f24749",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-lint.json",
+      "expected": "17403570b114d3af1d0d66048eeaab71d65a5bf4",
+      "actual": "17403570b114d3af1d0d66048eeaab71d65a5bf4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-lint.log",
+      "expected": "08621863ec2bad95e3d4b3e96f80e7594c8810e4",
+      "actual": "08621863ec2bad95e3d4b3e96f80e7594c8810e4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-types.json",
+      "expected": "4117756e085b25ba8e9e62e40df4bb54c07c0a86",
+      "actual": "4117756e085b25ba8e9e62e40df4bb54c07c0a86",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c1-types.log",
+      "expected": "3422374a6274036aecbaa6d1a4564b7283d58bcc",
+      "actual": "3422374a6274036aecbaa6d1a4564b7283d58bcc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-backlog.json",
+      "expected": "9f52d972c9d7ddece444352950424de131bd315c",
+      "actual": "9f52d972c9d7ddece444352950424de131bd315c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-backlog.log",
+      "expected": "0d7bc7614a5f049913aef38c7cd6a9d3c1523e19",
+      "actual": "0d7bc7614a5f049913aef38c7cd6a9d3c1523e19",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-format-check.json",
+      "expected": "fb91429fd0bb4d28cace4162f598550ebc0eb0f7",
+      "actual": "fb91429fd0bb4d28cace4162f598550ebc0eb0f7",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-format-check.log",
+      "expected": "a282656d4f9de5724eb25a5222664d75516e6d0f",
+      "actual": "a282656d4f9de5724eb25a5222664d75516e6d0f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-format.json",
+      "expected": "5225767f46d7dbfe67dae37c063479adc273286d",
+      "actual": "5225767f46d7dbfe67dae37c063479adc273286d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-format.log",
+      "expected": "f2ff9d8180c913a1fc5d361bba42e1975e50ea20",
+      "actual": "f2ff9d8180c913a1fc5d361bba42e1975e50ea20",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-index.json",
+      "expected": "c7187a0f53a293bdb0872d1a4ce4b738de7841db",
+      "actual": "c7187a0f53a293bdb0872d1a4ce4b738de7841db",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-c525-index.log",
+      "expected": "4a50fa18f72836ca603d4ab039ab32df63e53f57",
+      "actual": "4a50fa18f72836ca603d4ab039ab32df63e53f57",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-backlog-final.json",
+      "expected": "8c8180ef6b016be848269b2b8a0600fcba66601f",
+      "actual": "8c8180ef6b016be848269b2b8a0600fcba66601f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-backlog-final.log",
+      "expected": "fd2592ad845ac5c6de10fbd4559aa4ebc9555332",
+      "actual": "fd2592ad845ac5c6de10fbd4559aa4ebc9555332",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-backlog.log",
+      "expected": "d8465223e4863f91e99764af3a5f0b075ffc3680",
+      "actual": "d8465223e4863f91e99764af3a5f0b075ffc3680",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-collection-summary.json",
+      "expected": "4057a1c31974e1367615b3b6122186b7c717a862",
+      "actual": "4057a1c31974e1367615b3b6122186b7c717a862",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-collection.json",
+      "expected": "c98604ab6aafdde8ffc78e009d5029b90d872a62",
+      "actual": "c98604ab6aafdde8ffc78e009d5029b90d872a62",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-collection.log",
+      "expected": "415826b39c924aa7d26067b095859a0dd754f57f",
+      "actual": "415826b39c924aa7d26067b095859a0dd754f57f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-controls.json",
+      "expected": "9a146e8915640dee7755bcd54be68762df41a60e",
+      "actual": "9a146e8915640dee7755bcd54be68762df41a60e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-controls.log",
+      "expected": "b9c150fe54c0e784f2611d47818314582887e629",
+      "actual": "b9c150fe54c0e784f2611d47818314582887e629",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-final-format.json",
+      "expected": "7a9195efc0dbedbe703742a8686df8a6e25c033b",
+      "actual": "7a9195efc0dbedbe703742a8686df8a6e25c033b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-final-format.log",
+      "expected": "92ed02ad9f48d50ec6eeb637939ce1e3bdf32be1",
+      "actual": "92ed02ad9f48d50ec6eeb637939ce1e3bdf32be1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-format-check.json",
+      "expected": "64b6a2192b2e79e5136fcc863a7ea3f7f5378466",
+      "actual": "64b6a2192b2e79e5136fcc863a7ea3f7f5378466",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-format-check.log",
+      "expected": "ea26bd3ade3b64507a2c43306f9df3405c611dd1",
+      "actual": "ea26bd3ade3b64507a2c43306f9df3405c611dd1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-format-cleanup.json",
+      "expected": "a5255504f3f2ff9bcd2bff5f21c4283019d6e68a",
+      "actual": "a5255504f3f2ff9bcd2bff5f21c4283019d6e68a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-format-repair.json",
+      "expected": "5474aa48e1df30dc006ae75dfe61f4a5a723ba2c",
+      "actual": "5474aa48e1df30dc006ae75dfe61f4a5a723ba2c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-format-repair.log",
+      "expected": "b45dd23f8795fa95d7d2c39ea5352174d672d87a",
+      "actual": "b45dd23f8795fa95d7d2c39ea5352174d672d87a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-lint.json",
+      "expected": "5b7cbc97f06abdd102b018746756f3af76f504bd",
+      "actual": "5b7cbc97f06abdd102b018746756f3af76f504bd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-lint.log",
+      "expected": "7e22cf49527fde1d20fb66eca6c0917c3d0a11d2",
+      "actual": "7e22cf49527fde1d20fb66eca6c0917c3d0a11d2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-pr.log",
+      "expected": "d8465223e4863f91e99764af3a5f0b075ffc3680",
+      "actual": "d8465223e4863f91e99764af3a5f0b075ffc3680",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-typecheck-bounded.json",
+      "expected": "919fc5925c27cfa64c6c14f62105799acfc6b020",
+      "actual": "919fc5925c27cfa64c6c14f62105799acfc6b020",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-typecheck-bounded.log",
+      "expected": "0b31899d94382e150015ec5640fe09082da3bbf0",
+      "actual": "0b31899d94382e150015ec5640fe09082da3bbf0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-typecheck-cleanup.json",
+      "expected": "833856e39aad19f5005fe630570447a56a611aff",
+      "actual": "833856e39aad19f5005fe630570447a56a611aff",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-typecheck.json",
+      "expected": "76c5107cc8b82cf698ec7e809518141a6cd06f91",
+      "actual": "76c5107cc8b82cf698ec7e809518141a6cd06f91",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-typecheck.log",
+      "expected": "3e27ff00054c9e0a42d4ecd3a6d00343ad1a6afe",
+      "actual": "3e27ff00054c9e0a42d4ecd3a6d00343ad1a6afe",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-current-types-cleanup.json",
+      "expected": "34889586d02f9d376822ec83a712abbf0c5f59e0",
+      "actual": "34889586d02f9d376822ec83a712abbf0c5f59e0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-cleanup.json",
+      "expected": "6c794a5794a3d03f7b6a3744efe307b090beab12",
+      "actual": "6c794a5794a3d03f7b6a3744efe307b090beab12",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-controls.json",
+      "expected": "f7226939b07ff5b624f91640ab036e7ee694dd3c",
+      "actual": "f7226939b07ff5b624f91640ab036e7ee694dd3c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-controls.log",
+      "expected": "573124ca23078c3def0d919c62f278004b1d6faa",
+      "actual": "573124ca23078c3def0d919c62f278004b1d6faa",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-dependencies.json",
+      "expected": "2fbf93e3b19880f460c5a5467995fe5907375225",
+      "actual": "2fbf93e3b19880f460c5a5467995fe5907375225",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-dependencies.log",
+      "expected": "305f4d8c3cdb6df722c26e4eac87dc4959851f59",
+      "actual": "305f4d8c3cdb6df722c26e4eac87dc4959851f59",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-format.json",
+      "expected": "ad613e5634943037d408187ac5d113932936d4d2",
+      "actual": "ad613e5634943037d408187ac5d113932936d4d2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-format.log",
+      "expected": "84e53988d4d98c6fcdff01575e678ca9b557ae33",
+      "actual": "84e53988d4d98c6fcdff01575e678ca9b557ae33",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-lint.json",
+      "expected": "6cdba6b4cc818974ad653076c6f1c3120cefb541",
+      "actual": "6cdba6b4cc818974ad653076c6f1c3120cefb541",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-lint.log",
+      "expected": "2383a043ac5090b4bb26b5e221e9ad87b20b4684",
+      "actual": "2383a043ac5090b4bb26b5e221e9ad87b20b4684",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-types.json",
+      "expected": "d2d53579a522a0a75a1e7d38f1969d53759bd926",
+      "actual": "d2d53579a522a0a75a1e7d38f1969d53759bd926",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-d777-types.log",
+      "expected": "ac29abe9b9b9592a3ed11a5aaafd178ed5c2079f",
+      "actual": "ac29abe9b9b9592a3ed11a5aaafd178ed5c2079f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-backlog.json",
+      "expected": "824f474465fc7cec9c015960eab3ed11ab501bde",
+      "actual": "824f474465fc7cec9c015960eab3ed11ab501bde",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-backlog.log",
+      "expected": "06a49e22f4d8e510ba80c123c6a237b3e620fd27",
+      "actual": "06a49e22f4d8e510ba80c123c6a237b3e620fd27",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-cleanup.json",
+      "expected": "5ee33f5a12053119b43a6ad8b65a96606cb79903",
+      "actual": "5ee33f5a12053119b43a6ad8b65a96606cb79903",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-controls.json",
+      "expected": "d2dfad145265e05e693af52716b3b30af6f4a800",
+      "actual": "d2dfad145265e05e693af52716b3b30af6f4a800",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-controls.log",
+      "expected": "39003f66a4255e3f41f66af725e89f41106024ba",
+      "actual": "39003f66a4255e3f41f66af725e89f41106024ba",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-dependencies.json",
+      "expected": "c9acc648c50fdbe3cfb46855f183695e4a2b4b54",
+      "actual": "c9acc648c50fdbe3cfb46855f183695e4a2b4b54",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-dependencies.log",
+      "expected": "575fc8432fbf96e326c956f04a98b2c79ca48da8",
+      "actual": "575fc8432fbf96e326c956f04a98b2c79ca48da8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-format.json",
+      "expected": "f538251b9ebfc59cd22ba2b6f70773d597e119f8",
+      "actual": "f538251b9ebfc59cd22ba2b6f70773d597e119f8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-format.log",
+      "expected": "9169df6db70f547f5cb9ab1c7c2d01c65c04cc22",
+      "actual": "9169df6db70f547f5cb9ab1c7c2d01c65c04cc22",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-lint.json",
+      "expected": "476d984703998dddca1bd84b6c87df2b12f460d7",
+      "actual": "476d984703998dddca1bd84b6c87df2b12f460d7",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-lint.log",
+      "expected": "a6948c22c40dbcf029210f9b8d80938926abeb4b",
+      "actual": "a6948c22c40dbcf029210f9b8d80938926abeb4b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-types.json",
+      "expected": "4fedcbc5a58a83142d5738c4ffe9a6bbc6295ddf",
+      "actual": "4fedcbc5a58a83142d5738c4ffe9a6bbc6295ddf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-df7-types.log",
+      "expected": "639e625b4bbbdacc95c18e6d887109e46473df6a",
+      "actual": "639e625b4bbbdacc95c18e6d887109e46473df6a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-ec42-format.json",
+      "expected": "e3f2d359e24ff664c183be022b939db75ee6597f",
+      "actual": "e3f2d359e24ff664c183be022b939db75ee6597f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-ec42-format.log",
+      "expected": "0c69ab17f932d8a88ad47524fcef3bf26b69c526",
+      "actual": "0c69ab17f932d8a88ad47524fcef3bf26b69c526",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-ec42-index.json",
+      "expected": "2a81e23499bb31e6a6f93d7a7cca6ef3976f494e",
+      "actual": "2a81e23499bb31e6a6f93d7a7cca6ef3976f494e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-ec42-index.log",
+      "expected": "e53bb472c342f879e4f2b034326e2672f360d8c5",
+      "actual": "e53bb472c342f879e4f2b034326e2672f360d8c5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-development.stderr",
+      "expected": "83dc5ab75ecea4bcaf52b5892e07b58af4a6c533",
+      "actual": "83dc5ab75ecea4bcaf52b5892e07b58af4a6c533",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-development.stdout",
+      "expected": "1158605dc0369f532342f8a5d03b5602260377a4",
+      "actual": "1158605dc0369f532342f8a5d03b5602260377a4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-production.stderr",
+      "expected": "83dc5ab75ecea4bcaf52b5892e07b58af4a6c533",
+      "actual": "83dc5ab75ecea4bcaf52b5892e07b58af4a6c533",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-production.stdout",
+      "expected": "fe929e81f89ff4325ffb99c01a00da42b81e5443",
+      "actual": "fe929e81f89ff4325ffb99c01a00da42b81e5443",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-summary.json",
+      "expected": "fe97576c127a4fc0accfee46e83810f650955918",
+      "actual": "fe97576c127a4fc0accfee46e83810f650955918",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-sync-production.stderr",
+      "expected": "6ff6d2bd7c52d022902ffaf84e9557f04a969843",
+      "actual": "6ff6d2bd7c52d022902ffaf84e9557f04a969843",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection-sync-production.stdout",
+      "expected": "903bbf228b1999fb77cb9da210466fef8985a5c5",
+      "actual": "903bbf228b1999fb77cb9da210466fef8985a5c5",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection.json",
+      "expected": "b7298d9374edc6299604f4116e71a981810885e0",
+      "actual": "b7298d9374edc6299604f4116e71a981810885e0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-exact-collection.log",
+      "expected": "8b3ab25fa39412e54b717995dd3663fbdeedef1c",
+      "actual": "8b3ab25fa39412e54b717995dd3663fbdeedef1c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-backlog.json",
+      "expected": "3b03b1d5f4d323d7cb83136b0f0b343934e046a1",
+      "actual": "3b03b1d5f4d323d7cb83136b0f0b343934e046a1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-backlog.log",
+      "expected": "f4d06003f1286eb1c11b921e7221ca0dd55abb14",
+      "actual": "f4d06003f1286eb1c11b921e7221ca0dd55abb14",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-format-check.json",
+      "expected": "8b7ba3fb4649a09acdd4269b7a5385e7804553e1",
+      "actual": "8b7ba3fb4649a09acdd4269b7a5385e7804553e1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-format-check.log",
+      "expected": "1ff1498f63edb19219c034b93969b4e9ea33a8c4",
+      "actual": "1ff1498f63edb19219c034b93969b4e9ea33a8c4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-format.json",
+      "expected": "d41db231c4e326635e08d3ae517acd1d92a22767",
+      "actual": "d41db231c4e326635e08d3ae517acd1d92a22767",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-format.log",
+      "expected": "ba62f64ea76e61d37b4771b16ec4986d3a298716",
+      "actual": "ba62f64ea76e61d37b4771b16ec4986d3a298716",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-lint.json",
+      "expected": "983e48eb0b99f80f01fe86492c189672e5b91228",
+      "actual": "983e48eb0b99f80f01fe86492c189672e5b91228",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-lint.log",
+      "expected": "f808e0218eb371ae4589ca6df7f6ae01259054b6",
+      "actual": "f808e0218eb371ae4589ca6df7f6ae01259054b6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-typecheck.json",
+      "expected": "c3b476cd6a13e5a049e2af6bbd0ec627d50b2e79",
+      "actual": "c3b476cd6a13e5a049e2af6bbd0ec627d50b2e79",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-portable-evidence-typecheck.log",
+      "expected": "109a105fc7e6652f2790593f83a03d822c043a5e",
+      "actual": "109a105fc7e6652f2790593f83a03d822c043a5e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-registration-backlog.json",
+      "expected": "b527d5c02f5d6c05f839b8e26ac8aa3d08006bc2",
+      "actual": "b527d5c02f5d6c05f839b8e26ac8aa3d08006bc2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-registration-backlog.log",
+      "expected": "7e82dac850007bac1c4f900ca570a869ea8f6c55",
+      "actual": "7e82dac850007bac1c4f900ca570a869ea8f6c55",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-registration-index.json",
+      "expected": "c21467341ce9101c581d7cdad1d4db555bc8cf9c",
+      "actual": "c21467341ce9101c581d7cdad1d4db555bc8cf9c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-registration-index.log",
+      "expected": "cb301945ed565771980e26e7bf1809aa34bd8d5d",
+      "actual": "cb301945ed565771980e26e7bf1809aa34bd8d5d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-a-controls-a1beeea1.json",
+      "expected": "30538575ab99ecf8f87c3b7bdfc9c26601cb8b76",
+      "actual": "30538575ab99ecf8f87c3b7bdfc9c26601cb8b76",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-a-controls-a1beeea1.log",
+      "expected": "6f772bf775abd7f605b6a648432f1cdf68c0deca",
+      "actual": "6f772bf775abd7f605b6a648432f1cdf68c0deca",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-b-cleanup.json",
+      "expected": "43ac137a2975395bbc954231443af1b86ec76bdb",
+      "actual": "43ac137a2975395bbc954231443af1b86ec76bdb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-b-controls.json",
+      "expected": "22d7e2039356919bf24ccc3d6ca5c55dedccb4e8",
+      "actual": "22d7e2039356919bf24ccc3d6ca5c55dedccb4e8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-b-controls.log",
+      "expected": "a8e3b4b919755d6e05323567b98eb3668ef0d2bf",
+      "actual": "a8e3b4b919755d6e05323567b98eb3668ef0d2bf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-b-pr.json",
+      "expected": "2622d37b95f484fa518eb53bfe52033000274a2f",
+      "actual": "2622d37b95f484fa518eb53bfe52033000274a2f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-review-b-pr.log",
+      "expected": "025cc17cb31db160acaa043c8c484677b98a6f89",
+      "actual": "025cc17cb31db160acaa043c8c484677b98a6f89",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/review-assets/spn-120-current/spn120-typescript-runtime.json",
+      "expected": "dc5f8d68d6714ebbceb548ba970f983af2f3b5a6",
+      "actual": "dc5f8d68d6714ebbceb548ba970f983af2f3b5a6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/todo/SPN-120.md",
+      "expected": null,
+      "actual": null,
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/todo/SPN-123.md",
+      "expected": null,
+      "actual": null,
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "docs/todo/process.md",
+      "expected": "8468d3e8b05f33279dc730d6cadaa744bd533ec0",
+      "actual": "8468d3e8b05f33279dc730d6cadaa744bd533ec0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/app-process.ts",
+      "expected": "fe3d04ce9d64c4413e00be857be9d3bb946b63d3",
+      "actual": "fe3d04ce9d64c4413e00be857be9d3bb946b63d3",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/diagnostics.spec.ts",
+      "expected": "a488e86e541764ac057f01dfaf34d6d54b35bf6e",
+      "actual": "a488e86e541764ac057f01dfaf34d6d54b35bf6e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/doc-phone-navigation.spec.ts",
+      "expected": "27fcf9fbc5874667a874c65292f4b62b58c56807",
+      "actual": "27fcf9fbc5874667a874c65292f4b62b58c56807",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/doc-responsiveness.ts",
+      "expected": "1f25553d03516d51bd3c2b3bda6818a3da30908a",
+      "actual": "1f25553d03516d51bd3c2b3bda6818a3da30908a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/fixture-evidence.ts",
+      "expected": "761329801108af4a22e89cdda544efaeed030f6a",
+      "actual": "761329801108af4a22e89cdda544efaeed030f6a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/fixture-session.ts",
+      "expected": "d5a83436559ff0dc2fbd85c691ae72b51787d5fd",
+      "actual": "d5a83436559ff0dc2fbd85c691ae72b51787d5fd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/offline-fixture.ts",
+      "expected": "d7ca6870dcb19a1fb5856a3f2a6ffb75166427e9",
+      "actual": "d7ca6870dcb19a1fb5856a3f2a6ffb75166427e9",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/offline-recovery.spec.ts",
+      "expected": "cf1b767a8b93d2308f586ad7e7c1eb936d6cb318",
+      "actual": "cf1b767a8b93d2308f586ad7e7c1eb936d6cb318",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/offline-sign-out.spec.ts",
+      "expected": "f38ed6ba08417af8c5500456c28e8e346b2d6f80",
+      "actual": "f38ed6ba08417af8c5500456c28e8e346b2d6f80",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/owned-process.ts",
+      "expected": "520826e45f083511d92d001a2d5a885b9fc0b25c",
+      "actual": "520826e45f083511d92d001a2d5a885b9fc0b25c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/passkey-management.spec.ts",
+      "expected": "5d534299aa7ea792f87a9ec614a6d77bc6348427",
+      "actual": "5d534299aa7ea792f87a9ec614a6d77bc6348427",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/restore-browser.acceptance.ts",
+      "expected": "526513a2a3bdc25f81e1356124eb8938cc09895c",
+      "actual": "526513a2a3bdc25f81e1356124eb8938cc09895c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "e2e/sync-client.spec.ts",
+      "expected": "59414e05755803f4a05ec1c03a193020f8dea496",
+      "actual": "59414e05755803f4a05ec1c03a193020f8dea496",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/README.md",
+      "expected": "6b1e191164f940f3de522c03bea268f41a3349d7",
+      "actual": "6b1e191164f940f3de522c03bea268f41a3349d7",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/client.test.ts",
+      "expected": "32baef3a9dcf4ca95a024f23f1bd7079c5304f95",
+      "actual": "32baef3a9dcf4ca95a024f23f1bd7079c5304f95",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/client.ts",
+      "expected": "612f4e8ef6f8b62e2cfaf897b620af279e1531d6",
+      "actual": "612f4e8ef6f8b62e2cfaf897b620af279e1531d6",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/index.ts",
+      "expected": "de5539b69e7a26cc6845a01158ffd248716694b3",
+      "actual": "de5539b69e7a26cc6845a01158ffd248716694b3",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/server.test.ts",
+      "expected": "ca8186fc0dd2b0329fa91429a20903f7711c606f",
+      "actual": "ca8186fc0dd2b0329fa91429a20903f7711c606f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/server.ts",
+      "expected": "2697aaf4b5105b04038545edc7ab8d5f2a4f66bd",
+      "actual": "2697aaf4b5105b04038545edc7ab8d5f2a4f66bd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/diagnostics/sync.ts",
+      "expected": "e6c0ec33474272f0f47663a77dba21b045365c61",
+      "actual": "e6c0ec33474272f0f47663a77dba21b045365c61",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/sync-client/package.json",
+      "expected": "57c77099b3979002dd9e6f9135fccd0203b0275b",
+      "actual": "57c77099b3979002dd9e6f9135fccd0203b0275b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/sync-client/src/client.ts",
+      "expected": "bf9f2ccdd5c0997d0003e24febecbd4bfdc7fcbc",
+      "actual": "bf9f2ccdd5c0997d0003e24febecbd4bfdc7fcbc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/sync-client/src/types.ts",
+      "expected": "8af9487b4f48d819555b73323253150c364e6643",
+      "actual": "8af9487b4f48d819555b73323253150c364e6643",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "lib/sync-client/tests/diagnostics.test.ts",
+      "expected": "94a023f36bde194a0614b7aae1b89c3059537a28",
+      "actual": "94a023f36bde194a0614b7aae1b89c3059537a28",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "package-lock.json",
+      "expected": "01b11150af11d2f3eddb04b00e03ba6decad74c7",
+      "actual": "01b11150af11d2f3eddb04b00e03ba6decad74c7",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "package.json",
+      "expected": "0ba4acdbceb3c2d49577732721df19d6b46326f9",
+      "actual": "0ba4acdbceb3c2d49577732721df19d6b46326f9",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "playwright.config.ts",
+      "expected": "2827bada47fea07f431ce1274b4502a4ef7c3962",
+      "actual": "2827bada47fea07f431ce1274b4502a4ef7c3962",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/app-process.test.ts",
+      "expected": "8d25bbc66fcff84383d8ee4fd31926c6179d7f35",
+      "actual": "8d25bbc66fcff84383d8ee4fd31926c6179d7f35",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/desktop-safari-identity.test.ts",
+      "expected": "895bb4339d8c4601e1b9792c00731708471f7b2a",
+      "actual": "895bb4339d8c4601e1b9792c00731708471f7b2a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/desktop-safari-identity.ts",
+      "expected": "c67a39882ec42c0630a670102f2044759b3288fc",
+      "actual": "c67a39882ec42c0630a670102f2044759b3288fc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/diagnostics-overhead.ts",
+      "expected": "a62cf076b91378aef54df150193211cb0cd2dd2c",
+      "actual": "a62cf076b91378aef54df150193211cb0cd2dd2c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/fixture-audit-reporter.ts",
+      "expected": "3f2274615223eea6c4e97f6af643050a331d7d8e",
+      "actual": "3f2274615223eea6c4e97f6af643050a331d7d8e",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/fixture-audit.test.ts",
+      "expected": "6b9843762449963e0b4bebf5c07e3e8d9123e2bd",
+      "actual": "6b9843762449963e0b4bebf5c07e3e8d9123e2bd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/fixture-audit.ts",
+      "expected": "021e50d8c3ab56f01f7bcbf38ec87e7191dd0fb1",
+      "actual": "021e50d8c3ab56f01f7bcbf38ec87e7191dd0fb1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/fixture-evidence.test.ts",
+      "expected": "3ed2ff3df89c61dc477dc04153529e1246089abd",
+      "actual": "3ed2ff3df89c61dc477dc04153529e1246089abd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/fixture-session-http.test.ts",
+      "expected": "d93e60e6d5a66f75eb5cf8b3fa34a2816473bbd9",
+      "actual": "d93e60e6d5a66f75eb5cf8b3fa34a2816473bbd9",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/ci/fixture-session.test.ts",
+      "expected": "b892b87f37cdabc7ad5feef12a4870b8c313f7c1",
+      "actual": "b892b87f37cdabc7ad5feef12a4870b8c313f7c1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/dependencies/patch-univer-docs.test.ts",
+      "expected": "d0ee040aa46076393ba32d4c475a2cb2924f8a7d",
+      "actual": "d0ee040aa46076393ba32d4c475a2cb2924f8a7d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "scripts/e2e-server.ts",
+      "expected": "807ebdbf0b573592ce366fc81d39d6328bfc4acd",
+      "actual": "807ebdbf0b573592ce366fc81d39d6328bfc4acd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "server/app.ts",
+      "expected": "79acc7bbf843e1e3463e94005e100ae890555ee4",
+      "actual": "79acc7bbf843e1e3463e94005e100ae890555ee4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "server/supervisor.ts",
+      "expected": "0b7be30eef72f8221d101d1404f7db52888afc7a",
+      "actual": "0b7be30eef72f8221d101d1404f7db52888afc7a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/collaboration/service.ts",
+      "expected": "0b714467ed892e2ffd670e9b281e08c09156ea98",
+      "actual": "0b714467ed892e2ffd670e9b281e08c09156ea98",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/account.test.ts",
+      "expected": "bad7a929dc02c443eae960e1d5382eefafe37a50",
+      "actual": "bad7a929dc02c443eae960e1d5382eefafe37a50",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/browser.test.ts",
+      "expected": "b7b81e37733fe5aff71d80a3bb270eeb51986429",
+      "actual": "b7b81e37733fe5aff71d80a3bb270eeb51986429",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/routes.test.ts",
+      "expected": "5f8a53f08e88f3c29fb5e0d8614d0c8cb544faaf",
+      "actual": "5f8a53f08e88f3c29fb5e0d8614d0c8cb544faaf",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/routes.ts",
+      "expected": "104f20a2510a7a24fa522179197cd0c633917514",
+      "actual": "104f20a2510a7a24fa522179197cd0c633917514",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/runtime.test.ts",
+      "expected": "b507b8eb0f2306d145cd1ce7192cd82864ab5892",
+      "actual": "b507b8eb0f2306d145cd1ce7192cd82864ab5892",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/runtime.ts",
+      "expected": "167d3f5786795fd04997bc2f842e7ad01502bc6b",
+      "actual": "167d3f5786795fd04997bc2f842e7ad01502bc6b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/store.test.ts",
+      "expected": "ceaf105775148a1b05a42a61f177f90c8fba8ae1",
+      "actual": "ceaf105775148a1b05a42a61f177f90c8fba8ae1",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/store.ts",
+      "expected": "a749f31eb8f56d3f0e7e45cf39f68978789aae7b",
+      "actual": "a749f31eb8f56d3f0e7e45cf39f68978789aae7b",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/supervisor.test.ts",
+      "expected": "8b5c16f30968e14b9d93d0b30155c45502f66f92",
+      "actual": "8b5c16f30968e14b9d93d0b30155c45502f66f92",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/diagnostics/supervisor.ts",
+      "expected": "0f9d085d940897d021b480c541fd650c7b906250",
+      "actual": "0f9d085d940897d021b480c541fd650c7b906250",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/history/store.test.ts",
+      "expected": "2bf2ff90ed52a496e69d49fc781e1beba98400cd",
+      "actual": "2bf2ff90ed52a496e69d49fc781e1beba98400cd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/history/store.ts",
+      "expected": "659efd6de2d4c8795c2dbb629106e7bb43d72df2",
+      "actual": "659efd6de2d4c8795c2dbb629106e7bb43d72df2",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/maintenance/gate.test.ts",
+      "expected": "484e6fbc99248de4a9196cfdd802f86349345975",
+      "actual": "484e6fbc99248de4a9196cfdd802f86349345975",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/maintenance/gate.ts",
+      "expected": "79f095f38fa2f16c276539632720b0cd96ff7c69",
+      "actual": "79f095f38fa2f16c276539632720b0cd96ff7c69",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/maintenance/supervisor.test.ts",
+      "expected": "f8033244e4249c568939fc62061cd99d5d9350a0",
+      "actual": "f8033244e4249c568939fc62061cd99d5d9350a0",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/workspace/offline-creation.test.ts",
+      "expected": "ba722775af9cc8381b12b388c932334e127076f8",
+      "actual": "ba722775af9cc8381b12b388c932334e127076f8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/workspace/offline-creation.ts",
+      "expected": "f20afc3e9cfb406da7d8dda4f062b08d74d58a42",
+      "actual": "f20afc3e9cfb406da7d8dda4f062b08d74d58a42",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/workspace/offline-recovery.test.ts",
+      "expected": "de41ca06c14c71f4a8c336260faac46b1b6e8a86",
+      "actual": "de41ca06c14c71f4a8c336260faac46b1b6e8a86",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/workspace/portable.ts",
+      "expected": "2cda58289dc10b288ba4042c09134192f2b51b4c",
+      "actual": "2cda58289dc10b288ba4042c09134192f2b51b4c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/workspace/routes.ts",
+      "expected": "eb3d6d3ea9b7215a15216be0f41f5074e8c191cb",
+      "actual": "eb3d6d3ea9b7215a15216be0f41f5074e8c191cb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/server/workspace/search.test.ts",
+      "expected": "865f32f72268d43106a26bb1c57d1f7457bad797",
+      "actual": "865f32f72268d43106a26bb1c57d1f7457bad797",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/boundedDocHistory.test.ts",
+      "expected": "57b1574f7853e9c96398a3dbcf09572380fcc9a8",
+      "actual": "57b1574f7853e9c96398a3dbcf09572380fcc9a8",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/boundedDocHistory.ts",
+      "expected": "c3fe3bc28394c121f2e09755326d48f10599094f",
+      "actual": "c3fe3bc28394c121f2e09755326d48f10599094f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/docDrainEvidence.test.ts",
+      "expected": "b932dd3bd7b005e21e0141d3ee3c9a792989cd0c",
+      "actual": "b932dd3bd7b005e21e0141d3ee3c9a792989cd0c",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/docIdleEpisode.test.ts",
+      "expected": "b98b4282b8737ad6bbd5e53ee6a695b65726cbbc",
+      "actual": "b98b4282b8737ad6bbd5e53ee6a695b65726cbbc",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/docIdleEpisode.ts",
+      "expected": "7d69859d0b84bf37f651ed608767faee6fff6f93",
+      "actual": "7d69859d0b84bf37f651ed608767faee6fff6f93",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/offlineCreation.test.ts",
+      "expected": "3fd93c9fc249c654e1befd70f579ddc47107fdfd",
+      "actual": "3fd93c9fc249c654e1befd70f579ddc47107fdfd",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/offlinePersistence.test.ts",
+      "expected": "914f00e9e00c4f3f3e4ac3c57e3ff1511f6c0c85",
+      "actual": "914f00e9e00c4f3f3e4ac3c57e3ff1511f6c0c85",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/operationDiagnostics.test.ts",
+      "expected": "52d3dc7ee226f050944f52a2a1e513ff4bb98957",
+      "actual": "52d3dc7ee226f050944f52a2a1e513ff4bb98957",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "src/ui/spinelSync.test.ts",
+      "expected": "190949770d5b93cb6bacc231cf93221a5dd36081",
+      "actual": "190949770d5b93cb6bacc231cf93221a5dd36081",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/App.tsx",
+      "expected": "177a1e448798a64c872ef5edaed28869bbc3eba4",
+      "actual": "177a1e448798a64c872ef5edaed28869bbc3eba4",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/DocEditor.tsx",
+      "expected": "3f731fec3a0a66ac75d8b433c41d1e63412ec74f",
+      "actual": "3f731fec3a0a66ac75d8b433c41d1e63412ec74f",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/SearchPanel.tsx",
+      "expected": "0d15ebe91bb501d9e4111e5e6f053670efcc9e93",
+      "actual": "0d15ebe91bb501d9e4111e5e6f053670efcc9e93",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/SheetEditor.tsx",
+      "expected": "d81704d69b6476db7aac27d04b14ef1f61a02640",
+      "actual": "d81704d69b6476db7aac27d04b14ef1f61a02640",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/diagnostics.ts",
+      "expected": "48318f41c608fb1a90a09fd6e22bed5ba9fc5e1a",
+      "actual": "48318f41c608fb1a90a09fd6e22bed5ba9fc5e1a",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/diagnosticsAccount.ts",
+      "expected": "c9a7bbe126506ed3490e38a89efbcfd3ffac8e26",
+      "actual": "c9a7bbe126506ed3490e38a89efbcfd3ffac8e26",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/offline/OfflineSession.ts",
+      "expected": "1367733da0d9dac8a25146e578bc43552808d00d",
+      "actual": "1367733da0d9dac8a25146e578bc43552808d00d",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/operationDiagnostics.ts",
+      "expected": "08cb6dbeaba4f85525051b54e304cb4a53860bac",
+      "actual": "08cb6dbeaba4f85525051b54e304cb4a53860bac",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/spinelSync.ts",
+      "expected": "72c3091f5e1b728aadb291ded8d072cbf75335cb",
+      "actual": "72c3091f5e1b728aadb291ded8d072cbf75335cb",
+      "equal": true
+    },
+    {
+      "group": "incoming",
+      "path": "web/useDiagnostics.tsx",
+      "expected": "a810d425a37ee2916b471f1ee2c0c2c2c71dd6fc",
+      "actual": "a810d425a37ee2916b471f1ee2c0c2c2c71dd6fc",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/backups.md",
+      "expected": "33cdacfc50585ab986a23e4c1e713f2f279e26e1",
+      "actual": "33cdacfc50585ab986a23e4c1e713f2f279e26e1",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/SPN-112.md",
+      "expected": "bf7f4e32044af9e438ba2f598df2daa94bbf6279",
+      "actual": "bf7f4e32044af9e438ba2f598df2daa94bbf6279",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/backlog-watchdog.json",
+      "expected": "737e4991f9be9809f5973d0121ebafb6e8089312",
+      "actual": "737e4991f9be9809f5973d0121ebafb6e8089312",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/backlog.log.gz",
+      "expected": "15ea18d56cfc9cd75bb0b0643ae0dfa5c2dc5f52",
+      "actual": "15ea18d56cfc9cd75bb0b0643ae0dfa5c2dc5f52",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/completed-source-audit.json",
+      "expected": "dfea933bc56eec5a581fcb5a371d47500d7bc90b",
+      "actual": "dfea933bc56eec5a581fcb5a371d47500d7bc90b",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/contracts-watchdog.json",
+      "expected": "fe3bcbc6e2f167de9341c54fd07f3753e01b1d7b",
+      "actual": "fe3bcbc6e2f167de9341c54fd07f3753e01b1d7b",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/contracts.log.gz",
+      "expected": "24fcd88057a26d597f8ad7ebe479ff54b2330219",
+      "actual": "24fcd88057a26d597f8ad7ebe479ff54b2330219",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/index-watchdog.json",
+      "expected": "d96345cc288d18875c3b5cd796a7ff16e7de88fe",
+      "actual": "d96345cc288d18875c3b5cd796a7ff16e7de88fe",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/index.log.gz",
+      "expected": "24f897c0c4f20fc817b23093dcf2c04a1ed55dfb",
+      "actual": "24f897c0c4f20fc817b23093dcf2c04a1ed55dfb",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/lint-watchdog.json",
+      "expected": "9b577384e32c2941e4669d470fae062f6e33784e",
+      "actual": "9b577384e32c2941e4669d470fae062f6e33784e",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/lint.log.gz",
+      "expected": "df802a37e43ffbc8a17c2ffea031b9d8612b2b93",
+      "actual": "df802a37e43ffbc8a17c2ffea031b9d8612b2b93",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/pr-watchdog.json",
+      "expected": "56fce68314ed2a8f5f86c032bef02e79feba483c",
+      "actual": "56fce68314ed2a8f5f86c032bef02e79feba483c",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/pr.log.gz",
+      "expected": "93712972f5fec0d2af367b4bd2bfa5b04519a4b8",
+      "actual": "93712972f5fec0d2af367b4bd2bfa5b04519a4b8",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/provenance.json",
+      "expected": "68de638556ece6de5a461d0815770248668b35cc",
+      "actual": "68de638556ece6de5a461d0815770248668b35cc",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/scripts-watchdog.json",
+      "expected": "2d0d96dfaa1c95c0398ac61b7c6e53082cd263c6",
+      "actual": "2d0d96dfaa1c95c0398ac61b7c6e53082cd263c6",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/scripts.log.gz",
+      "expected": "3849d9888d964277769e4955dd502a1544acf3cd",
+      "actual": "3849d9888d964277769e4955dd502a1544acf3cd",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/source-only-audit.json",
+      "expected": "a04c27d186b3d2bd220a35584426232f42edc97a",
+      "actual": "a04c27d186b3d2bd220a35584426232f42edc97a",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/types-watchdog.json",
+      "expected": "380c5119ba0cafe1d4b970584a0ef3d941ac304b",
+      "actual": "380c5119ba0cafe1d4b970584a0ef3d941ac304b",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-c1-integration/types.log.gz",
+      "expected": "885111bbd22618a689e91723a585d6bb3e954fc8",
+      "actual": "885111bbd22618a689e91723a585d6bb3e954fc8",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-held-folder-probe.patch",
+      "expected": "a5d513a85a9a7ef4b8010cb54364a402bf4f0ba5",
+      "actual": "a5d513a85a9a7ef4b8010cb54364a402bf4f0ba5",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-mirror-setup-failure.json",
+      "expected": "85b0feabb19a9e6eab8033fbd8218a8efca02035",
+      "actual": "85b0feabb19a9e6eab8033fbd8218a8efca02035",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-mirror-validation.json",
+      "expected": "1353e1fb5b4bc628f7deb65316c18fbade1d8296",
+      "actual": "1353e1fb5b4bc628f7deb65316c18fbade1d8296",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-readiness-fix.patch",
+      "expected": "7880ab775b8dc5aa89adbd65ceecdff035fbe365",
+      "actual": "7880ab775b8dc5aa89adbd65ceecdff035fbe365",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-readiness.json",
+      "expected": "593108855394ae3a1c77696090e300e3db50d537",
+      "actual": "593108855394ae3a1c77696090e300e3db50d537",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/backlog-watchdog.json",
+      "expected": "2db5babfea018497b0bf49aaead19c217c6b448b",
+      "actual": "2db5babfea018497b0bf49aaead19c217c6b448b",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/backlog.log.gz",
+      "expected": "6c61941cfe8fb1d076779c49b4fe9efc5eee04d9",
+      "actual": "6c61941cfe8fb1d076779c49b4fe9efc5eee04d9",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/contracts-watchdog.json",
+      "expected": "91a8a21836ee6df94138a922efceffa8c42fa1ed",
+      "actual": "91a8a21836ee6df94138a922efceffa8c42fa1ed",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/contracts.log.gz",
+      "expected": "ec53a2e297fd292bee51e4391221b9af0a0232a5",
+      "actual": "ec53a2e297fd292bee51e4391221b9af0a0232a5",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/evidence-watchdog.json",
+      "expected": "8aeece6432683676a887bec9a4849aedd5a454ca",
+      "actual": "8aeece6432683676a887bec9a4849aedd5a454ca",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/evidence.log.gz",
+      "expected": "04396a9c708e02e6ff483454417ab1d170f528ba",
+      "actual": "04396a9c708e02e6ff483454417ab1d170f528ba",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/lint-watchdog.json",
+      "expected": "a8d55feef0df00cedb89f147e73d9b43f1cb1c22",
+      "actual": "a8d55feef0df00cedb89f147e73d9b43f1cb1c22",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/lint.log.gz",
+      "expected": "82b695acb523566ee91563cbd63d87a4526ca13e",
+      "actual": "82b695acb523566ee91563cbd63d87a4526ca13e",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/pr-watchdog.json",
+      "expected": "5179d7bc387fb2721a7f9e2f24eed856d973569d",
+      "actual": "5179d7bc387fb2721a7f9e2f24eed856d973569d",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/pr.log.gz",
+      "expected": "f39e3683dbad60bee31f81c658af2a20711cbe84",
+      "actual": "f39e3683dbad60bee31f81c658af2a20711cbe84",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/provenance.json",
+      "expected": "4eb92f9da718aa113cd2505f2b3b673961adc0c1",
+      "actual": "4eb92f9da718aa113cd2505f2b3b673961adc0c1",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/recovery-first-failures.log",
+      "expected": "01c0051ba0b9fd34ec546104b80c1ca1ada7126c",
+      "actual": "01c0051ba0b9fd34ec546104b80c1ca1ada7126c",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/types-watchdog.json",
+      "expected": "4879868dda8fb76ca75350b09aff1369d8356b02",
+      "actual": "4879868dda8fb76ca75350b09aff1369d8356b02",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-resume/types.log.gz",
+      "expected": "164b97c70ad016333cea39bb31fcfb5d6dc4def3",
+      "actual": "164b97c70ad016333cea39bb31fcfb5d6dc4def3",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-sync-production-first-attempt.json",
+      "expected": "1494a288cff33f23b8d4d70404a5b9afe4b04c48",
+      "actual": "1494a288cff33f23b8d4d70404a5b9afe4b04c48",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/implementation/evidence/SPN-128-withheld-readiness.patch",
+      "expected": "35488c17a5e4d2c6a369d3811a8e07960a37eae2",
+      "actual": "35488c17a5e4d2c6a369d3811a8e07960a37eae2",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/maintenance.md",
+      "expected": "7de2537f3e26b02034ac20640db57180b1a476d0",
+      "actual": "7de2537f3e26b02034ac20640db57180b1a476d0",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "docs/todo/SPN-128.md",
+      "expected": null,
+      "actual": null,
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "e2e/maintenance-evidence.ts",
+      "expected": "cee2057f7f59cc83f86243bf486b496e395188d1",
+      "actual": "cee2057f7f59cc83f86243bf486b496e395188d1",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "e2e/maintenance-fixture.ts",
+      "expected": "c1a924521f4bd664b9092a29574d61d187c2a460",
+      "actual": "c1a924521f4bd664b9092a29574d61d187c2a460",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "e2e/supervised-restore.spec.ts",
+      "expected": "c3494b49ae8ff40fd397a594cec71f854b6e6d5b",
+      "actual": "c3494b49ae8ff40fd397a594cec71f854b6e6d5b",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "scripts/ci/maintenance-evidence.test.ts",
+      "expected": "8118f0d5dfc680d89842a7b47b4c82f7658012e7",
+      "actual": "8118f0d5dfc680d89842a7b47b4c82f7658012e7",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "scripts/deploy/maintenance.ts",
+      "expected": "bfc73627fc38d6be5eb284740c9725649a31688d",
+      "actual": "bfc73627fc38d6be5eb284740c9725649a31688d",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/backup/restore-registry.ts",
+      "expected": "5e10631ed74bfbe6888f4ed4699cc83053eac666",
+      "actual": "5e10631ed74bfbe6888f4ed4699cc83053eac666",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-cold-custody.test.ts",
+      "expected": "a4e579f4d86786d6f899985fbbae578799ce5d06",
+      "actual": "a4e579f4d86786d6f899985fbbae578799ce5d06",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-cold-state.test.ts",
+      "expected": "67354bbbe8f17694ae07de38668858ca40a1e56a",
+      "actual": "67354bbbe8f17694ae07de38668858ca40a1e56a",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-cold-state.ts",
+      "expected": "eb1a261d489533087608a1fa58b75b6ee31a16b9",
+      "actual": "eb1a261d489533087608a1fa58b75b6ee31a16b9",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-cold.ts",
+      "expected": "ae455109f9cd392ee224be2b20efa38e664c66db",
+      "actual": "ae455109f9cd392ee224be2b20efa38e664c66db",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-app-fixture.ts",
+      "expected": "6f5352a473df36408cb1e59c223835c578ba5386",
+      "actual": "6f5352a473df36408cb1e59c223835c578ba5386",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-cleanup-fixture.ts",
+      "expected": "be5334ea29252a2434011342e821d43d856b601d",
+      "actual": "be5334ea29252a2434011342e821d43d856b601d",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-clock-fixture.ts",
+      "expected": "c4d85b21c24567c2d6be0336ab54a2043c9f26bc",
+      "actual": "c4d85b21c24567c2d6be0336ab54a2043c9f26bc",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-clock.test.ts",
+      "expected": "da08d2a3bc47bbad6cca300a99517e2ce8dcf8cb",
+      "actual": "da08d2a3bc47bbad6cca300a99517e2ce8dcf8cb",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-fixture.ts",
+      "expected": "e1c35a13375190bbbfb2f364b78846475faeff7c",
+      "actual": "e1c35a13375190bbbfb2f364b78846475faeff7c",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-security-fixture.ts",
+      "expected": "3395eeb1c1c8c1a781952058608b0e877760031d",
+      "actual": "3395eeb1c1c8c1a781952058608b0e877760031d",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash-tamper-fixture.ts",
+      "expected": "df3e3d0a7215aeb8c8185e31d0c223035727cff1",
+      "actual": "df3e3d0a7215aeb8c8185e31d0c223035727cff1",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "expected": "e84b2036915ced4e10fd2e01379e9e7d9b531abb",
+      "actual": "e84b2036915ced4e10fd2e01379e9e7d9b531abb",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-files.ts",
+      "expected": "79535d67d3be4965c6aa09c37227b6b982138109",
+      "actual": "79535d67d3be4965c6aa09c37227b6b982138109",
+      "equal": true
+    },
+    {
+      "group": "retained",
+      "path": "src/server/maintenance/restore-jobs.ts",
+      "expected": "55b693759a2a10edf0f731074b48d6ac7c22f006",
+      "actual": "55b693759a2a10edf0f731074b48d6ac7c22f006",
+      "equal": true
+    }
+  ]
+}

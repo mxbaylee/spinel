@@ -1,0 +1,192 @@
+{
+  "head": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "sourceCopiesVerified": 1602,
+  "executableCopiesByteExact": true,
+  "completeBinaryDiffByteExact": true,
+  "allIncludedGzipEvidenceDecodedAndScanned": true,
+  "decodedEvidenceCount": 21,
+  "historicalArchiveTextFiles": 59,
+  "maskedLines": [
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 590
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 594
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 651
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 652
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 653
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 654
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 655
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 656
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 671
+    },
+    {
+      "path": "source/docs/implementation/SPN-112.md",
+      "line": 2939
+    },
+    {
+      "path": "source/docs/implementation/SPN-112.md",
+      "line": 3025
+    },
+    {
+      "path": "source/docs/implementation/SPN-112.md",
+      "line": 3063
+    },
+    {
+      "path": "source/docs/implementation/SPN-115.md",
+      "line": 113
+    },
+    {
+      "path": "source/docs/implementation/SPN-115.md",
+      "line": 114
+    },
+    {
+      "path": "source/docs/implementation/SPN-120.md",
+      "line": 500
+    },
+    {
+      "path": "source/docs/implementation/SPN-120.md",
+      "line": 535
+    },
+    {
+      "path": "source/docs/implementation/grooming-2026-10-26.md",
+      "line": 214
+    }
+  ],
+  "remainingPatternHits": [
+    {
+      "path": "source/.github/pull_request_template.md",
+      "line": 45,
+      "text": "Two independent nonimplementing subagents, each scoring above 95/100 on the same",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/AGENTS.md",
+      "line": 105,
+      "text": "  reviews, each **above 95/100 on that exact commit**, before a validation push",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/design/README.md",
+      "line": 176,
+      "text": "secondary sizes are 28/18/14/12 px. Compact metadata uses 10–11 px sparingly.",
+      "disposition": "Typography/spacing dimensions"
+    },
+    {
+      "path": "source/docs/design/redesign.md",
+      "line": 97,
+      "text": "production typography is changed by this PR. Type scale is 28/18/14/12 px for",
+      "disposition": "Typography/spacing dimensions"
+    },
+    {
+      "path": "source/docs/design/redesign.md",
+      "line": 99,
+      "text": "The existing 4/8/12/16/24/32 spacing scale remains; 40/48/64 are explicit large",
+      "disposition": "Typography/spacing dimensions"
+    },
+    {
+      "path": "source/docs/diagnostics.md",
+      "line": 317,
+      "text": "| Persistence: persisted / not-prepared / read-only | 4 / 1 / 1                   | 6                               |",
+      "disposition": "Measured persistence outcomes, not assessment"
+    },
+    {
+      "path": "source/docs/implementation/SPN-090.md",
+      "line": 4059,
+      "text": "creation/restart/reconnect/link/repeat phase maxima of 240/100/80/90/140/80/30",
+      "disposition": "Declared native phase time budgets, not review grade"
+    },
+    {
+      "path": "source/docs/implementation/SPN-160.md",
+      "line": 267,
+      "text": "SPN-160 first: score 33, with no open prerequisite. The earlier provisional",
+      "disposition": "Ticket priority score"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 29,
+      "text": "**above 95/100 on the same current commit**. Exactly 95 does not pass; neither",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 100,
+      "text": "Require a nonimplementing reviewer, at least 95/100 and no blockers: scope 35, correctness 25,",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 163,
+      "text": "other rubric weights, at least 95/100 and no-blocker threshold. Simplicity does not justify missing",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 382,
+      "text": "every actionable step to 100/100 (points at stake, exact file and line or command, change,",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/implementation/grooming-2026-11-02.md",
+      "line": 26,
+      "text": "to that exact unpublished commit. Both must score above 95/100 with no unresolved",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/run-backlog.md",
+      "line": 179,
+      "text": "The merge gate is **two independent scores each above 95/100 on the same current",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/docs/todo/SPN-122.md",
+      "line": 47,
+      "text": "- Retain the original 2,086-input workload, fourfold mobile throttle, registered timing budgets, first-attempt policy, current 16-state grouping and 200-group history retention, complete actual-group Undo/Redo and native boundary/access checks. The [accepted 2026-11-06 history amendment](../implementation/SPN-108.md#-smaller-capacity-pairs-after-the-2026-11-06-mobile-maximum) supersedes 32/100; any further history-policy change needs its own explicit persona decision and complete replay evidence.",
+      "disposition": "Native history batch/group capacities"
+    },
+    {
+      "path": "source/docs/todo/process.md",
+      "line": 243,
+      "text": "   evidence, without a prior or hoped-for grade. Require **each score above 95/100",
+      "disposition": "Standing review policy/rubric instruction/threshold, not historical grade"
+    },
+    {
+      "path": "source/lib/sync-transform/tests/cells.test.ts",
+      "line": 906,
+      "text": "    // B100 is past B30, the last cell either move covers.",
+      "disposition": "Spreadsheet cell reference in executable test"
+    },
+    {
+      "path": "source/src/server/auth/passkey-provider-names.json",
+      "line": 47,
+      "text": "  \"6bb49926-160a-4306-a100-4eb39ba6ac45\": \"AVG Password Manager\",",
+      "disposition": "Provider GUID fragment"
+    }
+  ],
+  "originalsPreserved": true,
+  "scope": "Historical numerical grades/vectors/deductions masked only in external copies. Actual assertions, timings, failures, source identities, priorities and standing rubric retained. Unrelated historical art-review archives excluded."
+}
