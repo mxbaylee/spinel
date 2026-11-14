@@ -1,0 +1,102 @@
+[
+  {
+    "file": "README.md",
+    "bytes": 3690,
+    "sha256": "d0fa32ed74e03efcaab665c5449a08e6d0324c719c599976983386fab9b0c23f"
+  },
+  {
+    "file": "artifact-receipts.json",
+    "bytes": 2330,
+    "sha256": "4ab4e2ff1549ffb5658fcde30398aa4e72d2d468a256a6d9288297f1ff25d4c7"
+  },
+  {
+    "file": "checkpoint-cancelled-artifact-pages.json",
+    "bytes": 2138,
+    "sha256": "ff589accd1ece5510ff4e1a2e1705242fa6bb8a270a29b883c0a24e123273e75"
+  },
+  {
+    "file": "checkpoint-cancelled-jobs-pages.json",
+    "bytes": 25180,
+    "sha256": "bbe0499f02f8425daa6c921fcdf66e2dea5997c05b3c424adc05f7f21679b8bf"
+  },
+  {
+    "file": "checkpoint-cancelled-run.json",
+    "bytes": 12180,
+    "sha256": "be677e6dca6b659882035afb0a5c8aede50782b3525d1160f745a7a602189e9e"
+  },
+  {
+    "file": "checkpoint-ci-results-browser.zip",
+    "bytes": 414,
+    "sha256": "207830d8e7fdddce0504d48d647c2a10752173e0a846be53d0f46323ec851de0"
+  },
+  {
+    "file": "checkpoint-ci-results-lib.zip",
+    "bytes": 288,
+    "sha256": "eb142e483adbaaee6a9e81a28d2a47e3a06936f5d10f05ce0c600c0c2e3a348c"
+  },
+  {
+    "file": "checkpoint-ci-results-unit.zip",
+    "bytes": 288,
+    "sha256": "ad6b920b7663df802689b067507c583bbcf23952d88926fe3b233d3f080ea9da"
+  },
+  {
+    "file": "metadata-ci-artifact-pages.json",
+    "bytes": 16488,
+    "sha256": "7a7f22dcfa384d5da96deab0a7ccd6c415decfa8f4c6b7f78bf5dffdcb1b30ed"
+  },
+  {
+    "file": "metadata-ci-jobs-pages.json",
+    "bytes": 106042,
+    "sha256": "dfe86a1cf1d4deacbf563ea9ef9095cb247401f9960bb6db410a8090b54d7318"
+  },
+  {
+    "file": "metadata-ci-plan.json",
+    "bytes": 3897,
+    "sha256": "d915e21eecc19926dfe89e9f8f97087f2f4b6a53138b8e606e6866f774d105b7"
+  },
+  {
+    "file": "metadata-ci-plan.zip",
+    "bytes": 930,
+    "sha256": "efb9343a2e3a17bea254e19e472dde6a17a34f68a6ca08bc7fcd1d58ae631ec5"
+  },
+  {
+    "file": "metadata-ci-results-browser.zip",
+    "bytes": 477,
+    "sha256": "5e35ea93b94dff6713855046ecf10bf48b00d6d38a61b57d154edf9875319163"
+  },
+  {
+    "file": "metadata-ci-results-lib.zip",
+    "bytes": 1168,
+    "sha256": "b020f5e7e109c69cb5a4de9691b44f1bd233ff829e9747c4c6dc8c761ee390f2"
+  },
+  {
+    "file": "metadata-ci-results-unit.zip",
+    "bytes": 342,
+    "sha256": "e42cab2e312c3a9bc5245c440e80cd610df488468163e3d168c7ee1b88c9ded2"
+  },
+  {
+    "file": "metadata-ci-run.json",
+    "bytes": 12178,
+    "sha256": "2b5afec68803dbdfccc8b07f2d073cdd2084b8d2530ff5532d5260e7623b9dda"
+  },
+  {
+    "file": "metadata-doc-responsiveness-mobile.zip",
+    "bytes": 1976790,
+    "sha256": "456925d5f152896332f2be441ffd716c66a68b6fe5b143ec47eabac7052b0bf5"
+  },
+  {
+    "file": "mobile-audit.json",
+    "bytes": 7102,
+    "sha256": "7f9019b13654400c0e110781a3ac5efda57fb36cf5267316b24fc95780cf125c"
+  },
+  {
+    "file": "original-ci-plan.json",
+    "bytes": 3902,
+    "sha256": "4e8efa1fc9c7702c105f497e0ef5552db94b3a5d05b3a6538603b5fc0871a181"
+  },
+  {
+    "file": "receipt.json",
+    "bytes": 13993,
+    "sha256": "706c407a6c873852a8e5b8abb1e6535a1b0f830fc4ff56ab27d642a418da3ba4"
+  }
+]

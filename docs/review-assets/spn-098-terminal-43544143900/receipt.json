@@ -1,0 +1,349 @@
+{
+  "schema": 1,
+  "capturedAt": "2026-11-14T02:35:12.620810+00:00",
+  "source": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "tested": "62bc0229c5675ff519b733cfc8f3c9a7e6e918d8",
+  "plans": {
+    "original": {
+      "file": "original-ci-plan.json",
+      "rawFileSha256": "4e8efa1fc9c7702c105f497e0ef5552db94b3a5d05b3a6538603b5fc0871a181",
+      "canonicalPlanSha256": "7f3f130bf8684f274220b739e4b20536890acf2a4c91a6fe5dbdb250d6078b7e",
+      "serialization": "Canonical is JSON.stringify-style compact JSON without trailing newline; raw is preserved original file including newline.",
+      "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+      "head": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+      "tested": "62bc0229c5675ff519b733cfc8f3c9a7e6e918d8",
+      "action": "synchronize",
+      "selectedSuites": 15
+    },
+    "metadata": {
+      "file": "metadata-ci-plan.json",
+      "rawFileSha256": "d915e21eecc19926dfe89e9f8f97087f2f4b6a53138b8e606e6866f774d105b7",
+      "canonicalPlanSha256": "50ddf45c449484b550e25feb6d0c0e8f82ec9fdeda2d494a03ce190c91b0be69",
+      "serialization": "Canonical is JSON.stringify-style compact JSON without trailing newline; raw is preserved original file including newline.",
+      "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+      "head": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+      "tested": "62bc0229c5675ff519b733cfc8f3c9a7e6e918d8",
+      "action": "edited",
+      "selectedSuites": 15
+    }
+  },
+  "runs": {
+    "originalMetadata": {
+      "id": 43544143900,
+      "attempt": 1,
+      "source": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+      "status": "completed",
+      "conclusion": "failure",
+      "terminalAt": "2026-11-14T02:33:08Z",
+      "jobs": [
+        {
+          "id": 132291296979,
+          "name": "Classify changes (43544143900)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291296979"
+        },
+        {
+          "id": 132291297399,
+          "name": "Pull request",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291297399"
+        },
+        {
+          "id": 132291548776,
+          "name": "Lint",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548776"
+        },
+        {
+          "id": 132291548781,
+          "name": "Backlog",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548781"
+        },
+        {
+          "id": 132291548814,
+          "name": "Unit tests (recovery)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548814"
+        },
+        {
+          "id": 132291548822,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548822"
+        },
+        {
+          "id": 132291548830,
+          "name": "Lib tests (mixed-fuzz)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548830"
+        },
+        {
+          "id": 132291548867,
+          "name": "Retained sync transition",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548867"
+        },
+        {
+          "id": 132291548908,
+          "name": "Lib tests (remaining)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548908"
+        },
+        {
+          "id": 132291548911,
+          "name": "Doc callback lifetimes (mobile)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548911"
+        },
+        {
+          "id": 132291548912,
+          "name": "Unit tests (remaining)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548912"
+        },
+        {
+          "id": 132291548937,
+          "name": "Unit tests (supervisor)",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548937"
+        },
+        {
+          "id": 132291548962,
+          "name": "Doc callback lifetimes (desktop)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548962"
+        },
+        {
+          "id": 132291548963,
+          "name": "Lib tests (dense-cells)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548963"
+        },
+        {
+          "id": 132291548973,
+          "name": "Container smoke",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548973"
+        },
+        {
+          "id": 132291548977,
+          "name": "Sized restore acceptance",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548977"
+        },
+        {
+          "id": 132291548985,
+          "name": "Doc responsiveness (mobile)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291548985"
+        },
+        {
+          "id": 132291549021,
+          "name": "Doc responsiveness (desktop)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549021"
+        },
+        {
+          "id": 132291549023,
+          "name": "Lib tests (cells)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549023"
+        },
+        {
+          "id": 132291549133,
+          "name": "Playwright smoke (sync-production)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549133"
+        },
+        {
+          "id": 132291549159,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549159"
+        },
+        {
+          "id": 132291549162,
+          "name": "Playwright smoke (offline-upgrade)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549162"
+        },
+        {
+          "id": 132291549164,
+          "name": "Playwright smoke (supervised-restore)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549164"
+        },
+        {
+          "id": 132291549169,
+          "name": "Playwright smoke (development 2/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549169"
+        },
+        {
+          "id": 132291549178,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549178"
+        },
+        {
+          "id": 132291549192,
+          "name": "Playwright smoke (production 1/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549192"
+        },
+        {
+          "id": 132291549198,
+          "name": "Playwright smoke (sync-development)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549198"
+        },
+        {
+          "id": 132291549212,
+          "name": "Playwright smoke (production 2/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549212"
+        },
+        {
+          "id": 132291549215,
+          "name": "Playwright smoke (mobile-https)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549215"
+        },
+        {
+          "id": 132291549254,
+          "name": "Playwright smoke (development 1/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132291549254"
+        },
+        {
+          "id": 132293846852,
+          "name": "Unit tests",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132293846852"
+        },
+        {
+          "id": 132294594794,
+          "name": "Lib tests",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132294594794"
+        },
+        {
+          "id": 132299767160,
+          "name": "Playwright smoke",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43544143900/job/132299767160"
+        }
+      ]
+    },
+    "checkpointCancellation": {
+      "id": 43545634784,
+      "attempt": 1,
+      "source": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "terminalAt": "2026-11-14T02:20:30Z",
+      "jobs": [
+        {
+          "id": 132296179793,
+          "name": "Classify changes (43545634784)",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296179793"
+        },
+        {
+          "id": 132296179860,
+          "name": "Pull request",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296179860"
+        },
+        {
+          "id": 132296234819,
+          "name": "Typecheck",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296234819"
+        },
+        {
+          "id": 132296234941,
+          "name": "Lint",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296234941"
+        },
+        {
+          "id": 132296234952,
+          "name": "Backlog",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296234952"
+        },
+        {
+          "id": 132296235585,
+          "name": "Lib tests",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296235585"
+        },
+        {
+          "id": 132296235627,
+          "name": "Unit tests",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296235627"
+        },
+        {
+          "id": 132296236044,
+          "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236044"
+        },
+        {
+          "id": 132296236048,
+          "name": "Retained sync transition",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236048"
+        },
+        {
+          "id": 132296236256,
+          "name": "Sized restore acceptance",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236256"
+        },
+        {
+          "id": 132296236424,
+          "name": "Doc responsiveness (${{ matrix.preset }})",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236424"
+        },
+        {
+          "id": 132296236442,
+          "name": "Lib tests (${{ matrix.suite }})",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236442"
+        },
+        {
+          "id": 132296236758,
+          "name": "Unit tests (${{ matrix.suite }})",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236758"
+        },
+        {
+          "id": 132296236809,
+          "name": "Container smoke",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236809"
+        },
+        {
+          "id": 132296236952,
+          "name": "Doc callback lifetimes (${{ matrix.preset }})",
+          "conclusion": "cancelled",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296236952"
+        },
+        {
+          "id": 132296471888,
+          "name": "Playwright smoke",
+          "conclusion": "failure",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43545634784/job/132296471888"
+        }
+      ]
+    }
+  },
+  "disposition": "Original metadata validation failed and blocks merge. Checkpoint-edit run was intentionally cancelled and is not acceptance. No additional underlying worker failure beyond the two supervisor cases. SPN-157 owns separate diagnosis/repair; implementation unchanged.",
+  "retention": "Full run/job/artifact API snapshots, all original aggregate archives, original plan and complete mobile responsiveness archive retained. Other successful worker artifacts for this second validation were not downloaded and remain expiring supplements; job outcomes are retained. First validation full acceptance archive and original supervisor failure archive remain separate immutable evidence."
+}
