@@ -1,0 +1,39 @@
+{
+  "integratedBase": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "previousCandidate": "b77990e4063d876c1233deabd892082c07f11b14",
+  "runtimeEvidenceSource": "5108adb55c2de303af7146a0f24402be72430b3a",
+  "baseDelta": "Seven documentation and backlog files only since 7c38f7d32e6a55d8000239923113155de6a07c8c",
+  "runtimeDiff": {
+    "command": "git diff --exit-code 5108adb55c2de303af7146a0f24402be72430b3a -- web src lib server scripts e2e .storybook package.json package-lock.json '*.config.ts' docs/implementation/evidence/SPN-159/experiment.ts",
+    "exitCode": 0,
+    "changedPaths": []
+  },
+  "matchedHashManifest": "integrated/source-identity.json",
+  "matchedFiles": [
+    "web/SyncNative.stories.tsx",
+    "web/nativeDrawingResize.ts",
+    "src/ui/nativeDrawingResize.test.ts",
+    "scripts/screenshots.ts",
+    "docs/implementation/evidence/SPN-159/experiment.ts",
+    "test-results/spn159/experiment.ts",
+    "test-results/spn159/storybook/main.ts",
+    "test-results/spn159/storybook/preview.tsx",
+    "node_modules/@univerjs/engine-render/lib/es/index.js",
+    "node_modules/@univerjs/docs-drawing-ui/lib/es/index.js"
+  ],
+  "bookkeeping": {
+    "nextId": 161,
+    "completedSince": ["SPN-148", "SPN-145", "SPN-149", "SPN-159"],
+    "SPN-157": ["SPN-160"],
+    "SPN-120": ["SPN-158"]
+  },
+  "indexRegeneration": {
+    "command": "node scripts/backlog/cli.ts index",
+    "receiptName": "spn159-ecef-index",
+    "exitCode": 0,
+    "elapsedMs": 145,
+    "peakKiB": 0,
+    "peakNote": "Finished before the watchdog's first sample; not zero memory use."
+  },
+  "limits": "No repeat native sample or full compiler run. New-base CLI checks and independent exact-head reviews remain separate requirements."
+}

@@ -1,0 +1,17 @@
+{
+  "name": "spn159-diagnostic-build",
+  "args": [
+    "node",
+    "node_modules/storybook/bin/index.cjs",
+    "build",
+    "--config-dir",
+    "test-results/spn159/storybook",
+    "--output-dir",
+    "test-results/spn159/static"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 104,
+  "peakKiB": 0
+}
