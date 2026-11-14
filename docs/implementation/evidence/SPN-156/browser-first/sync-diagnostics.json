@@ -1,0 +1,586 @@
+{
+  "observed": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "http://localhost:3105/",
+        "online": false,
+        "preparedAccount": "abc6a771-d360-4516-8f53-fefe5456fd7e",
+        "native": {
+          "627758d8-11a5-4f7d-a933-40eefd918ae8": {
+            "unitId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+            "revision": 1,
+            "snapshot": {
+              "id": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+              "locale": "enUS",
+              "title": "Offline doc",
+              "tableSource": {},
+              "drawings": {},
+              "drawingsOrder": [],
+              "headers": {},
+              "footers": {},
+              "notes": {},
+              "noteSettings": {},
+              "body": {
+                "dataStream": "\r\n",
+                "textRuns": [],
+                "customBlocks": [],
+                "tables": [],
+                "columnGroups": [],
+                "blockRanges": [],
+                "customRanges": [],
+                "customDecorations": [],
+                "paragraphs": [
+                  {
+                    "startIndex": 0,
+                    "paragraphId": "para_9qAKeARqz7zS",
+                    "paragraphStyle": {}
+                  }
+                ],
+                "sectionBreaks": [
+                  {
+                    "sectionId": "section_l97YHYrbfgUl",
+                    "startIndex": 1
+                  }
+                ]
+              },
+              "documentStyle": {
+                "pageSize": {
+                  "width": 960,
+                  "height": 1122.6666666666667
+                },
+                "documentFlavor": 2,
+                "marginTop": 50,
+                "marginBottom": 50,
+                "marginRight": 50,
+                "marginLeft": 50,
+                "autoHyphenation": 1,
+                "doNotHyphenateCaps": 0,
+                "consecutiveHyphenLimit": 2,
+                "defaultHeaderId": "",
+                "defaultFooterId": "",
+                "evenPageHeaderId": "",
+                "evenPageFooterId": "",
+                "firstPageHeaderId": "",
+                "firstPageFooterId": "",
+                "evenAndOddHeaders": 0,
+                "useFirstPageHeaderFooter": 0,
+                "marginHeader": 30,
+                "marginFooter": 30,
+                "defaultParagraphStyle": {
+                  "spaceAbove": {
+                    "v": 0
+                  },
+                  "lineSpacing": 1.5,
+                  "spaceBelow": {
+                    "v": 12
+                  }
+                },
+                "renderConfig": {
+                  "zeroWidthParagraphBreak": 0,
+                  "vertexAngle": 0,
+                  "centerAngle": 0,
+                  "background": {
+                    "rgb": "#ccc"
+                  }
+                }
+              },
+              "settings": {},
+              "rev": 1,
+              "resources": [
+                {
+                  "name": "DOC_OBJECT_PERMISSION_PLUGIN",
+                  "data": "[]"
+                },
+                {
+                  "name": "DOC_WORD_STYLES_PLUGIN",
+                  "data": ""
+                },
+                {
+                  "name": "DOC_NOTE_PLUGIN",
+                  "data": ""
+                },
+                {
+                  "name": "DOC_HYPER_LINK_PLUGIN",
+                  "data": "{\"links\":[]}"
+                },
+                {
+                  "name": "DOC_DRAWING_PLUGIN",
+                  "data": "{\"data\":{},\"order\":[]}"
+                }
+              ]
+            },
+            "mutations": [
+              "doc.mutation.rename-doc",
+              "doc.mutation.rich-text-editing",
+              "doc.mutation.set-permission-rule",
+              "doc.mutation.set-permission-rules",
+              "doc.operation.clear-drawing-transformer",
+              "docs.mutation.add-hyper-link",
+              "docs.mutation.delete-hyper-link",
+              "docs.mutation.update-hyper-link",
+              "formula.mutation.register-function",
+              "formula.mutation.remove-defined-name",
+              "formula.mutation.remove-feature-calculation",
+              "formula.mutation.remove-other-formula",
+              "formula.mutation.remove-super-table",
+              "formula.mutation.set-array-formula-data",
+              "formula.mutation.set-cell-formula-dependency-calculation",
+              "formula.mutation.set-cell-formula-dependency-calculation-result",
+              "formula.mutation.set-defined-name",
+              "formula.mutation.set-feature-calculation",
+              "formula.mutation.set-formula-calculation-notification",
+              "formula.mutation.set-formula-calculation-result",
+              "formula.mutation.set-formula-calculation-start",
+              "formula.mutation.set-formula-calculation-stop",
+              "formula.mutation.set-formula-data",
+              "formula.mutation.set-formula-dependency-calculation",
+              "formula.mutation.set-formula-dependency-calculation-result",
+              "formula.mutation.set-formula-string-batch-calculation",
+              "formula.mutation.set-formula-string-batch-calculation-result",
+              "formula.mutation.set-image-formula-data",
+              "formula.mutation.set-other-formula",
+              "formula.mutation.set-query-formula-dependency",
+              "formula.mutation.set-query-formula-dependency-all",
+              "formula.mutation.set-query-formula-dependency-all-result",
+              "formula.mutation.set-query-formula-dependency-result",
+              "formula.mutation.set-super-table",
+              "formula.mutation.set-super-table-option",
+              "formula.mutation.set-trigger-formula-calculation-start",
+              "sheet.mutation.data-validation-formula-mark-dirty"
+            ],
+            "observedAt": 1794631010772
+          }
+        },
+        "focus": "<body>\n    <div id=\"root\"><div class=\"maintenance-shell\" tabindex=\"-1\" style=\"--sp-maintenance-height: 0px;\"><div class=\"maintenance-band\"></div><div class=\"workspace files-workspace\"><header class=\"file-rail\"><div class=\"rail-brand\"><a class=\"brand rail-button\" href=\"/\"><span class=\"wiggle\"><svg class=\"gem\" width=\"36\" height=\"36\" viewBox=\"0 0 100 100\" role=\"img\" aria-label=\"Spinel\"><defs><clipPath id=\"_r_f_\"><path d=\"M50 27C44 13 31 6 20 9 8 12 2 24 4 37 7 56 29 76 50 94 71 76 93 56 96 37 98 24 92 12 80 9 69 6 56 13 50 27Z\"></path></clipPath></defs><g clip-path=\"url(#_r_f_)\" stroke-width=\"0.6\" stroke-linejoin=\"round\"><path d=\"M20 -10L50 -10L50 22L34 12Z\" fill=\"var(--gem-3)\" stroke=\"var(--gem-3)\"></path><path d=\"M50 -10L80 -10L66 12L50 22Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M20 -10L34 12L7 30L-10 20Z\" fill=\"var(--gem-3)\" stroke=\"var(--gem-3)\"></path><path d=\"M80 -10L110 20L93 30L66 12Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M-10 20L7 30L15 60L-10 62Z\" fill=\"var(--gem-4)\" stroke=\"var(--gem-4)\"></path><path d=\"M-10 62L15 60L38 85L50 94L50 110Z\" fill=\"var(--gem-3)\" stroke=\"var(--gem-3)\"></path><path d=\"M110 20L110 62L85 60L93 30Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M110 62L50 110L50 94L62 85L85 60Z\" fill=\"var(--gem-1)\" stroke=\"var(--gem-1)\"></path><path d=\"M23 33L34 12L50 22Z\" fill=\"var(--gem-4)\" stroke=\"var(--gem-4)\"></path><path d=\"M50 22L66 12L77 33Z\" fill=\"var(--gem-3)\" stroke=\"var(--gem-3)\"></path><path d=\"M23 33L50 22L77 33Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M7 30L34 12L23 33Z\" fill=\"var(--gem-5)\" stroke=\"var(--gem-5)\"></path><path d=\"M77 33L66 12L93 30Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M7 30L23 33L15 60Z\" fill=\"var(--gem-6)\" stroke=\"var(--gem-6)\"></path><path d=\"M15 60L23 33L50 80Z\" fill=\"var(--gem-5)\" stroke=\"var(--gem-5)\"></path><path d=\"M15 60L50 80L38 85Z\" fill=\"var(--gem-3)\" stroke=\"var(--gem-3)\"></path><path d=\"M93 30L85 60L77 33Z\" fill=\"var(--gem-3)\" stroke=\"var(--gem-3)\"></path><path d=\"M85 60L50 80L77 33Z\" fill=\"var(--gem-1)\" stroke=\"var(--gem-1)\"></path><path d=\"M85 60L62 85L50 80Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M38 85L50 80L50 94Z\" fill=\"var(--gem-2)\" stroke=\"var(--gem-2)\"></path><path d=\"M50 80L62 85L50 94Z\" fill=\"var(--gem-1)\" stroke=\"var(--gem-1)\"></path><path d=\"M23 33L77 33L50 80Z\" fill=\"var(--gem-4)\" stroke=\"var(--gem-4)\"></path></g><path d=\"M50 27C44 13 31 6 20 9 8 12 2 24 4 37 7 56 29 76 50 94 71 76 93 56 96 37 98 24 92 12 80 9 69 6 56 13 50 27Z\" fill=\"none\" stroke=\"var(--gem-edge)\" stroke-width=\"3.2\" stroke-linejoin=\"round\"></path></svg></span><span class=\"rail-label\">Your docs</span></a><span class=\"connection-status\" data-state=\"offline\"><span class=\"connection-announcement\" role=\"status\" aria-label=\"Connection status\" aria-live=\"polite\" aria-atomic=\"true\">Offline</span><button type=\"button\" tabindex=\"0\" data-base-ui-click-trigger=\"\" id=\"base-ui-_r_h_\" aria-haspopup=\"dialog\" aria-expanded=\"false\" aria-label=\"Offline — not connected to Spinel\" class=\"connection-trigger\"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M2 8q10-8 20 0 M5 12q7-6 14 0 M8 16q4-4 8 0 M12 20h.01 M3 3l18 18\"></path></svg></button></span></div><button class=\"rail-button file-rail-toggle\" aria-label=\"Collapse navigation\" aria-expanded=\"true\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:panel-left-close\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\"></rect><path d=\"M9 3v18\"></path><path d=\"m16 15-3-3 3-3\"></path></svg><span class=\"rail-label\">Collapse navigation</span></button><div class=\"file-rail-desktop\"><nav class=\"file-rail-places\" aria-label=\"File places\"><button class=\"rail-button\" aria-label=\"My files\" aria-current=\"page\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:files\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M15 2h-4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8\"></path><path d=\"M16.706 2.706A2.4 2.4 0 0 0 15 2v5a1 1 0 0 0 1 1h5a2.4 2.4 0 0 0-.706-1.706z\"></path><path d=\"M5 7a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h8a2 2 0 0 0 1.732-1\"></path></svg><span class=\"rail-label\">My files</span></button><button class=\"rail-button\" aria-label=\"Shared with me\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:users-round\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M18 21a8 8 0 0 0-16 0\"></path><circle cx=\"10\" cy=\"8\" r=\"5\"></circle><path d=\"M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3\"></path></svg><span class=\"rail-label\">Shared with me</span></button></nav></div><button class=\"rail-button file-rail-browse\" aria-label=\"Browse files\" title=\"Browse files\" aria-expanded=\"false\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:menu\" width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 5h16\"></path><path d=\"M4 12h16\"></path><path d=\"M4 19h16\"></path></svg></button><div class=\"rail-account\"><div class=\"rd-theme-control\"><div role=\"radiogroup\" aria-label=\"Appearance\" class=\"sp-segments\"><span data-checked=\"\" role=\"radio\" tabindex=\"0\" aria-checked=\"true\" data-composite-item-active=\"\" id=\"base-ui-_r_66_\" aria-label=\"Follow system\" title=\"Follow system\" class=\"sp-segment\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 3h18v14H3z M8 21h8 M10 17v4 M14 17v4\"></path></svg><span class=\"sp-segment-hint\" aria-hidden=\"true\">Follow system</span></span><input id=\"base-ui-_r_67_\" tabindex=\"-1\" aria-hidden=\"true\" type=\"radio\" value=\"system\" checked=\"\" style=\"clip-path: inset(50%); overflow: hidden; white-space: nowrap; border: 0px; padding: 0px; width: 1px; height: 1px; margin: 0px; position: fixed; top: 0px; left: 0px;\"><span data-unchecked=\"\" role=\"radio\" tabindex=\"-1\" aria-checked=\"false\" id=\"base-ui-_r_69_\" aria-label=\"Light\" title=\"Light\" class=\"sp-segment\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10 M12 1v2 M12 21v2 M1 12h2 M21 12h2 M4 4l2 2 M18 18l2 2 M4 20l2-2 M18 6l2-2\"></path></svg><span class=\"sp-segment-hint\" aria-hidden=\"true\">Light</span></span><input id=\"base-ui-_r_6a_\" tabindex=\"-1\" aria-hidden=\"true\" type=\"radio\" value=\"light\" style=\"clip-path: inset(50%); overflow: hidden; white-space: nowrap; border: 0px; padding: 0px; width: 1px; height: 1px; margin: 0px; position: fixed; top: 0px; left: 0px;\"><span data-unchecked=\"\" role=\"radio\" tabindex=\"-1\" aria-checked=\"false\" id=\"base-ui-_r_6c_\" aria-label=\"Dark\" title=\"Dark\" class=\"sp-segment\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 14a8 8 0 0 1-10-10 8 8 0 1 0 10 10 M18 2v6 M15 5h6\"></path></svg><span class=\"sp-segment-hint\" aria-hidden=\"true\">Dark</span></span><input id=\"base-ui-_r_6d_\" tabindex=\"-1\" aria-hidden=\"true\" type=\"radio\" value=\"dark\" style=\"clip-path: inset(50%); overflow: hidden; white-space: nowrap; border: 0px; padding: 0px; width: 1px; height: 1px; margin: 0px; position: fixed; top: 0px; left: 0px;\"></div></div><a class=\"rail-button\" href=\"/profile\" aria-label=\"Your profile\" title=\"Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76 — Your profile\"><span class=\"profile-rail-avatar\" style=\"background: var(--fill-primary-strong-bg); color: var(--fill-primary-strong-fg);\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:user-round\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"8\" r=\"5\"></circle><path d=\"M20 21a8 8 0 0 0-16 0\"></path></svg></span><span class=\"rail-label\">Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76</span></a><button class=\"rail-button\"><span aria-hidden=\"true\">↪</span><span class=\"rail-label\">Sign out</span></button></div></header><div class=\"workspace-body\"><main><section class=\"dashboard-content\" aria-label=\"Your files\"><header class=\"dashboard-heading\"><h1 tabindex=\"-1\"> My files</h1><div class=\"dashboard-heading-actions\"><button type=\"button\" tabindex=\"0\" aria-haspopup=\"menu\" aria-expanded=\"false\" id=\"base-ui-_r_5s_\" aria-label=\"New\" class=\"sp-control sp-primary\">New</button></div></header><section class=\"offline-recovery-list\" aria-labelledby=\"offline-recovery-heading\"><h2 id=\"offline-recovery-heading\">Offline changes on this device</h2><p>Open these device copies to recover, export, or discard saved changes.</p><ul><li><a href=\"/?offlineRecovery=bdbad09e-940a-419c-88c9-9bfbf27245a0\">Recover Queued offline Sheet</a></li></ul></section><div class=\"dashboard-view-choice\"><div role=\"radiogroup\" aria-label=\"File view\" class=\"sp-segments\"><span data-checked=\"\" role=\"radio\" tabindex=\"0\" aria-checked=\"true\" data-composite-item-active=\"\" id=\"base-ui-_r_5v_\" aria-label=\"List\" title=\"List\" class=\"sp-segment\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:list\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 5h.01\"></path><path d=\"M3 12h.01\"></path><path d=\"M3 19h.01\"></path><path d=\"M8 5h13\"></path><path d=\"M8 12h13\"></path><path d=\"M8 19h13\"></path></svg><span class=\"sp-segment-hint\" aria-hidden=\"true\">List</span></span><input id=\"base-ui-_r_60_\" tabindex=\"-1\" aria-hidden=\"true\" type=\"radio\" value=\"list\" checked=\"\" style=\"clip-path: inset(50%); overflow: hidden; white-space: nowrap; border: 0px; padding: 0px; width: 1px; height: 1px; margin: 0px; position: fixed; top: 0px; left: 0px;\"><span data-unchecked=\"\" role=\"radio\" tabindex=\"-1\" aria-checked=\"false\" id=\"base-ui-_r_62_\" aria-label=\"Grid\" title=\"Grid\" class=\"sp-segment\"><svg aria-hidden=\"true\" data-profile-icon=\"lucide:layout-grid\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect width=\"7\" height=\"7\" x=\"3\" y=\"3\" rx=\"1\"></rect><rect width=\"7\" height=\"7\" x=\"14\" y=\"3\" rx=\"1\"></rect><rect width=\"7\" height=\"7\" x=\"14\" y=\"14\" rx=\"1\"></rect><rect width=\"7\" height=\"7\" x=\"3\" y=\"14\" rx=\"1\"></rect></svg><span class=\"sp-segment-hint\" aria-hidden=\"true\">Grid</span></span><input id=\"base-ui-_r_63_\" tabindex=\"-1\" aria-hidden=\"true\" type=\"radio\" value=\"grid\" style=\"clip-path: inset(50%); overflow: hidden; white-space: nowrap; border: 0px; padding: 0px; width: 1px; height: 1px; margin: 0px; position: fixed; top: 0px; left: 0px;\"></div></div><div class=\"dashboard-files-section\"><div class=\"sp-ui dashboard-files dashboard-files-list\" role=\"list\" aria-label=\"Folder contents\"><div class=\"dashboard-file\" role=\"listitem\"><button class=\"dashboard-file-open\" aria-label=\"Offline doc Doc\" aria-describedby=\"_r_6g_-0\"><span class=\"dashboard-file-identity\" aria-hidden=\"true\"><span class=\"item-icon\" aria-hidden=\"true\" style=\"font-size: 28px;\">🍋</span></span><span class=\"dashboard-file-description\"><strong>Offline doc</strong><span class=\"dashboard-file-metadata\" id=\"_r_6g_-0\"><span class=\"dashboard-file-type\"><svg class=\"entity-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" focusable=\"false\" aria-hidden=\"true\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2H18L17 5H7Z\" fill=\"var(--entity-doc-4)\" stroke=\"var(--entity-doc-4)\" stroke-width=\"0.08\"></path><path d=\"M3 5L6 2 7 5V19L3 19Z\" fill=\"var(--entity-doc-3)\" stroke=\"var(--entity-doc-3)\" stroke-width=\"0.08\"></path><path d=\"M3 19L7 19H17L18 22H6Z\" fill=\"var(--entity-doc-2)\" stroke=\"var(--entity-doc-2)\" stroke-width=\"0.08\"></path><path d=\"M18 2L21 5V19L18 22 17 19V5Z\" fill=\"var(--entity-doc-1)\" stroke=\"var(--entity-doc-1)\" stroke-width=\"0.08\"></path><path d=\"M7 5H17V19H7Z\" fill=\"var(--entity-doc-2)\" stroke=\"var(--entity-doc-2)\" stroke-width=\"0.08\"></path><path d=\"M7 5H17L7 13Z\" fill=\"var(--entity-doc-3)\" stroke=\"var(--entity-doc-3)\" stroke-width=\"0.08\"></path><path d=\"M7 13L17 19H7Z\" fill=\"var(--entity-doc-1)\" stroke=\"var(--entity-doc-1)\" stroke-width=\"0.08\"></path><path d=\"M6 2H18L21 5V19L18 22H6L3 19V5Z\" fill=\"none\" stroke=\"var(--entity-doc-0)\" stroke-width=\"0.55\"></path><path fill=\"none\" stroke=\"var(--entity-mark)\" stroke-width=\"1.25\" opacity=\"0.86\" d=\"M8 8.5H16M8 12H14.5M8 15.5H15.5\"></path></svg>Doc</span><span>Owner</span><span>Created by Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76</span><span class=\"offline-badge\" data-state=\"available\"><span aria-hidden=\"true\">⤓</span> Available offline</span></span></span></button><span class=\"dashboard-file-date\"><time datetime=\"2026-11-14T04:36:45.860Z\" title=\"Last edited 11/13/2026, 8:36:45 PM\">11/13/2026</time></span><div class=\"dashboard-file-menu\"><button type=\"button\" tabindex=\"0\" aria-haspopup=\"menu\" aria-expanded=\"false\" id=\"base-ui-_r_6k_\" aria-label=\"More actions for Offline doc\" class=\"sp-control \">···</button></div></div><div class=\"dashboard-file\" role=\"listitem\"><button class=\"dashboard-file-open\" aria-label=\"Queued offline Sheet Sheet\" aria-describedby=\"_r_6g_-1\"><span class=\"dashboard-file-identity\" aria-hidden=\"true\"><span class=\"item-icon\" aria-hidden=\"true\" style=\"font-size: 28px;\">🌻</span></span><span class=\"dashboard-file-description\"><strong>Queued offline Sheet</strong><span class=\"dashboard-file-metadata\" id=\"_r_6g_-1\"><span class=\"dashboard-file-type\"><svg class=\"entity-icon\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" focusable=\"false\" aria-hidden=\"true\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 2H18L17 5H7Z\" fill=\"var(--entity-sheet-4)\" stroke=\"var(--entity-sheet-4)\" stroke-width=\"0.08\"></path><path d=\"M3 5L6 2 7 5V19L3 19Z\" fill=\"var(--entity-sheet-3)\" stroke=\"var(--entity-sheet-3)\" stroke-width=\"0.08\"></path><path d=\"M3 19L7 19H17L18 22H6Z\" fill=\"var(--entity-sheet-2)\" stroke=\"var(--entity-sheet-2)\" stroke-width=\"0.08\"></path><path d=\"M18 2L21 5V19L18 22 17 19V5Z\" fill=\"var(--entity-sheet-1)\" stroke=\"var(--entity-sheet-1)\" stroke-width=\"0.08\"></path><path d=\"M7 5H17V19H7Z\" fill=\"var(--entity-sheet-2)\" stroke=\"var(--entity-sheet-2)\" stroke-width=\"0.08\"></path><path d=\"M7 5H17L7 13Z\" fill=\"var(--entity-sheet-3)\" stroke=\"var(--entity-sheet-3)\" stroke-width=\"0.08\"></path><path d=\"M7 13L17 19H7Z\" fill=\"var(--entity-sheet-1)\" stroke=\"var(--entity-sheet-1)\" stroke-width=\"0.08\"></path><path d=\"M6 2H18L21 5V19L18 22H6L3 19V5Z\" fill=\"none\" stroke=\"var(--entity-sheet-0)\" stroke-width=\"0.55\"></path><path fill=\"none\" stroke=\"var(--entity-mark)\" stroke-width=\"1\" opacity=\"0.86\" d=\"M8 8H16V16H8ZM8 12H16\"></path><path fill=\"var(--entity-mark)\" opacity=\"0.86\" d=\"M8 8H16V10H8Z\"></path></svg>Sheet</span><span>Owner</span><span>Created by Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76</span><span class=\"offline-badge\" data-state=\"available\"><span aria-hidden=\"true\">⤓</span> Available offline</span></span></span></button><span class=\"dashboard-file-date\"><time datetime=\"2026-11-14T04:36:46.159Z\" title=\"Last edited 11/13/2026, 8:36:46 PM\">11/13/2026</time></span><div class=\"dashboard-file-menu\"><button type=\"button\" tabindex=\"0\" aria-haspopup=\"menu\" aria-expanded=\"false\" id=\"base-ui-_r_6p_\" aria-label=\"More actions for Queued offline Sheet\" class=\"sp-control \">···</button></div></div></div></div></section></main></div></div></div></div>\n  \n\n</body>",
+        "layout": [],
+        "stored": {
+          "itemId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+          "name": "Offline doc",
+          "kind": "doc",
+          "readOnly": false,
+          "revision": 1,
+          "downloadedAt": 1794631007888,
+          "bundle": {
+            "appearance": {
+              "revision": 0,
+              "icon": null,
+              "iconColor": null,
+              "accent": null,
+              "cover": null
+            },
+            "coverAssets": {},
+            "version": 1,
+            "accountId": "abc6a771-d360-4516-8f53-fefe5456fd7e",
+            "itemId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+            "name": "Offline doc",
+            "unitId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+            "revision": 1,
+            "revisionOffset": 0,
+            "access": "owner",
+            "readOnly": false,
+            "sdkVersion": "1.3.1",
+            "images": [],
+            "kind": "doc",
+            "snapshot": {
+              "id": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+              "locale": "enUS",
+              "title": "Offline doc",
+              "tableSource": {},
+              "drawings": {},
+              "drawingsOrder": [],
+              "headers": {},
+              "footers": {},
+              "notes": {},
+              "noteSettings": {},
+              "body": {
+                "dataStream": "\r\n",
+                "textRuns": [],
+                "customBlocks": [],
+                "tables": [],
+                "columnGroups": [],
+                "blockRanges": [],
+                "customRanges": [],
+                "customDecorations": [],
+                "paragraphs": [
+                  {
+                    "startIndex": 0,
+                    "paragraphId": "para_9qAKeARqz7zS",
+                    "paragraphStyle": {}
+                  }
+                ],
+                "sectionBreaks": [
+                  {
+                    "sectionId": "section_l97YHYrbfgUl",
+                    "startIndex": 1
+                  }
+                ]
+              },
+              "documentStyle": {
+                "pageSize": {
+                  "width": 960,
+                  "height": 1122.6666666666667
+                },
+                "documentFlavor": 2,
+                "marginTop": 50,
+                "marginBottom": 50,
+                "marginRight": 50,
+                "marginLeft": 50,
+                "autoHyphenation": 1,
+                "doNotHyphenateCaps": 0,
+                "consecutiveHyphenLimit": 2,
+                "defaultHeaderId": "",
+                "defaultFooterId": "",
+                "evenPageHeaderId": "",
+                "evenPageFooterId": "",
+                "firstPageHeaderId": "",
+                "firstPageFooterId": "",
+                "evenAndOddHeaders": 0,
+                "useFirstPageHeaderFooter": 0,
+                "marginHeader": 30,
+                "marginFooter": 30,
+                "defaultParagraphStyle": {
+                  "spaceAbove": {
+                    "v": 0
+                  },
+                  "lineSpacing": 1.5,
+                  "spaceBelow": {
+                    "v": 12
+                  }
+                },
+                "renderConfig": {
+                  "zeroWidthParagraphBreak": 0,
+                  "vertexAngle": 0,
+                  "centerAngle": 0,
+                  "background": {
+                    "rgb": "#ccc"
+                  }
+                }
+              },
+              "settings": {},
+              "rev": 1,
+              "resources": [
+                {
+                  "name": "DOC_OBJECT_PERMISSION_PLUGIN",
+                  "data": "[]"
+                },
+                {
+                  "name": "DOC_WORD_STYLES_PLUGIN",
+                  "data": ""
+                },
+                {
+                  "name": "DOC_NOTE_PLUGIN",
+                  "data": ""
+                },
+                {
+                  "name": "DOC_HYPER_LINK_PLUGIN",
+                  "data": "{\"links\":[]}"
+                },
+                {
+                  "name": "DOC_DRAWING_PLUGIN",
+                  "data": "{\"data\":{},\"order\":[]}"
+                }
+              ]
+            }
+          },
+          "outbox": {
+            "version": 1,
+            "account": "abc6a771-d360-4516-8f53-fefe5456fd7e",
+            "item": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+            "unitId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+            "revisionOffset": 0,
+            "checkpoint": {
+              "version": 1,
+              "unitId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+              "revision": 1,
+              "snapshot": {
+                "id": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+                "locale": "enUS",
+                "title": "Offline doc",
+                "tableSource": {},
+                "drawings": {},
+                "drawingsOrder": [],
+                "headers": {},
+                "footers": {},
+                "notes": {},
+                "noteSettings": {},
+                "body": {
+                  "dataStream": "\r\n",
+                  "textRuns": [],
+                  "customBlocks": [],
+                  "tables": [],
+                  "columnGroups": [],
+                  "blockRanges": [],
+                  "customRanges": [],
+                  "customDecorations": [],
+                  "paragraphs": [
+                    {
+                      "startIndex": 0,
+                      "paragraphId": "para_9qAKeARqz7zS",
+                      "paragraphStyle": {}
+                    }
+                  ],
+                  "sectionBreaks": [
+                    {
+                      "sectionId": "section_l97YHYrbfgUl",
+                      "startIndex": 1
+                    }
+                  ]
+                },
+                "documentStyle": {
+                  "pageSize": {
+                    "width": 960,
+                    "height": 1122.6666666666667
+                  },
+                  "documentFlavor": 2,
+                  "marginTop": 50,
+                  "marginBottom": 50,
+                  "marginRight": 50,
+                  "marginLeft": 50,
+                  "autoHyphenation": 1,
+                  "doNotHyphenateCaps": 0,
+                  "consecutiveHyphenLimit": 2,
+                  "defaultHeaderId": "",
+                  "defaultFooterId": "",
+                  "evenPageHeaderId": "",
+                  "evenPageFooterId": "",
+                  "firstPageHeaderId": "",
+                  "firstPageFooterId": "",
+                  "evenAndOddHeaders": 0,
+                  "useFirstPageHeaderFooter": 0,
+                  "marginHeader": 30,
+                  "marginFooter": 30,
+                  "defaultParagraphStyle": {
+                    "spaceAbove": {
+                      "v": 0
+                    },
+                    "lineSpacing": 1.5,
+                    "spaceBelow": {
+                      "v": 12
+                    }
+                  },
+                  "renderConfig": {
+                    "zeroWidthParagraphBreak": 0,
+                    "vertexAngle": 0,
+                    "centerAngle": 0,
+                    "background": {
+                      "rgb": "#ccc"
+                    }
+                  }
+                },
+                "settings": {},
+                "rev": 1,
+                "resources": [
+                  {
+                    "name": "DOC_OBJECT_PERMISSION_PLUGIN",
+                    "data": "[]"
+                  },
+                  {
+                    "name": "DOC_WORD_STYLES_PLUGIN",
+                    "data": ""
+                  },
+                  {
+                    "name": "DOC_NOTE_PLUGIN",
+                    "data": ""
+                  },
+                  {
+                    "name": "DOC_HYPER_LINK_PLUGIN",
+                    "data": "{\"links\":[]}"
+                  },
+                  {
+                    "name": "DOC_DRAWING_PLUGIN",
+                    "data": "{\"data\":{},\"order\":[]}"
+                  }
+                ]
+              },
+              "sent": null,
+              "inflight": [],
+              "buffer": []
+            }
+          }
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=bdbad09e-940a-419c-88c9-9bfbf27245a0",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=bdbad09e-940a-419c-88c9-9bfbf27245a0",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=bdbad09e-940a-419c-88c9-9bfbf27245a0",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/",
+      "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "page": "http://localhost:3105/",
+      "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    }
+  ],
+  "outgoing": [
+    {
+      "type": "cursor",
+      "selection": "0:0:1:TEXT::-1"
+    },
+    {
+      "type": "cursor",
+      "selection": "first!A1"
+    }
+  ],
+  "incoming": [
+    {
+      "type": "resume",
+      "version": 1,
+      "unitId": "627758d8-11a5-4f7d-a933-40eefd918ae8",
+      "fromRevision": 1,
+      "revision": 1,
+      "edits": []
+    },
+    {
+      "type": "presence",
+      "selfId": "qO8jTJ8P9hoENpcXPmCsbKSH",
+      "members": [
+        {
+          "id": "qO8jTJ8P9hoENpcXPmCsbKSH",
+          "name": "Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+          "avatar": "/profile-avatar/user-round/info-strong.svg"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "qO8jTJ8P9hoENpcXPmCsbKSH",
+      "members": [
+        {
+          "id": "qO8jTJ8P9hoENpcXPmCsbKSH",
+          "name": "Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+          "avatar": "/profile-avatar/user-round/info-strong.svg",
+          "selection": "0:0:1:TEXT::-1"
+        }
+      ]
+    },
+    {
+      "type": "resume",
+      "version": 1,
+      "unitId": "bdbad09e-940a-419c-88c9-9bfbf27245a0",
+      "fromRevision": 1,
+      "revision": 1,
+      "edits": []
+    },
+    {
+      "type": "presence",
+      "selfId": "M_zIcmbhx3WPiPP0Vi4vuK5b",
+      "members": [
+        {
+          "id": "M_zIcmbhx3WPiPP0Vi4vuK5b",
+          "name": "Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+          "avatar": "/profile-avatar/user-round/info-strong.svg"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "M_zIcmbhx3WPiPP0Vi4vuK5b",
+      "members": [
+        {
+          "id": "M_zIcmbhx3WPiPP0Vi4vuK5b",
+          "name": "Offline owner e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+          "avatar": "/profile-avatar/user-round/info-strong.svg",
+          "selection": "first!A1"
+        }
+      ]
+    }
+  ]
+}

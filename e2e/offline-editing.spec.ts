@@ -55,25 +55,25 @@ test.describe('downloaded native editors', () => {
     baseURL,
   }, info) => {
     const f = await fixture(browser, baseURL!, info, 'doc');
-    const sheet = f.workspace.create(f.owner.id, {
-      name: 'Queued offline Sheet',
-      kind: 'sheet',
-      parentId: null,
-    });
-    const prepare = await f.control.request.post(`/api/items/${sheet.id}/collaboration`, {
-      headers: { Origin: baseURL! },
-      data: {},
-    });
-    expect(prepare.status(), await prepare.text()).toBe(200);
-    const sheetUnit = (await prepare.json()).unitId as string;
-    const readSheet = async () => {
-      const response = await f.control.request.get(
-        `/sync-api/items/${sheet.id}/snapshot?unitId=${sheetUnit}`,
-      );
-      expect(response.status(), await response.text()).toBe(200);
-      return await response.json();
-    };
     try {
+      const sheet = f.workspace.create(f.owner.id, {
+        name: 'Queued offline Sheet',
+        kind: 'sheet',
+        parentId: null,
+      });
+      const prepare = await f.control.request.post(`/api/items/${sheet.id}/collaboration`, {
+        headers: { Origin: baseURL! },
+        data: {},
+      });
+      expect(prepare.status(), await prepare.text()).toBe(200);
+      const sheetUnit = (await prepare.json()).unitId as string;
+      const readSheet = async () => {
+        const response = await f.control.request.get(
+          `/sync-api/items/${sheet.id}/snapshot?unitId=${sheetUnit}`,
+        );
+        expect(response.status(), await response.text()).toBe(200);
+        return await response.json();
+      };
       await f.download();
       const docBefore = await f.read();
       const sheetBefore = await readSheet();
@@ -92,13 +92,25 @@ test.describe('downloaded native editors', () => {
       await f.network.setOffline(true);
       await edit(f.page, 'sheet', '15642');
       await savedLocally(f.page);
+      await expect
+        .poll(async () =>
+          JSON.stringify((await stored(f.page, f.actor.id, sheet.id))?.outbox?.checkpoint),
+        )
+        .toContain('15642');
       await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
       await f.page.reload();
       await f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }).click();
       await expect(f.page.getByRole('region', { name: 'Offline copy', exact: true })).toBeVisible();
+      await savedLocally(f.page);
+      await usableCanvas(f.page);
       const text = `File-list replay ${info.testId}`;
       await edit(f.page, 'doc', text);
       await savedLocally(f.page);
+      await expect
+        .poll(async () =>
+          JSON.stringify((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint),
+        )
+        .toContain(text);
       await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
       expect(pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint)).toBe(true);
       expect(pending((await stored(f.page, f.actor.id, sheet.id))?.outbox?.checkpoint)).toBe(true);
@@ -158,6 +170,11 @@ test.describe('downloaded native editors', () => {
       await f.network.setOffline(true);
       await edit(f.page, 'doc', 'Retained after file-list revocation');
       await savedLocally(f.page);
+      await expect
+        .poll(async () =>
+          JSON.stringify((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint),
+        )
+        .toContain('Retained after file-list revocation');
       const original = (await stored(f.page, f.actor.id, f.item.id))!.outbox!;
       await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
       f.workspace.share(f.owner.id, f.item.id, f.editor.id, null);
