@@ -434,8 +434,10 @@ export function Dashboard({
   // Only navigation ends a device-copy open. A refresh keeps it, so the live editor is
   // not mounted offline while the refetch is in flight; a successful refetch clears it.
   useEffect(() => setDeviceOpenId(null), [currentId]);
-  // The network is back while a device copy is open: refetch once. Success returns to the
-  // live editor; a failure keeps the device copy.
+  // A device copy is open while the connection reads online (the network just came back, or
+  // a slow live request timed out): refetch once. Success returns to the live editor; a
+  // failure keeps the device copy. `deviceOpen` is a dependency, so opening the copy while
+  // online also triggers this single retry.
   useEffect(() => {
     if (connection === 'online' && deviceOpen) setRefresh((value) => value + 1);
   }, [connection, deviceOpen]);

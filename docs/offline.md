@@ -354,7 +354,8 @@ lives in `web/offline/warmOpen.ts`.
 (`web/offline/deadlines.ts`). When the browser reports `onLine === false`, startup and
 page loads skip the wait and take the offline path at once; `onLine === true` proves
 nothing and never short-circuits. A page load slower than 8 s to first byte falls back to
-the saved app, and an item request slower than 15 s opens the device copy. On a slow but
+the saved app (server-only pages such as sign-in and invites have no saved copy, so they
+wait for the server), and an item request slower than 15 s opens the device copy. On a slow but
 live network this chooses the saved copy over waiting; the app refetches once the
 connection answers. A start that is still waiting after 8 s names the step it is on
 (`web/startupStage.ts`), so a phone with no inspector can report where it stalled.
@@ -746,13 +747,13 @@ a passing run.
 
 ## 🗺️ Where each SPN-090 rule is checked
 
-| Rule | Owning check |
-| --- | --- |
-| A shortcut is not a download | `e2e/offline.spec.ts:585`, `:717`; `e2e/offline-recovery.spec.ts:375` |
-| Manifest and installation icons offline | `e2e/pwa.spec.ts:69` (manifest and installability) |
-| Stable `/?item=<uuid>` and Space-child `?item=` links | `e2e/offline-recovery.spec.ts:75`; `e2e/offline-editing.spec.ts:1062`, `:1123` |
-| Create and edit offline, reconnect once | `e2e/offline-creation.spec.ts` |
-| Real-device observation of the above | Owner's own phone, recorded in [own-phone findings](implementation/SPN-090-own-phone-findings.md) |
+| Rule                                                  | Owning check                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| A shortcut is not a download                          | `e2e/offline.spec.ts:585`, `:717`; `e2e/offline-recovery.spec.ts:375`                             |
+| Manifest and installation icons offline               | `e2e/pwa.spec.ts:69` (manifest and installability)                                                |
+| Stable `/?item=<uuid>` and Space-child `?item=` links | `e2e/offline-recovery.spec.ts:75`; `e2e/offline-editing.spec.ts:1062`, `:1123`                    |
+| Create and edit offline, reconnect once               | `e2e/offline-creation.spec.ts`                                                                    |
+| Real-device observation of the above                  | Owner's own phone, recorded in [own-phone findings](implementation/SPN-090-own-phone-findings.md) |
 
 ## Ordinary desktop browser tabs
 

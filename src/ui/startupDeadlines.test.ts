@@ -71,8 +71,18 @@ test('a slow start stays silent at first, then names the step it waits on', asyn
   expect(lines[0]?.textContent).toBe('Still starting: sign-in check (9 s)');
 });
 
+test('importing the module starts no timer; the first named step does', async () => {
+  const { startupStage } = await import('../../web/startupStage.ts');
+  vi.advanceTimersByTime(20_000);
+  expect(lines).toHaveLength(0);
+  startupStage('app code');
+  vi.advanceTimersByTime(1000);
+  expect(lines).toHaveLength(1);
+});
+
 test('a finished start removes the line and stays silent', async () => {
   const { startupDone, startupStage } = await import('../../web/startupStage.ts');
+  startupStage('first');
   vi.advanceTimersByTime(9000);
   expect(lines).toHaveLength(1);
   startupDone();
@@ -84,7 +94,8 @@ test('a finished start removes the line and stays silent', async () => {
 });
 
 test('a start that finishes before the delay never shows a line', async () => {
-  const { startupDone } = await import('../../web/startupStage.ts');
+  const { startupDone, startupStage } = await import('../../web/startupStage.ts');
+  startupStage('first');
   vi.advanceTimersByTime(3000);
   startupDone();
   vi.advanceTimersByTime(20_000);
