@@ -1,0 +1,3565 @@
+--- a/THIRD-PARTY-NOTICES.md
++++ b/THIRD-PARTY-NOTICES.md
+@@ -87,3 +87,12 @@
+ - Add a line in the file saying it was modified for Spinel.
+ - List it here as: path in Spinel, source repository and commit, license, and a
+   one-line summary of the changes.
++
++`docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json`
++retains diagnostic excerpts from the Apache-2.0
++[Playwright 1.64.1 frame manager](https://github.com/microsoft/playwright/blob/cfe490d941f992655948eee8fd4fd94e1c4234bf/packages/playwright-core/src/server/frames.ts),
++commit `cfe490d941f992655948eee8fd4fd94e1c4234bf`. The excerpts are unchanged
++source lines extracted into JSON with line numbers and diagnostic provenance;
++the surrounding code is omitted. The file preserves the original Google and
++Microsoft copyright notice and Apache-2.0 license header. This extraction does
++not modify or replace the installed dependency.
+--- a/docs/collaboration.md
++++ b/docs/collaboration.md
+@@ -358,6 +358,23 @@
+ Protocol-specific tests now exercise native snapshot/replay instead of retired
+ SDK block or permission-batch endpoints. Retired routes are explicitly refused.
+ 
++### 🔏 Session closure across navigation
++
++The existing two-login Chromium journey in `e2e/collaboration.spec.ts` owns
++session revocation, independently of the sign-in screen. Its observer attaches
++to Chromium Network events before navigation and retains actual closure of every
++matching established socket across document replacement. Navigation and
++Playwright page-close observations alone cannot pass. HTTP 401 denial, editor
++removal, the surviving login's uninterrupted queued write, absence of subsequent
++frames, saved content and the reloaded native cell remain separate assertions.
++
++Every attempt retains a bounded content-free timeline and cleanup status. Keep
++the 60-second journey, five-second closure deadline and flaky-test gate; a live
++socket, retained authorization, missing observation or cleanup failure still
++fails. Focused protocol controls cover the observation boundary without adding a
++browser matrix. [SPN-149](implementation/SPN-149.md) preserves the original
++failure's missing timeline, the controlled dispatch proof and acceptance record.
++
+ The native browser snapshot observer is enabled only in disposable test builds
+ with `VITE_SYNC_EVIDENCE=1`. It is read-only and ordinary builds omit it; there is
+ no production global that can issue editor commands. Browser tests retain the
+--- a/docs/implementation/SPN-149.md
++++ b/docs/implementation/SPN-149.md
+@@ -50,3 +50,264 @@
+ continuity, successful queued writes from the surviving login, no later broadcasts and saved/reloaded content.
+ A sign-in screen alone cannot establish closure. Keep current deadlines and
+ privacy-safe first-failure/cleanup evidence; no retry-to-green or deleted assertion.
++
++## 🧪 Declared investigation — 2026-11-12
++
++Agent decision under the owner's ticket-specific authorization. Complete outcome
++remains M: one observation-boundary correction, focused controls, the existing
++two-login journey, and its unchanged hosted acceptance. Product authentication,
++transport policy and navigation behavior are outside this correction.
++
++**Falsifiable hypothesis:** Playwright's page-level close observation loses a
++previously established socket when main-frame new-document navigation clears its
++socket map before the protocol close notification is dispatched. A request-ID
++observer attached directly to Chromium's Network events should retain the actual
++close independently of that map. Navigation without a close must remain failure.
++
++**Source and runtime declared before execution:** current main
++`04baabd6a68abe7c0b225f8699681532e2205b60`; Node `26.13.0`, executable SHA-256
++`0adde40d1b7dfa57c8bc83cbc319758c3ec6ebba21363bb2fa752ea6b267ad1b`;
++lockfile SHA-256 `cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c`;
++Playwright `1.64.1`, installed `coreBundle.js` SHA-256
++`829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d`.
++The original browser and the unchanged pinned hosted owner are Chromium
++`156.0.8078.4`, revision `1248`. Record the complete candidate and tested-merge
++identities before/with hosted execution; never substitute this base for them.
++
++**Fixed sample and stop condition:** one browser-free dispatch probe of the
++installed Playwright runtime, with exactly two controlled orderings: close before
++main-frame map clearing, then clearing before close. This deliberately injected
++ordering can demonstrate the observer boundary, not the historical browser's
++ordering or real server closure. Stop after both orderings or the first probe
++error. Then use exactly the existing development and production Chromium
++two-login cases, once each at retry zero in the first reviewed candidate's hosted
++run. Retain every configured retry separately; a retry cannot replace a failed
++first attempt. If neither native case exhibits the ordering, record the natural
++recurrence as not reproduced. Do not add a repeat matrix or run until green.
++
++**Bounds:** one local workload at a time via `scripts/serial.ts`, a process-tree
++RSS watchdog capped at 2 GiB and eight minutes, with system pressure checked
++before and during work. The browser-free probe has a 10-second outer bound.
++The actual journey keeps its 60-second test deadline, five-second closure poll,
++existing save/readiness deadlines, and `failOnFlakyTests`. New diagnostics store
++only finite event kinds, relative times, counts and statuses; no socket URLs,
++tickets, cookies, identifiers, frame payloads or authored content.
++
++**Capability checkpoint:** pinned dependencies installed successfully under the
++watchdog (peak 1,182,360 KiB, 11.967 s). Pinned Chromium local installation failed:
++the official installer downloaded invalid/empty ZIPs on its five built-in
++attempts. No local browser case ran and this is not passing acceptance. Keep
++browser execution with the existing hosted owners, without substituting another
++browser version or changing the environment matrix.
++
++Operator gains durable, bounded first-attempt evidence. Owner and Collaborator
++keep denial, real closure, the surviving login's queued write and saved/reloaded
++content as separate assertions. Link guest authorization and journeys are
++unchanged. No server/session defect is inferred from a missing observer event.
++
++## 🔎 Observed boundary and repair
++
++The declaration was committed locally as
++`d98f7d6b22459b4a9aa7306ab054c8e09e02e5d0` before the single dispatch probe.
++[The retained probe](evidence/SPN-149/playwright-boundary-probe.ts) executed the
++actual pinned Playwright `FrameManager` methods with a synthetic page/context;
++it did not launch a browser or a Spinel server. Source SHA-256:
++`6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a`.
++[Result](evidence/SPN-149/boundary-probe-result.json): one established socket and
++one page close event for close-before-clearing; one established socket and zero
++page close events for clearing-before-close. Both declared orderings completed
++in one process, 637 ms including the serial runner, peak 221,928 KiB.
++
++This demonstrates a conditional observation defect in the installed dependency.
++It does **not** establish that the original failed browser attempt had this
++ordering, or that server revocation failed. The
++[original case](evidence/SPN-149/original-13557930894-case.json),
++[DOM limitation](evidence/SPN-149/original-13557930894-error-context-summary.json),
++and [pinned source provenance](evidence/SPN-149/original-13557930894-playwright-source.json)
++remain separate. The original artifact's actual retention was seven days,
++expiring 2026-11-14 02:54:57 UTC; PR #268's 30-day statement was incorrect.
++Reviewed content-free extracts and member hashes now survive that expiry.
++The missing first-attempt socket/session/navigation timeline remains unavailable.
++
++Agent decision: use the supported Chromium CDP Network event interface in
++`e2e/session-revocation.ts`, installed before navigation, without modifying
++application/session/transport code or intercepting the revoked socket. Pin the
++observed request IDs privately until cleanup, require a real 101 establishment,
++and freeze all open matching sockets immediately before the synchronous session
++revocation. Only their actual protocol close events count. The observer also
++rejects a later established connection, observer loss and diagnostic overflow.
++Main-frame navigation and legacy page close events are diagnostic events only.
++
++The existing journey retains independent 401 denial, sign-in/editor removal,
++surviving socket continuity, successful forwarded queued writes and saved native
++content. It now verifies the same native cell after reload and rejects **any**
++later matching socket frame, without retaining frame payloads. The timeline has
++at most 64 finite events and 16 sockets; overflow fails closed. Every attempt
++attaches the content-free timeline, source/runtime fields and cleanup disposition,
++including when its first assertion fails. Cleanup releases held writes, detaches
++the owned observer, closes the owned context and removes disposable database
++state. Each phase has a five-second cleanup bound inside the unchanged test
++deadline; later phases still run after a rejection, and cleanup/attachment errors
++cannot replace the primary test failure.
++
++## 🧭 Test plan and evidence
++
++| Contract | Lowest meaningful owner |
++| --- | --- |
++| Navigation/close ordering, real establishment, all-target closure, retained frame observation | Browser-free protocol event controls in `scripts/ci/session-revocation.test.ts` |
++| Live socket with 401, closed socket with 200, wrong socket, reopened connection, observer loss or overflow must fail | The same focused controls, exercising the actual helper used by the browser case |
++| Setup/teardown listener ownership, privacy, rejected or stalled cleanup | The same focused controls, with bounded fake timers for cleanup |
++| Real closure, denied access, editor removal, surviving queued write and saved/reloaded value | Existing `e2e/collaboration.spec.ts` two-login development/production Chromium owners; no added browser project or duplicate journey |
++| Authority regression protection | Existing auth/session, collaboration and native sync suites remain selected; no authority source changed |
++
++CI routing is unchanged. Its existing broad rules select unit/browser owners for
++auth/session, `src/server/sync/transport.ts`, collaboration identity, navigation,
++`web/spinelSync.ts`, shared `sync-network`/`native-sheet-value` fixtures and the new
++observer. The new harness-control path selects the existing full plan. Focused
++routing controls preserve rejection of missing/skipped/failed/cancelled selected
++workers. All seven current-head gates and every selected worker remain required.
++
++### ✅ Local candidate verification
++
++The first runtime/test source was committed locally as
++`8ea691b2286a48e6344d46bd6fba0fd64ad6698e`, tree
++`20557e405e1fa5642ccdbf14aaef99d5d873e90b`. On that committed source, all
++18 focused controls, full strict TypeScript and the complete PR checker passed.
++That source also passed dependency boundaries, lint, full formatting,
++backlog checks and CLI index generation. No dependent ticket listed SPN-149.
++Its Rules are preserved here, its ticket is removed, its completion is appended
++without changing the grooming date or allocation counter, and the generated index has 22 open
++tickets. Relative documentation targets and whitespace were checked.
++
++[Local verification manifest](evidence/SPN-149/local-validation.json) retains
++source file hashes, commands, each attempt, resource measurements and limitations.
++The first lint attempt correctly rejected a throw inside `finally`; the throw
++now runs after cleanup, preserving the primary failure. The initial uncommitted
++control/type checks are preliminary; the committed-source reruns above own the
++evidence for that source. The failed local pinned-browser installation remains unavailable,
++not passed. No browser assertion or original deadline was retried or weakened.
++
++### 🔁 Independent review repair
++
++The first complete remote-created candidate was
++`8ee824a9787c630f7c9b02263461280611f68d59`, tree
++`fe2cc7200da2b0333374ad0bef89e88085ab6bda`. It had no published validation
++branch or PR. [Both independent reviews](evidence/SPN-149/review-iteration-1.json)
++ran all 18 controls and inspected the full candidate. Review A scored [historical grade masked];
++review B scored [historical grade masked] and identified two local repairs. Neither deducted for
++pending hosted acceptance.
++
++Review B demonstrated that rejected `Network.enable` followed by a permanently
++pending detach left setup pending after 5,106 ms. Setup failure now runs the same
++bounded observer cleanup as normal teardown, removing every owned listener and
++rethrowing the original setup error after at most the existing five-second cleanup
++bound. A new mocked-timer control remains pending at 4,999 ms and rejects with the
++identical error at 5,000 ms. The original Playwright copyright/license header and
++an accurate extraction notice are now retained beside the diagnostic snippets,
++with their pinned source registered in `THIRD-PARTY-NOTICES.md`.
++
++The repaired source is local commit `8ea17ad308b5fe77b293f58f35c803575cede0d6`,
++tree `924001dbca2b2e27d24fc40d6ccbdc28b68eff3f`. All 19 focused controls,
++strict TypeScript, dependency boundaries, lint and formatting passed on its exact
++executable bytes; the manifest records hashes and every attempt. Both findings
++are repaired before validation publication. The complete candidate, including
++this record, requires both independent reviewers to revalidate its exact commit.
++
++Actual hosted acceptance remains pending at this pre-publication checkpoint.
++The final PR/immutable receipt must
++record complete candidate/review/tested identities, every attempt and any natural
++recurrence observed within the declared sample. A later pass cannot retroactively
++pass the original run or waive a failed current-head acceptance. No scope from
++SPN-120 or SPN-145 is incorporated.
++
++## 🔄 Current-main integration — 2026-11-14
++
++Status: accepted agent decision; implementation integration and local verification
++in progress, current-source reviews and hosted acceptance pending. Resume existing
++PR #282 from `64d85c15288017bbfe3434d91fe0647eb2a2d613` onto actual main
++`89e4426dfff1c3469b260305e21180ffd79fdb7f`. The complete outcome remains **M**:
++the existing protocol observer, focused controls, full two-login security journey,
++current-base integration, verification and durable evidence. No product, session,
++transport or authorization policy change is added. Initial integration conflicts
++are confined to completion bookkeeping; regenerate the index with the CLI,
++preserving main's allocations, registrations, dependencies and grooming date.
++
++The alternatives are to resume the already demonstrated observation correction,
++replace actual closure with sign-in UI, or absorb unrelated fixture failures.
++Choose the existing correction: Operator receives bounded first-failure evidence;
++Owner and Collaborator retain real socket closure, denied access, the other login's
++queued write and saved/reloaded content; Link guest authority remains unchanged.
++This is agent judgment under the standing persona delegation, not owner approval
++of a test result or an acceptance waiver.
++
++The prior [immutable acceptance record](https://github.com/mxbaylee/spinel/blob/9392210d92f3ae706443ca49803c4ea7122322af/docs/implementation/evidence/SPN-149/acceptance/acceptance.json)
++preserves both old candidate reviews and every earlier run. Its fixed initial
++two-sample native investigation is complete: the natural ordering gap was not
++reproduced, while the separately controlled dependency probe demonstrated the
++conditional observation boundary. Do not reopen that diagnostic sample. Required
++validation after this base integration is ordinary current-source acceptance.
++
++The latest old-head CI `43373411759`, attempt 1, did not pass: its development
++2/2 job `131715559252` retained a flaky first-attempt Space guest export-snapshot
++reset and ended cancelled, failing the Playwright aggregate. The [separate scope
++assessment](https://github.com/mxbaylee/spinel/blob/9392210d92f3ae706443ca49803c4ea7122322af/docs/implementation/evidence/SPN-149/acceptance/spn149-current-head-scope-assessment.md)
++remains applicable: cause and cancellation trigger are unproved, no first-attempt
++trace exists, and that Space guest case is outside both this observation repair
++and SPN-120's finite historical reset inventory. No speculative repair, assertion
++retry or unchanged-workflow rerun is authorized by this integration. Preserve any
++recurrence and determine its owner from evidence; all selected current-head gates
++remain required.
++
++SPN-158's separate current CI `43553620429`, attempt 1, supplies a new recurrence
++of the **old page-close-counter assertion**, production 1/2 job `132321620858`:
++source `bfeb0b23953a67aae8afcba8af6eadd8b24f1040`, base `89e4426d`, tested merge
++`1211f269850c22b213e707cdd6aeeb8e7e3f9b3d`. Retry zero failed after 7,559 ms
++with zero observed page closes at the unchanged five-second poll; retry one
++passed in 5,996 ms, and `failOnFlakyTests` correctly rejected the worker. Sign-in
++was visible, but later queued-write/broadcast assertions were not reached. Only
++the successful retry retained a trace. Artifact `14097746136`, SHA-256
++`d30a17c29b5eb10716abed4873159e7df71c2949cfd378ce7f54efeed5e22410`, retains
++the original report and first-failure attachments. This supports resuming the
++existing repair, not claiming either historical failure's actual event ordering.
++SPN-158's restore-admission change remains a separate ticket and is not imported.
++
++### 🔎 Current integration verification plan
++
++Compare exact executable blobs with the previously reviewed source; run the 19
++existing observer/routing negative controls as the cheapest meaningful owner of
++closure ordering, real establishment, every target, denied access, observer loss,
++overflow, cleanup and fail-closed selection. Recheck dependency equivalence,
++targeted lint/formatting, TypeScript when safely feasible, backlog and exact-title
++PR checks under the shared serial runner and memory watchdog. Preserve resource
++refusals/aborts as unavailable checks. No new browser matrix, budget or retry is
++introduced; current native closure and saved-work acceptance belongs to the
++existing development/production Chromium journeys in selected hosted CI.
++
++Keep the two independent exact-candidate reviews, seven required gates, selected
++workers and current-base requirement separate from historical passes. No product
++UI changed, so visual approval is inapplicable. Before landing, pin the final
++evidence durably; after a qualifying squash merge, preserve unique work and remove
++obsolete implementation/integration/evidence branches with exact-head and active
++PR ownership checks. Prior archive/deletion capability limitations are historical;
++recheck actual capability during cleanup instead of retaining them as assumptions.
++
++### ✅ Local integration checkpoint
++
++All three executable paths introduced or changed by SPN-149 are byte-identical
++to `64d85c15288017bbfe3434d91fe0647eb2a2d613`; current main integrates without
++runtime conflicts. The 225 root/workspace/patch dependency-source files match
++the existing SPN-098 installation, reused through a local `node_modules` symlink
++without package installation or dependency-source changes. No Vitest or browser
++cache-writing workload ran.
++
++The existing 19 controls passed with zero failures, skips or cancellations in
++181 ms including the serial runner. Dependency boundaries, targeted lint/format,
++backlog and generated index checks passed. Full strict TypeScript passed in
++8,465 ms with peak sampled process-tree RSS 1,652,704 KiB, using tool-only
++`GOMEMLIMIT=1GiB` and `GOMAXPROCS=2`; the unchanged 2 GiB watchdog limit and normal
++memory pressure remained enforced. Checks shorter than the 200 ms polling
++interval have an unsampled peak, not a zero-memory claim. Exact logs, source
++hashes, dependency equivalence and receipts are retained in the
++[current local record](evidence/SPN-149/current-main-20261114/checks.json).
++No new native diagnostic experiment or local browser execution ran. Current
++hosted acceptance and final exact-candidate reviews remain pending.
+--- a/docs/implementation/evidence/SPN-149/boundary-probe-result.json
++++ b/docs/implementation/evidence/SPN-149/boundary-probe-result.json
+@@ -0,0 +1,45 @@
++{
++  "node": "v26.13.0",
++  "playwright": "1.64.1",
++  "controlledDispatchOnly": true,
++  "browserLaunched": false,
++  "outcomes": [
++    {
++      "ordering": "protocol-close then navigation-map-clear",
++      "established": 1,
++      "pageCloseEvents": 1
++    },
++    {
++      "ordering": "navigation-map-clear then protocol-close",
++      "established": 1,
++      "pageCloseEvents": 0
++    }
++  ],
++  "declarationCommit": "d98f7d6",
++  "probeSHA256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a",
++  "command": "node scripts/serial.ts timeout 10s node docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
++  "watchdog": {
++    "startedAt": "2026-11-13T03:50:57.123Z",
++    "finishedAt": "2026-11-13T03:50:57.761Z",
++    "command": "node",
++    "args": [
++      "scripts/serial.ts",
++      "timeout",
++      "10s",
++      "node",
++      "../validation/playwright-boundary-probe.ts"
++    ],
++    "node": "v26.13.0",
++    "cwd": "/workspace/scratch/13a7bba7afec/spinel",
++    "elapsedMs": 637,
++    "initialMemory": {
++      "availableKiB": 7684964,
++      "totalKiB": 10206472
++    },
++    "minimumAvailableKiB": 7309372,
++    "peakKiB": 221928,
++    "code": 0,
++    "signal": null,
++    "aborted": null
++  }
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/backlog.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/backlog.json
+@@ -0,0 +1,13 @@
++{
++  "name": "spn149-current-backlog",
++  "args": [
++    "node",
++    "scripts/backlog/cli.ts",
++    "check"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 140,
++  "peakKiB": 0
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/backlog.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/backlog.log
+@@ -0,0 +1,23 @@
++warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-089.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-090.md: 77 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-098.md: 71 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-099.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-122.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-147.md: 59 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-154.md: 54 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-156.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-157.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-158.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
++backlog ok: 29 open tickets
++{"name":"spn149-current-backlog","args":["node","scripts/backlog/cli.ts","check"],"code":0,"signal":null,"reason":null,"elapsedMs":140,"peakKiB":0}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/checks.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/checks.json
+@@ -0,0 +1,138 @@
++{
++  "ticket": "SPN-149",
++  "date": "2026-11-14",
++  "priorSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
++  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
++  "status": "local integration checks passed; complete candidate reviews and hosted acceptance pending",
++  "node": "v26.13.0",
++  "nodeSHA256": "533bd644c5ae0e0ea3a80e433aad16b817447ccba1e1eea701875eac80cb75d4",
++  "focusedControls": {
++    "passed": 19,
++    "failed": 0,
++    "skipped": 0,
++    "cancelled": 0
++  },
++  "bounds": {
++    "normalMemoryPressure": 1,
++    "processTreeLimitKiB": 2097152,
++    "pollIntervalMs": 200,
++    "deadlineMs": 480000
++  },
++  "unsampledRSS": "Receipt peakKiB=0 means command completed before the first sample; it is not zero memory usage.",
++  "typecheckEnvironment": {
++    "GOMEMLIMIT": "1GiB",
++    "GOMAXPROCS": "2"
++  },
++  "nativeExecution": "Not run locally. Fixed initial diagnostic sample remains closed; current hosted native cases own ordinary integrated-source acceptance.",
++  "sourceIdentity": "source-identity.json verifies all three executable ticket paths against prior reviewed source.",
++  "dependencyReuse": "225 tracked root/workspace/patch paths byte-match SPN098 donor; local dependency symlink only; no dependency source mutation, install, Vitest or browser execution.",
++  "firstFailures": "Historical failed CI43373411759 and current SPN158 old-observer failure43553620429 retained in canonical record; no unchanged-run rerun.",
++  "evidence": [
++    {
++      "path": "index.json",
++      "bytes": 193,
++      "sha256": "8f133830f71567ec699a0d556b03ac683d7fa0965c5fba24382c335e12913db7"
++    },
++    {
++      "path": "index.log",
++      "bytes": 2083,
++      "sha256": "b54e2ffd9e75d5e753513794b718a9d7f1e0a549c00e9900dafbca13a0695686"
++    },
++    {
++      "path": "controls.json",
++      "bytes": 240,
++      "sha256": "018c2271d6cd601d26cc0feb7a024b4eb37c6be5471344be1ee40a88b5fe42f9"
++    },
++    {
++      "path": "controls.log",
++      "bytes": 2082,
++      "sha256": "5e94ca591d72cc26dbf09019eae699a8e196df335dac4dbeea54dbb41a7d8d7f"
++    },
++    {
++      "path": "dependencies.json",
++      "bytes": 202,
++      "sha256": "5d7a2929597f19f780287344d78a4f11cc946631392bcf449ca922beeaf35f27"
++    },
++    {
++      "path": "dependencies.log",
++      "bytes": 228,
++      "sha256": "b31a5417539d05c5d119b896191810927bf03f69384f87867d301261e54ec4da"
++    },
++    {
++      "path": "lint.json",
++      "bytes": 303,
++      "sha256": "e20be87fc65d793be02fc0ab4dc8e2cb240b8af03b3bca1254e50c1fc9f85975"
++    },
++    {
++      "path": "lint.log",
++      "bytes": 246,
++      "sha256": "bae2637fd52ffeecc101eb42045f355effab4c243b65b82661edff089dd58379"
++    },
++    {
++      "path": "format.json",
++      "bytes": 304,
++      "sha256": "9ba05109af46e142570f68a52daeb2b526a5c9366a30e874df2d1ff35e80a032"
++    },
++    {
++      "path": "format.log",
++      "bytes": 313,
++      "sha256": "1c604b7926adb79c5955239bf6dc829f1db90f66b87cb1e5d9714c2cd61f69ca"
++    },
++    {
++      "path": "backlog.json",
++      "bytes": 195,
++      "sha256": "5c55073f6ae3c16eb43665185111c9cbd178f495d83795f296bb53eccde93750"
++    },
++    {
++      "path": "backlog.log",
++      "bytes": 2087,
++      "sha256": "eda076fb5f6fb8ef1058a1d1723189df0275aac6ffe5ec2f9207ed7f1bdfe75f"
++    },
++    {
++      "path": "types.json",
++      "bytes": 193,
++      "sha256": "7c4ddb48af4e1ffa75d1b5a44079181fed769bf6d1fd2514f11a555a5ed62d8b"
++    },
++    {
++      "path": "types.log",
++      "bytes": 146,
++      "sha256": "0a69afdf6e1d4c9ddf49758d33163fd2d8b8343d1ec6137d11fc9a664e282517"
++    },
++    {
++      "path": "dependency-source.json",
++      "bytes": 52556,
++      "sha256": "259dd7b33ba6742a73bf503788e724a88df479cef2996b6e55fb6b04b11d3fc3"
++    },
++    {
++      "path": "source-identity.json",
++      "bytes": 810,
++      "sha256": "6881ef8feff222c2da5d8c234c4ddd3b1c0db48d4e8fbb33759f0e47a55f6b88"
++    },
++    {
++      "path": "pr.json",
++      "bytes": 352,
++      "sha256": "e8d479857d19ed07d1dacfce943a488fb7c7e19ef2c690406b64c1793078de5f"
++    },
++    {
++      "path": "pr.log",
++      "bytes": 301,
++      "sha256": "f44426c9bde3a7d9db4be9e24f96577ed355c82421192f20530d43e6e6d22ee2"
++    }
++  ],
++  "integrationCommit": "8aa0b835",
++  "exactTitlePRCheck": {
++    "source": "8aa0b8353c4569a2af61116ec6128fd295bf2b46",
++    "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
++    "result": "passed",
++    "elapsedMs": 417,
++    "peakKiB": 179696
++  },
++  "whitespace": {
++    "againstActualBase": "passed: git diff --check 89e4426d...HEAD",
++    "duringMerge": "The staged merge against old64d85 includes two pre-existing trailing-whitespace lines in main SPN145 retained first-failure contexts; these files are unchanged versus actual base and were preserved byte-for-byte."
++  },
++  "cleanup": {
++    "postChecks": "No remaining TypeScript compiler or task-worktree command in post-check process inventory; no process termination needed.",
++    "rawInventory": "Local /tmp/spn149-current/post-check-processes.txt retained privately; owner application inventory is not published."
++  }
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/controls.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/controls.json
+@@ -0,0 +1,14 @@
++{
++  "name": "spn149-current-controls",
++  "args": [
++    "node",
++    "--test",
++    "--test-concurrency=1",
++    "scripts/ci/session-revocation.test.ts"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 181,
++  "peakKiB": 0
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/controls.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/controls.log
+@@ -0,0 +1,28 @@
++✔ protocol closure survives close-first ordering and retains frame counts (2.791334ms)
++✔ protocol closure survives navigation-first ordering and retains frame counts (0.192167ms)
++✔ a socket without a successful handshake (missing) cannot prove revocation (0.547666ms)
++✔ a socket without a successful handshake (403) cannot prove revocation (0.153417ms)
++✔ unrelated socket closes and frames cannot satisfy the established target (0.243417ms)
++✔ 401, navigation and a Playwright close cannot accept a live protocol socket (0.241375ms)
++✔ a protocol close cannot accept authorization that is still active (0.271834ms)
++✔ every established target must close before revocation can pass (0.1705ms)
++✔ post-revocation handshake status 101 preserves the establishment boundary (0.140667ms)
++✔ post-revocation handshake status 401 preserves the establishment boundary (0.114625ms)
++✔ losing the protocol observer invalidates completed closure evidence (0.135667ms)
++✔ overflow retains bounded content-free evidence and cannot turn into acceptance (0.189292ms)
++✔ too many socket identities fail closed without retaining an unbounded map (0.127417ms)
++✔ failed Network.enable removes listeners and detach failure preserves its original error (0.229ms)
++✔ failed Network.enable preserves its original error when detach reaches the cleanup bound (0.783042ms)
++✔ stop detaches only owned listeners and prevents late events from changing evidence (0.250625ms)
++✔ cleanup runs every remaining owned phase after synchronous and asynchronous rejection (0.143042ms)
++✔ a stalled cleanup phase reaches its original bound and still releases later resources (0.142625ms)
++✔ revocation source and shared inputs keep unit/browser owners and fail-closed aggregates (4.469917ms)
++ℹ tests 19
++ℹ suites 0
++ℹ pass 19
++ℹ fail 0
++ℹ cancelled 0
++ℹ skipped 0
++ℹ todo 0
++ℹ duration_ms 88.265541
++{"name":"spn149-current-controls","args":["node","--test","--test-concurrency=1","scripts/ci/session-revocation.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":181,"peakKiB":0}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/dependencies.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/dependencies.json
+@@ -0,0 +1,12 @@
++{
++  "name": "spn149-current-dependencies",
++  "args": [
++    "node",
++    "scripts/dependencies/no-univer-pro.ts"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 115,
++  "peakKiB": 0
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/dependencies.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/dependencies.log
+@@ -0,0 +1,2 @@
++No Univer Pro dependencies in 8 manifests or the resolved lockfile.
++{"name":"spn149-current-dependencies","args":["node","scripts/dependencies/no-univer-pro.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":115,"peakKiB":0}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/dependency-source.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/dependency-source.json
+@@ -0,0 +1,1131 @@
++{
++  "donor": "/Users/mxbaylee/projects/spinel-spn-098-production",
++  "donorHead": "2204b8c40ce6feb8ad03c65720c976510535ad00",
++  "files": [
++    {
++      "path": "lib/diagnostics/index.test.ts",
++      "candidate": "b1a6b3010f7141260b180e39ec5442ac2835978889d80aba45b2c6f36dda7bb8",
++      "donor": "b1a6b3010f7141260b180e39ec5442ac2835978889d80aba45b2c6f36dda7bb8"
++    },
++    {
++      "path": "lib/diagnostics/index.ts",
++      "candidate": "efe5bc747e18c13dacb1468595a174f31bb8a7efbb928dfacc3e09f75fde574d",
++      "donor": "efe5bc747e18c13dacb1468595a174f31bb8a7efbb928dfacc3e09f75fde574d"
++    },
++    {
++      "path": "lib/diagnostics/package.json",
++      "candidate": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5",
++      "donor": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5"
++    },
++    {
++      "path": "lib/diagnostics/sync.test.ts",
++      "candidate": "41d592ec89cfb6c34e2b4e55a642a42fc7529361b1f16bdaa3279e4394fc3ccf",
++      "donor": "41d592ec89cfb6c34e2b4e55a642a42fc7529361b1f16bdaa3279e4394fc3ccf"
++    },
++    {
++      "path": "lib/diagnostics/sync.ts",
++      "candidate": "e35b9c859a73e6abeb31a4db8ea54d8db3c836056afc684a8d6b67a157a59f0b",
++      "donor": "e35b9c859a73e6abeb31a4db8ea54d8db3c836056afc684a8d6b67a157a59f0b"
++    },
++    {
++      "path": "lib/doc-formulas/completion.test.ts",
++      "candidate": "73fead5b3a7779f00cf1d9ec4e1f82f9e13460d3d97929d1dc3373e7f4456357",
++      "donor": "73fead5b3a7779f00cf1d9ec4e1f82f9e13460d3d97929d1dc3373e7f4456357"
++    },
++    {
++      "path": "lib/doc-formulas/completion.ts",
++      "candidate": "e619fb26f84e84b5ba1580d86657159aa17c08f50d3d03a06bc6f5091508cbce",
++      "donor": "e619fb26f84e84b5ba1580d86657159aa17c08f50d3d03a06bc6f5091508cbce"
++    },
++    {
++      "path": "lib/doc-formulas/definition.test.ts",
++      "candidate": "8e9b96fe778381bf6cef30785f49eeea1039942abcf3d1454082571fc0a481be",
++      "donor": "8e9b96fe778381bf6cef30785f49eeea1039942abcf3d1454082571fc0a481be"
++    },
++    {
++      "path": "lib/doc-formulas/definition.ts",
++      "candidate": "c9daba0be4cdc4f302532ee69009272aebdc6c79fb1aadd6a2a98f6ebbaaeb5a",
++      "donor": "c9daba0be4cdc4f302532ee69009272aebdc6c79fb1aadd6a2a98f6ebbaaeb5a"
++    },
++    {
++      "path": "lib/doc-formulas/evaluate.test.ts",
++      "candidate": "89332102c530f7440f6dca7fa5d3e70ef27dd92e569b0b27d210d9e51c633886",
++      "donor": "89332102c530f7440f6dca7fa5d3e70ef27dd92e569b0b27d210d9e51c633886"
++    },
++    {
++      "path": "lib/doc-formulas/evaluate.ts",
++      "candidate": "46362fda87877ead18d84ab6d0efb1758529d67e3109af9cc07423f3b16e891c",
++      "donor": "46362fda87877ead18d84ab6d0efb1758529d67e3109af9cc07423f3b16e891c"
++    },
++    {
++      "path": "lib/doc-formulas/index.ts",
++      "candidate": "bb053aff7ef905c8b4a0b0ed05e9bf2452368ebbc883b6dda5a35478aed7d9a7",
++      "donor": "bb053aff7ef905c8b4a0b0ed05e9bf2452368ebbc883b6dda5a35478aed7d9a7"
++    },
++    {
++      "path": "lib/doc-formulas/model.test.ts",
++      "candidate": "410a24a2483d5e67f9d095642bf676d5dda802b6b0ed53a14d80f304c2f70203",
++      "donor": "410a24a2483d5e67f9d095642bf676d5dda802b6b0ed53a14d80f304c2f70203"
++    },
++    {
++      "path": "lib/doc-formulas/model.ts",
++      "candidate": "6a033c05349a60c2c73b9aa25c32ceb9868629087a7dd2dbd34a4e7bab86b3b8",
++      "donor": "6a033c05349a60c2c73b9aa25c32ceb9868629087a7dd2dbd34a4e7bab86b3b8"
++    },
++    {
++      "path": "lib/doc-formulas/native.test.ts",
++      "candidate": "fd37a459a36ee7b3ec0b90b1bbd4228433784e8406d50683da2981b467bbe126",
++      "donor": "fd37a459a36ee7b3ec0b90b1bbd4228433784e8406d50683da2981b467bbe126"
++    },
++    {
++      "path": "lib/doc-formulas/native.ts",
++      "candidate": "f8ca600cfe766fadbb0c3bf614b1295a949b0265f4da5aac9c27f22d88fda996",
++      "donor": "f8ca600cfe766fadbb0c3bf614b1295a949b0265f4da5aac9c27f22d88fda996"
++    },
++    {
++      "path": "lib/doc-formulas/package.json",
++      "candidate": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f",
++      "donor": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f"
++    },
++    {
++      "path": "lib/doc-formulas/rendering.ts",
++      "candidate": "9236d1916b9fb981fba79d6b6612ec0f35c4a527713d8ac0d0eeb82a5f913b13",
++      "donor": "9236d1916b9fb981fba79d6b6612ec0f35c4a527713d8ac0d0eeb82a5f913b13"
++    },
++    {
++      "path": "lib/doc-formulas/saveError.ts",
++      "candidate": "31116ddce415b793c60c80cbc583256c7daf55fa01bc684f78208fab0fcec99a",
++      "donor": "31116ddce415b793c60c80cbc583256c7daf55fa01bc684f78208fab0fcec99a"
++    },
++    {
++      "path": "lib/presence-ui/docPresence.test.ts",
++      "candidate": "6de354d44fb44bd33943ad88cac87c3ca089bd425ab51d5a31f09caea2eb3bf9",
++      "donor": "6de354d44fb44bd33943ad88cac87c3ca089bd425ab51d5a31f09caea2eb3bf9"
++    },
++    {
++      "path": "lib/presence-ui/docPresence.ts",
++      "candidate": "3a7bca5028e9e53183798b7977e370a156e6b5919c9d813781c502bcf8eaec2f",
++      "donor": "3a7bca5028e9e53183798b7977e370a156e6b5919c9d813781c502bcf8eaec2f"
++    },
++    {
++      "path": "lib/presence-ui/index.test.ts",
++      "candidate": "69fe1b3316cf79513f481bb213bc7d1a325d372abb9b7152530e1a75c2370a86",
++      "donor": "69fe1b3316cf79513f481bb213bc7d1a325d372abb9b7152530e1a75c2370a86"
++    },
++    {
++      "path": "lib/presence-ui/index.ts",
++      "candidate": "5aa178e3ddabb0cded68f02da7678c7410775ee9cc6cd0e83b9aa6c95e6141e9",
++      "donor": "5aa178e3ddabb0cded68f02da7678c7410775ee9cc6cd0e83b9aa6c95e6141e9"
++    },
++    {
++      "path": "lib/presence-ui/localSelection.ts",
++      "candidate": "7c7507b067059eb3e89d8bfd0005e00b5f3c4af01fca68900692943bdb2bfb7b",
++      "donor": "7c7507b067059eb3e89d8bfd0005e00b5f3c4af01fca68900692943bdb2bfb7b"
++    },
++    {
++      "path": "lib/presence-ui/package.json",
++      "candidate": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810",
++      "donor": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810"
++    },
++    {
++      "path": "lib/presence-ui/renderColors.ts",
++      "candidate": "53654c17aab7a9660c31b98cac56473077b76dcf27c5f3d4ad7889e3af8a151e",
++      "donor": "53654c17aab7a9660c31b98cac56473077b76dcf27c5f3d4ad7889e3af8a151e"
++    },
++    {
++      "path": "lib/presence-ui/rendering.test.ts",
++      "candidate": "400229937b80a1e29372ca291918fa7ef172ecc2d8209e837543ae645a3c4b1b",
++      "donor": "400229937b80a1e29372ca291918fa7ef172ecc2d8209e837543ae645a3c4b1b"
++    },
++    {
++      "path": "lib/presence-ui/selection.ts",
++      "candidate": "261aa89cc1cbc3a0985a5b6db5a50d693206036c00d95ce84587569c5cb08bf2",
++      "donor": "261aa89cc1cbc3a0985a5b6db5a50d693206036c00d95ce84587569c5cb08bf2"
++    },
++    {
++      "path": "lib/print/contract.ts",
++      "candidate": "4b12030ef0a779780c06b9b8e85a5cdde40f25f18ba1df34a12836638e189c35",
++      "donor": "4b12030ef0a779780c06b9b8e85a5cdde40f25f18ba1df34a12836638e189c35"
++    },
++    {
++      "path": "lib/print/doc-column-breaks.test.ts",
++      "candidate": "fc3d042883a651e4dba6b504ea482f0b45693d182d8f2e52f6d90b13c8923d29",
++      "donor": "fc3d042883a651e4dba6b504ea482f0b45693d182d8f2e52f6d90b13c8923d29"
++    },
++    {
++      "path": "lib/print/doc-column-breaks.ts",
++      "candidate": "fbb0c61b06ece4004c304d8e4a9aaf04503d6925e5d832359f96949df0845504",
++      "donor": "fbb0c61b06ece4004c304d8e4a9aaf04503d6925e5d832359f96949df0845504"
++    },
++    {
++      "path": "lib/print/doc-fixed-image-flow.ts",
++      "candidate": "908b4f81457f7046c1f8978d33db3e01acb7102c8afe9e3b44347c1b0baf529b",
++      "donor": "908b4f81457f7046c1f8978d33db3e01acb7102c8afe9e3b44347c1b0baf529b"
++    },
++    {
++      "path": "lib/print/doc-fixed-images.test.ts",
++      "candidate": "09d3a4ed6dfaa5cd15624c34ebeab987a6d33de7526f776ec4608561d63a5cf0",
++      "donor": "09d3a4ed6dfaa5cd15624c34ebeab987a6d33de7526f776ec4608561d63a5cf0"
++    },
++    {
++      "path": "lib/print/doc-fixed-images.ts",
++      "candidate": "d09cac5b740d3282a626f8fbab9f85cf6b2039815ee388e02a4bbf8f62ae19f8",
++      "donor": "d09cac5b740d3282a626f8fbab9f85cf6b2039815ee388e02a4bbf8f62ae19f8"
++    },
++    {
++      "path": "lib/print/doc-floating-pages.test.ts",
++      "candidate": "0af44e716d156ac9fc7b49d841b4042a1190cc40257983ac834c2e33425356bb",
++      "donor": "0af44e716d156ac9fc7b49d841b4042a1190cc40257983ac834c2e33425356bb"
++    },
++    {
++      "path": "lib/print/doc-floating-pages.ts",
++      "candidate": "97961d6d845f8d0995c90dd0333371911a9d54609e6e84b17438ff2010a55b7a",
++      "donor": "97961d6d845f8d0995c90dd0333371911a9d54609e6e84b17438ff2010a55b7a"
++    },
++    {
++      "path": "lib/print/doc-formulas.ts",
++      "candidate": "3d6dbfd253af93c2cd3717e373c9d23e8a6584d2e9225ac3dd5188739b7c0b63",
++      "donor": "3d6dbfd253af93c2cd3717e373c9d23e8a6584d2e9225ac3dd5188739b7c0b63"
++    },
++    {
++      "path": "lib/print/doc-hyperlinks.test.ts",
++      "candidate": "8664b7d26018d7c2f08d945fdfd6136968d0eb1f64f7e0827ed4bb2154ab6ae1",
++      "donor": "8664b7d26018d7c2f08d945fdfd6136968d0eb1f64f7e0827ed4bb2154ab6ae1"
++    },
++    {
++      "path": "lib/print/doc-hyperlinks.ts",
++      "candidate": "0e36aee028dced7485eacf325ab693dd188b7cbae37614c1584a4ba00ac23585",
++      "donor": "0e36aee028dced7485eacf325ab693dd188b7cbae37614c1584a4ba00ac23585"
++    },
++    {
++      "path": "lib/print/doc-hyphen-flow.test.ts",
++      "candidate": "5d19a596514cc7ca7e0d152038425b15b60ad106460408fcb2589256e81ba30b",
++      "donor": "5d19a596514cc7ca7e0d152038425b15b60ad106460408fcb2589256e81ba30b"
++    },
++    {
++      "path": "lib/print/doc-hyphen-flow.ts",
++      "candidate": "9379b2563adb5b9868461bf522a1c077d0148fa0d7199835f10670ba9b2f78bd",
++      "donor": "9379b2563adb5b9868461bf522a1c077d0148fa0d7199835f10670ba9b2f78bd"
++    },
++    {
++      "path": "lib/print/doc-image-anchor.test.ts",
++      "candidate": "c436ea7c8aea5b2d9d27125533346992ae462acbfed41155a411f6500fba87d1",
++      "donor": "c436ea7c8aea5b2d9d27125533346992ae462acbfed41155a411f6500fba87d1"
++    },
++    {
++      "path": "lib/print/doc-image-anchor.ts",
++      "candidate": "960865803cdc704526bce9d642fa9d60bfbe3bc28935c14fe221d580715c5d84",
++      "donor": "960865803cdc704526bce9d642fa9d60bfbe3bc28935c14fe221d580715c5d84"
++    },
++    {
++      "path": "lib/print/doc-image-clusters.test.ts",
++      "candidate": "e47ef365be115825bdec9b406ac34594682653d13bbe26ba1301ba67d031912d",
++      "donor": "e47ef365be115825bdec9b406ac34594682653d13bbe26ba1301ba67d031912d"
++    },
++    {
++      "path": "lib/print/doc-image-flow.ts",
++      "candidate": "043f14741ef5eab99f89ddf47fe882a877aff0a13c031b4b65bcabe1068c5f59",
++      "donor": "043f14741ef5eab99f89ddf47fe882a877aff0a13c031b4b65bcabe1068c5f59"
++    },
++    {
++      "path": "lib/print/doc-image-groups.test.ts",
++      "candidate": "8eed87210ee97a3ac50c6410752c1b69ab46ef3d3c858224c6c33112cf64f2aa",
++      "donor": "8eed87210ee97a3ac50c6410752c1b69ab46ef3d3c858224c6c33112cf64f2aa"
++    },
++    {
++      "path": "lib/print/doc-image-groups.ts",
++      "candidate": "bf61608fc0f3499005aea6ee82c910ce86d8c5835619b188b56194f3332af19e",
++      "donor": "bf61608fc0f3499005aea6ee82c910ce86d8c5835619b188b56194f3332af19e"
++    },
++    {
++      "path": "lib/print/doc-image-page-flow.ts",
++      "candidate": "638d71e80150f54e18959fddda6cfcecc6709872054e6d785822930da00e411a",
++      "donor": "638d71e80150f54e18959fddda6cfcecc6709872054e6d785822930da00e411a"
++    },
++    {
++      "path": "lib/print/doc-image-pages.test.ts",
++      "candidate": "11933e2bb9385f194a8c5f991c32299b67e9ce7132affb5140925b2000aedf29",
++      "donor": "11933e2bb9385f194a8c5f991c32299b67e9ce7132affb5140925b2000aedf29"
++    },
++    {
++      "path": "lib/print/doc-image-spaces.test.ts",
++      "candidate": "28e30f75acd46cd7b6ffbc763a447dad9eeb6b142990ef4e85f15c6dfda53d3d",
++      "donor": "28e30f75acd46cd7b6ffbc763a447dad9eeb6b142990ef4e85f15c6dfda53d3d"
++    },
++    {
++      "path": "lib/print/doc-layout.test.ts",
++      "candidate": "96a9dec2d45d1a175fb1baad73676d1f4350add3d76aab90ca0c6f06cc1a7f66",
++      "donor": "96a9dec2d45d1a175fb1baad73676d1f4350add3d76aab90ca0c6f06cc1a7f66"
++    },
++    {
++      "path": "lib/print/doc-layout.ts",
++      "candidate": "7ab8a55b1920b2b3c29dfc40ef1c7b0f646c1bcc650da59439d69a0d840f2983",
++      "donor": "7ab8a55b1920b2b3c29dfc40ef1c7b0f646c1bcc650da59439d69a0d840f2983"
++    },
++    {
++      "path": "lib/print/doc-multiple-images.test.ts",
++      "candidate": "e0d59b91b830c933fb5ade9c7711597e7dc93dd1c85dacfea7b690ea68302af4",
++      "donor": "e0d59b91b830c933fb5ade9c7711597e7dc93dd1c85dacfea7b690ea68302af4"
++    },
++    {
++      "path": "lib/print/doc-native-fixture.ts",
++      "candidate": "dd2462b7e62cbc48995daf8b908d8ffdf8d04cbcc9654bcf8f4b6414c03dac6b",
++      "donor": "dd2462b7e62cbc48995daf8b908d8ffdf8d04cbcc9654bcf8f4b6414c03dac6b"
++    },
++    {
++      "path": "lib/print/doc-native-geometry-fixture.ts",
++      "candidate": "bea3b804e21c5ed5481c2b1281821a15ab0bf4c0f1329e0071eb0d143965ed56",
++      "donor": "bea3b804e21c5ed5481c2b1281821a15ab0bf4c0f1329e0071eb0d143965ed56"
++    },
++    {
++      "path": "lib/print/doc-native-test-support.ts",
++      "candidate": "8756029a75a225c41cd19e81d70dccf768ad818e260b70f6761322e2652ca38f",
++      "donor": "8756029a75a225c41cd19e81d70dccf768ad818e260b70f6761322e2652ca38f"
++    },
++    {
++      "path": "lib/print/doc-native.test.ts",
++      "candidate": "3629f38c11e449f0893d87a14fb2383eaec969a92fc4769db2be6ae1d81767d6",
++      "donor": "3629f38c11e449f0893d87a14fb2383eaec969a92fc4769db2be6ae1d81767d6"
++    },
++    {
++      "path": "lib/print/doc-native.ts",
++      "candidate": "8b1ebddcee8248421e14e2f9851070bb24a8eafb514ae56b7bd64dfded329097",
++      "donor": "8b1ebddcee8248421e14e2f9851070bb24a8eafb514ae56b7bd64dfded329097"
++    },
++    {
++      "path": "lib/print/doc-nested-formulas.test.ts",
++      "candidate": "158d6907de6d8a4bf1ad1e56ef9f15f88b3301f100d28092c5f4b864c28d321f",
++      "donor": "158d6907de6d8a4bf1ad1e56ef9f15f88b3301f100d28092c5f4b864c28d321f"
++    },
++    {
++      "path": "lib/print/doc-preparation.test.ts",
++      "candidate": "89c99230bc2d5d445ed434cd1878c1cfd868f474008a11edb686287e83325798",
++      "donor": "89c99230bc2d5d445ed434cd1878c1cfd868f474008a11edb686287e83325798"
++    },
++    {
++      "path": "lib/print/doc-preparation.ts",
++      "candidate": "0a81f49975d9b5e0b573c8abed192c2c3cdb466f15da0d1846b384c4abf79aec",
++      "donor": "0a81f49975d9b5e0b573c8abed192c2c3cdb466f15da0d1846b384c4abf79aec"
++    },
++    {
++      "path": "lib/print/doc-sections.test.ts",
++      "candidate": "0f085c8d450224d76f8d593236fafac8447a78887d990ae7c0a9aaacdd3e0f48",
++      "donor": "0f085c8d450224d76f8d593236fafac8447a78887d990ae7c0a9aaacdd3e0f48"
++    },
++    {
++      "path": "lib/print/doc-source-selection.test.ts",
++      "candidate": "fd3d71e15f2594d5e3109b02bfdbc06eb2226a600714dd8f92ad184b81bd0373",
++      "donor": "fd3d71e15f2594d5e3109b02bfdbc06eb2226a600714dd8f92ad184b81bd0373"
++    },
++    {
++      "path": "lib/print/doc-square-image.test.ts",
++      "candidate": "235219280f521a010290cb98a523a38c10e0e0cda31b2c4512dbde79d233743a",
++      "donor": "235219280f521a010290cb98a523a38c10e0e0cda31b2c4512dbde79d233743a"
++    },
++    {
++      "path": "lib/print/doc-stories.ts",
++      "candidate": "fea21a7b4e4c224ccfcfbf24325a333eced736d46644da56ab2a7cd79a7c5d39",
++      "donor": "fea21a7b4e4c224ccfcfbf24325a333eced736d46644da56ab2a7cd79a7c5d39"
++    },
++    {
++      "path": "lib/print/doc-story-geometry.test.ts",
++      "candidate": "05b5bf1978ef80ca843c390404fb8cc2de0bb964a9c00867af748fb80374e62d",
++      "donor": "05b5bf1978ef80ca843c390404fb8cc2de0bb964a9c00867af748fb80374e62d"
++    },
++    {
++      "path": "lib/print/doc-story-image.test.ts",
++      "candidate": "3e5627c8650da4e1a39e8dddebc0ff1b6b8b81132acb862acd69abc23171d1c8",
++      "donor": "3e5627c8650da4e1a39e8dddebc0ff1b6b8b81132acb862acd69abc23171d1c8"
++    },
++    {
++      "path": "lib/print/doc-story-layout.ts",
++      "candidate": "d3a8c0e9955a9c9284e14a7a88da95c05dfe5c2a5a9fed779f438242aa38ea37",
++      "donor": "d3a8c0e9955a9c9284e14a7a88da95c05dfe5c2a5a9fed779f438242aa38ea37"
++    },
++    {
++      "path": "lib/print/doc-table-flow.ts",
++      "candidate": "79a64380127b18989a17854ae6063d11bcf47536f8bdfa2eb32c6664f0afebf9",
++      "donor": "79a64380127b18989a17854ae6063d11bcf47536f8bdfa2eb32c6664f0afebf9"
++    },
++    {
++      "path": "lib/print/doc-table-render.ts",
++      "candidate": "889d00530297611138639de5549e35521e939c0bc4a05b674e02f7bb2b6b9cc5",
++      "donor": "889d00530297611138639de5549e35521e939c0bc4a05b674e02f7bb2b6b9cc5"
++    },
++    {
++      "path": "lib/print/entry-fixture.ts",
++      "candidate": "d2a34b0c16c8c625c0e08d02cdbdb84ab386663ece2dd417629b2ce27f037c35",
++      "donor": "d2a34b0c16c8c625c0e08d02cdbdb84ab386663ece2dd417629b2ce27f037c35"
++    },
++    {
++      "path": "lib/print/entry.test.ts",
++      "candidate": "eb5363a54f478a3bec44a760795d11398423249d3095e8716b046dd814a585d9",
++      "donor": "eb5363a54f478a3bec44a760795d11398423249d3095e8716b046dd814a585d9"
++    },
++    {
++      "path": "lib/print/font-fixtures.ts",
++      "candidate": "b178409636b772fbc14673a1336a2ed7d3144f2dc02c91b12563b782f050c9cd",
++      "donor": "b178409636b772fbc14673a1336a2ed7d3144f2dc02c91b12563b782f050c9cd"
++    },
++    {
++      "path": "lib/print/fonts.test.ts",
++      "candidate": "4f1ff592a590db28aa4fc76ccd39254e04c62cbea4f2a9c325be2c1c49b456ac",
++      "donor": "4f1ff592a590db28aa4fc76ccd39254e04c62cbea4f2a9c325be2c1c49b456ac"
++    },
++    {
++      "path": "lib/print/fonts.ts",
++      "candidate": "edbadd05e0fff4799625fa01996082a167f234e035703ba7d064319edda236b9",
++      "donor": "edbadd05e0fff4799625fa01996082a167f234e035703ba7d064319edda236b9"
++    },
++    {
++      "path": "lib/print/image-group-metadata.ts",
++      "candidate": "e98f0e360b96f1bf869935f4a9add6cc491cff4a70ab6af34115a7cbae936112",
++      "donor": "e98f0e360b96f1bf869935f4a9add6cc491cff4a70ab6af34115a7cbae936112"
++    },
++    {
++      "path": "lib/print/image-groups.ts",
++      "candidate": "c3cf250b3344a120aec128ee6f9d9f6dfeef6a0e56906737474f9466de263c31",
++      "donor": "c3cf250b3344a120aec128ee6f9d9f6dfeef6a0e56906737474f9466de263c31"
++    },
++    {
++      "path": "lib/print/image-render.ts",
++      "candidate": "11c30dbeb132369888d4cede42a8fcabf3fc8d98675bfcbbd830ddb4326104d8",
++      "donor": "11c30dbeb132369888d4cede42a8fcabf3fc8d98675bfcbbd830ddb4326104d8"
++    },
++    {
++      "path": "lib/print/images.test.ts",
++      "candidate": "c7fedb2dcac91b6ff94c74abf49f1c2e5826b3fa5497b98178516a7f5def6421",
++      "donor": "c7fedb2dcac91b6ff94c74abf49f1c2e5826b3fa5497b98178516a7f5def6421"
++    },
++    {
++      "path": "lib/print/images.ts",
++      "candidate": "4fcf8354d7dae6bd45c6acb8514390e57911b0194aaacf389836b18e7d747b2b",
++      "donor": "4fcf8354d7dae6bd45c6acb8514390e57911b0194aaacf389836b18e7d747b2b"
++    },
++    {
++      "path": "lib/print/index.ts",
++      "candidate": "5df74c9f4b747d15c825ba74f5477beda2c5c7339e9090d1dff2fe720006e9bc",
++      "donor": "5df74c9f4b747d15c825ba74f5477beda2c5c7339e9090d1dff2fe720006e9bc"
++    },
++    {
++      "path": "lib/print/layout.test.ts",
++      "candidate": "0692dc665cf7351aa181efae39b2e1225277b148ffe7f7f50c0cdb30491fd4f0",
++      "donor": "0692dc665cf7351aa181efae39b2e1225277b148ffe7f7f50c0cdb30491fd4f0"
++    },
++    {
++      "path": "lib/print/layout.ts",
++      "candidate": "6137fb3a7cc3bbc41d51900f65606d96f847154752c79ca9e9e546f0e5cfb1b1",
++      "donor": "6137fb3a7cc3bbc41d51900f65606d96f847154752c79ca9e9e546f0e5cfb1b1"
++    },
++    {
++      "path": "lib/print/native-fixture.ts",
++      "candidate": "dd2e8ce916ac7015aaa73dd199e98b86a5e7a53850a9132275370efee68bfd0b",
++      "donor": "dd2e8ce916ac7015aaa73dd199e98b86a5e7a53850a9132275370efee68bfd0b"
++    },
++    {
++      "path": "lib/print/native-images.test.ts",
++      "candidate": "6ef2243574c0ded316bf89c5d41bf9c6df89ba1292a9c766ed1483e7097e9316",
++      "donor": "6ef2243574c0ded316bf89c5d41bf9c6df89ba1292a9c766ed1483e7097e9316"
++    },
++    {
++      "path": "lib/print/native-runtime.ts",
++      "candidate": "05d5782b6b848d1a7f17215728f8c1b4daf474de353157c5db591519822192f2",
++      "donor": "05d5782b6b848d1a7f17215728f8c1b4daf474de353157c5db591519822192f2"
++    },
++    {
++      "path": "lib/print/native-test-support.ts",
++      "candidate": "b08fe8855ae0752fe139c524f899c92443641fa04ade81379e4800718daa7e67",
++      "donor": "b08fe8855ae0752fe139c524f899c92443641fa04ade81379e4800718daa7e67"
++    },
++    {
++      "path": "lib/print/native.test.ts",
++      "candidate": "5cad8eee9c8718fe44da837dbf72bb313a575f313633790f42858da1c1547a32",
++      "donor": "5cad8eee9c8718fe44da837dbf72bb313a575f313633790f42858da1c1547a32"
++    },
++    {
++      "path": "lib/print/native.ts",
++      "candidate": "4281a77c21ebe7c487d17256dca89ccb0290b01f081461bc2d7fbca8293a1969",
++      "donor": "4281a77c21ebe7c487d17256dca89ccb0290b01f081461bc2d7fbca8293a1969"
++    },
++    {
++      "path": "lib/print/package.json",
++      "candidate": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487",
++      "donor": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487"
++    },
++    {
++      "path": "lib/print/package.test.ts",
++      "candidate": "8adb517181b2cdcbb46b14c4175e704ab8c43e145ff5c0bfc1a39577aa3b75e1",
++      "donor": "8adb517181b2cdcbb46b14c4175e704ab8c43e145ff5c0bfc1a39577aa3b75e1"
++    },
++    {
++      "path": "lib/print/pdf-geometry.test.ts",
++      "candidate": "4d0fd61a174b1014b66545fb891ef59a20e177f2f3466d09a37af883093fefa9",
++      "donor": "4d0fd61a174b1014b66545fb891ef59a20e177f2f3466d09a37af883093fefa9"
++    },
++    {
++      "path": "lib/print/pdf-geometry.ts",
++      "candidate": "265b6b3232cb3fc3e6eaa3943e9e26af2482e4ad7e63ad3a5c340ecf4a592e58",
++      "donor": "265b6b3232cb3fc3e6eaa3943e9e26af2482e4ad7e63ad3a5c340ecf4a592e58"
++    },
++    {
++      "path": "lib/print/preflight.test.ts",
++      "candidate": "4b55285a35ea931df990153709a2b3f053f907941852d3b7100f9b669d741589",
++      "donor": "4b55285a35ea931df990153709a2b3f053f907941852d3b7100f9b669d741589"
++    },
++    {
++      "path": "lib/print/preflight.ts",
++      "candidate": "6be86f7d14ae36282fd15935c0616c89887f0365de03e19a00ca1cb9c2934dd0",
++      "donor": "6be86f7d14ae36282fd15935c0616c89887f0365de03e19a00ca1cb9c2934dd0"
++    },
++    {
++      "path": "lib/print/raster-text-test-support.test.ts",
++      "candidate": "671c8c7b77eede971313f9f7892e30fc9154373376bd8aaf40d91b4f58907eae",
++      "donor": "671c8c7b77eede971313f9f7892e30fc9154373376bd8aaf40d91b4f58907eae"
++    },
++    {
++      "path": "lib/print/raster-text-test-support.ts",
++      "candidate": "d84a05882a9b701d2b07b95f33dbb3a51290f68bdee848de98363cd7c2e9716e",
++      "donor": "d84a05882a9b701d2b07b95f33dbb3a51290f68bdee848de98363cd7c2e9716e"
++    },
++    {
++      "path": "lib/print/resources.test.ts",
++      "candidate": "64658045495c5912604d60f93b10615d30e96cb90d07857bb1aa15ed38072a18",
++      "donor": "64658045495c5912604d60f93b10615d30e96cb90d07857bb1aa15ed38072a18"
++    },
++    {
++      "path": "lib/print/resources.ts",
++      "candidate": "f91fcefcea93ccb8740ee609555e0d3c39274b3607885fcd517ec4516df6974c",
++      "donor": "f91fcefcea93ccb8740ee609555e0d3c39274b3607885fcd517ec4516df6974c"
++    },
++    {
++      "path": "lib/print/selection.test.ts",
++      "candidate": "27b21c77bbcd5f8496e0bec2edce32149ee9e12e844511c495555245d7eef79c",
++      "donor": "27b21c77bbcd5f8496e0bec2edce32149ee9e12e844511c495555245d7eef79c"
++    },
++    {
++      "path": "lib/print/selection.ts",
++      "candidate": "12fa4cffdc65f55197605e9d5a0135a6b9ed1337887a55dab76bc470f556edfd",
++      "donor": "12fa4cffdc65f55197605e9d5a0135a6b9ed1337887a55dab76bc470f556edfd"
++    },
++    {
++      "path": "lib/print/sheet-filter.test.ts",
++      "candidate": "93401cf89d800416ba49341e2cb692d0ffb272ec0b3e6a90f22a0ad27b833533",
++      "donor": "93401cf89d800416ba49341e2cb692d0ffb272ec0b3e6a90f22a0ad27b833533"
++    },
++    {
++      "path": "lib/print/sheet-filter.ts",
++      "candidate": "cacb676c44228b7f830d03aabdc5e85ad3525ec204de272078dae82467e1fb24",
++      "donor": "cacb676c44228b7f830d03aabdc5e85ad3525ec204de272078dae82467e1fb24"
++    },
++    {
++      "path": "lib/print/sheet-image-groups.test.ts",
++      "candidate": "371d201876a3d2e4d39fc0ca49777642a7075f1b1d2ef581168d92df10ba7c13",
++      "donor": "371d201876a3d2e4d39fc0ca49777642a7075f1b1d2ef581168d92df10ba7c13"
++    },
++    {
++      "path": "lib/print/sheet-image-metadata.ts",
++      "candidate": "6239bf3a404dc46e59b12a141238da227782564985e79750f53776ebe0c2eaf5",
++      "donor": "6239bf3a404dc46e59b12a141238da227782564985e79750f53776ebe0c2eaf5"
++    },
++    {
++      "path": "lib/print/sheet-seams.test.ts",
++      "candidate": "38e1c5be95e9838d8c12d19f941f1fcbcc0d5effef5c842eae73c64a1898c27c",
++      "donor": "38e1c5be95e9838d8c12d19f941f1fcbcc0d5effef5c842eae73c64a1898c27c"
++    },
++    {
++      "path": "lib/print/sheet-source-selection.test.ts",
++      "candidate": "546c9c175f28cd009287e9402789bea8cc53816b93d0d9441dead19195427258",
++      "donor": "546c9c175f28cd009287e9402789bea8cc53816b93d0d9441dead19195427258"
++    },
++    {
++      "path": "lib/print/text.test.ts",
++      "candidate": "99af4d196286085ed538be3d6e2424ab94fd590806716a6556024243600b3b9f",
++      "donor": "99af4d196286085ed538be3d6e2424ab94fd590806716a6556024243600b3b9f"
++    },
++    {
++      "path": "lib/print/text.ts",
++      "candidate": "8bac90d4a6cb93eec939a3b785c1cf222c0cab0cf8a0da2f360d0262fe080464",
++      "donor": "8bac90d4a6cb93eec939a3b785c1cf222c0cab0cf8a0da2f360d0262fe080464"
++    },
++    {
++      "path": "lib/print/worksheet.test.ts",
++      "candidate": "04df39690d88a1ae26b57d105b2cac31be4aef147bfb9fa03b1c808dde12e8b6",
++      "donor": "04df39690d88a1ae26b57d105b2cac31be4aef147bfb9fa03b1c808dde12e8b6"
++    },
++    {
++      "path": "lib/print/worksheet.ts",
++      "candidate": "860e037008b094c3cad209925925204dc8797b6b631c521b480e533e6fbdef19",
++      "donor": "860e037008b094c3cad209925925204dc8797b6b631c521b480e533e6fbdef19"
++    },
++    {
++      "path": "lib/sync-client/index.ts",
++      "candidate": "a9d7b38129f503aae2d8333cac0c47f751d8b7ebd24894f550f24633f9228171",
++      "donor": "a9d7b38129f503aae2d8333cac0c47f751d8b7ebd24894f550f24633f9228171"
++    },
++    {
++      "path": "lib/sync-client/package.json",
++      "candidate": "45b917bd9d85a4b0fb94e49dd033a07ce11c7af295bea54598434b3a2a29f5f6",
++      "donor": "45b917bd9d85a4b0fb94e49dd033a07ce11c7af295bea54598434b3a2a29f5f6"
++    },
++    {
++      "path": "lib/sync-client/src/admission.ts",
++      "candidate": "4ced97b483aa140436ad47fa623ec21a35a3d0b1e03132daea9fa6ef0971d611",
++      "donor": "4ced97b483aa140436ad47fa623ec21a35a3d0b1e03132daea9fa6ef0971d611"
++    },
++    {
++      "path": "lib/sync-client/src/budget.ts",
++      "candidate": "a401f4cc2ccbc514a2d9607e1b21f8473502bd5b41c277145c2933e2a6cd7aa2",
++      "donor": "a401f4cc2ccbc514a2d9607e1b21f8473502bd5b41c277145c2933e2a6cd7aa2"
++    },
++    {
++      "path": "lib/sync-client/src/capture.ts",
++      "candidate": "7a9250aacc14f81c62ee8368cc442b42a1ff645c943e6bb1c7fe7fb68edcc579",
++      "donor": "7a9250aacc14f81c62ee8368cc442b42a1ff645c943e6bb1c7fe7fb68edcc579"
++    },
++    {
++      "path": "lib/sync-client/src/checkpoint.ts",
++      "candidate": "a816a56591ed8160d968371e08115fb4320df68b3a2d1b6c9853023f7581b8bc",
++      "donor": "a816a56591ed8160d968371e08115fb4320df68b3a2d1b6c9853023f7581b8bc"
++    },
++    {
++      "path": "lib/sync-client/src/client.ts",
++      "candidate": "764435ca33795ccce1ae39e075ae1c5eb115696dd1664011895b04a3a2e39224",
++      "donor": "764435ca33795ccce1ae39e075ae1c5eb115696dd1664011895b04a3a2e39224"
++    },
++    {
++      "path": "lib/sync-client/src/hash.ts",
++      "candidate": "4a6973159a6aa612fb8f0b18b30d5fd216747b2a1dfeb00b49a9011bd088ed0d",
++      "donor": "4a6973159a6aa612fb8f0b18b30d5fd216747b2a1dfeb00b49a9011bd088ed0d"
++    },
++    {
++      "path": "lib/sync-client/src/native.ts",
++      "candidate": "b2bd700b7ffbcfcf370c504d5d56d4de73e91fffd12e4f74f8a91cc298aa4cc3",
++      "donor": "b2bd700b7ffbcfcf370c504d5d56d4de73e91fffd12e4f74f8a91cc298aa4cc3"
++    },
++    {
++      "path": "lib/sync-client/src/pending-buffer.ts",
++      "candidate": "54dbd3f6e2700f5bda0e4ffc2f64298fa037e3434f65a3ca00eb20e42d507ba1",
++      "donor": "54dbd3f6e2700f5bda0e4ffc2f64298fa037e3434f65a3ca00eb20e42d507ba1"
++    },
++    {
++      "path": "lib/sync-client/src/recovery.ts",
++      "candidate": "9df848c4bfebbdee5036b978511f67b6945453f8ca7458c56a466bb7c518dfe1",
++      "donor": "9df848c4bfebbdee5036b978511f67b6945453f8ca7458c56a466bb7c518dfe1"
++    },
++    {
++      "path": "lib/sync-client/src/types.ts",
++      "candidate": "3dc144f457774a15361bcae62cf8e96160b14fd93fc4cc5ea660fa764bc23a71",
++      "donor": "3dc144f457774a15361bcae62cf8e96160b14fd93fc4cc5ea660fa764bc23a71"
++    },
++    {
++      "path": "lib/sync-client/tests/admission.test.ts",
++      "candidate": "cd677a890e7e8c6e3be899be9fc935fc6b39f29d98d4c6bf8d06c7531ff5c65b",
++      "donor": "cd677a890e7e8c6e3be899be9fc935fc6b39f29d98d4c6bf8d06c7531ff5c65b"
++    },
++    {
++      "path": "lib/sync-client/tests/bounds.test.ts",
++      "candidate": "7d4771b88037f97ab692b81355fb1743df1b38e5a82b2a7872933b8f1d8c3423",
++      "donor": "7d4771b88037f97ab692b81355fb1743df1b38e5a82b2a7872933b8f1d8c3423"
++    },
++    {
++      "path": "lib/sync-client/tests/checkpoint.test.ts",
++      "candidate": "f5cb7a51bbe6dc347bac983c5b55c9c882eb0f8defddd49839a2b2e01f9e52df",
++      "donor": "f5cb7a51bbe6dc347bac983c5b55c9c882eb0f8defddd49839a2b2e01f9e52df"
++    },
++    {
++      "path": "lib/sync-client/tests/client.test.ts",
++      "candidate": "a67b0ac19f27c814c415f5ed042be4db254e0e15f2c06b455c07794a8dfbda7b",
++      "donor": "a67b0ac19f27c814c415f5ed042be4db254e0e15f2c06b455c07794a8dfbda7b"
++    },
++    {
++      "path": "lib/sync-client/tests/doc-copy.test.ts",
++      "candidate": "5a9ac02c9e67ecbfaced5f629e0eaf865977efd392c1f4c50807b453405d45c0",
++      "donor": "5a9ac02c9e67ecbfaced5f629e0eaf865977efd392c1f4c50807b453405d45c0"
++    },
++    {
++      "path": "lib/sync-client/tests/docs-drawing.test.ts",
++      "candidate": "a14116046391bd210b693593c62ed8d28345a668896f92747f0787c5e054f2d4",
++      "donor": "a14116046391bd210b693593c62ed8d28345a668896f92747f0787c5e054f2d4"
++    },
++    {
++      "path": "lib/sync-client/tests/drawing-queue.test.ts",
++      "candidate": "0dbf42e3e0f8a6c2ecf5d68ab92c492da4ecd568ab9e5a957349a302245cabc0",
++      "donor": "0dbf42e3e0f8a6c2ecf5d68ab92c492da4ecd568ab9e5a957349a302245cabc0"
++    },
++    {
++      "path": "lib/sync-client/tests/fixture.ts",
++      "candidate": "5aab40aaddd9fb2738053dbf87956b647830909768f1706bb5df9a7d8d64e365",
++      "donor": "5aab40aaddd9fb2738053dbf87956b647830909768f1706bb5df9a7d8d64e365"
++    },
++    {
++      "path": "lib/sync-client/tests/formula-cache.test.ts",
++      "candidate": "da3986e9ce088a54bfbf0300688b0100c25d85c0b6165a82dc2b62a257753ee8",
++      "donor": "da3986e9ce088a54bfbf0300688b0100c25d85c0b6165a82dc2b62a257753ee8"
++    },
++    {
++      "path": "lib/sync-client/tests/hash.test.ts",
++      "candidate": "b97a73953158bfce65091be6455dd79913def4832b4f29f33f25867cdb96c3e2",
++      "donor": "b97a73953158bfce65091be6455dd79913def4832b4f29f33f25867cdb96c3e2"
++    },
++    {
++      "path": "lib/sync-client/tests/native-session.ts",
++      "candidate": "93f83518abbe6e049430fcf243f9e9e3e0aa593ca64a7af4454f6d678e879dfc",
++      "donor": "93f83518abbe6e049430fcf243f9e9e3e0aa593ca64a7af4454f6d678e879dfc"
++    },
++    {
++      "path": "lib/sync-client/tests/native.test.ts",
++      "candidate": "d7eaa331984cfe16a051a88c6a1f5ab70550964c2a349c0e437025e5e6fd7499",
++      "donor": "d7eaa331984cfe16a051a88c6a1f5ab70550964c2a349c0e437025e5e6fd7499"
++    },
++    {
++      "path": "lib/sync-client/tests/paragraph-capture.test.ts",
++      "candidate": "043ada3fddb6a5a86c9a9a58d5a159b8a53dd94176e903c5be52484a04d41e02",
++      "donor": "043ada3fddb6a5a86c9a9a58d5a159b8a53dd94176e903c5be52484a04d41e02"
++    },
++    {
++      "path": "lib/sync-client/tests/pending-buffer.test.ts",
++      "candidate": "2346186216141a061a6c6e17704d661e0f877979b117a8c1e7795c11d119fda5",
++      "donor": "2346186216141a061a6c6e17704d661e0f877979b117a8c1e7795c11d119fda5"
++    },
++    {
++      "path": "lib/sync-client/tests/persistence.test.ts",
++      "candidate": "679b4d522ad972df4f3c3cbbeee36b684c5bc6006a7bf1766523cdb2223c36e0",
++      "donor": "679b4d522ad972df4f3c3cbbeee36b684c5bc6006a7bf1766523cdb2223c36e0"
++    },
++    {
++      "path": "lib/sync-client/tests/remote-formula.test.ts",
++      "candidate": "964a34536a112c36c7849780292da86d0f30d7441c1094efb1f7228967c42214",
++      "donor": "964a34536a112c36c7849780292da86d0f30d7441c1094efb1f7228967c42214"
++    },
++    {
++      "path": "lib/sync-client/tests/validation-entry.test.ts",
++      "candidate": "81f789a7287a322b751781f551a2fb722ee3055df2f6672a6017c500ef34f71a",
++      "donor": "81f789a7287a322b751781f551a2fb722ee3055df2f6672a6017c500ef34f71a"
++    },
++    {
++      "path": "lib/sync-client/tests/worksheet-identity.test.ts",
++      "candidate": "822ca3c47b90a8d34b267e4700f1fe91262d0f543228362c8ea4ef1e2d99d9cd",
++      "donor": "822ca3c47b90a8d34b267e4700f1fe91262d0f543228362c8ea4ef1e2d99d9cd"
++    },
++    {
++      "path": "lib/sync-client/validation.ts",
++      "candidate": "f1ebafab6834dc23fb23976835e17fd65fc3577a03c38c517c00e8a8c3ef4f9e",
++      "donor": "f1ebafab6834dc23fb23976835e17fd65fc3577a03c38c517c00e8a8c3ef4f9e"
++    },
++    {
++      "path": "lib/sync-server/index.ts",
++      "candidate": "327e8440ed3e762bfaccdfe2863b9ffc26d261fd3093339acfb1009f30af1039",
++      "donor": "327e8440ed3e762bfaccdfe2863b9ffc26d261fd3093339acfb1009f30af1039"
++    },
++    {
++      "path": "lib/sync-server/package.json",
++      "candidate": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c",
++      "donor": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c"
++    },
++    {
++      "path": "lib/sync-server/src/cells.ts",
++      "candidate": "744eb4ab0046b452960c9f08c47b216ec8fc0dc29581353076bb99d94cc2ec35",
++      "donor": "744eb4ab0046b452960c9f08c47b216ec8fc0dc29581353076bb99d94cc2ec35"
++    },
++    {
++      "path": "lib/sync-server/src/geometry.ts",
++      "candidate": "e97e66936b894d2790a941e8fda3abc77cd1560cc54e9bdcef2bf799d4db90c0",
++      "donor": "e97e66936b894d2790a941e8fda3abc77cd1560cc54e9bdcef2bf799d4db90c0"
++    },
++    {
++      "path": "lib/sync-server/src/native.ts",
++      "candidate": "641bb082c8603074cef540a1b1ae2943a6e034d66e0caaca8c010577c4635193",
++      "donor": "641bb082c8603074cef540a1b1ae2943a6e034d66e0caaca8c010577c4635193"
++    },
++    {
++      "path": "lib/sync-server/src/order.ts",
++      "candidate": "b7de265dd1f26beefe741b9dfb40dac2e320908667bec94ec45a6e742f2f68c2",
++      "donor": "b7de265dd1f26beefe741b9dfb40dac2e320908667bec94ec45a6e742f2f68c2"
++    },
++    {
++      "path": "lib/sync-server/src/server.ts",
++      "candidate": "5be58a9b33110f50f7aa5927eb159335655024e2838eb55ce84bb88f8146ed49",
++      "donor": "5be58a9b33110f50f7aa5927eb159335655024e2838eb55ce84bb88f8146ed49"
++    },
++    {
++      "path": "lib/sync-server/src/types.ts",
++      "candidate": "7501543ee7b362a40a3922a8ce01c4544e3fa4d27f3d98d50146773e03600923",
++      "donor": "7501543ee7b362a40a3922a8ce01c4544e3fa4d27f3d98d50146773e03600923"
++    },
++    {
++      "path": "lib/sync-server/tests/cells.test.ts",
++      "candidate": "a916a126d1f341bd71c3722e448448b01d291acf21b5c89e1669b0f4780c3327",
++      "donor": "a916a126d1f341bd71c3722e448448b01d291acf21b5c89e1669b0f4780c3327"
++    },
++    {
++      "path": "lib/sync-server/tests/headless-formula.fixture.ts",
++      "candidate": "91beba46b570ff237b34c46ab7e94786a2b2c5e65886b778fe451d0b8e2c9e16",
++      "donor": "91beba46b570ff237b34c46ab7e94786a2b2c5e65886b778fe451d0b8e2c9e16"
++    },
++    {
++      "path": "lib/sync-server/tests/headless-formula.test.ts",
++      "candidate": "d86a5c9ba85e083ee18e6e39bf6a22b7a0a20108ad7096ab2119687dc521b9e3",
++      "donor": "d86a5c9ba85e083ee18e6e39bf6a22b7a0a20108ad7096ab2119687dc521b9e3"
++    },
++    {
++      "path": "lib/sync-server/tests/server.test.ts",
++      "candidate": "3988b9cb375aa2ff12c07cfb08468f775e07c21c3c25165d9fd3192d74300ffa",
++      "donor": "3988b9cb375aa2ff12c07cfb08468f775e07c21c3c25165d9fd3192d74300ffa"
++    },
++    {
++      "path": "lib/sync-transform/index.ts",
++      "candidate": "0b7a1edaa6e39cc207352fcd6c39766ff42f101e32dab3bbce0145c3d310fc98",
++      "donor": "0b7a1edaa6e39cc207352fcd6c39766ff42f101e32dab3bbce0145c3d310fc98"
++    },
++    {
++      "path": "lib/sync-transform/package.json",
++      "candidate": "9b18276b297e3948de2e12a7215487d58efbd175d14860c94cfd8c91e387548f",
++      "donor": "9b18276b297e3948de2e12a7215487d58efbd175d14860c94cfd8c91e387548f"
++    },
++    {
++      "path": "lib/sync-transform/src/axis.ts",
++      "candidate": "e33b3f00b987e1f2d210201d21139763b30fcbbdd03406f8ed3e8fdf76236f8a",
++      "donor": "e33b3f00b987e1f2d210201d21139763b30fcbbdd03406f8ed3e8fdf76236f8a"
++    },
++    {
++      "path": "lib/sync-transform/src/cells.ts",
++      "candidate": "f536fe4fecc821e2bb4e5ead25d46f7803d57b34c834bf451c44c98dc143ce5f",
++      "donor": "f536fe4fecc821e2bb4e5ead25d46f7803d57b34c834bf451c44c98dc143ce5f"
++    },
++    {
++      "path": "lib/sync-transform/src/docs.ts",
++      "candidate": "2bd888909554a14482d09bd09099215364d7f9c7288672b65c2ca55b854d0679",
++      "donor": "2bd888909554a14482d09bd09099215364d7f9c7288672b65c2ca55b854d0679"
++    },
++    {
++      "path": "lib/sync-transform/src/drawings.ts",
++      "candidate": "3d7b5da8f7b3297db533e16e9e92cb1cbb5916e91d2b1e3f51705c97e66234d0",
++      "donor": "3d7b5da8f7b3297db533e16e9e92cb1cbb5916e91d2b1e3f51705c97e66234d0"
++    },
++    {
++      "path": "lib/sync-transform/src/family.ts",
++      "candidate": "5c56e6309fa9d420855ac4b7c5b0c1e694e0c1959a95761cb431e528518d6da8",
++      "donor": "5c56e6309fa9d420855ac4b7c5b0c1e694e0c1959a95761cb431e528518d6da8"
++    },
++    {
++      "path": "lib/sync-transform/src/merges.ts",
++      "candidate": "fc9a2962672e9851dc946ad98212638588252110a042d0fc73e6a61bbbe1453c",
++      "donor": "fc9a2962672e9851dc946ad98212638588252110a042d0fc73e6a61bbbe1453c"
++    },
++    {
++      "path": "lib/sync-transform/src/names.ts",
++      "candidate": "52e741b42d869f227e715d7eed4394f8ffa5add6dd36c8b50d1681f879a7cc20",
++      "donor": "52e741b42d869f227e715d7eed4394f8ffa5add6dd36c8b50d1681f879a7cc20"
++    },
++    {
++      "path": "lib/sync-transform/src/native-values.ts",
++      "candidate": "3a96b566b357ae579dce101d33bb9b1821b6860fecc8e420e59d11cfa1ffa96a",
++      "donor": "3a96b566b357ae579dce101d33bb9b1821b6860fecc8e420e59d11cfa1ffa96a"
++    },
++    {
++      "path": "lib/sync-transform/src/properties.ts",
++      "candidate": "83a11516003326cb68ab737b1e9cdf57ab789e1bc9a74663b662f61d9a5498bb",
++      "donor": "83a11516003326cb68ab737b1e9cdf57ab789e1bc9a74663b662f61d9a5498bb"
++    },
++    {
++      "path": "lib/sync-transform/src/settings.ts",
++      "candidate": "768a2992acab5ca7e567a4ccbc2e95957be1fd71ca0fb673d58c599630c6c510",
++      "donor": "768a2992acab5ca7e567a4ccbc2e95957be1fd71ca0fb673d58c599630c6c510"
++    },
++    {
++      "path": "lib/sync-transform/src/shifts.ts",
++      "candidate": "256d466a1ff5870dabbed7b6c3c3d0ff33db5d4609b16377ecea1016917e179d",
++      "donor": "256d466a1ff5870dabbed7b6c3c3d0ff33db5d4609b16377ecea1016917e179d"
++    },
++    {
++      "path": "lib/sync-transform/src/state.ts",
++      "candidate": "185d39aae14591b42deaf16d3132771cf2b4c573f70e88aab2b72a2a0dfadd0d",
++      "donor": "185d39aae14591b42deaf16d3132771cf2b4c573f70e88aab2b72a2a0dfadd0d"
++    },
++    {
++      "path": "lib/sync-transform/src/structure.ts",
++      "candidate": "aa5063d899678b57f464dda43c6149e70e9b94dd30a3a963f9ef086218680c6f",
++      "donor": "aa5063d899678b57f464dda43c6149e70e9b94dd30a3a963f9ef086218680c6f"
++    },
++    {
++      "path": "lib/sync-transform/src/transform.ts",
++      "candidate": "9dbe116e6314d7353242c9c52348fa1b40d5176c3955ff849ff9de28aa68185a",
++      "donor": "9dbe116e6314d7353242c9c52348fa1b40d5176c3955ff849ff9de28aa68185a"
++    },
++    {
++      "path": "lib/sync-transform/src/types.ts",
++      "candidate": "d7d77837735f2c5fc8d21706b6f844972f39d7a03ed4e84be53d80663c8d099e",
++      "donor": "d7d77837735f2c5fc8d21706b6f844972f39d7a03ed4e84be53d80663c8d099e"
++    },
++    {
++      "path": "lib/sync-transform/src/writes.ts",
++      "candidate": "841bfd7640ab689e7ed3610e1043ed70cdc0a7fff248018f285aa294ff4bd62d",
++      "donor": "841bfd7640ab689e7ed3610e1043ed70cdc0a7fff248018f285aa294ff4bd62d"
++    },
++    {
++      "path": "lib/sync-transform/tests/axis.test.ts",
++      "candidate": "f78daa59e6f5012b08f2fe4d50286345da3449870ede4e093c5da51788930657",
++      "donor": "f78daa59e6f5012b08f2fe4d50286345da3449870ede4e093c5da51788930657"
++    },
++    {
++      "path": "lib/sync-transform/tests/cells-dense.test.ts",
++      "candidate": "30cae967893a113706012a1cb64c933a150fb6b60b816c16dbbd2458e41c417a",
++      "donor": "30cae967893a113706012a1cb64c933a150fb6b60b816c16dbbd2458e41c417a"
++    },
++    {
++      "path": "lib/sync-transform/tests/cells.test.ts",
++      "candidate": "bc75c9baaa04c96e7d641410c568180607e56517f769ec05bdec9ab554a219c8",
++      "donor": "bc75c9baaa04c96e7d641410c568180607e56517f769ec05bdec9ab554a219c8"
++    },
++    {
++      "path": "lib/sync-transform/tests/content-intent.test.ts",
++      "candidate": "4874c7da0f35cf80f337af18d5b505992b3777722161bd24c2790d07311ff656",
++      "donor": "4874c7da0f35cf80f337af18d5b505992b3777722161bd24c2790d07311ff656"
++    },
++    {
++      "path": "lib/sync-transform/tests/content-intent.ts",
++      "candidate": "84725f85fb595f193d4381d117fdec452bfa6fa81c7433c943db5e4b59c71502",
++      "donor": "84725f85fb595f193d4381d117fdec452bfa6fa81c7433c943db5e4b59c71502"
++    },
++    {
++      "path": "lib/sync-transform/tests/coverage.test.ts",
++      "candidate": "b8bb8aa5e03b7f23b55e32dfbf327612a58f2120107d7d6c4e0292274077327d",
++      "donor": "b8bb8aa5e03b7f23b55e32dfbf327612a58f2120107d7d6c4e0292274077327d"
++    },
++    {
++      "path": "lib/sync-transform/tests/coverage.ts",
++      "candidate": "2c84cdf0b7cd4bac3df61201d7a2ec5700cb351349736fb717f4c74dd893ee78",
++      "donor": "2c84cdf0b7cd4bac3df61201d7a2ec5700cb351349736fb717f4c74dd893ee78"
++    },
++    {
++      "path": "lib/sync-transform/tests/docs.test.ts",
++      "candidate": "e0aa89524adfb8f0ecdcd1b214ecd3ed51b2ac78d3eb12d5db7deed1317d83df",
++      "donor": "e0aa89524adfb8f0ecdcd1b214ecd3ed51b2ac78d3eb12d5db7deed1317d83df"
++    },
++    {
++      "path": "lib/sync-transform/tests/drawings.test.ts",
++      "candidate": "36b491c9c2466eece382af98508733bca298d9faba3839a8ae70c1332121bda6",
++      "donor": "36b491c9c2466eece382af98508733bca298d9faba3839a8ae70c1332121bda6"
++    },
++    {
++      "path": "lib/sync-transform/tests/edits.ts",
++      "candidate": "519373bdcad15d57d436d9f63c880f184a9d57fbae91766e30997d09ae09e619",
++      "donor": "519373bdcad15d57d436d9f63c880f184a9d57fbae91766e30997d09ae09e619"
++    },
++    {
++      "path": "lib/sync-transform/tests/fuzz.test.ts",
++      "candidate": "f24c58e47f18995f43e0fa10c22e0eea2103c5c479319e6e689a3718f2e379d8",
++      "donor": "f24c58e47f18995f43e0fa10c22e0eea2103c5c479319e6e689a3718f2e379d8"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-cells.ts",
++      "candidate": "a34d3770cb0481c7a8c138166512b94b3cb10f1308119f8a55b5b8b715941b9a",
++      "donor": "a34d3770cb0481c7a8c138166512b94b3cb10f1308119f8a55b5b8b715941b9a"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-docs.ts",
++      "candidate": "4a362bb3a88108313fe57285433f39580b437c634b2442ef4742811fa1a5fb00",
++      "donor": "4a362bb3a88108313fe57285433f39580b437c634b2442ef4742811fa1a5fb00"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-drawings.ts",
++      "candidate": "1cb04f805afe93c43ed1d5f8299d7fa11930a8745de2315e790f85fa84a90a01",
++      "donor": "1cb04f805afe93c43ed1d5f8299d7fa11930a8745de2315e790f85fa84a90a01"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-history.test.ts",
++      "candidate": "65b8b9e04996ee379a357472a781a8f524f19ff31d1ce65bc5fe0cd1bb5cd213",
++      "donor": "65b8b9e04996ee379a357472a781a8f524f19ff31d1ce65bc5fe0cd1bb5cd213"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-history.ts",
++      "candidate": "9ee3a6e6831be1d754e13c830d527fa38d3d25f0852e5a2b6f8155f7c2c86016",
++      "donor": "9ee3a6e6831be1d754e13c830d527fa38d3d25f0852e5a2b6f8155f7c2c86016"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-names.ts",
++      "candidate": "457c14e2db0473f44b590c4d827153300c50fc348ec93775779ef320603b68f0",
++      "donor": "457c14e2db0473f44b590c4d827153300c50fc348ec93775779ef320603b68f0"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-schema.ts",
++      "candidate": "a27b626b0c5042808c4263e03bd32876f11f2f3dafa1b0d5f78f86c0afba70c5",
++      "donor": "a27b626b0c5042808c4263e03bd32876f11f2f3dafa1b0d5f78f86c0afba70c5"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate-sheet.ts",
++      "candidate": "31437ead410c35e644cdf39bdf4528dc5df0ad8ecdcf7d3e6b1aa9710e0f1f3d",
++      "donor": "31437ead410c35e644cdf39bdf4528dc5df0ad8ecdcf7d3e6b1aa9710e0f1f3d"
++    },
++    {
++      "path": "lib/sync-transform/tests/generate.ts",
++      "candidate": "6320dd96bd5eee40599906b7cfaa69944a31da8d567e09818e333859b76a5804",
++      "donor": "6320dd96bd5eee40599906b7cfaa69944a31da8d567e09818e333859b76a5804"
++    },
++    {
++      "path": "lib/sync-transform/tests/harness.ts",
++      "candidate": "196c4a0ccb07d3f50bd135ab251dccabffa9663fd11df05cd1e26fd4100c08bc",
++      "donor": "196c4a0ccb07d3f50bd135ab251dccabffa9663fd11df05cd1e26fd4100c08bc"
++    },
++    {
++      "path": "lib/sync-transform/tests/ids.test.ts",
++      "candidate": "e2946204bca89a853fd1b55b5b761f5f3b88257595bcdcfb7c3f9976f2bbd991",
++      "donor": "e2946204bca89a853fd1b55b5b761f5f3b88257595bcdcfb7c3f9976f2bbd991"
++    },
++    {
++      "path": "lib/sync-transform/tests/intent.test.ts",
++      "candidate": "01f1f25bd7c736baee3a33d3a2815614953da0626bf6914b9275128c5733aef8",
++      "donor": "01f1f25bd7c736baee3a33d3a2815614953da0626bf6914b9275128c5733aef8"
++    },
++    {
++      "path": "lib/sync-transform/tests/merges.test.ts",
++      "candidate": "f584ff670df713a771de479e77bceb983768ae01c59ea84be41f3f74791be398",
++      "donor": "f584ff670df713a771de479e77bceb983768ae01c59ea84be41f3f74791be398"
++    },
++    {
++      "path": "lib/sync-transform/tests/names.test.ts",
++      "candidate": "b449fc9986e0fd7c5c67fb9eac112dbd75e6d5c0e2a969593a984bbe0c9c12c3",
++      "donor": "b449fc9986e0fd7c5c67fb9eac112dbd75e6d5c0e2a969593a984bbe0c9c12c3"
++    },
++    {
++      "path": "lib/sync-transform/tests/observations.test.ts",
++      "candidate": "e591e5205b8f85d4b937cb51104ea7ade3d7f1890deba80bc894706e8e7865ff",
++      "donor": "e591e5205b8f85d4b937cb51104ea7ade3d7f1890deba80bc894706e8e7865ff"
++    },
++    {
++      "path": "lib/sync-transform/tests/properties.test.ts",
++      "candidate": "673de7772c77c9120bb9910f1926a45a287d1c2070ffdf95cca4a8148bc85c41",
++      "donor": "673de7772c77c9120bb9910f1926a45a287d1c2070ffdf95cca4a8148bc85c41"
++    },
++    {
++      "path": "lib/sync-transform/tests/random.ts",
++      "candidate": "edca8886b932f49f54a3244a2bfd7ed4bc10afa54125167c73055471696c53b4",
++      "donor": "edca8886b932f49f54a3244a2bfd7ed4bc10afa54125167c73055471696c53b4"
++    },
++    {
++      "path": "lib/sync-transform/tests/reference-undo.test.ts",
++      "candidate": "20f25c6576e14c5b4bff27c9e288a545097f68340724ba62bb9bcce81ae80253",
++      "donor": "20f25c6576e14c5b4bff27c9e288a545097f68340724ba62bb9bcce81ae80253"
++    },
++    {
++      "path": "lib/sync-transform/tests/rule-based.test.ts",
++      "candidate": "1eba0fb8be47a151090d989caa232029b5c9fd8a5fe8c44797d494203ac873d0",
++      "donor": "1eba0fb8be47a151090d989caa232029b5c9fd8a5fe8c44797d494203ac873d0"
++    },
++    {
++      "path": "lib/sync-transform/tests/schema.test.ts",
++      "candidate": "d8709fab81445d612ea4b05b1ea5c126c28603d2a3b012d98ddb05dc13d11105",
++      "donor": "d8709fab81445d612ea4b05b1ea5c126c28603d2a3b012d98ddb05dc13d11105"
++    },
++    {
++      "path": "lib/sync-transform/tests/settings.test.ts",
++      "candidate": "4628673ffe3a2a75bfd61089cc3a2362e551fdf850341e2a2725229e9a0ed1bf",
++      "donor": "4628673ffe3a2a75bfd61089cc3a2362e551fdf850341e2a2725229e9a0ed1bf"
++    },
++    {
++      "path": "lib/sync-transform/tests/sheet-names.test.ts",
++      "candidate": "e8d93a5d685be383a2e871048eda86eed7037c05c1b84c511f33acdaae65461f",
++      "donor": "e8d93a5d685be383a2e871048eda86eed7037c05c1b84c511f33acdaae65461f"
++    },
++    {
++      "path": "lib/sync-transform/tests/shrink.ts",
++      "candidate": "a5456a9bacb8c8d6a7eee6a82eddeb1b836830281e4a3aef84f94b9c174fd62a",
++      "donor": "a5456a9bacb8c8d6a7eee6a82eddeb1b836830281e4a3aef84f94b9c174fd62a"
++    },
++    {
++      "path": "lib/sync-transform/tests/simulate.ts",
++      "candidate": "b99c4d1ac2f053c37ce8cb897d15ed696781d63cc17dbbad0774341eda323ded",
++      "donor": "b99c4d1ac2f053c37ce8cb897d15ed696781d63cc17dbbad0774341eda323ded"
++    },
++    {
++      "path": "lib/sync-transform/tests/state.test.ts",
++      "candidate": "261b7027cf6f3c396f2cd8437d373034624c25ff90c5da9331007d362946ac22",
++      "donor": "261b7027cf6f3c396f2cd8437d373034624c25ff90c5da9331007d362946ac22"
++    },
++    {
++      "path": "lib/sync-transform/tests/structure.test.ts",
++      "candidate": "adb6ee21e055578c4163d32da0171ef9994c441f653aef5e0a38febe38521166",
++      "donor": "adb6ee21e055578c4163d32da0171ef9994c441f653aef5e0a38febe38521166"
++    },
++    {
++      "path": "lib/sync-transform/tests/transform.test.ts",
++      "candidate": "1073c8aa2b262188c392ad784f5c21e84a84cebaedf47754300bbedd275fa61c",
++      "donor": "1073c8aa2b262188c392ad784f5c21e84a84cebaedf47754300bbedd275fa61c"
++    },
++    {
++      "path": "package-lock.json",
++      "candidate": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
++      "donor": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c"
++    },
++    {
++      "path": "package.json",
++      "candidate": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6",
++      "donor": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6"
++    },
++    {
++      "path": "scripts/dependencies/doc-flush-observation.ts",
++      "candidate": "c3c7b8d75b1643868372bc8d1c4cbe7af114a5864b7e9ebc2e7fae6ed4f7ca23",
++      "donor": "c3c7b8d75b1643868372bc8d1c4cbe7af114a5864b7e9ebc2e7fae6ed4f7ca23"
++    },
++    {
++      "path": "scripts/dependencies/no-univer-pro.test.ts",
++      "candidate": "b89838d7b3dc69520e4f3c85f52c3e83bddb8d1237322bafe91cbf47e2681576",
++      "donor": "b89838d7b3dc69520e4f3c85f52c3e83bddb8d1237322bafe91cbf47e2681576"
++    },
++    {
++      "path": "scripts/dependencies/no-univer-pro.ts",
++      "candidate": "f9e5b7e5727bdfe89619c11322e2ae49c86c6ad94f5a2a540bc76daa32b5f8ff",
++      "donor": "f9e5b7e5727bdfe89619c11322e2ae49c86c6ad94f5a2a540bc76daa32b5f8ff"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-core.test.ts",
++      "candidate": "e43d69d66d111f2db710171aa05971fe8cda45ab2b6769eb79df8dcc04399bf4",
++      "donor": "e43d69d66d111f2db710171aa05971fe8cda45ab2b6769eb79df8dcc04399bf4"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-core.ts",
++      "candidate": "86a533e500fb40bb874cfcf42220aeb0ad7c5e0f672e23999aea1644be62a938",
++      "donor": "86a533e500fb40bb874cfcf42220aeb0ad7c5e0f672e23999aea1644be62a938"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-docs-ui.test.ts",
++      "candidate": "4488e7ba116027981cb91fb0c91a21f1e67bede208b4f85adfdae30216e9705e",
++      "donor": "4488e7ba116027981cb91fb0c91a21f1e67bede208b4f85adfdae30216e9705e"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-docs-ui.ts",
++      "candidate": "31b0bfebb8dfde829036c7f3c7d96260184f62203970c9c001ca4dbfcf7f6751",
++      "donor": "31b0bfebb8dfde829036c7f3c7d96260184f62203970c9c001ca4dbfcf7f6751"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-docs.test.ts",
++      "candidate": "69064dacfc0c244f47657ef398ab9f7f19c361f2da78bf872a94ee0c47761615",
++      "donor": "69064dacfc0c244f47657ef398ab9f7f19c361f2da78bf872a94ee0c47761615"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-docs.ts",
++      "candidate": "d05ac1490546fd891dabd0e1583d1b42b0517d32386b76ddc53b1a01a4105608",
++      "donor": "d05ac1490546fd891dabd0e1583d1b42b0517d32386b76ddc53b1a01a4105608"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-drawing.test.ts",
++      "candidate": "c545f5de1c57f04b52dee6ce3ae625b93c814f8c550d3e58de5ec205b6877bbf",
++      "donor": "c545f5de1c57f04b52dee6ce3ae625b93c814f8c550d3e58de5ec205b6877bbf"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-drawing.ts",
++      "candidate": "2485f3c22626830f40e4cea7e8b6f787aaa8f20549e3956ee26444e3944d13b8",
++      "donor": "2485f3c22626830f40e4cea7e8b6f787aaa8f20549e3956ee26444e3944d13b8"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-ui.test.ts",
++      "candidate": "006459d960f5e7458a2b41212596985cb1bf055f298ce7c163a9c30c3ec1a817",
++      "donor": "006459d960f5e7458a2b41212596985cb1bf055f298ce7c163a9c30c3ec1a817"
++    },
++    {
++      "path": "scripts/dependencies/patch-univer-ui.ts",
++      "candidate": "c9412f55d5c144d6cdf0b943f784fedd84d43ac1e1d978b003c847fdd2f9ca51",
++      "donor": "c9412f55d5c144d6cdf0b943f784fedd84d43ac1e1d978b003c847fdd2f9ca51"
++    }
++  ]
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/format.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/format.json
+@@ -0,0 +1,15 @@
++{
++  "name": "spn149-current-format",
++  "args": [
++    "node_modules/.bin/prettier",
++    "--check",
++    "e2e/collaboration.spec.ts",
++    "e2e/session-revocation.ts",
++    "scripts/ci/session-revocation.test.ts"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 267,
++  "peakKiB": 209408
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/format.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/format.log
+@@ -0,0 +1,3 @@
++Checking formatting...
++All matched files use Prettier code style!
++{"name":"spn149-current-format","args":["node_modules/.bin/prettier","--check","e2e/collaboration.spec.ts","e2e/session-revocation.ts","scripts/ci/session-revocation.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":267,"peakKiB":209408}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/index.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/index.json
+@@ -0,0 +1,13 @@
++{
++  "name": "spn149-current-index",
++  "args": [
++    "node",
++    "scripts/backlog/cli.ts",
++    "index"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 166,
++  "peakKiB": 0
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/index.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/index.log
+@@ -0,0 +1,23 @@
++warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-089.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-090.md: 77 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-098.md: 71 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-099.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-122.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-147.md: 59 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-154.md: 54 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-156.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-157.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
++warning: SPN-158.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
++wrote docs/todo/readme.md
++{"name":"spn149-current-index","args":["node","scripts/backlog/cli.ts","index"],"code":0,"signal":null,"reason":null,"elapsedMs":166,"peakKiB":0}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/lint.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/lint.json
+@@ -0,0 +1,15 @@
++{
++  "name": "spn149-current-lint",
++  "args": [
++    "node_modules/.bin/oxlint",
++    "--deny-warnings",
++    "e2e/collaboration.spec.ts",
++    "e2e/session-revocation.ts",
++    "scripts/ci/session-revocation.test.ts"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 125,
++  "peakKiB": 0
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/lint.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/lint.log
+@@ -0,0 +1 @@
++{"name":"spn149-current-lint","args":["node_modules/.bin/oxlint","--deny-warnings","e2e/collaboration.spec.ts","e2e/session-revocation.ts","scripts/ci/session-revocation.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":125,"peakKiB":0}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/pr.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/pr.json
+@@ -0,0 +1,17 @@
++{
++  "name": "spn149-current-pr",
++  "args": [
++    "node",
++    "scripts/backlog/cli.ts",
++    "pr",
++    "--base",
++    "89e4426dfff1c3469b260305e21180ffd79fdb7f",
++    "--title",
++    "🔏 SPN-149 Preserve session-revocation closure evidence across navigation"
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 417,
++  "peakKiB": 179696
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/pr.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/pr.log
+@@ -0,0 +1,2 @@
++pull request ok
++{"name":"spn149-current-pr","args":["node","scripts/backlog/cli.ts","pr","--base","89e4426dfff1c3469b260305e21180ffd79fdb7f","--title","🔏 SPN-149 Preserve session-revocation closure evidence across navigation"],"code":0,"signal":null,"reason":null,"elapsedMs":417,"peakKiB":179696}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/source-identity.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/source-identity.json
+@@ -0,0 +1,21 @@
++{
++  "prior": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
++  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
++  "files": [
++    {
++      "path": "e2e/collaboration.spec.ts",
++      "prior": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
++      "current": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c"
++    },
++    {
++      "path": "e2e/session-revocation.ts",
++      "prior": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
++      "current": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a"
++    },
++    {
++      "path": "scripts/ci/session-revocation.test.ts",
++      "prior": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
++      "current": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462"
++    }
++  ]
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/types.json
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/types.json
+@@ -0,0 +1,13 @@
++{
++  "name": "spn149-current-types",
++  "args": [
++    "node_modules/.bin/tsc",
++    "-p",
++    "."
++  ],
++  "code": 0,
++  "signal": null,
++  "reason": null,
++  "elapsedMs": 8465,
++  "peakKiB": 1652704
++}
+--- a/docs/implementation/evidence/SPN-149/current-main-20261114/types.log
++++ b/docs/implementation/evidence/SPN-149/current-main-20261114/types.log
+@@ -0,0 +1 @@
++{"name":"spn149-current-types","args":["node_modules/.bin/tsc","-p","."],"code":0,"signal":null,"reason":null,"elapsedMs":8465,"peakKiB":1652704}
+--- a/docs/implementation/evidence/SPN-149/local-validation.json
++++ b/docs/implementation/evidence/SPN-149/local-validation.json
+@@ -0,0 +1,379 @@
++{
++  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
++  "localSourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
++  "sourceTree": "924001dbca2b2e27d24fc40d6ccbdc28b68eff3f",
++  "sourceSHA256": {
++    "e2e/collaboration.spec.ts": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
++    "e2e/session-revocation.ts": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
++    "scripts/ci/session-revocation.test.ts": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
++    "e2e/sync-network.ts": "d7b5260969c65ec880e30d41002e725396edf3fdfa1599a77e15c4143cbb30f6",
++    "e2e/native-sheet-value.ts": "138fbdee2bf57d16464fc07873424afe193e01796f363d6fcdfafa8c2673f7f2",
++    "src/server/auth/store.ts": "685ce48e89ec1dc8377846d43fc8f5c35c70b3a56ca1420405fd857fc358fedf",
++    "src/server/collaboration/identity.ts": "04178ff41ec48241bd230060f11b1d11e479befb2115665c4e8ae3e9e4dd3f79",
++    "src/server/sync/transport.ts": "4e20587e388d8917d469a03d8b8815ba189e1132541572adcb54f7711969034f",
++    "web/spinelSync.ts": "f311fae970039a4e1bca97f5d84da6e8da21720e10aa6703149bbec0a1fa1310",
++    "web/App.tsx": "62aeb0cc70ebe9fa437d80499bd62574f46aafb3e3fb122d0128ce7bdaa44021",
++    "scripts/ci/plan.ts": "b63905295532481182910853d4384580cc53ac790fad318ab67d6567852b2704",
++    "playwright.config.ts": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa",
++    "package-lock.json": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
++    ".nvmrc": "6e775beae185bb3f5837d2f6d3fbe910e6f60e18fa507e661e312e84d707a92f"
++  },
++  "node": "26.13.0",
++  "finalCommittedChecks": [],
++  "controlResults": {
++    "tests": 19,
++    "passed": 19,
++    "failed": 0,
++    "skipped": 0
++  },
++  "attempts": [
++    {
++      "attempt": "npm-ci",
++      "startedAt": "2026-11-13T03:48:28.335Z",
++      "finishedAt": "2026-11-13T03:48:40.302Z",
++      "command": "node scripts/serial.ts npm ci --no-audit --no-fund",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 11967,
++      "peakKiB": 1182360,
++      "minimumAvailableKiB": 7877356,
++      "aborted": null
++    },
++    {
++      "attempt": "browser-install",
++      "startedAt": "2026-11-13T03:49:16.645Z",
++      "finishedAt": "2026-11-13T03:49:44.985Z",
++      "command": "node scripts/serial.ts node node_modules/playwright/cli.js install chromium --only-shell",
++      "status": "failed",
++      "exitCode": 1,
++      "elapsedMs": 28339,
++      "peakKiB": 374416,
++      "minimumAvailableKiB": 7055708,
++      "aborted": null
++    },
++    {
++      "attempt": "boundary-probe",
++      "startedAt": "2026-11-13T03:50:57.123Z",
++      "finishedAt": "2026-11-13T03:50:57.761Z",
++      "command": "node scripts/serial.ts timeout 10s node ../validation/playwright-boundary-probe.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 637,
++      "peakKiB": 221928,
++      "minimumAvailableKiB": 7309372,
++      "aborted": null
++    },
++    {
++      "attempt": "format-candidate",
++      "startedAt": "2026-11-13T03:55:37.570Z",
++      "finishedAt": "2026-11-13T03:55:38.173Z",
++      "command": "node scripts/serial.ts node node_modules/prettier/bin/prettier.cjs --write e2e/session-revocation.ts e2e/collaboration.spec.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 602,
++      "peakKiB": 206672,
++      "minimumAvailableKiB": 8150292,
++      "aborted": null
++    },
++    {
++      "attempt": "backlog-index",
++      "startedAt": "2026-11-13T03:56:59.673Z",
++      "finishedAt": "2026-11-13T03:57:00.645Z",
++      "command": "node scripts/serial.ts npm run backlog:index",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 972,
++      "peakKiB": 252284,
++      "minimumAvailableKiB": 8163132,
++      "aborted": null
++    },
++    {
++      "attempt": "focused-controls",
++      "startedAt": "2026-11-13T03:57:19.129Z",
++      "finishedAt": "2026-11-13T03:57:19.567Z",
++      "command": "node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 439,
++      "peakKiB": 237316,
++      "minimumAvailableKiB": 8140592,
++      "aborted": null
++    },
++    {
++      "attempt": "format-controls",
++      "startedAt": "2026-11-13T03:57:30.284Z",
++      "finishedAt": "2026-11-13T03:57:30.791Z",
++      "command": "node scripts/serial.ts node node_modules/prettier/bin/prettier.cjs --write scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 507,
++      "peakKiB": 173376,
++      "minimumAvailableKiB": 8180512,
++      "aborted": null
++    },
++    {
++      "attempt": "typecheck",
++      "startedAt": "2026-11-13T03:57:30.879Z",
++      "finishedAt": "2026-11-13T03:57:37.519Z",
++      "command": "node scripts/serial.ts npm run typecheck",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 6640,
++      "peakKiB": 1969260,
++      "minimumAvailableKiB": 6202544,
++      "aborted": null
++    },
++    {
++      "attempt": "lint",
++      "startedAt": "2026-11-13T03:58:22.136Z",
++      "finishedAt": "2026-11-13T03:58:23.017Z",
++      "command": "node scripts/serial.ts npm run lint",
++      "status": "failed",
++      "exitCode": 1,
++      "elapsedMs": 880,
++      "peakKiB": 317980,
++      "minimumAvailableKiB": 8092872,
++      "aborted": null
++    },
++    {
++      "attempt": "format-repair",
++      "startedAt": "2026-11-13T03:58:42.510Z",
++      "finishedAt": "2026-11-13T03:58:43.240Z",
++      "command": "node scripts/serial.ts node node_modules/prettier/bin/prettier.cjs --write scripts/ci/session-revocation.test.ts e2e/collaboration.spec.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 729,
++      "peakKiB": 191208,
++      "minimumAvailableKiB": 8151168,
++      "aborted": null
++    },
++    {
++      "attempt": "lint-repair",
++      "startedAt": "2026-11-13T03:58:43.337Z",
++      "finishedAt": "2026-11-13T03:59:05.003Z",
++      "command": "node scripts/serial.ts npm run lint",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 21665,
++      "peakKiB": 699120,
++      "minimumAvailableKiB": 7692524,
++      "aborted": null
++    },
++    {
++      "attempt": "backlog-check",
++      "startedAt": "2026-11-13T03:59:05.101Z",
++      "finishedAt": "2026-11-13T03:59:05.475Z",
++      "command": "node scripts/serial.ts npm run backlog:check",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 374,
++      "peakKiB": 234468,
++      "minimumAvailableKiB": 8144840,
++      "aborted": null
++    },
++    {
++      "attempt": "backlog-pr",
++      "startedAt": "2026-11-13T03:59:05.554Z",
++      "finishedAt": "2026-11-13T03:59:06.029Z",
++      "command": "node scripts/serial.ts npm run backlog:pr -- --base origin/main --title \ud83d\udd0f SPN-149 Preserve session-revocation closure evidence across navigation",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 475,
++      "peakKiB": 257840,
++      "minimumAvailableKiB": 8094332,
++      "aborted": null
++    },
++    {
++      "attempt": "final-controls",
++      "startedAt": "2026-11-13T03:59:41.183Z",
++      "finishedAt": "2026-11-13T03:59:41.673Z",
++      "command": "node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 490,
++      "peakKiB": 223980,
++      "minimumAvailableKiB": 8181476,
++      "aborted": null
++    },
++    {
++      "attempt": "final-typecheck",
++      "startedAt": "2026-11-13T03:59:41.755Z",
++      "finishedAt": "2026-11-13T03:59:47.277Z",
++      "command": "node scripts/serial.ts npm run typecheck",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 5522,
++      "peakKiB": 2013876,
++      "minimumAvailableKiB": 6295412,
++      "aborted": null
++    },
++    {
++      "attempt": "final-backlog-pr",
++      "startedAt": "2026-11-13T03:59:47.354Z",
++      "finishedAt": "2026-11-13T03:59:47.848Z",
++      "command": "node scripts/serial.ts npm run backlog:pr -- --base origin/main --title \ud83d\udd0f SPN-149 Preserve session-revocation closure evidence across navigation",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 494,
++      "peakKiB": 256116,
++      "minimumAvailableKiB": 7949664,
++      "aborted": null
++    },
++    {
++      "attempt": "review-a-controls",
++      "sourceCommit": "8ee824a9787c630f7c9b02263461280611f68d59",
++      "startedAt": "2026-11-13T04:04:11.048Z",
++      "finishedAt": "2026-11-13T04:04:11.444Z",
++      "command": "node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 396,
++      "peakKiB": 215664,
++      "minimumAvailableKiB": 8443384,
++      "aborted": null
++    },
++    {
++      "attempt": "review-b-controls",
++      "sourceCommit": "8ee824a9787c630f7c9b02263461280611f68d59",
++      "startedAt": "2026-11-13T04:04:38.212Z",
++      "finishedAt": "2026-11-13T04:04:38.679Z",
++      "command": "node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 467,
++      "peakKiB": 231136,
++      "minimumAvailableKiB": 8464052,
++      "aborted": null
++    },
++    {
++      "attempt": "review-b-setup-cleanup",
++      "sourceCommit": "8ee824a9787c630f7c9b02263461280611f68d59",
++      "startedAt": "2026-11-13T04:07:25.797Z",
++      "finishedAt": "2026-11-13T04:07:31.189Z",
++      "command": "node scripts/serial.ts node --input-type=module -",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 5388,
++      "peakKiB": 154804,
++      "minimumAvailableKiB": 7980696,
++      "aborted": null
++    },
++    {
++      "attempt": "review-repair-format",
++      "sourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
++      "startedAt": "2026-11-13T04:10:54.438Z",
++      "finishedAt": "2026-11-13T04:10:54.984Z",
++      "command": "node scripts/serial.ts node node_modules/prettier/bin/prettier.cjs --write e2e/session-revocation.ts scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 546,
++      "peakKiB": 189216,
++      "minimumAvailableKiB": 8084744,
++      "aborted": null
++    },
++    {
++      "attempt": "review-repair-controls",
++      "sourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
++      "startedAt": "2026-11-13T04:10:55.315Z",
++      "finishedAt": "2026-11-13T04:10:55.660Z",
++      "command": "node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 345,
++      "peakKiB": 235188,
++      "minimumAvailableKiB": 8057068,
++      "aborted": null
++    },
++    {
++      "attempt": "review-repair-typecheck",
++      "sourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
++      "startedAt": "2026-11-13T04:11:04.615Z",
++      "finishedAt": "2026-11-13T04:11:10.522Z",
++      "command": "node scripts/serial.ts npm run typecheck",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 5907,
++      "peakKiB": 2020040,
++      "minimumAvailableKiB": 6232276,
++      "aborted": null
++    },
++    {
++      "attempt": "review-repair-lint",
++      "sourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
++      "startedAt": "2026-11-13T04:11:10.856Z",
++      "finishedAt": "2026-11-13T04:11:34.052Z",
++      "command": "node scripts/serial.ts npm run lint",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 23196,
++      "peakKiB": 815808,
++      "minimumAvailableKiB": 7431300,
++      "aborted": null
++    },
++    {
++      "attempt": "review-repair-backlog-pr",
++      "sourceCommit": "8ea17ad308b5fe77b293f58f35c803575cede0d6",
++      "startedAt": "2026-11-13T04:12:07.683Z",
++      "finishedAt": "2026-11-13T04:12:08.649Z",
++      "command": "node scripts/serial.ts npm run backlog:pr -- --base origin/main --title \ud83d\udd0f SPN-149 Preserve session-revocation closure evidence across navigation",
++      "status": "passed",
++      "exitCode": 0,
++      "elapsedMs": 966,
++      "peakKiB": 258808,
++      "minimumAvailableKiB": 7522236,
++      "aborted": null
++    }
++  ],
++  "limitations": [
++    "Initial uncommitted control/type/lint attempts preceded final formatting and the finally-error repair. Their exact whole-tree identities were not captured; they are preliminary and do not substitute for final committed-source checks.",
++    "First lint rejected no-unsafe-finally at collaboration.spec.ts:559. Cleanup failures now throw after finally; primary errors propagate unchanged. The repaired lint pass is retained.",
++    "Official Playwright pinned Chromium installation failed with invalid/empty ZIP downloads on five built-in download attempts. No local browser test executed; hosted development/production first-attempt owners remain required.",
++    "Git push dry-run failed without a shell GitHub credential. Authorized GitHub connector object/ref operations are used for publication; exact remote candidate identity must be reviewed before its validation ref/PR is published.",
++    "No runtime/product/session source, workflow, browser matrix, retry setting or assertion deadline changed.",
++    "Review B demonstrated that rejected Network.enable with a never-settling detach remained pending after 5106 ms on 8ee824a. Setup cleanup now shares the existing 5000 ms bound, preserves the original error, and has an exact-bound mocked-timer regression."
++  ],
++  "bookkeeping": {
++    "indexGeneratedBy": "npm run backlog:index",
++    "openTickets": 22,
++    "dependentTicketsWith149": 0,
++    "relativeDocumentationTargetsChecked": 28,
++    "originalFailureTimelineAvailable": false
++  },
++  "previousSourceSnapshot": {
++    "commit": "8ea691b2286a48e6344d46bd6fba0fd64ad6698e",
++    "tree": "20557e405e1fa5642ccdbf14aaef99d5d873e90b",
++    "sourceSHA256": {
++      "e2e/collaboration.spec.ts": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
++      "e2e/session-revocation.ts": "2857a3d544250a30ca651c0ed702844156a6445e49b4da1f7e17ad89d434b7e5",
++      "scripts/ci/session-revocation.test.ts": "9d4189afb429e7246756db37cf9d3e8f7d5c89bad53436fb0507f6387ebcc1c8",
++      "e2e/sync-network.ts": "d7b5260969c65ec880e30d41002e725396edf3fdfa1599a77e15c4143cbb30f6",
++      "e2e/native-sheet-value.ts": "138fbdee2bf57d16464fc07873424afe193e01796f363d6fcdfafa8c2673f7f2",
++      "src/server/auth/store.ts": "685ce48e89ec1dc8377846d43fc8f5c35c70b3a56ca1420405fd857fc358fedf",
++      "src/server/collaboration/identity.ts": "04178ff41ec48241bd230060f11b1d11e479befb2115665c4e8ae3e9e4dd3f79",
++      "src/server/sync/transport.ts": "4e20587e388d8917d469a03d8b8815ba189e1132541572adcb54f7711969034f",
++      "web/spinelSync.ts": "f311fae970039a4e1bca97f5d84da6e8da21720e10aa6703149bbec0a1fa1310",
++      "web/App.tsx": "62aeb0cc70ebe9fa437d80499bd62574f46aafb3e3fb122d0128ce7bdaa44021",
++      "scripts/ci/plan.ts": "b63905295532481182910853d4384580cc53ac790fad318ab67d6567852b2704",
++      "playwright.config.ts": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa",
++      "package-lock.json": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
++      ".nvmrc": "6e775beae185bb3f5837d2f6d3fbe910e6f60e18fa507e661e312e84d707a92f"
++    },
++    "finalCommittedChecks": [
++      "final-controls",
++      "final-typecheck",
++      "final-backlog-pr"
++    ],
++    "controlResults": {
++      "tests": 18,
++      "passed": 18,
++      "failed": 0,
++      "skipped": 0
++    }
++  },
++  "repairedSourceChecks": [
++    "review-repair-controls",
++    "review-repair-typecheck",
++    "review-repair-lint"
++  ],
++  "repairedSourceCheckIdentity": "Executed on byte-identical source immediately before the local source commit. Exact source hashes are retained; final independent reviewers check the complete remote-created candidate."
++}
+--- a/docs/implementation/evidence/SPN-149/original-13557930894-case.json
++++ b/docs/implementation/evidence/SPN-149/original-13557930894-case.json
+@@ -0,0 +1,72 @@
++{
++  "title": "revoking one login preserves another login\u2019s queued edit and stops later broadcasts",
++  "file": "collaboration.spec.ts",
++  "line": 362,
++  "column": 1,
++  "id": "960cd46fcfcce4c1b118-dd2e11699054ac42c1e3",
++  "ok": true,
++  "tests": [
++    {
++      "projectName": "production",
++      "expectedStatus": "passed",
++      "status": "flaky",
++      "timeout": 60000,
++      "results": [
++        {
++          "status": "failed",
++          "retry": 0,
++          "duration": 7537,
++          "startTime": "2026-11-07T02:47:43.338Z",
++          "errors": [
++            {
++              "message": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  444 |     const otherClosedBefore = otherClosed;\n  445 |     auth.revokeSession(sessions[0].session.token_hash);\n> 446 |     await expect.poll(() => revokedClosed).toBeGreaterThan(revokedClosedBefore);\n      |                                            ^\n  447 |     expect(otherClosed).toBe(otherClosedBefore);\n  448 |     // The revoked login has no unfinished work, so SPN-053's clean 401 handoff\n  449 |     // closes its editor. The other login's independently queued edit must survive.\n    at e2e/collaboration.spec.ts:446:44",
++              "location": {
++                "file": "e2e/collaboration.spec.ts",
++                "column": 44,
++                "line": 446
++              }
++            }
++          ],
++          "attachments": [
++            {
++              "name": "screenshot",
++              "contentType": "image/png",
++              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/test-failed-1.png"
++            },
++            {
++              "name": "screenshot",
++              "contentType": "image/png",
++              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/test-failed-2.png"
++            },
++            {
++              "name": "error-context",
++              "contentType": "text/markdown",
++              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/error-context.md"
++            }
++          ]
++        },
++        {
++          "status": "passed",
++          "retry": 1,
++          "duration": 6759,
++          "startTime": "2026-11-07T02:47:51.298Z",
++          "errors": [],
++          "attachments": [
++            {
++              "name": "trace",
++              "contentType": "application/zip",
++              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production-retry1/trace.zip"
++            }
++          ]
++        }
++      ]
++    }
++  ],
++  "provenance": {
++    "original_artifact_id": 13557930894,
++    "artifact_sha256": "8e1582f1d03595d272d95e2686680e474e63bc302590fd366998131f278d6366",
++    "report_member": "playwright-report/production-1-of-2.json",
++    "report_member_sha256": "7ce0aa1f925ef5eaa8fa0cc139fae4ec0ff3d9ae77f269346c8e667cdfa48b85",
++    "extraction": "Exact case fields; error ANSI escapes removed and runner prefix replaced with repository-relative path; no snapshots, storage state, network payloads, cookies or trace bodies copied."
++  }
++}
+--- a/docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json
++++ b/docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json
+@@ -0,0 +1,14 @@
++{
++  "source_member": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/error-context.md",
++  "source_sha256": "91949a9b460bc9312dee73d1d4c6ccc81a2f0f3f2b0e8f3690501b00e9a17068",
++  "source_bytes": 8142,
++  "selected_generic_dom_lines": [
++    "      - heading \"Your workspace.\" [level=1] [ref=f1e52]",
++    "        - button \"Sign in with a passkey\" [ref=f1e56] [cursor=pointer]"
++  ],
++  "sign_in_button_in_snapshot": true,
++  "workspace_heading_in_snapshot": true,
++  "first_attempt_trace_present": false,
++  "retry_trace_present": true,
++  "limits": "These selected DOM observations establish a sign-in UI snapshot only. They do not establish actual socket closure, request denial, revocation/navigation ordering or later assertions. The original first-attempt timeline remains unavailable. No fixture content or cookies are copied."
++}
+--- a/docs/implementation/evidence/SPN-149/original-13557930894-metadata.json
++++ b/docs/implementation/evidence/SPN-149/original-13557930894-metadata.json
+@@ -0,0 +1,62 @@
++{
++  "artifact_id": 13557930894,
++  "run_id": 42329786250,
++  "job_id": 128273632504,
++  "name": "theme-screenshots-production-1",
++  "source_sha": "f4b5c3f0740c46b00bd7d2d1fefb232edd7308a5",
++  "artifact_url": "https://github.com/mxbaylee/spinel/actions/runs/42329786250/artifacts/13557930894",
++  "job_url": "https://github.com/mxbaylee/spinel/actions/runs/42329786250/job/128273632504",
++  "zip_file": "original-13557930894.zip",
++  "zip_sha256": "8e1582f1d03595d272d95e2686680e474e63bc302590fd366998131f278d6366",
++  "zip_bytes": 36909853,
++  "zip_integrity": "all member CRCs pass",
++  "zip_members": 483,
++  "created_at": "2026-11-07T02:54:59Z",
++  "expires_at": "2026-11-14T02:54:57Z",
++  "retention_days_observed": 7,
++  "retention_correction": "PR #268 described 30-day retention; job upload log and current artifact metadata both establish seven days.",
++  "runtime": {
++    "node": "26.13.0",
++    "npm": "11.20.0",
++    "playwright": "1.64.1",
++    "chromium": "156.0.8078.4",
++    "chromium_revision": 1248,
++    "os": "Ubuntu 24.04.5",
++    "runner_image": "ubuntu-24.04 20261101.360.1"
++  },
++  "report_stats": {
++    "startTime": "2026-11-07T02:45:05.066Z",
++    "duration": 592594.682,
++    "expected": 80,
++    "skipped": 3,
++    "unexpected": 0,
++    "flaky": 1
++  },
++  "revocation_members": [
++    {
++      "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/error-context.md",
++      "bytes": 8142,
++      "sha256": "91949a9b460bc9312dee73d1d4c6ccc81a2f0f3f2b0e8f3690501b00e9a17068"
++    },
++    {
++      "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/test-failed-1.png",
++      "bytes": 43172,
++      "sha256": "eabfef89accf15a2eb3f6bcee1ff38e77f6b21fa6ca3df897f1ce5b30a21f6c8"
++    },
++    {
++      "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/test-failed-2.png",
++      "bytes": 55177,
++      "sha256": "855b87ecaae2e3b847e849c7ba7c1f58b537ceac5e382cbe0b6d3f996fa872ce"
++    },
++    {
++      "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production-retry1/trace.zip",
++      "bytes": 2070547,
++      "sha256": "e52bb92e9036f5b4b11a3b5bd0236a4a0a46e29ee34f8079cb1863ab904414d9"
++    }
++  ],
++  "first_failure_limit": "Retry-0 has screenshots and error-context only; trace.zip belongs exclusively to retry 1. Missing original socket/session/navigation timeline cannot be reconstructed from the retry or later acceptance.",
++  "raw_archive_handling": "Original raw ZIP was verified locally. This maintained evidence intentionally preserves reviewed content-free extracts and original hashes rather than publishing unrelated fixture outputs, credentials or retry trace bodies.",
++  "evidence_preparation_attempts": [
++    "Initial tool script parse failed before execution due to quoting; no filesystem or runtime experiment occurred. Corrected extraction completed."
++  ]
++}
+--- a/docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json
++++ b/docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json
+@@ -0,0 +1,64 @@
++{
++  "playwright_version": "1.64.1",
++  "upstream_commit": "cfe490d941f992655948eee8fd4fd94e1c4234bf",
++  "source_blob_sha": "d9080e4e2dce5bf5374ef18829765592af93c75f",
++  "source_path": "packages/playwright-core/src/server/frames.ts",
++  "source_url": "https://github.com/microsoft/playwright/blob/cfe490d941f992655948eee8fd4fd94e1c4234bf/packages/playwright-core/src/server/frames.ts",
++  "source_license": "Apache-2.0; small source excerpts retained only as diagnostic evidence.",
++  "snippets": [
++    {
++      "first_line": 234,
++      "lines": [
++        "  frameCommittedNewDocumentNavigation(frameId: string, url: string, name: string, documentId: string, initial: boolean) {",
++        "    const frame = this._frames.get(frameId)!;",
++        "    this.removeChildFramesRecursively(frame);",
++        "    this._clearWebSockets(frame);",
++        "    const previousUrl = frame._url;"
++      ]
++    },
++    {
++      "first_line": 425,
++      "lines": [
++        "  private _clearWebSockets(frame: Frame) {",
++        "    // TODO: attribute sockets to frames.",
++        "    if (frame.parentFrame())",
++        "      return;",
++        "    this._webSockets.clear();",
++        "  }"
++      ]
++    },
++    {
++      "first_line": 474,
++      "lines": [
++        "  webSocketClosed(requestId: string) {",
++        "    const ws = this._webSockets.get(requestId);",
++        "    if (ws) {",
++        "      if (ws.markAsNotified()) {",
++        "        this._page.emit(Page.Events.WebSocket, ws);",
++        "        this._page.browserContext.emit(BrowserContext.Events.WebSocket, ws, this._page);",
++        "      }",
++        "      ws.closed();",
++        "    }",
++        "    this._webSockets.delete(requestId);",
++        "  }",
++        ""
++      ]
++    }
++  ],
++  "local_installed_source": {
++    "path": "/workspace/scratch/ce40e94380e1/spinel/node_modules/playwright-core/lib/coreBundle.js",
++    "sha256": "829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d",
++    "same_observed_logic_lines": [
++      24518,
++      24521,
++      24679,
++      24682,
++      24717,
++      24726
++    ],
++    "limit": "Observed preexisting local Playwright 1.64.1 installation, not preserved original CI process state."
++  },
++  "inference": "A main-frame new-document navigation can clear Playwright's socket map before a later webSocketClosed callback. With no retained entry, that later callback emits no socket close. This is source-supported observer-ordering vulnerability; the original first-attempt timeline is absent, so it does not prove this ordering caused the historical failure.",
++  "original_license_header": "/**\n * Copyright 2017 Google Inc. All rights reserved.\n * Modifications copyright (c) Microsoft Corporation.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */",
++  "extraction_notice": "Spinel SPN-149 diagnostic extraction: unchanged source lines are retained in JSON with original line numbers and provenance; the surrounding source is omitted. No upstream implementation is modified by this evidence file."
++}
+--- a/docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts
++++ b/docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts
+@@ -0,0 +1,31 @@
++import assert from 'node:assert/strict';
++import { EventEmitter } from 'node:events';
++import { createRequire } from 'node:module';
++import { resolve } from 'node:path';
++const require = createRequire(resolve('package.json'));
++const { server } = require('playwright-core/lib/coreBundle');
++const outcomes: object[] = [];
++for (const navigationFirst of [false, true]) {
++  const context = Object.assign(new EventEmitter(), {
++    attribution: {},
++    instrumentation: { addListener() {}, removeListener() {} },
++    isCreatingStorageStatePage: () => false,
++  });
++  const page = new server.Page({}, context);
++  const manager = page.frameManager;
++  let established = 0, closed = 0;
++  page.on('websocket', (socket: EventEmitter) => { established++; socket.on('close', () => closed++); });
++  manager.onWebSocketCreated('fixture-socket', 'ws://fixture.invalid/sync-api/items/fixture/socket');
++  manager.onWebSocketRequest('fixture-socket', { wallTimeMs: 0, headers: {} });
++  manager.onWebSocketResponse('fixture-socket', { status: 101, statusText: 'Switching Protocols', headers: {} });
++  const clearForMainNavigation = () => manager._clearWebSockets({ parentFrame: () => null });
++  if (navigationFirst) clearForMainNavigation();
++  manager.webSocketClosed('fixture-socket');
++  if (!navigationFirst) clearForMainNavigation();
++  assert.equal(established, 1);
++  assert.equal(closed, navigationFirst ? 0 : 1);
++  outcomes.push({ ordering: navigationFirst ? 'navigation-map-clear then protocol-close' : 'protocol-close then navigation-map-clear', established, pageCloseEvents: closed });
++  page.screencast.dispose();
++  page.removeAllListeners();
++}
++console.log(JSON.stringify({ node: process.version, playwright: require('playwright-core/package.json').version, controlledDispatchOnly: true, browserLaunched: false, outcomes }, null, 2));
+--- a/docs/implementation/evidence/SPN-149/review-iteration-1.json
++++ b/docs/implementation/evidence/SPN-149/review-iteration-1.json
+@@ -0,0 +1,49 @@
++{
++  "candidate": "8ee824a9787c630f7c9b02263461280611f68d59",
++  "tree": "fe2cc7200da2b0333374ad0bef89e88085ab6bda",
++  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
++  "publishedValidationRef": false,
++  "hostedAcceptance": "Not run; no deduction for hosted status. Both reviewers are nonimplementing and read-only.",
++  "reviewers": [
++    {
++      "name": "/root/review_a",
++      "score": "[historical grade masked]",
++      "rubric": "[historical rubric masked]",
++      "findings": [],
++      "focusedControls": {
++        "passed": 18,
++        "failed": 0
++      },
++      "report": "# \ud83d\udd0e SPN-149 independent review A\n\n## Decision and source identity\n\n**Score: [historical grade masked]. No actionable findings or unresolved blockers in the reviewed candidate.** This is an independent, nonimplementing review of the complete committed change, including landing bookkeeping. The grade does not certify hosted acceptance or authorize merge.\n\n- Reviewed candidate: `8ee824a9787c630f7c9b02263461280611f68d59`.\n- Reviewed tree: `fe2cc7200da2b0333374ad0bef89e88085ab6bda`.\n- Base: `04baabd6a68abe7c0b225f8699681532e2205b60`.\n- Review date: 2026-11-13 UTC.\n- Reviewer: independent agent `/root/review_a`; did not implement this change, edit the repository, commit, push, run a browser, or trigger remote validation.\n- Working tree was clean before and after review. This report and the reviewer\u2019s control-run logs are outside the repository.\n\n## Rubric\n\n| Category | Score | Assessment |\n| --- | ---: | --- |\n| Ticket scope and acceptance criteria | [historical grade masked] | The original ticket\u2019s conditional investigation, declared bounded sample, observation correction, denial/closure negative controls, existing two-login journey, and historical limitations are all retained. Native execution is explicitly pending, never asserted as passed. |\n| Correctness, data integrity and access boundaries | [historical grade masked] | Acceptance requires an actual successful handshake, closure of every frozen target, no later established matching connection, an intact observer, and independent HTTP 401 denial. The retained journey protects the other login\u2019s queued write, saved value and reloaded native value. Product authority and transport code are unchanged. |\n| Meaningful regression protection and local verification | [historical grade masked] | I ran the 18 focused controls on the exact reviewed SHA; all passed. The suite exercises the actual browser helper and rejects false positives, observation loss, overflow and cleanup failures. Retained typecheck/lint/backlog evidence is traceable to unchanged executable bytes. |\n| CI and operational design | [historical grade masked] | Existing suite owners remain selected; the added controls are reached by the existing Node test glob. Required aggregates reject missing, skipped, failed and cancelled selected work. First-attempt JSON attachments are preserved by the existing reporter/upload path. No routing, matrix or required gate is weakened. |\n| Maintainability, documentation, process and over-complexity | [historical grade masked] | The helper stays specific to this Chromium journey, adds no dependency or product policy, and bounds private observation state. Decisions weigh all four personas. Maintained documentation, original evidence, ticket deletion, completion accounting, generated index and repaired links are consistent. The safeguards have concrete acceptance purposes rather than speculative abstraction. |\n| **Total** | **[historical grade masked]** | **No deductions.** |\n\nCI result status contributes no deduction in any category, in accordance with `AGENTS.md` and `docs/run-backlog.md`.\n\n## Evidence inspected\n\nI read the current `AGENTS.md`, `docs/todo/process.md`, `docs/run-backlog.md`, `docs/testing.md`, `docs/product/personas.md`, the original `docs/todo/SPN-149.md` from the base, the complete base-to-candidate diff, the maintained implementation record and every new evidence file.\n\nI also inspected the owning browser configuration and workflow, CI dependency classifier and aggregate contract, `e2e/sync-network.ts`, `e2e/native-sheet-value.ts`, the relevant session/identity/transport/navigation implementation, and the pinned Playwright implementation for CDP events and JSON attachment serialization.\n\n### Reviewer-executed local controls\n\nFrom `/workspace/scratch/13a7bba7afec/spinel`:\n\n```sh\nPATH=/workspace/scratch/cece61e42934/runtime/node-v26.13.0-linux-x64/bin:$PATH node ../validation/watchdog.ts ../validation/review-a-controls-watchdog.json node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts > ../validation/review-a-controls.log 2>&1\n```\n\nResult: **18 tests passed, zero failed/skipped/cancelled, exit 0**. Node was `v26.13.0`. Execution began `2026-11-13T04:04:11.048Z` and ended `2026-11-13T04:04:11.444Z`; total watchdog duration was 396 ms, peak process-tree RSS 215,664 KiB, minimum available memory 8,443,384 KiB, no resource abort. The run used the shared serial runner and watchdog. I notified the parent when it finished so reviewer B could run without overlap.\n\nEvidence files:\n\n- `/workspace/scratch/13a7bba7afec/validation/review-a-controls.log`\n- `/workspace/scratch/13a7bba7afec/validation/review-a-controls-watchdog.json`\n\n### Source and retained-evidence verification\n\n- All 14 SHA-256 entries in `docs/implementation/evidence/SPN-149/local-validation.json` match the reviewed working tree, including the helper, browser case, focused suite, shared fixtures, authority dependencies, CI plan, browser config, lockfile and pinned Node declaration.\n- The recorded committed verification source `8ea691b2286a48e6344d46bd6fba0fd64ad6698e` has the recorded tree `20557e405e1fa5642ccdbf14aaef99d5d873e90b`. Its difference from the reviewed candidate consists only of the implementation record, local-validation manifest and grooming link. The executable bytes are unchanged.\n- I inspected the actual final typecheck/PR-check logs, repaired full lint/dependency/format log and backlog-check log. Their pass results and resource measurements agree with the maintained manifest. The earlier `no-unsafe-finally` failure is retained and its fix preserves the primary error.\n- Declaration commit `d98f7d6b22459b4a9aa7306ab054c8e09e02e5d0` exists and contains the declared hypothesis, exact runtime, two controlled orderings, stop condition, resource bounds and pending native sample. Its commit time precedes the one retained dispatch probe.\n- The retained probe source hash matches its result. The actual probe log contains the declared close-first result of one close and navigation-first result of zero closes; it did not launch a browser. I did not repeat the bounded experiment.\n- I independently hashed the retained original ZIP and its relevant DOM, screenshot and retry-trace members; every hash matches the maintained original metadata. The original report member hash also matches. The retained record correctly separates retry 0\u2019s failure/DOM from retry 1\u2019s passing trace and states that the missing original ordering cannot be reconstructed.\n- I inspected the pinned-browser installation log: all five built-in download attempts failed with invalid ZIP data, followed by exit 1. No local browser pass is claimed.\n\n## Contract assessment\n\n### Conditional observation correction\n\n`e2e/session-revocation.ts:26\u2013101` attaches a separate Chromium Network observer before navigation. URL matching uses origin and path while dropping query credentials from retained diagnostics. Successful establishment requires HTTP 101. `beforeRevoke()` at lines 133\u2013142 freezes every then-open matching socket immediately before the synchronous database revocation (`e2e/collaboration.spec.ts:457\u2013459`). `isClosed()` and `assertRevoked()` at helper lines 124\u2013147 reject absent targets, still-open sockets, reopening, observer loss, overflow and non-401 authorization.\n\nNavigation and Playwright\u2019s page-level close notification are diagnostic only. The two ordering controls and the live-socket/active-authorization controls (`scripts/ci/session-revocation.test.ts:65\u2013178`) exercise this actual helper. This is an adequately demonstrated conditional observer correction; it does not establish the original incident\u2019s ordering or a product security defect.\n\n### Complete two-login contract\n\nThe browser journey keeps its 60-second deadline and five-second closure poll (`e2e/collaboration.spec.ts:371`, `:460\u2013462`). It waits for both editors\u2019 saved/online state and an established revoked socket before holding the surviving login\u2019s write. The same journey independently checks protocol closure, sign-in and editor removal, 401 denial, successful forwarding of the held write, surviving socket continuity, a 200 saved-sheet response, exact stored cell content, absence of later matching frames during the queued-write/reload window, native cell content after reload, and a final 401 (`:430\u2013508`). The existing development and production Chromium owners remain in place; no duplicate journey or browser project is added.\n\n### Privacy, first-attempt diagnostics and cleanup\n\nThe new snapshot contains finite event kinds, relative timestamps, socket ordinals, counts and booleans. It does not expose socket URLs, request IDs, tokens or frame payloads. The 64-event and 16-socket bounds fail closed, and the focused privacy test injects secrets and verifies that neither content nor URL survives serialization (`scripts/ci/session-revocation.test.ts:181\u2013211`).\n\nThe browser `finally` path releases held writes, drains interception, detaches the observer, closes its extra context, deletes disposable data and attaches its content-free record (`e2e/collaboration.spec.ts:513\u2013561`). Each asynchronous cleanup phase has a five-second wait bound; failures do not prevent later phases, and the main test error is preserved. On an otherwise successful body, cleanup/attachment failures still fail the case. Listener teardown removes only owned listeners. The cleanup controls cover synchronous rejection, asynchronous rejection and a stalled phase.\n\nI checked that the pinned Playwright worker keeps a body attachment in the test result and its JSON reporter serializes the body as base64. The workflow already uploads `playwright-report/*.json` on every attempt, so the unchanged artifact patterns preserve this new first-attempt record; an extra attachment-file glob is not required.\n\n### Sustainable routing and bookkeeping\n\nThe new `scripts/ci/session-revocation.test.ts` is included by `package.json`\u2019s `scripts/ci/*.test.ts` glob and the existing remaining unit partition. Its routing control verifies auth/session, transport, identity, navigation, shared fixture and helper inputs and rejection of incomplete selected work (`:305\u2013345`). Existing broad routing selects all applicable owners, and no workflow or gate definition changes.\n\nThe completion list adds only SPN-149; the allocation counter and grooming date are preserved. The ticket is deleted, there are no dependent tickets left naming it, the generated index records 22 open tickets, its rules survive in maintained documentation, and the grooming link now targets the maintained implementation record. There are no product UI changes requiring a separate visual review.\n\n## Every actionable step to 100\n\n**None.** The candidate earns [historical grade masked] on this review. There are no withheld points, local repair steps, hosted-only deductions or owner-decision deductions.\n\n## Hosted acceptance and completion still pending \u2014 zero score deduction\n\nThe grade is a pre-publication review. The existing development and production Chromium two-login cases still need their declared retry-zero execution on the published candidate/tested merge, with every configured retry retained separately and natural recurrence reported accurately. All seven current-head gates and every selected worker remain merge prerequisites. The original failure stays failed; a new passing sample cannot establish its missing ordering.\n\nThe final PR or immutable receipt must retain both independent reviews, the exact candidate/tested identities, actual first-attempt diagnostics and cleanup outcomes, all run attempts and their dispositions. After any subsequent source, bookkeeping or base edit, both reviewers must revalidate the new committed SHA. No remote publication, gate pass, native acceptance or merge is asserted by this report.\n"
++    },
++    {
++      "name": "/root/review_b",
++      "score": "[historical grade masked]",
++      "rubric": "[historical rubric masked]",
++      "findings": [
++        {
++          "points": 2,
++          "finding": "Setup cleanup after rejected Network.enable had an unbounded detach.",
++          "demonstrated": {
++            "elapsedMs": 5106,
++            "detachStarted": true,
++            "remainingSessionListeners": [],
++            "remainingPageListeners": []
++          },
++          "repair": "Use cleanupSessionRevocation for the setup catch, preserving the original error; test pending at 4999 mocked ms and rejection at 5000 ms."
++        },
++        {
++          "points": 1,
++          "finding": "Retained Apache-2.0 source excerpts lacked original header and extraction notice.",
++          "repair": "Retain the exact pinned upstream header and extraction notice; register source commit/path in THIRD-PARTY-NOTICES.md."
++        }
++      ],
++      "focusedControls": {
++        "passed": 18,
++        "failed": 0
++      },
++      "report": "# Independent review B \u2014 SPN-149\n\n## Verdict and identity\n\n**Score: [historical grade masked]. Two local repairs remain; no points were deducted for hosted CI status.** I did not implement this change. This review is read-only apart from evidence/report files outside the repository. It covers the complete committed candidate, original ticket, maintained implementation record, relevant ownership/routing code and retained evidence.\n\n- Candidate: `8ee824a9787c630f7c9b02263461280611f68d59`\n- Candidate tree: `fe2cc7200da2b0333374ad0bef89e88085ab6bda`\n- Base: `04baabd6a68abe7c0b225f8699681532e2205b60`\n- Working copy: `/workspace/scratch/13a7bba7afec/spinel`; clean at inspection.\n- No remote branch, PR, browser test or full test suite was run by this reviewer.\n\n| Rubric | Awarded | Assessment |\n| --- | ---: | --- |\n| Ticket scope and acceptance | [historical grade masked] | Conditional observer correction, bounded investigation, real closure/denial and downstream content contract are preserved. One setup-failure cleanup path misses the stated bound (B2). |\n| Correctness, data integrity and access boundaries | [historical grade masked] | No application authority code changes. Closure requires established matching protocol sockets and independent 401 denial; false positives are rejected. |\n| Meaningful regression protection and local verification | [historical grade masked] | All 18 focused tests passed locally. The existing controls omit a stalled detach during failed observer setup (B2), which the additional probe reproduced. |\n| CI and operational design | [historical grade masked] | Existing owners and fail-closed aggregates remain selected; bounded content-free attachments reach the retained JSON report. No duplicated browser matrix or weakened gate. |\n| Maintainability, documentation, process and over-complexity | [historical grade masked] | Small ticket-specific helper, no new dependency or speculative framework. Copied Playwright diagnostic source lacks the mandated full attribution record (B1). |\n| **Total** | **[historical grade masked]** | Hosted results are a separate gate and cost no points. |\n\nThe score exceeds the numerical threshold, but the repository's review/repair process requires both local findings to be repaired and the new complete commit to be revalidated before a validation push. Neither finding establishes an application security defect.\n\n## Every actionable step to 100\n\n### B1 \u2014 Retain the required notice for copied Playwright source\n\n**Severity:** low. **Points:** 1, maintainability/process. **Classification:** local.\n\n**Location:** `docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json:7\u201344`; missing corresponding entry in `THIRD-PARTY-NOTICES.md`.\n\nThe JSON packages verbatim Apache-2.0 source excerpts from the pinned Playwright `frames.ts`. It records the source URL, commit and a short license label, but does not retain the original copyright/license header or describe the extraction/modification in the copied material, and the third-party notice inventory has no Playwright evidence entry. `AGENTS.md` explicitly requires the original notice, a change note and registration for code copied from any Apache-2.0 project; it does not exempt diagnostic excerpts.\n\n**Fix:** preserve the actual header/notice from the exact pinned source in the evidence metadata, identify the modification accurately as selecting/packaging diagnostic excerpts with their code unchanged, and add the exact evidence path, upstream commit, license and extraction description to `THIRD-PARTY-NOTICES.md`. This does not require changing the experiment or executing it again.\n\n### B2 \u2014 Bound failed observer setup cleanup and preserve its original error\n\n**Severity:** medium; in-scope cleanup/first-failure evidence repair. **Points:** 2 total: 1 scope/acceptance and 1 regression verification. **Classification:** local.\n\n**Location:** `e2e/session-revocation.ts:117\u2013122`; awaiting caller at `e2e/collaboration.spec.ts:409`; related coverage at `scripts/ci/session-revocation.test.ts:214\u2013235` and `283\u2013310`.\n\nIf `Network.enable` rejects and `session.detach()` never settles, the setup catch awaits `stop().catch(...)` indefinitely. The caller has not yet received or assigned `observation`, so it cannot enter its normal bounded cleanup and attach the failure evidence while that await remains pending. Listener removal happens before the stall, which is good, but the failed setup still violates the stated five-second cleanup bound. The existing setup test covers a rejecting detach and the general cleanup test covers a stalled phase; neither covers the actual setup catch's unbounded await.\n\n**Reproduction on the reviewed commit:** a browser-free EventEmitter fixture rejects `Network.enable` with an identifiable primary error and returns a never-settling promise from `detach`. At 5,106 ms the observation promise was still pending rather than rejecting with the original error. Detach had started and both owned listener collections were empty. This used the real imported helper, not a copy of its implementation. See `/workspace/scratch/13a7bba7afec/validation/review-b-setup-cleanup.log` and `review-b-setup-cleanup-watchdog.json`.\n\n**Fix:** put setup-error `stop()` through the same finite cleanup mechanism (or an equally small five-second bound), then rethrow the original `Network.enable` error regardless of detach rejection or timeout. Add a focused mocked-timer test that makes enable reject and detach remain pending, advances the five-second deadline, asserts rejection with the identical primary error, and verifies all owned listeners were removed. Keep the current journey and assertion deadlines.\n\nThere are no other withheld points, hosted-only deductions, owner-decision deductions or impossible steps to 100 in this review.\n\n## Evidence checked\n\n### Independent local execution\n\nAfter reviewer A released the shared test turn, I ran:\n\n```sh\nPATH=/workspace/scratch/cece61e42934/runtime/node-v26.13.0-linux-x64/bin:$PATH node ../validation/watchdog.ts ../validation/review-b-controls-watchdog.json node scripts/serial.ts node --test scripts/ci/session-revocation.test.ts > ../validation/review-b-controls.log 2>&1\n```\n\nResult: **18 passed, 0 failed, 0 skipped, 0 cancelled** on Node `v26.13.0`. The watchdog recorded 467 ms elapsed, peak process-tree RSS 231,136 KiB, exit 0 and no abort. Minimum system available memory was 8,464,052 KiB. This run used the exact candidate bytes.\n\nThe additional focused setup-cleanup probe used the same pinned Node, shared serial runner and watchdog. It completed in 5,388 ms, peak 154,804 KiB, exit 0 with no watchdog abort; its deliberate result was the pending cleanup condition described in B2. This is diagnostic evidence of the gap, not a passing cleanup regression.\n\n### Source, contract and privacy review\n\nI read `AGENTS.md`, all of `docs/todo/process.md`, `docs/run-backlog.md`, `docs/testing.md`, `docs/product/personas.md`, the original ticket via `git show <base>:docs/todo/SPN-149.md`, maintained `docs/implementation/SPN-149.md`, and the entire base-to-candidate change.\n\nI followed current ownership through `AuthStore.revokeSession`, document credential validation, collaboration identity, sync transport revalidation/send and broadcast guards, and the native client authentication handoff. These application files are unchanged by the candidate. The helper is installed before navigation and leaves the revoked socket unintercepted. It requires HTTP 101 before targeting, freezes every open matching request before the synchronous revocation, and accepts only matching protocol close events. Sign-in/navigation and Playwright page close remain diagnostic only. A later successful handshake, a live target, observer loss or bounded-buffer overflow invalidates acceptance.\n\nThe browser case retains sign-in plus editor removal, two independent denied requests, surviving-login HTTP 200, the original queued write being successfully forwarded, no surviving close before its explicit reload, exact saved cell content, native reloaded value, and unchanged post-boundary frame counts. It strengthens the previous fixture-string check into absence of every matching later received frame without collecting payloads. The existing 60-second test and five-second closure budgets remain unchanged.\n\nDiagnostic snapshots contain finite event names, relative times, ordinal socket numbers, counts and flags; no URLs, request IDs, cookies, tickets, payloads or document content are emitted. The 64-event and 16-socket limits fail closed. Cleanup continues through writes, observer, context and database phase failures, and primary test errors survive later cleanup/attachment failures. B2 is the one uncovered exception before setup returns.\n\nI checked the pinned installed Playwright JSON reporter: Buffer attachments are serialized into each attempt's result as base64 bodies. The unchanged CI upload includes `playwright-report/*.json`, so this attachment is preserved despite the absence of a new standalone attachment-path glob. The artifact remains temporary (seven days); the implementation correctly requires the final immutable acceptance receipt to retain necessary evidence.\n\n### Provenance, routing and bookkeeping\n\nI read every retained SPN-149 evidence file. The two-ordering probe uses the actual installed Playwright FrameManager and demonstrates conditional map-clearing loss; it neither launches a browser nor proves the historical failed attempt's ordering. The records preserve that limitation and the missing first-attempt timeline. The retry-1 trace is not represented as retry-0 evidence, and the previously incorrect 30-day artifact claim is corrected to seven days.\n\nI independently verified the original archive byte count, SHA-256, member count and the four listed revocation-member hashes against the locally retained archive. I also verified every source hash in `local-validation.json`, the retained probe hash, installed Playwright bundle hash and pinned Node executable hash. The declaration and executable-source commits exist with the recorded trees. The difference from executable-source commit `8ea691b2286a48e6344d46bd6fba0fd64ad6698e` to the candidate is confined to the documented evidence/doc-link changes.\n\nThe focused routing control covers the observer, journey, native-cell and sync-network helpers, auth/session, collaboration identity, sync transport, native client, application navigation and harness path. It confirms unit/browser selection and rejects missing, failed, skipped and cancelled selected evidence. I inspected the plan, workflow, package test inclusion and aggregate wiring: no routing or gate was weakened.\n\nOnly SPN-149 is removed from the backlog. The completed ID is appended while the allocation counter and grooming date remain unchanged; the generated index reports 22 open tickets, and the old grooming link points to the maintained record. The record weighs all four personas: Operator observability, Owner/Collaborator access and preserved work, and unchanged Link guest boundaries. There is no UI change requiring independent visual review. The helper and finite cleanup seam are proportionate to the accepted outcome; no over-complexity deduction is warranted.\n\n## Separate remaining gates and limits\n\nPinned local Chromium installation is documented as failed because the official installer downloaded invalid/empty archives; no browser acceptance was run locally or claimed by this review. The existing development and production Chromium first attempts, their separately retained retries if any, and all selected current-head CI gates remain pending. Their status is not part of this score.\n\nThe native sample must keep the declared finite bounds and explicitly state whether natural recurrence was observed or not reproduced. Historical causality remains unavailable regardless of a later pass. After repairs, both reviewers must revalidate the same complete committed source before validation publication. Actual hosted acceptance, current base readiness and post-merge branch cleanup remain later gates, not accomplishments of this local review.\n"
++    }
++  ],
++  "disposition": "Both local findings repaired before any validation ref/PR publication; the changed complete candidate requires both reviewers again."
++}
+--- a/docs/implementation/grooming-2026-11-12.md
++++ b/docs/implementation/grooming-2026-11-12.md
+@@ -61,7 +61,7 @@
+ 
+ ### Preserve session-revocation closure evidence across navigation
+ 
+-[SPN-149](../todo/SPN-149.md), **M, pre-launch**. Operator/Owner/Collaborator impact M; Link guest S.
++[SPN-149](SPN-149.md), **M, pre-launch**. Operator/Owner/Collaborator impact M; Link guest S.
+ [PR #268](https://github.com/mxbaylee/spinel/pull/268) preserves
+ [run 42329786250, job 128273632504](https://github.com/mxbaylee/spinel/actions/runs/42329786250/job/128273632504):
+ the revocation test observed zero Playwright WebSocket-close events within five
+--- a/docs/todo/SPN-149.md
++++ b/docs/todo/SPN-149.md
+@@ -1,48 +0,0 @@
+----
+-id: SPN-149
+-emoji: 🔏
+-effort: M
+-phase: pre_launch
+-impact_operator: M
+-impact_owner: M
+-impact_collaborator: M
+-impact_guest: S
+-score: 21
+-depends_on: []
+-decisions: []
+----
+-
+-# 🔏 SPN-149 Preserve session-revocation closure evidence across navigation
+-
+-## Story
+-
+-As the [Owner](../product/personas.md#owner), I want revocation checks to prove an old session and its socket lose access even when the page navigates, so that a passing check means the full security contract was exercised.
+-
+-## Scenarios
+-
+-### Navigation cannot hide a required closure observation
+-
+-Given the retained failure with sign-in visible but no observed WebSocket close,
+-When socket/session/navigation ordering is investigated within a declared sample,
+-Then a demonstrated observation race receives a verified correction, or the sample ends with an explicit inconclusive/not-reproduced disposition,
+-And a still-live socket or retained authorization cannot pass as successful revocation.
+-
+-## Rules
+-
+-- Owner approved this M, pre-launch outcome during grooming, chat 2026-11-12. Preserve the [registration, first failure and persona decision](../implementation/SPN-149.md#-registration-and-scope).
+-- Follow [sustainable testing](../testing.md). Inspect current observer/server/session ownership and preserve the missing first-attempt timeline. Navigation overtaking the observer is a hypothesis, not an established historical cause or security defect.
+-- Before execution declare one hypothesis, exact source/runtime, small fixed first-attempt sample, resource budget and stop condition. Reassess scope before a demonstrated product/session defect or broader protocol change.
+-- Preserve actual socket termination, denied requests, editor removal, surviving-login continuity, successful queued writes from the surviving login, no later broadcasts and saved/reloaded content. Sign-in UI alone is not server-closure proof.
+-- Keep original deadlines, `failOnFlakyTests`, privacy and owned cleanup. Do not delete closure coverage, increase timeouts or retry failed assertions. An inconclusive diagnosis does not waive a failed current-head gate.
+-- This later case is separate from SPN-120's finite auth-heading/navigation/recovery/snapshot inventory and SPN-145's worker activation.
+-
+-## Out of scope
+-
+-- New authentication policy, a generic retry framework, or claiming product/security defects from missing observer events alone.
+-
+-## Verify
+-
+-- Reuse `e2e/collaboration.spec.ts` and its isolated auth/server/browser fixtures. Add focused controls for any demonstrated observer ordering; a socket kept live and an authorization check left active must still fail.
+-- Observe socket establishment and revocation/navigation boundaries without sleeps; retain content-free first-failure evidence and bounded cleanup of owned contexts, intercepted writes and server state.
+-- Focused tests own the observation negative controls; the existing two-login Chromium collaboration journey owns real closure, denied access, surviving-login/queued-write/broadcast and saved-content proof. Reuse auth/session regressions for changed authority code.
+-- Track auth/session, sync transport, navigation, shared fixtures and harness dependencies in existing CI routing. Preserve exact source/tested identities and all attempts; stop at the declared sample limit, record its supported disposition, and retain both reviews and selected current-head gates.
+--- a/docs/todo/backlog.json
++++ b/docs/todo/backlog.json
+@@ -6,7 +6,7 @@
+   "grooming": {
+     "every": 7,
+     "last": "2026-11-12",
+-    "completed_since": ["SPN-148", "SPN-145"]
++    "completed_since": ["SPN-148", "SPN-145", "SPN-149"]
+   },
+   "size": {
+     "soft": 10000,
+--- a/docs/todo/readme.md
++++ b/docs/todo/readme.md
+@@ -2,11 +2,11 @@
+ 
+ <!-- Generated by `npm run backlog:index` from the SPN-NNN.md tickets and backlog.json. Don't edit it by hand; CI fails if it is stale. -->
+ 
+-How this backlog works: [process.md](process.md). Next ID: **SPN-159**. Grooming: **2** tickets completed since 2026-11-12: SPN-148, SPN-145. Reminder every 7; grooming on request, never a work gate.
++How this backlog works: [process.md](process.md). Next ID: **SPN-159**. Grooming: **3** tickets completed since 2026-11-12: SPN-148, SPN-145, SPN-149. Reminder every 7; grooming on request, never a work gate.
+ 
+ Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.
+ 
+-## Open tickets (30)
++## Open tickets (29)
+ 
+ Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.
+ 
+@@ -24,33 +24,32 @@
+ | 8 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
+ | 9 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
+ | 10 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
+-| 11 | 🔏 [SPN-149](SPN-149.md) Preserve session-revocation closure evidence across navigation | 🌿 M | 💜 M | 21 | — |
+-| 12 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
+-| 13 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
+-| 14 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
+-| 15 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
+-| 16 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
++| 11 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
++| 12 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
++| 13 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
++| 14 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
++| 15 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
+ 
+ ### Launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 17 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
++| 16 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
+ 
+ ### After launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 18 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
+-| 19 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
+-| 20 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
+-| 21 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
+-| 22 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
+-| 23 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
+-| 24 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
+-| 25 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
+-| 26 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
+-| 27 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
+-| 28 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
+-| 29 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
+-| 30 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |
++| 17 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
++| 18 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
++| 19 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
++| 20 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
++| 21 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
++| 22 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
++| 23 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
++| 24 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
++| 25 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
++| 26 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
++| 27 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
++| 28 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
++| 29 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |
+--- a/e2e/collaboration.spec.ts
++++ b/e2e/collaboration.spec.ts
+@@ -4,6 +4,9 @@
+ import { openDatabase } from '../server/database.ts';
+ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
+ import { WorkspaceStore } from '../src/server/workspace/store.ts';
++import type { BrowserContext } from '@playwright/test';
++import { cleanupSessionRevocation, observeSessionRevocation } from './session-revocation.ts';
++import { expectNativeSheetValue } from './native-sheet-value.ts';
+ 
+ test('two authenticated editors receive each other’s sheet edits without reloading', async ({
+   page,
+@@ -372,48 +375,56 @@
+       : 'test-results/production/app.sqlite',
+   );
+   const auth = new AuthStore(db),
+-    workspace = new WorkspaceStore(auth),
+-    owner = auth.createUser('Two logins');
+-  const item = workspace.create(owner.id, {
+-    name: 'Private after revoke',
+-    kind: 'sheet',
+-    parentId: null,
+-  });
+-  const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
+-  const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+-  const network = await syncNetwork(second);
+-  const other = await second.newPage();
++    workspace = new WorkspaceStore(auth);
++  let ownerId: string | undefined, itemId: string | undefined;
++  let second: BrowserContext | undefined;
++  let network: Awaited<ReturnType<typeof syncNetwork>> | undefined;
++  let observation: Awaited<ReturnType<typeof observeSessionRevocation>> | undefined;
++  let primaryFailed = false,
++    contractCompleted = false;
++  let cleanupFailures: string[] = [],
++    attachmentFailures: string[] = [];
+   let release!: () => void;
+   const pending = new Promise<void>((resolve) => {
+     release = resolve;
+   });
+   let held = false,
+-    revokedClosed = 0,
++    forwarded = false,
+     otherClosed = 0;
+-  const revokedMessages: string[] = [];
+-  page.on('websocket', (socket) => {
+-    socket.on('framereceived', (frame) => revokedMessages.push(String(frame.payload)));
+-    socket.on('close', () => {
+-      revokedClosed++;
++  try {
++    const owner = auth.createUser('Two logins');
++    ownerId = owner.id;
++    const item = workspace.create(owner.id, {
++      name: 'Private after revoke',
++      kind: 'sheet',
++      parentId: null,
+     });
+-  });
+-  other.on('websocket', (socket) =>
+-    socket.on('close', () => {
+-      otherClosed++;
+-    }),
+-  );
+-  for (const [index, c] of [context, second].entries())
+-    await c.addCookies([
+-      {
+-        name: COOKIE_NAME,
+-        value: sessions[index].token,
+-        url: baseURL!.replace('http:', 'https:'),
+-        secure: true,
+-        httpOnly: true,
+-        sameSite: 'Strict',
+-      },
+-    ]);
+-  try {
++    itemId = item.id;
++    const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
++    second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
++    network = await syncNetwork(second);
++    const other = await second.newPage();
++    const socketURL = new URL(`/sync-api/items/${item.id}/socket`, baseURL);
++    socketURL.protocol = socketURL.protocol === 'https:' ? 'wss:' : 'ws:';
++    observation = await observeSessionRevocation(page, socketURL.href);
++    other.on('websocket', (socket) => {
++      if (new URL(socket.url()).pathname !== socketURL.pathname) return;
++      socket.on('close', () => {
++        otherClosed++;
++      });
++    });
++    await second.grantPermissions(['clipboard-read', 'clipboard-write']);
++    for (const [index, c] of [context, second].entries())
++      await c.addCookies([
++        {
++          name: COOKIE_NAME,
++          value: sessions[index].token,
++          url: baseURL!.replace('http:', 'https:'),
++          secure: true,
++          httpOnly: true,
++          sameSite: 'Strict',
++        },
++      ]);
+     await page.goto(`/?item=${item.id}`);
+     await other.goto(`${baseURL}/?item=${item.id}`);
+     for (const target of [page, other]) {
+@@ -426,10 +437,11 @@
+         target.getByRole('status', { name: 'Connection status', exact: true }),
+       ).toHaveText('Online');
+     }
++    await expect.poll(() => observation!.snapshot().openSockets).toBeGreaterThan(0);
+     network.interceptWrites(async (write) => {
+       held = true;
+       await pending;
+-      write.forward();
++      forwarded = write.forward();
+     });
+     const box = other
+       .getByRole('region', { name: 'Sheet document', exact: true })
+@@ -440,10 +452,15 @@
+     await other.keyboard.type('private-after-revoke');
+     await other.keyboard.press('Enter');
+     await expect.poll(() => held).toBe(true);
+-    const revokedClosedBefore = revokedClosed;
++    observation.checkpoint('edit-held');
+     const otherClosedBefore = otherClosed;
++    observation.beforeRevoke();
+     auth.revokeSession(sessions[0].session.token_hash);
+-    await expect.poll(() => revokedClosed).toBeGreaterThan(revokedClosedBefore);
++    observation.checkpoint('revocation-written');
++    // The same five-second deadline still requires a real protocol close for
++    // every socket established before revocation, even if navigation wins.
++    await expect.poll(() => observation!.isClosed(), { timeout: 5000 }).toBe(true);
++    observation.checkpoint('closure-observed');
+     expect(otherClosed).toBe(otherClosedBefore);
+     // The revoked login has no unfinished work, so SPN-053's clean 401 handoff
+     // closes its editor. The other login's independently queued edit must survive.
+@@ -452,37 +469,99 @@
+       page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+     ).toBeVisible();
+     await expect(page.locator('.univer-container canvas')).toHaveCount(0);
+-    expect((await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status()).toBe(401);
+-    const boundary = revokedMessages.length;
++    observation.checkpoint('sign-in');
++    const denied = await context.request.get(`${baseURL}/api/items/${item.id}/sheet`);
++    observation.assertRevoked(denied.status());
++    observation.checkpoint('request-denied');
++    const boundary = observation.frameCount();
+     release();
++    observation.checkpoint('edit-released');
+     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
+       'All changes saved.',
+       { timeout: 30_000 },
+     );
+-    const saved = (await (await second.request.get(`${baseURL}/api/items/${item.id}/sheet`)).json())
+-      .snapshot;
++    expect(forwarded).toBe(true);
++    expect(otherClosed).toBe(otherClosedBefore);
++    const savedResponse = await second.request.get(`${baseURL}/api/items/${item.id}/sheet`);
++    expect(savedResponse.status()).toBe(200);
++    const saved = (await savedResponse.json()).snapshot;
+     expect(saved.sheets[saved.sheetOrder[0]].cellData[0][0].v).toBe('private-after-revoke');
+-    expect(
+-      revokedMessages.slice(boundary).some((message) => message.includes('private-after-revoke')),
+-    ).toBe(false);
++    observation.checkpoint('saved');
++    // No frame may reach the revoked socket after closure. Do not retain private
++    // frame content just to search for one fixture string.
++    expect(observation.frameCount()).toBe(boundary);
+     await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
+     await expect(page).toHaveURL(/\/sign-in$/);
+     await expect(page.getByRole('heading', { name: 'Your workspace.', exact: true })).toBeVisible();
++    expect(otherClosed).toBe(otherClosedBefore);
+     await other.reload();
+     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
+       'All changes saved.',
+       { timeout: 30_000 },
+     );
++    await expectNativeSheetValue(other, 'A1', 'private-after-revoke');
++    observation.checkpoint('reloaded');
++    expect(observation.frameCount()).toBe(boundary);
++    observation.assertRevoked(
++      (await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status(),
++    );
++    expect(observation.frameCount()).toBe(boundary);
++    contractCompleted = true;
++  } catch (error) {
++    primaryFailed = true;
++    throw error;
+   } finally {
+     release();
+-    network.interceptWrites(undefined);
+-    try {
+-      await network.drainWrites();
+-    } finally {
+-      await second.close();
+-      db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
+-      db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
+-      db.close();
+-    }
++    network?.interceptWrites(undefined);
++    cleanupFailures = await cleanupSessionRevocation([
++      { name: 'writes', run: () => network?.drainWrites() },
++      { name: 'observer', run: () => observation?.stop() },
++      { name: 'context', run: () => second?.close() },
++      {
++        name: 'database',
++        run: () => {
++          try {
++            if (itemId) db.prepare('DELETE FROM workspace_items WHERE id=?').run(itemId);
++          } finally {
++            try {
++              if (ownerId) db.prepare('DELETE FROM auth_users WHERE id=?').run(ownerId);
++            } finally {
++              db.close();
++            }
++          }
++        },
++      },
++    ]);
++    attachmentFailures = await cleanupSessionRevocation([
++      {
++        name: 'diagnostics',
++        run: () =>
++          info.attach('session-revocation-observation', {
++            contentType: 'application/json',
++            body: Buffer.from(
++              JSON.stringify(
++                {
++                  version: 1,
++                  project: info.project.name,
++                  retry: info.retry,
++                  tested: process.env.GITHUB_SHA ?? null,
++                  node: process.version,
++                  browser: browser.version(),
++                  contractCompleted,
++                  primaryFailed,
++                  cleanupFailures,
++                  observation: observation?.snapshot() ?? null,
++                },
++                null,
++                2,
++              ),
++            ),
++          }),
++      },
++    ]);
+   }
++  if (cleanupFailures.length || attachmentFailures.length)
++    throw new Error(
++      `Revocation fixture cleanup failed: ${[...cleanupFailures, ...attachmentFailures].join(', ')}.`,
++    );
+ });
+--- a/e2e/session-revocation.ts
++++ b/e2e/session-revocation.ts
+@@ -0,0 +1,191 @@
++import assert from 'node:assert/strict';
++import type { Frame, Page, WebSocket } from '@playwright/test';
++
++type Checkpoint =
++  | 'edit-held'
++  | 'revocation-written'
++  | 'closure-observed'
++  | 'sign-in'
++  | 'request-denied'
++  | 'edit-released'
++  | 'saved'
++  | 'reloaded';
++type EventKind =
++  | Checkpoint
++  | 'socket-created'
++  | 'socket-opened'
++  | 'socket-closed'
++  | 'page-close'
++  | 'navigation'
++  | 'revocation-requested'
++  | 'observer-lost';
++
++/** Chromium owns this journey. Observe its real socket independently of
++ * Playwright's per-document map, which navigation clears before a late close.
++ * Never retain URLs, request IDs, credentials, frame payloads or document data. */
++export async function observeSessionRevocation(page: Page, socketURL: string) {
++  const expected = new URL(socketURL);
++  const session = await page.context().newCDPSession(page);
++  const started = performance.now();
++  const sockets = new Map<string, { index: number; opened: boolean; closed: boolean }>();
++  const pageSockets = new Map<WebSocket, () => void>();
++  const events: { kind: EventKind; ms: number; socket?: number }[] = [];
++  let targets: string[] | undefined;
++  let received = 0;
++  let overflow = false;
++  let observerLost = false;
++  let reopened = false;
++  let stopped = false;
++  const record = (kind: EventKind, socket?: number) => {
++    if (events.length === 64) overflow = true;
++    else
++      events.push({ kind, ms: Math.round(performance.now() - started), ...(socket && { socket }) });
++  };
++  const matches = (url: string) => {
++    try {
++      const parsed = new URL(url);
++      return parsed.origin === expected.origin && parsed.pathname === expected.pathname;
++    } catch {
++      return false;
++    }
++  };
++  const created = ({ requestId, url }: { requestId: string; url: string }) => {
++    if (!matches(url)) return;
++    if (sockets.size === 16 || sockets.has(requestId)) {
++      overflow = true;
++      return;
++    }
++    const socket = { index: sockets.size + 1, opened: false, closed: false };
++    sockets.set(requestId, socket);
++    record('socket-created', socket.index);
++  };
++  const opened = ({ requestId, response }: { requestId: string; response: { status: number } }) => {
++    const socket = sockets.get(requestId);
++    if (!socket || response.status !== 101) return;
++    socket.opened = true;
++    if (targets) reopened = true;
++    record('socket-opened', socket.index);
++  };
++  const closed = ({ requestId }: { requestId: string }) => {
++    const socket = sockets.get(requestId);
++    if (!socket) return;
++    socket.closed = true;
++    record('socket-closed', socket.index);
++  };
++  const frameReceived = ({ requestId }: { requestId: string }) => {
++    if (sockets.has(requestId)) received++;
++  };
++  const navigated = (frame: Frame) => {
++    if (frame === page.mainFrame()) record('navigation');
++  };
++  const pageSocket = (socket: WebSocket) => {
++    if (!matches(socket.url())) return;
++    if (pageSockets.size === 16) {
++      overflow = true;
++      return;
++    }
++    const onClose = () => record('page-close');
++    pageSockets.set(socket, onClose);
++    socket.on('close', onClose);
++  };
++  const lost = () => {
++    observerLost = true;
++    record('observer-lost');
++  };
++  session.on('Network.webSocketCreated', created);
++  session.on('Network.webSocketHandshakeResponseReceived', opened);
++  session.on('Network.webSocketClosed', closed);
++  session.on('Network.webSocketFrameReceived', frameReceived);
++  session.on('close', lost);
++  page.on('framenavigated', navigated);
++  page.on('websocket', pageSocket);
++
++  async function stop() {
++    if (stopped) return;
++    stopped = true;
++    session.off('Network.webSocketCreated', created);
++    session.off('Network.webSocketHandshakeResponseReceived', opened);
++    session.off('Network.webSocketClosed', closed);
++    session.off('Network.webSocketFrameReceived', frameReceived);
++    session.off('close', lost);
++    page.off('framenavigated', navigated);
++    page.off('websocket', pageSocket);
++    for (const [socket, onClose] of pageSockets) socket.off('close', onClose);
++    pageSockets.clear();
++    await session.detach();
++  }
++  try {
++    await session.send('Network.enable');
++  } catch (error) {
++    // Preserve the setup error and the normal cleanup bound even if detach stalls.
++    await cleanupSessionRevocation([{ name: 'observer', run: stop }]);
++    throw error;
++  }
++  const isClosed = () =>
++    !stopped &&
++    !overflow &&
++    !observerLost &&
++    !reopened &&
++    !!targets?.length &&
++    targets.every((id) => sockets.get(id)!.closed) &&
++    ![...sockets.values()].some((socket) => socket.opened && !socket.closed);
++  return {
++    beforeRevoke() {
++      assert(
++        !stopped && !overflow && !observerLost && !targets,
++        'Revocation observer is not ready.',
++      );
++      targets = [...sockets]
++        .filter(([, socket]) => socket.opened && !socket.closed)
++        .map(([id]) => id);
++      assert(targets.length > 0, 'Revocation requires an observed established socket.');
++      record('revocation-requested');
++    },
++    isClosed,
++    assertRevoked(status: number) {
++      assert.equal(status, 401, 'The revoked login must be denied by the server.');
++      assert(isClosed(), 'The revoked login must have an observed socket close.');
++    },
++    frameCount: () => received,
++    checkpoint: (kind: Checkpoint) => record(kind),
++    snapshot: () => ({
++      targetCount: targets?.length ?? 0,
++      closedTargets: targets?.filter((id) => sockets.get(id)!.closed).length ?? 0,
++      openSockets: [...sockets.values()].filter((socket) => socket.opened && !socket.closed).length,
++      receivedFrames: received,
++      overflow,
++      observerLost,
++      reopened,
++      events: events.map((event) => ({ ...event })),
++    }),
++    stop,
++  };
++}
++
++/** Cleanup has its own small bound within the unchanged test deadline. Every
++ * owned phase runs even after an earlier failure; diagnostics cannot replace the
++ * test's primary error. Callers report these finite phase names, never raw errors. */
++export async function cleanupSessionRevocation(
++  phases: {
++    name: 'writes' | 'observer' | 'context' | 'database' | 'diagnostics';
++    run: () => unknown | Promise<unknown>;
++  }[],
++) {
++  const failed: string[] = [];
++  for (const phase of phases) {
++    let timer: ReturnType<typeof setTimeout> | undefined;
++    try {
++      await Promise.race([
++        Promise.resolve().then(phase.run),
++        new Promise<never>((_, reject) => {
++          timer = setTimeout(() => reject(new Error('Owned cleanup deadline.')), 5000);
++        }),
++      ]);
++    } catch {
++      failed.push(phase.name);
++    } finally {
++      clearTimeout(timer);
++    }
++  }
++  return failed;
++}
+--- a/scripts/ci/session-revocation.test.ts
++++ b/scripts/ci/session-revocation.test.ts
+@@ -0,0 +1,385 @@
++import assert from 'node:assert/strict';
++import { EventEmitter } from 'node:events';
++import test, { type TestContext } from 'node:test';
++import type { CDPSession, Frame, Page, WebSocket } from '@playwright/test';
++import {
++  cleanupSessionRevocation,
++  observeSessionRevocation,
++} from '../../e2e/session-revocation.ts';
++import { coveragePlan, suiteIds, verifyCoverage } from './plan.ts';
++
++const socketURL = 'wss://spinel.test/sync';
++
++function boundary() {
++  const commands: string[] = [];
++  let detaches = 0;
++  const session = Object.assign(new EventEmitter(), {
++    async send(command: string) {
++      commands.push(command);
++    },
++    async detach() {
++      detaches++;
++      session.emit('close');
++    },
++  });
++  const mainFrame = {} as Frame;
++  const page = Object.assign(new EventEmitter(), {
++    mainFrame: () => mainFrame,
++    context: () => ({ newCDPSession: async () => session as unknown as CDPSession }),
++  });
++  return {
++    session,
++    page,
++    commands,
++    detaches: () => detaches,
++    observe: () => observeSessionRevocation(page as unknown as Page, socketURL),
++    create: (requestId: string, url = socketURL) =>
++      session.emit('Network.webSocketCreated', { requestId, url }),
++    open: (requestId: string, status = 101) =>
++      session.emit('Network.webSocketHandshakeResponseReceived', {
++        requestId,
++        response: { status },
++      }),
++    close: (requestId: string) => session.emit('Network.webSocketClosed', { requestId }),
++    frame: (requestId: string, payloadData = 'fixture content') =>
++      session.emit('Network.webSocketFrameReceived', {
++        requestId,
++        response: { opcode: 1, payloadData },
++      }),
++    navigate: () => page.emit('framenavigated', mainFrame),
++    pageSocket: (url = socketURL) => {
++      const socket = Object.assign(new EventEmitter(), { url: () => url });
++      page.emit('websocket', socket as unknown as WebSocket);
++      return socket;
++    },
++  };
++}
++
++async function fixture(t: TestContext) {
++  const f = boundary();
++  const observer = await f.observe();
++  t.after(() => observer.stop());
++  return { ...f, observer };
++}
++
++for (const order of ['close-first', 'navigation-first'] as const)
++  test(`protocol closure survives ${order} ordering and retains frame counts`, async (t) => {
++    const f = await fixture(t);
++    f.create('revoked');
++    f.open('revoked');
++    f.frame('revoked');
++    f.observer.beforeRevoke();
++    if (order === 'navigation-first') f.navigate();
++    assert.equal(f.observer.isClosed(), false);
++    f.close('revoked');
++    if (order === 'close-first') f.navigate();
++    assert.doesNotThrow(() => f.observer.assertRevoked(401));
++    assert.equal(f.observer.frameCount(), 1);
++    // Later frames remain observable even after navigation and a close event;
++    // the browser journey owns the assertion that none were broadcast.
++    f.frame('revoked');
++    assert.equal(f.observer.frameCount(), 2);
++    const events = f.observer.snapshot().events.map((event) => event.kind);
++    assert.deepEqual(
++      events.slice(-2),
++      order === 'close-first' ? ['socket-closed', 'navigation'] : ['navigation', 'socket-closed'],
++    );
++  });
++
++for (const handshake of [undefined, 403])
++  test(`a socket without a successful handshake (${handshake ?? 'missing'}) cannot prove revocation`, async (t) => {
++    const f = await fixture(t);
++    f.create('unestablished');
++    if (handshake !== undefined) f.open('unestablished', handshake);
++    f.close('unestablished');
++    assert.throws(() => f.observer.beforeRevoke(), /observed established socket/);
++    assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++  });
++
++test('unrelated socket closes and frames cannot satisfy the established target', async (t) => {
++  const f = await fixture(t);
++  f.create('revoked');
++  f.open('revoked');
++  f.observer.beforeRevoke();
++  for (const url of ['wss://elsewhere.test/sync', 'wss://spinel.test/other', 'invalid']) {
++    f.create(url, url);
++    f.open(url);
++    f.frame(url);
++    f.close(url);
++  }
++  f.close('never-observed');
++  assert.equal(f.observer.frameCount(), 0);
++  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++  f.close('revoked');
++  assert.doesNotThrow(() => f.observer.assertRevoked(401));
++  assert.equal(f.observer.snapshot().targetCount, 1);
++});
++
++test('401, navigation and a Playwright close cannot accept a live protocol socket', async (t) => {
++  const f = await fixture(t);
++  const socket = f.pageSocket();
++  f.create('revoked');
++  f.open('revoked');
++  f.observer.beforeRevoke();
++  f.navigate();
++  socket.emit('close');
++  f.observer.checkpoint('sign-in');
++  assert.equal(f.observer.snapshot().openSockets, 1);
++  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++});
++
++test('a protocol close cannot accept authorization that is still active', async (t) => {
++  const f = await fixture(t);
++  f.create('revoked');
++  f.open('revoked');
++  f.observer.beforeRevoke();
++  f.close('revoked');
++  assert.equal(f.observer.isClosed(), true);
++  assert.throws(() => f.observer.assertRevoked(200), /denied by the server/);
++});
++
++test('every established target must close before revocation can pass', async (t) => {
++  const f = await fixture(t);
++  for (const id of ['first', 'second']) {
++    f.create(id);
++    f.open(id);
++  }
++  f.observer.beforeRevoke();
++  f.close('first');
++  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++  f.close('second');
++  assert.doesNotThrow(() => f.observer.assertRevoked(401));
++  assert.equal(f.observer.snapshot().closedTargets, 2);
++});
++
++for (const status of [101, 401])
++  test(`post-revocation handshake status ${status} preserves the establishment boundary`, async (t) => {
++    const f = await fixture(t);
++    f.create('revoked');
++    f.open('revoked');
++    f.observer.beforeRevoke();
++    f.close('revoked');
++    f.create('new');
++    f.open('new', status);
++    f.close('new');
++    assert.equal(f.observer.snapshot().reopened, status === 101);
++    if (status === 101) assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++    else assert.doesNotThrow(() => f.observer.assertRevoked(401));
++  });
++
++test('losing the protocol observer invalidates completed closure evidence', async (t) => {
++  const f = await fixture(t);
++  f.create('revoked');
++  f.open('revoked');
++  f.observer.beforeRevoke();
++  f.close('revoked');
++  f.session.emit('close');
++  assert.equal(f.observer.snapshot().observerLost, true);
++  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++});
++
++test('overflow retains bounded content-free evidence and cannot turn into acceptance', async (t) => {
++  const f = await fixture(t);
++  const secret = 'DO-NOT-RETAIN-PRIVATE-FIXTURE';
++  f.create(secret, `${socketURL}?credential=${secret}`);
++  f.open(secret);
++  f.frame(secret, secret.repeat(1000));
++  f.observer.beforeRevoke();
++  f.close(secret);
++  for (let index = 0; index < 100; index++) f.navigate();
++  const snapshot = f.observer.snapshot();
++  assert.equal(snapshot.overflow, true);
++  assert.equal(snapshot.events.length, 64);
++  assert.equal(snapshot.receivedFrames, 1);
++  const json = JSON.stringify(snapshot);
++  assert.equal(json.includes(secret), false);
++  assert.equal(json.includes(socketURL), false);
++  assert.ok(Buffer.byteLength(json) < 8 * 1024);
++  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++  snapshot.events[0].kind = 'observer-lost';
++  assert.equal(f.observer.snapshot().events[0].kind, 'socket-created');
++});
++
++test('too many socket identities fail closed without retaining an unbounded map', async (t) => {
++  const f = await fixture(t);
++  for (let index = 0; index < 17; index++) {
++    f.create(String(index));
++    f.open(String(index));
++  }
++  assert.equal(f.observer.snapshot().overflow, true);
++  assert.equal(f.observer.snapshot().openSockets, 16);
++  assert.throws(() => f.observer.beforeRevoke(), /not ready/);
++});
++
++test('failed Network.enable removes listeners and detach failure preserves its original error', async () => {
++  const f = boundary();
++  const primary = new Error('Network.enable failed');
++  const secondary = new Error('detach failed');
++  let socket: ReturnType<typeof f.pageSocket> | undefined;
++  f.session.send = async (command) => {
++    f.commands.push(command);
++    socket = f.pageSocket();
++    throw primary;
++  };
++  const detach = f.session.detach;
++  f.session.detach = async () => {
++    await detach();
++    throw secondary;
++  };
++  await assert.rejects(f.observe(), (error) => error === primary);
++  assert.deepEqual(f.commands, ['Network.enable']);
++  assert.equal(f.detaches(), 1);
++  assert.deepEqual(f.session.eventNames(), []);
++  assert.deepEqual(f.page.eventNames(), []);
++  assert.equal(socket?.listenerCount('close'), 0);
++});
++
++test('failed Network.enable preserves its original error when detach reaches the cleanup bound', async (t) => {
++  t.mock.timers.enable({ apis: ['setTimeout'] });
++  t.after(() => t.mock.timers.reset());
++  const f = boundary();
++  const primary = new Error('Network.enable failed');
++  let socket: ReturnType<typeof f.pageSocket> | undefined;
++  f.session.send = async (command) => {
++    f.commands.push(command);
++    socket = f.pageSocket();
++    throw primary;
++  };
++  let started!: () => void;
++  const reached = new Promise<void>((resolve) => {
++    started = resolve;
++  });
++  const detach = f.session.detach;
++  f.session.detach = async () => {
++    await detach();
++    started();
++    return new Promise<void>(() => {});
++  };
++  let rejected = false;
++  const rejection = assert.rejects(f.observe(), (error) => {
++    rejected = true;
++    return error === primary;
++  });
++  await reached;
++  assert.deepEqual(f.commands, ['Network.enable']);
++  assert.equal(f.detaches(), 1);
++  assert.deepEqual(f.session.eventNames(), []);
++  assert.deepEqual(f.page.eventNames(), []);
++  assert.equal(socket?.listenerCount('close'), 0);
++  t.mock.timers.tick(4999);
++  await Promise.resolve();
++  assert.equal(rejected, false);
++  t.mock.timers.tick(1);
++  await rejection;
++  assert.equal(rejected, true);
++});
++
++test('stop detaches only owned listeners and prevents late events from changing evidence', async (t) => {
++  const f = await fixture(t);
++  const socket = f.pageSocket();
++  const unrelated = () => {};
++  f.page.on('framenavigated', unrelated);
++  f.session.on('Network.webSocketClosed', unrelated);
++  socket.on('close', unrelated);
++  f.create('revoked');
++  f.open('revoked');
++  f.observer.beforeRevoke();
++  f.close('revoked');
++  await f.observer.stop();
++  assert.deepEqual(f.page.eventNames(), ['framenavigated']);
++  assert.deepEqual(f.session.eventNames(), ['Network.webSocketClosed']);
++  assert.deepEqual(socket.listeners('close'), [unrelated]);
++  assert.deepEqual(f.page.listeners('framenavigated'), [unrelated]);
++  assert.deepEqual(f.session.listeners('Network.webSocketClosed'), [unrelated]);
++  const snapshot = f.observer.snapshot();
++  socket.emit('close');
++  f.navigate();
++  f.frame('revoked');
++  f.close('revoked');
++  assert.deepEqual(f.observer.snapshot(), snapshot);
++  assert.equal(snapshot.observerLost, false);
++  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
++  await f.observer.stop();
++  assert.equal(f.detaches(), 1);
++});
++
++test('cleanup runs every remaining owned phase after synchronous and asynchronous rejection', async () => {
++  const calls: string[] = [];
++  const names = ['writes', 'observer', 'context', 'database', 'diagnostics'] as const;
++  const failed = await cleanupSessionRevocation(
++    names.map((name) => ({
++      name,
++      run: () => {
++        calls.push(name);
++        if (name === 'writes') throw new Error('private write failure');
++        if (name === 'observer') return Promise.reject(new Error('private observer failure'));
++      },
++    })),
++  );
++  assert.deepEqual(calls, names);
++  assert.deepEqual(failed, ['writes', 'observer']);
++});
++
++test('a stalled cleanup phase reaches its original bound and still releases later resources', async (t) => {
++  t.mock.timers.enable({ apis: ['setTimeout'] });
++  t.after(() => t.mock.timers.reset());
++  let started!: () => void;
++  const reached = new Promise<void>((resolve) => {
++    started = resolve;
++  });
++  let databaseClosed = false;
++  const cleanup = cleanupSessionRevocation([
++    {
++      name: 'writes',
++      run: () => {
++        started();
++        return new Promise(() => {});
++      },
++    },
++    {
++      name: 'database',
++      run: () => {
++        databaseClosed = true;
++      },
++    },
++  ]);
++  await reached;
++  t.mock.timers.tick(5000);
++  assert.deepEqual(await cleanup, ['writes']);
++  assert.equal(databaseClosed, true);
++});
++
++test('revocation source and shared inputs keep unit/browser owners and fail-closed aggregates', () => {
++  const head = 'b'.repeat(40);
++  const event = {
++    action: 'synchronize',
++    pull_request: { base: { sha: 'a'.repeat(40) }, head: { sha: head }, labels: [] },
++  };
++  for (const path of [
++    'e2e/session-revocation.ts',
++    'e2e/collaboration.spec.ts',
++    'e2e/native-sheet-value.ts',
++    'e2e/sync-network.ts',
++    'src/server/auth/store.ts',
++    'src/server/collaboration/identity.ts',
++    'src/server/sync/transport.ts',
++    'web/spinelSync.ts',
++    'web/App.tsx',
++    'scripts/ci/session-revocation.test.ts',
++  ]) {
++    const plan = coveragePlan('pull_request', event, [path], head);
++    assert.equal(plan.suites['unit-tests'].selected, true, path);
++    assert.equal(plan.suites['playwright-run'].selected, true, path);
++    const complete = Object.fromEntries(
++      suiteIds.map((id) => [id, plan.suites[id].selected ? 'success' : 'skipped']),
++    );
++    assert.doesNotThrow(() => verifyCoverage(plan, 'success', complete, suiteIds));
++    for (const id of suiteIds.filter((id) => plan.suites[id].selected))
++      for (const status of [undefined, 'failure', 'skipped', 'cancelled'])
++        assert.throws(
++          () => verifyCoverage(plan, 'success', { ...complete, [id]: status }, suiteIds),
++          new RegExp(`Incomplete coverage ${id}:`),
++          `${path}: ${id} ${status ?? 'missing'}`,
++        );
++  }
++});

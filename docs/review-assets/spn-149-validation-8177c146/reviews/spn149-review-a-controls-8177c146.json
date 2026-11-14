@@ -1,0 +1,14 @@
+{
+  "name": "spn149-review-a-controls-8177c146",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/session-revocation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 173,
+  "peakKiB": 0
+}

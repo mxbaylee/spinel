@@ -1,0 +1,266 @@
+{
+  "head": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62",
+  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "masking": "Only historical numerical grades/rubrics/points masked; no code or test changes. Original hashes permit integrity checks without score exposure. Read full canonical and prior-review JSON through files/ copies. All other candidate code can be inspected directly.",
+  "files": [
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "originalSha256": "69a0932754d07a9012adb8fe18b5795bddbff09d7c8484f4b6abe9ccb691cf04",
+      "maskedSha256": "69a0932754d07a9012adb8fe18b5795bddbff09d7c8484f4b6abe9ccb691cf04",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/collaboration.md",
+      "originalSha256": "dc921b3ffe2f4838dec8973874f555536a54669a28d5ee185106cd3cb63a4f34",
+      "maskedSha256": "dc921b3ffe2f4838dec8973874f555536a54669a28d5ee185106cd3cb63a4f34",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/SPN-149.md",
+      "originalSha256": "4648955e0c2ee4f70843248f7efcc0aa3a5f7feaa818a1c095559018af2e9629",
+      "maskedSha256": "d835c0915fd92f42b708b32eac63d391bdcb1842d4549e80daca57ae98a1c59e",
+      "masked": true,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/boundary-probe-result.json",
+      "originalSha256": "5809ab1677db96bb6707264783c987364a91facd914e879302ff441a737f5505",
+      "maskedSha256": "5809ab1677db96bb6707264783c987364a91facd914e879302ff441a737f5505",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/backlog.json",
+      "originalSha256": "5c55073f6ae3c16eb43665185111c9cbd178f495d83795f296bb53eccde93750",
+      "maskedSha256": "5c55073f6ae3c16eb43665185111c9cbd178f495d83795f296bb53eccde93750",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/backlog.log",
+      "originalSha256": "eda076fb5f6fb8ef1058a1d1723189df0275aac6ffe5ec2f9207ed7f1bdfe75f",
+      "maskedSha256": "eda076fb5f6fb8ef1058a1d1723189df0275aac6ffe5ec2f9207ed7f1bdfe75f",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/checks.json",
+      "originalSha256": "8faa1a86c7cd254eb6d58f99d7e400baac0ea8b001cdb9b49ae1883a1af7d844",
+      "maskedSha256": "8faa1a86c7cd254eb6d58f99d7e400baac0ea8b001cdb9b49ae1883a1af7d844",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/controls.json",
+      "originalSha256": "018c2271d6cd601d26cc0feb7a024b4eb37c6be5471344be1ee40a88b5fe42f9",
+      "maskedSha256": "018c2271d6cd601d26cc0feb7a024b4eb37c6be5471344be1ee40a88b5fe42f9",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/controls.log",
+      "originalSha256": "5e94ca591d72cc26dbf09019eae699a8e196df335dac4dbeea54dbb41a7d8d7f",
+      "maskedSha256": "5e94ca591d72cc26dbf09019eae699a8e196df335dac4dbeea54dbb41a7d8d7f",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/dependencies.json",
+      "originalSha256": "5d7a2929597f19f780287344d78a4f11cc946631392bcf449ca922beeaf35f27",
+      "maskedSha256": "5d7a2929597f19f780287344d78a4f11cc946631392bcf449ca922beeaf35f27",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/dependencies.log",
+      "originalSha256": "b31a5417539d05c5d119b896191810927bf03f69384f87867d301261e54ec4da",
+      "maskedSha256": "b31a5417539d05c5d119b896191810927bf03f69384f87867d301261e54ec4da",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/dependency-source.json",
+      "originalSha256": "259dd7b33ba6742a73bf503788e724a88df479cef2996b6e55fb6b04b11d3fc3",
+      "maskedSha256": "259dd7b33ba6742a73bf503788e724a88df479cef2996b6e55fb6b04b11d3fc3",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/format.json",
+      "originalSha256": "9ba05109af46e142570f68a52daeb2b526a5c9366a30e874df2d1ff35e80a032",
+      "maskedSha256": "9ba05109af46e142570f68a52daeb2b526a5c9366a30e874df2d1ff35e80a032",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/format.log",
+      "originalSha256": "1c604b7926adb79c5955239bf6dc829f1db90f66b87cb1e5d9714c2cd61f69ca",
+      "maskedSha256": "1c604b7926adb79c5955239bf6dc829f1db90f66b87cb1e5d9714c2cd61f69ca",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/index.json",
+      "originalSha256": "8f133830f71567ec699a0d556b03ac683d7fa0965c5fba24382c335e12913db7",
+      "maskedSha256": "8f133830f71567ec699a0d556b03ac683d7fa0965c5fba24382c335e12913db7",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/index.log",
+      "originalSha256": "b54e2ffd9e75d5e753513794b718a9d7f1e0a549c00e9900dafbca13a0695686",
+      "maskedSha256": "b54e2ffd9e75d5e753513794b718a9d7f1e0a549c00e9900dafbca13a0695686",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/lint.json",
+      "originalSha256": "e20be87fc65d793be02fc0ab4dc8e2cb240b8af03b3bca1254e50c1fc9f85975",
+      "maskedSha256": "e20be87fc65d793be02fc0ab4dc8e2cb240b8af03b3bca1254e50c1fc9f85975",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/lint.log",
+      "originalSha256": "bae2637fd52ffeecc101eb42045f355effab4c243b65b82661edff089dd58379",
+      "maskedSha256": "bae2637fd52ffeecc101eb42045f355effab4c243b65b82661edff089dd58379",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/pr.json",
+      "originalSha256": "e8d479857d19ed07d1dacfce943a488fb7c7e19ef2c690406b64c1793078de5f",
+      "maskedSha256": "e8d479857d19ed07d1dacfce943a488fb7c7e19ef2c690406b64c1793078de5f",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/pr.log",
+      "originalSha256": "f44426c9bde3a7d9db4be9e24f96577ed355c82421192f20530d43e6e6d22ee2",
+      "maskedSha256": "f44426c9bde3a7d9db4be9e24f96577ed355c82421192f20530d43e6e6d22ee2",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/source-identity.json",
+      "originalSha256": "6881ef8feff222c2da5d8c234c4ddd3b1c0db48d4e8fbb33759f0e47a55f6b88",
+      "maskedSha256": "6881ef8feff222c2da5d8c234c4ddd3b1c0db48d4e8fbb33759f0e47a55f6b88",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/types.json",
+      "originalSha256": "7c4ddb48af4e1ffa75d1b5a44079181fed769bf6d1fd2514f11a555a5ed62d8b",
+      "maskedSha256": "7c4ddb48af4e1ffa75d1b5a44079181fed769bf6d1fd2514f11a555a5ed62d8b",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/current-main-20261114/types.log",
+      "originalSha256": "0a69afdf6e1d4c9ddf49758d33163fd2d8b8343d1ec6137d11fc9a664e282517",
+      "maskedSha256": "0a69afdf6e1d4c9ddf49758d33163fd2d8b8343d1ec6137d11fc9a664e282517",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/local-validation.json",
+      "originalSha256": "2fe1e038d0d616c98b54e0813b5fef08215739dd3f21763857206cde0ada2214",
+      "maskedSha256": "2fe1e038d0d616c98b54e0813b5fef08215739dd3f21763857206cde0ada2214",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-case.json",
+      "originalSha256": "810bcb12ebf578039bba5a89f6aaaef19fa844ee806b44b05f4c6871f2377174",
+      "maskedSha256": "810bcb12ebf578039bba5a89f6aaaef19fa844ee806b44b05f4c6871f2377174",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-error-context-summary.json",
+      "originalSha256": "cb81c931703c06021ca42328d7767bc3e002366d7e11c62307db51dbc1903c2b",
+      "maskedSha256": "cb81c931703c06021ca42328d7767bc3e002366d7e11c62307db51dbc1903c2b",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-metadata.json",
+      "originalSha256": "71a4c88a608f1a92bf4cdb16a5c23632a2047cccfa3abf184a305dd9487cb1a5",
+      "maskedSha256": "71a4c88a608f1a92bf4cdb16a5c23632a2047cccfa3abf184a305dd9487cb1a5",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json",
+      "originalSha256": "f0746ae4d7758af6b77c5c1917dc40264ee5527fb36087c0d965daea2d053757",
+      "maskedSha256": "f0746ae4d7758af6b77c5c1917dc40264ee5527fb36087c0d965daea2d053757",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+      "originalSha256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a",
+      "maskedSha256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-149/review-iteration-1.json",
+      "originalSha256": "18fbb420ec3bf69ffdf93696526bb6d24c6dc17b303b19a1221f0d8ad265cf67",
+      "maskedSha256": "fad90419c72a16f55cf6dae51c294ec5348ce6e16e9e1d87037cd2f27bd0fec4",
+      "masked": true,
+      "deleted": false
+    },
+    {
+      "path": "docs/implementation/grooming-2026-11-12.md",
+      "originalSha256": "fcb6910a9741441bdc99b189c2a81ae78ee67fbe910e4b41abae7dbc7bc1f142",
+      "maskedSha256": "fcb6910a9741441bdc99b189c2a81ae78ee67fbe910e4b41abae7dbc7bc1f142",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/todo/SPN-149.md",
+      "originalSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "maskedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "masked": false,
+      "deleted": true
+    },
+    {
+      "path": "docs/todo/backlog.json",
+      "originalSha256": "81ec9d180f2abb76701932de16f0acdb7242d977e18d60313414f7b4568e3287",
+      "maskedSha256": "81ec9d180f2abb76701932de16f0acdb7242d977e18d60313414f7b4568e3287",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "docs/todo/readme.md",
+      "originalSha256": "86987ee7ffc05294828d609174f41b26c88efd210c83c73062c6d5dfbb7d7946",
+      "maskedSha256": "86987ee7ffc05294828d609174f41b26c88efd210c83c73062c6d5dfbb7d7946",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "e2e/collaboration.spec.ts",
+      "originalSha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "maskedSha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "e2e/session-revocation.ts",
+      "originalSha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "maskedSha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "masked": false,
+      "deleted": false
+    },
+    {
+      "path": "scripts/ci/session-revocation.test.ts",
+      "originalSha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
+      "maskedSha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
+      "masked": false,
+      "deleted": false
+    }
+  ]
+}

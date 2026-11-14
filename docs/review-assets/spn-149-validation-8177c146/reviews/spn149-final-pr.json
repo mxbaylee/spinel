@@ -1,0 +1,17 @@
+{
+  "name": "spn149-final-pr",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+    "--title",
+    "🔏 SPN-149 Preserve session-revocation closure evidence across navigation"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 493,
+  "peakKiB": 181600
+}

@@ -1,0 +1,5 @@
+{
+  "artifactRead": "First developmentZIP hash check occurred while API download was still running and rejected partial bytes; after waiting for that same download process to exit0 the exact GitHub digest matched. No redownload or test rerun.",
+  "logRetrieval": "Initial gh api attempts used nonexistent --allow-escape-characters and failed before API retrieval. Plain request then refused terminal escapes; documented response requested --allow-escape-sequences, which was used for raw local logs. No test or workflow rerun.",
+  "rawLogPrivacy": "Complete logs and browser archives stay local. Published extracts contain source identities, test result lines, measurement summaries and content-free native diagnostics only."
+}

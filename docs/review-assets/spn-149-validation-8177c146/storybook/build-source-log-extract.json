@@ -1,0 +1,11 @@
+{
+  "job": 132330327924,
+  "run": 43556394025,
+  "rawLogSHA256": "49cd5b7de884601a01b081e1b58e3f5321db1acf13ac961808f2fbf907f206e0",
+  "exactSourceLines": [
+    "2026-11-14T04:25:51.5712558Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +4b58a794a35c69f0797fe6119b2c5892cc4e107b:refs/remotes/pull/282/merge",
+    "2026-11-14T04:25:54.3668072Z  * [new ref]         4b58a794a35c69f0797fe6119b2c5892cc4e107b -> pull/282/merge",
+    "2026-11-14T04:25:55.1124054Z HEAD is now at 4b58a79 Merge 8177c1466ace555817cf2dbb9a2e5f2b5abc2c62 into 89e4426dfff1c3469b260305e21180ffd79fdb7f",
+    "2026-11-14T04:25:55.1226499Z 4b58a794a35c69f0797fe6119b2c5892cc4e107b"
+  ]
+}

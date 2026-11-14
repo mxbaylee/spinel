@@ -1,0 +1,5233 @@
+{
+  "reviewedAt": "2026-11-14T04:33:59.421Z",
+  "durationMs": 395149,
+  "captureScreenshots": false,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "mobile",
+  "theme": "dark",
+  "variants": [
+    "phone-dark"
+  ],
+  "requested": [
+    "shell-gemlogo--rail",
+    "shell-gemlogo--large",
+    "shell-gemlogo--tap-replay",
+    "settings-themesettings--default",
+    "settings-themesettings--follow-system",
+    "settings-themesettings--storage-blocked",
+    "redesign-appearance--playground-story",
+    "redesign-appearance--gems-light-and-dark",
+    "redesign-controls--default",
+    "redesign-controls--disabled",
+    "redesign-controls--error",
+    "redesign-controls--long-modal-title",
+    "redesign-theme-control--default",
+    "redesign-theme-control--storage-blocked",
+    "redesign-theme-control--dismiss-storage-warning",
+    "sharing-access-details--inherited-folder",
+    "sharing-access-details--direct-share",
+    "sharing-access-details--space-through-folder",
+    "sharing-access-details--space-direct",
+    "sharing-access-details--owner",
+    "sharing-access-details--file-admin",
+    "sharing-access-details--long-names",
+    "sharing-access-details--loading",
+    "sharing-access-details--unavailable",
+    "sharing-access-details--revoked-while-open",
+    "current-production-guest-accessstate--revoked",
+    "current-production-guest-accessstate--revoked-with-unsaved-input",
+    "current-production-guest-accessstate--loading",
+    "current-production-guest-accessstate--unsupported-browser",
+    "current-production-guest-accessstate--offline",
+    "current-production-guest-accessstate--missing-guest-page",
+    "current-production-guest-accessstate--missing-account-file",
+    "current-production-guest-accessstate--retry",
+    "settings-accesstokens--loaded",
+    "settings-accesstokens--empty",
+    "settings-accesstokens--loading",
+    "settings-accesstokens--load-failed",
+    "settings-accesstokens--creating",
+    "settings-accesstokens--created",
+    "settings-accesstokens--create-failed",
+    "settings-accesstokens--revoking",
+    "settings-accesstokens--revoked",
+    "settings-accesstokens--revoke-failed",
+    "settings-accesstokens--active-limit",
+    "settings-accesstokens--previously-used",
+    "settings-accesstokens--copied",
+    "settings-accesstokens--manual-copy",
+    "account-access-changed--locked",
+    "account-access-changed--phone",
+    "account-exit--pending-changes",
+    "account-exit--checking",
+    "account-exit--counts-unavailable",
+    "account-exit--confirmed-pending-changes",
+    "account-exit--kept-while-offline",
+    "account-exit--retry-confirmed",
+    "account-exit--not-queued",
+    "account-exit--unrecognized-exit",
+    "account-exit--waiting-for-another-sign-in",
+    "account-exit--delete-confirmation",
+    "account-exit--cancel-deletion",
+    "account-exit--deleted",
+    "account-exit--deletion-refused",
+    "account-exit--phone",
+    "admin-accesstokens--loaded",
+    "admin-accesstokens--empty",
+    "admin-accesstokens--loading",
+    "admin-accesstokens--load-failed",
+    "admin-account-recovery--disabled-accounts",
+    "admin-account-recovery--confirm-reactivation",
+    "admin-account-recovery--disabled-admin-reactivation",
+    "admin-account-recovery--reactivation-pending",
+    "admin-account-recovery--reactivation-failed",
+    "admin-account-recovery--reactivation-readback-failed",
+    "admin-account-recovery--reactivation-committed-warning",
+    "admin-account-recovery--reactivated",
+    "admin-account-recovery--transfer-loading",
+    "admin-account-recovery--transfer-load-failed",
+    "admin-account-recovery--retry-transfer-load",
+    "admin-account-recovery--transfer-ready",
+    "admin-account-recovery--transfer-recipient-chosen",
+    "admin-account-recovery--transfer-no-recipients",
+    "admin-account-recovery--transfer-nothing-owned",
+    "admin-account-recovery--transfer-pending",
+    "admin-account-recovery--transfer-failed",
+    "admin-account-recovery--transfer-readback-failed",
+    "admin-account-recovery--transfer-stale",
+    "admin-account-recovery--transfer-committed-warning",
+    "admin-account-recovery--transfer-unconfirmed-response",
+    "admin-account-recovery--transfer-complete",
+    "admin-account-recovery--retry-transfer",
+    "admin-account-recovery--long-account-names",
+    "admin-account-recovery--duplicate-account-names",
+    "admin-account-recovery--duplicate-name-target-submitted",
+    "admin-account-recovery--cancel-returns-focus",
+    "admin-account-recovery--keyboard-recipient-choice",
+    "current-production-admin-diagnostics--ready",
+    "current-production-admin-diagnostics--empty",
+    "current-production-admin-diagnostics--loading",
+    "current-production-admin-diagnostics--unavailable",
+    "current-production-admin-diagnostics--failed",
+    "current-production-admin-diagnostics--expired",
+    "current-production-admin-diagnostics--another-download",
+    "current-production-admin-diagnostics--losses",
+    "current-production-admin-diagnostics--confirmation",
+    "current-production-admin-diagnostics--cancel-clear",
+    "current-production-admin-diagnostics--clearing",
+    "current-production-admin-diagnostics--clear-failed",
+    "current-production-admin-diagnostics--changed-collection",
+    "current-production-admin-diagnostics--cleared",
+    "current-production-admin-diagnostics--downloading",
+    "current-production-admin-diagnostics--download-cancelled",
+    "current-production-admin-diagnostics--download-failed",
+    "current-production-admin-diagnostics--download-ready",
+    "current-production-admin-diagnostics--fresh-confirmation-required",
+    "current-production-admin-diagnostics--clear-committed-readback-failed",
+    "admin-admininvites--loaded",
+    "admin-admininvites--loading",
+    "admin-admininvites--empty",
+    "admin-admininvites--recovery-invite",
+    "admin-admininvites--invite-created",
+    "admin-admininvites--load-failed",
+    "admin-admininvites--create-failed",
+    "admin-admininvites--created-but-readback-failed",
+    "admin-admininvites--created-while-readback-pending",
+    "admin-admininvites--revoked-but-readback-failed",
+    "admin-admininvites--refresh-after-created",
+    "admin-admininvites--refresh-after-revoked",
+    "admin-page--people",
+    "admin-page--loading",
+    "admin-page--error",
+    "admin-page--empty",
+    "admin-page--invites",
+    "admin-page--connections",
+    "admin-page--health",
+    "admin-page--restore-preparation-blocks-navigation",
+    "admin-page--diagnostics-download-blocks-navigation",
+    "admin-page--diagnostics-clear-blocks-navigation",
+    "admin-page--health-warning",
+    "admin-page--phone",
+    "admin-page--recovery-handoff",
+    "admin-page--once-only-invite",
+    "admin-page--creating-invite",
+    "admin-adminusers--loaded",
+    "admin-adminusers--loading",
+    "admin-adminusers--empty",
+    "admin-adminusers--last-admin-passkey",
+    "admin-adminusers--load-failed",
+    "admin-adminusers--confirm-disable",
+    "admin-adminusers--confirm-passkey-removal",
+    "admin-adminusers--removal-failed",
+    "shell-applayout--desktop",
+    "shell-applayout--offline",
+    "shell-applayout--reconnecting",
+    "shell-applayout--tablet",
+    "shell-applayout--phone",
+    "settings-assistantconnections--loaded",
+    "settings-assistantconnections--empty",
+    "settings-assistantconnections--loading",
+    "settings-assistantconnections--load-failed",
+    "settings-assistantconnections--disconnecting",
+    "settings-assistantconnections--disconnected",
+    "settings-assistantconnections--disconnect-failed",
+    "settings-assistantconnections--matching-names",
+    "settings-assistantconnections--previously-used",
+    "settings-assistantconnections--admin-metadata",
+    "settings-assistantconnections--admin-empty",
+    "settings-assistantconnections--admin-loading",
+    "settings-assistantconnections--admin-load-failed",
+    "account-entry--sign-in",
+    "account-entry--loading",
+    "account-entry--pending",
+    "account-entry--finishing",
+    "account-entry--cancelled",
+    "account-entry--failed",
+    "account-entry--unsupported-browser",
+    "account-entry--unreachable",
+    "account-entry--setup",
+    "account-entry--setup-pending",
+    "account-entry--setup-unavailable",
+    "account-entry--setup-failed",
+    "account-entry--invite",
+    "account-entry--invite-loading",
+    "account-entry--invite-unavailable",
+    "account-entry--invite-pending",
+    "account-entry--recovery",
+    "account-entry--recovery-pending",
+    "account-entry--recovery-failed",
+    "account-entry--long-recovery-name",
+    "account-entry--help",
+    "account-entry--operator-help",
+    "account-entry--help-keyboard-return",
+    "account-entry--invite-then-cancel",
+    "admin-backupdownloads--manual-only",
+    "admin-backupdownloads--preparing",
+    "admin-backupdownloads--ready",
+    "admin-backupdownloads--sending-to-browser",
+    "admin-backupdownloads--delivered",
+    "admin-backupdownloads--cancelled",
+    "admin-backupdownloads--expired",
+    "admin-backupdownloads--failed",
+    "admin-backupdownloads--disabled-by-policy",
+    "admin-backupdownloads--ready-download-disabled",
+    "admin-backupdownloads--missing-recovery-key",
+    "admin-backupdownloads--loading",
+    "admin-backupdownloads--status-unavailable",
+    "admin-backupdownloads--fresh-passkey-required",
+    "admin-backupdownloads--waiting-for-passkey",
+    "admin-backupdownloads--cancel-passkey",
+    "admin-backupdownloads--verification-failed",
+    "admin-backupdownloads--job-contended",
+    "admin-backupdownloads--saved-backups",
+    "admin-backupdownloads--saved-backups-empty",
+    "admin-backupdownloads--saved-backups-loading",
+    "admin-backupdownloads--saved-backups-failed",
+    "admin-backuprestore--available",
+    "admin-backuprestore--unavailable",
+    "admin-backuprestore--loading",
+    "admin-backuprestore--status-failed",
+    "admin-backuprestore--session-unavailable",
+    "admin-backuprestore--uploading",
+    "admin-backuprestore--preparing",
+    "admin-backuprestore--maintenance-draining",
+    "admin-backuprestore--ready",
+    "admin-backuprestore--separate-recovery-volume",
+    "admin-backuprestore--insufficient-disk-space",
+    "admin-backuprestore--memory-headroom-refusal",
+    "admin-backuprestore--confirmed-disk-shortage",
+    "admin-backuprestore--small-backup",
+    "admin-backuprestore--cancelled",
+    "admin-backuprestore--expired",
+    "admin-backuprestore--failed",
+    "admin-backuprestore--admission-needs-attention",
+    "admin-backuprestore--accepted",
+    "admin-backuprestore--started-outcome-unconfirmed",
+    "admin-backuprestore--manual-upload",
+    "admin-backuprestore--saved-backups",
+    "admin-backuprestore--saved-backups-empty",
+    "admin-backuprestore--saved-backups-loading",
+    "admin-backuprestore--saved-backups-failed",
+    "admin-backuprestore--confirmation-review",
+    "admin-backuprestore--full-confirmation",
+    "admin-backuprestore--waiting-for-passkey",
+    "admin-backuprestore--cancel-verification",
+    "admin-backuprestore--verification-failed",
+    "admin-backuprestore--recording-confirmation",
+    "admin-backuprestore--expired-original-confirmation",
+    "admin-backuprestore--backup-restored",
+    "admin-backuprestore--original-recovered",
+    "admin-backuprestore--did-not-start",
+    "admin-backuprestore--unresolved-outcome",
+    "admin-backuprestore--pending-without-record",
+    "admin-backuprestore--incomplete-observation",
+    "admin-backuprestore--slow-upload-keeps-bounded-lifetime",
+    "admin-backuprestore--slow-confirmation-keeps-bounded-lifetime",
+    "admin-backuprestore--slow-upload-still-cancels",
+    "admin-backuprestore--passkey-ceremony-still-ends-after-one-minute",
+    "admin-backuprestore--cancellation-still-ends-after-five-minutes",
+    "admin-backuprestore--slow-confirmation-stops-on-account-change",
+    "admin-backuprestore--slow-confirmation-stops-on-unmount",
+    "admin-backupstatus--healthy",
+    "admin-backupstatus--local-backup",
+    "admin-backupstatus--running",
+    "admin-backupstatus--never-run",
+    "admin-backupstatus--overdue",
+    "admin-backupstatus--failed",
+    "admin-backupstatus--not-configured",
+    "admin-backupstatus--configuration-failed",
+    "admin-backupstatus--verification-running",
+    "admin-backupstatus--verification-never-run",
+    "admin-backupstatus--verification-overdue",
+    "admin-backupstatus--verification-failed",
+    "admin-backupstatus--local-verification-failed",
+    "admin-backupstatus--retained-key-verified",
+    "admin-backupstatus--loading",
+    "admin-backupstatus--load-failed",
+    "admin-backupstatus--manual-downloads",
+    "admin-backupstatus--spaces-policy",
+    "admin-backupstatus--download-ready",
+    "admin-backupstatus--maintenance-paused",
+    "admin-backupstatus--maintenance-resumed",
+    "editor-collaborators--empty",
+    "editor-collaborators--alone",
+    "editor-collaborators--two-people",
+    "editor-collaborators--guest-labels",
+    "editor-collaborators--many",
+    "editor-collaborators--many-phone",
+    "editor-collaborators--empty-open",
+    "editor-collaborators--guest-labels-open",
+    "editor-collaborators--long-names-open",
+    "editor-collaborators--doc-cursor-open",
+    "editor-collaborators--sheet-cursor-open",
+    "settings-connectassistant--consent",
+    "settings-connectassistant--read-only",
+    "settings-connectassistant--loading",
+    "settings-connectassistant--load-failed",
+    "settings-connectassistant--expired",
+    "settings-connectassistant--unavailable",
+    "settings-connectassistant--missing-request",
+    "settings-connectassistant--admin-account",
+    "settings-connectassistant--allowing",
+    "settings-connectassistant--cancelling",
+    "settings-connectassistant--submit-failed",
+    "settings-connectassistant--expired-before-allow",
+    "settings-connectassistant--connection-limit",
+    "settings-connectassistant--long-identity",
+    "settings-connectassistant--sign-out-failed",
+    "shell-connectionstatus--online",
+    "shell-connectionstatus--offline",
+    "shell-connectionstatus--reconnecting",
+    "shell-connectionstatus--last-synced-catalog",
+    "shell-connectionstatus--local-mode",
+    "shell-connectionstatus--online-local-mode",
+    "shell-connectionstatus--online-stale-catalog",
+    "shell-connectionstatus--online-pending-save",
+    "shell-connectionstatus--keyboard-details",
+    "shell-connectionstatus--touch-details",
+    "account-console-recovery--ready",
+    "account-console-recovery--loading",
+    "account-console-recovery--missing-link",
+    "account-console-recovery--expired-link",
+    "account-console-recovery--pending",
+    "account-console-recovery--cancelled",
+    "account-console-recovery--retry",
+    "account-console-recovery--phone",
+    "account-console-recovery--finishing",
+    "account-console-recovery--help",
+    "dashboard-copyfile--owned-folder",
+    "dashboard-copyfile--shared-viewer",
+    "dashboard-copyfile--shared-destination",
+    "dashboard-copyfile--loading",
+    "dashboard-copyfile--waiting-for-save",
+    "dashboard-copyfile--offline",
+    "dashboard-copyfile--making-copy",
+    "dashboard-copyfile--source-changed",
+    "dashboard-copyfile--access-lost",
+    "dashboard-copyfile--completed-after-dismissal",
+    "dashboard-copyfile--completed-while-offline",
+    "dashboard-copyfile--outcome-unknown",
+    "dashboard-copyfile--unreadable-receipt",
+    "dashboard-copyfile--unknown-after-dismissal",
+    "dashboard-dashboard--file-view-targets",
+    "dashboard-dashboard--populated",
+    "dashboard-dashboard--make-copy",
+    "dashboard-dashboard--new-item",
+    "dashboard-dashboard--new-doc",
+    "dashboard-dashboard--new-sheet",
+    "dashboard-dashboard--shared-folder-editor",
+    "dashboard-dashboard--shared-folder-admin",
+    "dashboard-dashboard--shared-folder-viewer",
+    "dashboard-dashboard--new-in-shared-folder",
+    "dashboard-dashboard--empty-workspace",
+    "dashboard-dashboard--shared-drawer",
+    "dashboard-dashboard--shared-drawer-loading",
+    "dashboard-dashboard--inside-folder",
+    "dashboard-dashboard--loading",
+    "dashboard-dashboard--load-failed",
+    "dashboard-dashboard--missing-item",
+    "dashboard-dashboard--item-load-failed",
+    "dashboard-dashboard--local-mode",
+    "dashboard-dashboard--new-offline-doc",
+    "dashboard-dashboard--created-offline",
+    "dashboard-dashboard--shared-creation-offline",
+    "dashboard-dashboard--shared-creation-revoked",
+    "dashboard-dashboard--choose-creation-folder",
+    "dashboard-dashboard--creation-parent-now-shared",
+    "dashboard-dashboard--creation-parent-no-longer-listed",
+    "dashboard-dashboard--local-needs-connection",
+    "dashboard-dashboard--local-folder-not-opened",
+    "dashboard-dashboard--space-files",
+    "dashboard-dashboard--new-space",
+    "dashboard-dashboard--open-space-keeps-my-files",
+    "dashboard-dashboard--shared-spaces",
+    "dashboard-dashboard--space-inside-folder",
+    "dashboard-dashboard--local-space-needs-connection",
+    "dashboard-dashboard--local-prepared-space-opens",
+    "dashboard-dashboard--file-admins",
+    "dashboard-dashboard--cancel-admin-move-while-loading",
+    "dashboard-dashboard--file-admin-no-destinations",
+    "dashboard-dashboard--file-admin-personal-filing",
+    "dashboard-dashboard--grid",
+    "dashboard-dashboard--folder-scoped-search",
+    "dashboard-dashboard--import-dialog",
+    "dashboard-dashboard--export-all-files",
+    "dashboard-dashboard--cancel-export-confirmation",
+    "dashboard-dashboard--personal-filing-dialog",
+    "dashboard-dashboard--sharing-dialog",
+    "dashboard-dashboard--shared-grant-ordering",
+    "dashboard-dashboard--cancel-space-action-then-retry",
+    "dashboard-dashboard--clear-empty-global-scope",
+    "dashboard-files--list",
+    "dashboard-files--dark",
+    "dashboard-files--grid",
+    "dashboard-files--phone",
+    "dashboard-files--grid-phone",
+    "dashboard-files--shared",
+    "dashboard-files--creator-attribution",
+    "dashboard-files--search-results",
+    "dashboard-files--empty",
+    "dashboard-files--no-search-results",
+    "dashboard-files--loading",
+    "dashboard-files--error",
+    "dashboard-files--busy",
+    "dashboard-files--offline",
+    "dashboard-files--long-names",
+    "dashboard-files--owner-menu",
+    "dashboard-files--viewer-menu",
+    "dashboard-files--file-admin-menu",
+    "offline-device-storage--loading",
+    "offline-device-storage--empty",
+    "offline-device-storage--documents",
+    "offline-device-storage--space-page",
+    "offline-device-storage--missing-store",
+    "offline-device-storage--startup-metadata-missing",
+    "offline-device-storage--storage-unavailable",
+    "offline-device-storage--storage-preparation-failed",
+    "offline-device-storage--account-locked",
+    "offline-device-storage--protection-denied",
+    "offline-device-storage--protection-unsupported",
+    "offline-device-storage--protection-error",
+    "offline-device-storage--request-protection",
+    "offline-device-storage--about-storage",
+    "offline-device-storage--clean-removal",
+    "offline-device-storage--pending-removal",
+    "offline-device-storage--discard-confirmation",
+    "offline-device-storage--removal-failed",
+    "offline-device-storage--removing",
+    "offline-device-storage--damaged-pending",
+    "offline-device-storage--cancel-keeps-changes",
+    "offline-device-storage--newly-pending-is-kept",
+    "offline-device-storage--removal-returns-focus",
+    "offline-device-storage--long-title-phone",
+    "docs-formulas--insert",
+    "docs-formulas--edit",
+    "docs-formulas--save-returns-focus",
+    "docs-formulas--cancel-returns-focus",
+    "docs-formulas--offline-keeps-draft",
+    "docs-formulas--reconnect-keeps-draft",
+    "docs-formulas--save-busy",
+    "docs-formulas--save-timed-out",
+    "docs-formulas--save-unavailable",
+    "docs-formulas--save-invalid",
+    "docs-formulas--save-private-source",
+    "docs-formulas--save-too-large",
+    "docs-formulas--save-retry",
+    "docs-formulas--save-double-activation",
+    "docs-formulas--save-cancelled-retry",
+    "docs-formulas--save-cancel-pending",
+    "docs-formulas--save-escape-pending",
+    "docs-formulas--loading-sources",
+    "docs-formulas--no-sources",
+    "docs-formulas--source-error",
+    "docs-formulas--dark",
+    "docs-formulas--phone",
+    "docs-formulas--space-sources",
+    "docs-formulas--space-sources-dark",
+    "docs-formulas--space-sources-phone",
+    "docs-formulas--space-source-unavailable",
+    "docs-formulas--space-guest-sources",
+    "docs-formulas--space-guest-sources-dark",
+    "docs-formulas--space-guest-sources-phone",
+    "docs-formulas--space-guest-external-unavailable",
+    "docs-formulas--scalar",
+    "docs-formulas--table",
+    "docs-formulas--thirty-rows",
+    "docs-formulas--empty",
+    "docs-formulas--calculating",
+    "docs-formulas--private-source",
+    "docs-formulas--missing-source",
+    "docs-formulas--invalid-formula",
+    "docs-formulas--too-large",
+    "docs-formulas--busy",
+    "docs-formulas--timed-out",
+    "docs-formulas--unavailable",
+    "docs-native-formulas--inline-and-table",
+    "docs-native-formulas--private",
+    "docs-native-formulas--dark",
+    "docs-native-formulas--phone",
+    "docs-native-formulas--thirty-rows",
+    "docs-native-formulas--styled-scalar",
+    "docs-mobile--reading",
+    "docs-mobile--saved-half-zoom",
+    "docs-mobile--saved-double-zoom",
+    "docs-mobile--viewer",
+    "docs-mobile--traditional",
+    "docs-mobile--layout-changed",
+    "docs-mobile--selection-formatting",
+    "docs-mobile--keyboard-viewport-response",
+    "dashboard-documenttags--no-tags",
+    "dashboard-documenttags--several-tags",
+    "dashboard-documenttags--suggestions-failed",
+    "dashboard-documenttags--adding",
+    "dashboard-documenttags--add-failed",
+    "dashboard-documenttags--personal-space-tags",
+    "editor-frame--default",
+    "editor-frame--dark",
+    "editor-frame--phone",
+    "editor-frame--guest",
+    "editor-frame--reconnecting",
+    "editor-frame--rename",
+    "editor-frame--rename-authority-removed",
+    "editor-frame--versions-dialog",
+    "editor-frame--version-naming-failure",
+    "editor-frame--version-rename",
+    "editor-frame--versions-loading",
+    "editor-frame--export-dialog",
+    "editor-frame--export-waiting-for-save",
+    "editor-frame--pdf-failure",
+    "editor-frame--offline-formulas",
+    "editor-frame--editable-formulas",
+    "editor-frame--offline-availability-success",
+    "editor-frame--offline-availability-failure",
+    "editor-frame--theatre-dialog",
+    "editor-frame--people-and-theatre",
+    "editor-frame--people-dialog",
+    "editor-frame--people-over-presence",
+    "editor-frame--actions-over-presence",
+    "editor-frame--guest-pdf",
+    "editor-frame--personalization",
+    "editor-fileexports--saved",
+    "editor-fileexports--unsaved",
+    "editor-fileexports--download-failed",
+    "editor-fileexports--pdf-failed",
+    "guest-guestapp--loading",
+    "guest-guestapp--link-revoked",
+    "guest-guestapp--connection-interrupted",
+    "guest-guestapp--unsupported-browser",
+    "current-production-account-guest-links--inventory",
+    "current-production-account-guest-links--empty",
+    "current-production-account-guest-links--loading",
+    "current-production-account-guest-links--load-error",
+    "current-production-account-guest-links--load-retry",
+    "current-production-account-guest-links--change-expiry",
+    "current-production-account-guest-links--expiry-saved",
+    "current-production-account-guest-links--saving",
+    "current-production-account-guest-links--uncertain-write",
+    "current-production-account-guest-links--stale-link",
+    "current-production-account-guest-links--turn-off-space",
+    "current-production-account-guest-links--turned-off",
+    "current-production-account-guest-links--expired",
+    "current-production-account-guest-links--phone",
+    "current-production-account-guest-links--stale-account-response",
+    "dashboard-hidden-shares--include-hidden",
+    "dashboard-hidden-shares--all-shares-hidden",
+    "dashboard-hidden-shares--hide-and-show",
+    "dashboard-hidden-shares--failed-hide",
+    "dashboard-hidden-shares--pending-hide",
+    "history-browser--today",
+    "history-browser--dark",
+    "history-browser--phone",
+    "history-browser--calendar",
+    "history-browser--no-older-days",
+    "history-browser--loading",
+    "history-browser--history-failure",
+    "history-browser--empty",
+    "history-browser--unavailable",
+    "history-browser--missing-checkpoint",
+    "history-browser--preview-loading",
+    "history-browser--preview-failure",
+    "history-browser--viewer",
+    "history-browser--name-current",
+    "history-browser--name-failure",
+    "history-browser--naming-focus-return",
+    "history-browser--restore-confirmation",
+    "history-browser--restore-failure",
+    "history-browser--restore-interrupted",
+    "history-browser--restoring",
+    "account-icon-picker--browse",
+    "dashboard-importfile--default",
+    "dashboard-importfile--dialog",
+    "dashboard-importfile--importing-dialog",
+    "dashboard-importfile--limits-open",
+    "dashboard-importfile--unsupported-file",
+    "dashboard-importfile--not-json",
+    "dashboard-importfile--too-many-files",
+    "dashboard-importfile--importing",
+    "dashboard-importfile--import-failed",
+    "dashboard-importfile--archive-importing",
+    "dashboard-importfile--archive-imported",
+    "dashboard-importfile--empty-archive",
+    "dashboard-importfile--archive-failed",
+    "dashboard-importfile--archive-cancelled",
+    "dashboard-importfile--archive-needs-my-files",
+    "dashboard-importfile--archive-too-large",
+    "dashboard-importfile--archive-unconfirmed",
+    "dashboard-importfile--archive-interrupted-by-maintenance",
+    "maintenance-controls--running",
+    "maintenance-controls--scheduled",
+    "maintenance-controls--missed-window",
+    "maintenance-controls--paused",
+    "maintenance-controls--draining",
+    "maintenance-controls--starting",
+    "maintenance-controls--recovery-required",
+    "maintenance-controls--authority-expired",
+    "maintenance-controls--unavailable",
+    "maintenance-controls--loading",
+    "maintenance-controls--load-failed",
+    "maintenance-controls--confirm-pause",
+    "maintenance-controls--pause-and-resume",
+    "maintenance-controls--paused-with-resume",
+    "maintenance-controls--pause-response-lost",
+    "maintenance-controls--cancel-confirmation",
+    "maintenance-controls--notice-form",
+    "maintenance-controls--repeated-time",
+    "maintenance-controls--publish-notice",
+    "maintenance-controls--notice-too-far-ahead",
+    "maintenance-controls--cancel-notice",
+    "maintenance-controls--cancel-notice-while-paused",
+    "maintenance-controls--cancel-notice-without-paused-proof",
+    "maintenance-controls--phone",
+    "maintenance-banner--scheduled",
+    "maintenance-banner--paused",
+    "maintenance-banner--draining",
+    "maintenance-banner--reconnecting",
+    "maintenance-banner--guest-paused",
+    "maintenance-banner--notice-details",
+    "maintenance-banner--cancelled",
+    "maintenance-banner--running",
+    "maintenance-banner--unavailable",
+    "maintenance-banner--paused-dismissed",
+    "maintenance-banner--guest-paused-dismissed",
+    "maintenance-banner--reconnecting-dismissed",
+    "maintenance-banner--dismiss-and-reopen",
+    "maintenance-banner--expired-dismissal",
+    "maintenance-banner--new-pause-resurfaces",
+    "maintenance-banner--replacement-resurfaces",
+    "offline-recovery-entry--missing-device-copy",
+    "offline-recovery-entry--invalid-link",
+    "offline-recovery-entry--no-prepared-account",
+    "offline-recovery-entry--another-account",
+    "offline-recovery-entry--clean-downloaded-copy",
+    "offline-recovery-entry--guarded-return-to-my-files",
+    "offline-recovery-entry--missing-copy-dark",
+    "offline-recovery-entry--invalid-link-phone",
+    "offline-recovery-list--pending-ordinary-and-space",
+    "offline-recovery-list--dark",
+    "offline-recovery-list--clean-downloads",
+    "offline-recovery-list--navigation-guard",
+    "offline-recovery-list--long-title-phone",
+    "space-offline-view--light",
+    "space-offline-view--dark",
+    "space-offline-view--profile-navigation",
+    "space-offline-view--editor-navigation",
+    "space-offline-view--phone",
+    "space-offline-view--attention-held-viewer",
+    "space-offline-view--attention-held-viewer-dark",
+    "space-offline-view--attention-held-viewer-phone",
+    "space-offline-view--explicit-page-not-prepared",
+    "space-offline-view--no-prepared-pages",
+    "space-offline-view--space-index",
+    "space-offline-view--another-account",
+    "dashboard-offlinebadge--available",
+    "dashboard-offlinebadge--pages-available",
+    "dashboard-offlinebadge--needs-connection",
+    "dashboard-offlinebadge--not-synced",
+    "dashboard-offlinebadge--needs-attention",
+    "dashboard-offlinebadge--none",
+    "dashboard-offlinebadge--unreachable",
+    "current-production-account-passkey-security--ready",
+    "current-production-account-passkey-security--loading",
+    "current-production-account-passkey-security--load-error",
+    "current-production-account-passkey-security--empty",
+    "current-production-account-passkey-security--adding",
+    "current-production-account-passkey-security--confirm-removal",
+    "current-production-account-passkey-security--remove-current",
+    "current-production-account-passkey-security--last-passkey",
+    "current-production-account-passkey-security--fresh-verification-required",
+    "current-production-account-passkey-security--verify-before-adding",
+    "current-production-account-passkey-security--verification-pending",
+    "current-production-account-passkey-security--verification-failed",
+    "current-production-account-passkey-security--saving",
+    "current-production-account-passkey-security--refused",
+    "current-production-account-passkey-security--proof-expired",
+    "current-production-account-passkey-security--uncertain",
+    "current-production-account-passkey-security--sign-out-others",
+    "current-production-account-passkey-security--others-signed-out",
+    "current-production-account-passkey-security--removal-cancelled",
+    "current-production-account-passkey-security--verified-then-confirmed",
+    "current-production-account-passkey-security--verification-cancelled",
+    "current-production-account-passkey-security--uncertain-cannot-repeat",
+    "current-production-account-passkey-security--malformed-acknowledgement",
+    "current-production-account-passkey-security--unattributed-session",
+    "current-production-account-passkey-security--registration-proof-invalidated",
+    "current-production-account-passkey-security--read-retry-recovered",
+    "current-production-account-passkey-security--account-changed-before-action",
+    "current-production-account-passkey-security--cookie-changed-during-confirmation",
+    "current-production-account-passkey-security--account-changed-during-registration",
+    "editor-pdfexport--document",
+    "editor-pdfexport--all-visible-worksheets",
+    "editor-pdfexport--worksheet-subset",
+    "editor-pdfexport--no-worksheets-selected",
+    "editor-pdfexport--no-visible-worksheets",
+    "editor-pdfexport--waiting-for-save",
+    "editor-pdfexport--loading-options",
+    "editor-pdfexport--options-failed",
+    "editor-pdfexport--preparing",
+    "editor-pdfexport--cancelled",
+    "editor-pdfexport--export-failed",
+    "editor-pdfexport--download-started",
+    "editor-profile-cursor-label--flower",
+    "editor-profile-cursor-label--cat",
+    "editor-presence-native--doc",
+    "editor-presence-native--doc-selection",
+    "editor-presence-native--doc-guest",
+    "editor-presence-native--doc-disconnected",
+    "editor-presence-native--doc-lifecycle",
+    "editor-presence-native--doc-local-colors",
+    "account-profile-icons--catalog-compatibility",
+    "account-profile-page--profile",
+    "account-profile-page--passkeys",
+    "account-profile-page--this-device",
+    "account-profile-page--connections",
+    "account-profile-page--guest-links",
+    "account-profile-page--guest-links-offline",
+    "account-profile-page--guest-links-operator",
+    "account-profile-page--operator",
+    "account-profile-page--offline",
+    "account-profile-page--phone",
+    "account-profile--ready",
+    "account-profile--loading",
+    "account-profile--load-error",
+    "account-profile--save-error",
+    "account-profile--saving",
+    "account-profile--color-picker",
+    "shell-rail--member",
+    "shell-rail--admin",
+    "shell-rail--offline",
+    "shell-rail--reconnecting",
+    "shell-rail--phone",
+    "shell-rail--signed-out",
+    "shell-rail--compact",
+    "shell-rail--files",
+    "shell-rail--files-collapsed",
+    "shell-rail--files-long-profile-name",
+    "shell-rail--files-phone",
+    "shell-rail--files-drawer",
+    "restore-notice--restored",
+    "restore-notice--dark",
+    "restore-notice--phone",
+    "restore-notice--restore-undone",
+    "restore-notice--restore-undone-dark",
+    "restore-notice--dismissed",
+    "restore-notice--another-restore-after-dismissal",
+    "restore-notice--never-restored",
+    "editor-savestatus--saved",
+    "editor-savestatus--saving-on-device",
+    "editor-savestatus--saved-on-device",
+    "editor-savestatus--synced",
+    "editor-savestatus--needs-attention",
+    "editor-savestatus--creation-needs-attention",
+    "editor-savestatus--recovery-creating",
+    "editor-savestatus--recovery-created",
+    "editor-savestatus--recovery-failed",
+    "editor-savestatus--recovery-exported",
+    "editor-savestatus--recovery-discard-confirmation",
+    "editor-savestatus--recovery-discarded",
+    "editor-savestatus--recovery-expired-account",
+    "editor-savestatus--recovery-unfinished-input",
+    "editor-savestatus--recovery-unfinished-doc-text",
+    "editor-savestatus--recovery-unfinished-doc-text-discarded",
+    "editor-savestatus--expired-unfinished-doc-text",
+    "editor-savestatus--device-save-failed",
+    "editor-savestatus--attention-save-failed",
+    "editor-savestatus--saving",
+    "editor-savestatus--editing-cell",
+    "editor-savestatus--expired-cell-input",
+    "editor-savestatus--expired-saved-work",
+    "editor-savestatus--editing-formula",
+    "editor-savestatus--loading",
+    "editor-savestatus--view-only",
+    "editor-savestatus--failed-save",
+    "editor-savestatus--access-changed",
+    "editor-savestatus--waiting-to-resync",
+    "editor-savestatus--rejected-edits",
+    "editor-savestatus--long-error",
+    "editor-savestatus--stable-geometry-and-retry",
+    "editor-savestatus--keyboard-details",
+    "editor-savestatus--touch-details",
+    "dashboard-searchpanel--empty-query",
+    "dashboard-searchpanel--results",
+    "dashboard-searchpanel--no-results",
+    "dashboard-searchpanel--loading",
+    "dashboard-searchpanel--failed",
+    "dashboard-searchpanel--space-roots-only",
+    "dashboard-searchpanel--active-filters",
+    "dashboard-searchpanel--invalid-draft",
+    "dashboard-searchpanel--long-invalid-draft",
+    "dashboard-searchpanel--search-options",
+    "current-production-admin-serverhealth--healthy",
+    "current-production-admin-serverhealth--spaces-disabled",
+    "current-production-admin-serverhealth--warning",
+    "current-production-admin-serverhealth--unavailable-measurements",
+    "current-production-admin-serverhealth--low-backup-space",
+    "current-production-admin-serverhealth--near-upload-ceiling",
+    "current-production-admin-serverhealth--loading",
+    "current-production-admin-serverhealth--failed",
+    "current-production-admin-serverhealth--expired",
+    "sharing-sharelink--loading",
+    "sharing-sharelink--link-off",
+    "sharing-sharelink--doc-source-limit",
+    "sharing-sharelink--space-source-limit",
+    "sharing-sharelink--link-on-view-only",
+    "sharing-sharelink--link-on-can-edit",
+    "sharing-sharelink--link-on-without-url",
+    "sharing-sharelink--scheduled-expiry",
+    "sharing-sharelink--expired",
+    "sharing-sharelink--create-after-expiry",
+    "sharing-sharelink--failed",
+    "sharing-sharelink--space-view-link",
+    "sharing-sharelink--space-edit-link",
+    "sharing-sharelink--confirm-whole-space",
+    "sharing-sharelink--confirm-replacement-edit-link",
+    "sharing-sharelink--confirm-turn-off-space-link",
+    "sharing-sharelink--load-after-leaving-space",
+    "sharing-sharelink--change-after-replacing-space",
+    "sharing-sharelink--created-link",
+    "sharing-sharelink--replace-fresh-link",
+    "sharing-sharelink--replaced-link",
+    "sharing-sharelink--replacing",
+    "sharing-sharelink--created-space-link-focus",
+    "sharing-sharelink--turned-off-space-link-focus",
+    "sharing-sharelink--no-secret-readback",
+    "sharing-sharelink--creating",
+    "sharing-sharelink--failed-create",
+    "sharing-sharelink--failed-replacement",
+    "sharing-sharelink--failed-replacement-visible",
+    "sharing-sharelink--failed-turn-off",
+    "dashboard-sharedbadge--owned",
+    "dashboard-sharedbadge--shared-with-me",
+    "dashboard-sharedbadge--unknown-owner",
+    "sharing-sharing--loading",
+    "sharing-sharing--owner-only",
+    "sharing-sharing--with-people",
+    "sharing-sharing--folder",
+    "sharing-sharing--failed",
+    "sharing-sharing--whole-space",
+    "sharing-sharing--file-admin",
+    "sharing-sharing--grant-file-admin",
+    "sharing-sharing--admin-revoked-while-applying",
+    "sharing-sharing--composed",
+    "sharing-sharing--access-saving",
+    "sharing-sharing--disabled-account",
+    "sharing-sharing--disabled-account-before-removal",
+    "sharing-sharing--one-recipient-draft",
+    "sharing-sharing--navigation-after-cancel",
+    "sharing-sharing--write-after-leaving",
+    "sharing-sharing--write-after-replacing",
+    "sharing-sharing--failed-write-retry",
+    "sharing-sharing--guest-link-created",
+    "sharing-sharing--existing-guest-link",
+    "sharing-sharing--replace-guest-link",
+    "sharing-sharing--inherited-access-after-removal",
+    "sharing-sharing--equal-inherited-access-after-downgrade",
+    "sharing-formula-sources--overview",
+    "sharing-formula-sources--unchecked",
+    "sharing-formula-sources--checked",
+    "sharing-formula-sources--choose-report-access-first",
+    "sharing-formula-sources--host-only",
+    "sharing-formula-sources--source-only",
+    "sharing-formula-sources--checking",
+    "sharing-formula-sources--check-failed",
+    "sharing-formula-sources--applying",
+    "sharing-formula-sources--existing-access-kept",
+    "sharing-formula-sources--same-space",
+    "sharing-formula-sources--external-space",
+    "sharing-formula-sources--protected-and-unavailable",
+    "sharing-formula-sources--partial",
+    "sharing-formula-sources--changed-after-review",
+    "sharing-formula-sources--lost-acknowledgement",
+    "sharing-formula-sources--missing-result",
+    "sharing-formula-sources--host-only-lost-acknowledgement",
+    "sharing-formula-sources--host-only-authority-lost",
+    "sharing-formula-sources--host-only-source-became-private",
+    "sharing-formula-sources--host-revoked",
+    "sharing-formula-sources--no-stale-source-names",
+    "sharing-formula-sources--consent-and-draft-reset",
+    "sharing-formula-sources--public-link-isolation",
+    "sharing-formula-sources--review-after-leaving",
+    "sharing-formula-sources--review-after-replacing",
+    "space-review--app-loading",
+    "space-review--app-unreachable",
+    "space-review--app-unavailable",
+    "space-review--populated",
+    "space-review--independent-expansion",
+    "space-review--view-only",
+    "space-review--page-access-details",
+    "space-review--empty",
+    "space-review--restore-banner",
+    "space-review--restore-banner-dark",
+    "space-review--restore-banner-phone",
+    "space-review--restore-banner-with-document",
+    "space-review--spaces-index",
+    "space-review--no-spaces",
+    "space-review--new-space",
+    "space-review--new-doc",
+    "space-review--new-sheet",
+    "space-review--new-folder",
+    "space-review--loading",
+    "space-review--unavailable",
+    "space-review--retained-device-page",
+    "space-review--retained-device-page-navigation",
+    "space-review--unreachable",
+    "space-review--guest-viewer",
+    "space-review--guest-editor",
+    "space-review--guest-empty",
+    "space-review--guest-loading",
+    "space-review--guest-revoked",
+    "space-review--guest-unreachable",
+    "space-review--guest-missing-page",
+    "space-review--guest-malformed-route",
+    "space-review--offline",
+    "space-review--deep-tree",
+    "space-review--pages-drawer",
+    "space-review--move-or-reorder",
+    "space-review--metadata-dialog-focus",
+    "space-review--mutation-failure",
+    "space-review--trash-subtree-confirmation",
+    "space-review--trash-owner",
+    "space-review--trash-editor",
+    "space-review--trash-expired",
+    "space-review--trash-expired-editor",
+    "space-review--trash-recovery-ended",
+    "space-review--trash-role-change",
+    "space-review--trash-viewer-denied",
+    "space-review--trash-empty",
+    "space-review--trash-retry",
+    "space-review--trash-offline",
+    "space-review--delete-confirmation",
+    "space-review--cancel-deletion",
+    "space-review--stale-delete-preview",
+    "space-review--file-admin",
+    "space-guest--view-only",
+    "space-guest--view-only-dark",
+    "space-guest--view-only-phone",
+    "space-guest--can-edit",
+    "space-guest--can-edit-dark",
+    "space-guest--can-edit-phone",
+    "space-guest--nested-page",
+    "space-guest--phone-contents",
+    "space-guest--empty",
+    "space-guest--loading",
+    "space-guest--unavailable",
+    "space-guest--recovery-deep-link-refused",
+    "space-offline-actions--ready-to-prepare",
+    "space-offline-actions--waiting-for-save",
+    "space-offline-actions--storage-unavailable",
+    "space-offline-actions--storage-unavailable-dark",
+    "space-offline-actions--storage-unavailable-phone",
+    "space-offline-actions--prepared-pages",
+    "space-offline-actions--prepared-dark",
+    "space-offline-actions--prepared-phone",
+    "space-offline-actions--unmount-during-download",
+    "space-offline-actions--change-account-during-download",
+    "space-offline-actions--sign-out-during-download",
+    "spaces-root-actions--owner",
+    "spaces-root-actions--viewer",
+    "spaces-root-actions--rename",
+    "spaces-root-actions--move",
+    "spaces-root-actions--loading-destinations",
+    "spaces-root-actions--destination-failure",
+    "spaces-root-actions--whole-space-trash",
+    "spaces-root-actions--share-whole-space",
+    "spaces-root-actions--save-failure",
+    "spaces-root-actions--trash-response-after-navigation",
+    "spaces-root-actions--rename-response-after-unmount",
+    "spaces-root-actions--failed-response-after-navigation",
+    "spaces-root-actions--file-admin-move",
+    "spaces-root-actions--file-admin-no-destinations",
+    "current-production-spaces-recovery-holds--held-after-recovery",
+    "current-production-spaces-recovery-holds--editor",
+    "current-production-spaces-recovery-holds--offline",
+    "editor-sync-native--doc-drawing-capture",
+    "dashboard-taglabels--none",
+    "dashboard-taglabels--one",
+    "dashboard-taglabels--several",
+    "dashboard-trash--with-items",
+    "dashboard-trash--held-after-recovery",
+    "dashboard-trash--confirm-empty-held-items",
+    "dashboard-trash--empty",
+    "dashboard-trash--loading",
+    "dashboard-trash--load-failed",
+    "dashboard-trash--confirm-empty",
+    "dashboard-trash--space-recovery-window",
+    "dashboard-trash--expired-space-group",
+    "dashboard-trash--confirm-complete-space-graph",
+    "dashboard-trash--space-graph-changed",
+    "editor-versionnames--closed",
+    "editor-versionnames--open",
+    "editor-versionnames--viewer-open",
+    "editor-versionnames--no-versions",
+    "editor-versionnames--unsaved-changes",
+    "editor-versionnames--loading",
+    "editor-versionnames--load-failed",
+    "editor-versionnames--naming-version",
+    "editor-versionnames--space-editor",
+    "editor-versionnames--space-viewer",
+    "dashboard-workspacearchive--confirmation",
+    "dashboard-workspacearchive--starting",
+    "dashboard-workspacearchive--preparing",
+    "dashboard-workspacearchive--browser-download",
+    "dashboard-workspacearchive--exporting",
+    "dashboard-workspacearchive--completed",
+    "dashboard-workspacearchive--empty-archive",
+    "dashboard-workspacearchive--start-failed",
+    "dashboard-workspacearchive--export-failed",
+    "dashboard-workspacearchive--progress-unavailable",
+    "dashboard-workspacearchive--expired-task",
+    "dashboard-workspacearchive--cancel-expired-task",
+    "dashboard-workspacearchive--retry-progress",
+    "dashboard-workspacearchive--cancelling",
+    "dashboard-workspacearchive--cancelled",
+    "dashboard-workspacearchive--cancel-before-start",
+    "dashboard-workspacearchive--cancellation-failed",
+    "offline-availability--protection-granted",
+    "offline-availability--protection-denied",
+    "offline-availability--protection-unsupported",
+    "offline-availability--protection-error",
+    "offline-availability--storage-guidance",
+    "offline-availability--browser-storage-limits",
+    "offline-availability--pending-removal",
+    "identity-entity-icons--standalone",
+    "identity-entity-icons--lineup",
+    "identity-entity-icons--in-context",
+    "identity-entity-icons--monochrome",
+    "identity-entity-icons--phone",
+    "identity-favicon--light",
+    "identity-favicon--dark",
+    "identity-favicon--automatic",
+    "identity-social-cards--generic",
+    "identity-social-cards--document",
+    "identity-social-cards--spreadsheet",
+    "identity-social-cards--emoji",
+    "identity-social-cards--long-title",
+    "identity-social-cards--long-word",
+    "identity-social-cards--space-preview",
+    "redesign-native-editors--sheet",
+    "redesign-native-editors--doc",
+    "redesign-native-editors--sheet-viewer",
+    "redesign-native-editors--doc-viewer",
+    "redesign-native-editors--sheet-formula",
+    "redesign-native-editors--sheet-copy-available",
+    "redesign-native-editors--sheet-copy-unavailable"
+  ],
+  "checked": [
+    {
+      "id": "shell-gemlogo--rail",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-gemlogo--large",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-gemlogo--tap-replay",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-themesettings--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-themesettings--follow-system",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-themesettings--storage-blocked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--playground-story",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--gems-light-and-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--disabled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-theme-control--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-theme-control--storage-blocked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-theme-control--dismiss-storage-warning",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--inherited-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--direct-share",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--space-through-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--space-direct",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--owner",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--file-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--long-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-access-details--revoked-while-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--revoked-with-unsaved-input",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--unsupported-browser",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--missing-guest-page",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--missing-account-file",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--loaded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--creating",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--created",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--create-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--revoking",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--revoke-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--active-limit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--previously-used",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--copied",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-accesstokens--manual-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-access-changed--locked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-access-changed--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--pending-changes",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--checking",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--counts-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--confirmed-pending-changes",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--kept-while-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--retry-confirmed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--not-queued",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--unrecognized-exit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--waiting-for-another-sign-in",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--delete-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--cancel-deletion",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--deleted",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--deletion-refused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-exit--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-accesstokens--loaded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-accesstokens--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-accesstokens--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-accesstokens--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--disabled-accounts",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--confirm-reactivation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--disabled-admin-reactivation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--reactivation-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--reactivation-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--reactivation-readback-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--reactivation-committed-warning",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--reactivated",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--retry-transfer-load",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-recipient-chosen",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-no-recipients",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-nothing-owned",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-readback-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-stale",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-committed-warning",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-unconfirmed-response",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--transfer-complete",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--retry-transfer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--long-account-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--duplicate-account-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--duplicate-name-target-submitted",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--cancel-returns-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-account-recovery--keyboard-recipient-choice",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--another-download",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--cancel-clear",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--clearing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--clear-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--changed-collection",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--cleared",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--downloading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--download-cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--download-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--download-ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--fresh-confirmation-required",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--clear-committed-readback-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--loaded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--recovery-invite",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--invite-created",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--create-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--created-but-readback-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--created-while-readback-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--revoked-but-readback-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--refresh-after-created",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-admininvites--refresh-after-revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--people",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--invites",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--connections",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--health",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--restore-preparation-blocks-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--diagnostics-download-blocks-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--diagnostics-clear-blocks-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--health-warning",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--recovery-handoff",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--once-only-invite",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-page--creating-invite",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--loaded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--last-admin-passkey",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--confirm-disable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--removal-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-applayout--desktop",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-applayout--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-applayout--reconnecting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-applayout--tablet",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-applayout--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--loaded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--disconnecting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--disconnected",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--disconnect-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--matching-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--previously-used",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--admin-metadata",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--admin-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--admin-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-assistantconnections--admin-load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--sign-in",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--finishing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--unsupported-browser",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--unreachable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--setup",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--setup-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--setup-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--setup-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--invite",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--invite-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--invite-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--invite-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--recovery",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--recovery-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--recovery-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--long-recovery-name",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--help",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--operator-help",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--help-keyboard-return",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-entry--invite-then-cancel",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--manual-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--preparing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--sending-to-browser",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--delivered",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--disabled-by-policy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--ready-download-disabled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--missing-recovery-key",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--status-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--fresh-passkey-required",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--waiting-for-passkey",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--cancel-passkey",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--verification-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--job-contended",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--saved-backups",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--saved-backups-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--saved-backups-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupdownloads--saved-backups-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--available",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--status-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--session-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--uploading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--preparing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--maintenance-draining",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--separate-recovery-volume",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--insufficient-disk-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--memory-headroom-refusal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--confirmed-disk-shortage",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--small-backup",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--admission-needs-attention",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--accepted",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--started-outcome-unconfirmed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--manual-upload",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--saved-backups",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--saved-backups-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--saved-backups-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--saved-backups-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--confirmation-review",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--full-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--waiting-for-passkey",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--cancel-verification",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--verification-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--recording-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--expired-original-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--backup-restored",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--original-recovered",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--did-not-start",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--unresolved-outcome",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--pending-without-record",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--incomplete-observation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--slow-upload-keeps-bounded-lifetime",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--slow-confirmation-keeps-bounded-lifetime",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--slow-upload-still-cancels",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--passkey-ceremony-still-ends-after-one-minute",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--cancellation-still-ends-after-five-minutes",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--slow-confirmation-stops-on-account-change",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backuprestore--slow-confirmation-stops-on-unmount",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--healthy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--local-backup",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--running",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--never-run",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--overdue",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--not-configured",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--configuration-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--verification-running",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--verification-never-run",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--verification-overdue",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--verification-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--local-verification-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--retained-key-verified",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--manual-downloads",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--spaces-policy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--download-ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--maintenance-paused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-backupstatus--maintenance-resumed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--alone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--two-people",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--guest-labels",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--many",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--many-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--empty-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--guest-labels-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--long-names-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--doc-cursor-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-collaborators--sheet-cursor-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--consent",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--read-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--missing-request",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--admin-account",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--allowing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--cancelling",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--submit-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--expired-before-allow",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--connection-limit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--long-identity",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "settings-connectassistant--sign-out-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--online",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--reconnecting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--last-synced-catalog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--local-mode",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--online-local-mode",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--online-stale-catalog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--online-pending-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--keyboard-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-connectionstatus--touch-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--missing-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--expired-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--finishing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-console-recovery--help",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--owned-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--shared-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--shared-destination",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--waiting-for-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--making-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--source-changed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--access-lost",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--completed-after-dismissal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--completed-while-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--outcome-unknown",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--unreadable-receipt",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-copyfile--unknown-after-dismissal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--file-view-targets",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--populated",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--make-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-item",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-doc",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-sheet",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-folder-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-in-shared-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--empty-workspace",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-drawer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-drawer-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--inside-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--missing-item",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--item-load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--local-mode",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-offline-doc",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--created-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-creation-revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--choose-creation-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-now-shared",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--creation-parent-no-longer-listed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--local-needs-connection",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--local-folder-not-opened",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--space-files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--open-space-keeps-my-files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-spaces",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--space-inside-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--local-space-needs-connection",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--local-prepared-space-opens",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--file-admins",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--cancel-admin-move-while-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--file-admin-no-destinations",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--file-admin-personal-filing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--grid",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--folder-scoped-search",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--import-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--export-all-files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--cancel-export-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--personal-filing-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--sharing-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--shared-grant-ordering",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--cancel-space-action-then-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--clear-empty-global-scope",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--list",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--grid",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--grid-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--shared",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--creator-attribution",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--search-results",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--no-search-results",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--busy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--long-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--owner-menu",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--viewer-menu",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-files--file-admin-menu",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--documents",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--space-page",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--missing-store",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--startup-metadata-missing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--storage-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--storage-preparation-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--account-locked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--protection-denied",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--protection-unsupported",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--protection-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--request-protection",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--about-storage",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--clean-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--pending-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--discard-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--removal-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--removing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--damaged-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--cancel-keeps-changes",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--newly-pending-is-kept",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--removal-returns-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-device-storage--long-title-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--offline-keeps-draft",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--reconnect-keeps-draft",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-timed-out",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-invalid",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-private-source",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-too-large",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-double-activation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-cancelled-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-sources-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-sources-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-source-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-guest-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-guest-sources-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-guest-sources-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--space-guest-external-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--scalar",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--table",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--thirty-rows",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--calculating",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--private-source",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--missing-source",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--invalid-formula",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--too-large",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--busy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--timed-out",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-native-formulas--inline-and-table",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-native-formulas--private",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-native-formulas--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-native-formulas--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-native-formulas--thirty-rows",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-native-formulas--styled-scalar",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--reading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--saved-half-zoom",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--saved-double-zoom",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--traditional",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--layout-changed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--selection-formatting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-mobile--keyboard-viewport-response",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-documenttags--no-tags",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-documenttags--several-tags",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-documenttags--suggestions-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-documenttags--adding",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-documenttags--add-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-documenttags--personal-space-tags",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--guest",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--reconnecting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--rename",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--rename-authority-removed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--versions-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--version-naming-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--version-rename",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--versions-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--export-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--export-waiting-for-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--pdf-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--offline-availability-success",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--offline-availability-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--theatre-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--people-and-theatre",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--people-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--people-over-presence",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--actions-over-presence",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--guest-pdf",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--personalization",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-fileexports--saved",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-fileexports--unsaved",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-fileexports--download-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-fileexports--pdf-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "guest-guestapp--link-revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "guest-guestapp--connection-interrupted",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "guest-guestapp--unsupported-browser",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--inventory",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--load-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--load-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--change-expiry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--expiry-saved",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--saving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--uncertain-write",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--stale-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--turn-off-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--turned-off",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-guest-links--stale-account-response",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--include-hidden",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--all-shares-hidden",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--hide-and-show",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--failed-hide",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-hidden-shares--pending-hide",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--today",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--calendar",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--no-older-days",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--history-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--missing-checkpoint",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--preview-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--preview-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--name-current",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--name-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--naming-focus-return",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--restore-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--restore-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--restore-interrupted",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--restoring",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--importing-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--limits-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--unsupported-file",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--not-json",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--too-many-files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--importing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--import-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-importing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-imported",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--empty-archive",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-needs-my-files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-too-large",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-unconfirmed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-importfile--archive-interrupted-by-maintenance",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--running",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--scheduled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--missed-window",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--paused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--draining",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--starting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--recovery-required",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--authority-expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--confirm-pause",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--pause-and-resume",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--paused-with-resume",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--pause-response-lost",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--cancel-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--notice-form",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--repeated-time",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--publish-notice",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--notice-too-far-ahead",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--cancel-notice",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--cancel-notice-while-paused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--cancel-notice-without-paused-proof",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-controls--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--scheduled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--paused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--draining",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--reconnecting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--guest-paused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--notice-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--running",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--paused-dismissed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--guest-paused-dismissed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--reconnecting-dismissed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--dismiss-and-reopen",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--expired-dismissal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--new-pause-resurfaces",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "maintenance-banner--replacement-resurfaces",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--missing-device-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--invalid-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--no-prepared-account",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--another-account",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--clean-downloaded-copy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--guarded-return-to-my-files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--missing-copy-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-entry--invalid-link-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-list--pending-ordinary-and-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-list--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-list--clean-downloads",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-list--navigation-guard",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-recovery-list--long-title-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--light",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--profile-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--editor-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--attention-held-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--attention-held-viewer-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--attention-held-viewer-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--explicit-page-not-prepared",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--no-prepared-pages",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--space-index",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-view--another-account",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--available",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--pages-available",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--needs-connection",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--not-synced",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--needs-attention",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--none",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-offlinebadge--unreachable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--load-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--adding",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--remove-current",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--last-passkey",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--fresh-verification-required",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--verify-before-adding",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--verification-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--verification-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--refused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--proof-expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--uncertain",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--sign-out-others",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--others-signed-out",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--removal-cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--verified-then-confirmed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--verification-cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--uncertain-cannot-repeat",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--malformed-acknowledgement",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--unattributed-session",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--registration-proof-invalidated",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--read-retry-recovered",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--account-changed-before-action",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--cookie-changed-during-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--account-changed-during-registration",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--document",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--all-visible-worksheets",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--worksheet-subset",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--no-worksheets-selected",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--no-visible-worksheets",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--waiting-for-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--loading-options",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--options-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--preparing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--export-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-pdfexport--download-started",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-profile-cursor-label--flower",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-profile-cursor-label--cat",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-presence-native--doc",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-presence-native--doc-selection",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-presence-native--doc-guest",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-presence-native--doc-disconnected",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-presence-native--doc-lifecycle",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-presence-native--doc-local-colors",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-icons--catalog-compatibility",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--profile",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--passkeys",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--this-device",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--connections",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--guest-links",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--guest-links-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--guest-links-operator",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--operator",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile-page--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--ready",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--load-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--save-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--saving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--member",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--reconnecting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--signed-out",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--compact",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--files",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--files-collapsed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--files-long-profile-name",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--files-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "shell-rail--files-drawer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--restored",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--restore-undone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--restore-undone-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--dismissed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--another-restore-after-dismissal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "restore-notice--never-restored",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--saved",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--saving-on-device",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--saved-on-device",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--synced",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--needs-attention",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--creation-needs-attention",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-creating",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-created",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-exported",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-discard-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-discarded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-expired-account",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-unfinished-input",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-unfinished-doc-text",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--recovery-unfinished-doc-text-discarded",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--expired-unfinished-doc-text",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--device-save-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--attention-save-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--saving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--editing-cell",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--expired-cell-input",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--expired-saved-work",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--editing-formula",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--view-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--failed-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--access-changed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--waiting-to-resync",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--rejected-edits",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--long-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--stable-geometry-and-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--keyboard-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-savestatus--touch-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--empty-query",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--results",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--no-results",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--space-roots-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--active-filters",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--invalid-draft",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--long-invalid-draft",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--spaces-disabled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--warning",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--unavailable-measurements",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--low-backup-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--near-upload-ceiling",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--link-off",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--doc-source-limit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--space-source-limit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--link-on-view-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--link-on-can-edit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--link-on-without-url",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--scheduled-expiry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--create-after-expiry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--space-view-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--space-edit-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--confirm-whole-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--confirm-replacement-edit-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--confirm-turn-off-space-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--load-after-leaving-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--change-after-replacing-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--created-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--replace-fresh-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--replaced-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--replacing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--created-space-link-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--turned-off-space-link-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--no-secret-readback",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--creating",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--failed-create",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--failed-replacement",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--failed-replacement-visible",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharelink--failed-turn-off",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-sharedbadge--owned",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-sharedbadge--shared-with-me",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-sharedbadge--unknown-owner",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--owner-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--with-people",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--whole-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--file-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--grant-file-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--admin-revoked-while-applying",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--composed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--access-saving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--disabled-account",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--disabled-account-before-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--one-recipient-draft",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--navigation-after-cancel",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--write-after-leaving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--write-after-replacing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--failed-write-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--guest-link-created",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--existing-guest-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--replace-guest-link",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--inherited-access-after-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-sharing--equal-inherited-access-after-downgrade",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--overview",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--unchecked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--checked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--choose-report-access-first",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--host-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--source-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--checking",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--check-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--applying",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--existing-access-kept",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--same-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--external-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--protected-and-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--partial",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--changed-after-review",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--lost-acknowledgement",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--missing-result",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--host-only-lost-acknowledgement",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--host-only-authority-lost",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--host-only-source-became-private",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--host-revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--no-stale-source-names",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--consent-and-draft-reset",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--public-link-isolation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--review-after-leaving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "sharing-formula-sources--review-after-replacing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--populated",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--independent-expansion",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--view-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--page-access-details",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--restore-banner",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--restore-banner-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--restore-banner-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--restore-banner-with-document",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--spaces-index",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--no-spaces",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--new-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--new-doc",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--new-sheet",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--new-folder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--retained-device-page",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--retained-device-page-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--unreachable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-revoked",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-unreachable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-missing-page",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--guest-malformed-route",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--deep-tree",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--move-or-reorder",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--mutation-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-owner",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-expired",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-expired-editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-recovery-ended",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-role-change",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-viewer-denied",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-retry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--delete-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--cancel-deletion",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--stale-delete-preview",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--file-admin",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--view-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--view-only-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--view-only-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--can-edit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--can-edit-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--can-edit-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--nested-page",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--phone-contents",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-guest--recovery-deep-link-refused",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--ready-to-prepare",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--waiting-for-save",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--storage-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--storage-unavailable-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--storage-unavailable-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--prepared-pages",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--prepared-dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--prepared-phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--unmount-during-download",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--change-account-during-download",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--sign-out-during-download",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--owner",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--rename",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--move",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--loading-destinations",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--destination-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--whole-space-trash",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--share-whole-space",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--save-failure",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--trash-response-after-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--rename-response-after-unmount",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--failed-response-after-navigation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--file-admin-move",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--file-admin-no-destinations",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-spaces-recovery-holds--held-after-recovery",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-spaces-recovery-holds--editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-spaces-recovery-holds--offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-sync-native--doc-drawing-capture",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-taglabels--none",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-taglabels--one",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-taglabels--several",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--with-items",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--held-after-recovery",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty-held-items",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--space-recovery-window",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--expired-space-group",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--confirm-complete-space-graph",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--space-graph-changed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--closed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--viewer-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--no-versions",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--unsaved-changes",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--load-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--naming-version",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--space-editor",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-versionnames--space-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--starting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--preparing",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--browser-download",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--exporting",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--completed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--empty-archive",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--start-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--export-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--progress-unavailable",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--expired-task",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--cancel-expired-task",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--retry-progress",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--cancelling",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--cancelled",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--cancel-before-start",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-workspacearchive--cancellation-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--protection-granted",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--protection-denied",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--protection-unsupported",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--protection-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--storage-guidance",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--browser-storage-limits",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "offline-availability--pending-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-entity-icons--standalone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-entity-icons--lineup",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-entity-icons--in-context",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-entity-icons--monochrome",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-entity-icons--phone",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-favicon--light",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-favicon--dark",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-favicon--automatic",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--generic",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--document",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--spreadsheet",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--emoji",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--long-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--long-word",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "identity-social-cards--space-preview",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--sheet",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--doc",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--sheet-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--doc-viewer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--sheet-formula",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--sheet-copy-available",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--sheet-copy-unavailable",
+      "variant": "phone-dark"
+    }
+  ],
+  "captures": [],
+  "verifications": [
+    "phone-dark: docs-native-formulas--inline-and-table native formula viewer settled before capture",
+    "phone-dark: docs-native-formulas--private native formula viewer settled before capture",
+    "phone-dark: docs-native-formulas--dark native formula viewer settled before capture",
+    "phone-dark: docs-native-formulas--phone native formula viewer settled before capture",
+    "phone-dark: docs-native-formulas--thirty-rows native formula viewer settled before capture",
+    "phone-dark: docs-native-formulas--styled-scalar native formula viewer settled before capture",
+    "phone-dark: redesign-native-editors--sheet native toolbar remains visible after content scroll",
+    "phone-dark: redesign-native-editors--doc native toolbar remains visible after content scroll",
+    "phone-dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal"
+  ],
+  "failures": []
+}

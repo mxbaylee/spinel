@@ -1,0 +1,136 @@
+{
+  "purpose": "Ordinary current-source integration acceptance; original fixed diagnostic sample remains closed.",
+  "run": 43556394015,
+  "attempt": 1,
+  "job": 132330306979,
+  "source": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62",
+  "tested": "4b58a794a35c69f0797fe6119b2c5892cc4e107b",
+  "artifact": {
+    "id": 14098409338,
+    "node_id": "MDg6QXJ0aWZhY3QxNDA5ODQwOTMzOA==",
+    "name": "theme-screenshots-production-1",
+    "size_in_bytes": 35146036,
+    "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14098409338",
+    "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14098409338/zip",
+    "expired": false,
+    "digest": "sha256:266ad88e258d6b9e090b4b24c4e727193b396f4f32632d508359d74d6a751dba",
+    "created_at": "2026-11-14T04:35:04Z",
+    "updated_at": "2026-11-14T04:35:04Z",
+    "expires_at": "2026-11-21T04:35:01Z",
+    "workflow_run": {
+      "id": 43556394015,
+      "repository_id": 1423484121,
+      "head_repository_id": 1423484121,
+      "head_branch": "codex/spn-149-revocation-evidence",
+      "head_sha": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+    }
+  },
+  "zipSHA256": "266ad88e258d6b9e090b4b24c4e727193b396f4f32632d508359d74d6a751dba",
+  "reportSHA256": "2ef7bd43ed7f6e49c7f2a868577f51aefabfc90a687692feb5ff2ddace207aaa",
+  "test": {
+    "id": "960cd46fcfcce4c1b118-dd2e11699054ac42c1e3",
+    "title": "revoking one login preserves another login’s queued edit and stops later broadcasts",
+    "file": "collaboration.spec.ts",
+    "line": 365,
+    "project": "production",
+    "status": "expected",
+    "timeout": 60000
+  },
+  "attempts": [
+    {
+      "retry": 0,
+      "status": "passed",
+      "durationMs": 4634,
+      "startTime": "2026-11-14T04:28:14.385Z",
+      "errors": 0,
+      "diagnostic": "production-retry-0-observation.json",
+      "bytes": 1538,
+      "sha256": "948f94f356a79d906fcd521393cd9ae5f45acc923eb08544b82daa150fee8fd5",
+      "contractCompleted": true,
+      "primaryFailed": false,
+      "cleanupFailures": [],
+      "observation": {
+        "targetCount": 1,
+        "closedTargets": 1,
+        "openSockets": 0,
+        "receivedFrames": 6,
+        "overflow": false,
+        "observerLost": false,
+        "reopened": false,
+        "events": [
+          {
+            "kind": "navigation",
+            "ms": 11
+          },
+          {
+            "kind": "socket-created",
+            "ms": 1826,
+            "socket": 1
+          },
+          {
+            "kind": "socket-opened",
+            "ms": 1841,
+            "socket": 1
+          },
+          {
+            "kind": "edit-held",
+            "ms": 2627
+          },
+          {
+            "kind": "revocation-requested",
+            "ms": 2628
+          },
+          {
+            "kind": "revocation-written",
+            "ms": 2629
+          },
+          {
+            "kind": "page-close",
+            "ms": 2644
+          },
+          {
+            "kind": "socket-closed",
+            "ms": 2644,
+            "socket": 1
+          },
+          {
+            "kind": "navigation",
+            "ms": 2664
+          },
+          {
+            "kind": "closure-observed",
+            "ms": 2730
+          },
+          {
+            "kind": "sign-in",
+            "ms": 3010
+          },
+          {
+            "kind": "request-denied",
+            "ms": 3012
+          },
+          {
+            "kind": "edit-released",
+            "ms": 3012
+          },
+          {
+            "kind": "saved",
+            "ms": 3046
+          },
+          {
+            "kind": "reloaded",
+            "ms": 4463
+          }
+        ]
+      }
+    }
+  ],
+  "reportStats": {
+    "startTime": "2026-11-14T04:25:40.498Z",
+    "duration": 560516.218,
+    "expected": 81,
+    "skipped": 3,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

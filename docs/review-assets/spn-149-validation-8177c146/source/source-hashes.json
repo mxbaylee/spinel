@@ -1,0 +1,32 @@
+[
+  {
+    "path": "e2e/collaboration.spec.ts",
+    "blob": "4288b469f77dc552bd92698fc33d1b13f3608491",
+    "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c"
+  },
+  {
+    "path": "e2e/session-revocation.ts",
+    "blob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c",
+    "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a"
+  },
+  {
+    "path": "scripts/ci/session-revocation.test.ts",
+    "blob": "71c9a32209f6f0a2da124a3353766f626b4d0203",
+    "sha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462"
+  },
+  {
+    "path": "playwright.config.ts",
+    "blob": "fe75c6581e3fd1ca616c2c8afe629da1f220fb9b",
+    "sha256": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa"
+  },
+  {
+    "path": ".github/workflows/ci.yml",
+    "blob": "4f2eac4f6ea8fde4afec92df9fae1a459a030edb",
+    "sha256": "fd9583d5d9fee71d00b40f152978cb3718c184a040d66ffca3a30b94ecce9c3f"
+  },
+  {
+    "path": ".github/workflows/storybook.yml",
+    "blob": "54758abff8770ba497402841c400a3f9ee3eb370",
+    "sha256": "3834e10f8c68f17904af5a8c3a9864a1457f7c3290e2f8840464f0067f3f59f8"
+  }
+]

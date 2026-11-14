@@ -1,0 +1,14 @@
+{
+  "name": "spn149-grade-a-controls-8177",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/session-revocation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 169,
+  "peakKiB": 0
+}

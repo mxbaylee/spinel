@@ -1,0 +1,834 @@
+name: 💎 CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    # Draft commits already run every check; becoming ready changes no code.
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 9 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  # Edits and label events cannot cancel OR replace a pending code run.
+  # Every main push keeps its own immutable before/after range; no PR pass reuse.
+  group: ci-${{ github.event_name == 'pull_request' && contains(fromJSON('["opened","synchronize"]'), github.event.action) && format('code-{0}', github.event.pull_request.number) || format('event-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action == 'synchronize' }}
+
+jobs:
+  changes:
+    name: Classify changes (${{ github.run_id }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      restore_timing: ${{ steps.changes.outputs.restore_timing }}
+      mode: ${{ steps.changes.outputs.mode }}
+      plan: ${{ steps.changes.outputs.plan }}
+      plan_sha256: ${{ steps.changes.outputs.plan_sha256 }}
+      backlog: ${{ steps.changes.outputs.backlog }}
+      pull_request: ${{ steps.changes.outputs.pull_request }}
+      lint: ${{ steps.changes.outputs.lint }}
+      typecheck: ${{ steps.changes.outputs.typecheck }}
+      unit_tests: ${{ steps.changes.outputs.unit_tests }}
+      lib_test_run: ${{ steps.changes.outputs.lib_test_run }}
+      playwright_run: ${{ steps.changes.outputs.playwright_run }}
+      container_smoke: ${{ steps.changes.outputs.container_smoke }}
+      sync_transition: ${{ steps.changes.outputs.sync_transition }}
+      doc_responsiveness: ${{ steps.changes.outputs.doc_responsiveness }}
+      doc_callback_lifetimes: ${{ steps.changes.outputs.doc_callback_lifetimes }}
+      responsiveness_baseline: ${{ steps.changes.outputs.responsiveness_baseline }}
+      callback_baseline: ${{ steps.changes.outputs.callback_baseline }}
+      phone_compatibility: ${{ steps.changes.outputs.phone_compatibility }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - id: changes
+        run: node scripts/ci/changes.ts
+      - name: Retain immutable coverage plan
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-plan
+          path: ci-plan.json
+          retention-days: 30
+          if-no-files-found: error
+
+  backlog:
+    name: Backlog
+    needs: changes
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Tickets and index
+        run: npm run backlog:check
+
+  pull-request:
+    name: Pull request
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      # Title and immutable event base go through env, never into script text.
+      # origin/main may advance after this run's merge commit was created.
+      - name: Title, ticket, IDs and size
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/backlog/cli.ts pr --base "$BASE_SHA" --title "$PR_TITLE"
+
+  lint:
+    name: Lint
+    needs: changes
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+
+  typecheck:
+    name: Typecheck
+    needs: changes
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      evidence: ${{ steps.typecheck.outcome }}
+    steps:
+      - name: Require complete applicability
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          SELECTED: ${{ needs.changes.outputs.typecheck }}
+        run: |
+          case "$CLASSIFICATION:$SELECTED" in
+            success:true|success:false) ;;
+            *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;
+          esac
+      - if: needs.changes.outputs.typecheck == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - if: needs.changes.outputs.typecheck == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        if: needs.changes.outputs.typecheck == 'true'
+        run: npm ci
+      - name: Typecheck
+        id: typecheck
+        if: needs.changes.outputs.typecheck == 'true'
+        run: npm run typecheck
+      - name: Documentation-only change
+        if: needs.changes.outputs.typecheck == 'false'
+        run: echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'
+
+  # Separate runners retain maxWorkers: 1 and every case/assertion. Real restore
+  # lifecycle cases include bounded physical shutdown/closure waits: the
+  # 117-case supervisor file alone measured 343s and maintenance/backup another
+  # ~260s, so one serial job could not finish within its hosted cap (SPN-112).
+  unit-test-run:
+    name: Unit tests (${{ matrix.suite }})
+    needs: changes
+    if: needs.changes.outputs.unit_tests == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [supervisor, recovery, remaining]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Install fixture init
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tini
+      # lib/ runs in its own partitions below.
+      - name: Unit tests
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          case "$SUITE" in
+            supervisor)
+              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts
+              ;;
+            recovery)
+              node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \
+                --exclude 'src/server/maintenance/supervisor.test.ts'
+              ;;
+            remaining)
+              # Exact exclusions keep future test files in this partition; it
+              # also runs the node:test script suites.
+              node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \
+                --exclude 'src/server/maintenance/**' \
+                --exclude 'src/server/backup/**'
+              ;;
+            *)
+              echo "Unknown unit partition: $SUITE" >&2
+              exit 1
+              ;;
+          esac
+      - name: PDF collaboration overlap evidence
+        if: always() && matrix.suite == 'remaining'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: pdf-collaboration-overlap
+          path: output/pdf/spn-075-overlap/
+          retention-days: 7
+          if-no-files-found: warn
+
+  # Keep the policy-required check available for branch protection, including
+  # explicit non-applicable runs. Every required partition must succeed.
+  unit-tests:
+    name: Unit tests
+    needs: [changes, unit-test-run]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      evidence: ${{ needs.unit-test-run.result }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify selected evidence and publish result
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
+          COVERAGE_RESULTS: '{"unit-tests":"${{ needs.unit-test-run.result }}"}'
+        run: node scripts/ci/coverage-result.ts unit
+      - name: Retain coverage result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-results-unit
+          path: ci-results-unit.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  # Separate runners retain maxWorkers: 1 and every seed/assertion. The mixed
+  # native-history/intent matrix has its own runner so it does not consume the
+  # ordinary cell suite's time budget (SPN-056 integrated verification).
+  lib-test-run:
+    name: Lib tests (${{ matrix.suite }})
+    needs: changes
+    if: needs.changes.outputs.lib_test_run == 'true'
+    runs-on: ubuntu-latest
+    # Ordinary cells measured 255s; the stronger mixed matrix projects over
+    # eight minutes locally. Keep the same hosted cap for every full partition.
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [dense-cells, cells, mixed-fuzz, remaining]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Lib tests
+        env:
+          SUITE: ${{ matrix.suite }}
+        run: |
+          case "$SUITE" in
+            dense-cells)
+              npx vitest run lib/sync-transform/tests/cells-dense.test.ts
+              ;;
+            cells)
+              npx vitest run lib/sync-transform/tests/cells.test.ts
+              ;;
+            mixed-fuzz)
+              npx vitest run lib/sync-transform/tests/fuzz.test.ts
+              ;;
+            remaining)
+              # Exact exclusions keep future lib test files in this partition.
+              npx vitest run lib/ \
+                --exclude 'lib/sync-transform/tests/cells-dense.test.ts' \
+                --exclude 'lib/sync-transform/tests/cells.test.ts' \
+                --exclude 'lib/sync-transform/tests/fuzz.test.ts'
+              ;;
+            *)
+              echo "Unknown library partition: $SUITE" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Synthetic Sheet PDF evidence
+        if: always() && matrix.suite == 'remaining'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sheet-pdf-evidence
+          path: |
+            output/pdf/spn-101-candidate/*.pdf
+            output/pdf/spn-101-candidate/*.png
+            output/pdf/spn-101-candidate/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Synthetic Doc PDF evidence
+        if: always() && matrix.suite == 'remaining'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-pdf-evidence
+          path: |
+            output/pdf/spn-102/*.pdf
+            output/pdf/spn-102/*.png
+            output/pdf/spn-102/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
+  # Keep the policy-required check available for branch protection, including
+  # explicit non-applicable runs. Every required partition must succeed.
+  lib-tests:
+    name: Lib tests
+    needs: [changes, lib-test-run]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify selected evidence and publish result
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
+          COVERAGE_RESULTS: '{"lib-test-run":"${{ needs.lib-test-run.result }}"}'
+        run: node scripts/ci/coverage-result.ts lib
+      - name: Retain coverage result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-results-lib
+          path: ci-results-lib.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  container-smoke:
+    name: Container smoke
+    needs: changes
+    if: needs.changes.outputs.container_smoke == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install PDF verification tools
+        run: npm ci
+      - name: Build and exercise the final image
+        run: node scripts/ci/container-smoke.ts
+
+  restore-timing:
+    name: Sized restore acceptance
+    needs: changes
+    if: needs.changes.outputs.restore_timing == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install acceptance driver and Chromium
+        run: |
+          npm ci
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Build the exact production image
+        run: |
+          docker build --pull --label "org.opencontainers.image.revision=$(git rev-parse HEAD)" \
+            --iidfile "$RUNNER_TEMP/restore-image-id" .
+      - name: Measure and verify the real 256 MiB restore
+        env:
+          SPINEL_RESTORE_BROWSER_PROFILE: images-256m
+          SPINEL_RESTORE_BROWSER_EVIDENCE: test-results/spn124-sized-restore
+        run: |
+          export SPINEL_RESTORE_BROWSER_IMAGE="$(cat "$RUNNER_TEMP/restore-image-id")"
+          node e2e/restore-browser.acceptance.ts
+      - name: Preserve safe timing and integrity evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: sized-restore-acceptance
+          path: |
+            test-results/spn124-sized-restore/evidence.json
+            test-results/spn124-sized-restore/failure.png
+          if-no-files-found: warn
+          retention-days: 14
+
+  playwright-run:
+    needs: changes
+    if: needs.changes.outputs.playwright_run == 'true'
+    name: Playwright smoke (${{ matrix.project }}${{ matrix.shard && format(' {0}', matrix.shard) || '' }})
+    runs-on: ubuntu-latest
+    # Each runner keeps one browser worker and only its own app server, as
+    # `npm run e2e` does; the builds and their shards run side by side instead
+    # of one after another.
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { project: development, shard: 1/2 }
+          - { project: development, shard: 2/2 }
+          - { project: production, shard: 1/2 }
+          - { project: production, shard: 2/2 }
+          - { project: mobile-https, shard: '' }
+          - { project: sync-development, shard: '' }
+          - { project: sync-production, shard: '' }
+          - { project: sync-soak-sheet, shard: '' }
+          - { project: sync-soak-doc, shard: '' }
+          - { project: offline-upgrade, shard: '' }
+          - { project: supervised-restore, shard: '' }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Install maintenance fixture init
+        if: matrix.project == 'production' || matrix.project == 'supervised-restore'
+        run: sudo apt-get install -y --no-install-recommends tini
+      - name: Immutable offline source for adoption evidence
+        if: matrix.project == 'offline-upgrade'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: c2e8cac0fcdec36d992d6ebf3f377c9b579a8002
+          path: legacy-offline-source
+          persist-credentials: false
+      - name: Install immutable offline build dependencies
+        if: matrix.project == 'offline-upgrade'
+        working-directory: legacy-offline-source
+        # Preserve the historical lock and postinstall patches for browser
+        # emission. Legacy data is initially served by the genuine 1.1.0 backend.
+        run: npm ci
+      - name: Immutable last 1.1.0 offline host and backend
+        if: matrix.project == 'offline-upgrade'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 3a0e2238fb5be3907d04120eabda2aafd6565d63
+          path: previous-offline-source
+          persist-credentials: false
+      - name: Install previous offline host dependencies
+        if: matrix.project == 'offline-upgrade'
+        working-directory: previous-offline-source
+        run: npm ci
+      - name: Build
+        if: matrix.project != 'offline-upgrade'
+        env:
+          VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+        run: npm run build
+      - name: Playwright smoke
+        env:
+          # Server-only provider credential; never passed to the Vite build.
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY || vars.UNSPLASH_ACCESS_KEY }}
+          SPINEL_E2E_PROJECT: ${{ matrix.project }}
+          SPINEL_CI_FULL_COMPATIBILITY: ${{ needs.changes.outputs.phone_compatibility }}
+          SHARD: ${{ matrix.shard }}
+          SPINEL_CAPTURE_SCREENSHOTS: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-review') && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+          SPINEL_PREVIOUS_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/previous-offline-source', github.workspace) || '' }}
+          SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
+        run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
+      - name: Artifact name
+        if: always()
+        id: artifact
+        env:
+          PROJECT: ${{ matrix.project }}
+          SHARD: ${{ matrix.shard }}
+        run: echo "name=theme-screenshots-$PROJECT${SHARD:+-${SHARD%/*}}" >> "$GITHUB_OUTPUT"
+      - name: Theme screenshots
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: |
+            test-results/theme-screenshots/*.png
+            test-results/**/test-failed-*.png
+            test-results/**/*-restore-preview.png
+            test-results/**/*-export.pdf
+            test-results/**/*-export-opened.png
+            test-results/**/*-permission-notices.json
+            test-results/**/*-sync-presence.png
+            test-results/**/spn-059-sheet-menu-*.png
+            test-results/**/spn-053-offline-*.png
+            test-results/**/spn-055-*.png
+            test-results/**/spn-055-*.json
+            test-results/**/sync-diagnostics.json
+            test-results/**/phone-doc-caret-events*.json
+            test-results/**/phone-doc-selection-evidence*.json
+            test-results/**/maintenance-views/*.png
+            test-results/**/spn-059-*-soak.json
+            test-results/**/error-context.md
+            test-results/**/trace.zip
+            playwright-report/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
+  # Pair each preset's immutable pre-fix baseline and candidate on one hosted
+  # runner. The constrained local host aborted two-editor startup at its 2 GiB
+  # watchdog limit; that aborted attempt is not acceptance evidence.
+  doc-responsiveness:
+    name: Doc responsiveness (${{ matrix.preset }})
+    needs: changes
+    if: needs.changes.outputs.doc_responsiveness == 'true'
+    runs-on: ubuntu-latest
+    # Four baseline observations allow 600 s each after the first throttled
+    # baseline took 255–266 s just to type. Candidate cases retain 300 s and all
+    # latency gates. This paired job also installs/builds twice and runs boundaries.
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [desktop, mobile]
+    env:
+      PRESET: ${{ matrix.preset }}
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '0'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-responsiveness
+    steps:
+      - name: Require comparison applicability
+        env:
+          PAIRED: ${{ needs.changes.outputs.responsiveness_baseline }}
+        run: |
+          case "$PAIRED" in true|false) ;; *) echo 'Missing comparison decision.' >&2; exit 1 ;; esac
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install candidate
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Immutable uncapped source with matched compatibility and native observations
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 96ae9e0a07d113c5de771f6e4e0f4ae83fae812d
+          path: baseline-doc-source
+          persist-credentials: false
+      - name: Use identical browser workload on both sources
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
+        run: |
+          cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
+          cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
+          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-doc-source/src/ui/
+          cp playwright.config.ts baseline-doc-source/playwright.config.ts
+          cp package-lock.json baseline-doc-source/package-lock.json
+      - name: Install and build baseline
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
+        working-directory: baseline-doc-source
+        run: |
+          npm ci
+          npm run build
+      - name: Observe baseline first attempts
+        if: needs.changes.outputs.responsiveness_baseline == 'true'
+        working-directory: baseline-doc-source
+        env:
+          SPN108_BASELINE: '1'
+        run: npx playwright test --project=doc-responsiveness --grep "$PRESET sustained native typing"
+      - name: Build candidate
+        run: npm run build
+      - name: Verify candidate responsiveness and boundaries
+        env:
+          SPN108_BASELINE: '0'
+        run: npx playwright test --project=doc-responsiveness --grep "$PRESET "
+      - name: Verify candidate evidence and selected paired comparison
+        env:
+          PAIRED: ${{ needs.changes.outputs.responsiveness_baseline }}
+        run: |
+          baseline=-
+          if [ "$PAIRED" = true ]; then baseline=baseline-doc-source/test-results/doc-responsiveness; fi
+          node scripts/ci/doc-responsiveness.ts "$PRESET" "$baseline" \
+            test-results/doc-responsiveness "test-results/spn108-comparison-$PRESET.json"
+      - name: Retain every baseline and candidate attempt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-responsiveness-${{ matrix.preset }}
+          path: |
+            baseline-doc-source/test-results/**/spn108-*.json
+            baseline-doc-source/test-results/**/spn108-profile.cpuprofile
+            baseline-doc-source/test-results/**/test-failed-*.png
+            baseline-doc-source/test-results/**/error-context.md
+            baseline-doc-source/playwright-report/*.json
+            test-results/**/spn108-*.json
+            test-results/**/spn108-profile.cpuprofile
+            test-results/**/test-failed-*.png
+            test-results/**/error-context.md
+            test-results/**/trace.zip
+            playwright-report/*.json
+          retention-days: 7
+          if-no-files-found: warn
+
+  doc-callback-lifetimes:
+    name: Doc callback lifetimes (${{ matrix.preset }})
+    needs: changes
+    if: needs.changes.outputs.doc_callback_lifetimes == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [desktop, mobile]
+    env:
+      PRESET: ${{ matrix.preset }}
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '1'
+      VITE_DOC_RESPONSIVENESS_EVIDENCE: '1'
+      SPINEL_E2E_PROJECT: doc-callback-lifetimes
+    steps:
+      - name: Require comparison applicability
+        env:
+          PAIRED: ${{ needs.changes.outputs.callback_baseline }}
+        run: |
+          case "$PAIRED" in true|false) ;; *) echo 'Missing comparison decision.' >&2; exit 1 ;; esac
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install candidate
+        run: npm ci
+      - name: Prepare pinned callback trace converter
+        run: |
+          node scripts/ci/doc-trace-processor.ts "$RUNNER_TEMP/spinel-trace-processor"
+          echo "SPINEL_TRACE_PROCESSOR=$RUNNER_TEMP/spinel-trace-processor" >> "$GITHUB_ENV"
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Immutable merged SPN-108 baseline
+        if: needs.changes.outputs.callback_baseline == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: b75e3797a11ac2f53e3833b5615f68b6c0091727
+          path: baseline-callback-source
+          persist-credentials: false
+      - name: Match callback workload and read-only observations
+        if: needs.changes.outputs.callback_baseline == 'true'
+        run: |
+          cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-proto.ts e2e/doc-responsiveness-callback-converter.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
+          cp scripts/ci/doc-callback-lifetimes.ts scripts/ci/doc-trace-processor.ts baseline-callback-source/scripts/ci/
+          cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
+          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-callback-source/src/ui/
+          cp playwright.config.ts baseline-callback-source/playwright.config.ts
+          cp package-lock.json baseline-callback-source/package-lock.json
+      - name: Install and build baseline with source maps
+        if: needs.changes.outputs.callback_baseline == 'true'
+        working-directory: baseline-callback-source
+        run: |
+          npm ci
+          npm run build -- --sourcemap hidden
+      - name: Retain baseline first attempt
+        if: needs.changes.outputs.callback_baseline == 'true'
+        id: callback_baseline
+        continue-on-error: true
+        working-directory: baseline-callback-source
+        env:
+          SPN113_BASELINE: '1'
+        run: npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+      - name: Build candidate with identical source-map settings
+        run: npm run build -- --sourcemap hidden
+      - name: Verify candidate first attempt
+        id: callback_candidate
+        continue-on-error: true
+        env:
+          SPN113_BASELINE: '0'
+        run: npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+      - name: Verify complete paired callback evidence
+        if: always()
+        env:
+          PAIRED: ${{ needs.changes.outputs.callback_baseline }}
+          BASELINE_OUTCOME: ${{ steps.callback_baseline.outcome }}
+          CANDIDATE_OUTCOME: ${{ steps.callback_candidate.outcome }}
+        run: |
+          comparison_status=0
+          baseline=-
+          expected_baseline=skipped
+          if [ "$PAIRED" = true ]; then baseline=baseline-callback-source/test-results/doc-callback-lifetimes; expected_baseline=success; fi
+          node scripts/ci/doc-callback-comparison.ts "$PRESET" \
+            "$baseline" \
+            test-results/doc-callback-lifetimes \
+            "test-results/spn113-comparison-$PRESET.json" || comparison_status=$?
+          if [ "$BASELINE_OUTCOME" != "$expected_baseline" ] || [ "$CANDIDATE_OUTCOME" != success ]; then
+            echo "::error::Callback browser run failed or was skipped: baseline=$BASELINE_OUTCOME candidate=$CANDIDATE_OUTCOME"
+            exit 1
+          fi
+          exit "$comparison_status"
+      - name: Retain raw traces, source maps and every first attempt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-callback-lifetimes-${{ matrix.preset }}
+          path: |
+            baseline-callback-source/test-results/doc-callback-lifetimes/
+            baseline-callback-source/playwright-report/*.json
+            test-results/doc-callback-lifetimes/
+            test-results/spn113-comparison-*.json
+            playwright-report/*.json
+          retention-days: 7
+          if-no-files-found: error
+
+  sync-transition:
+    name: Retained sync transition
+    needs: changes
+    if: needs.changes.outputs.sync_transition == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install current application
+        run: npm ci
+      # The exporter uses public APIs from this immutable pre-cutover checkout.
+      # It is a test/transition tool, never a final application dependency.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 81cc0774bda11f9bf65942ef84cf7d847bd08029
+          path: legacy-sync-source
+          persist-credentials: false
+      - name: Install pinned legacy export environment
+        working-directory: legacy-sync-source
+        run: npm ci
+      - name: Retain, interrupt, resume and verify real legacy data
+        run: node scripts/sync-transition/integration.ts --legacy-checkout "$GITHUB_WORKSPACE/legacy-sync-source"
+
+  # The ruleset requires a check named "Playwright smoke", so this job carries
+  # the name. Only classified docs-only changes may omit browsers and containers.
+  playwright:
+    name: Playwright smoke
+    needs:
+      [
+        changes,
+        backlog,
+        pull-request,
+        lint,
+        typecheck,
+        unit-tests,
+        lib-test-run,
+        lib-tests,
+        playwright-run,
+        container-smoke,
+        sync-transition,
+        doc-responsiveness,
+        doc-callback-lifetimes,
+        restore-timing,
+      ]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Verify selected evidence and publish result
+        env:
+          CLASSIFICATION: ${{ needs.changes.result }}
+          COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
+          COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
+          COVERAGE_GATE_RESULTS: '{"typecheck":"${{ needs.typecheck.result }}","unit-tests":"${{ needs.unit-tests.result }}","lib-tests":"${{ needs.lib-tests.result }}"}'
+          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","restore-timing":"${{ needs.restore-timing.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
+        run: node scripts/ci/coverage-result.ts browser
+      - name: Retain coverage result
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-results-browser
+          path: ci-results-browser.json
+          retention-days: 30
+          if-no-files-found: warn

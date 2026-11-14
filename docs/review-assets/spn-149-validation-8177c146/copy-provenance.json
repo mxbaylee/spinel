@@ -1,0 +1,146 @@
+[
+  {
+    "path": "source/source-plan-identity.json",
+    "original": "/tmp/spn149-hosted-8177c146/source-plan-identity.json",
+    "bytes": 963,
+    "sha256": "bfd63b238696f47862610f529abc4ecc60ea4cc91c11a7086a33ac8e04d0eaf5"
+  },
+  {
+    "path": "source/ci-plan.json",
+    "original": "/tmp/spn149-hosted-8177c146/ci-plan.json",
+    "bytes": 39780,
+    "sha256": "9255422815a310e07d93e48c913aa8f258f5f3c3ca3df894c95e51c055c7641b"
+  },
+  {
+    "path": "source/ci-artifacts.json",
+    "original": "/tmp/spn149-hosted-8177c146/ci-artifacts.json",
+    "bytes": 724,
+    "sha256": "2221a3b97175e43ce6bf856da151cf113f75aaf05d11fc551615cfb8350b35c6"
+  },
+  {
+    "path": "source/tested-merge.json",
+    "original": "/tmp/spn149-hosted-8177c146/tested-merge.json",
+    "bytes": 2648,
+    "sha256": "c06767761f4818653987f8935bd2b35313d35a0e07a553119315ca579ee795d2"
+  },
+  {
+    "path": "reviews/spn149-grade-a-8177c146.md",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-grade-a-8177c146.md",
+    "bytes": 8464,
+    "sha256": "f306446416b0e5928d65e18377f7c2c686b3c0093905f6c9d877145bc8473429"
+  },
+  {
+    "path": "reviews/spn149-grade-b-8177c146.md",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-grade-b-8177c146.md",
+    "bytes": 8258,
+    "sha256": "d9f137afe1bdcec4c3f309e692db03198b802a4742e449729c6cab68e9013e00"
+  },
+  {
+    "path": "reviews/spn149-grade-a-controls-8177.json",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-grade-a-controls-8177.json",
+    "bytes": 245,
+    "sha256": "b4cb0ad247b8cf8a29af29c4e7c9ccb8cbb832b9f5ce6706676f4a3da59545cd"
+  },
+  {
+    "path": "reviews/spn149-grade-b-controls-8177c146.json",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-grade-b-controls-8177c146.json",
+    "bytes": 249,
+    "sha256": "ef9dc7e6e0b4e2f6292f017834933d0f0c18eab9df54930fed96288e90dd3152"
+  },
+  {
+    "path": "reviews/spn149-grade-b-controls-8177c146.log",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-grade-b-controls-8177c146.log",
+    "bytes": 2092,
+    "sha256": "b31e04206fbc23a6e1283568d9a8ae904a800cd411ea7735b7cdde2c43ddf14d"
+  },
+  {
+    "path": "reviews/spn149-review-a-8177c146.md",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-review-a-8177c146.md",
+    "bytes": 3581,
+    "sha256": "165ecdeedc01f29adedd949aecfe2a1d6096f2adbb5f8b0f5ce925eccd957131"
+  },
+  {
+    "path": "reviews/spn149-review-b-8177c146.md",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-review-b-8177c146.md",
+    "bytes": 3950,
+    "sha256": "959781e4aa92b1463211f47989a8f20ae10740482503977231be50a436b6f8d4"
+  },
+  {
+    "path": "reviews/spn149-review-a-controls-8177c146.json",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-review-a-controls-8177c146.json",
+    "bytes": 250,
+    "sha256": "361b709f65f38091f3e414f6f5bc0ec063f694000bdacb73a35e707b99a7cf5c"
+  },
+  {
+    "path": "reviews/spn149-final-pr.json",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-final-pr.json",
+    "bytes": 350,
+    "sha256": "c924aca6a8274762fda978f81739f3b1121fa19acfc9a0af79fb36d55f959131"
+  },
+  {
+    "path": "reviews/spn149-final-pr.log",
+    "original": "/tmp/spinel-dependabot-2026-11-11/spn149-final-pr.log",
+    "bytes": 299,
+    "sha256": "bc1c07ffa3a973d259286d9d80d80ac55a593f6cd5dad181a2c726f2bc357a67"
+  },
+  {
+    "path": "reviews/blinded-manifest.json",
+    "original": "/tmp/spn149-current/blinded-review/manifest.json",
+    "bytes": 12141,
+    "sha256": "458ec958113030d8cc74f7f745dae9cc60eb7378602444313034cf6fc39e41ed"
+  },
+  {
+    "path": "reviews/blinded-complete.diff",
+    "original": "/tmp/spn149-current/blinded-review/complete.diff",
+    "bytes": 193117,
+    "sha256": "cc7f13b70a393d55f1e1b864fdd49c01f561e4e1b2a2b1e361a839ad7901bb0f"
+  },
+  {
+    "path": "reviews/masked/docs/implementation/SPN-149.md",
+    "original": "/tmp/spn149-current/blinded-review/files/docs/implementation/SPN-149.md",
+    "bytes": 20777,
+    "sha256": "d835c0915fd92f42b708b32eac63d391bdcb1842d4549e80daca57ae98a1c59e"
+  },
+  {
+    "path": "reviews/masked/docs/implementation/evidence/SPN-149/review-iteration-1.json",
+    "original": "/tmp/spn149-current/blinded-review/files/docs/implementation/evidence/SPN-149/review-iteration-1.json",
+    "bytes": 26108,
+    "sha256": "fad90419c72a16f55cf6dae51c294ec5348ce6e16e9e1d87037cd2f27bd0fec4"
+  },
+  {
+    "path": "source/workflows/ci.yml",
+    "original": "/Users/mxbaylee/projects/spinel-spn-149-production/.github/workflows/ci.yml",
+    "bytes": 35779,
+    "sha256": "fd9583d5d9fee71d00b40f152978cb3718c184a040d66ffca3a30b94ecce9c3f"
+  },
+  {
+    "path": "source/workflows/storybook.yml",
+    "original": "/Users/mxbaylee/projects/spinel-spn-149-production/.github/workflows/storybook.yml",
+    "bytes": 14506,
+    "sha256": "3834e10f8c68f17904af5a8c3a9864a1457f7c3290e2f8840464f0067f3f59f8"
+  },
+  {
+    "path": "source/workflows/desktop-offline.yml",
+    "original": "/Users/mxbaylee/projects/spinel-spn-149-production/.github/workflows/desktop-offline.yml",
+    "bytes": 3242,
+    "sha256": "626af9b4114ecd6b24ef0273bf5a50017c17acab44c35a29294c85d725ef5bfc"
+  },
+  {
+    "path": "source/workflows/spaces-acceptance.yml",
+    "original": "/Users/mxbaylee/projects/spinel-spn-149-production/.github/workflows/spaces-acceptance.yml",
+    "bytes": 3202,
+    "sha256": "467263e973d23b38ccf3bf1a422d9844c0f475012f6178ee1e36d50822f2be4f"
+  },
+  {
+    "path": "source/workflows/browserstack.yml",
+    "original": "/Users/mxbaylee/projects/spinel-spn-149-production/.github/workflows/browserstack.yml",
+    "bytes": 2863,
+    "sha256": "89c07cb2018f447a70fb2411cd3494f64df68f979c000d90b7cb24e2bdfae756"
+  },
+  {
+    "path": "source/workflows/patch-ab.yml",
+    "original": "/Users/mxbaylee/projects/spinel-spn-149-production/.github/workflows/patch-ab.yml",
+    "bytes": 11171,
+    "sha256": "2e38ae52730876b655cf727c6ceb1490526a801269ca0c8ee62b3c4afff3ab0b"
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "source": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62",
+  "tested": "4b58a794a35c69f0797fe6119b2c5892cc4e107b",
+  "run": 43556394015,
+  "attempt": 1,
+  "job": 132330306724,
+  "passed": 19,
+  "rawLogSHA256": "4338d3ef6018dce8b5ef8a43c1b0da23e3ac60cdf47766b7c97819166fa9bdee",
+  "exactResultLines": [
+    "2026-11-14T04:24:48.2303740Z \u2714 protocol closure survives close-first ordering and retains frame counts (3.961198ms)",
+    "2026-11-14T04:24:48.2304903Z \u2714 protocol closure survives navigation-first ordering and retains frame counts (0.376483ms)",
+    "2026-11-14T04:24:48.2306058Z \u2714 a socket without a successful handshake (missing) cannot prove revocation (1.16948ms)",
+    "2026-11-14T04:24:48.2307168Z \u2714 a socket without a successful handshake (403) cannot prove revocation (0.443088ms)",
+    "2026-11-14T04:24:48.2308631Z \u2714 unrelated socket closes and frames cannot satisfy the established target (0.718341ms)",
+    "2026-11-14T04:24:48.2309911Z \u2714 401, navigation and a Playwright close cannot accept a live protocol socket (0.924165ms)",
+    "2026-11-14T04:24:48.2311016Z \u2714 a protocol close cannot accept authorization that is still active (0.691206ms)",
+    "2026-11-14T04:24:48.2312257Z \u2714 every established target must close before revocation can pass (0.838465ms)",
+    "2026-11-14T04:24:48.2313353Z \u2714 post-revocation handshake status 101 preserves the establishment boundary (0.462283ms)",
+    "2026-11-14T04:24:48.2318448Z \u2714 post-revocation handshake status 401 preserves the establishment boundary (0.35889ms)",
+    "2026-11-14T04:24:48.2319826Z \u2714 losing the protocol observer invalidates completed closure evidence (0.369033ms)",
+    "2026-11-14T04:24:48.2321066Z \u2714 overflow retains bounded content-free evidence and cannot turn into acceptance (0.516652ms)",
+    "2026-11-14T04:24:48.2322237Z \u2714 too many socket identities fail closed without retaining an unbounded map (0.387066ms)",
+    "2026-11-14T04:24:48.2323503Z \u2714 failed Network.enable removes listeners and detach failure preserves its original error (0.706185ms)",
+    "2026-11-14T04:24:48.2324806Z \u2714 failed Network.enable preserves its original error when detach reaches the cleanup bound (1.321595ms)",
+    "2026-11-14T04:24:48.2326081Z \u2714 stop detaches only owned listeners and prevents late events from changing evidence (0.899433ms)",
+    "2026-11-14T04:24:48.2327349Z \u2714 cleanup runs every remaining owned phase after synchronous and asynchronous rejection (0.289601ms)",
+    "2026-11-14T04:24:48.2328609Z \u2714 a stalled cleanup phase reaches its original bound and still releases later resources (0.448825ms)",
+    "2026-11-14T04:24:48.2330017Z \u2714 revocation source and shared inputs keep unit/browser owners and fail-closed aggregates (12.966632ms)"
+  ]
+}

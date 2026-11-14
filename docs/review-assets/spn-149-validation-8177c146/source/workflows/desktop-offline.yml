@@ -1,0 +1,91 @@
+name: 💻 Desktop offline
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+    paths:
+      - .github/workflows/desktop-offline.yml
+      - scripts/ci/desktop-*.ts
+      - e2e/doc-image-fixture.ts
+      - e2e/offline-fixture.ts
+      - web/**
+      - src/**
+      - server/**
+      - lib/**
+      - vite.config.ts
+      - .nvmrc
+      - package.json
+      - package-lock.json
+      - docs/todo/SPN-052.md
+      - docs/implementation/SPN-052.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-offline-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  desktop:
+    name: Native desktop offline (${{ matrix.browser }}, ${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chrome
+            runner: macos-26
+          - browser: firefox
+            runner: macos-26
+          - browser: safari
+            runner: macos-15-intel
+    env:
+      SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      DESKTOP_RUNNER: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Use current vendor stable browsers
+        env:
+          DESKTOP_BROWSER: ${{ matrix.browser }}
+        run: node scripts/ci/desktop-browser-versions.ts "$DESKTOP_BROWSER"
+      - name: Prove same-profile ordinary Safari restart
+        if: matrix.browser == 'safari'
+        run: node scripts/ci/desktop-profile-probe.ts
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Build the production offline runtime
+        env:
+          VITE_DOC_SELECTION_EVIDENCE: '1'
+        run: npm run build
+      - name: Trust the disposable loopback fixture certificate
+        run: |
+          test "$RUNNER_ENVIRONMENT" = github-hosted
+          mkdir -p test-results/desktop-tls
+          openssl req -x509 -newkey rsa:2048 -nodes \
+            -keyout test-results/desktop-tls/key.pem \
+            -out test-results/desktop-tls/cert.pem -days 1 \
+            -subj /CN=localhost -addext 'subjectAltName=DNS:localhost,IP:127.0.0.1'
+          sudo security add-trusted-cert -d -r trustRoot \
+            -k /Library/Keychains/System.keychain test-results/desktop-tls/cert.pem
+      - name: Verify retained documents, edits, images and reconnect
+        env:
+          DESKTOP_BROWSER: ${{ matrix.browser }}
+        run: node --max-old-space-size=1024 scripts/ci/desktop-offline.ts "$DESKTOP_BROWSER"
+      - name: Retain native profile and application evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: desktop-offline-${{ matrix.browser }}-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/desktop-offline/
+          if-no-files-found: error
+          retention-days: 14

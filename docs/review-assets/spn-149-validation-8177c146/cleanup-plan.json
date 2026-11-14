@@ -1,0 +1,55 @@
+{
+  "observedAt": "2026-11-14T04:25:31.832Z",
+  "status": "prepared only; no deletion or archive tag publication",
+  "refs": [
+    {
+      "ref": "refs/heads/codex/spn-149-production-integration",
+      "head": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/spn-149-revocation-evidence",
+      "head": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+    },
+    {
+      "ref": "refs/remotes/origin/evidence/spn-149-acceptance-20261113",
+      "head": "9392210d92f3ae706443ca49803c4ea7122322af"
+    }
+  ],
+  "worktree": {
+    "path": "/Users/mxbaylee/projects/spinel-spn-149-production",
+    "branch": "codex/spn-149-production-integration",
+    "head": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62",
+    "status": ""
+  },
+  "activePRs": [
+    {
+      "headRefName": "codex/spn-149-revocation-evidence",
+      "headRefOid": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62",
+      "isDraft": true,
+      "number": 282,
+      "title": "🔏 SPN-149 Preserve session-revocation closure evidence across navigation"
+    }
+  ],
+  "historicalEvidence": {
+    "ref": "refs/heads/evidence/spn-149-acceptance-20261113",
+    "head": "9392210d92f3ae706443ca49803c4ea7122322af",
+    "uniqueCommits": [
+      "9392210d92f3ae706443ca49803c4ea7122322af",
+      "16033e992f8a5c529d0de5f470a396cb9417ec25",
+      "8145adb4884cdec10dfd4f7c5695ea9cc2599f5a",
+      "df241515152e109b751a95852abdcf1764a01d3d",
+      "bbedf0d7027ac1ed343a58a0c71fa9c5b4c78018",
+      "0338f8c41ac45d8d34765cd9aa46c81a7fc22454"
+    ],
+    "preservation": "Before deleting this branch, pin exact9392210d under new durable tag archive/spn-149-prior-acceptance-20261113; verify tag absent then exact remote target, or retain branch and report incomplete cleanup."
+  },
+  "steps": [
+    "After actual guarded squash and tree verification, verify current heads and activePR ownership afresh.",
+    "Verify candidate and complete current evidence remain reachable from validation/completion archive tags.",
+    "Pin prior evidence9392210d durably before deleting its unique history.",
+    "Detach clean integration worktree at exact8177c146 preserving files; guarded delete local codex/spn-149-production-integration.",
+    "Recheck remote implementation; automatic absence is valid. If present and no activePR owns it, guarded delete only at8177c146.",
+    "Delete remote evidence only at9392210d after tag verification and activePR recheck; prune corresponding remote-tracking refs with old-head guards.",
+    "Do not touch unrelated refs or remove worktree files."
+  ]
+}
