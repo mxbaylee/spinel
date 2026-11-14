@@ -1,0 +1,406 @@
+{
+  "source": "f0cb3d401b82762428f668557f9b44f7bdf341d3",
+  "node": "v26.13.0",
+  "chromium": "156.0.8078.4",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "withheld": "restore",
+  "result": {
+    "probe": {
+      "withheld": "restore",
+      "clicks": [
+        {
+          "phase": "narrow",
+          "observation": {
+            "raw": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "failures": [],
+            "resized": 2,
+            "controlsCreated": 2,
+            "geometry": {
+              "phase": "selection",
+              "hostWidth": 1280,
+              "canvasWidth": 1280,
+              "engineWidth": 1280,
+              "engineHeight": 578,
+              "resized": 2,
+              "controlsCreated": 2
+            },
+            "transitions": [
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 0
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 1
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              },
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 2
+              }
+            ],
+            "pending": 1,
+            "pendingIds": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "drawings": 1,
+            "rendered": 1,
+            "focused": 1,
+            "controls": 1,
+            "imageBounds": {
+              "left": 226.66666666666669,
+              "right": 386.6666666666667,
+              "top": 369.8541666666667,
+              "bottom": 449.8541666666667
+            },
+            "textBounds": {
+              "left": 400.5177714029948,
+              "right": 408.67095438639325,
+              "top": 366.8541666666667,
+              "bottom": 449.8541666666667
+            }
+          },
+          "host": {
+            "x": 0,
+            "y": 204.1875,
+            "width": 1280,
+            "height": 695.8125,
+            "top": 204.1875,
+            "right": 1280,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "phase": "restore",
+          "observation": {
+            "raw": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "failures": [],
+            "resized": 3,
+            "controlsCreated": 4,
+            "geometry": {
+              "phase": "narrow",
+              "hostWidth": 1272,
+              "canvasWidth": 1272,
+              "engineWidth": 1272,
+              "engineHeight": 578,
+              "resized": 3,
+              "controlsCreated": 4
+            },
+            "transitions": [
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 0
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 1
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              },
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 2
+              },
+              {
+                "event": "requested",
+                "phase": "narrow",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 2
+              },
+              {
+                "event": "controls",
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 3
+              },
+              {
+                "event": "resize",
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 3,
+                "controlsCreated": 3
+              },
+              {
+                "event": "controls",
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 3,
+                "controlsCreated": 4
+              }
+            ],
+            "pending": 1,
+            "pendingIds": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "drawings": 1,
+            "rendered": 1,
+            "focused": 1,
+            "controls": 1,
+            "imageBounds": {
+              "left": 222.66666666666669,
+              "right": 382.6666666666667,
+              "top": 369.8541666666667,
+              "bottom": 449.8541666666667
+            },
+            "textBounds": {
+              "left": 396.5177714029948,
+              "right": 404.67095438639325,
+              "top": 366.8541666666667,
+              "bottom": 449.8541666666667
+            }
+          },
+          "host": {
+            "x": 0,
+            "y": 204.1875,
+            "width": 1272,
+            "height": 695.8125,
+            "top": 204.1875,
+            "right": 1272,
+            "bottom": 900,
+            "left": 0
+          }
+        }
+      ]
+    },
+    "observation": {
+      "raw": [
+        "doc.mutation.rich-text-editing"
+      ],
+      "failures": [],
+      "resized": 5,
+      "controlsCreated": 5,
+      "geometry": {
+        "phase": "narrow",
+        "hostWidth": 1272,
+        "canvasWidth": 1272,
+        "engineWidth": 1272,
+        "engineHeight": 714,
+        "resized": 5,
+        "controlsCreated": 5
+      },
+      "transitions": [
+        {
+          "event": "resize",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 0
+        },
+        {
+          "event": "controls",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 1
+        },
+        {
+          "event": "controls",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 2
+        },
+        {
+          "event": "resize",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 2
+        },
+        {
+          "event": "requested",
+          "phase": "narrow",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 2
+        },
+        {
+          "event": "controls",
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 3
+        },
+        {
+          "event": "resize",
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 578,
+          "resized": 3,
+          "controlsCreated": 3
+        },
+        {
+          "event": "controls",
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 578,
+          "resized": 3,
+          "controlsCreated": 4
+        },
+        {
+          "event": "resize",
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 570,
+          "resized": 4,
+          "controlsCreated": 4
+        },
+        {
+          "event": "controls",
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 570,
+          "resized": 4,
+          "controlsCreated": 5
+        },
+        {
+          "event": "resize",
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 714,
+          "resized": 5,
+          "controlsCreated": 5
+        }
+      ],
+      "pending": 1,
+      "pendingIds": [
+        "doc.mutation.rich-text-editing"
+      ],
+      "drawings": 1,
+      "rendered": 1,
+      "focused": 0,
+      "controls": 0,
+      "imageBounds": {
+        "left": 222.66666666666669,
+        "right": 382.6666666666667,
+        "top": 226.66666666666669,
+        "bottom": 306.6666666666667
+      },
+      "textBounds": {
+        "left": 396.5177714029948,
+        "right": 404.67095438639325,
+        "top": 223.66666666666669,
+        "bottom": 306.6666666666667
+      }
+    },
+    "finished": [
+      {
+        "storyId": "editor-sync-native--doc-drawing-capture",
+        "status": "success",
+        "reporters": []
+      }
+    ],
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException"
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying"
+      }
+    ]
+  },
+  "errors": []
+}

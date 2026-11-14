@@ -1,0 +1,40 @@
+{
+  "integratedSource": "9ae1964d7b0e15116a1ea57a5f2f1d84d7bbf223",
+  "base": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "originalPassingNativeSource": "5108adb55c2de303af7146a0f24402be72430b3a",
+  "nativeClosureDiff": {
+    "command": "git diff --exit-code 5108adb55c2de303af7146a0f24402be72430b3a -- web src/ui src/shared lib server scripts e2e .storybook package.json package-lock.json '*.config.ts' docs/implementation/evidence/SPN-159/experiment.ts",
+    "exitCode": 0,
+    "changedPaths": []
+  },
+  "baseRuntimeChanges": [
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/ownership-fixture.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/ownership.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts",
+    "src/server/maintenance/restore-http-test-client.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "src/server/maintenance/supervisor-test-control.ts",
+    "src/server/maintenance/supervisor.test.ts"
+  ],
+  "hashVerification": "Story, readiness helper, focused test, screenshot runner, preserved probe, focused config/preview and both inspected native package sources match integrated/source-identity.json.",
+  "newChecks": {
+    "index": "passed; 158 ms; ended before first RSS sample",
+    "focusedUnit": "resource-aborted after 235 ms; peak 166624 KiB; no test result",
+    "combinedTypes": "watchdog preflight refused; no compiler spawned",
+    "qualityBacklogAndExactPR": "pending after resource stop"
+  },
+  "resourceObservation": [
+    { "time": "2026-11-14 07:54:48 UTC", "pressure": 1 },
+    { "time": "2026-11-14 07:55:11 UTC", "pressure": 2 }
+  ],
+  "resourceDisposition": "Stability was not established; no resumed workload and no new native sample.",
+  "cleanup": "Owned Vitest, compiler and serial process audit found no survivors.",
+  "bookkeeping": {
+    "nextId": 161,
+    "lastGrooming": "2026-11-12",
+    "completedSince": ["SPN-148", "SPN-145", "SPN-149", "SPN-158", "SPN-160", "SPN-159"],
+    "SPN-120Dependencies": []
+  }
+}
