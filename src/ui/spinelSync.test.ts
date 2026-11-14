@@ -37,6 +37,8 @@ vi.mock('../../web/offline/recovery.ts', () => ({
 }));
 
 const native = vi.hoisted(() => ({
+  snapshot: { id: 'unit', body: { dataStream: 'Observed native text\r\n' } },
+  snapshotReads: vi.fn(),
   clients: [] as {
     options: NativeSyncOptions;
     state: ClientState;
@@ -44,9 +46,16 @@ const native = vi.hoisted(() => ({
     received: IncomingFrame[];
   }[],
 }));
-vi.mock('@univerjs/core', () => ({ UniverInstanceType: { UNIVER_SHEET: 2, UNIVER_DOC: 1 } }));
+vi.mock('@univerjs/core', () => ({
+  UniverInstanceType: { UNIVER_SHEET: 2, UNIVER_DOC: 1 },
+  ICommandService: Symbol('ICommandService'),
+}));
 vi.mock('@spinel/sync-client', () => ({
   validateNativeSnapshot: vi.fn(),
+  nativeSnapshot() {
+    native.snapshotReads();
+    return native.snapshot;
+  },
   createNativeSyncClient(options: NativeSyncOptions) {
     const entry = {
       options,
@@ -155,8 +164,11 @@ afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
   downloadOfflineFile.mockClear();
   native.clients.length = 0;
+  native.snapshot = { id: 'unit', body: { dataStream: 'Observed native text\r\n' } };
+  native.snapshotReads.mockClear();
   Socket.instances.length = 0;
   maintenance.status = null;
 });
@@ -311,7 +323,10 @@ async function fixture({
     }),
     dispose: vi.fn(),
   };
-  const univer = { createUnit: vi.fn() } as unknown as Univer;
+  const univer = {
+    createUnit: vi.fn(),
+    __getInjector: () => ({ get: () => ({}) }),
+  } as unknown as Univer;
   const abort = new AbortController();
   stops.push(() => {
     abort.abort();
@@ -964,6 +979,48 @@ test.each(['success', 'failure', 'cancelled'] as const)(
     expect(f.offline.finishRecovery).toHaveBeenCalledTimes(outcome === 'success' ? 1 : 0);
     expect(f.offline.pending).toBe(outcome !== 'success');
     if (outcome === 'failure') expect(f.client.disposed).toBe(false);
+  },
+);
+
+test.each(['0', '1'])(
+  'native snapshot requests are read-only, scoped, current and evidence-build-only (%s)',
+  async (flag) => {
+    vi.stubEnv('VITE_SYNC_EVIDENCE', flag);
+    const f = await fixture({ downloaded: true });
+    f.pending();
+    const snapshots: unknown[] = [];
+    window.addEventListener('spinel-sync-native-snapshot', (event) => {
+      const detail = (event as CustomEvent).detail;
+      snapshots.push(structuredClone(detail));
+      // An observer receives a detached value, never the writable native model.
+      detail.snapshot.body.dataStream = 'Observer attempted to change a detached copy';
+    });
+    native.snapshotReads.mockClear();
+    const request = (unitId: string) =>
+      window.dispatchEvent(
+        new CustomEvent('spinel-sync-native-snapshot-read', { detail: { unitId } }),
+      );
+    request('different-unit');
+    expect(native.snapshotReads).not.toHaveBeenCalled();
+    request('unit');
+    expect(native.snapshotReads).toHaveBeenCalledTimes(flag === '1' ? 1 : 0);
+    expect(snapshots).toHaveLength(flag === '1' ? 1 : 0);
+    if (flag === '1')
+      expect(snapshots[0]).toMatchObject({
+        unitId: 'unit',
+        revision: 8,
+        snapshot: { body: { dataStream: 'Observed native text\r\n' } },
+      });
+    expect(native.snapshot.body.dataStream).toBe('Observed native text\r\n');
+    expect(f.persisted).toEqual([]);
+    expect(f.client.state.pending).toBe(true);
+    native.snapshotReads.mockClear();
+    f.leave();
+    request('unit');
+    expect(native.snapshotReads).not.toHaveBeenCalled();
+    f.handle.dispose();
+    request('unit');
+    expect(native.snapshotReads).not.toHaveBeenCalled();
   },
 );
 

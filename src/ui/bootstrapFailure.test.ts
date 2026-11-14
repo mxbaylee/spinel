@@ -1,5 +1,7 @@
 import { afterEach, expect, test, vi } from 'vitest';
 
+// Status timing has its own lifecycle owner; this test isolates import diagnostics.
+vi.mock('../../web/startupStage.ts', () => ({ startupStage: vi.fn(), startupDone: vi.fn() }));
 vi.mock('../../web/installApp.ts', () => ({ registerAppWorker: vi.fn() }));
 vi.mock('../../web/offline/runtime.ts', () => ({
   installRuntimeHost: vi.fn(),
