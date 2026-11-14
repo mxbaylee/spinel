@@ -112,12 +112,52 @@ for (const phone of [false, true])
             workspace.links.finish(item.id, link.epoch, true);
             path = `/share/${item.id}#${link.token}`;
           }
+          const legacy = () =>
+            db.prepare('SELECT * FROM doc_snapshots WHERE item_id=?').get(item.id);
+          const grants = () => ({
+            account: db
+              .prepare('SELECT * FROM workspace_grants WHERE item_id=? ORDER BY user_id')
+              .all(item.id),
+            link: db.prepare('SELECT * FROM workspace_links WHERE item_id=?').get(item.id),
+          });
+          const originalLegacy = legacy();
+          const originalGrants = grants();
+          // Prepare as the owner before the viewer can navigate. The service
+          // controls separately prove first-viewer preparation; this baseline
+          // must include native resources/revision without normalizing them away.
+          const prepared = await ownerContext.request.post(`/api/items/${item.id}/collaboration`, {
+            headers: { Origin: baseURL! },
+          });
+          expect(prepared.ok()).toBe(true);
+          const { unitId } = await prepared.json();
+          expect(unitId).toBe(item.id);
+          const head = () =>
+            db.prepare('SELECT * FROM spinel_sync_units WHERE unit_id=?').get(unitId);
+          const receipts = () =>
+            db.prepare('SELECT * FROM spinel_sync_revisions WHERE unit_id=?').all(unitId);
           const read = async () => {
             const response = await ownerContext.request.get(`/api/items/${item.id}/doc`);
             expect(response.ok()).toBe(true);
             return (await response.json()).snapshot as IDocumentData;
           };
           const original = await read();
+          const originalHead = head();
+          expect(originalHead?.revision).toBe(1);
+          expect(original.rev).toBe(1);
+          expect(JSON.parse(String(originalHead?.snapshot))).toEqual(original);
+          expect(original.body).toEqual(snapshot.body);
+          expect(original.headers).toEqual(snapshot.headers);
+          expect(original.footers).toEqual(snapshot.footers);
+          expect(original.documentStyle).toEqual(snapshot.documentStyle);
+          const unchanged = async () => {
+            expect(await read()).toEqual(original);
+            expect(head()).toEqual(originalHead);
+            expect(head()?.revision).toBe(1);
+            expect(receipts()).toEqual([]);
+            expect(legacy()).toEqual(originalLegacy);
+            expect(grants()).toEqual(originalGrants);
+          };
+          await unchanged();
           const page = await context.newPage();
           page.on('pageerror', (error) => failures.push(error.message));
           const status = page.getByRole('status', { name: 'Save status' });
@@ -128,7 +168,7 @@ for (const phone of [false, true])
             await expect(page.getByLabel('Document canvas', { exact: true })).toBeVisible();
             expect(await permissionNotices(page)).toEqual([]);
             await expect(page.getByText(protectionMessage, { exact: true })).toHaveCount(0);
-            expect(await read()).toEqual(original);
+            await unchanged();
           }
           if (fields && ((role === 'account' && !phone) || (role === 'guest' && phone))) {
             for (const theme of ['light', 'dark'] as const) {
@@ -152,7 +192,7 @@ for (const phone of [false, true])
             });
             expect(denied.status()).toBe(403);
           } else expect((await context.request.get('/api/items')).status()).toBe(401);
-          expect(await read()).toEqual(original);
+          await unchanged();
 
           if (!fields) {
             // Keep an authorized native editor alongside the reader; its real
