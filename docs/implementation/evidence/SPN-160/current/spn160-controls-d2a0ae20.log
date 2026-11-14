@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-160
+
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  21:38:37
+   Duration  250ms (transform 63%, import 18%, tests 15%, worker 3%)
+
+{"name":"spn160-controls-d2a0ae20","args":["node","node_modules/.bin/vitest","run","src/server/maintenance/ownership.test.ts","src/server/maintenance/supervisor-test-control.test.ts","--cache=false","--fsModuleCachePath","/tmp/spn160-vitest-positive"],"code":0,"signal":null,"reason":null,"elapsedMs":647,"peakKiB":277696}

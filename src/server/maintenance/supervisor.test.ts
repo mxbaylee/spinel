@@ -54,7 +54,16 @@ import { applicationPolicy } from '../../../server/application-policy.ts';
 import { prepareRestoreArchive } from '../backup/verification.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
-import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
+import {
+  OWNERSHIP_CHANNEL,
+  ownershipFailureDetails,
+  shareWorkspaceOwnership,
+} from './ownership.ts';
+import {
+  crashTransition,
+  diagnosticCode,
+  durableControlFailure,
+} from './supervisor-test-control.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -733,6 +742,16 @@ test.each(['before', 'during'])(
     const refused = await message(parent, (value) => value.refused === true);
     expect(refused.code).toBe(1);
     expect(refused.lateClosed).toBe(pending === 'during');
+    if (pending === 'during')
+      expect(refused.receiverFailure).toEqual({
+        side: 'receiver',
+        offerReceived: false,
+        // Receipt of the request does not order its sender's IPC callback.
+        requestCallback: expect.any(Boolean),
+        handlesReceived: 2,
+        heldSent: false,
+        heldCallback: false,
+      });
     expect((await exited)[0]).toBe(0);
     await expect(lstat(`${f.databasePath}.opened`)).rejects.toMatchObject({ code: 'ENOENT' });
     expect(await readFile(f.databasePath)).toEqual(before);
@@ -1073,8 +1092,18 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
     }
     const child = await launch();
     let operationId = randomUUID();
-    const control = (action: 'verify' | 'start' | 'resume' | 'pause' | 'stop') =>
-      maintenanceControl(f.root, { action, operationId });
+    let stage: 'setup' | 'transition' | 'reconcile' = 'setup';
+    const control = async (action: 'verify' | 'start' | 'resume' | 'pause' | 'stop' | 'status') => {
+      try {
+        return await maintenanceControl(
+          f.root,
+          action === 'status' ? { action } : { action, operationId },
+        );
+      } catch (error) {
+        // Snapshot before afterEach can stop the child or remove the journal.
+        throw durableControlFailure(f.root, { phase, stage, action }, error);
+      }
+    };
     await control('verify');
     if (phase !== 'starting') await control('start');
     if (!['starting', 'running'].includes(phase)) {
@@ -1085,7 +1114,6 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
     const armed = message(child, (value) => value.armed === phase);
     child.send({ barrier: phase });
     await armed;
-    const reached = message(child, (value) => value.barrier === phase);
     const action =
       phase === 'starting'
         ? 'start'
@@ -1094,14 +1122,16 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
           : ['draining', 'paused'].includes(phase)
             ? 'pause'
             : 'stop';
-    const pending = control(action).catch(() => undefined);
-    await reached;
+    stage = 'transition';
+    const transition = crashTransition(child, phase, () => control(action));
+    await transition.reached;
     const exit = once(child, 'exit');
     child.kill('SIGKILL');
     await exit;
-    await pending;
+    await transition.settled;
+    stage = 'reconcile';
     const restarted = await launch();
-    const after = await maintenanceControl(f.root, { action: 'status' });
+    const after = await control('status');
     expect(after.status.phase).toBe('recovery-required');
     expect(after.status.readyToResume).toBe(false);
     expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
@@ -2480,7 +2510,10 @@ test
         return result;
       });
     }
-    let controllerFailure: string | null = null;
+    let controllerFailure: {
+      category: 'ownership' | 'readiness-timeout' | 'other';
+      handoff: ReturnType<typeof ownershipFailureDetails>;
+    } | null = null;
     const controller = supervisor as unknown as {
       executeRestoreStopOwned(request: {
         id: string;
@@ -2493,8 +2526,15 @@ test
       try {
         await execute(request);
       } catch (error) {
-        controllerFailure =
-          error instanceof Error ? error.message.slice(0, 300) : 'Unknown fixture failure';
+        const handoff = ownershipFailureDetails(error);
+        controllerFailure = {
+          category: handoff
+            ? 'ownership'
+            : error instanceof Error && error.message === 'Restore trial readiness timed out.'
+              ? 'readiness-timeout'
+              : 'other',
+          handoff,
+        };
         if (longOperation && operationElapsed === 0) crossingFailed(error);
         throw error;
       }
@@ -2587,17 +2627,36 @@ test
       assertWorkspaceHandlesClosed(f.databasePath);
       return;
     }
-    await expect
-      .poll(() => privateReadyObserved || supervisor.status().phase === 'recovery-required', {
-        timeout: 30_000,
-      })
-      .toBe(true);
-    expect({
-      ready: privateReadyObserved,
-      phase: supervisor.status().phase,
-      jobPhase: JSON.parse(readFileSync(statePath, 'utf8')).phase,
-      controllerFailure,
-    }).toMatchObject({ ready: true });
+    const readinessSnapshot = () => {
+      let jobPhase: string | null = 'unavailable';
+      try {
+        jobPhase = diagnosticCode(JSON.parse(readFileSync(statePath, 'utf8')).phase);
+      } catch {
+        /* A missing journal must not mask the first readiness failure. */
+      }
+      return {
+        ordering,
+        ready: privateReadyObserved,
+        phase: supervisor.status().phase,
+        lastFailure: supervisor.status().lastFailure,
+        jobPhase,
+        controllerFailure,
+      };
+    };
+    try {
+      await expect
+        .poll(() => privateReadyObserved || supervisor.status().phase === 'recovery-required', {
+          timeout: 30_000,
+        })
+        .toBe(true);
+      expect(privateReadyObserved).toBe(true);
+    } catch (error) {
+      // A partial object matcher omits the other fields from Vitest's diff.
+      // Capture both polling and false-readiness failures before cleanup.
+      throw new Error(`Restore readiness failed: ${JSON.stringify(readinessSnapshot())}`, {
+        cause: error,
+      });
+    }
     expect(await pausedProbe).toBe(503);
     if (forcedStop) {
       await expect.poll(() => supervisor.journal.state.child, { timeout: 40_000 }).toBeNull();
