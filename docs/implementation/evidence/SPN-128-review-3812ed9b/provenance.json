@@ -1,0 +1,258 @@
+{
+  "source": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "testedLocalSource": "65b7c98208be011aaa2f4675952471905df74984",
+  "sourceTree": "519b4b5e40e48acce6e22857b0012d831337d4d0",
+  "originalRemote": "a6dd085d549d1a6e7b3894ccaa8d3c4fa03bcbb3",
+  "pr": 229,
+  "sourceBranch": "codex/spn-128-original-recovery",
+  "archiveRef": "refs/tags/archive/spn-128-review-3812ed9b-20261114",
+  "archiveParent": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+  "publication": "Prepared only; no remote mutation",
+  "lineCounts": {
+    "additions": 5577,
+    "deletions": 231,
+    "textualTotal": 5808,
+    "generatedIndexExcluded": 47,
+    "policyCounted": 5761,
+    "binaryGzipFiles": 6
+  },
+  "reviews": [
+    {
+      "who": "/root/spn128_current_a",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "blockers": 0,
+      "stepsTo100": []
+    },
+    {
+      "who": "/root/spn128_current_b",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "blockers": 0,
+      "stepsTo100": []
+    }
+  ],
+  "missingReceipts": [
+    {
+      "attempt": "spn128-review-a-3812-contracts",
+      "log": "execution/spn128-review-a-3812-contracts.log",
+      "reason": "Memory-pressure preflight threw before test process and before watchdog receipt creation; not a pass"
+    },
+    {
+      "attempt": "spn128-review-b-privacy-3812ed9b",
+      "log": "execution/spn128-review-b-privacy-3812ed9b.log",
+      "reason": "Explicit PATH omitted /usr/sbin; sysctl ENOENT before test and receipt creation; PATH-only correction diagnosed"
+    }
+  ],
+  "resourceAbort": {
+    "attempt": "spn128-review-a-3812-contracts-admitted",
+    "elapsedMs": 1134,
+    "peakKiB": 366784,
+    "completedTestResults": false,
+    "disposition": "Resource-aborted, not product failure or pass; no unchanged broad rerun"
+  },
+  "reservedRefs": {
+    "validation": "refs/tags/archive/spn-128-validation-3812ed9b-20261114",
+    "completion": "refs/tags/archive/spn-128-completion-3812ed9b-20261114"
+  },
+  "originals": [
+    {
+      "originalPath": "/tmp/spn128-publication-3812ed9b/pr-body-ready.md",
+      "archivePath": "pr-body-ready.md",
+      "sha256": "62c77c7554fc96b22b79b532aba087d2a5692afba7e02413f0c7e774d57a0997"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-3812ed9b-a.md",
+      "archivePath": "reviews/spn128-review-3812ed9b-a.md",
+      "sha256": "0192fd410536dc8a27d02013a987144c898473ac3c5e7418f61ce9bff8786264"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-3812ed9b-b.md",
+      "archivePath": "reviews/spn128-review-3812ed9b-b.md",
+      "sha256": "740dc7955c21c8190fe4df97a7e13686c4ebecf5e9d2f9ffee5c7a62be359f69"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-3812-contracts.log",
+      "archivePath": "execution/spn128-review-a-3812-contracts.log",
+      "sha256": "0715d8cdd4b7fa59657c6fbfe2fa0d8050a60a18b573f231c7f5b356b1ecbd71"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-3812-contracts-admitted.log",
+      "archivePath": "execution/spn128-review-a-3812-contracts-admitted.log",
+      "sha256": "1202547105dea617ba6c07f4b54ef96bf6a8ce2e82c10c75d1164193cb8ed363"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-a-3812-privacy.log",
+      "archivePath": "execution/spn128-review-a-3812-privacy.log",
+      "sha256": "a38bb95ae3776c79b71b0b3523da1ea0b3d5ec5357b2448cbd8fc9237c67c598"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-privacy-3812ed9b.log",
+      "archivePath": "execution/spn128-review-b-privacy-3812ed9b.log",
+      "sha256": "77f48cb71eac5869c6be2923e0fb68855131d0f6431d2205023f127f8c407034"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-privacy-fixedpath-3812ed9b.log",
+      "archivePath": "execution/spn128-review-b-privacy-fixedpath-3812ed9b.log",
+      "sha256": "cc5430f2dc5464fd8ca519a0bf3b46d1de3f6af36b0fad36b9a1a2e38a3ddb03"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-b-clock-3812ed9b.log",
+      "archivePath": "execution/spn128-review-b-clock-3812ed9b.log",
+      "sha256": "62b139aabe9a6605ddc7036627271ec8a5070dfc92a8dc8112c59b6fdc6bb1bd"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-3812-contracts-admitted.json",
+      "archivePath": "execution/spn128-review-a-3812-contracts-admitted.json",
+      "sha256": "a8f88995eac55918f3c00fca4d638c1b1f7943b9d5b66a8f2fcace576fc343bb"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-3812-privacy.json",
+      "archivePath": "execution/spn128-review-a-3812-privacy.json",
+      "sha256": "1d7bc316d331315e149a8d39e67efe69fe50265e5d39c4777140b6b6b6e15809"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-privacy-fixedpath-3812ed9b.json",
+      "archivePath": "execution/spn128-review-b-privacy-fixedpath-3812ed9b.json",
+      "sha256": "9fe711d4fc9425da0ef52080287b92f84ad681f48000381d5a4295a4184570d9"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-clock-3812ed9b.json",
+      "archivePath": "execution/spn128-review-b-clock-3812ed9b.json",
+      "sha256": "ad85da754480497fc6c785090e272b9720bbd78cb22e4b4962c4208bab4b3ff2"
+    },
+    {
+      "originalPath": "/tmp/spn128-resume-checks/backlog.log",
+      "archivePath": "original-local/backlog.log",
+      "sha256": "ddb952bf600a8c2119b40223935779bdb78a7bd58e56be9af0920895cc08e0af"
+    },
+    {
+      "originalPath": "/tmp/spn128-resume-checks/contracts.log",
+      "archivePath": "original-local/contracts.log",
+      "sha256": "722ad133039d40b87523e908dd8f61945560873883832129b2fdaf7fcaf6d745"
+    },
+    {
+      "originalPath": "/tmp/spn128-resume-checks/evidence.log",
+      "archivePath": "original-local/evidence.log",
+      "sha256": "7fac4cda5674fa089d4d83b7162f0e2ef6133879b2f41959c2641ad8349da721"
+    },
+    {
+      "originalPath": "/tmp/spn128-resume-checks/lint.log",
+      "archivePath": "original-local/lint.log",
+      "sha256": "09ca76a0b57d60229c03316723087709651d7b17810fa7c25277d8186f485b4d"
+    },
+    {
+      "originalPath": "/tmp/spn128-resume-checks/pr.log",
+      "archivePath": "original-local/pr.log",
+      "sha256": "b684ecdc427f440da59f1252b5fa4efa859a5e3b22947cccabde22f9b79e8ea8"
+    },
+    {
+      "originalPath": "/tmp/spn128-resume-checks/types.log",
+      "archivePath": "original-local/types.log",
+      "sha256": "bc3f9b6a91d915a80c7b8b7d5197d0736e4d19c5a26a91f704d81c9da9d0af4c"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-contracts.json",
+      "archivePath": "original-local/spn128-resume-contracts.json",
+      "sha256": "ee5bf748804e35dd57d2eaacca064f1174be8e8457be5a54749f00f3791c094d"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-evidence.json",
+      "archivePath": "original-local/spn128-resume-evidence.json",
+      "sha256": "d3c3c3e9ff277ea46961947af69b8e2977ad6bba3433ae5c8b48c72382a5e7e0"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-format.json",
+      "archivePath": "original-local/spn128-resume-format.json",
+      "sha256": "6eae0b62036276f913f882b0df20ed58cc02d26bf9a03abf698f0aea1f46589c"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-index.json",
+      "archivePath": "original-local/spn128-resume-index.json",
+      "sha256": "f5328d1594a2a0f3125409441d653dc42053160ec3c1132a5796b7ac33940de7"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-lint.json",
+      "archivePath": "original-local/spn128-resume-lint.json",
+      "sha256": "60df934fb4a79d6f8472aa77ff5511b57d9d7e85c638c975167def2fd07eaefe"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-pr.json",
+      "archivePath": "original-local/spn128-resume-pr.json",
+      "sha256": "a4f72aa52f911a32984ac3d9da4774ffb46b7313a1d39c6a057c1bfe0454c6da"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-quality.json",
+      "archivePath": "original-local/spn128-resume-quality.json",
+      "sha256": "b0b55a5d9f40b86f887f29868dc3f9e3664d564d749cf46c590e7cc443262499"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn128-resume-types.json",
+      "archivePath": "original-local/spn128-resume-types.json",
+      "sha256": "c2f7269ef63978099f11a70bb56693ec66ef52fb58c8e81e9f50b11d12d5edab"
+    },
+    {
+      "originalPath": "/tmp/spn128-root-packet-audit-3812ed9b.json",
+      "archivePath": "spn128-root-packet-audit-3812ed9b.json",
+      "sha256": "e6f15e195c6eca29fb314e6733c6ada7489f5efe2e7b0871c265b7adb0669a06"
+    },
+    {
+      "originalPath": "/tmp/spn128-vitest.config.ts",
+      "archivePath": "spn128-vitest.config.ts",
+      "sha256": "df7efab78de6e1bdb25bcc87ec6e0ee8edb120cb9fa6770a842d9a68de12505d"
+    },
+    {
+      "originalPath": "/tmp/spn128-build-review-packet.ts",
+      "archivePath": "spn128-build-review-packet.ts",
+      "sha256": "eb80abedc32dd56e8887cd36dd8fe978967c34d2e8d8aca5009ec2acdbab3d7a"
+    },
+    {
+      "originalPath": "/tmp/spn128-audit-packet.ts",
+      "archivePath": "spn128-audit-packet.ts",
+      "sha256": "b5ee168b6fad5cf554ce9d2109ab45de2c31901fc8926f6c76c33f2f3fb13c51"
+    },
+    {
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+      "archivePath": "watch.ts",
+      "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-3812ed9b-v2/source-manifest.json",
+      "archivePath": "packet-bindings/source-manifest.json",
+      "sha256": "caa35992b53a5bf38ae604c61783b65f7269947493951e7b23f5ee5dbd1fdd14"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-3812ed9b-v2/packet-manifest.json",
+      "archivePath": "packet-bindings/packet-manifest.json",
+      "sha256": "92a5372fcef92ef48c32e228bd38247d8921872fbecf1e664f575a2ebc797547"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-3812ed9b-v2/blinding-audit.json",
+      "archivePath": "packet-bindings/blinding-audit.json",
+      "sha256": "458e05287eddef6289f3cfb03ff032e8ae9266326ad23c849709c05bd2d9ebfd"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-3812ed9b-v2/source-bindings.txt",
+      "archivePath": "packet-bindings/source-bindings.txt",
+      "sha256": "2a58caa67b4c9d691669a05d55e130970cc339a237fbdb2d61d68acd80130216"
+    },
+    {
+      "originalPath": "/tmp/spn128-review-packet-3812ed9b-v2/README.md",
+      "archivePath": "packet-bindings/README.md",
+      "sha256": "ef233b0e9277ad67050e569807b9bc4b662550584764be51f28b26e59e4940d3"
+    }
+  ]
+}

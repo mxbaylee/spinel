@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-128-production
+
+
+ Test Files  3 passed (3)
+      Tests  30 passed | 21 skipped (51)
+   Start at  12:00:22
+   Duration  1.08s (tests 72%, transform 19%, import 8%, worker 1%)
+
+{"name":"spn128-resume-contracts","args":["node","node_modules/vitest/vitest.mjs","run","--config","/tmp/spn128-vitest.config.ts","--configLoader","native","--cache=false","src/server/maintenance/restore-crash-clock.test.ts","src/server/maintenance/restore-cold-custody.test.ts","src/server/maintenance/restore-cold-state.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":1465,"peakKiB":444640}

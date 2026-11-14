@@ -1,0 +1,95 @@
+{
+  "at": "2026-11-14T20:10:29.251571+00:00",
+  "source": "3812ed9b153237b3b6da75fdbf31319f67844d19",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "packetFiles": 1520,
+  "sourceBindings": 1517,
+  "exactExecutableCopies": 1215,
+  "actualGzipDecoded": 6,
+  "fullBinaryFullIndexDiffByteExact": true,
+  "packetSHA256": "92a5372fcef92ef48c32e228bd38247d8921872fbecf1e664f575a2ebc797547",
+  "assessmentHits": [
+    {
+      "path": "source/.github/pull_request_template.md",
+      "line": 33,
+      "text": "Two independent nonimplementing subagents, each scoring above 95/100 on the same"
+    },
+    {
+      "path": "source/AGENTS.md",
+      "line": 99,
+      "text": "  reviews, each **above 95/100 on that exact commit**, before a validation push"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 29,
+      "text": "**above 95/100 on the same current commit**. Exactly 95 does not pass; neither"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 100,
+      "text": "Require a nonimplementing reviewer, at least 95/100 and no blockers: scope 35, correctness 25,"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 163,
+      "text": "other rubric weights, at least 95/100 and no-blocker threshold. Simplicity does not justify missing"
+    },
+    {
+      "path": "source/docs/implementation/backlog-workflow.md",
+      "line": 382,
+      "text": "every actionable step to 100/100 (points at stake, exact file and line or command, change,"
+    },
+    {
+      "path": "source/docs/implementation/grooming-2026-11-02.md",
+      "line": 26,
+      "text": "to that exact unpublished commit. Both must score above 95/100 with no unresolved"
+    },
+    {
+      "path": "source/docs/run-backlog.md",
+      "line": 179,
+      "text": "The merge gate is **two independent scores each above 95/100 on the same current"
+    },
+    {
+      "path": "source/docs/todo/process.md",
+      "line": 232,
+      "text": "   evidence, without a prior or hoped-for grade. Require **each score above 95/100"
+    },
+    {
+      "path": "source/lib/print/native.test.ts",
+      "line": 214,
+      "text": "  rotated.snapshot.sheets.sheet.cellData![0][0]!.s = { fs: 16, tr: { a: 90 } };"
+    },
+    {
+      "path": "source/lib/sync-transform/tests/cells.test.ts",
+      "line": 906,
+      "text": "    // B100 is past B30, the last cell either move covers."
+    },
+    {
+      "path": "source/src/server/auth/passkey-provider-names.json",
+      "line": 47,
+      "text": "  \"6bb49926-160a-4306-a100-4eb39ba6ac45\": \"AVG Password Manager\","
+    }
+  ],
+  "readerCorrections": [
+    "First reader compared compressed blob with decoded hash; corrected archiveSha256 schema.",
+    "Second reader expected blob for historical records using source/path; now verified corresponding git blobs. Source-bindings generated text hash verified, technical contents read separately. No evidence mutation."
+  ],
+  "assessmentScanDisposition": "Only review-policy thresholds/rubric, spreadsheetcell B100, rotation90 and GUID; no prior numericassessments.",
+  "fullReportsRootRead": true,
+  "reviews": [
+    {
+      "who": "a",
+      "path": "/tmp/spn128-review-3812ed9b-a.md",
+      "sha256": "0192fd410536dc8a27d02013a987144c898473ac3c5e7418f61ce9bff8786264",
+      "score": 100,
+      "blockers": 0
+    },
+    {
+      "who": "b",
+      "path": "/tmp/spn128-review-3812ed9b-b.md",
+      "sha256": "740dc7955c21c8190fe4df97a7e13686c4ebecf5e9d2f9ffee5c7a62be359f69",
+      "score": 100,
+      "blockers": 0
+    }
+  ]
+}

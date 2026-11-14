@@ -1,0 +1,21 @@
+{
+  "name": "spn128-resume-contracts",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "/tmp/spn128-vitest.config.ts",
+    "--configLoader",
+    "native",
+    "--cache=false",
+    "src/server/maintenance/restore-crash-clock.test.ts",
+    "src/server/maintenance/restore-cold-custody.test.ts",
+    "src/server/maintenance/restore-cold-state.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1465,
+  "peakKiB": 444640
+}

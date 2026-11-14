@@ -1,0 +1,19 @@
+{
+  "name": "spn128-review-b-clock-3812ed9b",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "/tmp/spn128-vitest.config.ts",
+    "--configLoader",
+    "native",
+    "--cache=false",
+    "src/server/maintenance/restore-crash-clock.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 352,
+  "peakKiB": 189024
+}

@@ -1,0 +1,184 @@
+HEAD 3812ed9b153237b3b6da75fdbf31319f67844d19
+BASE ec42f0741415e4e712395fb47c30b911bc4e64ea
+TREE 519b4b5e40e48acce6e22857b0012d831337d4d0
+All executable source copies are byte-exact git blobs. Documentation masks do not alter originals.
+Parent graph:
+3812ed9b153237b3b6da75fdbf31319f67844d19 65b7c98208be011aaa2f4675952471905df74984 🌷 Preserve resumed recovery failures and local validation evidence
+65b7c98208be011aaa2f4675952471905df74984 c04aba84e75770eebc5aef411278394d1a2e9eae ec42f0741415e4e712395fb47c30b911bc4e64ea 🌷 Integrate current main and expire persisted restore authority in crash fixtures
+c04aba84e75770eebc5aef411278394d1a2e9eae a6dd085d549d1a6e7b3894ccaa8d3c4fa03bcbb3 🌷 Record SPN-128 current-main resume checkpoint
+ec42f0741415e4e712395fb47c30b911bc4e64ea c525aa933505d6e78b8fdd7a89940d87506d5cb3 📨 SPN-098 Send user feedback with diagnostic context (#227)
+
+Full changed-file accounting:
+7	2	docs/backups.md
+1	1	docs/implementation/SPN-112.md
+437	0	docs/implementation/SPN-128.md
+92	0	docs/implementation/evidence/SPN-128-held-folder-probe.patch
+52	0	docs/implementation/evidence/SPN-128-mirror-setup-failure.json
+35	0	docs/implementation/evidence/SPN-128-mirror-validation.json
+15	0	docs/implementation/evidence/SPN-128-readiness-fix.patch
+722	0	docs/implementation/evidence/SPN-128-readiness.json
+13	0	docs/implementation/evidence/SPN-128-resume/backlog-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/backlog.log.gz
+21	0	docs/implementation/evidence/SPN-128-resume/contracts-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/contracts.log.gz
+13	0	docs/implementation/evidence/SPN-128-resume/evidence-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/evidence.log.gz
+13	0	docs/implementation/evidence/SPN-128-resume/lint-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/lint.log.gz
+17	0	docs/implementation/evidence/SPN-128-resume/pr-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/pr.log.gz
+68	0	docs/implementation/evidence/SPN-128-resume/provenance.json
+48	0	docs/implementation/evidence/SPN-128-resume/recovery-first-failures.log
+14	0	docs/implementation/evidence/SPN-128-resume/types-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/types.log.gz
+117	0	docs/implementation/evidence/SPN-128-sync-production-first-attempt.json
+60	0	docs/implementation/evidence/SPN-128-withheld-readiness.patch
+53	21	docs/maintenance.md
+0	48	docs/todo/SPN-128.md
+2	1	docs/todo/backlog.json
+23	24	docs/todo/readme.md
+132	0	e2e/maintenance-evidence.ts
+116	2	e2e/maintenance-fixture.ts
+99	5	e2e/supervised-restore.spec.ts
+103	0	scripts/ci/maintenance-evidence.test.ts
+5	3	scripts/deploy/maintenance.ts
+9	6	src/server/backup/restore-registry.ts
+294	0	src/server/maintenance/restore-cold-custody.test.ts
+670	0	src/server/maintenance/restore-cold-state.test.ts
+341	0	src/server/maintenance/restore-cold-state.ts
+334	0	src/server/maintenance/restore-cold.ts
+24	4	src/server/maintenance/restore-crash-app-fixture.ts
+82	0	src/server/maintenance/restore-crash-cleanup-fixture.ts
+5	0	src/server/maintenance/restore-crash-clock-fixture.ts
+36	0	src/server/maintenance/restore-crash-clock.test.ts
+60	5	src/server/maintenance/restore-crash-fixture.ts
+32	0	src/server/maintenance/restore-crash-security-fixture.ts
+35	0	src/server/maintenance/restore-crash-tamper-fixture.ts
+550	43	src/server/maintenance/restore-crash.integration.test.ts
+271	27	src/server/maintenance/restore-files.ts
+298	12	src/server/maintenance/restore-jobs.ts
+258	27	src/server/maintenance/supervisor.ts
+
+Main-only integration delta in crash harness (SPN-158 preserved):
+diff --git a/src/server/maintenance/restore-crash.integration.test.ts b/src/server/maintenance/restore-crash.integration.test.ts
+index 17b36507..e84b2036 100644
+--- a/src/server/maintenance/restore-crash.integration.test.ts
++++ b/src/server/maintenance/restore-crash.integration.test.ts
+@@ -30,6 +30,7 @@ import { processResourcesReleased } from './process-exit.ts';
+ import { currentRestoreRecovery, restoreJobPhase } from './restore-jobs.ts';
+ import type { RestoreJobRecord } from './restore-jobs.ts';
+ import { finishRestoreCrashCleanup } from './restore-crash-cleanup-fixture.ts';
++import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
+ import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-http-test-client.ts';
+ 
+ const cuts = [
+@@ -345,18 +346,30 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
+       let acknowledgedId: string | undefined;
+       if (cut === 'postcommit') {
+         await expect.poll(() => record().phase, { timeout: 100_000 }).toBe('candidate-committed');
+-        await expect
+-          .poll(
+-            async () => {
+-              try {
+-                return (await client.request('/api/auth/session')).status;
+-              } catch {
+-                return 0;
+-              }
+-            },
+-            { timeout: 20_000 },
+-          )
+-          .toBe(401);
++        // Session reads deliberately bypass pause. Wait for the application's
++        // writable admission before making the one authentication attempt.
++        const admission = new AbortController();
++        const deadline = setTimeout(() => admission.abort(), 20_000);
++        let observed: Awaited<ReturnType<typeof client.restoredAdmission>> | undefined;
++        try {
++          await expect
++            .poll(
++              async () => {
++                observed = await client.restoredAdmission(admission.signal);
++                return observed.ready;
++              },
++              { timeout: 20_000 },
++            )
++            .toBe(true);
++        } catch (cause) {
++          throw new Error(
++            `Postcommit admission failed: ${JSON.stringify(observed ?? { stage: 'not-started' })}`,
++            { cause },
++          );
++        } finally {
++          clearTimeout(deadline);
++          admission.abort();
++        }
+         await ownerClient!.authenticate();
+         const acknowledged = await ownerClient!.json<{ item: { id: string; name: string } }>(
+           await ownerClient!.request('/api/items', {
+@@ -588,9 +601,14 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
+       }
+       await kill(first);
+       await confirmation;
+-      // This is clock-controlled expiry, not five minutes of elapsed runtime.
+-      // The historical WebAuthn proof stays byte-for-byte unchanged.
+-      if (recoversOriginal) clockOffset = 6 * 60_000;
++      // Expire the persisted operation authority, independent of its configured
++      // lifetime. This is virtual expiry, not a wall-clock soak; keep the proof unchanged.
++      if (recoversOriginal)
++        clockOffset = expiredRestoreClockOffset(
++          before.intent.authority.expiresAt,
++          Date.now(),
++          clockOffset,
++        );
+       await launch(false, Boolean(cold));
+       assertWorkspaceHandlesClosed(databasePath);
+       expect(statSync(databasePath).ino).toBe(identity.ino);
+@@ -825,7 +843,7 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
+           const coldEvidence = await retains(root, retained);
+           await kill(controller!);
+           await interrupted;
+-          clockOffset += 6 * 60_000;
++          clockOffset = expiredRestoreClockOffset(attempt.deadline, Date.now(), clockOffset);
+           await launch(false);
+           assertWorkspaceHandlesClosed(databasePath);
+           expect(record()).toEqual(attempted);
+
+Original authority and cold restart clock bindings:
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-app-fixture.ts:9:const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-app-fixture.ts:12:Date.now = () => realNow() + offset;
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock-fixture.ts:3:export function expiredRestoreClockOffset(deadline: number, wallNow: number, previousOffset = 0) {
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:3:import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:10:    const offset = expiredRestoreClockOffset(authority.expiresAt, wallNow);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:21:  expect(() => requireExpired(expiredRestoreClockOffset(expiresAt, wallNow))).not.toThrow();
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:26:  const first = expiredRestoreClockOffset(originalExpiry, wallNow);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:28:  const second = expiredRestoreClockOffset(coldDeadline, wallNow, first);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:31:  expect(expiredRestoreClockOffset(originalExpiry, wallNow, second)).toBe(second);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-clock.test.ts:35:  expect(expiredRestoreClockOffset(wallNow - 1, wallNow)).toBe(0);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-fixture.ts:24:const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-fixture.ts:27:Date.now = () => realNow() + offset;
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash-fixture.ts:180:          SPINEL_TEST_CLOCK_OFFSET: String(offset),
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:33:import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:298:            SPINEL_TEST_CLOCK_OFFSET: String(clockOffset),
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:607:        clockOffset = expiredRestoreClockOffset(
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:789:          expect(attempt.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:846:          clockOffset = expiredRestoreClockOffset(attempt.deadline, Date.now(), clockOffset);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:864:            expect(currentRestoreRecovery(record())!.grantedAt).toBeGreaterThan(attempt.deadline);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/server/maintenance/restore-crash.integration.test.ts:880:          expect(current!.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
+3812ed9b153237b3b6da75fdbf31319f67844d19:src/shared/restore.ts:2:export const RESTORE_OPERATION_MS = 30 * 60_000;
+
+Final-head changes after tested source65b7c982 (documentation/evidence only):
+docs/implementation/SPN-128.md
+docs/implementation/evidence/SPN-128-resume/backlog-watchdog.json
+docs/implementation/evidence/SPN-128-resume/backlog.log.gz
+docs/implementation/evidence/SPN-128-resume/contracts-watchdog.json
+docs/implementation/evidence/SPN-128-resume/contracts.log.gz
+docs/implementation/evidence/SPN-128-resume/evidence-watchdog.json
+docs/implementation/evidence/SPN-128-resume/evidence.log.gz
+docs/implementation/evidence/SPN-128-resume/lint-watchdog.json
+docs/implementation/evidence/SPN-128-resume/lint.log.gz
+docs/implementation/evidence/SPN-128-resume/pr-watchdog.json
+docs/implementation/evidence/SPN-128-resume/pr.log.gz
+docs/implementation/evidence/SPN-128-resume/provenance.json
+docs/implementation/evidence/SPN-128-resume/recovery-first-failures.log
+docs/implementation/evidence/SPN-128-resume/types-watchdog.json
+docs/implementation/evidence/SPN-128-resume/types.log.gz

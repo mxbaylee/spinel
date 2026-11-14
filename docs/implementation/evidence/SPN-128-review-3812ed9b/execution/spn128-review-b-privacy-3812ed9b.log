@@ -1,0 +1,28 @@
+node:internal/child_process:1175
+    result.error = new ErrnoException(result.error, 'spawnSync ' + options.file);
+                   ^
+
+<ref *1> Error: spawnSync sysctl ENOENT
+    at Object.spawnSync (node:internal/child_process:1175:20)
+    at spawnSync (node:child_process:976:24)
+    at execFileSync (node:child_process:1019:15)
+    at pressure (file:///private/tmp/spinel-dependabot-2026-11-11/watch.ts:4:27)
+    at file:///private/tmp/spinel-dependabot-2026-11-11/watch.ts:5:4
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'spawnSync sysctl',
+  path: 'sysctl',
+  spawnargs: [ '-n', 'kern.memorystatus_vm_pressure_level' ],
+  error: [Circular *1],
+  status: null,
+  signal: null,
+  output: null,
+  pid: 0,
+  stdout: undefined,
+  stderr: undefined
+}
+
+Node.js v26.13.0

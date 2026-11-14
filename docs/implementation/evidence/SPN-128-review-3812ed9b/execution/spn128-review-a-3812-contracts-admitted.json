@@ -1,0 +1,21 @@
+{
+  "name": "spn128-review-a-3812-contracts-admitted",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "/tmp/spn128-vitest.config.ts",
+    "--configLoader",
+    "native",
+    "--cache=false",
+    "src/server/maintenance/restore-crash-clock.test.ts",
+    "src/server/maintenance/restore-cold-custody.test.ts",
+    "src/server/maintenance/restore-cold-state.test.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 1134,
+  "peakKiB": 366784
+}
