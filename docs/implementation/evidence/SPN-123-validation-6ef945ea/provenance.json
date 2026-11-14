@@ -1,0 +1,16 @@
+{
+  "source": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "testedMerge": "c2a51b55e790dce6bed6c0059f40c07288f71a4c",
+  "testedTree": "6f99fb105dbbb33cb50f6ea5ec9c0e3814dc9a49",
+  "directParent": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "reservedTag": "archive/spn-123-validation-6ef945ea-20261114",
+  "repairedCandidate": "c270973a522822876ca615cca1ef24f2cd9555e4",
+  "reviewArchive": "b2ca9c9c49f3e4d9949bceb6da176bd1fe7d8999",
+  "bodySHA256": "ee0821fe0a8727b09f6d0b8031ffd4c03098d4f70878017e25012c59fc20277e",
+  "artifacts": 34,
+  "members": 3272,
+  "executedJobs": 45,
+  "retentionDecision": "Manager-approved curated complete raw acceptance records; bulk passing traceEvents/Perfetto remain explicitly supplementary with hashes/private originals.",
+  "currentHeadHostedAcceptance": "pending"
+}

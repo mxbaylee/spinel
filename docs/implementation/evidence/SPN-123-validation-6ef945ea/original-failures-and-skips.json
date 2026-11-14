@@ -1,0 +1,1068 @@
+{
+  "logs": [
+    {
+      "id": 132565004312,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:42:00Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132565004312.log.gz",
+          "sha256": "938f5d68751c48630fd7f0aaee65693f2aa3f533fce6bb08f61f5a14f76b133b"
+        }
+      ]
+    },
+    {
+      "id": 132565004547,
+      "name": "Playwright smoke (development 1/2)",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T19:44:05Z",
+      "completedAt": "2026-11-14T19:50:21Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004547.log.gz",
+          "sha256": "82acd2d19d4e26cc45616fc3708d7f273916f7c69a6632a43637b410514e42e6"
+        }
+      ]
+    },
+    {
+      "id": 132565004600,
+      "name": "Playwright smoke (production 1/2)",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T19:44:07Z",
+      "completedAt": "2026-11-14T19:57:09Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565004600.log.gz",
+          "sha256": "c490bb812c34a2b569bd61a0336544a8d5a669075354673f66f9965947f7e63d"
+        }
+      ]
+    },
+    {
+      "id": 132571583935,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T20:06:27Z",
+      "completedAt": "2026-11-14T20:06:42Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/terminal-43633378605/job-132571583935.log.gz",
+          "sha256": "1468dfed979a8ef4899e2ff4f668caa92eae6e4f00253bfbc6ae80419617b608"
+        }
+      ]
+    }
+  ],
+  "feedbackMembers": [
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/error-context.md",
+      "bytes": 16050,
+      "compressedBytes": 4580,
+      "crc32": "c0d974e1",
+      "sha256": "7f88ee09b15bc43f7db8f0bb6edc24ceb5ee60d74bd444d4f584d7491a6f740e",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/error-context.md.gz",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-1.png",
+      "bytes": 112897,
+      "compressedBytes": 109493,
+      "crc32": "2ca52c94",
+      "sha256": "526363a8646d9d55d103ed7917fe778020cdecd701441d7f477e649c04da5745",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-1.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-2.png",
+      "bytes": 51359,
+      "compressedBytes": 46982,
+      "crc32": "2f46804e",
+      "sha256": "58f15137e71dc9ee0790f25f05fa31ec75773747f3f78c7148d0fec67bacca3c",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-2.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-3.png",
+      "bytes": 33534,
+      "compressedBytes": 28849,
+      "crc32": "64ffb4bf",
+      "sha256": "75dba25bf003ffb3f38672321f28d6cfc25e9660738e0554771569595d2782e6",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-3.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/error-context.md",
+      "bytes": 16050,
+      "compressedBytes": 4581,
+      "crc32": "de7d05bf",
+      "sha256": "c0a6af7686e0b44eb1cf640b3894c84194412a30283e8f68803c3035a465ff1b",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/error-context.md.gz",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-1.png",
+      "bytes": 112627,
+      "compressedBytes": 108997,
+      "crc32": "ad67ee38",
+      "sha256": "a814a814e62aebbe8f40ab6531918f5481b2fc4fa366f68a62dc72c9af507dbb",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-1.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-2.png",
+      "bytes": 51359,
+      "compressedBytes": 46982,
+      "crc32": "2f46804e",
+      "sha256": "58f15137e71dc9ee0790f25f05fa31ec75773747f3f78c7148d0fec67bacca3c",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-2.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-3.png",
+      "bytes": 33441,
+      "compressedBytes": 28658,
+      "crc32": "57a9477e",
+      "sha256": "37da01ac94979e16d3eaada14f18dd13826b7ebbd65f034c24a5847328c11eb2",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-3.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/trace.zip",
+      "bytes": 1576955,
+      "compressedBytes": 1496207,
+      "crc32": "af4c9acb",
+      "sha256": "7a05c311d63028e6db359051403e5fe2a7f0197a4251329a1279e21717a4b283",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/trace.zip",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/error-context.md",
+      "bytes": 16050,
+      "compressedBytes": 4581,
+      "crc32": "3fad18d3",
+      "sha256": "6693f4daf8c4352379e0da83b47888568c41c34de4cfca7eacfd13a24cee5c47",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/error-context.md.gz",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-1.png",
+      "bytes": 112837,
+      "compressedBytes": 108650,
+      "crc32": "58e186d2",
+      "sha256": "a3b1795a683c3b2d6e780e867ce72153138132163b489ffcc7e506fbeaf7a1cc",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-1.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-2.png",
+      "bytes": 51359,
+      "compressedBytes": 46982,
+      "crc32": "2f46804e",
+      "sha256": "58f15137e71dc9ee0790f25f05fa31ec75773747f3f78c7148d0fec67bacca3c",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-2.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14130215319,
+      "name": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-3.png",
+      "bytes": 33441,
+      "compressedBytes": 28658,
+      "crc32": "57a9477e",
+      "sha256": "37da01ac94979e16d3eaada14f18dd13826b7ebbd65f034c24a5847328c11eb2",
+      "retainedPath": "members/14130215319/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-3.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/error-context.md",
+      "bytes": 16051,
+      "compressedBytes": 4582,
+      "crc32": "d317162a",
+      "sha256": "4fa0e079c74666848e99a1bb512ef4e7e406c9130cb647942085d6c69e042dd1",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/error-context.md.gz",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-1.png",
+      "bytes": 113044,
+      "compressedBytes": 109363,
+      "crc32": "d7e37965",
+      "sha256": "ea0307fc38bc277909b829b4a08b0403586c422440d9444dece573e71d9cc387",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-1.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-2.png",
+      "bytes": 51359,
+      "compressedBytes": 46982,
+      "crc32": "2f46804e",
+      "sha256": "58f15137e71dc9ee0790f25f05fa31ec75773747f3f78c7148d0fec67bacca3c",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-2.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-3.png",
+      "bytes": 33534,
+      "compressedBytes": 28849,
+      "crc32": "64ffb4bf",
+      "sha256": "75dba25bf003ffb3f38672321f28d6cfc25e9660738e0554771569595d2782e6",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-3.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/error-context.md",
+      "bytes": 16051,
+      "compressedBytes": 4581,
+      "crc32": "e1f42d70",
+      "sha256": "721ae19b7d560c06bea0b8878aea85c9cd98edff2708833f8b2fd9d311940506",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/error-context.md.gz",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-1.png",
+      "bytes": 113039,
+      "compressedBytes": 109635,
+      "crc32": "63c77ab8",
+      "sha256": "ba7788883a88eb1b92d83589d48a1b2e345583daeb7f2101c525ea1de6b895b7",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-1.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-2.png",
+      "bytes": 51359,
+      "compressedBytes": 46982,
+      "crc32": "2f46804e",
+      "sha256": "58f15137e71dc9ee0790f25f05fa31ec75773747f3f78c7148d0fec67bacca3c",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-2.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-3.png",
+      "bytes": 33534,
+      "compressedBytes": 28849,
+      "crc32": "64ffb4bf",
+      "sha256": "75dba25bf003ffb3f38672321f28d6cfc25e9660738e0554771569595d2782e6",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-3.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/trace.zip",
+      "bytes": 1681572,
+      "compressedBytes": 1545848,
+      "crc32": "0b2c7757",
+      "sha256": "c62a564de0c42a73ff61d5e19d4d1b98971d2d83290ffbe36c5db13cf497a1fe",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/trace.zip",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-1.png",
+      "bytes": 112469,
+      "compressedBytes": 109028,
+      "crc32": "6e32861b",
+      "sha256": "f77a13c6929608b5ab64f9f87230e9c936b81f1d3e68577327fbfcf8e25b89a0",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-1.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/error-context.md",
+      "bytes": 16051,
+      "compressedBytes": 4581,
+      "crc32": "1a2411c6",
+      "sha256": "362c20786e65225785571b081821b138290efb24c9ed53a3dcbf0863d82fabfe",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/error-context.md.gz",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-2.png",
+      "bytes": 51359,
+      "compressedBytes": 46982,
+      "crc32": "2f46804e",
+      "sha256": "58f15137e71dc9ee0790f25f05fa31ec75773747f3f78c7148d0fec67bacca3c",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-2.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    },
+    {
+      "artifact": 14129207913,
+      "name": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-3.png",
+      "bytes": 33534,
+      "compressedBytes": 28849,
+      "crc32": "64ffb4bf",
+      "sha256": "75dba25bf003ffb3f38672321f28d6cfc25e9660738e0554771569595d2782e6",
+      "retainedPath": "members/14129207913/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-3.png",
+      "retention": "complete original member (gzip wrapper only where noted)"
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14130215319,
+      "report": "playwright-report/production-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T19:45:05.940Z",
+        "duration": 716865.354,
+        "expected": 82,
+        "skipped": 3,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "errors": [],
+      "cases": [
+        {
+          "title": "diagnostics.spec.ts > feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "file": "diagnostics.spec.ts",
+          "line": 189,
+          "status": "unexpected",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "retry": 0,
+              "status": "failed",
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                    "column": 7,
+                    "line": 368
+                  },
+                  "message": "ReferenceError: writeFile is not defined\n\n  366 |       // Retain the exact synthetic rows/window after fixture cleanup, so review\n  367 |       // can inspect completeness without exporting credentials or a live store.\n> 368 |       await writeFile(\n      |       ^\n  369 |         info.outputPath('spn098-feedback-pair.json'),\n  370 |         JSON.stringify(\n  371 |           {\n    at /home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts:368:7"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-2.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/test-failed-3.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/error-context.md"
+                }
+              ]
+            },
+            {
+              "retry": 1,
+              "status": "failed",
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                    "column": 7,
+                    "line": 368
+                  },
+                  "message": "ReferenceError: writeFile is not defined\n\n  366 |       // Retain the exact synthetic rows/window after fixture cleanup, so review\n  367 |       // can inspect completeness without exporting credentials or a live store.\n> 368 |       await writeFile(\n      |       ^\n  369 |         info.outputPath('spn098-feedback-pair.json'),\n  370 |         JSON.stringify(\n  371 |           {\n    at /home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts:368:7"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-2.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/test-failed-3.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry1/trace.zip"
+                }
+              ]
+            },
+            {
+              "retry": 2,
+              "status": "failed",
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                    "column": 7,
+                    "line": 368
+                  },
+                  "message": "ReferenceError: writeFile is not defined\n\n  366 |       // Retain the exact synthetic rows/window after fixture cleanup, so review\n  367 |       // can inspect completeness without exporting credentials or a live store.\n> 368 |       await writeFile(\n      |       ^\n  369 |         info.outputPath('spn098-feedback-pair.json'),\n  370 |         JSON.stringify(\n  371 |           {\n    at /home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts:368:7"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-2.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/test-failed-3.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production-retry2/error-context.md"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "file": "doc-mobile.spec.ts",
+          "line": 501,
+          "status": "skipped",
+          "expectedStatus": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "skipped",
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "title": "doc-mobile.spec.ts > a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "line": 980,
+          "status": "skipped",
+          "expectedStatus": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "skipped",
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        },
+        {
+          "title": "doc-mobile.spec.ts > a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "line": 980,
+          "status": "skipped",
+          "expectedStatus": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "skipped",
+              "errors": [],
+              "attachments": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14129207913,
+      "report": "playwright-report/development-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T19:44:45.636Z",
+        "duration": 331980.63300000003,
+        "expected": 35,
+        "skipped": 42,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "errors": [
+        {
+          "message": "Testing stopped early after 1 maximum allowed failures."
+        }
+      ],
+      "cases": [
+        {
+          "title": "diagnostics.spec.ts > feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "file": "diagnostics.spec.ts",
+          "line": 189,
+          "status": "unexpected",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "retry": 0,
+              "status": "failed",
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                    "column": 7,
+                    "line": 368
+                  },
+                  "message": "ReferenceError: writeFile is not defined\n\n  366 |       // Retain the exact synthetic rows/window after fixture cleanup, so review\n  367 |       // can inspect completeness without exporting credentials or a live store.\n> 368 |       await writeFile(\n      |       ^\n  369 |         info.outputPath('spn098-feedback-pair.json'),\n  370 |         JSON.stringify(\n  371 |           {\n    at /home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts:368:7"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-2.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/test-failed-3.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/error-context.md"
+                }
+              ]
+            },
+            {
+              "retry": 1,
+              "status": "failed",
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                    "column": 7,
+                    "line": 368
+                  },
+                  "message": "ReferenceError: writeFile is not defined\n\n  366 |       // Retain the exact synthetic rows/window after fixture cleanup, so review\n  367 |       // can inspect completeness without exporting credentials or a live store.\n> 368 |       await writeFile(\n      |       ^\n  369 |         info.outputPath('spn098-feedback-pair.json'),\n  370 |         JSON.stringify(\n  371 |           {\n    at /home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts:368:7"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-2.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/test-failed-3.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry1/trace.zip"
+                }
+              ]
+            },
+            {
+              "retry": 2,
+              "status": "failed",
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                    "column": 7,
+                    "line": 368
+                  },
+                  "message": "ReferenceError: writeFile is not defined\n\n  366 |       // Retain the exact synthetic rows/window after fixture cleanup, so review\n  367 |       // can inspect completeness without exporting credentials or a live store.\n> 368 |       await writeFile(\n      |       ^\n  369 |         info.outputPath('spn098-feedback-pair.json'),\n  370 |         JSON.stringify(\n  371 |           {\n    at /home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts:368:7"
+                }
+              ],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-2.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/test-failed-3.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development-retry2/error-context.md"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "diagnostics.spec.ts > truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "file": "diagnostics.spec.ts",
+          "line": 413,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "diagnostics.spec.ts > production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "file": "diagnostics.spec.ts",
+          "line": 483,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "diagnostics.spec.ts > Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "file": "diagnostics.spec.ts",
+          "line": 734,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "diagnostics.spec.ts > diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "file": "diagnostics.spec.ts",
+          "line": 1139,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-formula-access.spec.ts > Doc readers and host-only guests see literal formulas without receiving private source values",
+          "file": "doc-formula-access.spec.ts",
+          "line": 12,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-formulas.spec.ts > native Doc formulas render live cells, tables and cross-document totals without sharing source access",
+          "file": "doc-formulas.spec.ts",
+          "line": 14,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-formulas.spec.ts > rich clipboard creates independent native Formula objects and plain text keeps the expression",
+          "file": "doc-formulas.spec.ts",
+          "line": 594,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-formulas.spec.ts > native Formula busy retains edits and only an explicit retry inserts once",
+          "file": "doc-formulas.spec.ts",
+          "line": 742,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-formulas.spec.ts > native Formula timeout retains edits and only an explicit retry inserts once",
+          "file": "doc-formulas.spec.ts",
+          "line": 742,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-formulas.spec.ts > native Formula unavailable retains edits and only an explicit retry inserts once",
+          "file": "doc-formulas.spec.ts",
+          "line": 742,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone Docs at saved 100% zoom keep readable layout, touch formatting and saved settings @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 312,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone Docs at saved 50% zoom keep readable layout, touch formatting and saved settings @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 312,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone Docs at saved 200% zoom keep readable layout, touch formatting and saved settings @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 312,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "file": "doc-mobile.spec.ts",
+          "line": 501,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone Doc formulas preserve scalar values, all table rows and usable edit dialogs @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 602,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > phone guest Doc reader cannot write and loses its document when the link is revoked",
+          "file": "doc-mobile.spec.ts",
+          "line": 660,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > a modern phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 762,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > a traditional phone Doc handles a viewer upgrade without replacing its native canvas @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 762,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > traditional phone Doc is locally read-only without revoking its owner grant @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 882,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > traditional phone Doc is locally read-only without revoking its guest-editor grant @phone-ordinary",
+          "file": "doc-mobile.spec.ts",
+          "line": 882,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "line": 980,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "doc-mobile.spec.ts > a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "line": 980,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "documents.spec.ts > document UI preserves rich text and embedded images through reload and offline recovery",
+          "file": "documents.spec.ts",
+          "line": 8,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > Space theatre fills the window and restores its own page navigation",
+          "file": "editor-theatre.spec.ts",
+          "line": 44,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > sheet theatre preserves the live editor and selection in light",
+          "file": "editor-theatre.spec.ts",
+          "line": 207,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > sheet theatre preserves the live editor and selection in dark",
+          "file": "editor-theatre.spec.ts",
+          "line": 207,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > sheet theatre preserves the live editor and selection in phone",
+          "file": "editor-theatre.spec.ts",
+          "line": 207,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > sheet guest theatre keeps viewer permissions and revocation boundaries",
+          "file": "editor-theatre.spec.ts",
+          "line": 502,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > doc theatre preserves the live editor and selection in light",
+          "file": "editor-theatre.spec.ts",
+          "line": 207,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > doc theatre preserves the live editor and selection in dark",
+          "file": "editor-theatre.spec.ts",
+          "line": 207,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > doc theatre preserves the live editor and selection in phone",
+          "file": "editor-theatre.spec.ts",
+          "line": 207,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "editor-theatre.spec.ts > doc guest theatre keeps viewer permissions and revocation boundaries",
+          "file": "editor-theatre.spec.ts",
+          "line": 502,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "entry-screens.spec.ts > entry keeps cancellation, retry and help on one task without losing the pending request",
+          "file": "entry-screens.spec.ts",
+          "line": 29,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "entry-screens.spec.ts > an unbound consent request survives Operator sign-out and permits only the everyday account grant",
+          "file": "entry-screens.spec.ts",
+          "line": 132,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "entry-screens.spec.ts > viewed consent stays bound after account switching and requires a fresh assistant request",
+          "file": "entry-screens.spec.ts",
+          "line": 228,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "file-admin.spec.ts > Owner delegates file administration on every outer type, administrators manage access and lose downgraded authority",
+          "file": "file-admin.spec.ts",
+          "line": 9,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "folders.spec.ts > builds and renames a nested tree, opens all document types, moves safely and persists",
+          "file": "folders.spec.ts",
+          "line": 5,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "guest-link-expiry.spec.ts > owner guest-link inventory changes expiry without rotating and fences stale profile actions",
+          "file": "guest-link-expiry.spec.ts",
+          "line": 10,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "guest-link-expiry.spec.ts > expiry hides clean and dirty standalone guest doc and refuses writes, images and previews",
+          "file": "guest-link-expiry.spec.ts",
+          "line": 167,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "guest-link-expiry.spec.ts > expiry hides clean and dirty standalone guest sheet and refuses writes, images and previews",
+          "file": "guest-link-expiry.spec.ts",
+          "line": 167,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "guest-links.spec.ts > sheet guest links isolate visitors, preserve tab identities and revoke open editors",
+          "file": "guest-links.spec.ts",
+          "line": 9,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        },
+        {
+          "title": "guest-links.spec.ts > doc guest links isolate visitors, preserve tab identities and revoke open editors",
+          "file": "guest-links.spec.ts",
+          "line": 9,
+          "status": "skipped",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": []
+        }
+      ]
+    }
+  ]
+}

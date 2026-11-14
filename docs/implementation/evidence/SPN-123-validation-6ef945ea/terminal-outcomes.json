@@ -1,0 +1,430 @@
+{
+  "observedAt": "2026-11-14T20:12:40.219Z",
+  "runs": [
+    {
+      "kind": "ci",
+      "id": 43633378605,
+      "attempt": 1,
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "status": "completed",
+      "conclusion": "failure",
+      "htmlUrl": "https://github.com/mxbaylee/spinel/actions/runs/43633378605",
+      "jobs": [
+        {
+          "id": 132564755827,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:42Z",
+          "completedAt": "2026-11-14T19:41:26Z"
+        },
+        {
+          "id": 132564756107,
+          "name": "Classify changes (43633378605)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:42Z",
+          "completedAt": "2026-11-14T19:41:30Z"
+        },
+        {
+          "id": 132565004312,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "failure",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:42:00Z"
+        },
+        {
+          "id": 132565004334,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:51:30Z"
+        },
+        {
+          "id": 132565004344,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:48:32Z"
+        },
+        {
+          "id": 132565004352,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:49:14Z"
+        },
+        {
+          "id": 132565004369,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:43:22Z"
+        },
+        {
+          "id": 132565004370,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:47:54Z"
+        },
+        {
+          "id": 132565004372,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:46:24Z"
+        },
+        {
+          "id": 132565004380,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:45:56Z"
+        },
+        {
+          "id": 132565004389,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:42:18Z"
+        },
+        {
+          "id": 132565004428,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:48:35Z",
+          "completedAt": "2026-11-14T19:48:48Z"
+        },
+        {
+          "id": 132565004430,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:34Z",
+          "completedAt": "2026-11-14T19:49:02Z"
+        },
+        {
+          "id": 132565004438,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:42:21Z"
+        },
+        {
+          "id": 132565004443,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:47:52Z"
+        },
+        {
+          "id": 132565004448,
+          "name": "Doc responsiveness (mobile)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T20:05:23Z"
+        },
+        {
+          "id": 132565004474,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:42:21Z",
+          "completedAt": "2026-11-14T19:52:36Z"
+        },
+        {
+          "id": 132565004477,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:46:54Z"
+        },
+        {
+          "id": 132565004482,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:33Z",
+          "completedAt": "2026-11-14T19:48:51Z"
+        },
+        {
+          "id": 132565004539,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:41:50Z",
+          "completedAt": "2026-11-14T19:48:44Z"
+        },
+        {
+          "id": 132565004547,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "failure",
+          "startedAt": "2026-11-14T19:44:05Z",
+          "completedAt": "2026-11-14T19:50:21Z"
+        },
+        {
+          "id": 132565004554,
+          "name": "Playwright smoke (sync-production)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:42:02Z",
+          "completedAt": "2026-11-14T19:56:49Z"
+        },
+        {
+          "id": 132565004564,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:43:06Z",
+          "completedAt": "2026-11-14T19:55:43Z"
+        },
+        {
+          "id": 132565004565,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:43:25Z",
+          "completedAt": "2026-11-14T20:03:14Z"
+        },
+        {
+          "id": 132565004585,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:47:57Z",
+          "completedAt": "2026-11-14T19:49:31Z"
+        },
+        {
+          "id": 132565004587,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:48:37Z",
+          "completedAt": "2026-11-14T19:50:39Z"
+        },
+        {
+          "id": 132565004595,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:46:06Z",
+          "completedAt": "2026-11-14T19:48:16Z"
+        },
+        {
+          "id": 132565004600,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "failure",
+          "startedAt": "2026-11-14T19:44:07Z",
+          "completedAt": "2026-11-14T19:57:09Z"
+        },
+        {
+          "id": 132565004632,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:47:55Z",
+          "completedAt": "2026-11-14T19:52:08Z"
+        },
+        {
+          "id": 132565004699,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:46:56Z",
+          "completedAt": "2026-11-14T19:48:56Z"
+        },
+        {
+          "id": 132567035187,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:48:58Z",
+          "completedAt": "2026-11-14T19:49:12Z"
+        },
+        {
+          "id": 132567086462,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:49:06Z",
+          "completedAt": "2026-11-14T19:49:27Z"
+        },
+        {
+          "id": 132571583935,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "failure",
+          "startedAt": "2026-11-14T20:06:27Z",
+          "completedAt": "2026-11-14T20:06:42Z"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": 43633378587,
+      "attempt": 1,
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "status": "completed",
+      "conclusion": "success",
+      "htmlUrl": "https://github.com/mxbaylee/spinel/actions/runs/43633378587",
+      "jobs": [
+        {
+          "id": 132564755743,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:42Z",
+          "completedAt": "2026-11-14T19:41:47Z"
+        },
+        {
+          "id": 132565084956,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:42:23Z",
+          "completedAt": "2026-11-14T19:43:03Z"
+        },
+        {
+          "id": 132565432695,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:48:47Z",
+          "completedAt": "2026-11-14T19:57:02Z"
+        },
+        {
+          "id": 132565432720,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:45:58Z",
+          "completedAt": "2026-11-14T19:55:40Z"
+        },
+        {
+          "id": 132565432721,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:48:51Z",
+          "completedAt": "2026-11-14T19:57:48Z"
+        },
+        {
+          "id": 132565432726,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:46:27Z",
+          "completedAt": "2026-11-14T19:55:36Z"
+        },
+        {
+          "id": 132565432762,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:48:53Z",
+          "completedAt": "2026-11-14T19:57:05Z"
+        },
+        {
+          "id": 132565433773,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped",
+          "startedAt": "2026-11-14T19:43:03Z",
+          "completedAt": "2026-11-14T19:43:03Z"
+        },
+        {
+          "id": 132569453334,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T20:00:34Z",
+          "completedAt": "2026-11-14T20:00:47Z"
+        },
+        {
+          "id": 132570262082,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped",
+          "startedAt": "2026-11-14T20:00:47Z",
+          "completedAt": "2026-11-14T20:00:47Z"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43633378724,
+      "attempt": 1,
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "status": "completed",
+      "conclusion": "success",
+      "htmlUrl": "https://github.com/mxbaylee/spinel/actions/runs/43633378724",
+      "jobs": [
+        {
+          "id": 132564756009,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:42Z",
+          "completedAt": "2026-11-14T19:44:03Z"
+        },
+        {
+          "id": 132564756274,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:42Z",
+          "completedAt": "2026-11-14T19:44:05Z"
+        },
+        {
+          "id": 132564756501,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:43Z",
+          "completedAt": "2026-11-14T19:48:57Z"
+        }
+      ]
+    },
+    {
+      "kind": "spaces",
+      "id": 43633378630,
+      "attempt": 1,
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "status": "completed",
+      "conclusion": "success",
+      "htmlUrl": "https://github.com/mxbaylee/spinel/actions/runs/43633378630",
+      "jobs": [
+        {
+          "id": 132564755608,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T19:40:41Z",
+          "completedAt": "2026-11-14T19:41:24Z"
+        }
+      ]
+    }
+  ],
+  "artifactCount": 34,
+  "source": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "testedMerge": "c2a51b55e790dce6bed6c0059f40c07288f71a4c",
+  "testedTree": "6f99fb105dbbb33cb50f6ea5ec9c0e3814dc9a49"
+}

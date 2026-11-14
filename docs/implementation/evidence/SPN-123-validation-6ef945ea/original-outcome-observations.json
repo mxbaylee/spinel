@@ -1,0 +1,257 @@
+[
+  {
+    "artifactId": 14130215319,
+    "name": "playwright-report/production-1-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T19:45:05.940Z",
+      "duration": 716865.354,
+      "expected": 82,
+      "skipped": 3,
+      "unexpected": 1,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129905360,
+    "name": "test-results/spn108-comparison-desktop.json",
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "candidateIntegrity": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14129905360,
+    "name": "playwright-report/doc-responsiveness.json",
+    "stats": {
+      "startTime": "2026-11-14T19:48:33.635Z",
+      "duration": 236331.38400000002,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129875025,
+    "name": "playwright-report/sync-soak-sheet.json",
+    "stats": {
+      "startTime": "2026-11-14T19:49:23.320Z",
+      "duration": 73327.58899999999,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129796118,
+    "name": "playwright-report/production-2-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T19:44:08.884Z",
+      "duration": 688132.526,
+      "expected": 85,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129770664,
+    "name": "test-results/spn113-comparison-mobile.json",
+    "accepted": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14129770664,
+    "name": "playwright-report/doc-callback-lifetimes.json",
+    "stats": {
+      "startTime": "2026-11-14T19:47:40.343Z",
+      "duration": 207664.28,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129656878,
+    "name": "playwright-report/development-2-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T19:44:20.055Z",
+      "duration": 1128158.587,
+      "expected": 77,
+      "skipped": 1,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129625816,
+    "name": "playwright-report/mobile-https.json",
+    "stats": {
+      "startTime": "2026-11-14T19:47:49.703Z",
+      "duration": 61842.561,
+      "expected": 10,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129613546,
+    "name": "test-results/spn108-comparison-mobile.json",
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "candidateIntegrity": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14129613546,
+    "name": "playwright-report/doc-responsiveness.json",
+    "stats": {
+      "startTime": "2026-11-14T19:57:55.883Z",
+      "duration": 443079.138,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129545495,
+    "name": "playwright-report/supervised-restore.json",
+    "stats": {
+      "startTime": "2026-11-14T19:42:39.892Z",
+      "duration": 361510.39200000005,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129460789,
+    "name": "playwright-report/sync-soak-doc.json",
+    "stats": {
+      "startTime": "2026-11-14T19:48:48.240Z",
+      "duration": 38377.265,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129336114,
+    "name": "test-results/spn113-comparison-desktop.json",
+    "accepted": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14129336114,
+    "name": "playwright-report/doc-callback-lifetimes.json",
+    "stats": {
+      "startTime": "2026-11-14T19:45:49.373Z",
+      "duration": 167080.013,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129207913,
+    "name": "playwright-report/development-1-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T19:44:45.636Z",
+      "duration": 331980.63300000003,
+      "expected": 35,
+      "skipped": 42,
+      "unexpected": 1,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129139531,
+    "name": "playwright-report/sync-production.json",
+    "stats": {
+      "startTime": "2026-11-14T19:42:51.303Z",
+      "duration": 832991.49,
+      "expected": 98,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129059351,
+    "name": "playwright-report/sync-development.json",
+    "stats": {
+      "startTime": "2026-11-14T19:48:46.074Z",
+      "duration": 198841.827,
+      "expected": 21,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129043701,
+    "name": "evidence.json",
+    "passed": true,
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance"
+  },
+  {
+    "artifactId": 14128374828,
+    "name": "playwright-report/offline-upgrade.json",
+    "stats": {
+      "startTime": "2026-11-14T19:47:25.852Z",
+      "duration": 45882.11,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14129710524,
+    "name": "safari/acceptance.json",
+    "status": "passed",
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss"
+  },
+  {
+    "artifactId": 14128888515,
+    "name": "chrome/acceptance.json",
+    "status": "passed",
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss"
+  },
+  {
+    "artifactId": 14128783740,
+    "name": "firefox/acceptance.json",
+    "status": "passed",
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss"
+  },
+  {
+    "artifactId": 14129077473,
+    "name": "spaces-acceptance.json",
+    "status": "passed",
+    "sourceCommit": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+    "checks": [
+      "bucket-retention-policy",
+      "private-publication-and-readback",
+      "anonymous-access-denial",
+      "authenticated-download-and-encrypted-restore",
+      "paginated-complete-catalog-and-pending-cleanup",
+      "retention-and-deletion",
+      "complete-app-provider-fixture",
+      "operator-provider-catalog",
+      "catalog-source-preparation",
+      "catalog-confirmation-and-private-release",
+      "provider-restore-session-revocation-and-outcome",
+      "provider-restored-content-and-current-passkey"
+    ],
+    "cleanup": "complete"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "attempt": 2,
+  "kind": "local evidence commit verification only",
+  "outcome": "evidence-only commit created without refs; helper did not return it because display-quoted Unicode path failed a plain-prefix comparison",
+  "cause": "Git quoted the curly apostrophe in one preserved original artifact member filename. The separate index contains exactly540 archive additions and no source changes.",
+  "repair": "Set core.quotePath=false for the scope verification; original file/path bytes are unchanged. Preserve original assembled manifest separately.",
+  "candidateChanged": false,
+  "remoteChanged": false
+}

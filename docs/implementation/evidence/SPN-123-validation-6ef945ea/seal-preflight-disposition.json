@@ -1,0 +1,10 @@
+{
+  "attempt": 1,
+  "kind": "local archive assembly preflight only",
+  "outcome": "stopped before Git index/object/ref mutation",
+  "error": "Error: already sealed",
+  "cause": "The helper matched preserved nested original manifest.json paths rather than only its intended archive-root manifest.",
+  "repair": "Restrict detection to exact root manifest path; preserved nested evidence remains unchanged.",
+  "applicationWorkload": false,
+  "workflowRerun": false
+}

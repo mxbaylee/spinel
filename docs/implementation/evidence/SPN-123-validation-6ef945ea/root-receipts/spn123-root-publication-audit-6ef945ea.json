@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-14T19:38:44.967255+00:00",
+  "source": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "archive": "607e36f0ac70db7d65879f0dc0699e4f31cf2cd6",
+  "parentVerified": true,
+  "files": 36,
+  "payloads": 35,
+  "rootReadBodyREADMEBothCurrentReviews": true,
+  "sourceTar1373GitBlobsVerified": true,
+  "originalPacketArchivesByteCompared": [
+    1536,
+    1465
+  ],
+  "allSevenCompressedTreesRead": true,
+  "fourOriginalReportsByteExact": true,
+  "bodySha256": "2673898a73c518e0864aa21f3199ea1206f907fada328d6f7fd2a08c017270a5",
+  "manifestSha256": "8b15a144fb7a0a7ea76cbc0ace1b39186944bd9a1404f91aec3d8a2426650932",
+  "publicationCorrections": "Build replaced withBacklog; compilerabortattributedprereintegrationACKsource. Originaldraftretained."
+}

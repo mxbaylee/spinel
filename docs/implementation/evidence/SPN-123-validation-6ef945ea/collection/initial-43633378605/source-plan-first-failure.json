@@ -1,0 +1,53 @@
+{
+  "source": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "testedMerge": "c2a51b55e790dce6bed6c0059f40c07288f71a4c",
+  "mergeParents": [
+    "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+    "6ef945eae3168da7f3706088dc7c2b78fad39cd5"
+  ],
+  "testedTree": "6f99fb105dbbb33cb50f6ea5ec9c0e3814dc9a49",
+  "sourceTree": "6f99fb105dbbb33cb50f6ea5ec9c0e3814dc9a49",
+  "treesEqual": true,
+  "planRawSHA256": "51d4c2ad46ee6370ce96fe39696a375eaade7f3672ee6c5397bca880e4af8d05",
+  "planCanonicalSHA256": "27a6dd13223f242dc2cdc12a3d94e73ad4101844ebcc999543a7cdf20e695edc",
+  "actualPlanMode": "full",
+  "paths": null,
+  "selectedSuites": [
+    "backlog",
+    "pull-request",
+    "lint",
+    "typecheck",
+    "unit-tests",
+    "lib-test-run",
+    "playwright-run",
+    "container-smoke",
+    "restore-timing",
+    "sync-transition",
+    "doc-responsiveness",
+    "doc-callback-lifetimes",
+    "responsiveness-baseline",
+    "callback-baseline",
+    "phone-compatibility"
+  ],
+  "planArtifactSHA256": "6036ac75baf14a13c12915e1f6f0edf368e84f97372ffd919da84e5576c37655",
+  "localTargetedPlanBytes": 198419,
+  "fallbackEvidence": "Classification log contains no changedPaths catch message; local same-source targeted plan exceeds64KiB. Existing changes.ts therefore supports oversized-output conservative fallback; this is an inference until actual pre-fallback plan is available, not a lost-selection pass. All15actual suites selected.",
+  "firstFailure": {
+    "workflow": 43633378605,
+    "attempt": 1,
+    "job": 132565004312,
+    "time": "2026-11-14T19:41:58.2456361Z",
+    "error": "e2e/diagnostics.spec.ts(368,13): TS2304 Cannot find name 'writeFile'.",
+    "cause": "Integration retained complete feedback case but omitted its writeFile named import from node:fs/promises; ec42 includes it.",
+    "rawLogSHA256": "938f5d68751c48630fd7f0aaee65693f2aa3f533fce6bb08f61f5a14f76b133b",
+    "sourceChanged": false
+  },
+  "checkoutProof": {
+    "ci": "c2a51b55e790dce6bed6c0059f40c07288f71a4c from classify and Typecheck full logs",
+    "storybook": "c2a51b55e790dce6bed6c0059f40c07288f71a4c from classify log",
+    "spaces": "6ef945eae3168da7f3706088dc7c2b78fad39cd5 directly from checkout and SPACES_ACCEPTANCE_COMMIT log",
+    "desktop": "Run source verified; exact per-platform tested checkout remains pending completed logs"
+  },
+  "collectionLimits": "Bounded initial snapshot, not terminal or acceptance. Six initial log GETs hit gh escape refusal; separately corrected GETs all succeeded without any Actions rerun. Original API responses/errors retained."
+}

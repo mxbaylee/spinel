@@ -1,0 +1,159 @@
+{
+  "files": [
+    {
+      "path": "all-source-runs.json.gz",
+      "sha256": "06a02e95fc4506daf89a599f3a250b101cd564d22b526f220c4d7b4827910c6d",
+      "bytes": 2398
+    },
+    {
+      "path": "artifacts-ci.json.gz",
+      "sha256": "f41092ec201d888599e79879105d05cb053daa0d7495512c0d0fb668b5df01bd",
+      "bytes": 440
+    },
+    {
+      "path": "artifacts-desktop.json.gz",
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "bytes": 54
+    },
+    {
+      "path": "artifacts-spaces.json.gz",
+      "sha256": "534548fe69506fb40b97a2a4831f74a54878315cc328d820c2bec13bf258406d",
+      "bytes": 448
+    },
+    {
+      "path": "artifacts-storybook.json.gz",
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "bytes": 54
+    },
+    {
+      "path": "base-commit.json.gz",
+      "sha256": "e735f8cbdbb2106ced74b95632b5d4f1cf37c6a58bebe6065b2905ec8eb48a3c",
+      "bytes": 114751
+    },
+    {
+      "path": "collection-summary.json",
+      "sha256": "9672817b2ef1024e84db9cdacd5e1193f38310944ec511b03ef4703ba22a3ea8",
+      "bytes": 9751
+    },
+    {
+      "path": "jobs-ci-attempt-1.json.gz",
+      "sha256": "28184c970bd7c302af6ec0642746a19000886f6f9290da84b9a87ca0cb4e2ef0",
+      "bytes": 3770
+    },
+    {
+      "path": "jobs-desktop-attempt-1.json.gz",
+      "sha256": "92b62ba45da4c8d34c622934907cbf01d48f5cd5524f98d946ee40e7ed529074",
+      "bytes": 1188
+    },
+    {
+      "path": "jobs-spaces-attempt-1.json.gz",
+      "sha256": "25c25a1266a2aae7d70bdcdc2d197e6803aee39d21ae5c216341da1dcd822191",
+      "bytes": 811
+    },
+    {
+      "path": "jobs-storybook-attempt-1.json.gz",
+      "sha256": "62e12dc40a7cd0bd14e042ad96c84a873da746f5c827b4c60828f2b212d34a93",
+      "bytes": 832
+    },
+    {
+      "path": "logs-escaped-output/job-132564755608.log.gz",
+      "sha256": "104d504f0cba545e3e59fa817e7df0bec3ca048ecf240408082736ad75857e6b",
+      "bytes": 7385
+    },
+    {
+      "path": "logs-escaped-output/job-132564755743.log.gz",
+      "sha256": "2995edf2e1bdb079af80178c69a9870e26092269df51d9f8bec4c17ca2e9606a",
+      "bytes": 10800
+    },
+    {
+      "path": "logs-escaped-output/job-132564755827.log.gz",
+      "sha256": "87fac11a8fbbe1169811284c619dd29ba6d5d3919e525433d434a13959e25e62",
+      "bytes": 9075
+    },
+    {
+      "path": "logs-escaped-output/job-132564756107.log.gz",
+      "sha256": "565c8730dd4f7582abb171b19f28a5bc41f06433d3590864c6de1a5074fc8302",
+      "bytes": 11371
+    },
+    {
+      "path": "logs-escaped-output/job-132565004312.log.gz",
+      "sha256": "8614c76299935a62cee52f566d92198c8d6c7aa9d9603e31f0e3ef3dffb7e383",
+      "bytes": 5053
+    },
+    {
+      "path": "logs-escaped-output/job-132565004389.log.gz",
+      "sha256": "643bcfc47d0011d57063656f075d15fa3ea5dbbd533d876deeeaea453ee62cf1",
+      "bytes": 7222
+    },
+    {
+      "path": "logs-escaped-output/manifest.json",
+      "sha256": "318fd380687f2c5014c88cdad3bfa08c243ef63fab5f7b89799b29b0806ab425",
+      "bytes": 1940
+    },
+    {
+      "path": "observed-merge-commit.json.gz",
+      "sha256": "2568eac847f63f2f2e435296b62717984c93d6e123c233f0349f14e68d3ae6e9",
+      "bytes": 227350
+    },
+    {
+      "path": "observed-pr-body.md.gz",
+      "sha256": "e1a65c9706046bc2f36976c2b25b2e54aa0f8bf2d0e85d11b673c4fe9dfc6d38",
+      "bytes": 7663
+    },
+    {
+      "path": "original-zips/artifact-14128628949.zip",
+      "sha256": "6036ac75baf14a13c12915e1f6f0edf368e84f97372ffd919da84e5576c37655",
+      "bytes": 923
+    },
+    {
+      "path": "plan-ci-plan.json",
+      "sha256": "51d4c2ad46ee6370ce96fe39696a375eaade7f3672ee6c5397bca880e4af8d05",
+      "bytes": 3887
+    },
+    {
+      "path": "pr.json.gz",
+      "sha256": "ddf5264b5564bcee5f9763c8c56c4f22f1e853184c3bc294a6acbc97ba000482",
+      "bytes": 9554
+    },
+    {
+      "path": "raw-manifest.json",
+      "sha256": "1ab83a5307919896e5e81fca495a246d8f911a3eb64253c03a22a909a64fd1aa",
+      "bytes": 4911
+    },
+    {
+      "path": "run-ci.json.gz",
+      "sha256": "41a46fcaf429120798bba2e0111bc21b6bcb64666955d29c526fb706a469da77",
+      "bytes": 1657
+    },
+    {
+      "path": "run-desktop.json.gz",
+      "sha256": "550b981ad2270fb4669a412ad6be120a271649b0a03554cf54cadc5344ee43ca",
+      "bytes": 1672
+    },
+    {
+      "path": "run-spaces.json.gz",
+      "sha256": "1d28c8f52e7aa58e265c8eb54523f365782ba7ca7cb3eb0308fe8795e1a644b9",
+      "bytes": 1680
+    },
+    {
+      "path": "run-storybook.json.gz",
+      "sha256": "0e5d8fc49943ebea74acc121c8714fe79baec65b09fe625bb20164e10f384fc0",
+      "bytes": 1663
+    },
+    {
+      "path": "source-check-runs.json.gz",
+      "sha256": "4f7927c60949ef3f7515d3ee37fb29fde8218a4ce6c69a2b271dbeb8c44263d6",
+      "bytes": 4743
+    },
+    {
+      "path": "source-commit.json.gz",
+      "sha256": "1af878f4849bac075860750e16bc23b35ef4257a7a7ddd5c9f40d3970f9bffaa",
+      "bytes": 119628
+    },
+    {
+      "path": "source-plan-first-failure.json",
+      "sha256": "39df1d10419042a0bae7e4d9928770cb209dca515d36b39f7c86e6e80e319ff3",
+      "bytes": 2604
+    }
+  ]
+}

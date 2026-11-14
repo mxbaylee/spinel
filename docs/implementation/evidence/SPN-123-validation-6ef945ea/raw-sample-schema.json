@@ -1,0 +1,458 @@
+[
+  {
+    "artifact": 14129770664,
+    "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+    "role": "baselineObservation",
+    "complete": true,
+    "passed": true,
+    "traceRead": {
+      "sourceEvents": 954374,
+      "retainedEvents": 954374,
+      "callbackEvents": 166365,
+      "uncompressedBytes": 593964119,
+      "uncompressedSha256": "e1ebe6a39d8ce2afd3eaf9bfcdae0f7c7410cab60ece4c6a16292f30a89f103d",
+      "maxEventBytes": 17411
+    },
+    "analysis": {
+      "schema": 1,
+      "role": "baselineObservation",
+      "complete": true,
+      "bounded": false,
+      "accepted": true,
+      "evidenceFailures": {
+        "length": 0
+      },
+      "candidateViolations": {
+        "length": 4
+      },
+      "frameId": "9257418431C7872E6DED7380C55299FD",
+      "renderer": {
+        "keys": [
+          "pid",
+          "tid"
+        ]
+      },
+      "phaseAtUs": {
+        "keys": [
+          "beforeMount",
+          "inputStart",
+          "finalKey",
+          "disposed",
+          "end"
+        ]
+      },
+      "caps": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "families": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "ledger": {
+        "length": 35770,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "timerId",
+          "generation",
+          "family",
+          "callsite",
+          "installedAtUs",
+          "timeoutMs",
+          "singleShot",
+          "retiredAtUs",
+          "retiredBy",
+          "removals",
+          "duplicateRemovals",
+          "fires"
+        ]
+      },
+      "orphans": {
+        "length": 0
+      },
+      "noOpRemovals": {
+        "length": 36,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "atUs",
+          "timerId",
+          "family",
+          "callsite"
+        ]
+      },
+      "ignoredOtherFrames": 0,
+      "unrelatedTimers": 16949,
+      "mainThreadTasks": {
+        "keys": [
+          "count",
+          "sumMs",
+          "unionMs",
+          "maxMs",
+          "instantaneousEvents",
+          "boundaryEvents",
+          "postInput",
+          "postDisposal",
+          "spans"
+        ]
+      }
+    },
+    "inputSamples": {
+      "keydown": 2086,
+      "keyToFrame": 2086,
+      "longTasks": 1722
+    }
+  },
+  {
+    "artifact": 14129770664,
+    "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "source": "c2a51b55e790dce6bed6c0059f40c07288f71a4c",
+    "role": "candidate",
+    "complete": true,
+    "passed": true,
+    "traceRead": {
+      "sourceEvents": 970948,
+      "retainedEvents": 970948,
+      "callbackEvents": 186561,
+      "uncompressedBytes": 624459897,
+      "uncompressedSha256": "31c92ec175cca6df270826cc8b29078b4693910ca46752abcccaf8b9dfbf87b7",
+      "maxEventBytes": 17403
+    },
+    "analysis": {
+      "schema": 1,
+      "role": "candidate",
+      "complete": true,
+      "bounded": true,
+      "accepted": true,
+      "evidenceFailures": {
+        "length": 0
+      },
+      "candidateViolations": {
+        "length": 0
+      },
+      "frameId": "94326F16AD7D8B788C38BDD109597E36",
+      "renderer": {
+        "keys": [
+          "pid",
+          "tid"
+        ]
+      },
+      "phaseAtUs": {
+        "keys": [
+          "beforeMount",
+          "inputStart",
+          "finalKey",
+          "disposed",
+          "end"
+        ]
+      },
+      "caps": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "families": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "ledger": {
+        "length": 29523,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "timerId",
+          "generation",
+          "family",
+          "callsite",
+          "installedAtUs",
+          "timeoutMs",
+          "singleShot",
+          "retiredAtUs",
+          "retiredBy",
+          "removals",
+          "duplicateRemovals",
+          "fires"
+        ]
+      },
+      "orphans": {
+        "length": 0
+      },
+      "noOpRemovals": {
+        "length": 39,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "atUs",
+          "timerId",
+          "family",
+          "callsite"
+        ]
+      },
+      "ignoredOtherFrames": 0,
+      "unrelatedTimers": 10699,
+      "mainThreadTasks": {
+        "keys": [
+          "count",
+          "sumMs",
+          "unionMs",
+          "maxMs",
+          "instantaneousEvents",
+          "boundaryEvents",
+          "postInput",
+          "postDisposal",
+          "spans"
+        ]
+      }
+    },
+    "inputSamples": {
+      "keydown": 2086,
+      "keyToFrame": 2086,
+      "longTasks": 637
+    }
+  },
+  {
+    "artifact": 14129336114,
+    "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+    "role": "baselineObservation",
+    "complete": true,
+    "passed": true,
+    "traceRead": {
+      "sourceEvents": 1064292,
+      "retainedEvents": 1064292,
+      "callbackEvents": 221643,
+      "uncompressedBytes": 668287991,
+      "uncompressedSha256": "9c1f92bfb63b8fe6db90032c066b1fcac095b2add1d4f13a9699c41c0b6f2e47",
+      "maxEventBytes": 18370
+    },
+    "analysis": {
+      "schema": 1,
+      "role": "baselineObservation",
+      "complete": true,
+      "bounded": false,
+      "accepted": true,
+      "evidenceFailures": {
+        "length": 0
+      },
+      "candidateViolations": {
+        "length": 4
+      },
+      "frameId": "F01B7CEBF40D75BFACC933FA60BDDF74",
+      "renderer": {
+        "keys": [
+          "pid",
+          "tid"
+        ]
+      },
+      "phaseAtUs": {
+        "keys": [
+          "beforeMount",
+          "inputStart",
+          "finalKey",
+          "disposed",
+          "end"
+        ]
+      },
+      "caps": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "families": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "ledger": {
+        "length": 37886,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "timerId",
+          "generation",
+          "family",
+          "callsite",
+          "installedAtUs",
+          "timeoutMs",
+          "singleShot",
+          "retiredAtUs",
+          "retiredBy",
+          "removals",
+          "duplicateRemovals",
+          "fires"
+        ]
+      },
+      "orphans": {
+        "length": 0
+      },
+      "noOpRemovals": {
+        "length": 4216,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "atUs",
+          "timerId",
+          "family",
+          "callsite"
+        ]
+      },
+      "ignoredOtherFrames": 0,
+      "unrelatedTimers": 19063,
+      "mainThreadTasks": {
+        "keys": [
+          "count",
+          "sumMs",
+          "unionMs",
+          "maxMs",
+          "instantaneousEvents",
+          "boundaryEvents",
+          "postInput",
+          "postDisposal",
+          "spans"
+        ]
+      }
+    },
+    "inputSamples": {
+      "keydown": 2086,
+      "keyToFrame": 2086,
+      "longTasks": 98
+    }
+  },
+  {
+    "artifact": 14129336114,
+    "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "source": "c2a51b55e790dce6bed6c0059f40c07288f71a4c",
+    "role": "candidate",
+    "complete": true,
+    "passed": true,
+    "traceRead": {
+      "sourceEvents": 1122888,
+      "retainedEvents": 1122888,
+      "callbackEvents": 244202,
+      "uncompressedBytes": 724845898,
+      "uncompressedSha256": "8507bef78cd581f55750911be76d2463a66a4172ae2a620728a6291e766a3ef9",
+      "maxEventBytes": 18371
+    },
+    "analysis": {
+      "schema": 1,
+      "role": "candidate",
+      "complete": true,
+      "bounded": true,
+      "accepted": true,
+      "evidenceFailures": {
+        "length": 0
+      },
+      "candidateViolations": {
+        "length": 0
+      },
+      "frameId": "D635B0B7E093263624E038099037D748",
+      "renderer": {
+        "keys": [
+          "pid",
+          "tid"
+        ]
+      },
+      "phaseAtUs": {
+        "keys": [
+          "beforeMount",
+          "inputStart",
+          "finalKey",
+          "disposed",
+          "end"
+        ]
+      },
+      "caps": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "families": {
+        "keys": [
+          "cursor",
+          "zoom-init",
+          "zoom-update"
+        ]
+      },
+      "ledger": {
+        "length": 31652,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "timerId",
+          "generation",
+          "family",
+          "callsite",
+          "installedAtUs",
+          "timeoutMs",
+          "singleShot",
+          "retiredAtUs",
+          "retiredBy",
+          "removals",
+          "duplicateRemovals",
+          "fires"
+        ]
+      },
+      "orphans": {
+        "length": 0
+      },
+      "noOpRemovals": {
+        "length": 4225,
+        "firstKeys": [
+          "pid",
+          "tid",
+          "frame",
+          "atUs",
+          "timerId",
+          "family",
+          "callsite"
+        ]
+      },
+      "ignoredOtherFrames": 0,
+      "unrelatedTimers": 12829,
+      "mainThreadTasks": {
+        "keys": [
+          "count",
+          "sumMs",
+          "unionMs",
+          "maxMs",
+          "instantaneousEvents",
+          "boundaryEvents",
+          "postInput",
+          "postDisposal",
+          "spans"
+        ]
+      }
+    },
+    "inputSamples": {
+      "keydown": 2086,
+      "keyToFrame": 2086,
+      "longTasks": 1
+    }
+  }
+]

@@ -1,0 +1,622 @@
+{
+  "observedAt": "2026-11-14T20:07:39.173Z",
+  "source": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "pr": 220,
+  "workflows": [
+    {
+      "kind": "storybook",
+      "id": 43633378587,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "jobs": [
+        {
+          "id": 132564755743,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565084956,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565432695,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565432720,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565432721,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565432726,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565432762,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565433773,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132569453334,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132570262082,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14130325020,
+          "name": "storybook-check-tablet",
+          "digest": "sha256:c34bed415f04d4400f5911aee09c5838289a495ff04956e075892a64edb8f3a7",
+          "size": 17653,
+          "expired": false
+        },
+        {
+          "id": 14129911024,
+          "name": "storybook-check-desktop-dark",
+          "digest": "sha256:deb125b43796a72f1c087cd09572b20e5aeab0587fc72f211125c25cee5e111e",
+          "size": 17645,
+          "expired": false
+        },
+        {
+          "id": 14129641842,
+          "name": "storybook-check-mobile-light",
+          "digest": "sha256:03c48f188fdd722a1700e9b3ca153c81135ef86e6324fe0a75098f09cb8e9d92",
+          "size": 17635,
+          "expired": false
+        },
+        {
+          "id": 14129391817,
+          "name": "storybook-check-desktop-light",
+          "digest": "sha256:11d76c65cd3521f03cf5890f5d045573e7492f8cc8a3d153ce96e176db7eec85",
+          "size": 17714,
+          "expired": false
+        },
+        {
+          "id": 14129104870,
+          "name": "storybook-check-mobile-dark",
+          "digest": "sha256:ea8dd01a39d009478c53be7a1d552c60b8ec0779cd3929950d001cdca4ab82e7",
+          "size": 17729,
+          "expired": false
+        },
+        {
+          "id": 14129077715,
+          "name": "storybook-review",
+          "digest": "sha256:b17d9329dc6e5de404d1b0d1c8529448d0bcd95812f44c65f47f4d6e04ee4517",
+          "size": 6263813,
+          "expired": false
+        },
+        {
+          "id": 14128654523,
+          "name": "entity-icon-checks",
+          "digest": "sha256:2a96578adf61025b59df02764109d7ea9e2125017890a30ef1793834e89a6dee",
+          "size": 509,
+          "expired": false
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43633378724,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "jobs": [
+        {
+          "id": 132564756009,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132564756274,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132564756501,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14129710524,
+          "name": "desktop-offline-safari-macos-15-intel-43633378724-1",
+          "digest": "sha256:a8ab5e0d1da7129ba6e36f87064a617ac564a4d027e867b1d4528168e888dc31",
+          "size": 1024869,
+          "expired": false
+        },
+        {
+          "id": 14128888515,
+          "name": "desktop-offline-chrome-macos-26-43633378724-1",
+          "digest": "sha256:dea6b19c5cff3fd99c4c5a4c59617be92f35affe7f4aac540d3e9fd706a65857",
+          "size": 220965,
+          "expired": false
+        },
+        {
+          "id": 14128783740,
+          "name": "desktop-offline-firefox-macos-26-43633378724-1",
+          "digest": "sha256:abee174ec817a7e1f69df7be6494443823b5616b353967ffbd39e4a4ae70908b",
+          "size": 455031,
+          "expired": false
+        }
+      ]
+    },
+    {
+      "kind": "spaces",
+      "id": 43633378630,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "jobs": [
+        {
+          "id": 132564755608,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14129077473,
+          "name": "spaces-acceptance",
+          "digest": "sha256:62b1131fbc8953c66f915446ea8a5c553dbcf2f01575c292ec6e0d1d8ef4c865",
+          "size": 669,
+          "expired": false
+        }
+      ]
+    },
+    {
+      "kind": "ci",
+      "id": 43633378605,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "head": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "jobs": [
+        {
+          "id": 132564755827,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132564756107,
+          "name": "Classify changes (43633378605)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004312,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 132565004334,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004344,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004352,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004369,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004370,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004372,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004380,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004389,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004428,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004430,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004438,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004443,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004448,
+          "name": "Doc responsiveness (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004474,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004477,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004482,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004539,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004547,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 132565004554,
+          "name": "Playwright smoke (sync-production)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004564,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004565,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004585,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004587,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004595,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004600,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 132565004632,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132565004699,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132567035187,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132567086462,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132571583935,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14130215319,
+          "name": "theme-screenshots-production-1",
+          "digest": "sha256:b7aa94e1f86d1f1828bf56f6c73a7a8789adb1b9c5fb3d83089326ed2a5234e1",
+          "size": 36631173,
+          "expired": false
+        },
+        {
+          "id": 14129932512,
+          "name": "ci-results-browser",
+          "digest": "sha256:1147f15856ee4159fea205fb6a4b436f0e3c46f132beb454256ca3fab09f2527",
+          "size": 480,
+          "expired": false
+        },
+        {
+          "id": 14129905360,
+          "name": "doc-responsiveness-desktop",
+          "digest": "sha256:94fa577fdc08dd8d375fecba81debf5cb75511c1cd1883105f5fdcdd37c9c2c9",
+          "size": 1179875,
+          "expired": false
+        },
+        {
+          "id": 14129875025,
+          "name": "theme-screenshots-sync-soak-sheet",
+          "digest": "sha256:76ea26aa06584b9d71efcc4f736512e27fc97dc3ef3607342bd035513f3174a4",
+          "size": 477215,
+          "expired": false
+        },
+        {
+          "id": 14129796118,
+          "name": "theme-screenshots-production-2",
+          "digest": "sha256:0cfb81cbde8e7ecec6777e517e4b68973ed118776d0737ec668f48f83ca4c99e",
+          "size": 19348780,
+          "expired": false
+        },
+        {
+          "id": 14129770664,
+          "name": "doc-callback-lifetimes-mobile",
+          "digest": "sha256:fc969655d3a69e2351c40c6cbea484bd8e1becea143c0a6d8e59654ac015f3cd",
+          "size": 181585094,
+          "expired": false
+        },
+        {
+          "id": 14129656878,
+          "name": "theme-screenshots-development-2",
+          "digest": "sha256:1152f91dba160713d77d96a2b49a24f1edec2f1e308877f5967edf1337d88b5c",
+          "size": 16842169,
+          "expired": false
+        },
+        {
+          "id": 14129625816,
+          "name": "theme-screenshots-mobile-https",
+          "digest": "sha256:b18a6cde018683d1d63ccc5ecabc20cf283087b72c60b069eed6dc49437a9bfb",
+          "size": 1560243,
+          "expired": false
+        },
+        {
+          "id": 14129613546,
+          "name": "doc-responsiveness-mobile",
+          "digest": "sha256:5b15295c7cba7c3a26e67dc5b2f3f9db09d1173e5ada3ad44bcfbd82067b6bf0",
+          "size": 1877407,
+          "expired": false
+        },
+        {
+          "id": 14129545495,
+          "name": "theme-screenshots-supervised-restore",
+          "digest": "sha256:c1977713f61b889f76e33544a1f14503a613e62a26ebb6f027ea93f1e36f75fe",
+          "size": 383912,
+          "expired": false
+        },
+        {
+          "id": 14129460789,
+          "name": "theme-screenshots-sync-soak-doc",
+          "digest": "sha256:3d7f4617fb18f4e6296dc528886a3feb9795411ed785327f96dc4f3f4d543b12",
+          "size": 487233,
+          "expired": false
+        },
+        {
+          "id": 14129336114,
+          "name": "doc-callback-lifetimes-desktop",
+          "digest": "sha256:3f4e373e7770d6d0bf6c34c4bca0e0f82c12c5ef38743e33cf6677a169b5501d",
+          "size": 203040435,
+          "expired": false
+        },
+        {
+          "id": 14129207913,
+          "name": "theme-screenshots-development-1",
+          "digest": "sha256:1f056018e46e7bbe43732079120149eb04da987e3a4bde4b3b6a7b2d39ecd416",
+          "size": 24270932,
+          "expired": false
+        },
+        {
+          "id": 14129139531,
+          "name": "theme-screenshots-sync-production",
+          "digest": "sha256:b57ba7571e5c6b64ae7d5f8106287834bb8b99a90d70020467260c8f85db3f2e",
+          "size": 4960235,
+          "expired": false
+        },
+        {
+          "id": 14129128296,
+          "name": "doc-pdf-evidence",
+          "digest": "sha256:435dbb39e7ff6acb3418aa9cbfb5cb30015024c367ddaf9165c1bc65b0a93921",
+          "size": 8558392,
+          "expired": false
+        },
+        {
+          "id": 14129059351,
+          "name": "theme-screenshots-sync-development",
+          "digest": "sha256:a51c3dda7b95a34cff24d31a79f9bc0a76e4b3b80a90ade5f4e2fcdea33260e3",
+          "size": 2171536,
+          "expired": false
+        },
+        {
+          "id": 14129058842,
+          "name": "sheet-pdf-evidence",
+          "digest": "sha256:75e4be9e635e06410123e4873a482f8b380ea17ec5b2e14b586ce90b025e493c",
+          "size": 735473,
+          "expired": false
+        },
+        {
+          "id": 14129043701,
+          "name": "sized-restore-acceptance",
+          "digest": "sha256:4bd03e00d05f54b97abe10b7f1a0f6a8236c9ff52cec2d83306f0cc86444e770",
+          "size": 73547,
+          "expired": false
+        },
+        {
+          "id": 14128839162,
+          "name": "pdf-collaboration-overlap",
+          "digest": "sha256:1e33858781eba1d1c5d14f9717bfe9278cbd3e7d4885f3acfcd482ffd5fdd3e4",
+          "size": 179617,
+          "expired": false
+        },
+        {
+          "id": 14128734894,
+          "name": "ci-results-unit",
+          "digest": "sha256:c3c9df319cbb5d85c05a2b1e915f4d9c08d3842c3d1df26130c7349de6f975cc",
+          "size": 1143,
+          "expired": false
+        },
+        {
+          "id": 14128628949,
+          "name": "ci-plan",
+          "digest": "sha256:6036ac75baf14a13c12915e1f6f0edf368e84f97372ffd919da84e5576c37655",
+          "size": 923,
+          "expired": false
+        },
+        {
+          "id": 14128374979,
+          "name": "ci-results-lib",
+          "digest": "sha256:334d85158963e6b6a71896eea0a6d2b5a0be996b8a99ff2c6e952ceec77820d7",
+          "size": 1161,
+          "expired": false
+        },
+        {
+          "id": 14128374828,
+          "name": "theme-screenshots-offline-upgrade",
+          "digest": "sha256:c9f8597a62178e2b3df35c78120f0fe19b721a4fa0e040d470bcd461d53a1425",
+          "size": 432701,
+          "expired": false
+        }
+      ]
+    }
+  ],
+  "plans": [
+    {
+      "kind": "ci",
+      "id": 14129932512,
+      "name": "ci-results-browser",
+      "path": "original-zips/artifact-14129932512.zip",
+      "githubDigest": "sha256:1147f15856ee4159fea205fb6a4b436f0e3c46f132beb454256ca3fab09f2527",
+      "sha256": "1147f15856ee4159fea205fb6a4b436f0e3c46f132beb454256ca3fab09f2527",
+      "bytes": 480,
+      "expired": false
+    },
+    {
+      "kind": "ci",
+      "id": 14128734894,
+      "name": "ci-results-unit",
+      "path": "original-zips/artifact-14128734894.zip",
+      "githubDigest": "sha256:c3c9df319cbb5d85c05a2b1e915f4d9c08d3842c3d1df26130c7349de6f975cc",
+      "sha256": "c3c9df319cbb5d85c05a2b1e915f4d9c08d3842c3d1df26130c7349de6f975cc",
+      "bytes": 1143,
+      "expired": false
+    },
+    {
+      "kind": "ci",
+      "id": 14128628949,
+      "name": "ci-plan",
+      "path": "original-zips/artifact-14128628949.zip",
+      "githubDigest": "sha256:6036ac75baf14a13c12915e1f6f0edf368e84f97372ffd919da84e5576c37655",
+      "sha256": "6036ac75baf14a13c12915e1f6f0edf368e84f97372ffd919da84e5576c37655",
+      "bytes": 923,
+      "expired": false
+    },
+    {
+      "kind": "ci",
+      "id": 14128374979,
+      "name": "ci-results-lib",
+      "path": "original-zips/artifact-14128374979.zip",
+      "githubDigest": "sha256:334d85158963e6b6a71896eea0a6d2b5a0be996b8a99ff2c6e952ceec77820d7",
+      "sha256": "334d85158963e6b6a71896eea0a6d2b5a0be996b8a99ff2c6e952ceec77820d7",
+      "bytes": 1161,
+      "expired": false
+    }
+  ],
+  "errors": [],
+  "readOnly": true,
+  "acceptance": false,
+  "ordering": "Root observed no old-head metadata-triggered run through19:40:10 after metadata19:39:18, then normal fast-forward19:40:38. No cancellation claimed. Old conflicting PR state may explain absence, but remains inference only. Preserve actual-main CI43630998048. No rerun/cancel/dispatch/metadata/merge."
+}

@@ -1,0 +1,53 @@
+{
+  "reason": "Original GETs failed gh terminal escape refusal; this retrieval explicitly allows unchanged log bytes. No Actions rerun.",
+  "results": [
+    {
+      "job": 132564755608,
+      "code": 0,
+      "path": "job-132564755608.log.gz",
+      "rawSHA256": "814365ac315a95748bc4bfeac1f88097890a3fff380f1cdf01d379e97bc9fc2c",
+      "gzipSHA256": "104d504f0cba545e3e59fa817e7df0bec3ca048ecf240408082736ad75857e6b",
+      "rawBytes": 29389
+    },
+    {
+      "job": 132564755743,
+      "code": 0,
+      "path": "job-132564755743.log.gz",
+      "rawSHA256": "781e3dffdac8d614988fc109d196911b885f2f55d62f24c2e0ae27f44686de4b",
+      "gzipSHA256": "2995edf2e1bdb079af80178c69a9870e26092269df51d9f8bec4c17ca2e9606a",
+      "rawBytes": 56013
+    },
+    {
+      "job": 132564755827,
+      "code": 0,
+      "path": "job-132564755827.log.gz",
+      "rawSHA256": "108a58e3961b051334295c8cf6b234370227d5bc264a6d2911bf8a7cbee3e609",
+      "gzipSHA256": "87fac11a8fbbe1169811284c619dd29ba6d5d3919e525433d434a13959e25e62",
+      "rawBytes": 45877
+    },
+    {
+      "job": 132564756107,
+      "code": 0,
+      "path": "job-132564756107.log.gz",
+      "rawSHA256": "11c660c9484d6c3a7cfbde302c7677d53bba2a888a7770a47e15ded219279afe",
+      "gzipSHA256": "565c8730dd4f7582abb171b19f28a5bc41f06433d3590864c6de1a5074fc8302",
+      "rawBytes": 57894
+    },
+    {
+      "job": 132565004312,
+      "code": 0,
+      "path": "job-132565004312.log.gz",
+      "rawSHA256": "938f5d68751c48630fd7f0aaee65693f2aa3f533fce6bb08f61f5a14f76b133b",
+      "gzipSHA256": "8614c76299935a62cee52f566d92198c8d6c7aa9d9603e31f0e3ef3dffb7e383",
+      "rawBytes": 20131
+    },
+    {
+      "job": 132565004389,
+      "code": 0,
+      "path": "job-132565004389.log.gz",
+      "rawSHA256": "982b885c14e6ce034353f458d4db78170cfedb942e1b7797eab7f373e8f29754",
+      "gzipSHA256": "643bcfc47d0011d57063656f075d15fa3ea5dbbd533d876deeeaea453ee62cf1",
+      "rawBytes": 37376
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "observedAt": "2026-11-14T20:00:43.762988+00:00",
+  "workflows": [
+    {
+      "kind": "ci",
+      "run": 43633378605,
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "nonterminal": [
+        {
+          "id": 132565004448,
+          "name": "Doc responsiveness (mobile)",
+          "status": "in_progress"
+        },
+        {
+          "id": 132565004565,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress"
+        }
+      ],
+      "failures": [
+        {
+          "id": 132565004312,
+          "name": "Typecheck"
+        },
+        {
+          "id": 132565004547,
+          "name": "Playwright smoke (development 1/2)"
+        },
+        {
+          "id": 132565004600,
+          "name": "Playwright smoke (production 1/2)"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "run": 43633378587,
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "nonterminal": [
+        {
+          "id": 132569453334,
+          "name": "Review Storybook states and interactions",
+          "status": "in_progress"
+        }
+      ],
+      "failures": []
+    }
+  ]
+}

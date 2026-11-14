@@ -1,0 +1,747 @@
+{
+  "jobs": [
+    {
+      "id": 132564755827,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:42Z",
+      "completedAt": "2026-11-14T19:41:26Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132564755827.log.gz",
+          "sha256": "108a58e3961b051334295c8cf6b234370227d5bc264a6d2911bf8a7cbee3e609"
+        }
+      ]
+    },
+    {
+      "id": 132564756107,
+      "name": "Classify changes (43633378605)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:42Z",
+      "completedAt": "2026-11-14T19:41:30Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132564756107.log.gz",
+          "sha256": "11c660c9484d6c3a7cfbde302c7677d53bba2a888a7770a47e15ded219279afe"
+        }
+      ]
+    },
+    {
+      "id": 132565004312,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:42:00Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132565004312.log.gz",
+          "sha256": "938f5d68751c48630fd7f0aaee65693f2aa3f533fce6bb08f61f5a14f76b133b"
+        }
+      ]
+    },
+    {
+      "id": 132565004334,
+      "name": "Doc callback lifetimes (mobile)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:51:30Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004334.log.gz",
+          "sha256": "42babfa5ddb0dac8f322e0ae6f07f6645e099a7bde5933988fac5842eae26c0b"
+        }
+      ]
+    },
+    {
+      "id": 132565004344,
+      "name": "Lib tests (dense-cells)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:48:32Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004344.log.gz",
+          "sha256": "c1f71cdbd317775f0f216217dfe8d7186053f13d87176468447825520ed3faa1"
+        }
+      ]
+    },
+    {
+      "id": 132565004352,
+      "name": "Doc callback lifetimes (desktop)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:49:14Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004352.log.gz",
+          "sha256": "fc9aab1c31904b749af8dfe6fe9574fbe4ceb0a4a9fe275a14d9dee8ec5e44eb"
+        }
+      ]
+    },
+    {
+      "id": 132565004369,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:43:22Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132565004369.log.gz",
+          "sha256": "5396cc552082147af18b1c73163907bf2257894e6957aabd3a256afc5779329a"
+        }
+      ]
+    },
+    {
+      "id": 132565004370,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:47:54Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004370.log.gz",
+          "sha256": "e00ab4ccd8f7856d19f188b269e6d598b0a23dbd35c2a69d2770cc9633663ba0"
+        }
+      ]
+    },
+    {
+      "id": 132565004372,
+      "name": "Lib tests (mixed-fuzz)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:46:24Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132565004372.log.gz",
+          "sha256": "124ed17e961b737aa4d0aa3358bf3e5d4e669fdca0e86e8369ed45d433b4b70f"
+        }
+      ]
+    },
+    {
+      "id": 132565004380,
+      "name": "Lib tests (cells)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:45:56Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132565004380.log.gz",
+          "sha256": "c3503a4a920bec14c2d71cbe35394624e6756bb4fc18334cd3de6f2406cebcc4"
+        }
+      ]
+    },
+    {
+      "id": 132565004389,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:42:18Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132565004389.log.gz",
+          "sha256": "982b885c14e6ce034353f458d4db78170cfedb942e1b7797eab7f373e8f29754"
+        }
+      ]
+    },
+    {
+      "id": 132565004428,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:48:35Z",
+      "completedAt": "2026-11-14T19:48:48Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004428.log.gz",
+          "sha256": "36388690e538e18078ba35c93bd9725b5993a0b0010acadc8f41aac531282af8"
+        }
+      ]
+    },
+    {
+      "id": 132565004430,
+      "name": "Lib tests (remaining)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:34Z",
+      "completedAt": "2026-11-14T19:49:02Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004430.log.gz",
+          "sha256": "12e030247ad4e250ef40ace16c5192d2a8e457a40995904800ce877979df685a"
+        }
+      ]
+    },
+    {
+      "id": 132565004438,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:42:21Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132565004438.log.gz",
+          "sha256": "6d5b0c151a7693c11113477c3841c981add846edd6c01189ee969654562fea46"
+        }
+      ]
+    },
+    {
+      "id": 132565004443,
+      "name": "Unit tests (remaining)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:47:52Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004443.log.gz",
+          "sha256": "c63b3589231a9095edfdfb6f6a65da71120ad3acded6ebd5edd0c42ffce39ccc"
+        }
+      ]
+    },
+    {
+      "id": 132565004448,
+      "name": "Doc responsiveness (mobile)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T20:05:23Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-6-43633378605/job-132565004448.log.gz",
+          "sha256": "5177a7e737f325d503f39657329a373a9d8e8812fd8a6107fff4280a9de36cd3"
+        }
+      ]
+    },
+    {
+      "id": 132565004474,
+      "name": "Doc responsiveness (desktop)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:42:21Z",
+      "completedAt": "2026-11-14T19:52:36Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004474.log.gz",
+          "sha256": "b9539f81993d3e29925d1cc72ec9bed883ead9e227593804e935936a641b3637"
+        }
+      ]
+    },
+    {
+      "id": 132565004477,
+      "name": "Unit tests (recovery)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:46:54Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004477.log.gz",
+          "sha256": "f1aedc69a5c3fc962d3e968e3191ab0d2bf9cc4c494eeec9aa10bebebd390db7"
+        }
+      ]
+    },
+    {
+      "id": 132565004482,
+      "name": "Unit tests (supervisor)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:33Z",
+      "completedAt": "2026-11-14T19:48:51Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004482.log.gz",
+          "sha256": "0cd11a4e032cddd07c3b618213e58a5c987b481962da78371998b89a2aeb2ff7"
+        }
+      ]
+    },
+    {
+      "id": 132565004539,
+      "name": "Playwright smoke (supervised-restore)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:41:50Z",
+      "completedAt": "2026-11-14T19:48:44Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004539.log.gz",
+          "sha256": "fc365143be9c842633a11152633c14bc72b2c0246865499a1e2c39770a238c92"
+        }
+      ]
+    },
+    {
+      "id": 132565004547,
+      "name": "Playwright smoke (development 1/2)",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T19:44:05Z",
+      "completedAt": "2026-11-14T19:50:21Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004547.log.gz",
+          "sha256": "82acd2d19d4e26cc45616fc3708d7f273916f7c69a6632a43637b410514e42e6"
+        }
+      ]
+    },
+    {
+      "id": 132565004554,
+      "name": "Playwright smoke (sync-production)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:42:02Z",
+      "completedAt": "2026-11-14T19:56:49Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565004554.log.gz",
+          "sha256": "e38f7648e5492375ce4944b9cc43a2e01f4ba019fb327c789cb03ef1ac12d793"
+        }
+      ]
+    },
+    {
+      "id": 132565004564,
+      "name": "Playwright smoke (production 2/2)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:43:06Z",
+      "completedAt": "2026-11-14T19:55:43Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565004564.log.gz",
+          "sha256": "4d35086d3bd7c9ad87d7c8aece5a295971cf2e73375c1f81199c11c94a5c79e4"
+        }
+      ]
+    },
+    {
+      "id": 132565004565,
+      "name": "Playwright smoke (development 2/2)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:43:25Z",
+      "completedAt": "2026-11-14T20:03:14Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-6-43633378605/job-132565004565.log.gz",
+          "sha256": "1512f7e8a3e405c418d96d7ee5c17c74a257790188a65ca78eb112a39269363e"
+        }
+      ]
+    },
+    {
+      "id": 132565004585,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:47:57Z",
+      "completedAt": "2026-11-14T19:49:31Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004585.log.gz",
+          "sha256": "ee0440f98601a14e6039ef3117428fb32929f389f49bca07b403f55d706cb0e1"
+        }
+      ]
+    },
+    {
+      "id": 132565004587,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:48:37Z",
+      "completedAt": "2026-11-14T19:50:39Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004587.log.gz",
+          "sha256": "ea96410037bbc160b2b28548db31fde14734ed44583bcf776c5eba62edfb2c8b"
+        }
+      ]
+    },
+    {
+      "id": 132565004595,
+      "name": "Playwright smoke (offline-upgrade)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:46:06Z",
+      "completedAt": "2026-11-14T19:48:16Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004595.log.gz",
+          "sha256": "e7de275e7ee7d5b37025b9d0541fb1e6c6ca8fb9dc8305b70da6a0844d1fc322"
+        }
+      ]
+    },
+    {
+      "id": 132565004600,
+      "name": "Playwright smoke (production 1/2)",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T19:44:07Z",
+      "completedAt": "2026-11-14T19:57:09Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565004600.log.gz",
+          "sha256": "c490bb812c34a2b569bd61a0336544a8d5a669075354673f66f9965947f7e63d"
+        }
+      ]
+    },
+    {
+      "id": 132565004632,
+      "name": "Playwright smoke (sync-development)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:47:55Z",
+      "completedAt": "2026-11-14T19:52:08Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004632.log.gz",
+          "sha256": "3168f0ac4189f2b139e2e8c08c26cdd0ffcac7f865fa45a73e6ce9c7d6d59f96"
+        }
+      ]
+    },
+    {
+      "id": 132565004699,
+      "name": "Playwright smoke (mobile-https)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:46:56Z",
+      "completedAt": "2026-11-14T19:48:56Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132565004699.log.gz",
+          "sha256": "32a5db78e511b06f7faf9a247b2309ac346bf5f003c884f7fe4bfade4d91ed88"
+        }
+      ]
+    },
+    {
+      "id": 132567035187,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:48:58Z",
+      "completedAt": "2026-11-14T19:49:12Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132567035187.log.gz",
+          "sha256": "b98ffae07c8f619af081e80bae8b21dae34a910b341fd05e56fc46036abfecb5"
+        }
+      ]
+    },
+    {
+      "id": 132567086462,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:49:06Z",
+      "completedAt": "2026-11-14T19:49:27Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132567086462.log.gz",
+          "sha256": "d55c42b81cac6f0ce9f3125e76ffc05bb15105fe69670a523f855ca76189ca57"
+        }
+      ]
+    },
+    {
+      "id": 132571583935,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-14T20:06:27Z",
+      "completedAt": "2026-11-14T20:06:42Z",
+      "run": 43633378605,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/terminal-43633378605/job-132571583935.log.gz",
+          "sha256": "1468dfed979a8ef4899e2ff4f668caa92eae6e4f00253bfbc6ae80419617b608"
+        }
+      ]
+    },
+    {
+      "id": 132564755743,
+      "name": "Classify changes",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:42Z",
+      "completedAt": "2026-11-14T19:41:47Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132564755743.log.gz",
+          "sha256": "781e3dffdac8d614988fc109d196911b885f2f55d62f24c2e0ae27f44686de4b"
+        }
+      ]
+    },
+    {
+      "id": 132565084956,
+      "name": "Build Storybook",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:42:23Z",
+      "completedAt": "2026-11-14T19:43:03Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132565084956.log.gz",
+          "sha256": "dbf1cd532d7ac7ee8455b3202887c5edd4ba5ad37f7ff7f04dbf8b09bf091090"
+        }
+      ]
+    },
+    {
+      "id": 132565432695,
+      "name": "Review Storybook mobile (dark)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:48:47Z",
+      "completedAt": "2026-11-14T19:57:02Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565432695.log.gz",
+          "sha256": "09f20a759b2a4a7c97bb3c3845648607448158b1c6b7aca67284d522b47c4fa7"
+        }
+      ]
+    },
+    {
+      "id": 132565432720,
+      "name": "Review Storybook desktop (light)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:45:58Z",
+      "completedAt": "2026-11-14T19:55:40Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565432720.log.gz",
+          "sha256": "449cf730faa8621cbfb48237c7d9ee9e129485c8dad1d63b85502b4428f86456"
+        }
+      ]
+    },
+    {
+      "id": 132565432721,
+      "name": "Review Storybook tablet",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:48:51Z",
+      "completedAt": "2026-11-14T19:57:48Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-6-43633378605/job-132565432721.log.gz",
+          "sha256": "ebafd851958c71b0f3e2d538aebf6408d6735bc24b64df22286f396834ec106f"
+        }
+      ]
+    },
+    {
+      "id": 132565432726,
+      "name": "Review Storybook mobile (light)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:46:27Z",
+      "completedAt": "2026-11-14T19:55:36Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565432726.log.gz",
+          "sha256": "90bbed4aeacea4dd8d1f0b37b0690bec565196e44ed266204d3000031bc486b3"
+        }
+      ]
+    },
+    {
+      "id": 132565432762,
+      "name": "Review Storybook desktop (dark)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:48:53Z",
+      "completedAt": "2026-11-14T19:57:05Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-4-43633378605/job-132565432762.log.gz",
+          "sha256": "915c901caa799c96562dfd652f9d848b7afe70f1f2a073fa500da72a3c2ab09a"
+        }
+      ]
+    },
+    {
+      "id": 132565433773,
+      "name": "Publish PR preview to GitHub Pages",
+      "status": "completed",
+      "conclusion": "skipped",
+      "startedAt": "2026-11-14T19:43:03Z",
+      "completedAt": "2026-11-14T19:43:03Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": []
+    },
+    {
+      "id": 132569453334,
+      "name": "Review Storybook states and interactions",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T20:00:34Z",
+      "completedAt": "2026-11-14T20:00:47Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-6-43633378605/job-132569453334.log.gz",
+          "sha256": "d7e02bbc2c52dcdbd298f73adb865ebe82ec08cd712b351c2ee7f352b6dacff5"
+        }
+      ]
+    },
+    {
+      "id": 132570262082,
+      "name": "Deploy to GitHub Pages",
+      "status": "completed",
+      "conclusion": "skipped",
+      "startedAt": "2026-11-14T20:00:47Z",
+      "completedAt": "2026-11-14T20:00:47Z",
+      "run": 43633378587,
+      "attempt": 1,
+      "logs": []
+    },
+    {
+      "id": 132564756009,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:42Z",
+      "completedAt": "2026-11-14T19:44:03Z",
+      "run": 43633378724,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132564756009.log.gz",
+          "sha256": "4d8ad15cfa7dc48c00b6cbf682a83cdfd2af77618e3a1c92e6e5e56c157dd96c"
+        }
+      ]
+    },
+    {
+      "id": 132564756274,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:42Z",
+      "completedAt": "2026-11-14T19:44:05Z",
+      "run": 43633378724,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-2-43633378605/job-132564756274.log.gz",
+          "sha256": "04f01d5a883e564a66a9e16ee31b4eb82d6af5d93f1cd512f4a8be707c986af1"
+        }
+      ]
+    },
+    {
+      "id": 132564756501,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:43Z",
+      "completedAt": "2026-11-14T19:48:57Z",
+      "run": 43633378724,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/snapshot-3-43633378605/job-132564756501.log.gz",
+          "sha256": "bfd6a9255788a6545fbd6311175a8490c0eefaa2b980c2143ca3f8d986bc2a1b"
+        }
+      ]
+    },
+    {
+      "id": 132564755608,
+      "name": "🦈 DigitalOcean Spaces",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-14T19:40:41Z",
+      "completedAt": "2026-11-14T19:41:24Z",
+      "run": 43633378630,
+      "attempt": 1,
+      "logs": [
+        {
+          "path": "collection/initial-43633378605/logs-escaped-output/job-132564755608.log.gz",
+          "sha256": "814365ac315a95748bc4bfeac1f88097890a3fff380f1cdf01d379e97bc9fc2c"
+        }
+      ]
+    }
+  ],
+  "nonSkipped": 45
+}
