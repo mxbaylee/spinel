@@ -658,25 +658,26 @@ When independent item icons are unsupported, provide the stable link and a clear
 in-app offline collection fallback, recording that limitation. A shortcut
 never implicitly claims the document has been downloaded.
 
-Test installed-context startup as well as a browser tab. On iOS, do not assume
-browser storage is copied into or shared with an installed app: prepare offline
-content in the context that will launch. Verify Android Chrome, Android Firefox
-and iPhone Safari Home Screen on actual devices, recording OS/browser versions,
-supported actions and observed launch behavior. CI's mobile viewport alone cannot
-establish installation, storage-context or native home-screen behavior. SPN-090
-owns these recorded physical-device runs, including install icons and the offline
-manifest; SPN-055 owns the shared lifecycle, and SPN-052 separately verifies
-ordinary macOS Chrome, Firefox and Safari tabs with browser versions and
-persistence results recorded here.
+📱 Prepare private offline content in the context that will launch. On iOS,
+do not assume a Safari tab and installed app share storage. The
+[current SPN-090 verification method](implementation/SPN-090.md#-current-phone-verification-method)
+combines targeted Pixel 10/Chrome/Home Screen observations with current
+deterministic/shared native content, persistence, replay and access checks. It
+supersedes the former BrowserStack provider, recurring quota workflow and repeated
+three-platform physical matrix; retained old results stay historical evidence.
+No new paid-device execution is required.
 
-SPN-090's [BrowserStack CI plan](implementation/SPN-090.md#browserstack-ci-plan)
-uses Automate real mobile browsers and Local from GitHub Actions, with repository
-secrets `BS_USERNAME` and `BS_ACCESS_KEY`. The bounded HTTP infrastructure smoke
-verifies credentials, mobile allocation and runner reachability. Installed-context
-HTTPS/service-worker, Home Screen restart and offline acceptance remain separate,
-uncompleted work; do not infer those passes from a successful tunnel session.
+Exact phone versions and tested build are unknown; the final known-offline sign-in
+shortcut and every physical edit/reopen/replay/creation permutation are not proved.
+This method accepts lower integrated phone confidence without claiming emulation
+is an installed device. SPN-152 owns deferred real-iPhone verification; SPN-154
+image paste and SPN-156 file-list replay remain pre-launch work. SPN-156 keeps its
+separate bounded repaired-build installed reconnect observation. SPN-055 owns the
+shared lifecycle, and SPN-052 separately verifies ordinary macOS Chrome, Firefox
+and Safari tabs. Neither provider smoke nor later unrelated passes complete a
+missing product assertion.
 
-The decisive scenario is: download online, terminate, enable airplane mode, launch
+The retained product scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
 then reconnect twice: once with the live document unchanged (the edits sync
 exactly once), and once after another editor changed it (the live document is
