@@ -1,0 +1,2 @@
+branch.codex/spn-123-operation-diagnostics.remote origin
+branch.codex/spn-123-operation-diagnostics.merge refs/heads/codex/spn-123-operation-diagnostics

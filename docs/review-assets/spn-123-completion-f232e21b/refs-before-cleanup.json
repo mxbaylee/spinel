@@ -1,0 +1,46 @@
+[
+  {
+    "ref": "refs/heads/codex/spn-123-operation-diagnostics",
+    "sha": "54307c19c075c5dd67a8012341cc7cee716a09a3"
+  },
+  {
+    "ref": "refs/heads/codex/spn-123-production-integration",
+    "sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/spn-123-operation-diagnostics",
+    "sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+  },
+  {
+    "ref": "refs/remotes/origin/codex/spn-123-production-integration",
+    "sha": "aeee60266b505b1ac6f928c4725639d90c768073"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-current-local-54307c19",
+    "sha": "a3d297b7b470322fb12f362a0c937486a664f5bf"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-current-safari-54307c19",
+    "sha": "abffe1aa260c6861404b31d96b3d31cfc3c94c41"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-review-6ef945ea-20261114",
+    "sha": "607e36f0ac70db7d65879f0dc0699e4f31cf2cd6"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-review-7fd2b0a6-20261114",
+    "sha": "38b4b4dba8033701183c00b6d69fa9575f34dd7a"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-review-c270973a-20261114",
+    "sha": "b2ca9c9c49f3e4d9949bceb6da176bd1fe7d8999"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-review-f232e21b-20261114",
+    "sha": "f524dd4d5ddaee80b2553f1be5174d0631bc655f"
+  },
+  {
+    "ref": "refs/tags/archive/spn-123-validation-6ef945ea-20261114",
+    "sha": "7d4c215d1075d3aa640a029366bddea58f7627ca"
+  }
+]

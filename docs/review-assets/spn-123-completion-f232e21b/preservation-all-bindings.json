@@ -1,0 +1,194 @@
+[
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/COMMIT_EDITMSG",
+    "path": "administrative-before/spinel-spn-123/COMMIT_EDITMSG",
+    "bytes": 69,
+    "sha256": "ed283ce07f303d72cbdb9dd1773bf4caf6ad3e1900700815b2aa03a95bd27902"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/HEAD",
+    "path": "administrative-before/spinel-spn-123/HEAD",
+    "bytes": 52,
+    "sha256": "55d192a4f9847fc5504e375ba73f9b8866ececd0ad620eab581e5a892571f3ee"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/ORIG_HEAD",
+    "path": "administrative-before/spinel-spn-123/ORIG_HEAD",
+    "bytes": 41,
+    "sha256": "0ab64c4f3e78c059ee0f72f20874027678c32e1f5856b8d0d875cf12cc3217ae"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/commondir",
+    "path": "administrative-before/spinel-spn-123/commondir",
+    "bytes": 6,
+    "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/gitdir",
+    "path": "administrative-before/spinel-spn-123/gitdir",
+    "bytes": 45,
+    "sha256": "6c24825c61907b7afba2e9e5e7712c62652b50fc301504274c679dde55c1817e"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/index",
+    "path": "administrative-before/spinel-spn-123/index",
+    "bytes": 238770,
+    "sha256": "94a0d9ee9982da0ac7ebab621cc2d9091cfdc28d58ed83176b07662c16bbf4f2"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/logs/HEAD",
+    "path": "administrative-before/spinel-spn-123/logs/HEAD",
+    "bytes": 754,
+    "sha256": "c389397f642a29e6e41b1fc86b544333ae8a555bd5e5d0502f731be975b073cc"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/COMMIT_EDITMSG",
+    "path": "administrative-before/spinel-spn-123-production/COMMIT_EDITMSG",
+    "bytes": 58,
+    "sha256": "8124f90642416ce870059b62d9674e4bc7e5791a6eeced5b9dc434c436dc89c8"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/FETCH_HEAD",
+    "path": "administrative-before/spinel-spn-123-production/FETCH_HEAD",
+    "bytes": 86,
+    "sha256": "73aeb2f880457ede1457cb61a01617c4c7b81114af8a36d37c6d24c95a4c2b74"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/HEAD",
+    "path": "administrative-before/spinel-spn-123-production/HEAD",
+    "bytes": 53,
+    "sha256": "648fee2fa8c57a04887ef71010020adde3acb76815ef1ba9b4ef5c4ca6394eb7"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/ORIG_HEAD",
+    "path": "administrative-before/spinel-spn-123-production/ORIG_HEAD",
+    "bytes": 41,
+    "sha256": "69a8155fddf7a25c3c8d7c5aba6c7bfee05069e994b21bf90637ac1bd5fcfc92"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/commondir",
+    "path": "administrative-before/spinel-spn-123-production/commondir",
+    "bytes": 6,
+    "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/gitdir",
+    "path": "administrative-before/spinel-spn-123-production/gitdir",
+    "bytes": 56,
+    "sha256": "b212808d3702bc15e45b985357c087974e02c92b0c091c27dc9265ffaebcaed3"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/index",
+    "path": "administrative-before/spinel-spn-123-production/index",
+    "bytes": 574174,
+    "sha256": "66b81fe55c450e657ae270e98a2e6fcaa6b013272fbeb3d74add18dfb0ece2b6"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/logs/HEAD",
+    "path": "administrative-before/spinel-spn-123-production/logs/HEAD",
+    "bytes": 3366,
+    "sha256": "56fb040aa2bb56563ba5626015372c5e90a4e48116ffea7ba8a92ebe18eb2cda"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel-spn-123-production/docs/implementation/evidence/SPN-123-null-loader/install-resource-abort.log",
+    "path": "ignored-evidence/install-resource-abort.log",
+    "bytes": 105,
+    "sha256": "b77e92076081de30a09586b791b406b8c39194bcdffcf09c0be21eea3277f1e6"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel-spn-123-production/docs/implementation/evidence/SPN-123-null-loader/integrated-native-controls.log",
+    "path": "ignored-evidence/integrated-native-controls.log",
+    "bytes": 8097,
+    "sha256": "02488a6371a175c19b5152bc73cbd07fd5df0e5c8130cf2aa8423597c48f1d2c"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/COMMIT_EDITMSG",
+    "path": "administrative-after/spinel-spn-123/COMMIT_EDITMSG",
+    "bytes": 69,
+    "sha256": "ed283ce07f303d72cbdb9dd1773bf4caf6ad3e1900700815b2aa03a95bd27902"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/HEAD",
+    "path": "administrative-after/spinel-spn-123/HEAD",
+    "bytes": 41,
+    "sha256": "48dd61950874e9d43749bec053b4de070fad53a73370a9a2d5c0cfd7e2451410"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/ORIG_HEAD",
+    "path": "administrative-after/spinel-spn-123/ORIG_HEAD",
+    "bytes": 41,
+    "sha256": "0ab64c4f3e78c059ee0f72f20874027678c32e1f5856b8d0d875cf12cc3217ae"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/commondir",
+    "path": "administrative-after/spinel-spn-123/commondir",
+    "bytes": 6,
+    "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/gitdir",
+    "path": "administrative-after/spinel-spn-123/gitdir",
+    "bytes": 45,
+    "sha256": "6c24825c61907b7afba2e9e5e7712c62652b50fc301504274c679dde55c1817e"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/index",
+    "path": "administrative-after/spinel-spn-123/index",
+    "bytes": 238770,
+    "sha256": "94a0d9ee9982da0ac7ebab621cc2d9091cfdc28d58ed83176b07662c16bbf4f2"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/logs/HEAD",
+    "path": "administrative-after/spinel-spn-123/logs/HEAD",
+    "bytes": 894,
+    "sha256": "ff0510a8e597c5a33bb7463334d632b81e9ae5fb14c4e69d71eba8a2a05a525d"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/COMMIT_EDITMSG",
+    "path": "administrative-after/spinel-spn-123-production/COMMIT_EDITMSG",
+    "bytes": 58,
+    "sha256": "8124f90642416ce870059b62d9674e4bc7e5791a6eeced5b9dc434c436dc89c8"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/FETCH_HEAD",
+    "path": "administrative-after/spinel-spn-123-production/FETCH_HEAD",
+    "bytes": 86,
+    "sha256": "73aeb2f880457ede1457cb61a01617c4c7b81114af8a36d37c6d24c95a4c2b74"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/HEAD",
+    "path": "administrative-after/spinel-spn-123-production/HEAD",
+    "bytes": 41,
+    "sha256": "487e122b922b498ea0518a8c478dd5dab25aa5968fc9a71137bdf8f4f8f1f05c"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/ORIG_HEAD",
+    "path": "administrative-after/spinel-spn-123-production/ORIG_HEAD",
+    "bytes": 41,
+    "sha256": "69a8155fddf7a25c3c8d7c5aba6c7bfee05069e994b21bf90637ac1bd5fcfc92"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/commondir",
+    "path": "administrative-after/spinel-spn-123-production/commondir",
+    "bytes": 6,
+    "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/gitdir",
+    "path": "administrative-after/spinel-spn-123-production/gitdir",
+    "bytes": 56,
+    "sha256": "b212808d3702bc15e45b985357c087974e02c92b0c091c27dc9265ffaebcaed3"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/index",
+    "path": "administrative-after/spinel-spn-123-production/index",
+    "bytes": 573961,
+    "sha256": "24640fd4fbef5a13a75fe15f07d9a4c2da8eab8ed2347929f1c8f0117adb008b"
+  },
+  {
+    "original": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123-production/logs/HEAD",
+    "path": "administrative-after/spinel-spn-123-production/logs/HEAD",
+    "bytes": 3609,
+    "sha256": "faafac65572754e8232e379cf463006ccc598263c99baeaf89e6db7f0e60b227"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-14T23:15:38.644Z",
+  "archive": "a44822ab287869e545fe005dfb2f62d02ef7f527",
+  "parent": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "exclusiveAdditions": 752,
+  "payloads": 751,
+  "actualGzipDecoded": 692,
+  "allStoredHashesAndGitBlobsVerified": true,
+  "originalCollectionBindings": 292,
+  "originalZipHashesVerified": 34,
+  "inventoriedMembers": 3588,
+  "retainedOriginalMemberBindings": 480,
+  "crcSource": "Independent collector streaming CRC; root independently verifies whole ZIP hashes and retained member bytes, without repeating derived trace extraction.",
+  "readerCorrection": "Initial newline path parser rejected Git-quoted Unicode names before payload inspection; corrected NUL-delimited paths. Second reader treated complete original ZIP as a member; corrected extraction according to recorded retention. Both original readers retained. No artifact or source mutation.",
+  "manifestSHA256": "a37ffd7a8f1ded460ab479039d7ec3b8713a4434b321bdfdaff49862d441388b"
+}

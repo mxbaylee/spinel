@@ -1,0 +1,4 @@
+!! docs/implementation/evidence/SPN-123-null-loader/install-resource-abort.log
+!! docs/implementation/evidence/SPN-123-null-loader/integrated-native-controls.log
+!! node_modules/
+!! playwright-report/

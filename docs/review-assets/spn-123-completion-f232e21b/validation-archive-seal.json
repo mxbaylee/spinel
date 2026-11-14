@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-14T23:13:59.023Z",
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "parent": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "commit": "a44822ab287869e545fe005dfb2f62d02ef7f527",
+  "tree": "1864d67b1237803f8f09d8f9c658f882b012f9cc",
+  "prefix": "docs/review-assets/spn-123-validation-f232e21b",
+  "archive": "/tmp/spn123-terminal-f232e21b/archive",
+  "index": "/tmp/spn123-terminal-f232e21b/validation-private.index",
+  "manifestSha256": "a37ffd7a8f1ded460ab479039d7ec3b8713a4434b321bdfdaff49862d441388b",
+  "payloadCount": 751,
+  "gitFileCount": 752,
+  "payloadBytes": 25799387,
+  "collectionBindings": 292,
+  "artifacts": 34,
+  "members": 3588,
+  "independentOriginalFiles": 16,
+  "independentManifestSha256": "80ce0ac4203934d34332362933e9305b4436762fe1791f93b2d451792c4f5621",
+  "published": false,
+  "implementationRefUnchanged": true,
+  "stagedGitBytesVerified": true
+}

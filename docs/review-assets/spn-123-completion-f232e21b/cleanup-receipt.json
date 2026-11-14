@@ -1,0 +1,55 @@
+{
+  "at": "2026-11-14T23:18:25.672Z",
+  "complete": true,
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "merged": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "deletedLocalBranches": [
+    {
+      "ref": "refs/heads/codex/spn-123-operation-diagnostics",
+      "sha": "54307c19c075c5dd67a8012341cc7cee716a09a3"
+    },
+    {
+      "ref": "refs/heads/codex/spn-123-production-integration",
+      "sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+    }
+  ],
+  "deletedRemoteBranch": {
+    "ref": "refs/heads/codex/spn-123-production-integration",
+    "sha": "aeee60266b505b1ac6f928c4725639d90c768073",
+    "guard": "force-with-lease exact observed SHA"
+  },
+  "prHeadAlreadyAbsent": true,
+  "obsoleteTracking": [
+    {
+      "ref": "refs/remotes/origin/codex/spn-123-operation-diagnostics",
+      "sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/spn-123-production-integration",
+      "sha": "aeee60266b505b1ac6f928c4725639d90c768073"
+    }
+  ],
+  "remainingTicketBranches": [],
+  "blockedRefs": [],
+  "detachedWorktrees": [
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-123-production",
+      "sha": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "exists": true
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-123",
+      "sha": "54307c19c075c5dd67a8012341cc7cee716a09a3",
+      "exists": false,
+      "administrationRetained": true
+    }
+  ],
+  "missingIndexSha256": "94a0d9ee9982da0ac7ebab621cc2d9091cfdc28d58ed83176b07662c16bbf4f2",
+  "activePROwnership": false,
+  "immutableRemoteTagsUnchanged": true,
+  "allUniqueCommitHeadsReachableFromPublishedValidationArchive": true,
+  "ignoredFilesAndPrivateDependenciesRetainedInPlace": true,
+  "noGlobalPruneOrClean": true,
+  "noTestsBuildsOrCICancellations": true,
+  "mainClean": true
+}

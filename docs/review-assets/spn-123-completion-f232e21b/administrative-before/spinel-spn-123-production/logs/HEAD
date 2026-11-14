@@ -1,0 +1,16 @@
+0000000000000000000000000000000000000000 5d775fba29a076126ebe3d81ed9232f355b5c6dc Baylee Schmeisser <github.mx@baylee.dev> 1793881894 -0800	
+5d775fba29a076126ebe3d81ed9232f355b5c6dc 5d775fba29a076126ebe3d81ed9232f355b5c6dc Baylee Schmeisser <github.mx@baylee.dev> 1793881895 -0800	reset: moving to HEAD
+5d775fba29a076126ebe3d81ed9232f355b5c6dc 04cfb15562db47562c7be0499ae74206cb879c67 Baylee Schmeisser <github.mx@baylee.dev> 1793882481 -0800	commit: Fix nullable native loader error handling and retain first-failure evidence
+04cfb15562db47562c7be0499ae74206cb879c67 a46033a5befed899a3c19cc05c89a921d45b1874 Baylee Schmeisser <github.mx@baylee.dev> 1793882560 -0800	commit (merge): Integrate current main into SPN-123 without dropping pending ticket work
+a46033a5befed899a3c19cc05c89a921d45b1874 7daec3871eb4da555115a7e228716dace11f9d9a Baylee Schmeisser <github.mx@baylee.dev> 1793883214 -0800	commit: Record integrated loader verification and blocked installation
+7daec3871eb4da555115a7e228716dace11f9d9a aeee60266b505b1ac6f928c4725639d90c768073 Baylee Schmeisser <github.mx@baylee.dev> 1793883539 -0800	commit: Preserve complete loader checkpoint receipts and publication limits
+aeee60266b505b1ac6f928c4725639d90c768073 df87eea061d9742404e58a4d6abdb7e3e0178f5a Baylee Schmeisser <github.mx@baylee.dev> 1794674650 -0800	commit: Record complete SPN-123 production resume scope
+df87eea061d9742404e58a4d6abdb7e3e0178f5a e0ba8a1bdbbc0234f6d39cac344ab2c355769146 Baylee Schmeisser <github.mx@baylee.dev> 1794674921 -0800	commit (merge): Integrate current main into preserved SPN-123 production candidate
+e0ba8a1bdbbc0234f6d39cac344ab2c355769146 cae5a58689b049e4f62c3a815482e21bb5212f49 Baylee Schmeisser <github.mx@baylee.dev> 1794681805 -0800	commit (merge): Complete SPN-123 local integration and preserve final validation evidence
+cae5a58689b049e4f62c3a815482e21bb5212f49 a37289b48825535a9036dfe17b4f671f7464bd65 Baylee Schmeisser <github.mx@baylee.dev> 1794683149 -0800	commit: Validate refused-client acknowledgment diagnostics against protocol revisions
+a37289b48825535a9036dfe17b4f671f7464bd65 6ef945eae3168da7f3706088dc7c2b78fad39cd5 Baylee Schmeisser <github.mx@baylee.dev> 1794684071 -0800	commit (merge): Integrate landed feedback diagnostics with complete SPN-123 receipt repair
+6ef945eae3168da7f3706088dc7c2b78fad39cd5 c270973a522822876ca615cca1ef24f2cd9555e4 Baylee Schmeisser <github.mx@baylee.dev> 1794685582 -0800	commit: Restore landed feedback fixture writeFile import and preserve first validation failure
+c270973a522822876ca615cca1ef24f2cd9555e4 d51f6375411207b52f80f0072d520b725a150219 Baylee Schmeisser <github.mx@baylee.dev> 1794690120 -0800	commit (merge): 📊 Integrate landed offline startup with diagnostic lifetimes
+d51f6375411207b52f80f0072d520b725a150219 7fd2b0a655513e628ab682174ae231e6a99b2874 Baylee Schmeisser <github.mx@baylee.dev> 1794690245 -0800	commit: 📊 Preserve combined-source diagnostic validation
+7fd2b0a655513e628ab682174ae231e6a99b2874 aaac6083a066c2a9f3f394650834eb33b2a270db Baylee Schmeisser <github.mx@baylee.dev> 1794694325 -0800	commit (merge): Integrate landed fixture ownership into SPN-123 diagnostics
+aaac6083a066c2a9f3f394650834eb33b2a270db f232e21b4910afe6209a22d8d78516c598eba1a5 Baylee Schmeisser <github.mx@baylee.dev> 1794694436 -0800	commit: Preserve actual-main fixture integration checks and scope

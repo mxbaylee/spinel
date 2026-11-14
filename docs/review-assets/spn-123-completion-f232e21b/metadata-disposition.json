@@ -1,0 +1,164 @@
+{
+  "run": 43652820954,
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "cancelled",
+  "createdAfterFinalBody": true,
+  "finalBodyPublishedAt": "2026-11-14T23:21:15Z",
+  "normalCancellationRequestedBy": "root",
+  "forceCancellation": false,
+  "failedGuardJobs": [
+    {
+      "id": 132624912001,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132624912263,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132624912360,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132625457788,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "cancelledJobs": [
+    {
+      "id": 132624800704,
+      "name": "Classify changes (43652820954)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624801039,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624912984,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913237,
+      "name": "Lib tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913299,
+      "name": "Doc callback lifetimes (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913302,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913325,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913606,
+      "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913635,
+      "name": "Doc responsiveness (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913648,
+      "name": "Unit tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    }
+  ],
+  "skippedJobs": [],
+  "successfulJobs": [
+    {
+      "id": 132624911987,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 132624912083,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "rawLogRetrievals": 16,
+  "unavailableOriginalResponses": 9,
+  "artifactCount": 3,
+  "sourceAcceptanceRun": 43648312553,
+  "acceptedOriginalRemainsSuccess": true,
+  "productTestFailureInference": false,
+  "notes": [
+    "Guard failures after cancelled classification/absent applicability plan remain explicit failures, not passes.",
+    "Original unavailable-log HTTP responses are preserved without retry.",
+    "This post-merge body-edit run is not substituted for accepted first-attempt source validation.",
+    "No useful main-squash CI or Storybook run was cancelled."
+  ],
+  "failedRawEvidence": [
+    {
+      "job": 132624912001,
+      "rawSha256": "edcb15c79d05aa9b13f6bf1da2d17a4da3b80f8e84f6e0b0ec09ab73f887fa3c",
+      "lines": [
+        "2026-11-14T23:22:23.5017440Z   CLASSIFICATION: cancelled",
+        "2026-11-14T23:22:23.5142006Z Missing successful applicability decision.",
+        "2026-11-14T23:22:23.5160387Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job": 132624912263,
+      "rawSha256": "1f56e4c414beeb3844bb2a93913a1fda20a5ccd3af195f749d6d6a83d1a72e6b",
+      "lines": [
+        "2026-11-14T23:23:25.6150387Z   CLASSIFICATION: cancelled",
+        "2026-11-14T23:23:25.6870050Z     \"error\": \"Error: Coverage plan digest changed or missing.\",",
+        "2026-11-14T23:23:25.6935497Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job": 132624912360,
+      "rawSha256": "b47d07e9f23452858bc8ba9c203988a0b8ae21ee6bf2d7de66970ab2c7de7209",
+      "lines": [
+        "2026-11-14T23:23:42.6836093Z   CLASSIFICATION: cancelled",
+        "2026-11-14T23:23:42.7699759Z     \"error\": \"Error: Coverage plan digest changed or missing.\",",
+        "2026-11-14T23:23:42.7792480Z ##[error]Process completed with exit code 1."
+      ]
+    },
+    {
+      "job": 132625457788,
+      "rawSha256": "7e894a9479c22ed31b8feb7786dff789cacd91bc0d52b80f6f134a6d46557546",
+      "lines": [
+        "2026-11-14T23:24:04.8063415Z   CLASSIFICATION: cancelled",
+        "2026-11-14T23:24:04.8751289Z     \"error\": \"Error: Coverage plan digest changed or missing.\",",
+        "2026-11-14T23:24:04.8814301Z ##[error]Process completed with exit code 1."
+      ]
+    }
+  ]
+}

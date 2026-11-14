@@ -1,0 +1,254 @@
+{
+  "at": "2026-11-14T23:24:30.265Z",
+  "id": 43652820954,
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "cancelled",
+  "snapshot": "/tmp/spn123-completion-f232e21b/metadata-run/2026-11-14T232428205Z",
+  "jobs": [
+    {
+      "id": 132624800704,
+      "name": "Classify changes (43652820954)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624801039,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624911987,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 132624912001,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132624912083,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 132624912263,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132624912360,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132624912984,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913237,
+      "name": "Lib tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913299,
+      "name": "Doc callback lifetimes (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913302,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913325,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913606,
+      "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913635,
+      "name": "Doc responsiveness (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132624913648,
+      "name": "Unit tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132625457788,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14136906327,
+      "name": "ci-results-lib",
+      "size": 288,
+      "digest": "sha256:052b99c2a9317db97f3dc22a257d57eec1d320a777b3c126e23eaa23d6fe3b92"
+    },
+    {
+      "id": 14136334561,
+      "name": "ci-results-unit",
+      "size": 288,
+      "digest": "sha256:be24a9e2f8f56a02e2107587967f2dfe0c668bcbc6507c55533f14c3e3967bd8"
+    },
+    {
+      "id": 14135994536,
+      "name": "ci-results-browser",
+      "size": 414,
+      "digest": "sha256:88a9bbfc58d42777b3113cfcd8ddb29ec58724df4f5935f6c2a0e527965833c7"
+    }
+  ],
+  "terminal": true,
+  "cancellationOwner": "root normal cancellation; no worker cancellation or rerun",
+  "acceptedSourceRunsUnchanged": true,
+  "logs": [
+    {
+      "job": 132624800704,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624800704.log.gz",
+      "rawBytes": 12703,
+      "rawSha256": "fc9831414200cd449fa36dbad1886fd053bf23e3f19c93fa1bd158ca76b89fd7"
+    },
+    {
+      "job": 132624801039,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624801039.unavailable.json"
+    },
+    {
+      "job": 132624911987,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624911987.log.gz",
+      "rawBytes": 19557,
+      "rawSha256": "11c362563d42e7f3da8bc1023f4b3605be047ba229e3f9eb8805090595c21504"
+    },
+    {
+      "job": 132624912001,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624912001.log.gz",
+      "rawBytes": 3025,
+      "rawSha256": "edcb15c79d05aa9b13f6bf1da2d17a4da3b80f8e84f6e0b0ec09ab73f887fa3c"
+    },
+    {
+      "job": 132624912083,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624912083.log.gz",
+      "rawBytes": 18513,
+      "rawSha256": "0a69ec8bb9799b7e38de7d9324327709ca1639c584b7189ab5c9c9e554ea81dc"
+    },
+    {
+      "job": 132624912263,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624912263.log.gz",
+      "rawBytes": 19010,
+      "rawSha256": "1f56e4c414beeb3844bb2a93913a1fda20a5ccd3af195f749d6d6a83d1a72e6b"
+    },
+    {
+      "job": 132624912360,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624912360.log.gz",
+      "rawBytes": 19121,
+      "rawSha256": "b47d07e9f23452858bc8ba9c203988a0b8ae21ee6bf2d7de66970ab2c7de7209"
+    },
+    {
+      "job": 132624912984,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624912984.unavailable.json"
+    },
+    {
+      "job": 132624913237,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913237.unavailable.json"
+    },
+    {
+      "job": 132624913299,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913299.unavailable.json"
+    },
+    {
+      "job": 132624913302,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913302.unavailable.json"
+    },
+    {
+      "job": 132624913325,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913325.unavailable.json"
+    },
+    {
+      "job": 132624913606,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913606.unavailable.json"
+    },
+    {
+      "job": 132624913635,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913635.unavailable.json"
+    },
+    {
+      "job": 132624913648,
+      "unavailable": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132624913648.unavailable.json"
+    },
+    {
+      "job": 132625457788,
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/logs/132625457788.log.gz",
+      "rawBytes": 19810,
+      "rawSha256": "7e894a9479c22ed31b8feb7786dff789cacd91bc0d52b80f6f134a6d46557546"
+    }
+  ],
+  "artifactInventory": [
+    {
+      "id": 14136906327,
+      "name": "ci-results-lib",
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/artifacts/14136906327.zip",
+      "bytes": 288,
+      "sha256": "052b99c2a9317db97f3dc22a257d57eec1d320a777b3c126e23eaa23d6fe3b92",
+      "members": [
+        {
+          "name": "ci-results-lib.json",
+          "bytes": 179,
+          "sha256": "456f695e71bd5fafb390d96213ebaaeb96d88120dac4ba5ac469d6b87df3bc3c"
+        }
+      ]
+    },
+    {
+      "id": 14136334561,
+      "name": "ci-results-unit",
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/artifacts/14136334561.zip",
+      "bytes": 288,
+      "sha256": "be24a9e2f8f56a02e2107587967f2dfe0c668bcbc6507c55533f14c3e3967bd8",
+      "members": [
+        {
+          "name": "ci-results-unit.json",
+          "bytes": 177,
+          "sha256": "b2777cae312897c12225168197bcd9ac241dac4c215d5b6de83ad669397ca2c7"
+        }
+      ]
+    },
+    {
+      "id": 14135994536,
+      "name": "ci-results-browser",
+      "path": "/tmp/spn123-completion-f232e21b/metadata-run/artifacts/14135994536.zip",
+      "bytes": 414,
+      "sha256": "88a9bbfc58d42777b3113cfcd8ddb29ec58724df4f5935f6c2a0e527965833c7",
+      "members": [
+        {
+          "name": "ci-results-browser.json",
+          "bytes": 522,
+          "sha256": "ca65d102b55f95687b8800ba7bb7ed55b4874f6b35a6bc3ce908bfa8d1c0d3c8"
+        }
+      ]
+    }
+  ]
+}

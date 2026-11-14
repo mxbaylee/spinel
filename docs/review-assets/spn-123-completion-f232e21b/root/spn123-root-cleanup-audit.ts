@@ -1,0 +1,20 @@
+import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import assert from 'node:assert/strict';
+const dir='/tmp/spn123-completion-f232e21b';
+const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+const git=(...args:string[])=>execFileSync('git',args,{cwd:'/Users/mxbaylee/projects/spinel',encoding:'utf8'}).trim();
+const receipt=JSON.parse(readFileSync(dir+'/cleanup-receipt.json','utf8'));
+for(const f of JSON.parse(readFileSync(dir+'/preservation-all-bindings.json','utf8'))){const b=readFileSync(dir+'/'+f.path);assert.equal(b.length,f.bytes);assert.equal(hash(b),f.sha256);}
+const index='/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-123/index';
+assert.equal(hash(readFileSync(index)),receipt.missingIndexSha256);
+for(const r of [...receipt.deletedLocalBranches,...receipt.obsoleteTracking])assert.equal(git('for-each-ref','--format=%(refname)',r.ref),'');
+assert.equal(git('ls-remote','--heads','origin','*spn-123*'),'');
+for(const r of [...receipt.deletedLocalBranches,receipt.deletedRemoteBranch])git('merge-base','--is-ancestor',r.sha,'a44822ab287869e545fe005dfb2f62d02ef7f527');
+const worktrees=git('worktree','list','--porcelain');
+for(const w of receipt.detachedWorktrees)assert(worktrees.includes('worktree '+w.path+'\nHEAD '+w.sha+'\ndetached'));
+assert(existsSync('/Users/mxbaylee/projects/spinel-spn-123-production/node_modules'));
+assert.equal(git('status','--porcelain=v1'),'');assert.equal(git('rev-parse','HEAD'),receipt.merged);
+const result={at:new Date().toISOString(),source:receipt.source,merged:receipt.merged,preservedPayloadHashes:32,missingIndexUnchanged:true,exactHeadsDurablyReachable:true,ticketBranchesAbsent:true,expectedRegistrationsDetached:true,ignoredPrivateDependenciesRetained:true,mainClean:true,reviewedCleanupCommands:32,scope:'Original commands inspected, current refs/registrations/index independently verified; unavailable old-directory unstaged content remains unknown.'};
+writeFileSync(dir+'/root-cleanup-audit.json',JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

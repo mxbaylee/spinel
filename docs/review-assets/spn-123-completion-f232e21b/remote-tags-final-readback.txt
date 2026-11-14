@@ -1,0 +1,10 @@
+a3d297b7b470322fb12f362a0c937486a664f5bf	refs/tags/archive/spn-123-current-local-54307c19
+9679376e4003563cb7403854df5593c0aff588d1	refs/tags/archive/spn-123-current-local-54307c19^{}
+abffe1aa260c6861404b31d96b3d31cfc3c94c41	refs/tags/archive/spn-123-current-safari-54307c19
+328159db109333e169f941810864c555430380cc	refs/tags/archive/spn-123-current-safari-54307c19^{}
+607e36f0ac70db7d65879f0dc0699e4f31cf2cd6	refs/tags/archive/spn-123-review-6ef945ea-20261114
+38b4b4dba8033701183c00b6d69fa9575f34dd7a	refs/tags/archive/spn-123-review-7fd2b0a6-20261114
+b2ca9c9c49f3e4d9949bceb6da176bd1fe7d8999	refs/tags/archive/spn-123-review-c270973a-20261114
+f524dd4d5ddaee80b2553f1be5174d0631bc655f	refs/tags/archive/spn-123-review-f232e21b-20261114
+7d4c215d1075d3aa640a029366bddea58f7627ca	refs/tags/archive/spn-123-validation-6ef945ea-20261114
+a44822ab287869e545fe005dfb2f62d02ef7f527	refs/tags/archive/spn-123-validation-f232e21b-20261114
