@@ -20,7 +20,10 @@ SPN-159 retains diagnosis before repair, a predeclared bounded source/native
 experiment, meaningful phase/geometry observations, missing-transition negative
 controls, actual native insertion/selection/control refresh, original budgets,
 privacy, cleanup and all existing five Storybook variants. Its exact historical
-assertion and cause remain unknown. Reassess before expanding into a broader
+assertion and cause remain unknown. Establish the causal transition/readiness
+boundary through a predeclared new controlled experiment before choosing a repair;
+this does not require reconstructing the unavailable original failure phase.
+Reassess before expanding into a broader
 product/native-engine issue. SPN-120's L outcome and original finite cases remain
 intact; no product acceptance is removed to improve a grade.
 
