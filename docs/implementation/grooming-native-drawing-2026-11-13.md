@@ -54,7 +54,12 @@ At the initial base these are **2026-11-12** and **[SPN-148, SPN-145]**. The man
 plans publication after the already validating SPN-149 PR if its acceptance passes,
 to avoid invalidating near-ready CI. Before publication, integrate the actual new
 main, preserve any newly landed completion, run the relevant checks and obtain
-both independent exact-head reviews. No future SPN-149 merge is assumed here.
+both independent exact-head reviews. That initial sequencing has now completed: SPN-149 landed in actual main
+`a3dfc6f3373babecf979d5b851bbbf46c6dbb3b9`, which this registration integrates.
+Its ticket removal and completion list **[SPN-148, SPN-145, SPN-149]** remain
+intact; last full grooming remains **2026-11-12**, with next ID **160**. The sole
+generated-index merge conflict was resolved by running the index CLI, not editing
+the generated file. This registration completes no product ticket.
 
 ## 🔎 First failure, investigation limits and checks
 
@@ -65,14 +70,18 @@ The recorded counter error does not identify one of the three possible assertion
 sites. Post-failure full-width geometry does not diagnose an earlier transition.
 The source/main story hashes match, while the native source/runner contribution
 remains an investigation question. No native experiment or rerun is performed by
-this documentation PR. Immutable first-failure archive publication is pending;
-the original artifact and local copies are retained in the meantime.
+this documentation PR. The [immutable failed-validation archive](https://github.com/mxbaylee/spinel/blob/4bd84e3be7645a3b18c794c966e0007e6770cc9c/docs/review-assets/spn-120-validation-47bf4aad/README.md)
+is now published at verified commit `4bd84e3be7645a3b18c794c966e0007e6770cc9c`;
+the original failed attempt remains visible and is not replaced by a retry.
 
 The complete open-PR listing during preparation returned **13 PRs**, all authored
 by `mxbaylee`: 220, 223, 224, 227, 228, 229, 230, 246, 247, 260, 281, 282 and 285.
 There are **no open Dependabot PRs** requiring security, compatibility, current-CI
 or grouping disposition. No dependency was changed or merged. Recheck this audit
 at the final publication base rather than treating this snapshot as permanent.
+The refreshed audit after integrating a3dfc6f3 returned **12 open PRs**, the same
+list excluding merged #282, all authored by `mxbaylee`; no Dependabot disposition
+is outstanding.
 
 Documentation verification owns allocation/history, exact heading, scope/persona
 rationale, dependency and phase ordering, evidence limits, local/immutable links,
@@ -87,3 +96,13 @@ runner and watchdog with normal pressure and no abort. `git diff --check` and
 local Markdown file-target resolution passed. The exact-head PR checker, final
 base integration and two independent reviews remain pending; these documentation
 checks are not native repair acceptance.
+
+After main integration, the index CLI passed in **172 ms** and `backlog:check`
+passed for **30 open tickets** in **149 ms**, with ticket-length guidance only.
+Both finished before the watchdog's first memory sample, so no measured peak
+is available; both passed normal-pressure preflight and had no resource abort.
+An earlier index invocation used a nonexistent `scripts/backlog.ts` path and
+failed before performing backlog work. Correcting it to the package script's
+`scripts/backlog/cli.ts index` produced the successful result above; retain both
+receipts rather than reporting the failed invocation as a pass. Final exact-head
+PR validation and independent reviews remain separate publication requirements.

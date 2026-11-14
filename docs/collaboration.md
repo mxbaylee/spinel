@@ -358,6 +358,23 @@ MCP credential/exact-base/retry identity, Formula privacy, and backup restoratio
 Protocol-specific tests now exercise native snapshot/replay instead of retired
 SDK block or permission-batch endpoints. Retired routes are explicitly refused.
 
+### 🔏 Session closure across navigation
+
+The existing two-login Chromium journey in `e2e/collaboration.spec.ts` owns
+session revocation, independently of the sign-in screen. Its observer attaches
+to Chromium Network events before navigation and retains actual closure of every
+matching established socket across document replacement. Navigation and
+Playwright page-close observations alone cannot pass. HTTP 401 denial, editor
+removal, the surviving login's uninterrupted queued write, absence of subsequent
+frames, saved content and the reloaded native cell remain separate assertions.
+
+Every attempt retains a bounded content-free timeline and cleanup status. Keep
+the 60-second journey, five-second closure deadline and flaky-test gate; a live
+socket, retained authorization, missing observation or cleanup failure still
+fails. Focused protocol controls cover the observation boundary without adding a
+browser matrix. [SPN-149](implementation/SPN-149.md) preserves the original
+failure's missing timeline, the controlled dispatch proof and acceptance record.
+
 The native browser snapshot observer is enabled only in disposable test builds
 with `VITE_SYNC_EVIDENCE=1`. It is read-only and ordinary builds omit it; there is
 no production global that can issue editor commands. Browser tests retain the
