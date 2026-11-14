@@ -89,6 +89,111 @@
       "reason": null,
       "elapsedMs": 460,
       "peakKiB": 265360
+    },
+    {
+      "name": "spn098-current-storybook",
+      "args": [
+        "node",
+        "node_modules/storybook/bin/index.cjs",
+        "build",
+        "--config-dir",
+        "test-results/spn098-storybook-config",
+        "--output-dir",
+        "storybook-static"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 118,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn098-current-storybook-corrected",
+      "args": [
+        "node",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "--config-dir",
+        "test-results/spn098-storybook-config",
+        "--output-dir",
+        "storybook-static"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 6315,
+      "peakKiB": 1506848
+    },
+    {
+      "name": "spn098-current-storybook-identity",
+      "args": [
+        "node",
+        "scripts/ci/storybook-identity.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 129,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn098-current-captures",
+      "args": [
+        "node",
+        "test-results/spn098-capture.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 126421,
+      "peakKiB": 1279344
+    },
+    {
+      "name": "spn098-current-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1589,
+      "peakKiB": 1050512
+    },
+    {
+      "name": "spn098-current-browser",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--config",
+        "test-results/spn098-playwright.config.ts",
+        "--project",
+        "production",
+        "e2e/diagnostics.spec.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 374,
+      "peakKiB": 211552
+    },
+    {
+      "name": "spn098-current-browser-corrected",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/diagnostics.spec.ts",
+        "--config=test-results/spn098-playwright.config.ts",
+        "--project=production"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 22260,
+      "peakKiB": 1802384
     }
   ],
   "sourceHashes": {
@@ -136,8 +241,20 @@
     "vitest.config.ts": "5d9906eaf4293df87618e9b889d848668f94c10c86eeb31537ad6c3762a2428b"
   },
   "limitations": [
-    "Hosted current-head acceptance and independent review pending.",
-    "Screenshots from ea6aa741 remain historical; current dependency rendering requires fresh images.",
-    "No old failure is waived by these local results."
+    "Current-head hosted full selected acceptance and independent exact-head/visual reviews remain pending.",
+    "Local component capture uses focused production story catalog and reactDocgen=false; canonical preview/themes/args/assertions retained; full hosted catalog remains selected.",
+    "Four actual production diagnostics cases passed; other application/native/development suites were not run locally.",
+    "Historical131.2ms native failure stays failed; no tail-elimination claim."
+  ],
+  "testedSource": "8e986617a40977eb96d016be7dc361366003384f",
+  "failureDispositions": [
+    {
+      "check": "spn098-current-storybook",
+      "reason": "Invocation failure before build: removed bin/index.cjs path. Corrected to installed dist/bin/dispatcher.js; no source or assertion change."
+    },
+    {
+      "check": "spn098-current-browser",
+      "reason": "Invocation rejected before test collection: variadic --project consumed the test path. Corrected --project=production; no test or assertion change."
+    }
   ]
 }
