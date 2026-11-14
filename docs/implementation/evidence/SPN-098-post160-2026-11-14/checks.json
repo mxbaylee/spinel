@@ -1,0 +1,138 @@
+{
+  "runtimeSource": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+  "checks": [
+    {
+      "name": "spn098-post160-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 236,
+      "peakKiB": 252320
+    },
+    {
+      "name": "spn098-post160-captures",
+      "args": [
+        "node",
+        "test-results/spn098-capture.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 132049,
+      "peakKiB": 1362192
+    },
+    {
+      "name": "spn098-post160-focused",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test-results/spn098-post160-vitest.config.ts",
+        "src/server/diagnostics",
+        "src/ui/feedbackContext.test.ts",
+        "src/server/maintenance/ownership.test.ts",
+        "src/server/maintenance/supervisor-test-control.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 4642,
+      "peakKiB": 541024
+    },
+    {
+      "name": "spn098-post160-identity",
+      "args": [
+        "node",
+        "scripts/ci/storybook-identity.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 130,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn098-post160-index",
+      "args": [
+        "npm",
+        "run",
+        "backlog:index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 529,
+      "peakKiB": 179120
+    },
+    {
+      "name": "spn098-post160-lint",
+      "args": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 10932,
+      "peakKiB": 814720
+    },
+    {
+      "name": "spn098-post160-pr",
+      "args": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "754e65317744e5ce97ede501935c6586e4875f2a",
+        "--title",
+        "\ud83d\udce8 SPN-098 Send user feedback with diagnostic context"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 564,
+      "peakKiB": 263536
+    },
+    {
+      "name": "spn098-post160-storybook",
+      "args": [
+        "node",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "--config-dir",
+        "test-results/spn098-storybook-config",
+        "--output-dir",
+        "storybook-static"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 9555,
+      "peakKiB": 1489584
+    },
+    {
+      "name": "spn098-post160-types",
+      "args": [
+        "node",
+        "node_modules/typescript/lib/tsc.js",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 8998,
+      "peakKiB": 1695024
+    }
+  ],
+  "firstOutcomes": "All actual workloads passed on first attempt. Packaging initially queried a nonexistent captureFailures key; corrected to the retained manifest failures key without rerunning capture or altering bytes.",
+  "limits": "Normal pressure;2GiB process tree;eight minutes; Go640MiB/GOGC50/GOMAXPROCS2; private caches. Short unsampled checks report peakKiB0 rather than measured zero memory."
+}
