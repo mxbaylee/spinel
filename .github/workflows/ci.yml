@@ -476,7 +476,18 @@ jobs:
         if: matrix.project == 'offline-upgrade'
         working-directory: legacy-offline-source
         # Preserve the historical lock and postinstall patches for browser
-        # emission. The application server still uses the candidate install.
+        # emission. Legacy data is initially served by the genuine 1.1.0 backend.
+        run: npm ci
+      - name: Immutable last 1.1.0 offline host and backend
+        if: matrix.project == 'offline-upgrade'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 3a0e2238fb5be3907d04120eabda2aafd6565d63
+          path: previous-offline-source
+          persist-credentials: false
+      - name: Install previous offline host dependencies
+        if: matrix.project == 'offline-upgrade'
+        working-directory: previous-offline-source
         run: npm ci
       - name: Build
         if: matrix.project != 'offline-upgrade'
@@ -494,6 +505,7 @@ jobs:
           SHARD: ${{ matrix.shard }}
           SPINEL_CAPTURE_SCREENSHOTS: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-review') && '1' || '0' }}
           VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+          SPINEL_PREVIOUS_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/previous-offline-source', github.workspace) || '' }}
           SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
@@ -576,7 +588,7 @@ jobs:
         if: needs.changes.outputs.responsiveness_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 6ee50161c9eeeb7296ffb282d7ae52abd9e61d1b
+          ref: 96ae9e0a07d113c5de771f6e4e0f4ae83fae812d
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
@@ -676,7 +688,7 @@ jobs:
         if: needs.changes.outputs.callback_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 48dc8d4698129d5c7748ff2dac3b5d18cb0bcd6b
+          ref: b75e3797a11ac2f53e3833b5615f68b6c0091727
           path: baseline-callback-source
           persist-credentials: false
       - name: Match callback workload and read-only observations

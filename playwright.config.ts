@@ -154,8 +154,8 @@ export default defineConfig({
     },
     {
       name: 'offline-upgrade',
-      // This suite builds the legacy baseline and two current compatibility
-      // fixtures. Its own server/browser must not race a normal webServer.
+      // This suite builds the eager legacy client, the last 1.1.0 host and
+      // the current compatibility fixture. Its own server/browser must not race a normal webServer.
       testMatch: '**/offline-upgrade.spec.ts',
       fullyParallel: false,
       use: { ...devices['Desktop Chrome'] },

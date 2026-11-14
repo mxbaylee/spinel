@@ -8,6 +8,14 @@ Cloudflare quick tunnel. It is the first run outside BrowserStack, and it found 
 failures the BrowserStack lanes did not report. Read this before trusting the Chrome row
 in [offline](../offline.md).
 
+**Delivery reconciliation, 2026-11-13:** the owner identified their Pixel 10, “latest
+Chrome” and Home Screen launch in the delivery conversation; exact version/build identity
+remains unrecorded. The later repair observations below supersede the initial failures
+only where explicitly stated. Current integration fixes the persisted-catalog deep-link
+gap; its tests are separate from these historical phone observations. List-view reconnect
+remains pre-launch SPN-156, image paste SPN-154, and the owner-deferred false offline
+indicator SPN-155. See the [current scope map](SPN-090.md#-current-branch-integration-and-remaining-outcomes).
+
 Each item says whether it was **observed** (on the phone, by Bee), **read from code**
 (not run) or **unknown**. Code readings are leads for the next agent, not proof.
 

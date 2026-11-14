@@ -1,5 +1,5 @@
 import {
-  LEGACY_COMPATIBILITY,
+  CURRENT_SDK_VERSION,
   parseShellManifest,
   RUNTIME_MESSAGE,
   sameCompatibility,
@@ -35,7 +35,10 @@ export function currentRuntime() {
 }
 /** Compatible online recovery does not require that every public asset remains cached. */
 export function isRuntimeCompatible(compatibility: RuntimeCompatibility) {
-  return sameCompatibility(currentRuntime()?.compatibility ?? LEGACY_COMPATIBILITY, compatibility);
+  return sameCompatibility(
+    currentRuntime()?.compatibility ?? { format: 1, sdkVersion: CURRENT_SDK_VERSION },
+    compatibility,
+  );
 }
 
 function bounded<T>(promise: Promise<T>, ms: number, message: string) {

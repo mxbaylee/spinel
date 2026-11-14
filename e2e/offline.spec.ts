@@ -1039,7 +1039,7 @@ test('a warm Dashboard that goes offline opens a downloaded Doc from the device'
   test.setTimeout(180_000);
   const context = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1100 } });
   const page = await context.newPage();
-  const db = openDatabase(`test-results/${info.project.name}/warm-offline.sqlite`);
+  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
   const auth = new AuthStore(db),
     workspace = new WorkspaceStore(auth);
   const user = auth.createUser(`Warm ${info.testId}`);
@@ -1073,6 +1073,14 @@ test('a warm Dashboard that goes offline opens a downloaded Doc from the device'
     await expect(page.locator('.editor-frame')).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("This item isn't available")).toHaveCount(0);
     await expect(page.getByText('Failed to fetch')).toHaveCount(0);
+    // A fresh Dashboard deep link has no in-memory list yet. Keep session/bootstrap
+    // online, but fail its item/list requests: only the prepared catalog may supply
+    // metadata, and the actual downloaded copy must still be usable.
+    await context.setOffline(false);
+    await page.route('**/api/items{,/**}', (route) => route.abort('internetdisconnected'));
+    await page.goto(`/?item=${doc.id}`);
+    await expect(page.locator('.editor-frame')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText("This item isn't available")).toHaveCount(0);
   } finally {
     await context.close();
     db.close();

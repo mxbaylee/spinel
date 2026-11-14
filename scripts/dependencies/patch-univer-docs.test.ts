@@ -17,12 +17,12 @@
  * against real JSONX/TextX operations and controlled service endpoints/timers.
  * Original bundle bytes are semantic and primitive-work negative controls.
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
- * dream-num/univer v1.1.0. No Pro package is read or modified.
+ * dream-num/univer v1.3.1. No Pro package is read or modified.
  */
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
@@ -762,7 +762,13 @@ for (const format of ['es', 'cjs'] as const) {
         'module',
         'exports',
         source,
-      )(createRequire(import.meta.url), module, module.exports);
+      )(
+        createRequire(
+          new URL('../../node_modules/@univerjs/docs/lib/cjs/index.js', import.meta.url),
+        ),
+        module,
+        module.exports,
+      );
       return module.exports as Record<string, any>;
     }
     function exercise(ManagerClass: any, states: State[]) {
@@ -793,6 +799,13 @@ for (const format of ['es', 'cjs'] as const) {
       }
     }
     try {
+      // Execute the complete copied module with its real package-local
+      // dependencies too; npm need not hoist Docs' RPC dependency to the root.
+      await symlink(
+        resolve('node_modules/@univerjs/docs/node_modules'),
+        resolve(directory, 'node_modules'),
+        'dir',
+      );
       const module = await load(patched, 'complete');
       for (const position of [3, 4, 23]) {
         const { states } = paragraphSequence(position);
@@ -2600,8 +2613,8 @@ for (const format of ['es', 'cjs'] as const) {
       linearTailPatched,
     } = prepareDocsPatch(await readBuild(format), format);
     const markerHash = {
-      es: '259dd5a4ce24744a442b2cfc7211a89f46437c0257a2ca7b2b9aaaceddd946ba',
-      cjs: 'd96e32ba1177187d3bffa1ac0dce9cbddb589070b5303159b7b6b6b460eb4f92',
+      es: 'dab591090c464e72138f4decb51f595a3307faefd8ba3af8dab61cd04d646bd2',
+      cjs: '7c31808ffa040ef2069e9ffe9be47235bbd6b6441f751c25ec553e9e869b0787',
     }[format];
     assert.equal(createHash('sha256').update(markerPatched).digest('hex'), markerHash);
     assert.equal(prepareDocsPatch(markerPatched, format).patched, patched);
@@ -2609,32 +2622,32 @@ for (const format of ['es', 'cjs'] as const) {
     assert.equal(
       createHash('sha256').update(completeDeletePatched).digest('hex'),
       {
-        es: '2288928025f2d6e168613614ec6fe5dd57f8675202d35e5ccff2e189fe391563',
-        cjs: 'f0302d8a70cff8ba33dba075d6b7b4fb52f95bd73b5ed53c835d7cbb2f4db2c3',
+        es: '3f6bc0f99450961af5219f0d635353e2e42f4b7c6136142e578f0d13de385302',
+        cjs: '1b89369c144869aef94c983aadbea939256098371b411e5e85464e78d0f82803',
       }[format],
     );
     assert.equal(prepareDocsPatch(completeDeletePatched, format).patched, patched);
     assert.equal(
       createHash('sha256').update(deletePrefixPatched).digest('hex'),
       {
-        es: 'fe7b6b735d8e5f2ef1979fb3bd97267c3c9d53ce0d107ff7473b140f5d3eafb1',
-        cjs: 'ce23b364acdd917ab0b4c645092b64c974567fc0ffea7aec94e3bd1bdfb0bb02',
+        es: '3a6afe19366ab5426023a2e0c5abcef836bc574c343a3b705160571abbb86097',
+        cjs: '58cf26efaa11cc1427c74c90e4d6a0881c0d717aba6c6d4f4f0871f4ab6659ed',
       }[format],
     );
     assert.equal(prepareDocsPatch(deletePrefixPatched, format).patched, patched);
     assert.equal(
       createHash('sha256').update(constantGuardPatched).digest('hex'),
       {
-        es: '57ec2ee153792c73e466a753d2e5c9ed1cd19615bb45a04fbe72c9336a6ad2b8',
-        cjs: '941110089ab9110c90383b5d343c912d38770b416234e25dfa4b7c2a7bfd8ce5',
+        es: 'a326d165b7288f7bb503259e1247e271ae58ef63acfee99e47dc47ac967fa64e',
+        cjs: '5b3a9d2559c9831cad691e0c2eef98227652e40b309b4ddc57b35d43de826817',
       }[format],
     );
     assert.equal(prepareDocsPatch(constantGuardPatched, format).patched, patched);
     assert.equal(
       createHash('sha256').update(paragraphTailPatched).digest('hex'),
       {
-        es: '535ff692c3fd37ba10bdcc614720b8d848827c988f75fbbf9109ebf90d8d68c7',
-        cjs: 'bad73b55afd6b345dc20f78b5f60e799abf8b1a62585ef488bbb8d0c6b2033b7',
+        es: 'ff54155b5bde5e951b5d9ca7672651cab6903f2565e3961121a0c5c8eb09f3d7',
+        cjs: 'b0020de90c3bb15b1edfb5ed79d2180b69841b7bc24a284b7475a91f94dd3495',
       }[format],
     );
     assert.equal(prepareDocsPatch(paragraphTailPatched, format).patched, patched);
@@ -2648,16 +2661,16 @@ for (const format of ['es', 'cjs'] as const) {
       /Unrecognized/,
     );
     const previousHash = {
-      es: '1f454109e7520cd09b5b046f45f9ceefbed546d643139d95952157d8e503d747',
-      cjs: '7329999ae29c047b0fcd67a10104f1f48e097313fb9019e72f5868a263c432e4',
+      es: '9cdb0811942ba53265a614ea059a65d14240e7e91a73ab71df97b7218e5052a3',
+      cjs: '8ad78de1a1667c47fac91ef33aa045cc30f1c655f0e977aca1cf8ce25bd555ac',
     }[format];
     assert.equal(createHash('sha256').update(previousPatched).digest('hex'), previousHash);
     assert.equal(prepareDocsPatch(previousPatched, format).patched, patched);
     assert.equal(
       createHash('sha256').update(qualifiedRangesPatched).digest('hex'),
       {
-        es: '110890e889ac362b22a4c38bafd1ebb4e7cf82e8107d4524bdb86ff7fe6bd7c3',
-        cjs: '58edceea5e1fb66ff1a83ec0a92707cf6f8d741aab87eb922d9c7e021f99207d',
+        es: '83b7c9780e3c7e23767f65357915e6d419d3be64d9717f9d6f4c4588f0803a77',
+        cjs: '4505cd09d6237053f43c2cdc32d3027be24d381a0917844f47c2c41949b5fa5c',
       }[format],
     );
     assert.equal(prepareDocsPatch(qualifiedRangesPatched, format).patched, patched);
@@ -2670,8 +2683,8 @@ for (const format of ['es', 'cjs'] as const) {
     assert.equal(
       createHash('sha256').update(patched).digest('hex'),
       {
-        es: '4b30f509d7426d43b5314f7d32422e0ca94830320d441712b6eed142af2b8dd5',
-        cjs: '4ade808be25d9aed4122d1ab254a07802c89065c06cac42f9dec60fe2f2d286f',
+        es: '788566fd844ad732f3dce124c64daf9f14a742487b5e11191d96da7c82b0563c',
+        cjs: 'f5d9d7a67e528159e16bb1abc341f4efd7b62dcfa29d18d925c7bd60904626a9',
       }[format],
     );
     assert.equal(prepareDocsPatch(patched, format).patched, patched);
@@ -2781,12 +2794,12 @@ test('Docs installer validates package identity and both complete builds before 
   const metadataPath = resolve(directory, 'package.json');
   for (const metadata of [
     { name: '@univerjs/docs', version: '1.2.0' },
-    { name: 'other', version: '1.1.0' },
+    { name: 'other', version: '1.3.1' },
   ]) {
     await writeFile(metadataPath, JSON.stringify(metadata));
     await assert.rejects(patchInstalledDocs(root), /Upgrading/);
   }
-  await writeFile(metadataPath, JSON.stringify({ name: '@univerjs/docs', version: '1.1.0' }));
+  await writeFile(metadataPath, JSON.stringify({ name: '@univerjs/docs', version: '1.3.1' }));
   const cjs = resolve(directory, 'lib/cjs/index.js');
   await writeFile(cjs, originals.cjs + '\n// unknown edit');
   await assert.rejects(patchInstalledDocs(root), /Unrecognized/);

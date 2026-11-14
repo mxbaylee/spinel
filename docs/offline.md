@@ -623,9 +623,11 @@ SPN-058 semantics, independent of the server database; neither an open connectio
 nor a UI status alone proves them. A local-save failure stays visible until resolved.
 
 Sync is attempted on startup, on returning to the foreground and when the
-connection returns, while that document's editor is open. The file list does not
+connection returns, while that document's editor is open. The file list currently does not
 sync pending edits: a document edited offline keeps its changes on the device until
-it is opened again while connected (own-phone run, 2026-11-13). Pending work stays
+it is opened again while connected (own-phone run, 2026-11-13). This is a known
+pre-launch gap in the required app-running reconnect contract, tracked by
+[SPN-156](todo/SPN-156.md); SPN-090's closure does not complete it. Pending work stays
 visible until it actually succeeds. Background Sync may be an optional enhancement. It is not a
 requirement for Firefox/Android or Safari/iOS, and not a promise that the sync
 client runs while the app is closed. Follow the existing [history](history.md)

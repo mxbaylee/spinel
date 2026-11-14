@@ -25,6 +25,10 @@ const paragraph: IParagraph = {
   paragraphId: 'stable-paragraph',
   bullet: { listId: 'list', listType: 'BULLET_LIST', nestingLevel: 0 },
   paragraphStyle: { namedStyleType: 4, outlineLevel: 0, headingId: 'heading' },
+  // 1.3.1 preserves these attributes in apply/transform. The composition repair
+  // must still agree with sequential REPLACE, including explicit falsy values.
+  styleId: 'old-style',
+  headingCollapsed: true,
 };
 
 test('composed paragraph replacement matches sequential application and preserves identity', () => {
@@ -37,6 +41,7 @@ test('composed paragraph replacement matches sequential application and preserve
     { startIndex: 0, paragraphStyle: {} },
     { startIndex: 0, paragraphStyle: { outlineLevel: 1 } },
     { startIndex: 0, paragraphId: 'replacement-id' },
+    { startIndex: 0, styleId: 'replacement-style', headingCollapsed: false },
   ].map(update);
   for (const replacement of replacements) {
     const first = new TextX()

@@ -23,7 +23,7 @@
  * through an opt-in scalar API. Native grouping, metadata,
  * cache ownership, publication order and timers remain in the pinned SDK service.
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
- * dream-num/univer v1.1.0 (Apache-2.0). No Pro code is read or modified.
+ * dream-num/univer v1.3.1 (Apache-2.0). No Pro code is read or modified.
  * Temporary: SPN-122 removes this after a suitable upstream release. SPN-121
  * retains the source, semantic and browser acceptance evidence.
  */
@@ -34,8 +34,8 @@ import { fileURLToPath } from 'node:url';
 import { docFlushObservationReplacements } from './doc-flush-observation.ts';
 
 const formats = {
-  es: '84349b3374cafabaf0baee661b97b4a76a2ac47d1bc68e73cef34f9b8c58e145',
-  cjs: '8a3191dee7f9f21c2a2cbb7bb0a7c93af624ef58f2fb8a96af71b27f6cbf5642',
+  es: '020cfd43d4157a1910c98a3d51272bbb121a0a7c10beff2840e6801b4efed721',
+  cjs: 'd3767e47abcb1c312a20b916a9b3805318a9a0118a6539df58b0c3bae04d0537',
 } as const;
 
 const originalImport = 'import { AlignTypeH, BooleanNumber,';
@@ -483,7 +483,7 @@ export function prepareDocsPatch(source: string, format: keyof typeof formats) {
 export async function patchInstalledDocs(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/docs');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
-  if (metadata.name !== '@univerjs/docs' || metadata.version !== '1.1.0')
+  if (metadata.name !== '@univerjs/docs' || metadata.version !== '1.3.1')
     throw new Error('Upgrading @univerjs/docs: review native composition and SPN-122 first.');
   // Fail closed on either unknown build before writing either format.
   const updates = await Promise.all(

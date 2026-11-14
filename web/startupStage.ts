@@ -18,14 +18,20 @@ function watch() {
   timer = window.setInterval(() => {
     if (finished || Date.now() - began < SHOW_AFTER_MS) return;
     if (!line) {
-      line = document.createElement('p');
-      line.setAttribute('role', 'status');
-      line.style.cssText =
-        'position:fixed;left:0;right:0;bottom:16px;margin:0;text-align:center;font:12px system-ui,sans-serif;opacity:.7';
+      line = createStartupLine();
       document.body.append(line);
     }
     line.textContent = text();
   }, 1000);
+}
+
+/** The same pre-React status element is rendered by its production story. */
+export function createStartupLine() {
+  const element = document.createElement('p');
+  element.setAttribute('role', 'status');
+  element.style.cssText =
+    'position:fixed;left:16px;right:16px;bottom:16px;margin:0;text-align:center;font:12px system-ui,sans-serif;color:var(--sp-muted,currentColor)';
+  return element;
 }
 
 /** Name the step startup is now waiting on. */

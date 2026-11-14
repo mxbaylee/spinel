@@ -149,7 +149,7 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
     const manifest: ShellManifest = {
       protocol: 1,
       version: '0123456789abcdef',
-      compatibility: { format: 1, sdkVersion: '1.1.0' },
+      compatibility: { format: 1, sdkVersion: '1.3.1' },
       entry: '/assets/story-runtime.js',
       css: [],
       files: ['/assets/story-runtime.js'],
@@ -205,7 +205,7 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
             revisionOffset: 0,
             access: copy.creation?.access ?? (copy.readOnly ? 'viewer' : 'owner'),
             readOnly: copy.readOnly,
-            sdkVersion: '1.1.0',
+            sdkVersion: '1.3.1',
             images: [],
             snapshot: creation
               ? blankOfflineSnapshot(creation)

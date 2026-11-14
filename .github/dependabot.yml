@@ -3,9 +3,9 @@ version: 2
 updates:
   - package-ecosystem: npm
     directory: /
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     cooldown:
@@ -25,50 +25,16 @@ updates:
       univer-security:
         applies-to: security-updates
         patterns: ['@univerjs/*', '@univerjs-pro/*']
-      storybook:
-        applies-to: version-updates
-        patterns: ['storybook', '@storybook/*']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      vite-tooling:
-        applies-to: version-updates
-        patterns: ['vite', '@vitejs/*', 'vitest', '@vitest/*']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      react:
-        applies-to: version-updates
-        patterns: ['react', 'react-dom', '@types/react', '@types/react-dom']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      typescript-tooling:
-        applies-to: version-updates
-        patterns: ['typescript', 'typescript-api', '@types/node']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      lint-format:
-        applies-to: version-updates
-        patterns: ['oxlint', 'prettier']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      webauthn:
-        applies-to: version-updates
-        patterns: ['@simplewebauthn/*']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      server-transport:
-        applies-to: version-updates
-        patterns: ['express', '@types/express', 'ws', '@types/ws']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
-      archives:
-        applies-to: version-updates
-        patterns: ['yauzl', '@types/yauzl', 'yazl', '@types/yazl']
-        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
-        update-types: ['minor', 'patch']
       print-rendering:
         applies-to: version-updates
         patterns: ['@napi-rs/canvas', 'sharp', 'pdfjs-dist']
         exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      routine-npm:
+        applies-to: version-updates
+        patterns: ['*']
+        exclude-patterns:
+          ['@univerjs/*', '@univerjs-pro/*', '@napi-rs/canvas', 'sharp', 'pdfjs-dist']
         update-types: ['minor', 'patch']
     # The trailing space prevents Dependabot adding a colon after "Bump".
     # Keep this literal prefix even if its generated description uses lowercase.
@@ -76,18 +42,18 @@ updates:
       prefix: '⬆️ Bump '
   - package-ecosystem: docker
     directory: /
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     commit-message:
       prefix: '⬆️ Bump '
   - package-ecosystem: docker-compose
     directory: /deploy
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     # SPINEL_IMAGE is an operator-selected built artifact, not an upstream image.
@@ -97,9 +63,9 @@ updates:
       prefix: '⬆️ Bump '
   - package-ecosystem: github-actions
     directory: /
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     groups:

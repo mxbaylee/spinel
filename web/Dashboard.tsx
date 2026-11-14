@@ -51,6 +51,7 @@ import { ITEM_REQUEST_DEADLINE_MS } from './offline/deadlines.ts';
 import { isNetworkFailure } from './offline/localStart.ts';
 import type { LocalStart } from './offline/localStart.ts';
 import { hasUsableCopy, isRequestTimeout, viewAfterNetworkFailure } from './offline/warmOpen.ts';
+import { readWarmFailureView } from './offline/warmCatalog.ts';
 import { preparedAccount } from './offline/offlineStore.ts';
 import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
@@ -476,7 +477,7 @@ export function Dashboard({
         setViewed(view);
         setDeviceOpenId(null);
       })
-      .catch((failure) => {
+      .catch(async (failure) => {
         if (!disposed) {
           // Read the newest lists: this effect only re-runs on navigation, so its
           // own render's `items` and downloads may predate the lists' first load.
@@ -486,7 +487,7 @@ export function Dashboard({
           // On a network failure reuse only that account's saved folder, or open
           // its downloaded Doc or Sheet from this device; an actual server denial
           // remains authoritative even with cached rows.
-          const fallback = viewAfterNetworkFailure({
+          let fallback = viewAfterNetworkFailure({
             networkFailure: isNetworkFailure(failure),
             accountId: user.id,
             preparedAccountId: preparedAccount(),
@@ -496,6 +497,9 @@ export function Dashboard({
             rows: [...now.items, ...now.shared],
             downloaded: hasUsableCopy(copy),
           });
+          if (!fallback && isNetworkFailure(failure))
+            fallback = await readWarmFailureView(user.id, currentId, () => !disposed);
+          if (disposed) return;
           if (fallback) {
             setViewed(fallback.rows);
             if (fallback.kind === 'device') setDeviceOpenId(currentId);

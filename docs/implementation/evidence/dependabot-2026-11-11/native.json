@@ -1,0 +1,18 @@
+{
+  "name": "native",
+  "args": [
+    "npx",
+    "vitest",
+    "run",
+    "lib/print/native.test.ts",
+    "lib/print/doc-native.test.ts",
+    "lib/print/pdf-geometry.test.ts",
+    "lib/print/doc-multiple-images.test.ts",
+    "lib/print/doc-story-geometry.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 36437,
+  "peakKiB": 971056
+}
