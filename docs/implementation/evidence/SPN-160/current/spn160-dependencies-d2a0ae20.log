@@ -1,0 +1,2 @@
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.
+{"name":"spn160-dependencies-d2a0ae20","args":["node","scripts/dependencies/no-univer-pro.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":116,"peakKiB":0}

@@ -1,0 +1,23 @@
+{
+  "dependencySource": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+  "dependencyTrackedStatus": "",
+  "manifestFields": [
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "peerDependencies",
+    "workspaces",
+    "engines"
+  ],
+  "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+  "matchingSourceFiles": 239,
+  "workspaceLinks": {
+    "presence-ui": "lib/presence-ui",
+    "doc-formulas": "lib/doc-formulas",
+    "sync-transform": "lib/sync-transform",
+    "print": "lib/print",
+    "sync-client": "lib/sync-client",
+    "diagnostics": "lib/diagnostics",
+    "sync-server": "lib/sync-server"
+  }
+}

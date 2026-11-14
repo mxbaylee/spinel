@@ -1,0 +1,18 @@
+{
+  "name": "spn160-b1-controls",
+  "args": [
+    "node",
+    "node_modules/.bin/vitest",
+    "run",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn160-b1-controls-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 655,
+  "peakKiB": 278128
+}
