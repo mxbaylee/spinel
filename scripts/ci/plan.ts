@@ -8,7 +8,7 @@ export function needsRestoreTiming(paths: readonly string[]): boolean {
       (path) =>
         /^(?:server|src\/server|src\/shared|src\/ui|lib|web)\//.test(path) ||
         /^e2e\/(?:restore-|supervised-restore)/.test(path) ||
-        /^e2e\/(?:doc-touch|native-sheet-value)\./.test(path) ||
+        /^e2e\/(?:doc-touch(?:-raster)?|native-sheet-value)\./.test(path) ||
         /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|restore-headroom|pid-namespace)/.test(
           path,
         ) ||
@@ -205,7 +205,7 @@ export function coveragePlan(
             'src/{server,shared}/**',
             'lib/**',
             'web/** and src/ui/** (shared application/authentication bundle)',
-            'e2e restore/shared helpers',
+            'e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)',
             'runtime/build/dependency/workflow inputs',
           ]
         : id === 'lib-test-run'

@@ -53,6 +53,12 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     );
   try {
     await page.goto('/');
+    // Ordinary mobile HTTPS owns absence of the opt-in, identity-free boot witness.
+    if (process.env.CI) expect(process.env.VITE_SYNC_EVIDENCE).toBe('0');
+    if (process.env.VITE_SYNC_EVIDENCE === '0')
+      expect(await page.evaluate(() => Object.hasOwn(window, '__spinelBootstrapEvidence'))).toBe(
+        false,
+      );
     await page.evaluate(async () => {
       await navigator.serviceWorker.ready;
     });

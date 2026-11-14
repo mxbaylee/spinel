@@ -238,7 +238,11 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
       .getByRole('button', { name: 'Create invite', exact: true })
       .click();
     const invitation = await operator.getByLabel('New invite link', { exact: true }).inputValue();
-    await operator.goto('/admin#health');
+    // The once-only link appears before invite readback settles. Navigation is
+    // deliberately fenced until that refresh finishes, even after POST succeeds.
+    const healthLink = operator.getByRole('link', { name: 'Backups & health', exact: true });
+    await expect(healthLink).not.toHaveAttribute('aria-disabled', 'true');
+    await healthLink.click();
     await expect(
       controls(operator).getByRole('button', { name: 'Pause edits', exact: true }),
     ).toBeEnabled();

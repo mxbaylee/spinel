@@ -1,0 +1,52 @@
+{
+  "attempt": "spn090-repair-review-b-browser",
+  "auditTime": "2026-11-13T18:37:27-0800",
+  "ownership": "Five server PIDs occur in the aborted attempt log; all eight server/wrapper PIDs have matching 18:11:07\u201318:11:12 start times and cwd /Users/mxbaylee/projects/spinel-spn-090-current. Wrapper PPIDs and PGIDs identify three npm/server pairs.",
+  "before": {
+    "92238": "92238     1 92238 Fri Nov 13 18:11:07 2026     node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open",
+    "92382": "92382     1 92382 Fri Nov 13 18:11:09 2026     npm start",
+    "92410": "92410 92382 92382 Fri Nov 13 18:11:09 2026     node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts",
+    "92531": "92531     1 92531 Fri Nov 13 18:11:11 2026     node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open",
+    "92592": "92592     1 92592 Fri Nov 13 18:11:12 2026     npm start",
+    "92620": "92620 92592 92592 Fri Nov 13 18:11:12 2026     node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts",
+    "92681": "92681     1 92681 Fri Nov 13 18:11:12 2026     npm start",
+    "92696": "92696 92681 92681 Fri Nov 13 18:11:12 2026     node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts"
+  },
+  "signals": [
+    {
+      "pid": 92238,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92382,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92410,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92531,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92592,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92620,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92681,
+      "signal": "SIGTERM"
+    },
+    {
+      "pid": 92696,
+      "signal": "SIGTERM"
+    }
+  ],
+  "after": "",
+  "pressureCausality": "Not established; no attribution of subsequent SPN-157 pressure.",
+  "finalRelevantProcessScan": []
+}
