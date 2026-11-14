@@ -142,6 +142,25 @@ test.each([0, 2])(
     expect(f.sent).toHaveLength(count + 1);
     f.emit({ kind: 'held', transferId: f.sent[1]?.transferId });
     expect(ownershipFailureDetails(error)).toEqual(receipt);
+    expect(ownershipFailureDetails(new Error('Witnessed trial failure', { cause: error }))).toEqual(
+      receipt,
+    );
+    const inaccessibleCause = Object.defineProperty(new Error('Unrelated failure'), 'cause', {
+      get() {
+        throw new Error('Diagnostic getter must not run.');
+      },
+    });
+    expect(ownershipFailureDetails(inaccessibleCause)).toBeUndefined();
+    const cyclic = new Error('Cyclic diagnostic cause');
+    cyclic.cause = cyclic;
+    expect(ownershipFailureDetails(cyclic)).toBeUndefined();
+    expect(
+      ownershipFailureDetails(
+        new Error('Beyond the known wrapper', {
+          cause: new Error('Witnessed trial failure', { cause: error }),
+        }),
+      ),
+    ).toBeUndefined();
     f.assertRetained();
   },
 );

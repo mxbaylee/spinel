@@ -59,6 +59,11 @@ import {
   ownershipFailureDetails,
   shareWorkspaceOwnership,
 } from './ownership.ts';
+import {
+  crashTransition,
+  diagnosticCode,
+  durableControlFailure,
+} from './supervisor-test-control.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -69,14 +74,6 @@ afterEach(async () => {
   }
 });
 const actorId = randomUUID();
-// Journal failure/phase fields are machine codes, never arbitrary exception text.
-// Bound malformed fixture state too; do not dump a journal into a failed test.
-const diagnosticCode = (value: unknown) =>
-  value === null
-    ? null
-    : typeof value === 'string' && /^[a-z-]{1,64}$/.test(value)
-      ? value
-      : 'invalid';
 const proof = (now = Date.now()) => ({
   actorId,
   sessionHash: 'a'.repeat(64),
@@ -1104,20 +1101,7 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
         );
       } catch (error) {
         // Snapshot before afterEach can stop the child or remove the journal.
-        let journal: { phase: string; lastFailure: string | null } | 'unavailable' = 'unavailable';
-        try {
-          const state = JSON.parse(readFileSync(join(f.root, 'journal.json'), 'utf8'));
-          journal = {
-            phase: diagnosticCode(state.phase) ?? 'invalid',
-            lastFailure: diagnosticCode(state.lastFailure),
-          };
-        } catch {
-          /* Keep the original control failure if the journal cannot be read. */
-        }
-        throw new Error(
-          `Durable phase control failed: ${JSON.stringify({ phase, stage, action, journal })}`,
-          { cause: error },
-        );
+        throw durableControlFailure(f.root, { phase, stage, action }, error);
       }
     };
     await control('verify');
@@ -1130,7 +1114,6 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
     const armed = message(child, (value) => value.armed === phase);
     child.send({ barrier: phase });
     await armed;
-    const reached = message(child, (value) => value.barrier === phase);
     const action =
       phase === 'starting'
         ? 'start'
@@ -1140,12 +1123,12 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
             ? 'pause'
             : 'stop';
     stage = 'transition';
-    const pending = control(action).catch(() => undefined);
-    await reached;
+    const transition = crashTransition(child, phase, () => control(action));
+    await transition.reached;
     const exit = once(child, 'exit');
     child.kill('SIGKILL');
     await exit;
-    await pending;
+    await transition.settled;
     stage = 'reconcile';
     const restarted = await launch();
     const after = await control('status');

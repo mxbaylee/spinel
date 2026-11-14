@@ -52,7 +52,14 @@ class HandoffFailure extends Error {
 }
 
 export function ownershipFailureDetails(error: unknown) {
-  return error instanceof HandoffFailure ? error.ownershipHandoff : undefined;
+  // The supervisor may retain a failed trial's final witness and wrap this
+  // error once. Inspect that existing cause boundary without invoking getters
+  // or walking an unbounded/cyclic chain of arbitrary diagnostic objects.
+  for (let depth = 0; depth < 2 && error instanceof Error; depth++) {
+    if (error instanceof HandoffFailure) return error.ownershipHandoff;
+    error = Object.getOwnPropertyDescriptor(error, 'cause')?.value;
+  }
+  return undefined;
 }
 
 function record(value: unknown): value is Record<string, unknown> {
