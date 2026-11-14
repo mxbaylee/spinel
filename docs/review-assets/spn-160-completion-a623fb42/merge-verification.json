@@ -1,0 +1,41 @@
+{
+  "squash": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "base": "b1b18165543ed800c0847a63201504c90c46272c",
+  "tested": "0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e",
+  "sourceTree": "199f2ebc08e56de9805caad7eba79e8a9e6dba1a",
+  "squashTree": "199f2ebc08e56de9805caad7eba79e8a9e6dba1a",
+  "validatedTree": "199f2ebc08e56de9805caad7eba79e8a9e6dba1a",
+  "squashParents": [
+    "b1b18165543ed800c0847a63201504c90c46272c"
+  ],
+  "validationArchive": "15da94cf01ce7f9f247edb472283b84031da564c",
+  "validationParent": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "uniqueCommitsPreserved": [
+    "a623fb42aa58096695ec4d4c09e9111e42d99386",
+    "2ed1e39fe2bed49213d27e9f0a7b07a6a364d341",
+    "a33d96672c9cb3b24b6b41de154587406fc8d504",
+    "4545b62ed45f8eb410dc85bac765d24522cff75a",
+    "d7e774bdbaed3974aba003558e206f655d58f02e",
+    "31b50112f6a1aeabc450372cb758355103c6abb0",
+    "d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a",
+    "9233fc4ad0659156a923ff5b5f8d3fd3cb082a3c",
+    "ebb9a65c0e8c0440c922102bf8e810fd1095ed2c",
+    "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad"
+  ],
+  "landing": {
+    "onlyCompletedTicket": "SPN-160",
+    "SPN157": "open L; original recovery requirements retained; only 160 prerequisite removed",
+    "SPN098": "still depends on SPN-157",
+    "nextId": 161,
+    "completedSince": [
+      "SPN-148",
+      "SPN-145",
+      "SPN-149",
+      "SPN-158",
+      "SPN-160"
+    ],
+    "lastFullGroom": "2026-11-12"
+  },
+  "production": "No deployment claimed; SPN-038 remains the final launch prerequisite."
+}

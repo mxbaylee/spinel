@@ -1,0 +1,37 @@
+{
+  "observedAt": "2026-11-14T07:21:39.554478+00:00",
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "squash": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "publishedValidationArchive": "15da94cf01ce7f9f247edb472283b84031da564c",
+  "guardedDeletedLocalRefs": [
+    {
+      "ref": "refs/heads/codex/spn-160-first-failure",
+      "expectedOld": "a623fb42aa58096695ec4d4c09e9111e42d99386"
+    },
+    {
+      "ref": "refs/remotes/origin/codex/spn-160-first-failure",
+      "expectedOld": "a623fb42aa58096695ec4d4c09e9111e42d99386"
+    }
+  ],
+  "deletionTransaction": "start\ndelete refs/heads/codex/spn-160-first-failure a623fb42aa58096695ec4d4c09e9111e42d99386\ndelete refs/remotes/origin/codex/spn-160-first-failure a623fb42aa58096695ec4d4c09e9111e42d99386\nprepare\ncommit\n",
+  "transactionOutput": "start: ok\nprepare: ok\ncommit: ok",
+  "remoteBranch": "Already absent after merged PR; absence rechecked immediately before and after local deletion. No remote delete/push required.",
+  "activeOpenPROwners": [],
+  "worktree": "Retained, detached at exact source, clean; all files and node_modules symlink retained.",
+  "unrelatedRefChangesObserved": [],
+  "protected157HeadBefore": "44f9a5365fe290236b882606933e63b8ef317363",
+  "protected157HeadAfter": "44f9a5365fe290236b882606933e63b8ef317363",
+  "remainingObsolete160Refs": [],
+  "blockedCleanup": [],
+  "remoteMutation": false,
+  "removedOwnBranchUpstreamConfiguration": {
+    "branch.codex/spn-160-first-failure.remote": "origin",
+    "branch.codex/spn-160-first-failure.merge": "refs/heads/codex/spn-160-first-failure"
+  },
+  "configurationCommand": [
+    "git",
+    "config",
+    "--remove-section",
+    "branch.codex/spn-160-first-failure"
+  ]
+}

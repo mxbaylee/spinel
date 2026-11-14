@@ -1,0 +1,58 @@
+{
+  "observedAt": "2026-11-14T06:16:41.968347+00:00",
+  "scope": "Read-only prepublication inventory; not cleanup authorization or completed cleanup. Recheck current heads/active PR ownership after eventual verified merge.",
+  "source": "a33d96672c9cb3b24b6b41de154587406fc8d504",
+  "base": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "worktree": "/Users/mxbaylee/projects/spinel-spn-160",
+  "clean": true,
+  "branch": "codex/spn-160-first-failure",
+  "ownedLocalRefs": [
+    {
+      "ref": "refs/heads/codex/spn-160-first-failure",
+      "head": "a33d96672c9cb3b24b6b41de154587406fc8d504"
+    }
+  ],
+  "remoteMatchingRefs": [],
+  "openPRCount": 12,
+  "activePROwners": [],
+  "uniqueCommitsAgainstBase": [
+    {
+      "sha": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+      "title": "\ud83e\uddf9 Groom backlog register maintenance failure diagnostics"
+    },
+    {
+      "sha": "ebb9a65c0e8c0440c922102bf8e810fd1095ed2c",
+      "title": "\ud83e\uddef Record SPN-160 implementation scope and verification checkpoint"
+    },
+    {
+      "sha": "9233fc4ad0659156a923ff5b5f8d3fd3cb082a3c",
+      "title": "\ud83e\uddef Preserve first maintenance fixture failures and bounded handoff context"
+    },
+    {
+      "sha": "d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a",
+      "title": "\ud83e\uddfe Correct imported file inventory count"
+    },
+    {
+      "sha": "31b50112f6a1aeabc450372cb758355103c6abb0",
+      "title": "\ud83e\uddfe Retain SPN-160 portable controls and detecting counterfactual"
+    },
+    {
+      "sha": "d7e774bdbaed3974aba003558e206f655d58f02e",
+      "title": "\ud83e\uddfe Preserve SPN-160 bounded check logs alongside receipts"
+    },
+    {
+      "sha": "4545b62ed45f8eb410dc85bac765d24522cff75a",
+      "title": "Merge commit 'ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f' into codex/spn-160-first-failure"
+    },
+    {
+      "sha": "a33d96672c9cb3b24b6b41de154587406fc8d504",
+      "title": "\ud83e\uddef Prepare SPN-160 landing on registered main with recovery scope retained"
+    }
+  ],
+  "otherTicketPreservation": {
+    "branch": "codex/spn-157-supervisor-handoffs",
+    "head": "44f9a5365fe290236b882606933e63b8ef317363",
+    "disposition": "Active separate L recovery work; never delete as SPN-160 cleanup. Original source/check/review history remains there."
+  },
+  "otherRefs": "No mutation or cleanup proposed for prior registration, other tickets, archive tags, dependencies or worktrees."
+}

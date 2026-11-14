@@ -1,0 +1,25 @@
+{
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "squash": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "validationArchive": "15da94cf01ce7f9f247edb472283b84031da564c",
+  "openPRCount": 11,
+  "activeHeadOrBaseOwners": [],
+  "remoteImplementationPresent": false,
+  "uniqueCommitsPreservedInPublishedArchive": [
+    "a623fb42aa58096695ec4d4c09e9111e42d99386",
+    "2ed1e39fe2bed49213d27e9f0a7b07a6a364d341",
+    "a33d96672c9cb3b24b6b41de154587406fc8d504",
+    "4545b62ed45f8eb410dc85bac765d24522cff75a",
+    "d7e774bdbaed3974aba003558e206f655d58f02e",
+    "31b50112f6a1aeabc450372cb758355103c6abb0",
+    "d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a",
+    "9233fc4ad0659156a923ff5b5f8d3fd3cb082a3c",
+    "ebb9a65c0e8c0440c922102bf8e810fd1095ed2c",
+    "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad"
+  ],
+  "protected157Head": "44f9a5365fe290236b882606933e63b8ef317363",
+  "worktree": "/Users/mxbaylee/projects/spinel-spn-160",
+  "clean": true,
+  "nodeModulesLink": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+  "scope": "Only own implementation and stale tracking ref; no registration/unrelated refs, archive tags, worktrees, files or dependencies are removed."
+}

@@ -1,0 +1,12 @@
+{
+  "archive": "15da94cf01ce7f9f247edb472283b84031da564c",
+  "source": "a623fb42aa58096695ec4d4c09e9111e42d99386",
+  "base": "b1b18165543ed800c0847a63201504c90c46272c",
+  "tested": "0df4921c7ef5504cfbe5f3dc6e6fb4ca39c2b04e",
+  "payloadsVerified": 77,
+  "zipCrcVerified": 6,
+  "ciLogMembersVerified": 434,
+  "planAndAggregatesVerified": 4,
+  "sourceTestedTree": "199f2ebc08e56de9805caad7eba79e8a9e6dba1a",
+  "manifestSha256": "ab6ee9fd88a68d7ada1845709a150eb9d98893f68c83e09d92a14de06c695989"
+}
