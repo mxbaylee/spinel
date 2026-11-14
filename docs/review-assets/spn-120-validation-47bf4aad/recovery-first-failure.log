@@ -1,0 +1,32 @@
+2026-11-14T04:10:27.4906425Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-11-14T04:10:27.4906669Z 
+2026-11-14T04:10:27.4911166Z [41m[1m FAIL [22m[49m src/server/maintenance/restore-crash.integration.test.ts[2m > [22mreal SIGKILL at postcommit preserves the durable restore decision and all retained evidence
+2026-11-14T04:10:27.4915971Z [31m[1mError[22m: Unexpected fixture HTTP status 503.[39m
+2026-11-14T04:10:27.4917221Z [36m [2m❯[22m json src/server/maintenance/restore-http-test-client.ts:[2m204:13[22m[39m
+2026-11-14T04:10:27.4990593Z     [90m202|[39m   const json = async <T>(response: Response, status = 200): Promise<T>…
+2026-11-14T04:10:27.4991025Z 
+2026-11-14T04:10:27.4991425Z     [90m203|[39m     [35mif[39m (response[33m.[39mstatus [33m!==[39m status)
+2026-11-14T04:10:27.4992213Z     [90m204|[39m       throw new Error(`Unexpected fixture HTTP status ${response.statu…
+2026-11-14T04:10:27.4992799Z     [90m   |[39m             [31m^[39m
+2026-11-14T04:10:27.4993862Z     [90m205|[39m     [35mreturn[39m response[33m.[39m[34mjson[39m() [35mas[39m [33mPromise[39m[33m<[39m[33mT[39m[33m>[39m[33m;[39m
+2026-11-14T04:10:27.4994342Z     [90m206|[39m   }[33m;[39m
+2026-11-14T04:10:27.4994835Z [90m [2m❯[22m prove src/server/maintenance/restore-http-test-client.ts:[2m208:27[22m[39m
+2026-11-14T04:10:27.4995648Z [90m [2m❯[22m Object.authenticate src/server/maintenance/restore-http-test-client.ts:[2m225:7[22m[39m
+2026-11-14T04:10:27.4996325Z [90m [2m❯[22m src/server/maintenance/restore-crash.integration.test.ts:[2m206:9[22m[39m
+2026-11-14T04:10:27.4996654Z 
+2026-11-14T04:10:27.4996973Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+2026-11-14T04:10:27.4997224Z 
+2026-11-14T04:10:27.4997773Z [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m46 passed[39m[22m[90m (47)[39m
+2026-11-14T04:10:27.4998684Z [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m606 passed[39m[22m[90m (607)[39m
+2026-11-14T04:10:27.4999274Z [2m   Start at [22m 04:06:07
+2026-11-14T04:10:27.4999983Z [2m   Duration [22m 259.69s[2m (tests 95%, import 4%, transform 1%)[22m
+2026-11-14T04:10:27.5000361Z 
+2026-11-14T04:10:27.5012904Z 
+2026-11-14T04:10:27.5033478Z ##[error]Error: Unexpected fixture HTTP status 503.
+ ❯ json src/server/maintenance/restore-http-test-client.ts:204:13
+ ❯ prove src/server/maintenance/restore-http-test-client.ts:208:27
+ ❯ Object.authenticate src/server/maintenance/restore-http-test-client.ts:225:7
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:206:9
+
+
+2026-11-14T04:10:27.5458180Z ##[error]Process completed with exit code 1.

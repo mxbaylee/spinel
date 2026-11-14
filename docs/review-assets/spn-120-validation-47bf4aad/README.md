@@ -1,0 +1,27 @@
+# 🔎 SPN-120 original47 failed validation archive
+
+This evidence-only commit is a direct child of source `47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee`. Its only additions are inside this archive. It preserves a **failed validation**, not acceptance or approval for the locally repaired candidate or any future integration. No workflow was rerun or redispatched to obtain these results.
+
+## 🔐 Source and review identities
+
+PR228 source47 integrated actual base `89e4426dfff1c3469b260305e21180ffd79fdb7f`. Ordinary CI tested merge `d9afd47135ff429db580af8b7010531ada3ee20b`; the verified merge parents are base89/head47 and its tree equals source47 tree `d522e5f2de71749d899361bcfe94dd4688ed1acf`. The manual audit directly checked out47 with the same tree; its baseline input records eventBase only and did not execute a baseline audit. `tested-merge-d9afd471.json`, raw source records and the plan retain this distinction.
+
+Two independent nonimplementing reviewers each graded exact47 100/100 before publication. Their original reports and guarded check receipts are in `reviews/`; pending CI was never counted as a pass or deducted from the grade. The parent source's maintained `spn-120-current` evidence and canonical SPN-120 record preserve the complete L scope, earlier a1 reviews, local controls and resource aborts. Historical597's successes and native failures remain in that canonical record; they are not substituted for current acceptance.
+
+## 🧪 Terminal outcomes and first failures
+
+- CI43554616516 attempt1: **failure**, 33 terminal jobs:29 success/4 failure. Required Backlog, Pull request, Lint and Lib tests passed. Typecheck failed with TS2307/TS7031 from the retained collection helper's absolute Mac import. The first log/diagnostic record is retained; its later relative-import repair is outside this archive.
+- Unit recovery job132325049638: **606 passed/1 failed**,47 files,259.69s. Authentication/prove returned HTTP503 before the postcommit SIGKILL boundary. Unit aggregate failed closed; SPN158 owns that registered readiness boundary. This is not evidence of restore data corruption. The original failure excerpt and full-log digest are retained.
+- Playwright aggregate132337093784: **failure**, because required Typecheck and Unit tests failed. All emitted browser/native worker jobs, including mobile responsiveness, succeeded; the aggregate is not an additional scenario failure. Its raw fail-closed receipt binds the same canonical plan digest.
+- Storybook43554616505: **failure**,6 successes/2 failures/2 skipped publishing jobs. Desktop-light DocDrawingCapture threw `expected 2 to be greater than 2`; the aggregate correctly rejected the swallowed play exception. Four other variants passed. `drawing-assessment.md` preserves ambiguity among three counter assertions and recommends a separate M diagnosis/repair outcome. Later1280-wide geometry does not prove a race or the failed phase. No original assertion was weakened or rerun.
+- Desktop43554616549: **success**, all3 native macOS workers. Installed Chrome157.0.8103.79, Firefox160.0, Safari27.2. Raw acceptance/versions reports preserve actual ordinary-profile restart, offline edits/images, reconnect and storage-loss stages. Representative synthetic normal/conflict/recovered Sheet/Doc captures are under each browser directory. These are desktop-browser evidence, not real-phone/Home Screen evidence or independent visual-design approval.
+- Spaces43554616510: **success** for its recorded provider scope.
+- Manual candidate audit43554828434: **success**, all3 jobs. Independent raw-artifact verification confirms production12/development8/sync-production4 = **24 passed first attempts**, two genuine indices per case, distinct test identities, retry0, no setup recovery,24 matching source47 journals, zero cleanup errors and expected final server closures. Node26.13.0, Chromium156.0.8078.4; source/driver/lock digests remain in every raw source record. This is exact47 evidence only.
+
+## 📦 Evidence boundaries
+
+The raw CI plan selected all15 suites through conservative full coverage because immutable range/event-label metadata was unavailable. Raw plan file SHA256 `08eb6759caaa8caa13449f9b3887e72576c7090414c546da77a073fec9c510b5` differs intentionally from its canonical JSON digest `02ab30f506fe4c20a4fbe2af643021ef7b4891ec98f9dccacf88b6fa2a391eeb`; all three aggregate receipts bind the latter. ZIP hashes are separately recorded and verified against GitHub artifact metadata before extraction. Full paginated terminal job inventories and workflow attempts are retained.
+
+`manifest.json` hashes every retained file except itself. Raw audit reports/journals and native acceptance reports are retained; raw native driver/protocol logs, complete ZIPs and redundant traces are excluded to avoid protocol/session-secret disclosure. The retained Typecheck log has provider-masked credentials. Recovery retention contains the failure excerpt plus the full raw log digest. Useful synthetic screenshots remain available without publishing unrelated protocol data. Artifact metadata records omitted payload identities; expiring download URLs are not a substitute for this durable evidence.
+
+Publication is coordinated separately by the root agent under the promised tag `archive/spn-120-validation-47bf4aad-20261114`. The local corrected43846 branch remains unchanged. Subsequent exact-head reviews, prerequisite integration and current-head acceptance remain required.

@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "02ab30f506fe4c20a4fbe2af643021ef7b4891ec98f9dccacf88b6fa2a391eeb",
+    "error": "Error: A required validation job failed or is missing despite its test-step result.",
+    "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"failure\",\"unit-tests\":\"failure\",\"lib-test-run\":\"success\",\"playwright-run\":\"success\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\"}"
+  }
+}

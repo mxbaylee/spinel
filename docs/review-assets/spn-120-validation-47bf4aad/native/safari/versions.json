@@ -1,0 +1,12 @@
+{
+  "sourceSha": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+  "checkedAt": "2026-11-14T04:03:06.433Z",
+  "kind": "safari",
+  "status": "passed",
+  "before": "26.6",
+  "releaseSource": "https://support.apple.com/en-us/149527",
+  "requiredStable": "27.2",
+  "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.3-24H241\n\tTitle: macOS Sequoia 15.8.3, Version: 15.8.3, Size: 1114249KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.3-25G342\n\tTitle: macOS Tahoe 26.7.3, Version: 26.7.3, Size: 5892155KiB, Recommended: YES, Action: restart, \n",
+  "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+  "installed": "27.2"
+}

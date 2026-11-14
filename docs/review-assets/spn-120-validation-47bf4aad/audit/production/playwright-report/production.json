@@ -1,0 +1,1056 @@
+{
+  "config": {
+    "argv": [
+      "/opt/hostedtoolcache/node/26.13.0/x64/bin/node",
+      "/home/runner/work/spinel/spinel/node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=production",
+      "--grep",
+      "phone Doc (light|dark) native pan, zoom and (editor|guest-viewer) behavior preserve the document|ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie|profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "--repeat-each=2",
+      "--retries=0",
+      "--workers=1",
+      "--max-failures=0",
+      "--trace=retain-on-failure",
+      "--reporter=line,json,/home/runner/work/_temp/fixture-audit-reporter.ts"
+    ],
+    "configFile": "/home/runner/work/spinel/spinel/playwright.config.ts",
+    "rootDir": "/home/runner/work/spinel/spinel/e2e",
+    "failOnFlakyTests": true,
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "ci": {
+        "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+        "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+        "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+      },
+      "gitCommit": {
+        "shortHash": "47bf4aad",
+        "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+        "subject": "Integrate registered launch repairs before SPN-120 validation",
+        "body": "Integrate registered launch repairs before SPN-120 validation\n",
+        "author": {
+          "name": "Baylee Schmeisser",
+          "email": "github.mx@baylee.dev",
+          "time": 1794627828000
+        },
+        "committer": {
+          "name": "Baylee Schmeisser",
+          "email": "github.mx@baylee.dev",
+          "time": 1794627828000
+        },
+        "branch": "HEAD"
+      },
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "development",
+        "name": "development",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "supervised-restore",
+        "name": "supervised-restore",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/supervised-restore.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/runner/work/spinel/spinel/test-results/production",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {
+          "ci": {
+            "commitHref": "https://github.com/mxbaylee/spinel/commit/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "commitHash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "buildHref": "https://github.com/mxbaylee/spinel/actions/runs/43554828434"
+          },
+          "gitCommit": {
+            "shortHash": "47bf4aad",
+            "hash": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+            "subject": "Integrate registered launch repairs before SPN-120 validation",
+            "body": "Integrate registered launch repairs before SPN-120 validation\n",
+            "author": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "committer": {
+              "name": "Baylee Schmeisser",
+              "email": "github.mx@baylee.dev",
+              "time": 1794627828000
+            },
+            "branch": "HEAD"
+          },
+          "actualWorkers": 1
+        },
+        "name": "production",
+        "testDir": "/home/runner/work/spinel/spinel/e2e",
+        "snapshotDir": "/home/runner/work/spinel/spinel/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3101"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "production"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line"
+      ],
+      [
+        "json"
+      ],
+      [
+        "/home/runner/work/_temp/fixture-audit-reporter.ts"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "doc-phone-navigation.spec.ts",
+      "file": "doc-phone-navigation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12600,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:06:19.173Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14609,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:06:31.839Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17384,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:06:46.455Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17334,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:07:03.851Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12164,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:07:37.227Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12042,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:07:49.452Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17381,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:08:01.502Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        },
+        {
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 150000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17395,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T04:08:18.894Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+          "file": "doc-phone-navigation.spec.ts",
+          "line": 214,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "offline-sign-out.spec.ts",
+      "file": "offline-sign-out.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Recorded passkey fixture",
+          "file": "offline-sign-out.spec.ts",
+          "line": 318,
+          "column": 6,
+          "specs": [
+            {
+              "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "production",
+                  "projectName": "production",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3025,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-14T04:07:21.505Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ccad38f60b47bfc68793-dc2ce66896d5e230117f",
+              "file": "offline-sign-out.spec.ts",
+              "line": 319,
+              "column": 3
+            },
+            {
+              "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "production",
+                  "projectName": "production",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2929,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-14T04:08:36.621Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ccad38f60b47bfc68793-7be8898b7f5fb244873f",
+              "file": "offline-sign-out.spec.ts",
+              "line": 319,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "passkey-management.spec.ts",
+      "file": "passkey-management.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Recorded passkey fixture",
+          "file": "passkey-management.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 150000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "production",
+                  "projectName": "production",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12266,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-14T04:07:24.542Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5af9f0c6976febdaf1f3-f44b12a4dca4651b84e8",
+              "file": "passkey-management.spec.ts",
+              "line": 66,
+              "column": 3
+            },
+            {
+              "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 150000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "production",
+                  "projectName": "production",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 12059,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-14T04:08:39.564Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "5af9f0c6976febdaf1f3-3464d5456fcdb271e02f",
+              "file": "passkey-management.spec.ts",
+              "line": 66,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T04:06:15.721Z",
+    "duration": 156052.985,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

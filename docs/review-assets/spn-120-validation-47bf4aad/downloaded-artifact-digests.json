@@ -1,0 +1,107 @@
+[
+  {
+    "id": 14097334483,
+    "name": "fixture-audit-candidate-production",
+    "zipSha256": "b1a4a516cf9a3631ae99012529338d03a93e8766dbfbed75fa7be3aea0212876",
+    "bytes": 17193,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097448604,
+    "name": "desktop-offline-chrome-macos-26-43554616549-1",
+    "zipSha256": "0f89028e658d90fe0585a28cbfb3c0808a3eda937859629432b3d80eeb162442",
+    "bytes": 224330,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097504548,
+    "name": "storybook-check-desktop-light",
+    "zipSha256": "c203f06d01059c23bdeb0eb6f8737fd689186e852d3edd9557cf19f1b067d167",
+    "bytes": 68300,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097533229,
+    "name": "ci-plan",
+    "zipSha256": "648bfbeae4ce03c46eaa62215c0a0b1ff75714bf78e3f900bf3cb50000a9a73a",
+    "bytes": 920,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097683539,
+    "name": "fixture-audit-candidate-sync-production",
+    "zipSha256": "85f846d8fe84b7187745a6146a58dcd295f2914692716ca542c437aba8fd307f",
+    "bytes": 134298,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097693787,
+    "name": "storybook-check-tablet",
+    "zipSha256": "5821034fa181d59655333e4ccbedae738f8a87a112baf42389fba6b87cd0a1d8",
+    "bytes": 17168,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097722338,
+    "name": "storybook-check-desktop-dark",
+    "zipSha256": "139f24f9633756b7dbb06fe155997aa1e7dd698368cdcd2363a48c4933b58712",
+    "bytes": 17171,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14097727874,
+    "name": "desktop-offline-firefox-macos-26-43554616549-1",
+    "zipSha256": "4956395e8fba87616c1d3863c749531eed975d5e349707a177ca7a7d48f6c079",
+    "bytes": 457189,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14098021452,
+    "name": "storybook-check-mobile-light",
+    "zipSha256": "7f7dab5f58b9c5299f280d129be9dae487aa27dc16cda4e0737c704ccb2082f5",
+    "bytes": 17151,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14098172147,
+    "name": "ci-results-lib",
+    "zipSha256": "74aa626953d34a54a5f099d2f6527c523047447c830cc540be8c41b427c0df24",
+    "bytes": 1159,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14098376311,
+    "name": "ci-results-unit",
+    "zipSha256": "300c3212cf8ea49cb897aea709c86317841ca1b6551048a18aea36b0ff345833",
+    "bytes": 343,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14098475251,
+    "name": "desktop-offline-safari-macos-15-intel-43554616549-1",
+    "zipSha256": "81feca1968e01105137831e3333b2b24b376974c9d5266512e6302eb82fd85b7",
+    "bytes": 1049727,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14098490057,
+    "name": "storybook-check-mobile-dark",
+    "zipSha256": "25fdaa95a10e37facc65f4137732eb7fcc51a8bfb74fff40294078fc4c5f3979",
+    "bytes": 17233,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14098625710,
+    "name": "fixture-audit-candidate-development",
+    "zipSha256": "3c92cbfef95648d81c9ff32783a3f041ac5d66a65b503dc13b5560a4a662e9f1",
+    "bytes": 12713,
+    "githubDigestVerified": true
+  },
+  {
+    "id": 14099096573,
+    "name": "ci-results-browser",
+    "zipSha256": "20f9ae4888e05d8944ff8663f91df5dbe69b2e7eeac4ae48ecfa0162333d2874",
+    "bytes": 477,
+    "githubDigestVerified": true
+  }
+]

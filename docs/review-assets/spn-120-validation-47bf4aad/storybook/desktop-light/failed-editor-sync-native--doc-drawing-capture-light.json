@@ -1,0 +1,109 @@
+{
+  "id": "editor-sync-native--doc-drawing-capture",
+  "variant": "light",
+  "message": "Error: editor-sync-native--doc-drawing-capture: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -   1\n+ Received  + 283\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"expected 2 to be greater than 2\n+\n+ Ignored nodes: comments, script, style\n+ <html\n+   data-theme=\\\"light\\\"\n+   lang=\\\"en\\\"\n+   style=\\\"color-scheme: light; --entity-doc-0: #254c8b; --entity-doc-1: #3267bc; --entity-doc-2: #5287dc; --entity-doc-3: #82acf0; --entity-doc-4: #b5d1fc; --entity-sheet-0: #185c43; --entity-sheet-1: #247c56; --entity-sheet-2: #3b9f70; --entity-sheet-3: #72c59a; --entity-sheet-4: #ade3c4; --entity-space-0: #56318a; --entity-space-1: #7849ae; --entity-space-2: #9b70cf; --entity-space-3: #bd9be6; --entity-space-4: #dcc7f6; --entity-mark: #ffffff; --sp-bg: #fff5f2; --sp-panel: #ffffff; --sp-rail: #c42c58; --sp-rail-ink: #ffe4ec; --sp-accent: #c42c58; --sp-on-accent: #ffffff; --sp-accent-2: #c24a35; --sp-text: #4a1e33; --sp-muted: #7e4d61; --sp-border: #f0c2cf; --sp-header: #ffeaf0; --sp-tint-1: #ffdde6; --sp-tint-2: #ffe6dc; --sp-select: rgba(196, 44, 88, 0.1); --fill-primary-soft-bg: #ffdde6; --fill-primary-soft-fg: #8a1d3f; --fill-primary-strong-bg: #c42c58; --fill-primary-strong-fg: #ffffff; --fill-secondary-soft-bg: #ffe3da; --fill-secondary-soft-fg: #8a3020; --fill-secondary-strong-bg: #c24a35; --fill-secondary-strong-fg: #ffffff; --fill-success-soft-bg: #ddf3e8; --fill-success-soft-fg: #1b5e42; --fill-success-strong-bg: #23825a; --fill-success-strong-fg: #ffffff; --fill-warning-soft-bg: #fff0d2; --fill-warning-soft-fg: #7a4e05; --fill-warning-strong-bg: #f2a93b; --fill-warning-strong-fg: #3a2500; --fill-error-soft-bg: #fddcd8; --fill-error-soft-fg: #8a1f18; --fill-error-strong-bg: #c3352c; --fill-error-strong-fg: #ffffff; --fill-info-soft-bg: #e0e9fb; --fill-info-soft-fg: #22427f; --fill-info-strong-bg: #3f6cc9; --fill-info-strong-fg: #ffffff; --fill-neutral-soft-bg: #f1e8ec; --fill-neutral-soft-fg: #4a3640; --fill-neutral-strong-bg: #6e5864; --fill-neutral-strong-fg: #ffffff; --fill-highlight-soft-bg: #fff6b8; --fill-highlight-soft-fg: #5a4a00; --fill-highlight-strong-bg: #f2d433; --fill-highlight-strong-fg: #3a3000; --gem-1: #a8124a; --gem-2: #d4245d; --gem-3: #f0457c; --gem-4: #ff7aa3; --gem-5: #ffaec6; --gem-6: #ffe1ea; --gem-edge: #5e0b29;\\\"\n+ >\n+   <head>\n+     \n+     \n+     <meta\n+       charset=\\\"utf-8\\\"\n+     />\n+     \n+     \n+     <title>\n+       editor-sync-native--doc-drawing-capture\n+     </title>\n+     \n+     \n+     <meta\n+       content=\\\"width=device-width, initial-scale=1\\\"\n+       name=\\\"viewport\\\"\n+     />\n+     \n+\n+     \n+     \n+\n+     \n+     \n+     \n+     <base\n+       target=\\\"_parent\\\"\n+     />\n+     \n+\n+\n+     \n+\n+\n+     \n+\n+     \n+     \n+     \n+     <link\n+       crossorigin=\\\"\\\"\n+       href=\\\"./assets/rolldown-runtime-sJBDdmOt.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     \n+     \n+     <link\n+       crossorigin=\\\"\\\"\n+       href=\\\"./assets/preload-helper-Dt5pTa-y.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     \n+     \n+     <link\n+       crossorigin=\\\"\\\"\n+       href=\\\"./assets/iframe-Dgc-pQ7f.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     \n+     \n+     <link\n+       crossorigin=\\\"\\\"\n+       href=\\\"./assets/iframe-mgzSPPzi.css\\\"\n+       rel=\\\"stylesheet\\\"\n+     />\n+     \n+   \n+     <link\n+       href=\\\"./favicon.svg?v=47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee\\\"\n+       rel=\\\"icon\\\"\n+       sizes=\\\"any\\\"\n+       type=\\\"image/svg+xml\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/SyncNative.stories-DwVaoBEt.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/es-9nq4Nfo8.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/lib-C810sHcJ.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/es-ET62XNVw.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/takeUntil-h5NiYrGE.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/floating-ui.react-dom-DD3Amxt2.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/react-dom-CeOCLb1m.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/client-0-FUyCS6.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/editorTheme-pUEHSGNw.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/autofill-double-icon-DVQs3dIm.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/es-DnEgb33y.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/en-US-MLTI-QLW.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/lib-Cg2Caa9Z.css\\\"\n+       rel=\\\"stylesheet\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/documentReady-qT3kNsoF.js\\\"\n+       rel=\\\"modulepreload\\\"\n+     />\n+     <link\n+       crossorigin=\\\"\\\"\n+       href=\\\"http://127.0.0.1:6007/assets/documentReady-BmpLaEIP.css\\\"\n+       rel=\\\"stylesheet\\\"\n+     />\n+     <link\n+       as=\\\"script\\\"\n+       crossorigin=\\\"\\\"\n+       href=",
+  "filename": "failed-editor-sync-native--doc-drawing-capture-light.png",
+  "storybook": {
+    "phase": "finished",
+    "storyFinished": {
+      "storyId": "editor-sync-native--doc-drawing-capture",
+      "status": "success"
+    },
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException",
+        "count": 1,
+        "samples": [
+          "{\"name\":\"AssertionError\",\"message\":\"expected 2 to be greater than 2\\n\\nIgnored nodes: comments, script, style\\n<html\\n  data-theme=\\\"light\\\"\\n  lang=\\\"en\\\"\\n  style=\\\"color-scheme: light; --entity-doc-0: #254c8b; --entity-doc-1: #3267bc; --entity-doc-2: #5287dc; --entity-doc-3: #82acf0; --entity-doc-4: #b5d1fc; --entity-sheet-0: #185c43; --entity-sheet-1: #247c56; --entity-sheet-2: #3b9f70; --entity-sheet-3: #72c59a; --entity-sheet-4: #ade3c4; --entity-space-0: #56318a; --entity-space-1: #7849ae; --entity-space-2: #9b70cf; --entity-space-3: #bd9be6; --entity-space-4: #dcc7f6; --entity-mark: #ffffff; --sp-bg: #fff5f2; --sp-panel: #ffffff; --sp-rail: #c42c58; --sp-rail-ink: #ffe4ec; --sp-accent: #c42c58; --sp-on-accent: #ffffff; --sp-accent-2: #c24a35; --sp-text: #4a1e33; --sp-muted: #7e4d61; --sp-border: #f0c2cf; --sp-header: #ffeaf0; --sp-tint-1: #ffdde6; --sp-tint-2: #ffe6dc; --sp-select: rgba(196, 44, 88, 0.1); --fill-primary-soft-bg: #ffdde6; --fill-primary-soft-fg: #8a1d3f; --fill-"
+        ]
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying",
+        "count": 0,
+        "samples": []
+      }
+    ]
+  },
+  "accessibility": "- group:\n  - text: Doc drawing capture controls\n  - paragraph: Native image insertion and selection with a local pending queue. Click the image or the text beside it to change selection. No server connection or save acknowledgment is simulated.\n  - button \"Insert fixture image\"\n  - button \"Narrow editor\"\n  - button \"Restore editor width\"\n- region \"Document editor\":\n  - tablist:\n    - tab \"Start\" [selected]\n    - tab \"Insert\"\n    - tab \"View\"\n  - toolbar \"Start\":\n    - button \"Undo\":\n      - img\n    - button \"Redo\" [disabled]:\n      - img\n    - button \"Format Painter\":\n      - img\n    - button \"Clear formatting\":\n      - img\n    - button \"Paste special\":\n      - img\n      - text: Paste\n      - img\n    - button \"Bold\":\n      - img\n    - button \"Italic\":\n      - img\n    - button \"Underline\":\n      - img\n    - button \"Strikethrough\":\n      - img\n    - button \"Subscript\":\n      - img\n    - button \"Superscript\":\n      - img\n    - text: Normal\n    - img\n    - textbox: \"11\"\n    - img\n    - textbox: Arial\n    - img\n    - button \"Text color\":\n      - img\n    - button \"Text color More\":\n      - img\n    - button \"Text Background color\":\n      - img\n    - button \"Text Background color More\":\n      - img\n    - button \"Align Left\":\n      - img\n      - img\n    - button \"Ordered list\":\n      - img\n    - button \"Ordered list More\":\n      - img\n    - button \"Unordered list\":\n      - img\n    - button \"Unordered list More\":\n      - img\n    - button \"Task list\":\n      - img\n    - button \"Toggle Shortcut Panel\":\n      - img\n    - button \"Search features\":\n      - img\n  - complementary\n  - button \"Outline\"\n  - complementary\n  - button \"View document statistics\":\n    - img\n    - text: 0 of 6 words\n  - button \"Zoom out\":\n    - img\n  - button \"Reset zoom\"\n  - slider \"Zoom\"\n  - button \"Zoom in\":\n    - img\n  - textbox \"Zoom\": 100%\n  - button \"Menu\":\n    - img\n  - region \"Notifications alt+T\"\n  - region \"Notifications alt+T\"\n- button:\n  - img\n  - img\n- button:\n  - img\n- button:\n  - img\n- button:\n  - img",
+  "nativeGeometry": {
+    "viewport": {
+      "width": 1280,
+      "height": 900,
+      "scale": 1
+    },
+    "host": {
+      "x": 0,
+      "y": 204.1875,
+      "width": 1280,
+      "height": 695.8125,
+      "top": 204.1875,
+      "right": 1280,
+      "bottom": 900,
+      "left": 0
+    },
+    "layout": {
+      "x": 0,
+      "y": 204.1875,
+      "width": 1280,
+      "height": 695.8125,
+      "top": 204.1875,
+      "right": 1280,
+      "bottom": 900,
+      "left": 0
+    },
+    "toolbar": {
+      "x": 12,
+      "y": 247.6875,
+      "width": 1256,
+      "height": 24,
+      "top": 247.6875,
+      "right": 1268,
+      "bottom": 271.6875,
+      "left": 12
+    },
+    "statistics": {
+      "x": 20,
+      "y": 866,
+      "width": 103.375,
+      "height": 28,
+      "top": 866,
+      "right": 123.375,
+      "bottom": 894,
+      "left": 20
+    },
+    "statisticsParent": {
+      "x": 20,
+      "y": 866,
+      "width": 103.375,
+      "height": 28,
+      "top": 866,
+      "right": 123.375,
+      "bottom": 894,
+      "left": 20
+    },
+    "mount": {
+      "x": 0,
+      "y": 280.1875,
+      "width": 1280,
+      "height": 578.8125,
+      "top": 280.1875,
+      "right": 1280,
+      "bottom": 859,
+      "left": 0
+    },
+    "canvas": {
+      "x": 0,
+      "y": 280.1875,
+      "width": 1280,
+      "height": 578,
+      "top": 280.1875,
+      "right": 1280,
+      "bottom": 858.1875,
+      "left": 0
+    },
+    "bitmap": {
+      "width": 1280,
+      "height": 578
+    }
+  }
+}
