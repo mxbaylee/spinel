@@ -1,0 +1,111 @@
+{
+  "repairParent": "a37289b48825535a9036dfe17b4f671f7464bd65",
+  "actualMain": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "mainTree": "2be9e82d514b424f49baa8dea5672f8f75472685",
+  "scope": "Complete L retained; integration tests, CLI index and final review pending; full TypeScript resource-blocked without retry",
+  "exactBlocks": [
+    {
+      "source": "a37289b48825535a9036dfe17b4f671f7464bd65",
+      "path": "e2e/diagnostics.spec.ts",
+      "start": "test('production open, search, local persistence",
+      "endExclusive": "test('Operator downloads real correlated diagnostics",
+      "sha256": "0d8e42436a358c880c5fb98d20fe2a755f9aca650d0102b97299fa810610b8ac",
+      "verbatimRetained": true
+    },
+    {
+      "source": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+      "path": "e2e/diagnostics.spec.ts",
+      "start": "async function openFeedbackComposer",
+      "endExclusive": "test('Operator downloads real correlated diagnostics",
+      "sha256": "5279fb08387057ac19677b29f1382ba7d812d37c3d0ba7b21b02952a16bc4bb9",
+      "verbatimRetained": true
+    }
+  ],
+  "exactMainContracts": [
+    {
+      "path": "docs/implementation/SPN-110.md",
+      "sha256": "8cceeb3f85f7c2aa695139369aad907021baef62ec4bcc69f78b5a20e4cfb07b"
+    },
+    {
+      "path": "docs/todo/SPN-110.md",
+      "sha256": "bcf9ca5dbde84e67a2f11e95c394e6ac137676568ffe87d9dded9d86e800a759"
+    },
+    {
+      "path": "docs/implementation/SPN-157.md",
+      "sha256": "286bd52391ae0fff76b8239d7526a9ad229322927cbe622621e8d32d64ab6e93"
+    },
+    {
+      "path": "docs/implementation/SPN-157-contract-audit.md",
+      "sha256": "29664a67ce0b669934fa7553b7c8fda43a4646d3fc572499db81c77ff457d8a7"
+    },
+    {
+      "path": "docs/implementation/grooming-2026-11-14.md",
+      "sha256": "8e0815ac07fb7b2ee8c5419cbf0933b91767b05621075f24e5a26950d5ed464c"
+    }
+  ],
+  "sources": [
+    {
+      "path": "e2e/diagnostics.spec.ts",
+      "repairParentSHA256": "423855ae2aa545daadc9ca1bc17b322a4c6b8eb0edf58cb784c9eea578f445a5",
+      "mainSHA256": "aa05dfa145fc0d0926d575e58ca239e4ab733ce9078d67453832f0ed69baec63",
+      "integratedSHA256": "bc181cbe13e6617315d9466f61d85d2cfb9c7822a69cf3c5964ecce7bafba028"
+    },
+    {
+      "path": "src/server/diagnostics/store.ts",
+      "repairParentSHA256": "c478f44a74c015c92c538145910d3591798fcfbb51d2738ce9c48acd20e365dc",
+      "mainSHA256": "13dd7e2ebade188dc60a5d4577eae59eb3b4b6acd686e0f373d1d5ec4e3c09ce",
+      "integratedSHA256": "90c6c24fd4fc9c61a7404cf8ea5cff91e680eec0e3f1c9ef3bb2a58c4e037e43"
+    },
+    {
+      "path": "src/server/diagnostics/routes.ts",
+      "repairParentSHA256": "e3777b9f9a7af899ecaf975e1991cfe2e7fd7c78f9f23866773f352001f58829",
+      "mainSHA256": "c963e19937aa2838833f8f2af7cbf59d6a7eacd0c09556fa367c6a789f9caf17",
+      "integratedSHA256": "54d92fb005a15da6ecd166dfb9e5cf372ff3f68a02e8c5f329f7b5010a22d2ae"
+    },
+    {
+      "path": "src/server/diagnostics/supervisor.test.ts",
+      "repairParentSHA256": "ded454ffa4b497bf46fb89f3a7552a1db5c523d8be182d6cab215dad9dd3d86f",
+      "mainSHA256": null,
+      "integratedSHA256": "da8b651f6884f8802ea78a80a985ea126eec4094d337e7c7d567b6fcdc06cf5f"
+    },
+    {
+      "path": "lib/sync-client/src/client.ts",
+      "repairParentSHA256": "bd803a83094b51fbe00630f2f7f437cdea872fccda4f6992dc622ff505966fee",
+      "mainSHA256": "764435ca33795ccce1ae39e075ae1c5eb115696dd1664011895b04a3a2e39224",
+      "integratedSHA256": "bd803a83094b51fbe00630f2f7f437cdea872fccda4f6992dc622ff505966fee"
+    },
+    {
+      "path": "lib/sync-client/tests/diagnostics.test.ts",
+      "repairParentSHA256": "05c571cb6d9e1a02b081b193115487102196b5d99c4e9fadc3f2cf22fb9f42b0",
+      "mainSHA256": null,
+      "integratedSHA256": "05c571cb6d9e1a02b081b193115487102196b5d99c4e9fadc3f2cf22fb9f42b0"
+    },
+    {
+      "path": "docs/diagnostics.md",
+      "repairParentSHA256": "cefd2564bdbcac099e5f7302fd1adc131480f31fb734763f6b4a4b22b4247903",
+      "mainSHA256": "eb89e9c3fd9855e6a13e1e712c46c1884a40a95bf02a7abae744cc6880c49a71",
+      "integratedSHA256": "3bbb47413f6aa4b71da88e923ca2c903f6fb8d437cced787616115307879c80d"
+    },
+    {
+      "path": "docs/todo/backlog.json",
+      "repairParentSHA256": "5f9ea7cf0d26c3a1bf570b952262195fe65a57fb2b1c59e71299c05af215f374",
+      "mainSHA256": "0ce8b0a50a311c563974e020d3d9077a225dd0afa2c90370f857c2b6686c024b",
+      "integratedSHA256": "65b843c0c7ba1e75f56bb56c3a576d9284d4a881bf8c3099a597679454a15da6"
+    }
+  ],
+  "conflicts": [
+    "src/server/diagnostics/store.ts",
+    "e2e/diagnostics.spec.ts",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "indexDisposition": "temporarily exact actual-main copy; must run CLI before commit",
+  "bookkeeping": {
+    "every": 7,
+    "last": "2026-11-14",
+    "completed_since": [
+      "SPN-098",
+      "SPN-123"
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "spn123-ec42-policy",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-policy.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 658,
+  "peakKiB": 276576
+}

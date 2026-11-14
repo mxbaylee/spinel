@@ -1,0 +1,216 @@
+{
+  "source": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "sourceTree": "6f99fb105dbbb33cb50f6ea5ec9c0e3814dc9a49",
+  "actualBase": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "reviewedParent": "cae5a58689b049e4f62c3a815482e21bb5212f49",
+  "archiveParentContract": "Evidence-only commit must parent exact reviewed source6ef. The complete source and existing original evidence remain in its Git tree. Additional source tar excludes only docs to avoid duplicating unchanged binary asset packs; bound packets carry full selected documentation and original binary inventories.",
+  "inputs": [
+    {
+      "original": "/tmp/spn123-review-cae5a586-a.md",
+      "path": "spn123-review-cae5a586-a.md",
+      "sha256": "1f88bc1c02633b361860887d3fcd9058111241b582d1b6a13ff1bea2b282f1db"
+    },
+    {
+      "original": "/tmp/spn123-review-cae5a586-b.md",
+      "path": "spn123-review-cae5a586-b.md",
+      "sha256": "67ef77e209900d0e3887ca7175a7b7a5394c9728d6c1b9921a37350cdd7fc803"
+    },
+    {
+      "original": "/tmp/spn123-review-6ef945ea-a.md",
+      "path": "spn123-review-6ef945ea-a.md",
+      "sha256": "12aedd5dcd3bb15bb4fd769080e09f2e0b62d297d6bfc4793b53e1858fb148f3"
+    },
+    {
+      "original": "/tmp/spn123-review-6ef945ea-b.md",
+      "path": "spn123-review-6ef945ea-b.md",
+      "sha256": "b61ec2170be37dd1df4456440e0c8a68e9c74a863c191b133312b0ca57a9ba2c"
+    },
+    {
+      "original": "/tmp/spn123-review-cae5-a-stale-ack.ts",
+      "path": "spn123-review-cae5-a-stale-ack.ts",
+      "sha256": "3b12393343f30f4a32264c8cc86e596db8f2d38f40a01ba4159376f1040738b0"
+    },
+    {
+      "original": "/tmp/spn123-review-cae5-a-stale-ack.log",
+      "path": "spn123-review-cae5-a-stale-ack.log",
+      "sha256": "60b62be02e5a3d89a1123742de9b3b0dec286181792bc655339f6bb323e7ecdb"
+    },
+    {
+      "original": "/tmp/spn123-review-cae5-a.log",
+      "path": "spn123-review-cae5-a.log",
+      "sha256": "d33f8e5c056e7d6d599a5b9ae990eb72e27ba90cb88cb89604def81dc7fad18b"
+    },
+    {
+      "original": "/tmp/spn123-review-b-cae5a586.log",
+      "path": "spn123-review-b-cae5a586.log",
+      "sha256": "e471e6851cce67b40bbe5b5dcd42b80c37b6240a58c67c53ef3beb6f77b3fbc6"
+    },
+    {
+      "original": "/tmp/spn123-review-b-cae5a586-supported.log",
+      "path": "spn123-review-b-cae5a586-supported.log",
+      "sha256": "4ae42c4763001b75a7a10b75ace528071636c884f39006f6c7abc5c86fdd0416"
+    },
+    {
+      "original": "/tmp/spn123-review-6ef9-a.log",
+      "path": "spn123-review-6ef9-a.log",
+      "sha256": "c24d53d5d371b8776367356fe48b7c90355b9d1aff4be40ce0ca7eb9126c377b"
+    },
+    {
+      "original": "/tmp/spn123-review-b-6ef945ea.log",
+      "path": "spn123-review-b-6ef945ea.log",
+      "sha256": "223e1164d313c992e4bbd406c9fd640d2446a15aec659add5c4f4a098d795ede"
+    },
+    {
+      "original": "/tmp/spn123-root-integration-e0ba8a1b.json",
+      "path": "spn123-root-integration-e0ba8a1b.json",
+      "sha256": "aafc93a2602b34e2b2ca8910723ffb73deb8a630d42d663bb5232e12b845fc3c"
+    },
+    {
+      "original": "/tmp/spn123-ec42-integration-source-audit.json",
+      "path": "spn123-ec42-integration-source-audit.json",
+      "sha256": "5dd0a8f9367b318d57b1584961b9950d52cc648c166df1d2fa8a4d9c14e885f8"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-6ef9-a.json",
+      "path": "spn123-review-6ef9-a.json",
+      "sha256": "d530fa2155733f9c9aaba02bcd04f0b95d7417480fcf7f048d7968614ad26b23"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-cae5a586.json",
+      "path": "spn123-review-b-cae5a586.json",
+      "sha256": "48b9af8977de2911818f19fa57f3b91afc3f1fac5352bdd00e40f847137c7893"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-cae5-a.json",
+      "path": "spn123-review-cae5-a.json",
+      "sha256": "9a8e9a2823c991ef95a0e0cbdacabab392442d1ca220c37dc8992c0b2d59d942"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-6ef945ea.json",
+      "path": "spn123-review-b-6ef945ea.json",
+      "sha256": "e9c3be0e89b0a965e77ef7371822d20ae260c7b7f04cff2921da4ee0e08ee67d"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-cae5-a-stale-ack.json",
+      "path": "spn123-review-cae5-a-stale-ack.json",
+      "sha256": "af13c5bf159d0cbe3c1c33270dffe05d764540d2effa2eef218819039cbcaeb5"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-cae5a586-supported.json",
+      "path": "spn123-review-b-cae5a586-supported.json",
+      "sha256": "49820669c30d5be6236fa35e7623a76cfef1d2821c1a259b1832f9ff971357f0"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-policy.log",
+      "path": "spn123-ec42-policy.log",
+      "sha256": "bf83d6717b95a84e2481570f018fe9268f308a408100da74ae6ff0b767c4945a"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-policy-result.json",
+      "path": "spn123-ec42-policy-result.json",
+      "sha256": "802deddde8a40bceec8cea07a14bfca386b8c3a3caed26ffb6c2e9876d146eb4"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-policy.json",
+      "path": "spn123-ec42-policy.json",
+      "sha256": "80b59feaf40154289b3606d25d2afbd1d00251c4282c9cd8b231e1f0a03c3ea7"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-policy.ts",
+      "path": "spn123-ec42-policy.ts",
+      "sha256": "8fd3ee31c11ba1f86ced1dd281bfa3854efb6882ec06837ea9b4356bf08fd0a9"
+    },
+    {
+      "original": "/tmp/spn123-review-packet-cae5a586",
+      "path": "spn123-review-packet-cae5a586.tar.gz",
+      "sha256": "9e4ff6b26eb042c53bce3f763078db5d36d7513039b8c7ada02dd50210ca078e",
+      "fileCount": 1465
+    },
+    {
+      "original": "/tmp/spn123-review-packet-cae5a586-v1",
+      "path": "spn123-review-packet-cae5a586-v1.tar.gz",
+      "sha256": "8f9af01a01dc1a4b16c6618ac81b958bf486c13b90a77dfef357d6f58284b749",
+      "fileCount": 1463
+    },
+    {
+      "original": "/tmp/spn123-review-archive-cae5a586",
+      "path": "spn123-review-archive-cae5a586.tar.gz",
+      "sha256": "65fe5606c0d28b3b7f39af322ac70d35e3a4b85f19f8468b0e5690509639483c",
+      "fileCount": 6
+    },
+    {
+      "original": "/tmp/spn123-review-packet-6ef945ea",
+      "path": "spn123-review-packet-6ef945ea.tar.gz",
+      "sha256": "363b5a13c41229c69a17bb244d8797090fe879a4f6d80d872d9b1101f9ece1f0",
+      "fileCount": 1536
+    },
+    {
+      "original": "/tmp/spn123-review-packet-6ef945ea-v1",
+      "path": "spn123-review-packet-6ef945ea-v1.tar.gz",
+      "sha256": "f4fe40d6b3090d4b4ad2d0f1efc2be761a0ed5bce088a0a2c049aaf205f2cc55",
+      "fileCount": 1531
+    },
+    {
+      "original": "/tmp/spn123-review-archive-6ef945ea",
+      "path": "spn123-review-archive-6ef945ea.tar.gz",
+      "sha256": "e5918fd62480b120d1110e9cdb9dce2d92482a151db017f383d02f589805a9ed",
+      "fileCount": 11
+    }
+  ],
+  "sourceTar": {
+    "path": "candidate-nondocument-source.tar.gz",
+    "sha256": "bd8c8c96c0488a9591cb8b818b9878d4ec8c846138ee47eba77d855063ec3ecc",
+    "rootPaths": [
+      ".dockerignore",
+      ".github",
+      ".gitignore",
+      ".nvmrc",
+      ".prettierignore",
+      ".storybook",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "Dockerfile",
+      "LICENSE",
+      "README.md",
+      "THIRD-PARTY-NOTICES.md",
+      "deploy",
+      "e2e",
+      "lib",
+      "package-lock.json",
+      "package.json",
+      "playwright.config.ts",
+      "prettier.config.ts",
+      "scripts",
+      "server",
+      "src",
+      "tsconfig.json",
+      "vite.config.ts",
+      "vitest.config.ts",
+      "web"
+    ]
+  },
+  "published": false,
+  "validation": "All current-head hosted work pending; full local TypeScript resource-aborted; no pass inferred from reviews.",
+  "publicationAuditCorrections": {
+    "priorEvidenceCommit": "f5ae7b3ca2c24ac39c821c756b4f29a7379643ce",
+    "priorEvidenceParent": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+    "originalBodySHA256": "ec0fe4611f2547bf8ecf854afa946e6e67acf01972d6c9502d16e81b5dd43c69",
+    "correctedBodySHA256": "2673898a73c518e0864aa21f3199ea1206f907fada328d6f7fd2a08c017270a5",
+    "corrections": [
+      {
+        "old": "Full current-source TypeScript attempt was resource-aborted",
+        "new": "Full TypeScript on repaired ACK source before actual-main integration was resource-aborted"
+      },
+      {
+        "old": "Current-source type acceptance is pending; an earlier pass is not substituted.",
+        "new": "Current 6ef945ea type acceptance is pending; an earlier pass is not substituted."
+      },
+      {
+        "old": "Pull request, Lint, Typecheck, Build, Unit tests, Playwright smoke and Lib tests",
+        "new": "Pull request, Backlog, Lint, Typecheck, Unit tests, Lib tests and Playwright smoke"
+      }
+    ],
+    "reason": "Root publication audit: required gates include Backlog, not Build; type abort belongs to repaired ACK source before actual-main integration. Exact6ef type acceptance remains pending.",
+    "unchanged": "All 4464 ms/1151040 KiB/pressure2/no retry/older-pass limits and candidate source preserved. No tests or refs/remote mutation."
+  }
+}

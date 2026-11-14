@@ -1,0 +1,51 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-123-production
+
+file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:86
+    throw new Error('Supervised maintenance requires Linux and its local filesystem profile.');
+          ^
+
+Error: Supervised maintenance requires Linux and its local filesystem profile.
+    at maintenanceSupported (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:86:11)
+    at kernelLock (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:129:3)
+    at acquireWorkspaceLease (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:197:26)
+    at acquireLiveWorkspace (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:343:10)
+    at file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/lease-fixture.ts:8:9
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5)
+
+Node.js v26.13.0
+file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:86
+    throw new Error('Supervised maintenance requires Linux and its local filesystem profile.');
+          ^
+
+Error: Supervised maintenance requires Linux and its local filesystem profile.
+    at maintenanceSupported (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:86:11)
+    at RecoveryJournal.open (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:573:5)
+    at MaintenanceSupervisor.open (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/supervisor.ts:394:43)
+    at file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/supervisor-fixture.ts:11:71
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5)
+
+Node.js v26.13.0
+file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:86
+    throw new Error('Supervised maintenance requires Linux and its local filesystem profile.');
+          ^
+
+Error: Supervised maintenance requires Linux and its local filesystem profile.
+    at maintenanceSupported (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:86:11)
+    at RecoveryJournal.open (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/journal.ts:573:5)
+    at MaintenanceSupervisor.open (file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/supervisor.ts:394:43)
+    at file:///Users/mxbaylee/projects/spinel-spn-123-production/src/server/maintenance/supervisor-fixture.ts:11:71
+    at ModuleJob.run (node:internal/modules/esm/module_job:569:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async node:internal/modules/esm/loader:650:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:105:5)
+
+Node.js v26.13.0
+serial: SIGTERM; killing the run.
+{"name":"spn123-review-b-cae5a586","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/vitest/vitest.mjs","run","lib/diagnostics/client.test.ts","lib/diagnostics/server.test.ts","lib/sync-client/tests/diagnostics.test.ts","src/server/diagnostics/account.test.ts","src/server/diagnostics/browser.test.ts","src/server/diagnostics/runtime.test.ts","src/server/diagnostics/store.test.ts","src/server/diagnostics/supervisor.test.ts","src/server/maintenance/gate.test.ts","src/server/maintenance/supervisor.test.ts","src/ui/offlinePersistence.test.ts","src/ui/operationDiagnostics.test.ts","src/ui/spinelSync.test.ts","src/ui/boundedDocHistory.test.ts","--config","/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts","--configLoader","native","--cache=false"],"code":1,"signal":null,"reason":null,"elapsedMs":25805,"peakKiB":508368}

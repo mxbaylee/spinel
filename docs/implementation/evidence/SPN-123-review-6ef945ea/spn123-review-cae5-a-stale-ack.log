@@ -1,0 +1,56 @@
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+{
+  "candidate": "cae5a58689b049e4f62c3a815482e21bb5212f49",
+  "negativeInput": "matching second request identity with old revision2 receipt; server never accepted second write",
+  "results": [
+    {
+      "refusedBeforeAck": false,
+      "currentRevision": 2,
+      "submittedBaseRevision": 2,
+      "ackRevision": 2,
+      "durableHistoryRows": 1,
+      "failures": [
+        "stale"
+      ],
+      "operationResults": [
+        {
+          "name": "operation.result",
+          "details": {
+            "operation": "document-save-server-ack",
+            "outcome": "cancelled",
+            "durationMs": 0.10749999999995907
+          }
+        }
+      ]
+    },
+    {
+      "refusedBeforeAck": true,
+      "currentRevision": 2,
+      "submittedBaseRevision": 2,
+      "ackRevision": 2,
+      "durableHistoryRows": 1,
+      "failures": [
+        "divergence"
+      ],
+      "operationResults": [
+        {
+          "name": "operation.result",
+          "details": {
+            "operation": "document-save-server-ack",
+            "outcome": "success",
+            "durationMs": 0.07583299999998871
+          }
+        }
+      ]
+    }
+  ]
+}
+{"name":"spn123-review-cae5-a-stale-ack","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","/tmp/spn123-review-cae5-a-stale-ack.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":394,"peakKiB":218864}

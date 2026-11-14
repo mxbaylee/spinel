@@ -1,0 +1,22 @@
+{
+  "priorEvidenceCommit": "f5ae7b3ca2c24ac39c821c756b4f29a7379643ce",
+  "priorEvidenceParent": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "originalBodySHA256": "ec0fe4611f2547bf8ecf854afa946e6e67acf01972d6c9502d16e81b5dd43c69",
+  "correctedBodySHA256": "2673898a73c518e0864aa21f3199ea1206f907fada328d6f7fd2a08c017270a5",
+  "corrections": [
+    {
+      "old": "Full current-source TypeScript attempt was resource-aborted",
+      "new": "Full TypeScript on repaired ACK source before actual-main integration was resource-aborted"
+    },
+    {
+      "old": "Current-source type acceptance is pending; an earlier pass is not substituted.",
+      "new": "Current 6ef945ea type acceptance is pending; an earlier pass is not substituted."
+    },
+    {
+      "old": "Pull request, Lint, Typecheck, Build, Unit tests, Playwright smoke and Lib tests",
+      "new": "Pull request, Backlog, Lint, Typecheck, Unit tests, Lib tests and Playwright smoke"
+    }
+  ],
+  "reason": "Root publication audit: required gates include Backlog, not Build; type abort belongs to repaired ACK source before actual-main integration. Exact6ef type acceptance remains pending.",
+  "unchanged": "All 4464 ms/1151040 KiB/pressure2/no retry/older-pass limits and candidate source preserved. No tests or refs/remote mutation."
+}
