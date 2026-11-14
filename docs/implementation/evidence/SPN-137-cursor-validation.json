@@ -1,0 +1,215 @@
+{
+  "ticket": "SPN-137",
+  "kind": "Local diagnostic-repair validation; hosted native acceptance remains pending",
+  "runtime": "Node26.12.1",
+  "parentSourceSha": "7ce6870beb84a594cf8487c6422c14077c04996e",
+  "actualBaseSha": "5062129284ef7c60c1bc292edba130bab278c8ba",
+  "sourceScope": "Checks ran on the worktree source bytes identified below. Exact complete committed source and both independent grades are recorded prospectively in the PR before validation publication. These checks do not establish macOS delivery.",
+  "sourceFiles": [
+    {
+      "path": "scripts/ci/desktop-pointer.ts",
+      "bytes": 14855,
+      "sha256": "0b16935123ba0e64af5d0fb556259f62f369f32a24ed34fd203247228cee83eb",
+      "gitBlob": "cd1e41c97fa30a70f360d25dff25807fbce9c718"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.test.ts",
+      "bytes": 18223,
+      "sha256": "c5b517ae641c0de2f1329f29b541eccee2a8edcd58a0ea61a1763e0aa1486747",
+      "gitBlob": "472592c59554ee1191e7dfa60a21b6c2e2231dcd"
+    },
+    {
+      "path": "scripts/ci/desktop-browser.ts",
+      "bytes": 49392,
+      "sha256": "25b31d60ee13ce2692cab505304d25b5f77a55ba6007f5938b060a4301ef3847",
+      "gitBlob": "d5bf0e1931d9b5ad83a0212cd6d8e28536321b11"
+    }
+  ],
+  "checks": [
+    {
+      "name": "format",
+      "outcome": "passed",
+      "measurement": {
+        "startedAt": "2026-11-04T10:10:42.998Z",
+        "finishedAt": "2026-11-04T10:10:44.309Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/01384cef7048/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "scripts/ci/desktop-pointer.ts",
+          "scripts/ci/desktop-pointer.test.ts",
+          "scripts/ci/desktop-browser.ts"
+        ],
+        "elapsedMs": 1311,
+        "peakKiB": 290696,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": {
+        "bytes": 548,
+        "sha256": "6ae7a4cd366066266d6951ca5d9496120355e46f22c32358b3a7e4b1b22b3532",
+        "content": "scripts/ci/desktop-pointer.ts 240ms (unchanged)\nscripts/ci/desktop-pointer.test.ts 197ms\nscripts/ci/desktop-browser.ts 350ms\n{\"startedAt\":\"2026-11-04T10:10:42.998Z\",\"finishedAt\":\"2026-11-04T10:10:44.309Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"node_modules/prettier/bin/prettier.cjs\",\"--write\",\"scripts/ci/desktop-pointer.ts\",\"scripts/ci/desktop-pointer.test.ts\",\"scripts/ci/desktop-browser.ts\"],\"elapsedMs\":1311,\"peakKiB\":290696,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      }
+    },
+    {
+      "name": "focused-first",
+      "outcome": "failed:38 passed,1 VM-realm fixture failure",
+      "measurement": {
+        "startedAt": "2026-11-04T10:10:52.245Z",
+        "finishedAt": "2026-11-04T10:10:52.835Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/01384cef7048/spinel",
+        "command": "node",
+        "args": ["scripts/serial.ts", "node", "--test", "scripts/ci/desktop-pointer.test.ts"],
+        "elapsedMs": 589,
+        "peakKiB": 319480,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "log": {
+        "bytes": 4674,
+        "sha256": "c242bfa31c86843561cf759b0060fe5bafcccdbbf9a52edfd135db4444e16708",
+        "content": "✔ posted coordinates, matching trusted delivery, identity and listener cleanup are retained (10.389446ms)\n✔ unrelated movement cannot supply a false viewport offset (3.031843ms)\n✔ missing move rejects without replay and removes its observers (2.859906ms)\n✔ unrelated move rejects without replay and removes its observers (3.48285ms)\n✔ untrusted move rejects without replay and removes its observers (2.565401ms)\n✔ missing click rejects without replay and removes its observers (2.377388ms)\n✔ wrong target rejects without replay and removes its observers (3.381147ms)\n✔ untrusted click rejects without replay and removes its observers (3.61493ms)\n✔ wrong page coordinates rejects without replay and removes its observers (1.942731ms)\n✔ wrong screen coordinates rejects without replay and removes its observers (2.241722ms)\n✔ obscured target after calibration refuses native click (2.371914ms)\n✔ unfocused target after calibration refuses native click (1.879765ms)\n✔ replace target after calibration refuses native click (1.7941ms)\n✔ move target after calibration refuses native click (4.218755ms)\n✔ changed native identity prevents posting to a different window (3.169124ms)\n✔ page replacement and secondary cleanup failures preserve the first posting error (2.153858ms)\n✔ missing movement retains available diagnostics without replacing its first cause (2.924377ms)\n✔ missing movement retains unavailable diagnostics without replacing its first cause (2.804393ms)\n✔ missing movement retains failed diagnostics without replacing its first cause (3.204724ms)\n✔ missing movement retains malformed diagnostics without replacing its first cause (12.885591ms)\n✔ cleanup failure alone cannot report a successful action (3.856083ms)\n✔ bounded observations retain a matching move even after the diagnostic event cap (5.522773ms)\n✔ native identity script rejects frontmost (2.550845ms)\n✔ native identity script rejects window (2.907428ms)\n✔ native identity script rejects tab (1.613699ms)\n✔ native identity script rejects minimized (2.267932ms)\n✔ native identity script rejects hidden (2.326153ms)\n✔ Quartz post script validates native events: none (2.953891ms)\n✔ Quartz post script validates native events: permission (1.382457ms)\n✔ Quartz post script validates native events: nil (1.648847ms)\n✔ Quartz post script validates native events: type (2.292377ms)\n✔ Quartz post script validates native events: location (2.88907ms)\n✖ independent native snapshots bracket one unchanged move without claiming delivery (4.124094ms)\n✔ nil native cursor snapshots stay unavailable without blocking or replaying the move (1.982927ms)\n✔ failed native cursor snapshots stay unavailable without blocking or replaying the move (2.246642ms)\n✔ nonfinite native cursor snapshots stay unavailable without blocking or replaying the move (2.802252ms)\n✔ an unavailable pre-post snapshot cannot replace a native posting error (2.064668ms)\n✔ failure-only cursor script takes one read-only snapshot (2.005635ms)\n✔ cursor evidence validation rejects wrong provenance, missing errors and invalid coordinates (2.560232ms)\nℹ tests 39\nℹ suites 0\nℹ pass 38\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 355.857155\n\n✖ failing tests:\n\ntest at scripts/ci/desktop-pointer.test.ts:457:1\n✖ independent native snapshots bracket one unchanged move without claiming delivery (4.124094ms)\n  AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:\n  \n  [\n    {\n      point: {\n        x: 960,\n        y: 510\n      },\n      type: 5\n    }\n  ]\n  \n      at TestContext.<anonymous> (file:///workspace/scratch/01384cef7048/spinel/scripts/ci/desktop-pointer.test.ts:461:10)\n      at Test.runInAsyncScope (node:async_hooks:226:14)\n      at Test.run (node:internal/test_runner/test:1402:25)\n      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)\n      at Test.postRun (node:internal/test_runner/test:1542:19)\n      at Test.run (node:internal/test_runner/test:1467:12)\n      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {\n    generatedMessage: true,\n    code: 'ERR_ASSERTION',\n    actual: [ { type: 5, point: [Object] } ],\n    expected: [ { type: 5, point: [Object] } ],\n    operator: 'deepStrictEqual',\n    diff: 'simple'\n  }\n{\"startedAt\":\"2026-11-04T10:10:52.245Z\",\"finishedAt\":\"2026-11-04T10:10:52.835Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"--test\",\"scripts/ci/desktop-pointer.test.ts\"],\"elapsedMs\":589,\"peakKiB\":319480,\"code\":1,\"signal\":null,\"aborted\":null}\n"
+      }
+    },
+    {
+      "name": "focused-corrected",
+      "outcome": "passed:39 passed,0 failed",
+      "measurement": {
+        "startedAt": "2026-11-04T10:11:40.543Z",
+        "finishedAt": "2026-11-04T10:11:41.322Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/01384cef7048/spinel",
+        "command": "node",
+        "args": ["scripts/serial.ts", "node", "--test", "scripts/ci/desktop-pointer.test.ts"],
+        "elapsedMs": 778,
+        "peakKiB": 321916,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": {
+        "bytes": 3595,
+        "sha256": "b9ef929b24bd008e2c433a53ac7122404406354ff57c8938f9145fce353a322f",
+        "content": "✔ posted coordinates, matching trusted delivery, identity and listener cleanup are retained (9.702664ms)\n✔ unrelated movement cannot supply a false viewport offset (5.116975ms)\n✔ missing move rejects without replay and removes its observers (4.343523ms)\n✔ unrelated move rejects without replay and removes its observers (3.077532ms)\n✔ untrusted move rejects without replay and removes its observers (3.249312ms)\n✔ missing click rejects without replay and removes its observers (3.017567ms)\n✔ wrong target rejects without replay and removes its observers (3.08505ms)\n✔ untrusted click rejects without replay and removes its observers (3.622714ms)\n✔ wrong page coordinates rejects without replay and removes its observers (2.893595ms)\n✔ wrong screen coordinates rejects without replay and removes its observers (4.464966ms)\n✔ obscured target after calibration refuses native click (2.760882ms)\n✔ unfocused target after calibration refuses native click (2.431248ms)\n✔ replace target after calibration refuses native click (2.248801ms)\n✔ move target after calibration refuses native click (2.585161ms)\n✔ changed native identity prevents posting to a different window (3.750961ms)\n✔ page replacement and secondary cleanup failures preserve the first posting error (1.478888ms)\n✔ missing movement retains available diagnostics without replacing its first cause (3.518416ms)\n✔ missing movement retains unavailable diagnostics without replacing its first cause (1.75228ms)\n✔ missing movement retains failed diagnostics without replacing its first cause (2.198655ms)\n✔ missing movement retains malformed diagnostics without replacing its first cause (5.729149ms)\n✔ cleanup failure alone cannot report a successful action (2.237605ms)\n✔ bounded observations retain a matching move even after the diagnostic event cap (2.071019ms)\n✔ native identity script rejects frontmost (1.621317ms)\n✔ native identity script rejects window (0.967233ms)\n✔ native identity script rejects tab (0.852171ms)\n✔ native identity script rejects minimized (1.984333ms)\n✔ native identity script rejects hidden (1.026271ms)\n✔ Quartz post script validates native events: none (1.454499ms)\n✔ Quartz post script validates native events: permission (0.875172ms)\n✔ Quartz post script validates native events: nil (1.252129ms)\n✔ Quartz post script validates native events: type (0.857453ms)\n✔ Quartz post script validates native events: location (0.961556ms)\n✔ independent native snapshots bracket one unchanged move without claiming delivery (2.223193ms)\n✔ nil native cursor snapshots stay unavailable without blocking or replaying the move (1.560079ms)\n✔ failed native cursor snapshots stay unavailable without blocking or replaying the move (2.238575ms)\n✔ nonfinite native cursor snapshots stay unavailable without blocking or replaying the move (3.000605ms)\n✔ an unavailable pre-post snapshot cannot replace a native posting error (1.427293ms)\n✔ failure-only cursor script takes one read-only snapshot (1.388813ms)\n✔ cursor evidence validation rejects wrong provenance, missing errors and invalid coordinates (2.459489ms)\nℹ tests 39\nℹ suites 0\nℹ pass 39\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 286.153927\n{\"startedAt\":\"2026-11-04T10:11:40.543Z\",\"finishedAt\":\"2026-11-04T10:11:41.322Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"--test\",\"scripts/ci/desktop-pointer.test.ts\"],\"elapsedMs\":778,\"peakKiB\":321916,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      }
+    },
+    {
+      "name": "static",
+      "outcome": "passed",
+      "measurement": {
+        "startedAt": "2026-11-04T10:11:54.929Z",
+        "finishedAt": "2026-11-04T10:12:12.279Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/01384cef7048/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "node node_modules/typescript/bin/tsc -p . && node_modules/.bin/oxlint --deny-warnings scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts && node node_modules/prettier/bin/prettier.cjs --check scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts docs/implementation/SPN-137.md docs/implementation/evidence/SPN-137-move-observation/README.md docs/implementation/evidence/SPN-137-move-observation/manifest.json && git diff --check"
+        ],
+        "elapsedMs": 17349,
+        "peakKiB": 1890100,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": {
+        "bytes": 860,
+        "sha256": "c1d7834235cabd089e54ddf20d0e25035646c9846f39520060d37d82a466d4c4",
+        "content": "Checking formatting...\nAll matched files use Prettier code style!\n{\"startedAt\":\"2026-11-04T10:11:54.929Z\",\"finishedAt\":\"2026-11-04T10:12:12.279Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"bash\",\"-c\",\"node node_modules/typescript/bin/tsc -p . && node_modules/.bin/oxlint --deny-warnings scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts && node node_modules/prettier/bin/prettier.cjs --check scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts docs/implementation/SPN-137.md docs/implementation/evidence/SPN-137-move-observation/README.md docs/implementation/evidence/SPN-137-move-observation/manifest.json && git diff --check\"],\"elapsedMs\":17349,\"peakKiB\":1890100,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      }
+    },
+    {
+      "name": "backlog",
+      "outcome": "passed",
+      "measurement": {
+        "startedAt": "2026-11-04T10:12:40.360Z",
+        "finishedAt": "2026-11-04T10:12:40.800Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/01384cef7048/spinel",
+        "command": "node",
+        "args": ["scripts/serial.ts", "node", "scripts/backlog/cli.ts", "check"],
+        "elapsedMs": 439,
+        "peakKiB": 251624,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "log": {
+        "bytes": 1913,
+        "sha256": "9152c168a34a1e101723d3026e171155613e00dbe5188cfe2c4f8c513747e5be",
+        "content": "warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-089.md: 63 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 15 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nbacklog ok: 21 open tickets\n{\"startedAt\":\"2026-11-04T10:12:40.360Z\",\"finishedAt\":\"2026-11-04T10:12:40.800Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/01384cef7048/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"scripts/backlog/cli.ts\",\"check\"],\"elapsedMs\":439,\"peakKiB\":251624,\"code\":0,\"signal\":null,\"aborted\":null}\n"
+      }
+    }
+  ],
+  "firstFailure": {
+    "finding": "The new VM test recorder retained a point object from a different realm; deepStrictEqual rejected its prototype despite equal scalar coordinates.",
+    "repair": "Copy only the test recorder value with structuredClone(event); production diagnostic source remained unchanged.",
+    "disposition": "Preserve first failure; repeat the same39 focused controls once after the concrete fixture repair. No native/browser execution occurred.",
+    "sourceAttribution": {
+      "capturedAt": "2026-11-04T10:11:37.254Z",
+      "sourceHead": "7ce6870beb84a594cf8487c6422c14077c04996e",
+      "note": "Working-tree diagnostic additions are uncommitted. First controls run was38/39; the test recorder retained a VM-realm point object. Only the recorder now copies the posted value with structuredClone. The request to capture pre-edit hashes arrived after that patch; first-test source hashes explicitly reflect exact reconstruction, not a claimed pre-edit capture.",
+      "records": [
+        {
+          "file": "scripts/ci/desktop-pointer.ts",
+          "firstAttempt": {
+            "bytes": 14855,
+            "sha256": "0b16935123ba0e64af5d0fb556259f62f369f32a24ed34fd203247228cee83eb",
+            "basis": "unchanged source read after first attempt"
+          },
+          "corrected": {
+            "bytes": 14855,
+            "sha256": "0b16935123ba0e64af5d0fb556259f62f369f32a24ed34fd203247228cee83eb"
+          }
+        },
+        {
+          "file": "scripts/ci/desktop-pointer.test.ts",
+          "firstAttempt": {
+            "bytes": 18124,
+            "sha256": "8b5e7f2b89b0a89ba5225ac0b01557cb64996cc96bfab42f80c6f6f6616c1e7e",
+            "basis": "reconstructed exactly after edit by reversing the unique harness-only recorder patch"
+          },
+          "corrected": {
+            "bytes": 18223,
+            "sha256": "c5b517ae641c0de2f1329f29b541eccee2a8edcd58a0ea61a1763e0aa1486747"
+          }
+        },
+        {
+          "file": "scripts/ci/desktop-browser.ts",
+          "firstAttempt": {
+            "bytes": 49392,
+            "sha256": "25b31d60ee13ce2692cab505304d25b5f77a55ba6007f5938b060a4301ef3847",
+            "basis": "unchanged source read after first attempt"
+          },
+          "corrected": {
+            "bytes": 49392,
+            "sha256": "25b31d60ee13ce2692cab505304d25b5f77a55ba6007f5938b060a4301ef3847"
+          }
+        }
+      ]
+    },
+    "reconstructedFirstTest": {
+      "path": "scripts/ci/desktop-pointer.test.ts",
+      "bytes": 18124,
+      "sha256": "8b5e7f2b89b0a89ba5225ac0b01557cb64996cc96bfab42f80c6f6f6616c1e7e",
+      "basis": "Exactly reconstructed after the recorder-only edit; not a pre-edit capture.",
+      "content": "import assert from 'node:assert/strict';\nimport { test } from 'node:test';\nimport { createContext, runInContext, runInNewContext } from 'node:vm';\nimport {\n  clickSafariPointer,\n  safariPointerIdentityScript,\n  safariPointerPostScript,\n  safariPointerSnapshotScript,\n  validateSafariCursorSnapshot,\n} from './desktop-pointer.ts';\nimport type { PointerBoundary } from './desktop-pointer.ts';\n\nfunction cursorSnapshot(phase = 'move-observation-failure') {\n  return {\n    method: 'CGEventGetLocation(CGEventCreate(NULL))',\n    coordinateSpace: 'Quartz global display',\n    phase,\n    time: '2026-11-04T10:00:00.000Z',\n    available: true,\n    point: { x: 938.25, y: 377.5 },\n  };\n}\n\nfunction fixture() {\n  const listeners = new Map<string, Set<(event: unknown) => void>>();\n  const records: Record<string, unknown>[] = [];\n  const posts: { mode: string; point: { x: number; y: number } }[] = [];\n  let obscured = false;\n  let focused = true;\n  let replaced = false;\n  let offset = 0;\n  let reads = 0;\n  let snapshots = 0;\n  class Element {\n    isConnected = true;\n    getClientRects() {\n      return [{}];\n    }\n    getBoundingClientRect() {\n      return { x: offset, y: 0, width: 1000, height: 800 };\n    }\n    matches() {\n      return false;\n    }\n    contains(target: unknown) {\n      return target === this;\n    }\n  }\n  const element = new Element();\n  const context = createContext({\n    HTMLElement: Element,\n    document: {\n      querySelector: () => (replaced ? new Element() : element),\n      elementFromPoint: () => (obscured ? {} : element),\n      hasFocus: () => focused,\n      visibilityState: 'visible',\n    },\n    addEventListener(type: string, fn: (event: unknown) => void) {\n      const values = listeners.get(type) ?? new Set();\n      values.add(fn);\n      listeners.set(type, values);\n    },\n    removeEventListener(type: string, fn: (event: unknown) => void) {\n      listeners.get(type)?.delete(fn);\n    },\n  });\n  const emit = (\n    type: string,\n    screen: { x: number; y: number },\n    changes: Record<string, unknown> = {},\n  ) => {\n    const event = {\n      type,\n      screenX: screen.x,\n      screenY: screen.y,\n      clientX: screen.x - 100,\n      clientY: screen.y - 150,\n      isTrusted: true,\n      target: element,\n      ...changes,\n    };\n    for (const fn of listeners.get(type) ?? []) fn(event);\n  };\n  const boundary: PointerBoundary = {\n    evaluate: async (expression) =>\n      JSON.parse(JSON.stringify(runInContext(expression, context, { timeout: 100 })) ?? 'null'),\n    identity: async () => ({\n      pid: 42,\n      windowId: 7,\n      tabIndex: 1,\n      bounds: { x: 100, y: 100, width: 1000, height: 800 },\n    }),\n    post: async (mode, point, evidence) => {\n      posts.push({ mode, point });\n      evidence.posted = mode === 'move' ? 1 : 2;\n      emit(mode === 'move' ? 'mousemove' : 'mousedown', point);\n    },\n    snapshot: async () => {\n      snapshots++;\n      return cursorSnapshot();\n    },\n    poll: async (read, accept, label) => {\n      // Deterministic withheld-event control; production supplies the existing 30s poll.\n      for (let i = 0; i < 3; i++) {\n        reads++;\n        const value = await read();\n        if (accept(value)) return value;\n      }\n      throw new Error(label);\n    },\n    record: async (evidence) => {\n      records.push(evidence);\n    },\n  };\n  return {\n    boundary,\n    records,\n    posts,\n    emit,\n    context,\n    element,\n    obscured: () => {\n      obscured = true;\n    },\n    unfocused: () => {\n      focused = false;\n    },\n    replace: () => {\n      replaced = true;\n    },\n    reads: () => reads,\n    snapshots: () => snapshots,\n    move: () => {\n      offset = 10;\n    },\n    clean: () =>\n      [...listeners.values()].every((set) => set.size === 0) &&\n      !Object.keys(context).some((key) => key.startsWith('__spinelPointer_')),\n    click: () => clickSafariPointer(boundary, '.univer-container', { x: 640, y: 200 }),\n  };\n}\n\ntest('posted coordinates, matching trusted delivery, identity and listener cleanup are retained', async () => {\n  const f = fixture();\n  await f.click();\n  assert.deepEqual(f.posts, [\n    { mode: 'move', point: { x: 600, y: 500 } },\n    { mode: 'click', point: { x: 740, y: 350 } },\n  ]);\n  assert.equal(f.records[0].phase, 'delivered');\n  assert.equal(f.records[0].observerRemoved, true);\n  assert.equal(f.snapshots(), 0);\n  assert.equal(\n    (f.records[0].clickObservation as { clicked: { target: boolean } }).clicked.target,\n    true,\n  );\n  assert.ok(f.clean());\n});\n\ntest('unrelated movement cannot supply a false viewport offset', async () => {\n  const f = fixture(),\n    post = f.boundary.post;\n  f.boundary.post = async (mode, point, evidence) => {\n    if (mode === 'move') f.emit('mousemove', { x: 999, y: 888 });\n    await post(mode, point, evidence);\n    if (mode === 'move') f.emit('mousemove', { x: 111, y: 222 });\n  };\n  await f.click();\n  assert.deepEqual(f.posts[1].point, { x: 740, y: 350 });\n  assert.equal((f.records[0].movement as { events: unknown[] }).events.length, 3);\n});\n\nfor (const mode of [\n  'missing move',\n  'unrelated move',\n  'untrusted move',\n  'missing click',\n  'wrong target',\n  'untrusted click',\n  'wrong page coordinates',\n  'wrong screen coordinates',\n] as const)\n  test(`${mode} rejects without replay and removes its observers`, async () => {\n    const f = fixture(),\n      post = f.boundary.post;\n    f.boundary.post = async (kind, point, evidence) => {\n      if (kind === 'move' && mode.includes('move')) {\n        if (mode === 'unrelated move') f.emit('mousemove', { x: 1, y: 2 });\n        if (mode === 'untrusted move') f.emit('mousemove', point, { isTrusted: false });\n        return;\n      }\n      if (kind === 'click') {\n        if (mode === 'missing click') return;\n        const changes = {\n          'wrong target': { target: {} },\n          'untrusted click': { isTrusted: false },\n          'wrong page coordinates': { clientX: 1 },\n          'wrong screen coordinates': { screenX: 1 },\n        }[\n          mode as\n            | 'wrong target'\n            | 'untrusted click'\n            | 'wrong page coordinates'\n            | 'wrong screen coordinates'\n        ];\n        if (changes) {\n          f.emit('mousedown', point, changes);\n          return;\n        }\n      }\n      await post(kind, point, evidence);\n    };\n    await assert.rejects(f.click(), /native|coordinates/);\n    assert.ok(f.reads() <= 4);\n    assert.ok(f.clean());\n    assert.notEqual(f.records[0].phase, 'delivered');\n    assert.ok(f.records[0].finalObservation);\n  });\n\nfor (const change of ['obscured', 'unfocused', 'replace', 'move'] as const)\n  test(`${change} target after calibration refuses native click`, async () => {\n    const f = fixture(),\n      post = f.boundary.post;\n    f.boundary.post = async (...args) => {\n      await post(...args);\n      f[change]();\n    };\n    await assert.rejects(f.click(), /no longer visible/);\n    assert.deepEqual(\n      f.posts.map((post) => post.mode),\n      ['move'],\n    );\n    assert.ok(f.clean());\n  });\n\ntest('changed native identity prevents posting to a different window', async () => {\n  const f = fixture(),\n    identity = f.boundary.identity;\n  let calls = 0;\n  f.boundary.identity = async () => ({ ...(await identity()), windowId: ++calls === 1 ? 7 : 8 });\n  await assert.rejects(f.click(), /window changed/);\n  assert.deepEqual(\n    f.posts.map((post) => post.mode),\n    ['move'],\n  );\n  assert.ok(f.clean());\n});\n\ntest('page replacement and secondary cleanup failures preserve the first posting error', async () => {\n  const f = fixture(),\n    first = new Error('native post failed'),\n    evaluate = f.boundary.evaluate;\n  f.boundary.post = async () => {\n    throw first;\n  };\n  f.boundary.evaluate = async (expression) => {\n    if (!expression.includes('addEventListener')) throw new Error('page disappeared');\n    return evaluate(expression);\n  };\n  await assert.rejects(f.click(), (error) => error === first);\n  assert.equal(f.records[0].phase, 'move-post');\n  assert.match(String(f.records[0].cleanupError), /page disappeared/);\n  assert.match(String(f.records[0].observationError), /page disappeared/);\n  assert.equal(f.snapshots(), 0);\n});\n\nfor (const diagnostic of ['available', 'unavailable', 'failed', 'malformed'] as const)\n  test(`missing movement retains ${diagnostic} diagnostics without replacing its first cause`, async () => {\n    const f = fixture(),\n      first = new Error('original movement observation failed'),\n      snapshot = f.boundary.snapshot,\n      identity = f.boundary.identity;\n    let identities = 0;\n    f.boundary.post = async (mode, point, evidence) => {\n      f.posts.push({ mode, point });\n      evidence.posted = 1;\n      // The native post returns, but no page mouse event arrives.\n    };\n    f.boundary.poll = async (read) => {\n      await read();\n      throw first;\n    };\n    f.boundary.snapshot = async () => {\n      const value = (await snapshot()) as ReturnType<typeof cursorSnapshot>;\n      if (diagnostic === 'failed') throw new Error('native snapshot command timed out');\n      if (diagnostic === 'unavailable') {\n        return { ...value, point: undefined, available: false, error: 'default event unavailable' };\n      }\n      return diagnostic === 'malformed' ? { ...value, point: { x: Infinity, y: 0 } } : value;\n    };\n    f.boundary.identity = async () => {\n      if (++identities > 1 && diagnostic !== 'available')\n        throw new Error('passive native identity unavailable');\n      return identity();\n    };\n    await assert.rejects(f.click(), (error) => error === first);\n    assert.deepEqual(f.posts, [{ mode: 'move', point: { x: 600, y: 500 } }]);\n    assert.equal(f.snapshots(), 1);\n    assert.equal(identities, 2);\n    const record = f.records[0];\n    assert.equal(record.phase, 'move-observation');\n    assert.equal(record.error, String(first));\n    assert.equal(record.status, 'failed');\n    assert.equal(record.observerRemoved, true);\n    assert.equal((record.finalObservation as { moved: unknown }).moved, null);\n    if (diagnostic === 'available') {\n      assert.deepEqual(record.failureCursor, cursorSnapshot());\n      assert.ok(record.failureIdentity);\n    } else {\n      assert.match(String(record.failureIdentityError), /passive native identity unavailable/);\n      if (diagnostic === 'unavailable' || diagnostic === 'failed') {\n        validateSafariCursorSnapshot(record.failureCursor, 'move-observation-failure');\n        assert.equal((record.failureCursor as { available: boolean }).available, false);\n      }\n      if (diagnostic === 'failed' || diagnostic === 'malformed')\n        assert.ok(record.failureCursorError);\n    }\n    assert.ok(f.clean());\n  });\n\ntest('cleanup failure alone cannot report a successful action', async () => {\n  const f = fixture(),\n    evaluate = f.boundary.evaluate;\n  f.boundary.evaluate = async (expression) => {\n    if (expression.includes('removeEventListener')) throw new Error('cleanup failed');\n    return evaluate(expression);\n  };\n  await assert.rejects(f.click(), /cleanup failed/);\n});\n\ntest('bounded observations retain a matching move even after the diagnostic event cap', async () => {\n  const f = fixture(),\n    post = f.boundary.post;\n  f.boundary.post = async (...args) => {\n    if (args[0] === 'move') for (let i = 0; i < 100; i++) f.emit('mousemove', { x: 1, y: i });\n    await post(...args);\n  };\n  await f.click();\n  assert.equal((f.records[0].finalObservation as { events: unknown[] }).events.length, 16);\n});\n\nfor (const changed of ['frontmost', 'window', 'tab', 'minimized', 'hidden'])\n  test(`native identity script rejects ${changed}`, () => {\n    const target = {\n      id: () => 7,\n      currentTab: () => ({ index: () => (changed === 'tab' ? 2 : 1) }),\n      visible: () => changed !== 'hidden',\n      miniaturized: () => changed === 'minimized',\n      bounds: () => ({ x: 100, y: 100, width: 1000, height: 800 }),\n    };\n    const windows = Object.assign([{ id: () => (changed === 'window' ? 8 : 7) }], {\n      byId: () => target,\n    });\n    assert.throws(\n      () =>\n        runInNewContext(\n          safariPointerIdentityScript + '; run([\"42\", \"7\", \"1\"])',\n          {\n            Application: () => ({ frontmost: () => changed !== 'frontmost', windows }),\n          },\n          { timeout: 100 },\n        ),\n      /pointer target changed/,\n    );\n  });\n\nfor (const defect of ['none', 'permission', 'nil', 'type', 'location'] as const)\n  test(`Quartz post script validates native events: ${defect}`, () => {\n    const posted: unknown[] = [];\n    const $ = Object.assign(() => null, {\n      CGPreflightPostEventAccess: () => defect !== 'permission',\n      kCGEventMouseMoved: 5,\n      kCGEventLeftMouseDown: 1,\n      kCGEventLeftMouseUp: 2,\n      kCGMouseButtonLeft: 0,\n      kCGHIDEventTap: 0,\n      CGEventCreateMouseEvent: (_source: unknown, type: number, point: unknown) =>\n        defect === 'nil' ? null : { type, point },\n      CGEventGetType: (event: { type: number }) => (defect === 'type' ? 99 : event.type),\n      CGEventGetLocation: (event: { point: unknown }) =>\n        defect === 'location' ? { x: 0, y: 0 } : event.point,\n      CGEventPost: (_tap: unknown, event: unknown) => posted.push(event),\n    });\n    const execute = () =>\n      runInNewContext(\n        safariPointerPostScript + '; run([\"click\", \"740\", \"350\"])',\n        {\n          $,\n          ObjC: { import: () => {} },\n          console: { log: () => {} },\n          Automation: { getDisplayString: () => 'nil' },\n        },\n        { timeout: 100 },\n      );\n    if (defect === 'none') {\n      const result = JSON.parse(execute());\n      assert.equal(result.posted, 2);\n      assert.equal(result.cursorBefore, undefined);\n      assert.equal(result.cursorAfter, undefined);\n      assert.equal(posted.length, 2);\n    } else {\n      assert.throws(execute);\n      assert.equal(posted.length, 0);\n    }\n  });\n\nfunction quartzSnapshots(defect = 'none', postError?: Error) {\n  const operations: string[] = [];\n  const posted: unknown[] = [];\n  let samples = 0;\n  const points = [\n    { x: 938.25, y: 377.5 },\n    { x: 941.5, y: 389.25 },\n  ];\n  const $ = Object.assign(() => null, {\n    CGPreflightPostEventAccess: () => true,\n    kCGEventMouseMoved: 5,\n    kCGMouseButtonLeft: 0,\n    kCGHIDEventTap: 0,\n    CGEventCreateMouseEvent: (_source: unknown, type: number, point: unknown) => ({ type, point }),\n    CGEventGetType: (event: { type: number }) => event.type,\n    CGEventCreate: () => {\n      operations.push('snapshot');\n      const index = samples++;\n      return defect === 'nil' ? null : { snapshot: true, point: points[index] };\n    },\n    CGEventGetLocation: (event: { snapshot?: boolean; point: unknown }) => {\n      if (event.snapshot && defect === 'failed') throw new Error('native location read failed');\n      if (event.snapshot && defect === 'nonfinite') return { x: NaN, y: Infinity };\n      return event.point;\n    },\n    CGEventPost: (_tap: unknown, event: unknown) => {\n      operations.push('post');\n      if (postError) throw postError;\n      posted.push(event);\n    },\n  });\n  return {\n    operations,\n    posted,\n    execute: (script = safariPointerPostScript, call = 'run([\"move\", \"960\", \"510\"])') =>\n      JSON.parse(\n        runInNewContext(\n          script + '; ' + call,\n          {\n            $,\n            ObjC: { import: (name: string) => assert.equal(name, 'CoreGraphics') },\n            console: { log: () => {} },\n            Automation: { getDisplayString: () => 'nil' },\n          },\n          { timeout: 100 },\n        ),\n      ),\n  };\n}\n\ntest('independent native snapshots bracket one unchanged move without claiming delivery', () => {\n  const f = quartzSnapshots();\n  const result = f.execute();\n  assert.deepEqual(f.operations, ['snapshot', 'post', 'snapshot']);\n  assert.deepEqual(f.posted, [{ type: 5, point: { x: 960, y: 510 } }]);\n  assert.deepEqual(\n    { mode: result.mode, point: result.point, posted: result.posted },\n    {\n      mode: 'move',\n      point: { x: 960, y: 510 },\n      posted: 1,\n    },\n  );\n  validateSafariCursorSnapshot(result.cursorBefore, 'before-move-post');\n  validateSafariCursorSnapshot(result.cursorAfter, 'after-move-post');\n  assert.deepEqual(result.cursorBefore.point, { x: 938.25, y: 377.5 });\n  assert.deepEqual(result.cursorAfter.point, { x: 941.5, y: 389.25 });\n});\n\nfor (const defect of ['nil', 'failed', 'nonfinite'])\n  test(`${defect} native cursor snapshots stay unavailable without blocking or replaying the move`, () => {\n    const f = quartzSnapshots(defect);\n    const result = f.execute();\n    assert.deepEqual(f.operations, ['snapshot', 'post', 'snapshot']);\n    assert.equal(f.posted.length, 1);\n    for (const [field, phase] of [\n      ['cursorBefore', 'before-move-post'],\n      ['cursorAfter', 'after-move-post'],\n    ] as const) {\n      validateSafariCursorSnapshot(result[field], phase);\n      assert.equal(result[field].available, false);\n      assert.ok(result[field].error);\n    }\n  });\n\ntest('an unavailable pre-post snapshot cannot replace a native posting error', () => {\n  const first = new Error('original native post failure');\n  const f = quartzSnapshots('failed', first);\n  assert.throws(\n    () => f.execute(),\n    (error) => error === first,\n  );\n  assert.deepEqual(f.operations, ['snapshot', 'post']);\n});\n\ntest('failure-only cursor script takes one read-only snapshot', () => {\n  const f = quartzSnapshots();\n  const result = f.execute(safariPointerSnapshotScript, 'run()');\n  validateSafariCursorSnapshot(result, 'move-observation-failure');\n  assert.deepEqual(result.point, { x: 938.25, y: 377.5 });\n  assert.deepEqual(f.operations, ['snapshot']);\n  assert.deepEqual(f.posted, []);\n});\n\ntest('cursor evidence validation rejects wrong provenance, missing errors and invalid coordinates', () => {\n  const valid = cursorSnapshot();\n  for (const changed of [\n    { method: 'constructed posted event' },\n    { coordinateSpace: 'page' },\n    { phase: 'before-move-post' },\n    { time: 'invalid' },\n    { available: false },\n    { point: { x: Infinity, y: 0 } },\n  ])\n    assert.throws(() =>\n      validateSafariCursorSnapshot({ ...valid, ...changed }, 'move-observation-failure'),\n    );\n});\n"
+    }
+  },
+  "limits": [
+    "No skipped controls, retry configuration or changed native acceptance budget.",
+    "All workloads used the shared serial lock and2GiB/eight-minute process-tree watchdog; no abort.",
+    "The earlier72-control checkpoint is historical evidence for the pre-extension source; these39 controls cover the changed pointer implementation.",
+    "Complete committed-head PR diff validation and both independent source grades remain before the validation push.",
+    "Current-source native acceptance, ordinary CI and any failure disposition remain separate obligations."
+  ]
+}

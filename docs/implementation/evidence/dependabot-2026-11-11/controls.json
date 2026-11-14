@@ -1,0 +1,19 @@
+{
+  "name": "controls",
+  "args": [
+    "node",
+    "--test",
+    "scripts/ci/doc-callback-comparison.test.ts",
+    "scripts/ci/doc-responsiveness.test.ts",
+    "scripts/ci/plan.test.ts",
+    "scripts/ci/coverage-result.test.ts",
+    "scripts/ci/desktop-storage.test.ts",
+    "scripts/ci/desktop-safari-identity.test.ts",
+    "scripts/dependencies/no-univer-pro.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2728,
+  "peakKiB": 791312
+}

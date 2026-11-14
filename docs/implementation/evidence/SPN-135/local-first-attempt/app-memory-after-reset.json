@@ -1,0 +1,39 @@
+{
+  "observedAt": "2026-11-02T23:39:48.111Z",
+  "pressure": "1",
+  "appProcesses": 71,
+  "rssMiBSum": 2674,
+  "largest": [
+    {
+      "pid": 3122,
+      "parent": 2306,
+      "exe": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/156.0.8078.48/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+      "rssMiB": 998
+    },
+    {
+      "pid": 2306,
+      "parent": 1,
+      "exe": "/Applications/ChatGPT.app/Contents/MacOS/ChatGPT",
+      "rssMiB": 317
+    },
+    {
+      "pid": 3120,
+      "parent": 2306,
+      "exe": "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+      "rssMiB": 294
+    },
+    {
+      "pid": 3312,
+      "parent": 2306,
+      "exe": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/156.0.8078.48/Helpers/Codex (Renderer).app/Contents/MacOS/Codex (Renderer)",
+      "rssMiB": 99
+    },
+    {
+      "pid": 2324,
+      "parent": 2306,
+      "exe": "/Applications/ChatGPT.app/Contents/Frameworks/Codex Framework.framework/Versions/156.0.8078.48/Helpers/Codex (Service).app/Contents/MacOS/Codex (Service)",
+      "rssMiB": 77
+    }
+  ],
+  "note": "RSS sum may double-count shared pages. Own and three completed reviewers reset their tool kernels; no app termination. No stale native test workload found."
+}

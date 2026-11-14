@@ -1,0 +1,54 @@
+{
+  "root": 94292,
+  "started": 1793887627345,
+  "elapsedMs": 197,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90256,
+  "peakKiB": 90256,
+  "live": [
+    {
+      "pid": 94292,
+      "parent": 94157,
+      "group": 94292,
+      "rssKiB": 88736,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-tests-watchdog.json node --test scripts/ci/doc-native-window.test.ts"
+    },
+    {
+      "pid": 94345,
+      "parent": 94292,
+      "group": 94292,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 94292,
+      "parent": 94157,
+      "group": 94292,
+      "rssKiB": 88736,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-window-hosted/map-repair-tests-watchdog.json node --test scripts/ci/doc-native-window.test.ts"
+    },
+    {
+      "pid": 94311,
+      "parent": 94292,
+      "group": 94292,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 94345,
+      "parent": 94292,
+      "group": 94292,
+      "rssKiB": 1520,
+      "started": "Thu Nov  5 06:07:07 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

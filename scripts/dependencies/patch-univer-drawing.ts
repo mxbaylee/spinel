@@ -17,7 +17,7 @@
  * after native structural edits without treating it as a new placement request.
  * Explicit placement validation remains unchanged. No Pro package is read.
  * Source: packages/sheets-drawing/src/controllers/sheet-drawing-transform-affected.controller.ts
- * and services/sheet-drawing-placement.ts, dream-num/univer tag v1.1.0.
+ * and services/sheet-drawing-placement.ts, dream-num/univer tag v1.3.1.
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -25,37 +25,33 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const formats = {
-  es: '1bdd287986af35517d44249e62dea67932aeaf00216028d0e01d5e1519b09701',
-  cjs: '0887a284c9856cae8d4933d48d0032b27953e1636aa5729045c4397cd4d81e67',
+  es: '137a6044dfd8b2df07f4e72584b22bd278e61cc479429065d60030ebcd9cbc3d',
+  cjs: '96e714645fb718ddaf9f97be06dc5dd4722871ec0a0d9ae4b36da6bba9881032',
 } as const;
-const marker = '//#region src/controllers/sheet-drawing-transform-affected.controller.ts';
-const helper = (format: keyof typeof formats) => `${marker}
-// Modified for Spinel: structural edits can retain an image with zero/signed
-// extent. Refresh its existing anchor without changing that extent or identity.
-function refreshRetainedSheetDrawingPlacement(drawing, skeleton) {
-  const placement = getSheetDrawingPlacement(drawing);
-  if (placement.kind !== "0" || !Number.isFinite(placement.width) ||
-      !Number.isFinite(placement.height) || (placement.width > 0 && placement.height > 0)) {
-    return applySheetDrawingPlacement(drawing, placement, skeleton);
-  }
-  validateCellPosition(placement.from);
-  const converted = ${format === 'cjs' ? '(0, _univerjs_sheets.convertPositionCellToSheetOverGrid)' : 'convertPositionCellToSheetOverGrid'}(
-    drawing.unitId, drawing.subUnitId, placement.from, placement.width, placement.height, skeleton);
-  const transform = withExistingTransform(drawing.transform, converted.transform);
-  return {
-    ...drawing,
-    sheetTransform: withExistingSheetTransform(drawing.sheetTransform, converted.sheetTransform),
-    transform,
-    axisAlignSheetTransform: transformToAxisAlignPosition(transform, skeleton)
-  };
-}`;
-export function patchDrawing(source: string, format: keyof typeof formats): string {
+export function prepareDrawingPatch(source: string, format: keyof typeof formats) {
+  // 1.3.1 centralizes both resize and queued refresh in this method. Preserve
+  // its marker validation, hidden-cell handling, range filter and error isolation;
+  // only an existing finite collapsed Position placement bypasses extent rejection.
   const replacements = [
-    [marker, helper(format)],
-    ...['skeleton', 'sheetSkeletonParam.skeleton'].map((skeleton) => [
-      `applySheetDrawingPlacement(drawing, getSheetDrawingPlacement(drawing), ${skeleton})`,
-      `refreshRetainedSheetDrawingPlacement(drawing, ${skeleton})`,
-    ]),
+    [
+      `\t\t\tconst failure = validateSheetDrawingPlacement(drawing);
+\t\t\tif (failure) {`,
+      `\t\t\tconst failure = validateSheetDrawingPlacement(drawing);
+\t\t\t// Modified for Spinel: retain finite collapsed geometry, not new placements.
+\t\t\t// An extent failure implies both persisted cell markers already validated.
+\t\t\tconst placement = failure?.reason === PLACEMENT_ERROR.EXTENT_INVALID
+\t\t\t\t? getSheetDrawingPlacement(drawing) : void 0;
+\t\t\tconst retainedCollapsed = placement?.kind === "0" &&
+\t\t\t\tNumber.isFinite(placement.width) && Number.isFinite(placement.height) &&
+\t\t\t\t(placement.width <= 0 || placement.height <= 0);
+\t\t\tif (failure && !retainedCollapsed) {`,
+    ],
+    [
+      '\t\t\tconst result = tryRefreshSheetDrawingPlacement(drawing, skeleton);',
+      `\t\t\tconst result = retainedCollapsed
+\t\t\t\t? { ok: true, drawing: resolveSheetDrawingPlacement(drawing, placement, skeleton) }
+\t\t\t\t: tryRefreshSheetDrawingPlacement(drawing, skeleton);`,
+    ],
   ];
   const original = replacements.reduce(
     (text, [before, after]) => text.replace(after, before),
@@ -65,17 +61,24 @@ export function patchDrawing(source: string, format: keyof typeof formats): stri
     throw new Error(
       `Unrecognized @univerjs/sheets-drawing ${format} build; review the drawing patch.`,
     );
-  return replacements.reduce((text, [before, after]) => {
+  const patched = replacements.reduce((text, [before, after]) => {
     if (text.split(before).length !== 2)
       throw new Error('Drawing patch target must occur exactly once.');
     return text.replace(before, after);
   }, original);
+  if (source !== original && source !== patched)
+    throw new Error('Partially modified drawing build; restore the pinned package.');
+  return { original, patched };
+}
+
+export function patchDrawing(source: string, format: keyof typeof formats): string {
+  return prepareDrawingPatch(source, format).patched;
 }
 
 export async function patchInstalledDrawing(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/sheets-drawing');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
-  if (metadata.version !== '1.1.0')
+  if (metadata.version !== '1.3.1')
     throw new Error('Upgrading @univerjs/sheets-drawing: review retained drawing geometry first.');
   const updates = await Promise.all(
     (Object.keys(formats) as (keyof typeof formats)[]).map(async (format) => {

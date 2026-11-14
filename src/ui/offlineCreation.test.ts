@@ -59,7 +59,7 @@ function stored(kind: 'sheet' | 'doc' = 'doc'): StoredItem {
     readOnly: false,
     revision: 1,
     revisionOffset: 0,
-    sdkVersion: '1.1.0',
+    sdkVersion: '1.3.1',
     images: [],
     snapshot: blankOfflineSnapshot(request),
   } as OfflineBundle;

@@ -1,0 +1,17 @@
+{
+  "name": "spn159-corrected-build-static",
+  "args": [
+    "node",
+    "node_modules/.bin/storybook",
+    "build",
+    "--config-dir",
+    "test-results/spn159/storybook",
+    "--output-dir",
+    "test-results/spn159/static"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 3075,
+  "peakKiB": 604160
+}

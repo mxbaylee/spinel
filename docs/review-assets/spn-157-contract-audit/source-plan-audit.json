@@ -1,0 +1,72 @@
+{
+  "base": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "investigation": "9ca506c558820e5756aaeb518510f40c75c2e6dd",
+  "candidate": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "frozen": {
+    "original-spec.md": {
+      "source": "754e65317744e5ce97ede501935c6586e4875f2a:docs/todo/SPN-157.md",
+      "gitBlob": "d983f6a36284a1f50c454f9da4530d811ff2af00",
+      "sha256": "13b1803b9ee1154bd6e35eb9b9f58b0942fa7466125e589899fb3a528d5224c6"
+    },
+    "investigation-9ca.md": {
+      "source": "9ca506c558820e5756aaeb518510f40c75c2e6dd:docs/implementation/SPN-157.md",
+      "gitBlob": "02248dcf98c09f69b2f17f50a573f978657712ee",
+      "sha256": "44f40806d9902927c91a500ae950010cea17f11feaf351bb2730c9a3fab5d271"
+    }
+  },
+  "unchangedSources": {
+    "src/server/maintenance/supervisor.test.ts": "1e309107e5a00132018d1c946399859291ded46e",
+    "src/server/maintenance/supervisor.ts": "720cc34345f588e78af72aa3a216102c8c348651",
+    "src/server/maintenance/supervisor-fixture.ts": "aec311a5aa41211c0908f1d03bb555e501ba4d57",
+    "src/server/maintenance/ownership.ts": "db5a7d706fe67c054098ab17615203c0c541f523",
+    "src/server/maintenance/ownership.test.ts": "da510751e25edba4f6c9e690fdd00cabb489924f",
+    "src/server/maintenance/ownership-fixture.ts": "07c5ebd7e495e5df6d7b5ff4d606df2bc23a73ef",
+    "src/server/maintenance/supervisor-test-control.ts": "5a771bf516749e0fc8f042e617a6acf9ecb3a7a9",
+    "src/server/maintenance/supervisor-test-control.test.ts": "930dcfaf48a2d93f13c88764b374c50b1eceb243",
+    "src/server/maintenance/restore-trial.test.ts": "c8b444903f9f0f510489bbae45f9fe59de3676cd",
+    "src/server/maintenance/restore-trial-fixture.ts": "128c89de3d4e6f406e71cfdc5bade544c9fb8dce",
+    "src/server/maintenance/restore-authority.test.ts": "7bd6067b7ae699b235a9833078c9ad6b2e07fd27",
+    "src/server/backup/verification.test.ts": "ba77692a9b703c52902f28e80e4047a0c9d606a8",
+    "src/server/maintenance/restore-controller-fixture.ts": "a924298033decee93c35088053beb71e09744391",
+    "src/server/maintenance/restore-controller-observer-fixture.ts": "3bbef0498dcffcde781efb21f14695bd12bd2cbe",
+    "scripts/ci/pid-namespace.ts": "78706a8cd5cf4620d3c7bd487fc3a6ab64ed6b69",
+    "scripts/ci/plan.ts": "d41f63903f91689e952275ee63c788bf1780e624",
+    "scripts/ci/plan.test.ts": "ffabae7258b9310ee4b3f4b2df2a55e1eb8d0c33",
+    "scripts/ci/coverage-result.ts": "8be7b998bb75649f7c995c3bf8cd2416f3774b5e",
+    "scripts/ci/coverage-result.test.ts": "04df50eae508773d83c1f140ccbca481cf5cdcfe",
+    "vitest.config.ts": "77b9ad9ce658eac7a2d4f6b20e49ac25da3d6863",
+    "package.json": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be",
+    "package-lock.json": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0",
+    ".nvmrc": "1dda03ddb06ad1c7da5b913539290187eb7fc5aa",
+    "server/database.ts": "a05569e5a9d9717ed5bc67ac43fe845a41b9d297",
+    "src/server/maintenance/seed-fixture.ts": "2364db3827abb51a9417ca9a92b4bae98fd7fe42",
+    "src/server/maintenance/journal.ts": "15b70c6aaa86328bcca3645a408a2c613a1bf6fb",
+    "src/server/maintenance/restore-crash.integration.test.ts": "1452d3a2a188d0f8eba70e48c7c211c7f8a6e30d"
+  },
+  "boundaryNote": "Initial source-audit assertion detected ci.yml differs; the only difference adds spn098-feedback-pair.json browser artifact retention. Runtime commands, jobs and aggregates are unchanged. No test was executed by this source inspection. A later audit lookup initially used nonexistent src/server/database.ts; the real server/database.ts path was inspected and compared. No runtime command or test was executed by either source lookup.",
+  "workflowDiff": "diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml\nindex 4f2eac4f..0ad32c91 100644\n--- a/.github/workflows/ci.yml\n+++ b/.github/workflows/ci.yml\n@@ -532,6 +532,7 @@ jobs:\n             test-results/**/spn-055-*.png\n             test-results/**/spn-055-*.json\n             test-results/**/sync-diagnostics.json\n+            test-results/**/spn098-feedback-pair.json\n             test-results/**/phone-doc-caret-events*.json\n             test-results/**/phone-doc-selection-evidence*.json\n             test-results/**/maintenance-views/*.png\n",
+  "nativePlan": {
+    "rawSha256": "8f506fb37a01c4e233efea31dcdda6ee54cef158c41de8690b7a2de4d0dd62ea",
+    "canonicalSha256": "90b47b80b05d2211d3660bc4f6b7cf7e35dc09c99c1f27f47218ac87b3af8b16",
+    "unitReportSha256": "ef8fc98e18b7076bdfb1bf99131f641941b256ff8150577c20aafe9233c09d36",
+    "selected": true,
+    "mode": "full",
+    "paths": null,
+    "result": [
+      {
+        "suite": "unit-tests",
+        "selected": true,
+        "dependencies": [
+          "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+        ],
+        "inputs": [],
+        "reason": "Immutable range or event labels unavailable; full coverage.",
+        "result": "success"
+      }
+    ]
+  },
+  "unchangedRuntimeFolders": {
+    "src/server/maintenance/": [],
+    "src/server/backup/": []
+  }
+}

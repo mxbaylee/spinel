@@ -1,0 +1,469 @@
+{
+  "source": "5108adb55c2de303af7146a0f24402be72430b3a",
+  "node": "v26.13.0",
+  "chromium": "156.0.8078.4",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "withheld": "none",
+  "result": {
+    "probe": {
+      "withheld": "none",
+      "clicks": [
+        {
+          "phase": "narrow",
+          "observation": {
+            "raw": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "failures": [],
+            "resized": 1,
+            "controlsCreated": 2,
+            "geometry": {
+              "phase": "selection",
+              "hostWidth": 1280,
+              "canvasWidth": 1280,
+              "engineWidth": 1280,
+              "engineHeight": 618,
+              "resized": 1,
+              "controlsCreated": 2
+            },
+            "transitions": [
+              {
+                "event": "resize",
+                "sequence": 1,
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 0
+              },
+              {
+                "event": "controls",
+                "sequence": 2,
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 1
+              },
+              {
+                "event": "controls",
+                "sequence": 3,
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              }
+            ],
+            "pending": 1,
+            "pendingIds": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "drawings": 1,
+            "rendered": 1,
+            "focused": 1,
+            "controls": 1,
+            "imageBounds": {
+              "left": 226.66666666666669,
+              "right": 386.6666666666667,
+              "top": 369.8541666666667,
+              "bottom": 449.8541666666667
+            },
+            "textBounds": {
+              "left": 400.5177714029948,
+              "right": 408.67095438639325,
+              "top": 366.8541666666667,
+              "bottom": 449.8541666666667
+            }
+          },
+          "host": {
+            "x": 0,
+            "y": 204.1875,
+            "width": 1280,
+            "height": 695.8125,
+            "top": 204.1875,
+            "right": 1280,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "phase": "restore",
+          "observation": {
+            "raw": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "failures": [],
+            "resized": 2,
+            "controlsCreated": 3,
+            "geometry": {
+              "phase": "narrow",
+              "hostWidth": 1272,
+              "canvasWidth": 1272,
+              "engineWidth": 1272,
+              "engineHeight": 578,
+              "resized": 2,
+              "controlsCreated": 3
+            },
+            "transitions": [
+              {
+                "event": "resize",
+                "sequence": 1,
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 0
+              },
+              {
+                "event": "controls",
+                "sequence": 2,
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 1
+              },
+              {
+                "event": "controls",
+                "sequence": 3,
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              },
+              {
+                "event": "requested",
+                "sequence": 4,
+                "phase": "narrow",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              },
+              {
+                "event": "resize",
+                "sequence": 5,
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 2
+              },
+              {
+                "event": "controls",
+                "sequence": 6,
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 3
+              }
+            ],
+            "resizeObservation": {
+              "phase": "narrow",
+              "targetWidth": 1272,
+              "before": {
+                "phase": "narrow",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              },
+              "current": {
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 3
+              },
+              "resize": {
+                "sequence": 5,
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 2
+              },
+              "controls": {
+                "sequence": 6,
+                "phase": "narrow",
+                "hostWidth": 1272,
+                "canvasWidth": 1272,
+                "engineWidth": 1272,
+                "engineHeight": 578,
+                "resized": 2,
+                "controlsCreated": 3
+              }
+            },
+            "pending": 1,
+            "pendingIds": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "drawings": 1,
+            "rendered": 1,
+            "focused": 1,
+            "controls": 1,
+            "imageBounds": {
+              "left": 222.66666666666669,
+              "right": 382.6666666666667,
+              "top": 369.8541666666667,
+              "bottom": 449.8541666666667
+            },
+            "textBounds": {
+              "left": 396.5177714029948,
+              "right": 404.67095438639325,
+              "top": 366.8541666666667,
+              "bottom": 449.8541666666667
+            }
+          },
+          "host": {
+            "x": 0,
+            "y": 204.1875,
+            "width": 1272,
+            "height": 695.8125,
+            "top": 204.1875,
+            "right": 1272,
+            "bottom": 900,
+            "left": 0
+          }
+        }
+      ]
+    },
+    "observation": {
+      "raw": [
+        "doc.mutation.rich-text-editing"
+      ],
+      "failures": [],
+      "resized": 4,
+      "controlsCreated": 4,
+      "geometry": {
+        "phase": "restore",
+        "hostWidth": 1280,
+        "canvasWidth": 1280,
+        "engineWidth": 1280,
+        "engineHeight": 722,
+        "resized": 4,
+        "controlsCreated": 4
+      },
+      "transitions": [
+        {
+          "event": "resize",
+          "sequence": 1,
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 0
+        },
+        {
+          "event": "controls",
+          "sequence": 2,
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 1
+        },
+        {
+          "event": "controls",
+          "sequence": 3,
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 2
+        },
+        {
+          "event": "requested",
+          "sequence": 4,
+          "phase": "narrow",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 2
+        },
+        {
+          "event": "resize",
+          "sequence": 5,
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 2
+        },
+        {
+          "event": "controls",
+          "sequence": 6,
+          "phase": "narrow",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 3
+        },
+        {
+          "event": "requested",
+          "sequence": 7,
+          "phase": "restore",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 3
+        },
+        {
+          "event": "resize",
+          "sequence": 8,
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 578,
+          "resized": 3,
+          "controlsCreated": 3
+        },
+        {
+          "event": "controls",
+          "sequence": 9,
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 578,
+          "resized": 3,
+          "controlsCreated": 4
+        },
+        {
+          "event": "resize",
+          "sequence": 10,
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 722,
+          "resized": 4,
+          "controlsCreated": 4
+        }
+      ],
+      "resizeObservation": {
+        "phase": "restore",
+        "targetWidth": 1280,
+        "before": {
+          "phase": "restore",
+          "hostWidth": 1272,
+          "canvasWidth": 1272,
+          "engineWidth": 1272,
+          "engineHeight": 578,
+          "resized": 2,
+          "controlsCreated": 3
+        },
+        "current": {
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 722,
+          "resized": 4,
+          "controlsCreated": 4
+        },
+        "resize": {
+          "sequence": 10,
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 722,
+          "resized": 4,
+          "controlsCreated": 4
+        },
+        "controls": {
+          "sequence": 9,
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 578,
+          "resized": 3,
+          "controlsCreated": 4
+        }
+      },
+      "pending": 1,
+      "pendingIds": [
+        "doc.mutation.rich-text-editing"
+      ],
+      "drawings": 1,
+      "rendered": 1,
+      "focused": 0,
+      "controls": 0,
+      "imageBounds": {
+        "left": 226.66666666666669,
+        "right": 386.6666666666667,
+        "top": 226.66666666666669,
+        "bottom": 306.6666666666667
+      },
+      "textBounds": {
+        "left": 400.5177714029948,
+        "right": 408.67095438639325,
+        "top": 223.66666666666669,
+        "bottom": 306.6666666666667
+      }
+    },
+    "finished": [
+      {
+        "storyId": "editor-sync-native--doc-drawing-capture",
+        "status": "success",
+        "reporters": []
+      }
+    ],
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException"
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying"
+      }
+    ]
+  },
+  "errors": []
+}

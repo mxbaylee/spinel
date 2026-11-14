@@ -1,0 +1,824 @@
+{
+  "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+  "sourceWasCleanAtEveryBrowserSample": true,
+  "protocol": 5,
+  "browserChecks": {
+    "desktop": 7,
+    "mobilePlain": 3,
+    "mobileProfileAndBoundaries": 4,
+    "passed": 14,
+    "attempt": 0,
+    "retries": 0
+  },
+  "commands": {
+    "build": "VITE_SYNC_EVIDENCE=0 VITE_DOC_SELECTION_EVIDENCE=0 VITE_DOC_RESPONSIVENESS_EVIDENCE=1 vite build",
+    "desktop": "playwright test --project=doc-responsiveness --grep \"desktop \"",
+    "mobilePlain": "playwright test --project=doc-responsiveness --grep \"mobile sustained native typing plain-\"",
+    "mobileOther": "playwright test --project=doc-responsiveness --grep \"mobile \" --grep-invert \"sustained native typing plain-\"",
+    "comparison": "node scripts/ci/doc-responsiveness.ts <preset> - <retained-results> <comparison.json>"
+  },
+  "environment": {
+    "baseline": false,
+    "ci": true,
+    "project": "doc-responsiveness",
+    "resourceLimitKiB": 3145728,
+    "maxRunMs": 475000,
+    "requiredMemoryPressure": "1",
+    "physicalDevice": false,
+    "mobileCpuThrottle": 4
+  },
+  "executions": [
+    {
+      "name": "build",
+      "outcome": "command-passed",
+      "elapsedMs": 2384,
+      "pressure": "1",
+      "peakKiB": 1072736,
+      "cleanup": {
+        "snapshot": "/tmp/spn135-candidate-build-processes.json",
+        "before": [],
+        "afterTerm": [],
+        "remaining": [],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    {
+      "name": "desktop",
+      "outcome": "command-passed",
+      "elapsedMs": 277257,
+      "pressure": "1",
+      "peakKiB": 3019120,
+      "cleanup": {
+        "snapshot": "/tmp/spn135-candidate-desktop-processes.json",
+        "before": [],
+        "afterTerm": [],
+        "remaining": [],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    {
+      "name": "mobile-plain",
+      "outcome": "command-passed",
+      "elapsedMs": 335021,
+      "pressure": "1",
+      "peakKiB": 2911456,
+      "cleanup": {
+        "snapshot": "/tmp/spn135-candidate-mobile-plain-processes.json",
+        "before": [],
+        "afterTerm": [],
+        "remaining": [],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    },
+    {
+      "name": "mobile-other",
+      "outcome": "command-passed",
+      "elapsedMs": 229181,
+      "pressure": "1",
+      "peakKiB": 2748064,
+      "cleanup": {
+        "snapshot": "/tmp/spn135-candidate-mobile-other-processes.json",
+        "before": [],
+        "afterTerm": [],
+        "remaining": [],
+        "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+      }
+    }
+  ],
+  "comparisons": {
+    "desktop": {
+      "schema": 2,
+      "mode": "candidate-only",
+      "candidateGroupLimit": 32,
+      "candidateHistoryLimit": 100,
+      "baselineHistoryLimit": 50,
+      "protocolRevision": 5,
+      "drainAcceptance": {
+        "metric": "first-verified-browser-local-empty",
+        "maximumMs": 1000,
+        "lateReadUpperBound": "descriptive-only"
+      },
+      "preset": "desktop",
+      "physicalDevice": false,
+      "status": "passed",
+      "passed": true,
+      "timingValid": true,
+      "baselineRedoOutcome": [],
+      "candidateIntegrity": true,
+      "failures": [],
+      "unavailable": [],
+      "summaries": [
+        {
+          "role": "candidate",
+          "sample": "profile",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 24.700000047683716,
+          "longestTaskMs": 0,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 2.5,
+            "p95": 6.099999964237213,
+            "max": 8.100000023841858,
+            "sum": 204.29999995231628
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 1.800000011920929,
+            "p95": 1.800000011920929,
+            "max": 1.800000011920929,
+            "sum": 1.800000011920929
+          },
+          "pairedFlushMaximumMs": 8.100000023841858,
+          "nativeDrainUpperBoundMs": 433.4000000357628,
+          "firstVerifiedBrowserLocalDrainMs": 309.4000000357628,
+          "lateReadMinusLocalWitnessMs": 124,
+          "drainPollCount": 6,
+          "firstEmptyAfterFinalKeyMs": 353.9000000357628,
+          "typingWallMs": 40353.92495799999,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 1
+        },
+        {
+          "role": "candidate",
+          "sample": "plain-3",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 25,
+          "longestTaskMs": 0,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 2.099999964237213,
+            "p95": 6,
+            "max": 7.299999952316284,
+            "sum": 189.20000010728836
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 0.6000000238418579,
+            "p95": 0.6000000238418579,
+            "max": 0.6000000238418579,
+            "sum": 0.6000000238418579
+          },
+          "pairedFlushMaximumMs": 7.299999952316284,
+          "nativeDrainUpperBoundMs": 421.5999999642372,
+          "firstVerifiedBrowserLocalDrainMs": 317.69999998807907,
+          "lateReadMinusLocalWitnessMs": 103.89999997615814,
+          "drainPollCount": 6,
+          "firstEmptyAfterFinalKeyMs": 343.2999999523163,
+          "typingWallMs": 39324.15112499999,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 1
+        },
+        {
+          "role": "candidate",
+          "sample": "plain-2",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 24.69999998807907,
+          "longestTaskMs": 0,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 2.100000023841858,
+            "p95": 5.700000047683716,
+            "max": 7.400000035762787,
+            "sum": 187.599999666214
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 0.5,
+            "p95": 0.5,
+            "max": 0.5,
+            "sum": 0.5
+          },
+          "pairedFlushMaximumMs": 7.400000035762787,
+          "nativeDrainUpperBoundMs": 450.10000002384186,
+          "firstVerifiedBrowserLocalDrainMs": 302.60000002384186,
+          "lateReadMinusLocalWitnessMs": 147.5,
+          "drainPollCount": 6,
+          "firstEmptyAfterFinalKeyMs": 349.4000000357628,
+          "typingWallMs": 39237.192583,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 1
+        },
+        {
+          "role": "candidate",
+          "sample": "plain-1",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 24.700000047683716,
+          "longestTaskMs": 0,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 2.100000023841858,
+            "p95": 5.5,
+            "max": 11.199999988079071,
+            "sum": 195.8999999165535
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 0.7000000476837158,
+            "p95": 0.7000000476837158,
+            "max": 0.7000000476837158,
+            "sum": 0.7000000476837158
+          },
+          "pairedFlushMaximumMs": 11.199999988079071,
+          "nativeDrainUpperBoundMs": 427.60000002384186,
+          "firstVerifiedBrowserLocalDrainMs": 302.2000000476837,
+          "lateReadMinusLocalWitnessMs": 125.39999997615814,
+          "drainPollCount": 4,
+          "firstEmptyAfterFinalKeyMs": 319.2000000476837,
+          "typingWallMs": 39660.014875,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 66
+        }
+      ],
+      "improvement": {
+        "history": {
+          "baselineContainingTaskMs": null,
+          "candidateEntireTaskUpperBoundMs": 50,
+          "reductionPercent": null,
+          "status": "paired-comparison-inapplicable",
+          "candidateAttribution": "sampled-native-reducer",
+          "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+        },
+        "collaboration": {
+          "baselineContainingTaskMs": null,
+          "candidateEntireTaskUpperBoundMs": 50,
+          "reductionPercent": null,
+          "status": "paired-comparison-inapplicable",
+          "candidateAttribution": "sampled-native-reducer",
+          "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+        }
+      },
+      "unprofiledImprovement": {
+        "metric": "whole-browser-longest-task-reduction",
+        "samples": [],
+        "conservativeAggregateReductionPercent": null,
+        "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+      },
+      "profilingVariation": [
+        {
+          "role": "candidate",
+          "plainTypingMs": {
+            "count": 3,
+            "p50": 39324.15112499999,
+            "p95": 39660.014875,
+            "max": 39660.014875,
+            "sum": 118221.358583
+          },
+          "profileTypingMs": 40353.92495799999,
+          "profileMinusPlainMedianMs": 1029.7738329999993,
+          "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+        }
+      ],
+      "composition": {
+        "baseline": null,
+        "candidate": {
+          "sampleIntervalUs": 1000,
+          "negativeDeltaCount": 0,
+          "reorderedSampleCount": 0,
+          "clock": {
+            "beforeMs": 2089.899999976158,
+            "afterMs": 2457.899999976158,
+            "uncertaintyMs": 368,
+            "profileStartTimeUs": 268613591045,
+            "profileEndTimeUs": 268654762104
+          },
+          "history": {
+            "status": "sampled",
+            "reason": null,
+            "functionNodes": 4,
+            "sampleCount": 106,
+            "sampledCpuMs": 111.247,
+            "certainContainingTasks": [],
+            "maxContainingTaskMs": null,
+            "taskAttribution": "unavailable"
+          },
+          "collaboration": {
+            "status": "sampled",
+            "reason": null,
+            "functionNodes": 3,
+            "sampleCount": 72,
+            "sampledCpuMs": 87.332,
+            "certainContainingTasks": [],
+            "maxContainingTaskMs": null,
+            "taskAttribution": "unavailable"
+          }
+        }
+      }
+    },
+    "mobile": {
+      "schema": 2,
+      "mode": "candidate-only",
+      "candidateGroupLimit": 32,
+      "candidateHistoryLimit": 100,
+      "baselineHistoryLimit": 50,
+      "protocolRevision": 5,
+      "drainAcceptance": {
+        "metric": "first-verified-browser-local-empty",
+        "maximumMs": 1000,
+        "lateReadUpperBound": "descriptive-only"
+      },
+      "preset": "mobile",
+      "physicalDevice": false,
+      "status": "passed",
+      "passed": true,
+      "timingValid": true,
+      "baselineRedoOutcome": [],
+      "candidateIntegrity": true,
+      "failures": [],
+      "unavailable": [],
+      "summaries": [
+        {
+          "role": "candidate",
+          "sample": "profile",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 63.90000003576279,
+          "longestTaskMs": 112,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 11.5,
+            "p95": 26.900000035762787,
+            "max": 75.80000001192093,
+            "sum": 984.700000166893
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 1.600000023841858,
+            "p95": 1.600000023841858,
+            "max": 1.600000023841858,
+            "sum": 1.600000023841858
+          },
+          "pairedFlushMaximumMs": 75.80000001192093,
+          "nativeDrainUpperBoundMs": 581.5,
+          "firstVerifiedBrowserLocalDrainMs": 339.39999997615814,
+          "lateReadMinusLocalWitnessMs": 242.10000002384186,
+          "drainPollCount": 3,
+          "firstEmptyAfterFinalKeyMs": 380.69999998807907,
+          "typingWallMs": 100361.62825000001,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 1
+        },
+        {
+          "role": "candidate",
+          "sample": "plain-3",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 63.69999998807907,
+          "longestTaskMs": 95,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 9.100000023841858,
+            "p95": 24.5,
+            "max": 61.700000047683716,
+            "sum": 853.299999833107
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 1.399999976158142,
+            "p95": 1.399999976158142,
+            "max": 1.399999976158142,
+            "sum": 1.399999976158142
+          },
+          "pairedFlushMaximumMs": 61.700000047683716,
+          "nativeDrainUpperBoundMs": 523.1999999880791,
+          "firstVerifiedBrowserLocalDrainMs": 322.69999998807907,
+          "lateReadMinusLocalWitnessMs": 200.5,
+          "drainPollCount": 3,
+          "firstEmptyAfterFinalKeyMs": 366.9000000357628,
+          "typingWallMs": 97603.62387499999,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 1
+        },
+        {
+          "role": "candidate",
+          "sample": "plain-2",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 62.59999996423721,
+          "longestTaskMs": 89,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 9.199999988079071,
+            "p95": 25.299999952316284,
+            "max": 32.5,
+            "sum": 800.700000166893
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 2.899999976158142,
+            "p95": 2.899999976158142,
+            "max": 2.899999976158142,
+            "sum": 2.899999976158142
+          },
+          "pairedFlushMaximumMs": 32.5,
+          "nativeDrainUpperBoundMs": 463.5,
+          "firstVerifiedBrowserLocalDrainMs": 313.5,
+          "lateReadMinusLocalWitnessMs": 150,
+          "drainPollCount": 3,
+          "firstEmptyAfterFinalKeyMs": 314.4000000357628,
+          "typingWallMs": 97667.42779099998,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 1
+        },
+        {
+          "role": "candidate",
+          "sample": "plain-1",
+          "source": "93619699bae0f2b2e5d9ac46f631cef7b56952d7",
+          "inputP95Ms": 63.799999952316284,
+          "longestTaskMs": 98,
+          "capacityPairedFlushMs": {
+            "count": 65,
+            "p50": 9,
+            "p95": 24.80000001192093,
+            "max": 33.5,
+            "sum": 805.799999833107
+          },
+          "idlePairedFlushMs": {
+            "count": 1,
+            "p50": 2,
+            "p95": 2,
+            "max": 2,
+            "sum": 2
+          },
+          "pairedFlushMaximumMs": 33.5,
+          "nativeDrainUpperBoundMs": 479.80000001192093,
+          "firstVerifiedBrowserLocalDrainMs": 321.10000002384186,
+          "lateReadMinusLocalWitnessMs": 158.69999998807907,
+          "drainPollCount": 3,
+          "firstEmptyAfterFinalKeyMs": 360.19999998807907,
+          "typingWallMs": 98538.700375,
+          "initialIntegrity": true,
+          "redoOutcome": "passed",
+          "undoRedoGroups": 66
+        }
+      ],
+      "improvement": {
+        "history": {
+          "baselineContainingTaskMs": null,
+          "candidateEntireTaskUpperBoundMs": 112,
+          "reductionPercent": null,
+          "status": "paired-comparison-inapplicable",
+          "candidateAttribution": "sampled-native-reducer",
+          "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+        },
+        "collaboration": {
+          "baselineContainingTaskMs": null,
+          "candidateEntireTaskUpperBoundMs": 112,
+          "reductionPercent": null,
+          "status": "paired-comparison-inapplicable",
+          "candidateAttribution": "sampled-native-reducer",
+          "qualification": "The baseline duration is the whole task containing a certain reducer sample, not time attributed entirely to that reducer."
+        }
+      },
+      "unprofiledImprovement": {
+        "metric": "whole-browser-longest-task-reduction",
+        "samples": [],
+        "conservativeAggregateReductionPercent": null,
+        "qualification": "All three plain baseline samples must corroborate a >1,000 ms browser task. Reductions use the worst candidate task across plain and profiled samples; native reducer attribution is a separate profile gate."
+      },
+      "profilingVariation": [
+        {
+          "role": "candidate",
+          "plainTypingMs": {
+            "count": 3,
+            "p50": 97667.42779099998,
+            "p95": 98538.700375,
+            "max": 98538.700375,
+            "sum": 293809.752041
+          },
+          "profileTypingMs": 100361.62825000001,
+          "profileMinusPlainMedianMs": 2694.200459000029,
+          "qualification": "Observed sample difference includes run-to-run variation; it does not isolate profiler overhead."
+        }
+      ],
+      "composition": {
+        "baseline": null,
+        "candidate": {
+          "sampleIntervalUs": 1000,
+          "negativeDeltaCount": 1,
+          "reorderedSampleCount": 2,
+          "clock": {
+            "beforeMs": 1804.7999999523163,
+            "afterMs": 3174.7999999523163,
+            "uncertaintyMs": 1370,
+            "profileStartTimeUs": 269110959176,
+            "profileEndTimeUs": 269213337462
+          },
+          "history": {
+            "status": "sampled",
+            "reason": null,
+            "functionNodes": 2,
+            "sampleCount": 405,
+            "sampledCpuMs": 476.7840000000005,
+            "certainContainingTasks": [],
+            "maxContainingTaskMs": null,
+            "taskAttribution": "unavailable"
+          },
+          "collaboration": {
+            "status": "sampled",
+            "reason": null,
+            "functionNodes": 3,
+            "sampleCount": 323,
+            "sampledCpuMs": 401.0529999999996,
+            "certainContainingTasks": [],
+            "maxContainingTaskMs": null,
+            "taskAttribution": "unavailable"
+          }
+        }
+      }
+    }
+  },
+  "installedPatchedBuildSha256": {
+    "node_modules/@univerjs/core/lib/es/index.js": "a019e7eb8b2ba235c7cfd54a19c262377a90c25aca13e5c2e0671a43b709e434",
+    "node_modules/@univerjs/core/lib/cjs/index.js": "ae2326c195fa7aa89be7199dd2a838d8f267f05c9dfee449a33c5ceae4d4a132",
+    "node_modules/@univerjs/docs/lib/es/index.js": "2288928025f2d6e168613614ec6fe5dd57f8675202d35e5ccff2e189fe391563",
+    "node_modules/@univerjs/docs/lib/cjs/index.js": "f0302d8a70cff8ba33dba075d6b7b4fb52f95bd73b5ed53c835d7cbb2f4db2c3",
+    "node_modules/@univerjs/ui/lib/es/index.js": "dc40538da0a65579ada4f9a05536bab61e74950a5e73742915cbc42d715ee508",
+    "node_modules/@univerjs/ui/lib/cjs/index.js": "2ffb99e11a98e26eee0eabfc8c7aeffce58de47548537063ae9be5c3c0c9dfc9",
+    "node_modules/@univerjs/drawing/lib/es/index.js": "7d5cf8f50b01f1f83cb48d1c78f0b84d2c140fbaa9cd29e77ced95d7f1c72717",
+    "node_modules/@univerjs/drawing/lib/cjs/index.js": "98b664d2f446f50071bce465f36f4a5c5fe373c90917d0ce7135116dc86c0185",
+    "node_modules/@univerjs/docs-ui/lib/es/index.js": "635dced08421d4f9710af399cd84224678d1fbd3cb11ac7bd37510d9d99d40bc",
+    "node_modules/@univerjs/docs-ui/lib/cjs/index.js": "dad649bd32e248632982a74a20626fa4a4ae4f8aa89e0eeefb791667dc04fce9"
+  },
+  "productionAssetSha256": {
+    "dist/index.html": "52959e73da3fb940c413ed56731accdf0f7f77b25e02345e4eac4cc83e4af01c",
+    "dist/service-worker.js": "48aac9f06dda2991f43c87af0c56aa150a11e9489cfbc0a0780493770da7d751",
+    "dist/assets/HistoryBrowser-DBWhm75j.js": "e04199f7464973dd8300e5d89100afa6c8ccceed3a6c73e388043b01475bed1d",
+    "dist/assets/theme-6GPmlRwP.css": "b1ce606d54e4be707ff60cd461509642a1b9d60c75a2fb296ebfd37792207890",
+    "dist/assets/snapshotIdentity-DauYycDk.js": "e73cce4f372b7783b2c4be4272b34a4cec7ca224532fc67c43c22f809b90ec64",
+    "dist/assets/HistoryBrowser-D9Z9OhM7.css": "a7536c0ab0d79dc700d82be8632e86dd9cbd365dd8698f94983cf6a073eb662c",
+    "dist/assets/useDiagnostics-DuPOOcXt.js": "2cf868e1c96b1950048c992c0d64b61e3565d7a53a0c9d673e0036558601c776",
+    "dist/assets/floating-ui.react-dom-BtIrzXdr.js": "487dad52f87342f5bcd543dbdd070226af9019e1aa296bd0fb075adcc56ca6f2",
+    "dist/assets/checkpoint-CNBwfwki.js": "bde26f209468e7dc2bb1bb48881fac6ebf968f664c5b649189cf2259d2cb1570",
+    "dist/assets/CopyFile-qR382OFY.js": "ad8dd97fcb8b38fae1ccf7673425ad1e45252eb0762ba1ec0bf580a63745073a",
+    "dist/assets/rolldown-runtime-XKyaHtl9.js": "548d1dbf321e7d2ae804fcc158b588706a7c52f8ca175de1490c6ccb4dbe55b7",
+    "dist/assets/lib-DGHf0mi1.css": "952d84ed3b6f59bb8a1f768400fb5ba4156edc3791ea6378be0fd1e3cea771da",
+    "dist/assets/PreparedImages-DxTqDsTH.js": "eea5ecbeecc54600d16b3645b26009ab88048c7ae89d1ad963b2188b5843fd36",
+    "dist/assets/rendering-EjkMmL5e.js": "5831699ff29df93c6c994abc4eaab556547b0a4dd94e4fffea12549bed27afef",
+    "dist/assets/react-DlmbjZJV.js": "a9097bd797421b2be0684bbdb498b8a85e784627e8f9ef8efe53a72d6a3c1273",
+    "dist/assets/OfflineAccess-mOp5M4Iz.js": "fbc8d6ee2cb71a07fec6a35e2845897b8dda29ea7c83a44c6503e88c6def58fc",
+    "dist/assets/theme-CqYTemgo.js": "93f17894230838770dfdf2a5fb0f4e21076b67c42454790233e0bc810dd3ba6e",
+    "dist/assets/univer-renderer-Cqyj3Y79.js": "9d7e0ecfd029bf41605ce931cda85c1747eec94ed1ddd3cc51feab4ff202506f",
+    "dist/assets/offlineError-BUk56pzC.js": "e7d3f01a2c14cd9c15e90fa9eb28296e571ceec82f95cd3ea23f17c5acce388b",
+    "dist/assets/existingDatabase-D6zEq-NF.js": "0a9b1f8d524aec5186d46e91b5e6c1d9bb2a062f0e9e09e2ed47a6de4fe0715e",
+    "dist/assets/runtime-BUQS9nEo.js": "2465b2123256d2087ca5119ab7101a1babee3e58a0cbbef8ce9deab56d2a9065",
+    "dist/assets/nativeSyncPermissions-Cz6gbsYk.js": "1c61080f31577d25a439adad4d28fba485074fe55109eff03b4323227935a341",
+    "dist/assets/CopyFile-Bp41xbsr.css": "24eae06726d425fb9689334e30999098838bc4aa2dc49678cadd92dcdaf2f203",
+    "dist/assets/documentReady-Dy2dyPBO.js": "5cefbcb5084ccf48637bf31b779fc31580a7f91d650a3a1e3e4232162c74013d",
+    "dist/assets/application-BEfFVd-T.js": "8678b666320c7ebe9769888936c7bb81fb6f61827a593e2e78140c4edf8a1723",
+    "dist/assets/application-B9PzMhak.css": "f0d0c9463ed080f214e06e4e5be29074ab12eec404fdbc624db44e44f61d069e",
+    "dist/assets/module-preload-BLdHbfdN.js": "8aec9ff75ffa86a03d51268b63126abadb3754aa5a6b6c5bb16e4e2446a63dee",
+    "dist/assets/main-B2y16eNa.js": "dd4b86f16a8073834b76599d219bb23130c95dda71b57394f7574acbed3e7325",
+    "dist/assets/OfflineViewer-CoTosQfq.js": "e1de9b0d9be428d72548b9719e907b9c18e28182474cc2b087799988e023afbf",
+    "dist/assets/download-BPGf4w79.js": "570752f32765f636f82c347910c6bde324c51d8b707e5e958e4bb45f6f8b66f5",
+    "dist/assets/nativeCopy-BNzdQp8d.js": "9582792146d7d1869ab811ac0b1628111b88bb722d81cf379be801c2e270c7a2",
+    "dist/assets/nativeCopy-mVcC3r32.css": "5635f05c18a0d88e35f62260fb18c1fd81c064d1da2421738ffd260d77bb400b",
+    "dist/assets/es-QsSEw2iP.js": "eca07f3346de0702bc4261237dcf8e97b3e19c40a8463a8c55f547c12f293629",
+    "dist/assets/model-DWEfXdLO.js": "27763521c6e8628a148f0bd4d6596c6c3ec43ea20409aa6ad6faf9d15990d102",
+    "dist/assets/lib-DPzcSJgf.js": "ef3e76e041876fb6f7dda64986f0938fba2862b9e23d785ad9b509d33bb87a68",
+    "dist/assets/native-DaKZZts_.js": "ea1f60c07460453d6ea7a87fc0fc766c7dae47f25b770245834aba0072605f34",
+    "dist/assets/documentReady-CZMWh3-A.css": "9ec479c60c4e194484e39f2d953a44ae40f94f88467e9fffbef6fa5473a89a7f",
+    "dist/assets/profile-CUeznPAf.js": "417d50f9fa7bc76ad2b2b7e7471164346d824a65fa00014d08337735b12b120e",
+    "dist/assets/offlineStore-CNblyHxf.js": "a446781e6db8e2a9b7a0d083c3b84ee6ed0167676c92d9373c35c754bd11103c",
+    "dist/assets/DocEditor-Dk9sG3xx.js": "7fd013472a8a8cc05e4dd7b7c338e298833b645171b359d977a293b01ac7b756",
+    "dist/assets/SheetEditor-Bo7Awp8V.js": "fe6f2af66bfa921f4f6894b9dad8440eec594f849638aa6a7ecaf855883ab4dd",
+    "dist/assets/spaceNavigation-BsLiTX-r.js": "b2ea2778519b79446a0fb15f0850592c83394f0af670229708d1f54b7cec68bf",
+    "dist/assets/documentAccess-BpTD8alm.js": "e82196b4dadcbcec0a88ffe775e55898c57862e1ee3585df7067c9705b3b2035"
+  },
+  "files": [
+    {
+      "file": "desktop/.last-run.json.gz",
+      "rawBytes": 45,
+      "rawSha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json.gz",
+      "rawBytes": 130663,
+      "rawSha256": "157a9aad011425dd4f4c1c79330ae2ac0195f361ee02f3ad59e22ab4c8515e77"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 532103,
+      "rawSha256": "c657e3e23589d3a24c2584fab622f6c1af2a776da0a027311c8d58621bce347c"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 536591,
+      "rawSha256": "17231010bbc35fba879dfeded4b69d8e92646ac4d12c1c3a70471f68b16c0858"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 531230,
+      "rawSha256": "2f4e24b9bddbac8fde522f8ec52833e3448074f02e75bda9ca9aed033f0747ad"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 532912,
+      "rawSha256": "01966d55df75b53f8b96bacd1208e5a6394c0cbb02356311cb8e3e410cbc2de0"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json.gz",
+      "rawBytes": 244,
+      "rawSha256": "5a0de29f1839750320449fe6995930d1b4d097d5e235f32a641f22ba25180684"
+    },
+    {
+      "file": "desktop/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile.gz",
+      "rawBytes": 2313850,
+      "rawSha256": "744cc400a26d837cde8e0066dddb2149a023a63e9d95e7bf06bc7d2c8cc63b73"
+    },
+    {
+      "file": "desktop/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json.gz",
+      "rawBytes": 2373,
+      "rawSha256": "553cca2154bb60976e40bebf0d0f870b3f47a905cd07ddaa7d09fee502c3b228"
+    },
+    {
+      "file": "desktop/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json.gz",
+      "rawBytes": 66196,
+      "rawSha256": "22e8e810e11a00639282ef18bd57ca3db68b639f2d3627d166a0b815f5ba4f00"
+    },
+    {
+      "file": "spn135-candidate-desktop-comparison.json.gz",
+      "rawBytes": 7090,
+      "rawSha256": "0a576b82b57648f55e72ffa95fc3ad67c7e80a8ee01efccf04d67a9f94ad64bf"
+    },
+    {
+      "file": "spn135-candidate-desktop-comparison.log.gz",
+      "rawBytes": 5385,
+      "rawSha256": "c1a8ab8a1cce4878a65ad287a9f770f777ce081e9555dadd120e398e9bbc1303"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json.gz",
+      "rawBytes": 155988,
+      "rawSha256": "581456e79f5aafa3fc59834e4630a6485398864270b8adfa0f6a7abb146414d1"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 562797,
+      "rawSha256": "26489d9d6564f8dcb9f83c273c52f2648ee13738d47d24c76521bc68a96a321d"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 564019,
+      "rawSha256": "e7c48e4d6d5614f4752c4459d278f308b88371c6bb14b84394c468f7b25497eb"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 562127,
+      "rawSha256": "a7f9ccd290d2dda462d5c1401e5e315fbadca1b0137436477bef53ed6b6e2076"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json.gz",
+      "rawBytes": 559224,
+      "rawSha256": "9e2c7287567c5dd8e51d2756ffc8c9c8481db7f7e4fb2da061e1c38a25771b46"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json.gz",
+      "rawBytes": 246,
+      "rawSha256": "d1fa89ea4cb4eaacbf5953be6de45f1c5baeac6b57c25160933fa70c6196555f"
+    },
+    {
+      "file": "mobile/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile.gz",
+      "rawBytes": 3238368,
+      "rawSha256": "86cf5a2958025e67a61e5e19d40aab24cfb33796adaced835c0b7eb1cb4ca75a"
+    },
+    {
+      "file": "mobile/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json.gz",
+      "rawBytes": 2360,
+      "rawSha256": "8993b6c964e20a2966b7da795bdc4de6192da4fccef8deb3776c65db22646740"
+    },
+    {
+      "file": "mobile/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json.gz",
+      "rawBytes": 67297,
+      "rawSha256": "fca9d019ada9090f777b4098beee04de2a8cf17993a2583c490a1a249d0cca6c"
+    },
+    {
+      "file": "spn135-candidate-mobile-comparison.json.gz",
+      "rawBytes": 7038,
+      "rawSha256": "22c6938c30729ccfbc76962d419edf65751afe1a5f02a053774a1e66a8587934"
+    },
+    {
+      "file": "spn135-candidate-mobile-comparison.log.gz",
+      "rawBytes": 5333,
+      "rawSha256": "cf0ec6dc7abc09ee8bf021c0ea2069a6a041810ddd3b5d5ed97beb580527f470"
+    },
+    {
+      "file": "spn135-candidate-build.log.gz",
+      "rawBytes": 4307,
+      "rawSha256": "4ed858df09f87b69d71a864897e6f60f730bb004d0eb69da4b8b3065547b8c20"
+    },
+    {
+      "file": "spn135-candidate-build-processes.json.gz",
+      "rawBytes": 3634,
+      "rawSha256": "94ee0e9b8122bc35afeabd667beaa8e310ea188c44b1c3a7e291e09ef30e4181"
+    },
+    {
+      "file": "spn135-candidate-build-cleanup.json.gz",
+      "rawBytes": 237,
+      "rawSha256": "7254a774c0b32b5f9301e8de6e1cd86b2b7bd28919c8bc815b9bcd758e19dc47"
+    },
+    {
+      "file": "spn135-candidate-desktop.log.gz",
+      "rawBytes": 1410,
+      "rawSha256": "2d30f0425ecb01357640436d439925e5f4409fac7c704d758537a73a62ec067a"
+    },
+    {
+      "file": "spn135-candidate-desktop-processes.json.gz",
+      "rawBytes": 252753,
+      "rawSha256": "8519bb9bcca44de6d4becc8d85a7719294092d018ebb8e84317c68c6f20c2ace"
+    },
+    {
+      "file": "spn135-candidate-desktop-cleanup.json.gz",
+      "rawBytes": 239,
+      "rawSha256": "19e4894c769ca39d747f140edcc40c8225f4a4fa9de7b8988af5a6f6b7ed599b"
+    },
+    {
+      "file": "spn135-candidate-mobile-plain.log.gz",
+      "rawBytes": 993,
+      "rawSha256": "929f613ae4bb04df62fd7c58c78c613796e84fd9650757af132e4fde980ca751"
+    },
+    {
+      "file": "spn135-candidate-mobile-plain-processes.json.gz",
+      "rawBytes": 298189,
+      "rawSha256": "98288bde309a3f0d5bd5b5382b9e84657f153306321b394f9be9e74ad4f30390"
+    },
+    {
+      "file": "spn135-candidate-mobile-plain-cleanup.json.gz",
+      "rawBytes": 244,
+      "rawSha256": "5133561b0949e52d63506ad50f71380d6140f9336aef3cc1c0102615c717fbd1"
+    },
+    {
+      "file": "spn135-candidate-mobile-other.log.gz",
+      "rawBytes": 1070,
+      "rawSha256": "f0254b21e4a262b7aceb945fcc8c782024b3314785f7176972e2fa5a36df8b6e"
+    },
+    {
+      "file": "spn135-candidate-mobile-other-processes.json.gz",
+      "rawBytes": 213454,
+      "rawSha256": "8cb99a2c8517cbc7c819edb74119b6af73f73e122f50c75dc83b8cd5426d6ba9"
+    },
+    {
+      "file": "spn135-candidate-mobile-other-cleanup.json.gz",
+      "rawBytes": 244,
+      "rawSha256": "b25c6c2fb7b2e7f5791a87ac517394f93054a70ca8e3a5e0fcd3c433cec7a73c"
+    },
+    {
+      "file": "spn135-candidate-desktop-report.json.gz",
+      "rawBytes": 17210,
+      "rawSha256": "4a6ef3aaed72dc1ab89cfb044ccd298e6c3e916bec4618e066c6b157026d6793"
+    },
+    {
+      "file": "spn135-candidate-mobile-plain-report.json.gz",
+      "rawBytes": 12367,
+      "rawSha256": "d32133256f54b72066a649880499655d8fa905e18961affc390c9781beae73ef"
+    },
+    {
+      "file": "spn135-candidate-mobile-other-report.json.gz",
+      "rawBytes": 14059,
+      "rawSha256": "8c68afcab1eb39944fc31127006b6395e94e99abc88e52e97d8850752303102f"
+    },
+    {
+      "file": "spn135-candidate-collection.log.gz",
+      "rawBytes": 1787,
+      "rawSha256": "313573104d2e819e034dc67233e94671ea8482bfa207697bb08bdf00c6d2586d"
+    },
+    {
+      "file": "spn135-prebuild-backlog.log.gz",
+      "rawBytes": 1664,
+      "rawSha256": "f0c55b491b746f2326ca5f5aeced1c3cd4506477f96acc1c65cb7f17958da89f"
+    },
+    {
+      "file": "spn135-post-acceptance-lint.log.gz",
+      "rawBytes": 690,
+      "rawSha256": "54f39ebcb2e2697990f735c881aad0cbddac982d42f5e9fcd0c8e8b5e884ab48"
+    },
+    {
+      "file": "spn135-post-acceptance-lint-processes.json.gz",
+      "rawBytes": 16406,
+      "rawSha256": "ec2874381db74b58f4e53db21012cead04df160c5216321a5d0632175f8f32cb"
+    },
+    {
+      "file": "spn135-post-acceptance-lint-cleanup.json.gz",
+      "rawBytes": 242,
+      "rawSha256": "b61ed476b961505fbf0d4b1a20b55b0925a31224ec7b10f60c80722321e20c73"
+    },
+    {
+      "file": "spn135-accepted-seam.log.gz",
+      "rawBytes": 259,
+      "rawSha256": "069e61c2f1f13ec0211e4db1f27edb61137478952b4599e01c51f88f696809cb"
+    },
+    {
+      "file": "spn135-accepted-seam-processes.json.gz",
+      "rawBytes": 4528,
+      "rawSha256": "45c5f73b7700c41b30cfec73c36a69522969db3bf862a319e912cba2d9c37b34"
+    },
+    {
+      "file": "spn135-accepted-seam-cleanup.json.gz",
+      "rawBytes": 235,
+      "rawSha256": "5d6af8da3bca8e752dfc71ebf561e25f0d6ede408ab06d90f32e91332d06e202"
+    }
+  ],
+  "interpretation": "Supported native work reduction and complete idle-coverage repair; original untraced34.3ms attribution remains unknown. No total heap/allocation-reduction claim. All unprofiled samples are first attempts on this candidate, unchanged budgets. Profiles are separate diagnostics. CI/PR/merge work intentionally not performed during the owner-requested local pre-push quality work."
+}

@@ -1,0 +1,130 @@
+{
+  "ticket": "SPN-138",
+  "kind": "original CI result extract; not the full artifact",
+  "source": {
+    "repository": "mxbaylee/spinel",
+    "pullRequest": 251,
+    "head": "6c0080d5aa492e654a225b4d22073f0d251cfb4d",
+    "base": "77cdd6c556c186cb5705b4d24e312da3aea36d3e",
+    "testedMerge": "1ef685c0cb9b8f613806496356fa4167cb88dbdc"
+  },
+  "workflow": {
+    "name": "CI",
+    "event": "pull_request",
+    "runId": 41781852668,
+    "runAttempt": 1,
+    "jobId": 126415088098,
+    "jobName": "Playwright smoke (sync-production)",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41781852668/job/126415088098"
+  },
+  "supplementaryArchive": {
+    "artifactId": 13300162191,
+    "name": "theme-screenshots-sync-production",
+    "sha256": "474823dd23257e65c47dfaeae88abea860fe6f434db21fd212be99031d93912e",
+    "expiresOnUtc": "2026-11-11",
+    "resultPath": "playwright-report/sync-production.json",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41781852668/artifacts/13300162191"
+  },
+  "suitePath": [
+    "offline-creation.spec.ts",
+    "documents created offline"
+  ],
+  "originalSpec": {
+    "title": "sheet: create in a cached shared folder, edit, reload twice offline and upload once",
+    "ok": true,
+    "tags": [],
+    "tests": [
+      {
+        "timeout": 180000,
+        "annotations": [],
+        "expectedStatus": "passed",
+        "projectId": "sync-production",
+        "projectName": "sync-production",
+        "results": [
+          {
+            "workerIndex": 0,
+            "parallelIndex": 0,
+            "status": "timedOut",
+            "duration": 180029,
+            "error": {
+              "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m",
+              "stack": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+            },
+            "errors": [
+              {
+                "message": "\u001b[31mTest timeout of 180000ms exceeded.\u001b[39m"
+              },
+              {
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/offline-fixture.ts",
+                  "column": 11,
+                  "line": 564
+                },
+                "message": "Error: browserContext.close: Target page, context or browser has been closed\n\n   at offline-fixture.ts:564\n\n  562 |       } finally {\n  563 |         try {\n> 564 |           await Promise.all(contexts.map((context) => context.close()));\n      |           ^\n  565 |         } finally {\n  566 |           db.close();\n  567 |         }\n    at Object.close (/home/runner/work/spinel/spinel/e2e/offline-fixture.ts:564:11)\n    at /home/runner/work/spinel/spinel/e2e/offline-creation.spec.ts:715:13"
+              }
+            ],
+            "stdout": [],
+            "stderr": [],
+            "retry": 0,
+            "startTime": "2026-11-04T05:59:07.188Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "screenshot",
+                "contentType": "image/png",
+                "path": "/home/runner/work/spinel/spinel/test-results/sync-production/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/test-failed-1.png"
+              },
+              {
+                "name": "error-context",
+                "contentType": "text/markdown",
+                "path": "/home/runner/work/spinel/spinel/test-results/sync-production/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/error-context.md"
+              }
+            ]
+          },
+          {
+            "workerIndex": 1,
+            "parallelIndex": 0,
+            "status": "passed",
+            "duration": 16035,
+            "errors": [],
+            "stdout": [],
+            "stderr": [],
+            "retry": 1,
+            "startTime": "2026-11-04T06:02:07.819Z",
+            "annotations": [],
+            "attachments": [
+              {
+                "name": "trace",
+                "contentType": "application/zip",
+                "path": "/home/runner/work/spinel/spinel/test-results/sync-production/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-retry1/trace.zip"
+              }
+            ]
+          }
+        ],
+        "status": "flaky"
+      }
+    ],
+    "id": "42defac763e8d20480e7-8734c51dc0e50553814c",
+    "file": "offline-creation.spec.ts",
+    "line": 359,
+    "column": 7
+  },
+  "firstAttemptObservations": {
+    "screenshot": "SPN-138-first-failure.png",
+    "screenshotSha256": "cb62494d50c0ba2a349961bec4ef0fddf555951756f64c2570766f345b30f8e1",
+    "visibleText": [
+      "This item isn't available",
+      "Failed to fetch",
+      "Refresh shared items"
+    ],
+    "offlineIndicatorVisible": true,
+    "diagnosticsItemUrl": "http://localhost:3105/?item=50b52843-7722-4432-9f14-ebee23b51ef6",
+    "itemIdentity": "The artifacts do not establish whether this UUID denotes the folder or the draft.",
+    "firstAttemptTraceAvailable": false,
+    "errorContextHasDomSnapshot": false,
+    "diagnosticsObserved": [],
+    "publication": "The only blocked offline-create POST is the deliberate verifyDisconnected connectivity probe; there is no forwarded creation publication.",
+    "limitation": "The first blocked statement and precise CI interleaving are not proved. The false-readiness boundary is established separately from maintained source and SPN-116 controlled probes."
+  },
+  "disposition": "Original first attempt remains failed; successful retry is diagnostic and does not satisfy failOnFlakyTests or repair proof."
+}

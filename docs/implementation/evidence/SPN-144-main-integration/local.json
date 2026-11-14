@@ -1,0 +1,146 @@
+{
+  "previousAcceptedSource": "7b06d7516c4c386f5a23044e74d0c09b95a5a929",
+  "integratedBase": "89d93c8b23db65d3fe6a83d1853acc716c024b80",
+  "implementationTestsWorkflowsDependenciesUnchanged": true,
+  "changedPaths": [
+    "docs/implementation/SPN-144.md",
+    "docs/implementation/SPN-145.md",
+    "docs/implementation/SPN-146.md",
+    "docs/implementation/grooming-2026-11-05-spn089-prerequisites.md",
+    "docs/todo/SPN-089.md",
+    "docs/todo/SPN-145.md",
+    "docs/todo/SPN-146.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "local": {
+    "lint": {
+      "outcome": "command-passed",
+      "elapsedMs": 17633,
+      "peakKiB": 748208,
+      "pressure": "1"
+    },
+    "backlog": "passed",
+    "index": "regenerated through CLI",
+    "prTitle": "passed",
+    "whitespace": "passed"
+  },
+  "priorAcceptedArchive": "02541cea2c28adadb988394be84515effa205b22",
+  "publicationVerifierFirstFailure": "All byte checks passed; obsolete derived-trace filename expectation corrected to actual spn144-derived.json.gz. First helper/log/watchdog retained. No application or converter rerun.",
+  "mergeGuardDisposition": "Ready transition returned UNKNOWN then CONFLICTING; actual remote main advanced89d93 while REST base temporarily showed1045. No merge attempted; returned draft and integrated documentation-only main. Generated index was the sole conflict.",
+  "newHeadAcceptance": "Pending two independent exact-commit reviews and fresh selected CI/first-attempt native comparisons; earlier accepted jobs are not current-head gate credit",
+  "payloads": [
+    {
+      "file": "spn144-final-publication-a.md.gz",
+      "rawBytes": 4175,
+      "rawSha256": "3f9e18f2625dfb6b80455ae16519819735f1b702bb0d7d8982ba800cb1c5851e",
+      "storedBytes": 2049,
+      "storedSha256": "21b304d5d881b11adc07d5efd558edd547753d0494fb9a8a865d6fadcaab4bb3"
+    },
+    {
+      "file": "spn144-final-publication-a.json.gz",
+      "rawBytes": 3561,
+      "rawSha256": "03243afa7e5d37d13751fd4d3c005bbc82557451889d4e33095ce1483b5c69e4",
+      "storedBytes": 1503,
+      "storedSha256": "1157f830f3f48b1188d9e0ce2306a61c791f42a1c9267e14cb94536b7e65f0d4"
+    },
+    {
+      "file": "spn144-publication-check-a.ts.gz",
+      "rawBytes": 6955,
+      "rawSha256": "e3ce197d53d388a412077410260c161333edb21a3c22d14e32e3d0ab1321ecdf",
+      "storedBytes": 2877,
+      "storedSha256": "7b932db2f963a5b30868c1c40be6ce9209763ac342e5071f66aa2d09dbedff1a"
+    },
+    {
+      "file": "spn144-final-publication-a.log.gz",
+      "rawBytes": 2230,
+      "rawSha256": "3a1d6dcdfd1fa68d8d31679957b9449f43ceb35eef60439e1c793213992a3f31",
+      "storedBytes": 1022,
+      "storedSha256": "f01fcddc52e80fb7769e48e35f90aa2aae8f32d3cc9641bb590846e527e597fd"
+    },
+    {
+      "file": "spn144-final-publication-a-watchdog.json.gz",
+      "rawBytes": 13248,
+      "rawSha256": "c0a09b1ac0918b14e8aa8034e9f76ebbb5266e5dab7417c49f57e513d8bcc824",
+      "storedBytes": 1338,
+      "storedSha256": "c1403a36bd164190b166bc2ada4774af816fbc7edac9448ea8b835600bddc660"
+    },
+    {
+      "file": "spn144-publication-check-first-a.ts.gz",
+      "rawBytes": 6953,
+      "rawSha256": "261ba314e190206cf3c6a89063b89e1fa1d9110a4376a9cd4bc074d699b992ca",
+      "storedBytes": 2877,
+      "storedSha256": "c2445bdfa8047b09f7198fe135ec1a2bb6161b5f43ba4cada120cd914cd0f1f1"
+    },
+    {
+      "file": "spn144-final-publication-first-a.log.gz",
+      "rawBytes": 514,
+      "rawSha256": "79d3408eec0997f5042b5ed57ea21ff137d7693cf2a6a60b668f0ce515bd79f1",
+      "storedBytes": 384,
+      "storedSha256": "e2eabdcf230212efac4fd9d4176388cd779a21e75b3393bfa151b6981805b634"
+    },
+    {
+      "file": "spn144-final-publication-first-a-watchdog.json.gz",
+      "rawBytes": 13243,
+      "rawSha256": "e598e875740748554df514bb5cc807a0e2e9a8c69c27fd8d58042e559dc1f72d",
+      "storedBytes": 1308,
+      "storedSha256": "4f0cb00a3efd80c69b02340f1d2cc26b8c90cc04c3ad40e2a005932a0230f3f0"
+    },
+    {
+      "file": "spn144-ready-rollup.json.gz",
+      "rawBytes": 12912,
+      "rawSha256": "7876d74d31c72312b4696a18b8ff94077e8dc71370f898ede14c1d740dd717a8",
+      "storedBytes": 1404,
+      "storedSha256": "a0089bc6443780518a5a745566e7df79160fde1a51e10a42552f5e06b77ba010"
+    },
+    {
+      "file": "spn144-ready-settled-rollup.json.gz",
+      "rawBytes": 12914,
+      "rawSha256": "f2858962612915c0e04eff0a56d85e8f64a05b99fbd6c8358b40323c9b876306",
+      "storedBytes": 1412,
+      "storedSha256": "7e30ef9f880bb5d38dc18eb651a23cbf6acdbd39743258bed4fcab75597520a5"
+    },
+    {
+      "file": "spn144-ready-raw-pr.json.gz",
+      "rawBytes": 18420,
+      "rawSha256": "e0b3f88a2113e54a7a39ae6199742606f21776d31c1ed078b10ea4d849cdc60c",
+      "storedBytes": 3417,
+      "storedSha256": "e437fc614cf6ef39e8bc508b0af15533f71d5855fdb9bd7a73cd01b53e55ee23"
+    },
+    {
+      "file": "spn144-integration-index.log.gz",
+      "rawBytes": 1662,
+      "rawSha256": "ff00779c29ac7855aa5c25c842eb35bd7e7053f683cca58227eb7088f7f27c5f",
+      "storedBytes": 322,
+      "storedSha256": "985dc9221deaca3ffdc015e8f692870fb71eab3c74f58345098757facb0f879b"
+    },
+    {
+      "file": "spn144-integration-backlog.log.gz",
+      "rawBytes": 1664,
+      "rawSha256": "85272a4e6e79e4a020a37dea1a20c3b060073756acdf15b0cc019e367efea7ef",
+      "storedBytes": 318,
+      "storedSha256": "7e1f89528a49d61c8570c76c40fbc9cfbdc6e97b5629d41926154b4e10afd057"
+    },
+    {
+      "file": "spn144-integration-pr.log.gz",
+      "rawBytes": 164,
+      "rawSha256": "6149a3c17d62565984452623c815caf8322881378483a637fc211d41f2ad96e2",
+      "storedBytes": 158,
+      "storedSha256": "36d9fcfc668763e8880cf1b21c15dd9b8af1046de6bd053312afaf4b28165e50"
+    },
+    {
+      "file": "spn144-integration-lint.log.gz",
+      "rawBytes": 690,
+      "rawSha256": "8fb3c8add33007c27e16987f426ee643eac6e980463df027ea20c1c0290c7565",
+      "storedBytes": 396,
+      "storedSha256": "357937731567b9fbaf2429a39e7e42f8ca854554174ddd80c37dd7e5af0a75fb"
+    },
+    {
+      "file": "spn144-integration-lint-watchdog.json.gz",
+      "rawBytes": 17813,
+      "rawSha256": "ea70855461088574396bc6809055b1979a343da554af8dab78199b7edcf29d7a",
+      "storedBytes": 1251,
+      "storedSha256": "ddb98fd54685e222edf5af598a37186cc4ac03a5a2a923b20af9cc5ebcb7165a"
+    }
+  ]
+}

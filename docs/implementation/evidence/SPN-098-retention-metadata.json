@@ -1,0 +1,7 @@
+{
+  "date": "2026-11-02",
+  "base": "24e00a783803749b73483457b923dddafee9996c",
+  "command": "node scripts/serial.ts node /tmp/spn124-merge-evidence/watchdog.ts npx vitest run src/server/diagnostics/feedback.test.ts",
+  "scope": "Actual export metadata adapter tests, not TTL implementation or full ticket acceptance",
+  "log": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-098\n\n\n Test Files  1 passed (1)\n      Tests  15 passed (15)\n   Start at  13:08:25\n   Duration  1.75s (tests 91%, transform 5%, import 4%)\n\nWATCHDOG: exit=0, signal=null, elapsed=2696ms, peak=443.7MiB\n"
+}

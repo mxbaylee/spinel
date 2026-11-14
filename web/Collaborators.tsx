@@ -17,6 +17,7 @@ import { avatarProfile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { palettes, presenceFallbackColors } from '../src/ui/palette.ts';
 import { getTheme, watchTheme } from '../src/ui/theme.ts';
+import { redrawScheduler } from '../src/ui/redrawScheduler.ts';
 import { PresenceLabel, presencePopupZIndex } from './PresenceLabel.tsx';
 import { presenceRenderColors } from './presenceColors.ts';
 import { useState } from 'react';
@@ -107,6 +108,9 @@ export function collaboratorColor(id: string) {
   return presenceFallbackColors[hash % presenceFallbackColors.length];
 }
 
+/** Shortest gap between remote-caret redraws while the document is changing (SPN-146). */
+export const REDRAW_INTERVAL_MS = 150;
+
 export async function watchPresence(
   univer: Univer,
   api: FUniver,
@@ -129,7 +133,6 @@ function watchSyncPresence(
   let state: SyncPresenceState = { selfId: '', members: [], connected: false };
   let disposed = false;
   let active = true;
-  let frame = 0;
   let previous = '';
   let activeSheet = '';
   const popups: IDisposable[] = [];
@@ -158,8 +161,6 @@ function watchSyncPresence(
       setLocalDocSelectionColor(univer, id, color, colors);
   };
   const update = () => {
-    cancelAnimationFrame(frame);
-    frame = 0;
     if (disposed) return;
     clearPopups();
     if (!active || !state.connected) {
@@ -245,8 +246,29 @@ function watchSyncPresence(
     localColor();
     publish(people);
   };
+  // Every document layout step asks for a redraw, and each redraw rebuilds a canvas range and popup per
+  // remote caret, which reads layout several times. During typing that was one rebuild per key (about 6
+  // layouts and 100 KB of Blink objects per key, SPN-146). The cursor transport already coalesces to 150 ms,
+  // so carets redraw at most that often: the first request draws on the next frame, later ones share one trailing draw.
+  const redraw = redrawScheduler(() => update(), REDRAW_INTERVAL_MS);
   const schedule = () => {
-    if (!disposed && !frame) frame = requestAnimationFrame(update);
+    if (!disposed) redraw.schedule();
+  };
+  // Sheet scrolling, zooming and resizing move every caret, so they redraw on the next frame rather than
+  // trailing by an interval. A Doc raises the same events while typing (measured: 84 against 106 KB of Blink
+  // objects per key when they skip the interval), so Docs keep the interval for them.
+  const follow = redrawScheduler(() => update(), 0);
+  // The local caret's own restyle must not wait for the trailing draw: it replaces the text range, so landing
+  // in the middle of a typing burst it can revert the caret to a stale offset and reorder the typed letters
+  // (hosted e2e/collaboration.spec.ts "two document editors merge text", every head whose CI ran to completion
+  // with the interval). It now runs on the next frame after each selection move, which approximates the
+  // per-layout-frame timing before the throttle. If a guard in the restyle skips that call (pointer drag, IME,
+  // pending selection), the throttled update() still retries it, so that residual path can land mid-burst.
+  const localFrame = redrawScheduler(() => localColor(), 0);
+  const scheduleFrame = () => {
+    if (disposed) return;
+    if (docSelections) redraw.schedule();
+    else follow.schedule();
   };
   const sendCursor = () => {
     if (disposed || !state.connected || !state.selfId || !active) {
@@ -314,32 +336,32 @@ function watchSyncPresence(
       if (!next.connected || next.selfId !== state.selfId) previous = '';
       state = next;
       // Disconnect cleanup is immediate: stale labels never imply a live peer.
-      if (!state.connected) update();
+      if (!state.connected) redraw.runNow();
       else schedule();
     }),
   );
-  cleanups.push(watchTheme(schedule));
-  window.addEventListener('resize', schedule);
-  cleanups.push(() => window.removeEventListener('resize', schedule));
+  cleanups.push(watchTheme(() => redraw.runNow()));
+  window.addEventListener('resize', scheduleFrame);
+  cleanups.push(() => window.removeEventListener('resize', scheduleFrame));
   const scrolling = api.addEvent(api.Event.Scroll, ({ workbook }) => {
-    if (workbook.getId() === id) schedule();
+    if (workbook.getId() === id) scheduleFrame();
   });
   cleanups.push(() => scrolling.dispose());
   if (render) {
     const activation = render.activated$.subscribe((value) => {
       active = value;
-      if (!value) update();
+      if (!value) redraw.runNow();
       else schedule();
     });
     cleanups.push(() => activation.unsubscribe());
-    const transform = render.scene.onTransformChange$.subscribeEvent(schedule);
-    const engine = render.engine.onTransformChange$.subscribeEvent(schedule);
+    const transform = render.scene.onTransformChange$.subscribeEvent(scheduleFrame);
+    const engine = render.engine.onTransformChange$.subscribeEvent(scheduleFrame);
     cleanups.push(
       () => transform.unsubscribe(),
       () => engine.unsubscribe(),
     );
     for (const viewport of render.scene.getViewports()) {
-      const scrolling = viewport.onScrollAfter$.subscribeEvent(schedule);
+      const scrolling = viewport.onScrollAfter$.subscribeEvent(scheduleFrame);
       cleanups.push(() => scrolling.unsubscribe());
     }
     if (docSelections) {
@@ -359,7 +381,9 @@ function watchSyncPresence(
       });
       const selection = docSelections.textSelection$.subscribe((event) => {
         // Capture every native move, coalescing transport to the 150 ms timer.
-        if (event.unitId === id) docSelection = event;
+        if (event.unitId !== id) return;
+        docSelection = event;
+        localFrame.schedule();
       });
       cleanups.push(
         () => {
@@ -377,7 +401,9 @@ function watchSyncPresence(
     if (disposed) return;
     disposed = true;
     clearInterval(timer);
-    cancelAnimationFrame(frame);
+    redraw.cancel();
+    follow.cancel();
+    localFrame.cancel();
     cleanups.reverse().forEach((close) => close());
     clearPopups();
     publish([]);

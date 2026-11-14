@@ -71,6 +71,45 @@ test('service changes keep candidate correctness and all existing broad checks w
   assert.equal(plan.suites['phone-compatibility'].selected, false);
 });
 
+test('the opt-in SPN-146 A/B stays tested without widening to full or performance coverage', () => {
+  const experiment = [
+    '.github/workflows/patch-ab.yml',
+    'scripts/ci/patch-ab/toggle.ts',
+    'scripts/ci/patch-ab/summarize.ts',
+    'scripts/ci/patch-ab.test.ts',
+  ];
+  const plan = coveragePlan('pull_request', pr(), experiment, head);
+  assert.equal(plan.mode, 'targeted');
+  for (const id of ['unit-tests', 'lint', 'typecheck'] as const)
+    assert.equal(plan.suites[id].selected, true, id);
+  for (const id of [
+    'restore-timing',
+    'responsiveness-baseline',
+    'callback-baseline',
+    'lib-test-run',
+    'phone-compatibility',
+  ] as const)
+    assert.equal(plan.suites[id].selected, false, id);
+  // Each experiment path alone, including the workflow file, still runs the script tests, lint and typecheck.
+  for (const path of experiment) {
+    const alone = coveragePlan('pull_request', pr(), [path], head);
+    assert.equal(alone.mode, 'targeted', path);
+    for (const id of ['unit-tests', 'lint', 'typecheck'] as const)
+      assert.equal(alone.suites[id].selected, true, `${path} ${id}`);
+  }
+  // Neighbouring workflow and CI script paths keep their full-coverage rule.
+  for (const path of ['.github/workflows/browserstack.yml', 'scripts/ci/patch-ab-other.ts'])
+    assert.equal(coveragePlan('pull_request', pr(), [path], head).mode, 'full', path);
+  assert.equal(
+    coveragePlan('pull_request', pr(), [...experiment, 'web/App.tsx'], head).mode,
+    'targeted',
+  );
+  assert.equal(
+    coveragePlan('pull_request', pr(), [...experiment, 'scripts/ci/plan.ts'], head).mode,
+    'full',
+  );
+});
+
 test('sized restore participates in the immutable plan and fails closed', () => {
   for (const path of [
     'src/server/auth/store.ts',
@@ -111,6 +150,10 @@ test('dependency closure and unknown paths fail closed, including old rename/del
     '.nvmrc',
     'vite.config.ts',
     'e2e/doc-responsiveness.spec.ts',
+    'e2e/doc-responsiveness-callback-progress.ts',
+    'e2e/doc-responsiveness-callback-proto.ts',
+    'e2e/doc-responsiveness-callback-converter.ts',
+    'scripts/ci/doc-trace-processor.ts',
     'scripts/dependencies/patch-univer-docs.ts',
   ]) {
     const plan = coveragePlan('pull_request', pr(), [path, 'docs/deleted.md']);

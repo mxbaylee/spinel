@@ -1,0 +1,44 @@
+{
+  "source": "5108adb55c2de303af7146a0f24402be72430b3a",
+  "base": "7c38f7d32e6a55d8000239923113155de6a07c8c",
+  "runtime": {
+    "node": "v26.13.0",
+    "storybook": "10.6.5",
+    "playwright": "1.64.1",
+    "chromium": "156.0.8078.4",
+    "univer": "1.3.1"
+  },
+  "nativeSample": {
+    "attempt": 1,
+    "variant": "desktop-light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "story": "editor-sync-native--doc-drawing-capture",
+    "probeMode": "corrected"
+  },
+  "typecheckEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "cleanup": {
+    "ownedProcessesRemaining": false,
+    "port6019Listening": false,
+    "pressureLevel": 1
+  },
+  "hashes": {
+    "web/SyncNative.stories.tsx": "58d00a0c9bf44577ac7ca038dd3f329274d850628eaab0765e9e0a210f998b76",
+    "web/nativeDrawingResize.ts": "eee23ea9c84a2bb5af5035a2a6d6973cd916a7b3108601ec8d82cb3513817cc7",
+    "src/ui/nativeDrawingResize.test.ts": "11b5d358453fa7ea44e9eb88103ece31abd394dbf6aaed2dc05865bcd42984f0",
+    "scripts/screenshots.ts": "ff5eb6dd5ac731eae89137d52c1b9c5349d9577d9bff4b86a7d353122e1aa855",
+    "test-results/spn159/experiment.ts": "b73d21a21d158fa32a994f86c8507e8a0388f746989a9fff0a8440b8838b2e45",
+    "test-results/spn159/storybook/main.ts": "14ffdedd6edc1387d73faa67e50658c4e55c0b73a4c090b530530070ef12606d",
+    "test-results/spn159/storybook/preview.tsx": "14d2ef1cfefb1cf22017b38da85924ce6f2d195c325198e521a90b2932e8185e",
+    "test-results/spn159/static/index.json": "0538f8d2a28c44845d7c9fdb4ea807b09f642312f1c1ddb281ccc7aa0b98bec5",
+    "test-results/spn159/static/assets/SyncNative.stories-C-UPTMYX.js": "9f2ba5d55e37ca1dc55d721b8a10ffccb961aa3185beb8e909ebabcf26bbe087",
+    "node_modules/@univerjs/engine-render/lib/es/index.js": "4aafe05d46511c0a6be2bc53a7ab9cf794398c45eef7ed9e10269cf392db4771",
+    "node_modules/@univerjs/docs-drawing-ui/lib/es/index.js": "ed4e5911810077a2b76e3db9ff986b5539d7467ebaf4f531a176503b8b56d1d4"
+  }
+}

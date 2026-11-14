@@ -1,0 +1,412 @@
+{
+  "sourceAtStart": "f5b7862c1990e4a70cb247d90d44f2ee19db8673",
+  "candidateSources": [
+    {
+      "path": ".github/workflows/doc-native-runtime.yml",
+      "sha256": "4116a3d5fb8c1d868ac506851e2113fc75f3a995daf43bc529bd24fc59ea3b3c"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime.test.ts",
+      "sha256": "77c3f8394f92f061a7067f2b9bafc501ef1af7f684548ad514eca51dc1752970"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/analysis.ts",
+      "sha256": "0faeeb8df5cf7242eb265c416386ad015a5cb917ca6fdeb8ad4545040a25eb89"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/build.ts",
+      "sha256": "a89cc1795e6d612d48080c1ea070c234f46eebf9055054910cd6759cb2d9a2d4"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/convert.ts",
+      "sha256": "5e273532697eb06f01d7d8bab7de8503319ab8ed2252ba407587931af60de58d"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/run.ts",
+      "sha256": "f014eb477006da1c9ab9374d359dcbded8e07ea6c9f250004b6a5cbaba9bd969"
+    },
+    {
+      "path": "scripts/ci/doc-native-runtime/watchdog.ts",
+      "sha256": "d5931be7d000593ce879933ea7fb32b7a15e8ff7dc865943f710aae385fef74d"
+    }
+  ],
+  "scope": "Local preparation/synthetic controls only; actual Linux runtime, process watchdog integration, pinned conversion and fresh application CI pending. First portable bundle used different RxJS entry; retained and corrected before runtime. Callback progress broad suite could not load partial Playwright install; focused actual shared-helper persistence controls passed.",
+  "payloads": [
+    {
+      "name": "000-hosted-runtime-backlog-watchdog.json.gz",
+      "original": "checks/hosted-runtime-backlog-watchdog.json",
+      "rawBytes": 2823,
+      "storedBytes": 597,
+      "rawSha256": "8c00322d0f3334d454c3518b6180d9dae32a0d62de9bf0ee52fc2a1f1a7967c8",
+      "storedSha256": "c0355ffbfea37812ce30e75e9dbad082d113012d5539a4c2ea5f3f8295881efa"
+    },
+    {
+      "name": "001-hosted-runtime-backlog.log.gz",
+      "original": "checks/hosted-runtime-backlog.log",
+      "rawBytes": 218,
+      "storedBytes": 208,
+      "rawSha256": "0b97f653a9bbce17c4f62806a4cd9928e14b4d85dd351d1142aad710625ac935",
+      "storedSha256": "85a4c2a7280ede0d99d9afd33357cb4d71b76a876a6022cd3d0452e2054c4d37"
+    },
+    {
+      "name": "002-hosted-runtime-controls-a-watchdog.json.gz",
+      "original": "checks/hosted-runtime-controls-a-watchdog.json",
+      "rawBytes": 1561,
+      "storedBytes": 435,
+      "rawSha256": "61670780b81dfe5850c4996261cfabfb620ac99bb5f920a4e08425009009135c",
+      "storedSha256": "e84d62b3470065571c25a54afc72723da9071e459522e38459ccf2817d7ff314"
+    },
+    {
+      "name": "003-hosted-runtime-controls-a.log.gz",
+      "original": "checks/hosted-runtime-controls-a.log",
+      "rawBytes": 1776,
+      "storedBytes": 765,
+      "rawSha256": "55a999a480a1fe8859e5caa198ed58509e1a7b65a8f899198c7e9153219bb2ef",
+      "storedSha256": "1c095842d409d40f5b7f6f2d3d468ec1e6158523948c4409bb4d13875cccb63b"
+    },
+    {
+      "name": "004-hosted-runtime-controls-b-watchdog.json.gz",
+      "original": "checks/hosted-runtime-controls-b-watchdog.json",
+      "rawBytes": 1715,
+      "storedBytes": 469,
+      "rawSha256": "fb947e04bd3e2f732162ffea7f8479721475fda695c8117a02c56cb96e43d671",
+      "storedSha256": "f35e3f1e6b7a0c47e1cf757c531a3776ba2709abd3aea60944df15795bcd5330"
+    },
+    {
+      "name": "005-hosted-runtime-controls-b.log.gz",
+      "original": "checks/hosted-runtime-controls-b.log",
+      "rawBytes": 5437,
+      "storedBytes": 1613,
+      "rawSha256": "1b25632a91e9c59ae187bf0c80067ff8f3bb1ff0aacdc33a9ed62a1a8a660e82",
+      "storedSha256": "4f7f8d71fe0ea0ad848e3589ade055fc3709b7e0d9a7b43ff4154e6b859b905c"
+    },
+    {
+      "name": "006-hosted-runtime-controls-final-watchdog.json.gz",
+      "original": "checks/hosted-runtime-controls-final-watchdog.json",
+      "rawBytes": 1569,
+      "storedBytes": 436,
+      "rawSha256": "f8688d747b3f8a70d78d2cccfcf2b810bf85cb9b5293f754fbd3d1cb748545da",
+      "storedSha256": "b3ba36ecd28071d805b6e7c7741b0784af1cfcb57b6bfaab2ec8a3c748b1f88f"
+    },
+    {
+      "name": "007-hosted-runtime-controls-final.log.gz",
+      "original": "checks/hosted-runtime-controls-final.log",
+      "rawBytes": 2038,
+      "storedBytes": 865,
+      "rawSha256": "4ffeb611c0c227e9919436fb6cba3962b72853d790946945e49e3461d9a28452",
+      "storedSha256": "171800241a9d0c28b4545a3d27e8ca62a4747317e6160068479ff1b56330e338"
+    },
+    {
+      "name": "008-hosted-runtime-controls-watchdog.json.gz",
+      "original": "checks/hosted-runtime-controls-watchdog.json",
+      "rawBytes": 1557,
+      "storedBytes": 434,
+      "rawSha256": "b358eaffbd12f4c5557e9fcbcf58d6bd295946eb9b2c92ea39d81eab9d0077b6",
+      "storedSha256": "503b422856d86f77668dc13ce809fcec72cbc410c4e1441e9e9cb8c6a0696193"
+    },
+    {
+      "name": "009-hosted-runtime-controls.log.gz",
+      "original": "checks/hosted-runtime-controls.log",
+      "rawBytes": 1506,
+      "storedBytes": 630,
+      "rawSha256": "df57c2461b382ab981ac759392e32994718aabfbb7ee6679fabdf29555db2092",
+      "storedSha256": "8e635000332eefb910c15709f8fcd9ddbe5df88770bf8a041055014f10abff13"
+    },
+    {
+      "name": "010-hosted-runtime-format-a-watchdog.json.gz",
+      "original": "checks/hosted-runtime-format-a-watchdog.json",
+      "rawBytes": 1727,
+      "storedBytes": 480,
+      "rawSha256": "36f7847b9db58e7a0edb337057ea4330073a73c25cb31f9ed35e06b069ac28c9",
+      "storedSha256": "3b3ee5f75d44a63b054c323085d4e6f2cf13589176d678cbd4760368133fafd5"
+    },
+    {
+      "name": "011-hosted-runtime-format-a.log.gz",
+      "original": "checks/hosted-runtime-format-a.log",
+      "rawBytes": 370,
+      "storedBytes": 194,
+      "rawSha256": "3872a31b8900dd474aa415783a7cdb8dfdc2f9cde6e34c9e190cda715cc02986",
+      "storedSha256": "ee1b2c996e928a49b35bfb38d6185e238ea5001c9256e76769a13c594940a1de"
+    },
+    {
+      "name": "012-hosted-runtime-format-b-watchdog.json.gz",
+      "original": "checks/hosted-runtime-format-b-watchdog.json",
+      "rawBytes": 1727,
+      "storedBytes": 478,
+      "rawSha256": "a2b1da6f5505ef9e01ba785dd04cd6c3a075b4c886f66e2d4985b678fdb8b715",
+      "storedSha256": "ce01779aeaab2c397cccc90156af4ec074d038ac9b6ef057b26de4ea6a428736"
+    },
+    {
+      "name": "013-hosted-runtime-format-b.log.gz",
+      "original": "checks/hosted-runtime-format-b.log",
+      "rawBytes": 346,
+      "storedBytes": 188,
+      "rawSha256": "ebbfa90ddfe5458469c09f816aed9c152c92b3f842f449f6b2f757180d82a697",
+      "storedSha256": "d7e9a5b6f728a25bca347b3899d8727ae5f8f03ab905d2fa433e2169663bbb64"
+    },
+    {
+      "name": "014-hosted-runtime-format-final-watchdog.json.gz",
+      "original": "checks/hosted-runtime-format-final-watchdog.json",
+      "rawBytes": 1735,
+      "storedBytes": 492,
+      "rawSha256": "a096b1c0a5cd56d3279536089f8303a01f32b2b76700801be93098ecae9d935f",
+      "storedSha256": "5b453546ac8f3000c0a45ab89207afae991de2a08fca95afd9cfa8b77a84248e"
+    },
+    {
+      "name": "015-hosted-runtime-format-final.log.gz",
+      "original": "checks/hosted-runtime-format-final.log",
+      "rawBytes": 394,
+      "storedBytes": 191,
+      "rawSha256": "3269eb49464988b0ca5521186ca29932fb21682a03e760cd65f465b04fcfbbbf",
+      "storedSha256": "5c17ed88879c4016a7ff83d92c6b05fd6849dbe4f300642f1bfa37e11c8bf852"
+    },
+    {
+      "name": "016-hosted-runtime-format-repair-watchdog.json.gz",
+      "original": "checks/hosted-runtime-format-repair-watchdog.json",
+      "rawBytes": 1679,
+      "storedBytes": 489,
+      "rawSha256": "10a31a8daf99cfb6c2e247b5012c1a53e01f94c1c22263b80706b5950eb159f4",
+      "storedSha256": "bb0272bd1d5590002d8024b0a0760e50e5b780e2f354d831846f066868ad9d15"
+    },
+    {
+      "name": "017-hosted-runtime-format-repair.log.gz",
+      "original": "checks/hosted-runtime-format-repair.log",
+      "rawBytes": 111,
+      "storedBytes": 129,
+      "rawSha256": "1768f44cf812c869d5e0c22f7e1dd6e2a425991062dd64d231b4d0224443e45a",
+      "storedSha256": "075456c013d20000f67501f4ee9336c7e671833ee18d86aa71e8d74eaeab8678"
+    },
+    {
+      "name": "018-hosted-runtime-format-watchdog.json.gz",
+      "original": "checks/hosted-runtime-format-watchdog.json",
+      "rawBytes": 1723,
+      "storedBytes": 490,
+      "rawSha256": "1392a3bcf272cd919198aec0fb56100c8c66bf63a825bdacaff302a4675ed7f6",
+      "storedSha256": "4316ca455af288a5a402d5e15695f7d263e3ff197c0d0b3e92fef28405108712"
+    },
+    {
+      "name": "019-hosted-runtime-format.log.gz",
+      "original": "checks/hosted-runtime-format.log",
+      "rawBytes": 333,
+      "storedBytes": 175,
+      "rawSha256": "41172d48106c189620f49dfd03e9419825128cb5980f538c283435ed34f35ae1",
+      "storedSha256": "2d141143f02a6495489ea05651174ec150bed2a16d402f98c51db5a1c9028b44"
+    },
+    {
+      "name": "020-hosted-runtime-lint-final-watchdog.json.gz",
+      "original": "checks/hosted-runtime-lint-final-watchdog.json",
+      "rawBytes": 1743,
+      "storedBytes": 480,
+      "rawSha256": "e1b381a0300cddddee960bf4cccfbeedd354ab781d779eb6d1edb62a02dfb4f3",
+      "storedSha256": "cfb24ed68ab33a71b8a7dc1fd16580e3d5c5eaa0e6657523d27b41a74f1c8238"
+    },
+    {
+      "name": "021-hosted-runtime-lint-final.log.gz",
+      "original": "checks/hosted-runtime-lint-final.log",
+      "rawBytes": 67,
+      "storedBytes": 87,
+      "rawSha256": "a33a0fb17f855c9c8bc525afbbc0890d7280c716278e2dd849e88039d0b10f13",
+      "storedSha256": "fd0fa0ce3ed5a0cc0b32b75a6cf146ac00efd6e663f89305fbf5205459011677"
+    },
+    {
+      "name": "022-hosted-runtime-lint-watchdog.json.gz",
+      "original": "checks/hosted-runtime-lint-watchdog.json",
+      "rawBytes": 1731,
+      "storedBytes": 489,
+      "rawSha256": "1ebb5d2e1f95cd6ca1425a6aded071d60f353eb9612245090364d08ea3ef46ec",
+      "storedSha256": "6428b63791083e8d9c16d78b15dbe34981070fc1cdeb47c5f6eb60f35d3f1694"
+    },
+    {
+      "name": "023-hosted-runtime-lint.log.gz",
+      "original": "checks/hosted-runtime-lint.log",
+      "rawBytes": 67,
+      "storedBytes": 87,
+      "rawSha256": "831a3da39702bcff5842bc7c587d7b42808abc3c97cd46c8de22db9a1ab46da6",
+      "storedSha256": "536e32e62c23cc898220961a28f13ccf35634d224516afcbf4e5177f2f99cf4d"
+    },
+    {
+      "name": "024-hosted-runtime-preparation-matched-watchdog.json.gz",
+      "original": "checks/hosted-runtime-preparation-matched-watchdog.json",
+      "rawBytes": 2459,
+      "storedBytes": 493,
+      "rawSha256": "d7d14097eca468b3f9a4f7bf5ef55977bffd339f589373879158c921ee7b61c1",
+      "storedSha256": "fed1eeda22a81cb8e44047477da6681b19a672b4f69f768423f5c94f77dbbb40"
+    },
+    {
+      "name": "025-hosted-runtime-preparation-matched.log.gz",
+      "original": "checks/hosted-runtime-preparation-matched.log",
+      "rawBytes": 564,
+      "storedBytes": 297,
+      "rawSha256": "a14fe8be8218c028c252f6a11176b20ec35bf8a1513d7d2b707fa5ce6b1b4c21",
+      "storedSha256": "fea66ea1b8d439577b208321b43cabe8fd370ff0eae727dffda2742478dd3580"
+    },
+    {
+      "name": "026-hosted-runtime-preparation-watchdog.json.gz",
+      "original": "checks/hosted-runtime-preparation-watchdog.json",
+      "rawBytes": 2444,
+      "storedBytes": 483,
+      "rawSha256": "6c5db78574ef26f2eb00318521f7af387330484bbb317e159dfb850476b6c423",
+      "storedSha256": "ff514781e511231ee9005043fabebea8e02bbc78d5f000fae379f29d83d0584b"
+    },
+    {
+      "name": "027-hosted-runtime-preparation.log.gz",
+      "original": "checks/hosted-runtime-preparation.log",
+      "rawBytes": 566,
+      "storedBytes": 298,
+      "rawSha256": "85c7f4d7475485a0be973b1c8965e20566cd9919a714bb374647ea84b4a0dd10",
+      "storedSha256": "d22726012c3f13e3dbb5b28b2583933155ef6a6f2c7608ef1ede87eef42170ed"
+    },
+    {
+      "name": "028-hosted-runtime-types-final-watchdog.json.gz",
+      "original": "checks/hosted-runtime-types-final-watchdog.json",
+      "rawBytes": 2212,
+      "storedBytes": 528,
+      "rawSha256": "49269cb595dc5dbdb6f2a49acecece9bf7019161647bcae4f847f2f82652d8e6",
+      "storedSha256": "2b514a06ec2d624b1f629cd8b6d90e60eb65507d14c828db74ea6b9eae27feab"
+    },
+    {
+      "name": "029-hosted-runtime-types-final.log.gz",
+      "original": "checks/hosted-runtime-types-final.log",
+      "rawBytes": 68,
+      "storedBytes": 88,
+      "rawSha256": "13a44f6a401981ee94afac9dbc191f5e1f2ab0168e6445d2a8c60c6da4817ed0",
+      "storedSha256": "cca7992b4c97567d42791465d769a341857a5775bfb5260cf497bc27a8166760"
+    },
+    {
+      "name": "030-hosted-runtime-types-watchdog.json.gz",
+      "original": "checks/hosted-runtime-types-watchdog.json",
+      "rawBytes": 2200,
+      "storedBytes": 528,
+      "rawSha256": "de2b6801bd24f7cad664cb3a31e783f59814d963d5aa55b8c4b1415ed6df75b8",
+      "storedSha256": "ccb6c59f9285e46a6518ad64561aac7f32b53491a17fb57e17844a2191d49bc7"
+    },
+    {
+      "name": "031-hosted-runtime-types.log.gz",
+      "original": "checks/hosted-runtime-types.log",
+      "rawBytes": 68,
+      "storedBytes": 88,
+      "rawSha256": "e590ffbff206ee0607d5de5d0f337d4bd7333723a12f130d0554f3fa29e8f29c",
+      "storedSha256": "8317700da61d7620c5f9e9263e0ccba22cc8f251008c9e17affe7547a3b5b3e1"
+    },
+    {
+      "name": "032-preparation.json.gz",
+      "original": "first-preparation/preparation.json",
+      "rawBytes": 328545,
+      "storedBytes": 58790,
+      "rawSha256": "0002701a0cb8e58579fa1d474f6b37a6c9321a5409cad89adc06b22cad6f8c7a",
+      "storedSha256": "d2b53328b552b2062ccddc4a1b25c354e9c0be2171edd731f999cb9babe6eddf"
+    },
+    {
+      "name": "033-runtime.js.gz",
+      "original": "first-preparation/bundle/runtime.js",
+      "rawBytes": 4478851,
+      "storedBytes": 352976,
+      "rawSha256": "9a4e4951ae6c4a252801cddf612d3a759c0cab5d5ea67531d52e2ec74b7a2e12",
+      "storedSha256": "74c4bf02441c0ac93aaa51d4849113e7d96b55a7c7f0ba3e66e04e826e6c5fa9"
+    },
+    {
+      "name": "034-runtime.js.map.gz",
+      "original": "first-preparation/bundle/runtime.js.map",
+      "rawBytes": 5231202,
+      "storedBytes": 518854,
+      "rawSha256": "f4e75f0620271707ccc470c558240c4ee9a396d9ae02f5d6d5af89b8c25744c5",
+      "storedSha256": "873d85f35dda50cf121006999d105be37b1941dbc2b11e659fafb72ddad07802"
+    },
+    {
+      "name": "035-entry.ts.gz",
+      "original": "first-preparation/source/entry.ts",
+      "rawBytes": 1296578,
+      "storedBytes": 27581,
+      "rawSha256": "d37edcbb70f7385cafb67fd34cdc2481d2d1b66d3b86a255b4b74c465915d2b5",
+      "storedSha256": "342d6c7d7e40cf895f8c208bc04fba67f6cf4aed1dccf0f1733d23a92a2e54fa"
+    },
+    {
+      "name": "036-preparation.json.gz",
+      "original": "matched-preparation/preparation.json",
+      "rawBytes": 266944,
+      "storedBytes": 48702,
+      "rawSha256": "e1c510d829e41b52c65e8d1306fa356a7eab776a27ba27d6269247ad82fcf3d4",
+      "storedSha256": "32e45958fe2eecc42718053e4bfa237cb40269c28b5754bb0426b37fda2a5128"
+    },
+    {
+      "name": "037-runtime.js.gz",
+      "original": "matched-preparation/bundle/runtime.js",
+      "rawBytes": 4465260,
+      "storedBytes": 349791,
+      "rawSha256": "bd18d17112adcb2dbec9d855a1d9a3f333bed0beeaeae57edbd63687f09b5a5c",
+      "storedSha256": "0672d870bb05d293cc6ce2cfe9fd0177ff79aed8ecf744d298efd7bff0b4cfbb"
+    },
+    {
+      "name": "038-runtime.js.map.gz",
+      "original": "matched-preparation/bundle/runtime.js.map",
+      "rawBytes": 5198486,
+      "storedBytes": 510915,
+      "rawSha256": "79d67aa20f26154dea141bdb9b256b858a513999fec5fee8c533d4edfd8cb899",
+      "storedSha256": "79b544dd84e52eaa363dcaed508c6ce55cb94a02f0d374ee7ff4887e7a3098b6"
+    },
+    {
+      "name": "039-entry.ts.gz",
+      "original": "matched-preparation/source/entry.ts",
+      "rawBytes": 1297562,
+      "storedBytes": 28175,
+      "rawSha256": "79623afaae1cbc83ac3767f48f2567d90cf343caf0080fc0539d44ec3f6f29c4",
+      "storedSha256": "e47505ff69affeacffdd449db31cdcbdfb8524fffca87a8007feb1daa2731e5d"
+    },
+    {
+      "name": "040-build-hosted-preparation-bridge.ts.gz",
+      "original": "bridge/build-hosted-preparation-bridge.ts",
+      "rawBytes": 628,
+      "storedBytes": 355,
+      "rawSha256": "f266f8892d77851844635879d0914024654edc45fc42ee5a4b0af4f003c9939d",
+      "storedSha256": "cb1c471cae80e9feb29206231e2a3da6062626442f6633e734f833d1d227323a"
+    },
+    {
+      "name": "041-hosted-preparation-first-bridge.ts.gz",
+      "original": "bridge/hosted-preparation-first-bridge.ts",
+      "rawBytes": 9259,
+      "storedBytes": 3416,
+      "rawSha256": "b9142095a908ec3a42511239de962cd3c019c67b2abfe946c6b323261195ec53",
+      "storedSha256": "eca82411c5a25190c3792df5459ab2cb6af120212379db64b711418251f22e75"
+    },
+    {
+      "name": "042-hosted-preparation-bridge.ts.gz",
+      "original": "bridge/hosted-preparation-bridge.ts",
+      "rawBytes": 9353,
+      "storedBytes": 3446,
+      "rawSha256": "0b991f5057ac46af89396db4ad5e10109949c5eaa6c92a85476696104e5a7280",
+      "storedSha256": "a39ae841884fc8139fa6ccec366ef694a1f46063cedfe559459e0338eb4e6f6e"
+    },
+    {
+      "name": "043-tsconfig-hosted-runtime.json.gz",
+      "original": "bridge/tsconfig-hosted-runtime.json",
+      "rawBytes": 2652,
+      "storedBytes": 495,
+      "rawSha256": "26a5350402048b891fdd4c35119fe61569e4a0b2ada931b448bb63117e1e25ca",
+      "storedSha256": "b04cdb6787c70366cf3a22611e29be29eb9f4de7cb97004d08fe6078bd71f09d"
+    },
+    {
+      "name": "044-spn146-hosted-environment-plan-b.md.gz",
+      "original": "review/spn146-hosted-environment-plan-b.md",
+      "rawBytes": 5923,
+      "storedBytes": 2684,
+      "rawSha256": "558b9ac1034be16c5fd8a32dee5c7d56cec3ad54a3c5caa4e25038fb393c240e",
+      "storedSha256": "aa9df9b6cc40e2bf34b40fb4faa01599179f09211afdf1d259c0942b2e9c2d79"
+    },
+    {
+      "name": "045-spn146-linux-lane-inspection-a.md.gz",
+      "original": "review/spn146-linux-lane-inspection-a.md",
+      "rawBytes": 8503,
+      "storedBytes": 3832,
+      "rawSha256": "f4f9e25cd0585a75954706fc377bbbf332002f7c7eda1e7eecee3127099b89b7",
+      "storedSha256": "1f32209b26de39a776bb1cc025e65fb59c0c22bd0d7538da7aaf3ecb2e4e6610"
+    },
+    {
+      "name": "046-spn146-linux-lane-inspection-b.md.gz",
+      "original": "review/spn146-linux-lane-inspection-b.md",
+      "rawBytes": 9520,
+      "storedBytes": 4098,
+      "rawSha256": "b4d4f50b8f3a4c32ba1cbc082d9db6b2f583cf00df911f3a8ecd5b3fbaa1ad9a",
+      "storedSha256": "0a196bf5d336428e4eab8ce76ba79c1ff21875a9f095d69f53760bb8cdba0bf6"
+    }
+  ]
+}

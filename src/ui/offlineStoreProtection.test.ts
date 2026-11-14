@@ -42,7 +42,7 @@ function cleanCopy(): StoredItem {
       readOnly: false,
       revision: 3,
       revisionOffset: 0,
-      sdkVersion: '1.1.0',
+      sdkVersion: '1.3.1',
       images: [],
       snapshot: { id: itemId, body: { dataStream: 'Original notes\r\n' }, documentStyle: {} },
     },

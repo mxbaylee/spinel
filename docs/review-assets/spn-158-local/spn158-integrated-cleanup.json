@@ -1,0 +1,5 @@
+{
+  "scope": "After integrated types, final lint/format and backlog validation",
+  "ownedRemaining": [],
+  "audit": "Relevant command plus exact lsof worktree cwd; no kills"
+}

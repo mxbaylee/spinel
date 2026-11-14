@@ -1,0 +1,19 @@
+{
+  "name": "spn160-lint-d2a0ae20",
+  "args": [
+    "node",
+    "node_modules/.bin/oxlint",
+    "--deny-warnings",
+    "src/server/maintenance/ownership.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/ownership-fixture.ts",
+    "src/server/maintenance/supervisor-test-control.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "src/server/maintenance/supervisor.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 121,
+  "peakKiB": 0
+}

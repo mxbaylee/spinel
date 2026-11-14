@@ -34,6 +34,8 @@ export const SHELL_PLACEHOLDER = '__SPINEL_SHELL_MANIFEST__';
 export const SHELL_PAGE = '/';
 export const RUNTIME_DESCRIPTOR_ID = 'spinel-runtime';
 export const LEGACY_COMPATIBILITY: RuntimeCompatibility = { format: 1, sdkVersion: '1.1.0' };
+/** Current SDK identity; legacy retained shells keep their original identity above. */
+export const CURRENT_SDK_VERSION = '1.3.1';
 
 export function sameCompatibility(left: RuntimeCompatibility, right: RuntimeCompatibility) {
   return left.format === right.format && left.sdkVersion === right.sdkVersion;

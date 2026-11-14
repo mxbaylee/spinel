@@ -30,6 +30,7 @@ import { processResourcesReleased } from './process-exit.ts';
 import { currentRestoreRecovery, restoreJobPhase } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
 import { finishRestoreCrashCleanup } from './restore-crash-cleanup-fixture.ts';
+import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
 import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-http-test-client.ts';
 
 const cuts = [
@@ -345,18 +346,30 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
       let acknowledgedId: string | undefined;
       if (cut === 'postcommit') {
         await expect.poll(() => record().phase, { timeout: 100_000 }).toBe('candidate-committed');
-        await expect
-          .poll(
-            async () => {
-              try {
-                return (await client.request('/api/auth/session')).status;
-              } catch {
-                return 0;
-              }
-            },
-            { timeout: 20_000 },
-          )
-          .toBe(401);
+        // Session reads deliberately bypass pause. Wait for the application's
+        // writable admission before making the one authentication attempt.
+        const admission = new AbortController();
+        const deadline = setTimeout(() => admission.abort(), 20_000);
+        let observed: Awaited<ReturnType<typeof client.restoredAdmission>> | undefined;
+        try {
+          await expect
+            .poll(
+              async () => {
+                observed = await client.restoredAdmission(admission.signal);
+                return observed.ready;
+              },
+              { timeout: 20_000 },
+            )
+            .toBe(true);
+        } catch (cause) {
+          throw new Error(
+            `Postcommit admission failed: ${JSON.stringify(observed ?? { stage: 'not-started' })}`,
+            { cause },
+          );
+        } finally {
+          clearTimeout(deadline);
+          admission.abort();
+        }
         await ownerClient!.authenticate();
         const acknowledged = await ownerClient!.json<{ item: { id: string; name: string } }>(
           await ownerClient!.request('/api/items', {
@@ -588,9 +601,14 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
       }
       await kill(first);
       await confirmation;
-      // This is clock-controlled expiry, not five minutes of elapsed runtime.
-      // The historical WebAuthn proof stays byte-for-byte unchanged.
-      if (recoversOriginal) clockOffset = 6 * 60_000;
+      // Expire the persisted operation authority, independent of its configured
+      // lifetime. This is virtual expiry, not a wall-clock soak; keep the proof unchanged.
+      if (recoversOriginal)
+        clockOffset = expiredRestoreClockOffset(
+          before.intent.authority.expiresAt,
+          Date.now(),
+          clockOffset,
+        );
       await launch(false, Boolean(cold));
       assertWorkspaceHandlesClosed(databasePath);
       expect(statSync(databasePath).ino).toBe(identity.ino);
@@ -825,7 +843,7 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           const coldEvidence = await retains(root, retained);
           await kill(controller!);
           await interrupted;
-          clockOffset += 6 * 60_000;
+          clockOffset = expiredRestoreClockOffset(attempt.deadline, Date.now(), clockOffset);
           await launch(false);
           assertWorkspaceHandlesClosed(databasePath);
           expect(record()).toEqual(attempted);

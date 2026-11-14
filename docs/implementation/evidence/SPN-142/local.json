@@ -1,0 +1,81 @@
+{
+  "base": "7679351822caaa9535d73d656191f2a6597a3380",
+  "checks": [
+    {
+      "name": "tests-first",
+      "logSha256": "6cc1986af6cae032c997432079068a5c1e62cc8f991e8e3fc5907d1ddd4178d8",
+      "outcome": "command-failed",
+      "elapsedMs": 5112,
+      "peakKiB": 550848,
+      "pressure": "1"
+    },
+    {
+      "name": "tests-second",
+      "logSha256": "89bdf2100c1e6df3de3a94c94c3ca56a50664c3e3eb2e3051110affde2e0ff83",
+      "outcome": "command-passed",
+      "elapsedMs": 6329,
+      "peakKiB": 567648,
+      "pressure": "1"
+    },
+    {
+      "name": "tests-final",
+      "logSha256": "f60cda0feaea23213bca69c303b5f915b11513d8b78560f18a104c8679a2fd4a",
+      "outcome": "command-passed",
+      "elapsedMs": 6368,
+      "peakKiB": 535296,
+      "pressure": "1"
+    },
+    {
+      "name": "types",
+      "logSha256": "2887d66059b96873de6d34da2d19d5fc7bedb0ab9aa7df0c729a3eb0789e9300",
+      "outcome": "command-passed",
+      "elapsedMs": 311,
+      "peakKiB": 90944,
+      "pressure": "1"
+    },
+    {
+      "name": "types-final",
+      "logSha256": "9ad68a3a9d7dc787daf57f13c961e6f718f1a62f594993c919a150f40fa00bff",
+      "outcome": "command-passed",
+      "elapsedMs": 242,
+      "peakKiB": 91712,
+      "pressure": "1"
+    },
+    {
+      "name": "lint",
+      "logSha256": "645bd6f8be7fb733023a17921e38589a86f4a566c3130f1746e75278d9277aee",
+      "outcome": "command-passed",
+      "elapsedMs": 10196,
+      "peakKiB": 722496,
+      "pressure": "1"
+    },
+    {
+      "name": "format",
+      "logSha256": "92034f19632aba80999863347c282faca72c6fe4d1f9fc771915f54f0ec62b8e",
+      "outcome": "command-passed",
+      "elapsedMs": 288,
+      "peakKiB": 91776,
+      "pressure": "1"
+    }
+  ],
+  "hashes": {
+    "scripts/dependencies/patch-univer-docs.ts": "b313e9803b7289cad2d8546bb70e2f495866ad00659d048e01a4d44e9d0255f0",
+    "scripts/dependencies/patch-univer-docs.test.ts": "0d7adc572a909c2006254a6f3e1dfeb44b1d5eceaa0265bea6cf594f00c92924",
+    "scripts/dependencies/doc-flush-observation.ts": "44a089f08216f0988c78a05990a727afd27313bdc4fc9ba9bf466d0b9119eb51",
+    "package-lock.json": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "typecheckConfig": {
+    "extends": "/Users/mxbaylee/projects/spinel-spn-142/tsconfig.json",
+    "include": [
+      "/Users/mxbaylee/projects/spinel-spn-142/scripts/dependencies/patch-univer-docs.ts",
+      "/Users/mxbaylee/projects/spinel-spn-142/scripts/dependencies/patch-univer-docs.test.ts"
+    ],
+    "compilerOptions": {
+      "typeRoots": [
+        "/Users/mxbaylee/projects/spinel-spn-142/node_modules/@types"
+      ]
+    }
+  },
+  "limits": "Short native TypeScript compiler sampling does not establish its instantaneous peak RSS. Full project typecheck remains hosted; previously attempted broad checks on prerequisite sources exceeded local pressure limits. All commands serialized under shared watchdog; no browser/installer ran against shared dependencies.",
+  "firstFailure": "186/190 passed; four obsolete combined forward/inverse work-equality expectations. Raw semantics and new controls passed. Corrected expectations retain exact output and forward body slicing while requiring reduced independently eligible inverse work. Second/final190/190; final adds old-patch installer upgrade validation."
+}

@@ -1,0 +1,64 @@
+{
+  "playwright_version": "1.64.1",
+  "upstream_commit": "cfe490d941f992655948eee8fd4fd94e1c4234bf",
+  "source_blob_sha": "d9080e4e2dce5bf5374ef18829765592af93c75f",
+  "source_path": "packages/playwright-core/src/server/frames.ts",
+  "source_url": "https://github.com/microsoft/playwright/blob/cfe490d941f992655948eee8fd4fd94e1c4234bf/packages/playwright-core/src/server/frames.ts",
+  "source_license": "Apache-2.0; small source excerpts retained only as diagnostic evidence.",
+  "snippets": [
+    {
+      "first_line": 234,
+      "lines": [
+        "  frameCommittedNewDocumentNavigation(frameId: string, url: string, name: string, documentId: string, initial: boolean) {",
+        "    const frame = this._frames.get(frameId)!;",
+        "    this.removeChildFramesRecursively(frame);",
+        "    this._clearWebSockets(frame);",
+        "    const previousUrl = frame._url;"
+      ]
+    },
+    {
+      "first_line": 425,
+      "lines": [
+        "  private _clearWebSockets(frame: Frame) {",
+        "    // TODO: attribute sockets to frames.",
+        "    if (frame.parentFrame())",
+        "      return;",
+        "    this._webSockets.clear();",
+        "  }"
+      ]
+    },
+    {
+      "first_line": 474,
+      "lines": [
+        "  webSocketClosed(requestId: string) {",
+        "    const ws = this._webSockets.get(requestId);",
+        "    if (ws) {",
+        "      if (ws.markAsNotified()) {",
+        "        this._page.emit(Page.Events.WebSocket, ws);",
+        "        this._page.browserContext.emit(BrowserContext.Events.WebSocket, ws, this._page);",
+        "      }",
+        "      ws.closed();",
+        "    }",
+        "    this._webSockets.delete(requestId);",
+        "  }",
+        ""
+      ]
+    }
+  ],
+  "local_installed_source": {
+    "path": "/workspace/scratch/ce40e94380e1/spinel/node_modules/playwright-core/lib/coreBundle.js",
+    "sha256": "829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d",
+    "same_observed_logic_lines": [
+      24518,
+      24521,
+      24679,
+      24682,
+      24717,
+      24726
+    ],
+    "limit": "Observed preexisting local Playwright 1.64.1 installation, not preserved original CI process state."
+  },
+  "inference": "A main-frame new-document navigation can clear Playwright's socket map before a later webSocketClosed callback. With no retained entry, that later callback emits no socket close. This is source-supported observer-ordering vulnerability; the original first-attempt timeline is absent, so it does not prove this ordering caused the historical failure.",
+  "original_license_header": "/**\n * Copyright 2017 Google Inc. All rights reserved.\n * Modifications copyright (c) Microsoft Corporation.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */",
+  "extraction_notice": "Spinel SPN-149 diagnostic extraction: unchanged source lines are retained in JSON with original line numbers and provenance; the surrounding source is omitted. No upstream implementation is modified by this evidence file."
+}

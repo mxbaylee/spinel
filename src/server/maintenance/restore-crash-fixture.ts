@@ -19,8 +19,8 @@ const coldCut = process.env.SPINEL_TEST_COLD_CRASH_CUT;
 const coldMarker = process.env.SPINEL_TEST_COLD_CRASH_MARKER;
 if (!process.send || !root || !databasePath || !marker)
   throw new Error('Private crash controller required.');
-// Advance only this fixture's wall clock. Expiry acceptance must not spend five
-// real minutes idle, and every application child uses the same virtual clock.
+// Advance only this fixture's wall clock beyond the persisted authority deadline.
+// This is not a wall-clock soak; every application child uses the same virtual clock.
 const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
 if (!Number.isSafeInteger(offset) || offset < 0) throw new Error('Invalid fixture clock.');
 const realNow = Date.now;

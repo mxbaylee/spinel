@@ -1,0 +1,115 @@
+{
+  "ticket": "SPN-137",
+  "kind": "local validation checkpoint; current combined-source hosted acceptance remains pending",
+  "runtime": "Node26.12.1",
+  "sourceScope": "The 72 pointer/identity/storage/routing controls executed on published source6c0080d5aa492e654a225b4d22073f0d251cfb4d. Their source blobs are unchanged in the prepared combined candidate. Full typecheck and focused lint/format were repeated on the combined pointer+SPN138 test source. Documentation-only final bookkeeping does not change those compiled files.",
+  "sourceFiles": [
+    {
+      "path": "scripts/ci/desktop-browser.ts",
+      "gitBlob": "6168081f61f73a94bbc04b5d7a05fdd25a06e514",
+      "sha256": "f61661c6ba64c4b6fb7a05961a8415a565d889d23c238ecf862fcd02fbcd3e3a"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.ts",
+      "gitBlob": "20057ddf41f1dbf4888416df0faf28e5273e57bc",
+      "sha256": "1eccfb415f208b61752b5c8f914f3101d39ade47226ff80260d92f6e115a9979"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.test.ts",
+      "gitBlob": "6cf7906c42a4897f99507c3cba411185311b7999",
+      "sha256": "855fdd098f76b10576804d6e577110222a80b9a8290c92d8286330818e416831"
+    },
+    {
+      "path": "scripts/ci/desktop-safari-identity.test.ts",
+      "gitBlob": "ca62ea5fec5715f6075c77aa270e7061d29b6620",
+      "sha256": "a70950109c2a5a27d66b781bee54058f154310194cd3378f9ef537370c2fb896"
+    },
+    {
+      "path": "scripts/ci/desktop-storage.test.ts",
+      "gitBlob": "49cde46c308c81a11e042971b43537013c875b74",
+      "sha256": "6cda4295094b33bb0e08d5168c160306e70482dd49185b0aa7a1b6f2ee1f4781"
+    },
+    {
+      "path": "scripts/ci/plan.test.ts",
+      "gitBlob": "54c0d76402c65c2f81dbe6ad8fcd33835e67f271",
+      "sha256": "f9d7cdc438c94ca361c44716be601206e1a24f142d1bcfd263267aeb92452b08"
+    },
+    {
+      "path": "scripts/ci/coverage-result.test.ts",
+      "gitBlob": "04df50eae508773d83c1f140ccbca481cf5cdcfe",
+      "sha256": "b74306e238421bfa413c33ec6651d599f66beb96ab8e673b97b79b9ade9a1830"
+    },
+    {
+      "path": "e2e/offline-creation.spec.ts",
+      "gitBlob": "cb47ea0aaea2c88c1d9bd73fa4aeca208e307750",
+      "sha256": "e2d8157b5cdcceecf20a104203a13677c2ed56ee48dfb95f4ca187e6a924b2ce"
+    }
+  ],
+  "checks": [
+    {
+      "startedAt": "2026-11-04T06:41:15.786Z",
+      "finishedAt": "2026-11-04T06:41:29.459Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--test",
+        "scripts/ci/desktop-pointer.test.ts",
+        "scripts/ci/desktop-safari-identity.test.ts",
+        "scripts/ci/desktop-storage.test.ts",
+        "scripts/ci/plan.test.ts",
+        "scripts/ci/coverage-result.test.ts"
+      ],
+      "elapsedMs": 13673,
+      "peakKiB": 691628,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    {
+      "startedAt": "2026-11-04T06:42:08.126Z",
+      "finishedAt": "2026-11-04T06:42:21.058Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "bash",
+        "-c",
+        "node node_modules/typescript/bin/tsc -p . && node_modules/.bin/oxlint --deny-warnings scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts && node node_modules/prettier/bin/prettier.cjs --check scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts && node scripts/backlog/cli.ts check && node scripts/backlog/cli.ts pr --base origin/main --title \"\ud83d\uddb1\ufe0f SPN-137 Diagnose missing Safari pointer delivery after offline restart\""
+      ],
+      "elapsedMs": 12931,
+      "peakKiB": 1793436,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    {
+      "startedAt": "2026-11-04T07:04:26.006Z",
+      "finishedAt": "2026-11-04T07:04:43.965Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/01384cef7048/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "bash",
+        "-c",
+        "node node_modules/typescript/bin/tsc -p . && node_modules/.bin/oxlint --deny-warnings scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts e2e/offline-creation.spec.ts && node node_modules/prettier/bin/prettier.cjs --check scripts/ci/desktop-browser.ts scripts/ci/desktop-pointer.ts scripts/ci/desktop-pointer.test.ts e2e/offline-creation.spec.ts && git diff --check"
+      ],
+      "elapsedMs": 17957,
+      "peakKiB": 1787420,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    }
+  ],
+  "browserExecution": "No local browser attempts. Pinned Chromium download failed before execution as preserved in SPN-138-local.json; native desktop acceptance requires the declared current-source hosted run.",
+  "remaining": [
+    "SPN-138 accepted prerequisite and actual current-main integration",
+    "Two independent reviews on final exact committed SHA",
+    "One declared complete current-source desktop workflow, all three browser owners on first attempts",
+    "All seven current-head required CI gates"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "spn158-resume-types",
+  "args": [
+    "/usr/bin/env",
+    "GOMEMLIMIT=640MiB",
+    "GOGC=50",
+    "GOMAXPROCS=2",
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 8845,
+  "peakKiB": 1777920
+}

@@ -1,0 +1,165 @@
+{
+  "identities": {
+    "tested": "8fe1ab79a49e206368a5e5ec336dad4877ce35b0",
+    "legacy": "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+    "previous": "3a0e2238fb5be3907d04120eabda2aafd6565d63",
+    "legacyWorker": "9921a49245434c606f1cc250db1d9d3d9b35f1925ca6440c8905173db28e9c11",
+    "previousWorker": "b98c43ee7a2a45ae6d501dcd3af9874da2ddd3b3352ac71fee99d47531a747f8",
+    "candidateWorker": "bfcaf456d56ae11d596c0ee198c9b5fe02c22cce80cbdaf78ec523e81fa42768"
+  },
+  "browser": "156.0.8078.4",
+  "retry": 1,
+  "entries": [
+    {
+      "mode": "original",
+      "event": "emitted-worker",
+      "elapsedMs": 76,
+      "label": "legacy",
+      "sha256": "9921a49245434c606f1cc250db1d9d3d9b35f1925ca6440c8905173db28e9c11"
+    },
+    {
+      "mode": "original",
+      "event": "emitted-worker",
+      "elapsedMs": 76,
+      "label": "replacement",
+      "sha256": "b98c43ee7a2a45ae6d501dcd3af9874da2ddd3b3352ac71fee99d47531a747f8"
+    },
+    {
+      "mode": "original",
+      "event": "browser",
+      "elapsedMs": 76,
+      "version": "156.0.8078.4"
+    },
+    {
+      "mode": "original",
+      "event": "upstream-body-started",
+      "elapsedMs": 193,
+      "path": "/assets/HistoryBrowser-kbd41gq_.js",
+      "bytes": 20898,
+      "sent": 128
+    },
+    {
+      "mode": "original",
+      "event": "replacement-waiting",
+      "elapsedMs": 235,
+      "active": "activated",
+      "activeIsOriginal": true,
+      "original": "activated",
+      "preparation": null
+    },
+    {
+      "mode": "original",
+      "event": "interrupt-upstream-body",
+      "elapsedMs": 242
+    },
+    {
+      "mode": "original",
+      "event": "upstream-body-aborted",
+      "elapsedMs": 244
+    },
+    {
+      "mode": "original",
+      "event": "original-obstruction-confirmed",
+      "elapsedMs": 1248,
+      "active": "activated",
+      "activeIsOriginal": true,
+      "original": "activated",
+      "waiting": "installed",
+      "preparation": null
+    },
+    {
+      "mode": "original",
+      "event": "release-original-response",
+      "elapsedMs": 1248
+    },
+    {
+      "mode": "original",
+      "event": "downstream-closed",
+      "elapsedMs": 1249
+    },
+    {
+      "mode": "original",
+      "event": "replacement-activated",
+      "elapsedMs": 1263,
+      "active": "activating",
+      "activeIsOriginal": false,
+      "original": "redundant",
+      "preparation": {
+        "ok": false,
+        "error": "Failed to execute 'put' on 'Cache': Cache.put() encountered a network error"
+      }
+    },
+    {
+      "mode": "original",
+      "event": "cleanup-complete",
+      "elapsedMs": 1807,
+      "failures": []
+    },
+    {
+      "mode": "repaired",
+      "event": "emitted-worker",
+      "elapsedMs": 42,
+      "label": "legacy",
+      "sha256": "9921a49245434c606f1cc250db1d9d3d9b35f1925ca6440c8905173db28e9c11"
+    },
+    {
+      "mode": "repaired",
+      "event": "emitted-worker",
+      "elapsedMs": 42,
+      "label": "replacement",
+      "sha256": "b98c43ee7a2a45ae6d501dcd3af9874da2ddd3b3352ac71fee99d47531a747f8"
+    },
+    {
+      "mode": "repaired",
+      "event": "browser",
+      "elapsedMs": 42,
+      "version": "156.0.8078.4"
+    },
+    {
+      "mode": "repaired",
+      "event": "upstream-body-started",
+      "elapsedMs": 117,
+      "path": "/assets/HistoryBrowser-kbd41gq_.js",
+      "bytes": 20898,
+      "sent": 128
+    },
+    {
+      "mode": "repaired",
+      "event": "replacement-waiting",
+      "elapsedMs": 146,
+      "active": "activated",
+      "activeIsOriginal": true,
+      "original": "activated",
+      "preparation": null
+    },
+    {
+      "mode": "repaired",
+      "event": "interrupt-upstream-body",
+      "elapsedMs": 151
+    },
+    {
+      "mode": "repaired",
+      "event": "upstream-body-aborted",
+      "elapsedMs": 151
+    },
+    {
+      "mode": "repaired",
+      "event": "downstream-closed",
+      "elapsedMs": 152
+    },
+    {
+      "mode": "repaired",
+      "event": "first-failure",
+      "elapsedMs": 170,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n",
+      "downstreamClosed": true
+    },
+    {
+      "mode": "repaired",
+      "event": "cleanup-complete",
+      "elapsedMs": 257,
+      "failures": []
+    }
+  ],
+  "firstFailure": "AggregateError: Emitted worker lifetime control failed."
+}

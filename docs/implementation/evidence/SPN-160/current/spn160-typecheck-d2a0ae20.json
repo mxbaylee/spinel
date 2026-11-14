@@ -1,0 +1,13 @@
+{
+  "name": "spn160-typecheck-d2a0ae20",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9125,
+  "peakKiB": 1743344
+}

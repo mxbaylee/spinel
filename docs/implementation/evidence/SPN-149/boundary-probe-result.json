@@ -1,0 +1,45 @@
+{
+  "node": "v26.13.0",
+  "playwright": "1.64.1",
+  "controlledDispatchOnly": true,
+  "browserLaunched": false,
+  "outcomes": [
+    {
+      "ordering": "protocol-close then navigation-map-clear",
+      "established": 1,
+      "pageCloseEvents": 1
+    },
+    {
+      "ordering": "navigation-map-clear then protocol-close",
+      "established": 1,
+      "pageCloseEvents": 0
+    }
+  ],
+  "declarationCommit": "d98f7d6",
+  "probeSHA256": "6b7adcb0a697b1f6db276e61a559efced37a0f7a8b68e9fcbbc0d425c67c561a",
+  "command": "node scripts/serial.ts timeout 10s node docs/implementation/evidence/SPN-149/playwright-boundary-probe.ts",
+  "watchdog": {
+    "startedAt": "2026-11-13T03:50:57.123Z",
+    "finishedAt": "2026-11-13T03:50:57.761Z",
+    "command": "node",
+    "args": [
+      "scripts/serial.ts",
+      "timeout",
+      "10s",
+      "node",
+      "../validation/playwright-boundary-probe.ts"
+    ],
+    "node": "v26.13.0",
+    "cwd": "/workspace/scratch/13a7bba7afec/spinel",
+    "elapsedMs": 637,
+    "initialMemory": {
+      "availableKiB": 7684964,
+      "totalKiB": 10206472
+    },
+    "minimumAvailableKiB": 7309372,
+    "peakKiB": 221928,
+    "code": 0,
+    "signal": null,
+    "aborted": null
+  }
+}

@@ -14,11 +14,11 @@
  * limitations under the License.
  *
  * Modified for Spinel: ignore queued virtual-list resize callbacks after React
- * clears the container ref, in open-source @univerjs/ui 1.1.0. Capture the node
+ * clears the container ref, in open-source @univerjs/ui 1.3.1. Capture the node
  * once so both dimensions come from the same mounted container.
  * No @univerjs-pro package is read or modified.
- * Source: packages/ui/src/views/hooks/virtual-list.ts, tag v1.1.0:
- * https://github.com/dream-num/univer/blob/v1.1.0/packages/ui/src/views/hooks/virtual-list.ts
+ * Source: packages/ui/src/views/hooks/virtual-list.ts, tag v1.3.1:
+ * https://github.com/dream-num/univer/blob/v1.3.1/packages/ui/src/views/hooks/virtual-list.ts
  */
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -26,8 +26,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const formats = {
-  es: '7a9a61456eb048be1536acb51322c6178558379bb9a8d0925ba0986062c8aef9',
-  cjs: '94e6cbd279adeb40a62c4a877df520ecd71c99c3061bdc962e3b3666f3eb148a',
+  es: 'a1e8782a0a87813af5aa55a132d6416555d550204e78d623bd5fe457ee32e09a',
+  cjs: '04f1e2ec78ea7df214822990f8439dda09f8ce20d12c8264b79ca581d5c365b7',
 } as const;
 
 const before = `const getSize = () => {
@@ -59,7 +59,7 @@ export function patchUi(source: string, format: keyof typeof formats): string {
 export async function patchInstalledUi(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/ui');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
-  if (metadata.version !== '1.1.0')
+  if (metadata.version !== '1.3.1')
     throw new Error('Upgrading @univerjs/ui: review the virtual-list resize patch first.');
   // Validate both formats before making either change.
   const updates = await Promise.all(

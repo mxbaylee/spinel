@@ -1,0 +1,19 @@
+
+┌  Building storybook v10.6.5
+│
+◇  Cleaning outputDir: test-results/spn159/static
+(node:57688) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│
+◇  Loading presets
+│
+◇  Building manager..
+│
+●  Building open services..
+│
+●  Building preview..
+Fontconfig error: Cannot load default config file: File not found
+│  Vite vite v8.3.6 building client environment for production...
+transforming...
+serial: SIGTERM; killing the run.
+{"name":"spn159-corrected-build-static","args":["node","node_modules/.bin/storybook","build","--config-dir","test-results/spn159/storybook","--output-dir","test-results/spn159/static"],"code":1,"signal":null,"reason":"Resource guard","elapsedMs":3075,"peakKiB":604160}

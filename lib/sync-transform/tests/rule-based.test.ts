@@ -319,9 +319,12 @@ for (const [where, row, col, pre, a, b] of [
   ]);
 }
 
+// Univer 1.3.1 preserves an existing value/type for writes without v/t unless
+// the number-format pattern changes. These pins supplement the native intent
+// and replica-convergence checks in landed(); they do not replace them.
 const pins: Record<string, unknown> = {
   'rule-based F5: "7" with a format clear against fd, its write first': { v: '7', t: 1, fd: 1 },
-  'rule-based F5: "7" with a format clear against fd, the other first': { v: 7, t: 2, fd: 1 },
+  'rule-based F5: "7" with a format clear against fd, the other first': { v: '7', t: 1, fd: 1 },
   'rule-based F5: 5 with a format clear against itself, its write first': { v: 5, t: 2 },
   'rule-based F5: 5 with a format clear against itself, the other first': { v: 5, t: 2 },
   'rule-based F5: 5 with a format clear against a text with a format clear, its write first': {
@@ -472,8 +475,8 @@ const pins: Record<string, unknown> = {
     s: { bl: 0, n: { pattern: '0%' } },
   },
   'rule-based format race: a bold against a percent format, the other first': {
-    v: '1',
-    t: 1,
+    v: 1,
+    t: 3,
     s: { bl: 0, n: { pattern: '0%' } },
   },
   'rule-based format race: a percent style against a style clear, its write first': {
@@ -494,35 +497,35 @@ const pins: Record<string, unknown> = {
   },
   'rule-based F15: two values past accepted forced text': { v: 'abc', t: 1 },
   'rule-based F16: a null font colour past a style override with a coloured st': {
-    v: 7,
-    t: 2,
+    v: '7',
+    t: 1,
     s: { st: { s: 1, t: 10 } },
   },
   'rule-based F16: a null font colour past a style override with a coloured ul': {
-    v: 7,
-    t: 2,
+    v: '7',
+    t: 1,
     s: { ul: { s: 1, t: 10 } },
   },
   'rule-based F16: a null font colour past a style override with a coloured ol': {
-    v: 7,
-    t: 2,
+    v: '7',
+    t: 1,
     s: { ol: { s: 1, t: 10 } },
   },
   'rule-based rr20 divergence: t1 against t2 on B4': { v: 'NaN', t: 1 },
   'rule-based rr20 divergence: pnull against t2 on B3': {
-    v: '7',
-    t: 1,
+    v: 7,
+    t: 2,
     s: { n: { pattern: '@' } },
   },
   'rule-based rr20 divergence: fclr against t2 on B3': {
-    v: '7',
-    t: 1,
+    v: 7,
+    t: 2,
     s: { n: { pattern: '@' } },
     f: '',
   },
   'rule-based rr20 divergence: fd1 against t2 on B3': {
-    v: '7',
-    t: 1,
+    v: 7,
+    t: 2,
     s: { n: { pattern: '@' } },
     fd: 1,
   },
@@ -546,14 +549,14 @@ const pins: Record<string, unknown> = {
     si: 'id',
   },
   'rule-based rr20 divergence: custom against t2 on B3': {
-    v: '7',
-    t: 1,
+    v: 7,
+    t: 2,
     s: { n: { pattern: '@' } },
     custom: { k: 1 },
   },
   'rule-based rr20 divergence: si against t2 on B3': {
-    v: '7',
-    t: 1,
+    v: 7,
+    t: 2,
     s: { n: { pattern: '@' } },
     si: 'id',
   },

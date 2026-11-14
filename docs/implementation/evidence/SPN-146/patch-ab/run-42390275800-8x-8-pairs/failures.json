@@ -1,0 +1,117 @@
+{
+  "note": "Per-run exit codes, first-failure messages (ANSI stripped, 200 chars) and failed budget results, extracted from the run artifact (runs/*/exit-code and metrics.json) because only summary.json and summary.md are otherwise retained.",
+  "runs": [
+    {
+      "pair": 1,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 1,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 2,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 2,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 3,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 3,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 4,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 4,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 5,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 5,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 6,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 6,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 7,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 7,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 8,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    },
+    {
+      "pair": 8,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.type: Test ended.",
+      "failedBudgets": null
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "base": "eb32117f5d09c28cd411063256db6d645335ae8a",
+  "sourceSha256": {
+    "e2e/doc-responsiveness-callback-trace.ts": "1b390bea61a61d06827b79ef25d08714a2473d1748068d1347a3fbe132320d85",
+    "e2e/doc-responsiveness-callback-progress.ts": "067b89352a774a75b89eb6f7293763aabe7517cabca71fd7df10d436ccba877c",
+    "e2e/doc-responsiveness-callbacks.spec.ts": "323f40a2c5450503bbc734b4718e6dc5565fc60537562e80b9b5a3deace3a6d0",
+    "e2e/doc-responsiveness-fixture.ts": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+    "scripts/ci/doc-callback-trace.test.ts": "03b61faf01b9a965a2d7c92ef2887d02aaee131c938f4984d92530bcb09c6e1a",
+    "scripts/ci/doc-callback-progress.test.ts": "d0997d550aa91f1b0fd2eabdd36b08c6da71e1841ed625c923b67eb31c85b228",
+    "scripts/ci/doc-callback-comparison.ts": "1dc3c9cbaa31460ebf55ce8c964f0371d1bd18fd372e5a7c635a956d617c59f7",
+    "scripts/ci/doc-callback-comparison.test.ts": "ad3193cabd78dda3f355ca678267e6b8d1ade30e92f198a0a0152b5ad5bd28b9",
+    "scripts/ci/doc-callback-sources.test.ts": "8a1a75b0d485824801da78fcbbe0859a127ba58a49aebc3ea57578ed7e59dd56"
+  },
+  "probe": {
+    "outcome": "passed",
+    "node": "v26.12.1",
+    "totalMs": 2786.150709,
+    "recompressMs": 1832.210917,
+    "counters": {
+      "originalGzip": {
+        "bytes": 32556712,
+        "sha256": "5e4eb36be8be53658a70b7997c1bc5a5cd28fe14d0c5730884ebbbdddf343e08"
+      },
+      "receivedRaw": {
+        "bytes": 596624241,
+        "sha256": "c6499a2562738465bf85b540585b9c9d18338c2cc2b01aecfd0ba59cf9464c7e"
+      },
+      "storedGzip": {
+        "bytes": 47129287,
+        "sha256": "9faceef069c2b4b43f1eb3cadf114bf3a892da503a175ee7f4f4ca612291e3cc"
+      },
+      "decodedStoredRaw": {
+        "bytes": 596624241,
+        "sha256": "c6499a2562738465bf85b540585b9c9d18338c2cc2b01aecfd0ba59cf9464c7e"
+      }
+    },
+    "allStreamsClosed": true,
+    "ownsOutput": true,
+    "cleanupError": null,
+    "failure": null,
+    "limits": "One retained full trace; streaming losslessness/local feasibility only. No Chromium/CDP/native timing or historical cause established."
+  },
+  "checks": {
+    "tests": {
+      "outcome": "command-passed",
+      "elapsedMs": 2889,
+      "peakKiB": 834976,
+      "pressure": "1",
+      "count": 107
+    },
+    "types": {
+      "outcome": "command-passed",
+      "elapsedMs": 444,
+      "peakKiB": 292688,
+      "pressure": "1"
+    },
+    "lint": {
+      "outcome": "command-passed",
+      "elapsedMs": 17752,
+      "peakKiB": 756064,
+      "pressure": "1"
+    }
+  },
+  "fullTypecheck": "Pending hosted CI; focused nine roots/import graph passed locally.",
+  "hosted": "Pending; no validation push or current-source native run yet.",
+  "reviews": "Early admission/adversarial findings retained; final exact-commit grades pending.",
+  "authority": {
+    "pinned-tracing-handler.cc": "50af8e4475f414ffae8b1ed0d80980aa621450b18e828aea710c38a867d1802d",
+    "pinned-endpoint.cc": "310b3018d8ac7461bdf98aaf189d26660e0dc9f2e8c01999cbc4458bf95351d8",
+    "pinned-tracing-controller.cc": "55d52fa6c1f6c0ccf910a71858bc27d0ce7912f0d37b5ed37c8ed1b39202220f",
+    "pinned-devtools-stream-file.cc": "10abd3c335f12b2759470bd6f99f10a71d4b6480b7d647ece13890621cbc6567"
+  }
+}

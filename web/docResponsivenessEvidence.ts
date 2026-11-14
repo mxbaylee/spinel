@@ -1,4 +1,9 @@
-import { IUndoRedoService, IUniverInstanceService, UniverInstanceType } from '@univerjs/core';
+import {
+  IUndoRedoService,
+  IUniverInstanceService,
+  JSONX,
+  UniverInstanceType,
+} from '@univerjs/core';
 import type { DocumentDataModel, Univer } from '@univerjs/core';
 import {
   DocSelectionManagerService,
@@ -9,6 +14,11 @@ import { DocSelectionRenderService } from '@univerjs/docs-ui';
 import { IRenderManagerService } from '@univerjs/engine-render';
 
 import type { DocFlushObservation } from '../src/ui/boundedDocHistory.ts';
+import type { NativeDocFlushManager } from '../src/ui/nativeDocFlush.ts';
+import { terminalIdleEpisode } from '../src/ui/docIdleEpisode.ts';
+import type { DocIdleEpisode, DocTerminalState, EpochDocFlush } from '../src/ui/docIdleEpisode.ts';
+import { observeNativeDocComposition } from '../src/ui/nativeDocFlushDiagnostic.ts';
+import type { DiagnosticManager } from '../src/ui/nativeDocFlushDiagnostic.ts';
 
 type CacheCounts = { history: number; collaboration: number };
 type HistoryCounts = { undos: number; redos: number };
@@ -44,6 +54,10 @@ export interface DocDrainWitness {
   completedStates: number;
   lastCompletedStateAt: number | null;
   initial: DocDrainSnapshot;
+  terminal: DocTerminalState | null;
+  nativeFlushes: EpochDocFlush[];
+  nativeObservationAvailable: boolean;
+  idleEpisode: DocIdleEpisode | null;
   firstEmpty: (DocDrainSnapshot & { completedStates: number; wakeups: DocDrainWakeup[] }) | null;
   sealedAt: number | null;
   invalidated: boolean;
@@ -57,6 +71,33 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
   const injector = univer.__getInjector();
   // Instantiate the native subscriber before ours so these are post-capture counts.
   const manager = injector.get(DocStateChangeManagerService);
+  let diagnostic: ReturnType<typeof observeNativeDocComposition> | undefined;
+  const diagnosticRequest = (event: Event) => {
+    const action = (event as CustomEvent<{ action?: string }>).detail?.action;
+    let result: unknown;
+    try {
+      if (action === 'start') {
+        if (diagnostic) throw new Error('Native diagnostic already started.');
+        diagnostic = observeNativeDocComposition(
+          manager as unknown as DiagnosticManager,
+          JSONX,
+          unitId,
+        );
+        result = { started: true, unitId, timeOrigin: performance.timeOrigin };
+      } else if (action === 'snapshot')
+        result = diagnostic?.snapshot() ?? { error: 'Native diagnostic never started.' };
+      else if (action === 'finish')
+        result = diagnostic?.finish() ?? { error: 'Native diagnostic never started.' };
+      else throw new Error('Unknown native diagnostic action.');
+    } catch (error) {
+      result = { error: String(error) };
+    }
+    window.dispatchEvent(
+      new CustomEvent('spinel-doc-native-diagnostic-evidence', { detail: result }),
+    );
+  };
+  if (import.meta.env.VITE_DOC_FLUSH_DIAGNOSTIC === '1')
+    window.addEventListener('spinel-doc-native-diagnostic', diagnosticRequest);
   const highWater = { history: 0, collaboration: 0 };
   const flushes: DocFlushObservation[] = [];
   const undoRedo = injector.get(IUndoRedoService);
@@ -133,7 +174,51 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       }
     });
   };
+  const nativeObservation = (
+    manager as typeof manager & Partial<NativeDocFlushManager>
+  ).observeFlushes?.(unitId, (value) => {
+    if (!active() || !drain) return;
+    if (drain.nativeFlushes.length >= 4096) {
+      invalidate('native-flush-overflow');
+      return;
+    }
+    if (!Number.isFinite(value.startedAt) || !Number.isFinite(value.endedAt))
+      invalidate('native-flush-clock');
+    drain.nativeFlushes.push({
+      ...value,
+      epoch: drain.epoch,
+      generation,
+      completedStates: drain.completedStates,
+    });
+    if (value.outcome !== 'returned') invalidate('native-flush-threw');
+  });
   const readDrain = () => {
+    if (active() && drain && nativeObservation) {
+      const status = nativeObservation.readStatus();
+      if (!status.active || status.observerErrors) invalidate('native-observer-failed');
+      if (
+        drain.firstEmpty &&
+        drain.terminal &&
+        Math.max(drain.terminal.pending.history, drain.terminal.pending.collaboration) > 0 &&
+        !drain.nativeFlushes.some(
+          (value) =>
+            value.phase === 'pair' &&
+            value.origin === 'policy-capacity' &&
+            value.startedAt >= drain!.terminal!.observedAt,
+        )
+      ) {
+        try {
+          drain.idleEpisode = terminalIdleEpisode(
+            drain.terminal,
+            drain.firstEmpty.observedAt,
+            drain.nativeFlushes,
+            flushes,
+          );
+        } catch (error) {
+          invalidate(String(error));
+        }
+      }
+    }
     if (active() && drain?.firstEmpty) {
       try {
         coherentAfterEmpty(snapshot());
@@ -160,6 +245,10 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
       completedStates: 0,
       lastCompletedStateAt: null,
       initial,
+      terminal: null,
+      nativeFlushes: [],
+      nativeObservationAvailable: Boolean(nativeObservation),
+      idleEpisode: null,
       firstEmpty: null,
       sealedAt: null,
       invalidated: false,
@@ -213,8 +302,21 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
         drain.lastCompletedStateAt = performance.now();
         if (drain.completedStates > drain.expectedCompletedStates)
           invalidate('extra-completed-state');
-        if (drain.completedStates === drain.expectedCompletedStates)
+        if (drain.completedStates === drain.expectedCompletedStates) {
+          drain.terminal = {
+            epoch: drain.epoch,
+            generation,
+            unitId,
+            timeOrigin,
+            completedStates: drain.completedStates,
+            observedAt: drain.lastCompletedStateAt,
+            pending: {
+              history: pending.history.length,
+              collaboration: pending.collaboration.length,
+            },
+          };
           scheduleCheck('terminal-state');
+        }
       }
     });
   const collaborationSubscription = manager.docStateChange$.subscribe((state) => {
@@ -303,10 +405,14 @@ export function observeDocResponsiveness(univer: Univer, unitId: string, mobile:
     flushed(value: DocFlushObservation) {
       // Bounded even when a benchmark tab is accidentally left open.
       if (flushes.length < 4096) flushes.push({ ...value });
+      else invalidate('policy-flush-overflow');
     },
     dispose() {
+      diagnostic?.finish();
+      window.removeEventListener('spinel-doc-native-diagnostic', diagnosticRequest);
       invalidate('disposed-before-seal');
       disposed = true;
+      nativeObservation?.dispose();
       subscription.unsubscribe();
       collaborationSubscription.unsubscribe();
       historySubscription.unsubscribe();

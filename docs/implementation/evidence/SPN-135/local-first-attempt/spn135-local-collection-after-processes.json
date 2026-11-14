@@ -1,0 +1,78 @@
+{
+  "root": 83271,
+  "started": 1793662344223,
+  "elapsedMs": 651,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91984,
+  "peakKiB": 291744,
+  "live": [
+    {
+      "pid": 83271,
+      "parent": 83245,
+      "group": 83271,
+      "rssKiB": 90432,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn135-local-collection-after-processes.json node node_modules/@playwright/test/cli.js test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep desktop sustained native typing plain-[12]$ --workers=1 --retries=0 --max-failures=1 --list --reporter=json"
+    },
+    {
+      "pid": 83349,
+      "parent": 83271,
+      "group": 83271,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 83271,
+      "parent": 83245,
+      "group": 83271,
+      "rssKiB": 90432,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn135-local-collection-after-processes.json node node_modules/@playwright/test/cli.js test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep desktop sustained native typing plain-[12]$ --workers=1 --retries=0 --max-failures=1 --list --reporter=json"
+    },
+    {
+      "pid": 83291,
+      "parent": 83271,
+      "group": 83271,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 83317,
+      "parent": 83271,
+      "group": 83271,
+      "rssKiB": 200000,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "node node_modules/@playwright/test/cli.js test --project=doc-responsiveness e2e/doc-responsiveness.spec.ts --grep desktop sustained native typing plain-[12]$ --workers=1 --retries=0 --max-failures=1 --list --reporter=json"
+    },
+    {
+      "pid": 83323,
+      "parent": 83271,
+      "group": 83271,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 83336,
+      "parent": 83271,
+      "group": 83271,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 83349,
+      "parent": 83271,
+      "group": 83271,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:32:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

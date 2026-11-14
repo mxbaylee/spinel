@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -164,7 +164,8 @@ for (const format of ['es', 'cjs'] as const) {
         assert.equal(artifact.sha256, digest(bytes));
         if (artifact.kind === 'docs-ui-source') {
           assert.equal(artifact.content, source);
-          assert.equal(artifact.sourceMapPath, f.mapPath);
+          // Attribution deliberately canonicalizes paths; macOS /var aliases /private/var.
+          assert.equal(artifact.sourceMapPath, await realpath(f.mapPath));
           assert.equal(artifact.sourceUrl, mappedSourceUrl);
           assert.equal(artifact.sourceIndex, 0);
         }

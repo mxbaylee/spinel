@@ -1,0 +1,126 @@
+{
+  "root": 81367,
+  "started": 1793662106654,
+  "elapsedMs": 1690,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 172368,
+  "peakKiB": 252960,
+  "live": [
+    {
+      "pid": 81367,
+      "parent": 81352,
+      "group": 81367,
+      "rssKiB": 89984,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn135-local-control-final-processes.json node /tmp/spn135-local-process-control.ts"
+    },
+    {
+      "pid": 81420,
+      "parent": 1,
+      "group": 81420,
+      "rssKiB": 80832,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /tmp/spn135-local-process-control.ts detached-child"
+    },
+    {
+      "pid": 81582,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 81367,
+      "parent": 81352,
+      "group": 81367,
+      "rssKiB": 89984,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn135-local-control-final-processes.json node /tmp/spn135-local-process-control.ts"
+    },
+    {
+      "pid": 81404,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81419,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 80816,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "node /tmp/spn135-local-process-control.ts"
+    },
+    {
+      "pid": 81420,
+      "parent": 1,
+      "group": 81420,
+      "rssKiB": 80832,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /tmp/spn135-local-process-control.ts detached-child"
+    },
+    {
+      "pid": 81432,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:26 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81457,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1568,
+      "started": "Mon Nov  2 15:28:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81482,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81507,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81532,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:27 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81557,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 81582,
+      "parent": 81367,
+      "group": 81367,
+      "rssKiB": 1552,
+      "started": "Mon Nov  2 15:28:28 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

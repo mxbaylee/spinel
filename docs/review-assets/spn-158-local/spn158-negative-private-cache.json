@@ -1,0 +1,19 @@
+{
+  "name": "spn158-negative-private-cache",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/http.test.ts",
+    "-t",
+    "postcommit readiness",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn158-vitest-cache"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 3448,
+  "peakKiB": 1175584
+}

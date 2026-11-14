@@ -1,0 +1,78 @@
+{
+  "root": 88307,
+  "started": 1793885690216,
+  "elapsedMs": 435,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92720,
+  "peakKiB": 177504,
+  "live": [
+    {
+      "pid": 88307,
+      "parent": 88271,
+      "group": 88307,
+      "rssKiB": 91168,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn146-investigation/window-evidence-watchdog-a.json node /tmp/spn146-investigation/window-evidence-check-a.ts"
+    },
+    {
+      "pid": 88414,
+      "parent": 88307,
+      "group": 88307,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 88307,
+      "parent": 88271,
+      "group": 88307,
+      "rssKiB": 91168,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "node /tmp/spn135-local-watchdog.ts /tmp/spn146-investigation/window-evidence-watchdog-a.json node /tmp/spn146-investigation/window-evidence-check-a.ts"
+    },
+    {
+      "pid": 88326,
+      "parent": 88307,
+      "group": 88307,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 88352,
+      "parent": 88307,
+      "group": 88307,
+      "rssKiB": 84896,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "node /tmp/spn146-investigation/window-evidence-check-a.ts"
+    },
+    {
+      "pid": 88378,
+      "parent": 88352,
+      "group": 88307,
+      "rssKiB": 0,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "(git)"
+    },
+    {
+      "pid": 88384,
+      "parent": 88307,
+      "group": 88307,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 88414,
+      "parent": 88307,
+      "group": 88307,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:34:50 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

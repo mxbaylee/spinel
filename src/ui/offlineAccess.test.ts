@@ -15,7 +15,7 @@ const scope: OfflineScope = {
   unitId: 'generation',
   kind: 'doc',
   access: 'owner',
-  sdkVersion: '1.1.0',
+  sdkVersion: '1.3.1',
   schema: 1,
   revisionOffset: 4,
 };

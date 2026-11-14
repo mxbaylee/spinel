@@ -1,0 +1,46 @@
+{
+  "source": "2ed1e39fe2bed49213d27e9f0a7b07a6a364d341",
+  "actualMain": "b1b18165543ed800c0847a63201504c90c46272c",
+  "priorPortableSource": "d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a",
+  "runtimeFiles": [
+    {
+      "path": "src/server/maintenance/ownership.ts",
+      "sha256": "570ec7ce0a38eec5c78571091b8bda0b570e88b80dae957ceb5e8d5d2b0ca722"
+    },
+    {
+      "path": "src/server/maintenance/ownership.test.ts",
+      "sha256": "4b95f9c37b9ee356c5df4a717a1828bb37d576baee460f02cacc6c29522d1414"
+    },
+    {
+      "path": "src/server/maintenance/ownership-fixture.ts",
+      "sha256": "30286dd117294a35207bb0d3bab044c96bb423cae63f7e5e0a803fd75fb61205"
+    },
+    {
+      "path": "src/server/maintenance/supervisor-test-control.ts",
+      "sha256": "8d0cebfe643491dd45dae18f1861ffbdf3c2086ad7e538011cd2484ff57ef295"
+    },
+    {
+      "path": "src/server/maintenance/supervisor-test-control.test.ts",
+      "sha256": "c2a808b87a1bed59d0d736b8fa4c45eefab716270cf38011c0f4977f486e50f9"
+    },
+    {
+      "path": "src/server/maintenance/supervisor.test.ts",
+      "sha256": "2e38979fe95356aa73514cde66eb9ba4d844220994eeb0cc702bff51191f2287"
+    }
+  ],
+  "dependencySourceHashesVerified": 241,
+  "dependencyInputsChangedByMain": false,
+  "mainRuntimeChanges": [
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts",
+    "src/server/maintenance/restore-http-test-client.ts"
+  ],
+  "applicability": "SPN-158 HTTP admission helper is not imported by SPN-160 supervisor/portable tests; full integrated types plus 10 portable controls revalidated. Original direct detecting mutation remains applicable to identical files. Native Linux pending.",
+  "node": "26.13.0",
+  "typecheckEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "guard": "/tmp/spinel-dependabot-2026-11-11/watch.ts with scripts/serial.ts; normal memory pressure; 2097152KiB / 480000ms caps; private Vitest caches"
+}

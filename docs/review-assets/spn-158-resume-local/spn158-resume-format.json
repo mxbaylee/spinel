@@ -1,0 +1,16 @@
+{
+  "name": "spn158-resume-format",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/restore-http-test-client.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 257,
+  "peakKiB": 201712
+}

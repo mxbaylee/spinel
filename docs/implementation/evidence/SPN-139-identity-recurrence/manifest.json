@@ -1,0 +1,637 @@
+{
+  "schema": "spinel-native-failure-manifest-v1",
+  "sourceSha": "5513ccb247401006982f628d0bac827691d51533",
+  "baseSha": "5062129284ef7c60c1bc292edba130bab278c8ba",
+  "testedSha": "0cb4e715881a5f4948c25584e7d9d5336f984984",
+  "treeSha": "7b2388cb962187e487360e3b7c941796685efd3d",
+  "workflow": {
+    "id": 41813499184,
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "event": "pull_request",
+    "createdAt": "2026-11-04T10:20:20Z",
+    "createdAtScope": "original-workflow-creation",
+    "metadataEndpoint": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/41813499184",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41813499184"
+  },
+  "owners": [
+    {
+      "browser": "chrome",
+      "jobId": 126518333772,
+      "conclusion": "success",
+      "startedAt": "2026-11-04T10:20:25Z",
+      "completedAt": "2026-11-04T10:24:40Z"
+    },
+    {
+      "browser": "firefox",
+      "jobId": 126518334079,
+      "conclusion": "success",
+      "startedAt": "2026-11-04T10:20:25Z",
+      "completedAt": "2026-11-04T10:24:03Z"
+    },
+    {
+      "browser": "safari",
+      "jobId": 126518336588,
+      "conclusion": "failure",
+      "startedAt": "2026-11-04T10:20:28Z",
+      "completedAt": "2026-11-04T10:22:58Z"
+    }
+  ],
+  "files": {
+    "records": {
+      "path": "records.json.gz",
+      "bytes": 83805,
+      "sha256": "bdd43ef1d0e58745e2d50fa087b6ef9be1db92514f549f37eef413f3221b2645",
+      "encoding": "gzip",
+      "decodedBytes": 528269,
+      "decodedSha256": "136d19615bb61dc65b1a9335d35791bc3b5f0022bb6d6356e0c7d3cdf5238a80",
+      "sourceFileCount": 32,
+      "artifactUtf8MemberCount": 13
+    },
+    "failureImage": {
+      "path": "safari-capability-failure.png",
+      "originalPath": "safari/artifact/safari-capability-failure.png",
+      "bytes": 156458,
+      "sha256": "fce2d7878fe3168c61b9b8e646586440b542fc086ac548d34005fec425761ad8",
+      "dimensions": {
+        "width": 1920,
+        "height": 1080
+      }
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "chrome/archive-verification.json",
+      "bytes": 2654,
+      "sha256": "3956e450a0a1b0fc28579f7bdaef118b0aaff202aabcd1285c4548c42920e05a",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/artifact-provider.json",
+      "bytes": 810,
+      "sha256": "3acfacd5b2e248b88c77edd54c0aee11259f610b707ec2913f2a1617288adaac",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/artifact/chrome/acceptance.json",
+      "bytes": 48947,
+      "sha256": "1ef72d07e14c522731493e971eb48dc1557fb475b796b63d42efb23ff049700a",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/artifact/chrome/chrome-driver-1.log",
+      "bytes": 352,
+      "sha256": "8916b948a7f6ab61f8cdd92b14c17cda69a1962917f26569a6d7fd1a987a432b",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/artifact/chrome/chrome-driver-2.log",
+      "bytes": 352,
+      "sha256": "0b584c0fa80c624287a5d5a6356def16eb7a324617c4a32b4442a1488ba35de4",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/artifact/chrome/chrome-driver-3.log",
+      "bytes": 352,
+      "sha256": "4711327cb4735cb1f18808a6b839f1eefd1a12d6304186eee17be1c935796dca",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/artifact/chrome/versions.json",
+      "bytes": 824,
+      "sha256": "16c297d3ea2fd27a07f8416251726840979d917b031c1db742cdd28a52a817a9",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/job-from-attempt-jobs.json",
+      "bytes": 4205,
+      "sha256": "ab1ecf68f1d48d8bb139fce7953329eaf0cd8432a947497fdefa2d387dc361f5",
+      "encoding": "utf8"
+    },
+    {
+      "path": "chrome/job.log",
+      "bytes": 123874,
+      "sha256": "cd8efefe6b690fc164918b80d9ec5bb4a5dd4467f7d6d89ffd44d3ca73d41dec",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/archive-verification.json",
+      "bytes": 3021,
+      "sha256": "b1d7b34a2626e2fd130f1cf8d29d3e7ba3fcb42c1aff11f43c25850176f8b7d2",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact-provider.json",
+      "bytes": 811,
+      "sha256": "07939cf70b9dbc84b88dd47da5ea1f89053b3fecbbd5b5cbbd54f246c8606948",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact/firefox/acceptance.json",
+      "bytes": 49865,
+      "sha256": "dca4a37ee03c6f948c2a8e18b3b1fe70cbb2c692b2eaa2a144dad0aab2cd3ba1",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact/firefox/firefox-driver-1.log",
+      "bytes": 2224,
+      "sha256": "4c32ba046e62bde26f94ab7473c76a9a4e4ad64acad332b4f97bcc04404c2989",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact/firefox/firefox-driver-2.log",
+      "bytes": 2150,
+      "sha256": "0753ec12c36c75a23bec06f875d245f84135334083a5f637e82a35b1fb0aeab6",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact/firefox/firefox-driver-3.log",
+      "bytes": 1760,
+      "sha256": "96877054f0d4ccaf3e7bea11e51beacade86cc387403f041a6705a2177c38ebe",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact/firefox/firefox-storage-prompt-1.json",
+      "bytes": 21974,
+      "sha256": "725023f5c846d3fe82b0c19420b16532f559989bb3eae739b50e33ba500b17c4",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/artifact/firefox/versions.json",
+      "bytes": 650,
+      "sha256": "957c97cbcf43e9313c6fd4834fbcadc8cdfa6b68797ceee7ca38ad590251699a",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/job-from-attempt-jobs.json",
+      "bytes": 4206,
+      "sha256": "0fbb2bc554e28532d2b233aa415c81471a1188d614853214a94ebcc970e6f38a",
+      "encoding": "utf8"
+    },
+    {
+      "path": "firefox/job.log",
+      "bytes": 128695,
+      "sha256": "9891337daad0d3201cccfe34b20ea32fe526dc15a72471523a86538bf5c19d0c",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/final-artifacts.json",
+      "bytes": 2223,
+      "sha256": "2cee7e1681a38a97c651d14633dfd369f61a1ab0326dd08efdb65fc06df3c32a",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/final-attempt.json",
+      "bytes": 12306,
+      "sha256": "0c9aef4f3d73b9419869ffc74e7c0f46c8ce931e18d7fae5053dc9d9f413cacd",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/final-capture.json",
+      "bytes": 1053,
+      "sha256": "b5ee681b8494a146afa3deb93ad7b37837f2904daf2d3c623c17f7d62c956290",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/final-jobs.json",
+      "bytes": 10081,
+      "sha256": "86df7ce3ebb5522494652d07a1898eb61c9178a27deeeaa1a2cb7a8ca21d8594",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/final-run.json",
+      "bytes": 12284,
+      "sha256": "c88fb3f60a0502f691bbab11810e078f7047cfab7721684216038f4994061e43",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/initial-source.json",
+      "bytes": 1200,
+      "sha256": "155cce850f4c07c2a5fb41ea8e5ef15a224d5b3308292cc06b3b30ff1f203c76",
+      "encoding": "utf8"
+    },
+    {
+      "path": "provider/initial-tested.json",
+      "bytes": 2649,
+      "sha256": "24b107dbe462e9d86e676e7b731a792e229f4dfe724e44a07332a1479ab132f1",
+      "encoding": "utf8"
+    },
+    {
+      "path": "safari/archive-verification.json",
+      "bytes": 943,
+      "sha256": "72dc17e50572b4966fd7a6c133bf9f3058ca7e80d89cba1a79d1fab5968452e9",
+      "encoding": "utf8"
+    },
+    {
+      "path": "safari/artifact-provider.json",
+      "bytes": 816,
+      "sha256": "df47308585bc167f391917e6c82e572d135598ad61be339e3d45e2f30689e5a9",
+      "encoding": "utf8"
+    },
+    {
+      "path": "safari/artifact/safari-profile-probe.json",
+      "bytes": 8784,
+      "sha256": "9482f3a7240884c9b773998876eeb5d9170a036b4005e6a8c286576b7ee81b1f",
+      "encoding": "utf8"
+    },
+    {
+      "path": "safari/artifact/safari/versions.json",
+      "bytes": 1136,
+      "sha256": "11da02a52ca00c85bdf78bee23fbbf0c4bb8d9c86d1dd24f5e651f82f8c52ae6",
+      "encoding": "utf8"
+    },
+    {
+      "path": "safari/job-from-attempt-jobs.json",
+      "bytes": 4217,
+      "sha256": "ab66c8c428dc9eb01794f3faf4cd7e6151eaa596aab98992654d5429ab676fee",
+      "encoding": "utf8"
+    },
+    {
+      "path": "safari/job.log",
+      "bytes": 36325,
+      "sha256": "351c50e71290cd098378e8573de0427e607ba43806abd7b36f64b3810991b7d3",
+      "encoding": "utf8"
+    }
+  ],
+  "failure": {
+    "browser": "safari",
+    "scope": "Native ordinary Safari same-profile capability probe, not application acceptance",
+    "stage": "online",
+    "pid": 4226,
+    "time": "2026-11-04T10:22:19.794Z",
+    "lastRecordedPhase": "executable-read-end",
+    "timeoutMs": 8000,
+    "elapsedMs": 8073,
+    "appKitImportMs": 7741,
+    "error": {
+      "signal": "SIGTERM",
+      "killed": true
+    },
+    "launchDatePhaseRecorded": false,
+    "ownedIdentityEstablished": false,
+    "teardownError": "AssertionError [ERR_ASSERTION]: No owned Safari identity is available for teardown.",
+    "applicationStages": 0,
+    "pointerInvocations": 0,
+    "cursorSnapshots": 0,
+    "cause": "Underlying native cause unresolved; the measured AppKit-import phase consumed most of the existing initial identity command budget.",
+    "notExecuted": [
+      "application retained-content and image acceptance",
+      "normal and conflict reconnect acceptance",
+      "storage-loss acceptance",
+      "SPN-137 pointer delivery and before/after cursor observations"
+    ],
+    "ownedExitEvidence": "Unavailable: positive owned identity was not established and teardown was refused."
+  },
+  "otherOwners": [
+    {
+      "browser": "chrome",
+      "status": "passed",
+      "completedStages": 37,
+      "retainedRecords": 4,
+      "normalReconnects": 2,
+      "completedConflictCopies": 2,
+      "storageLossCompleted": true,
+      "ownedStops": 3,
+      "allOwnedExits": true
+    },
+    {
+      "browser": "firefox",
+      "status": "passed",
+      "completedStages": 37,
+      "retainedRecords": 4,
+      "normalReconnects": 2,
+      "completedConflictCopies": 2,
+      "storageLossCompleted": true,
+      "ownedStops": 3,
+      "allOwnedExits": true
+    }
+  ],
+  "artifacts": [
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "name": "desktop-offline-chrome-macos-26-41813499184-1",
+      "artifactBytes": 227512,
+      "sha256": "748a83b337d165d806e544922e92f592549dc0b02a41e4f6f89306e3f8161d15",
+      "createdAt": "2026-11-04T10:24:28Z",
+      "expiresAt": "2026-11-18T10:24:26Z",
+      "expiredAtCollection": false,
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalJobLog": {
+        "bytes": 123874,
+        "sha256": "cd8efefe6b690fc164918b80d9ec5bb4a5dd4467f7d6d89ffd44d3ca73d41dec",
+        "encoding": "Connector-decoded UTF-8 text retained with terminal newline; not original HTTP response bytes."
+      },
+      "members": [
+        {
+          "path": "chrome/a403db24-8ef4-40bf-9995-032e2b3e731a-before-doc-input.png",
+          "bytes": 27944,
+          "sha256": "53912222abe9c155a5e72741788238c9ec2158d00b13eb34dcfc52b55eee7bda"
+        },
+        {
+          "path": "chrome/acceptance.json",
+          "bytes": 48947,
+          "sha256": "1ef72d07e14c522731493e971eb48dc1557fb475b796b63d42efb23ff049700a"
+        },
+        {
+          "path": "chrome/chrome-driver-1.log",
+          "bytes": 352,
+          "sha256": "8916b948a7f6ab61f8cdd92b14c17cda69a1962917f26569a6d7fd1a987a432b"
+        },
+        {
+          "path": "chrome/6e521530-a256-4c83-97a9-b14314f4108a-before-doc-input.png",
+          "bytes": 27482,
+          "sha256": "eaa2718c77bd6175c39c982913b20d868f636653761628eb1ff856bb64c2b320"
+        },
+        {
+          "path": "chrome/chrome-driver-2.log",
+          "bytes": 352,
+          "sha256": "0b584c0fa80c624287a5d5a6356def16eb7a324617c4a32b4442a1488ba35de4"
+        },
+        {
+          "path": "chrome/chrome-driver-3.log",
+          "bytes": 352,
+          "sha256": "4711327cb4735cb1f18808a6b839f1eefd1a12d6304186eee17be1c935796dca"
+        },
+        {
+          "path": "chrome/doc-conflict-offline.png",
+          "bytes": 29186,
+          "sha256": "9b37124e73a30a9c90a7322d19f0faade7853715623eca421b8578621f8379fe"
+        },
+        {
+          "path": "chrome/doc-normal-offline.png",
+          "bytes": 29641,
+          "sha256": "a868416551d9e91e7ebd6bd494477e83e583987ca614fa5f52d3c82f75b191ea"
+        },
+        {
+          "path": "chrome/doc-recovered-copy.png",
+          "bytes": 33379,
+          "sha256": "da563a75f1c655a8462ac7f0e1c53a7eb6ea4b71ceb118cf40f2aae76d7233c7"
+        },
+        {
+          "path": "chrome/sheet-conflict-offline.png",
+          "bytes": 29189,
+          "sha256": "3810754b2dceb54cb02a0c3d56a7ae2cab750985592a3ec42ab75773502bdba8"
+        },
+        {
+          "path": "chrome/sheet-normal-offline.png",
+          "bytes": 29263,
+          "sha256": "62e2e35e330e56bad4a92301fae8478d82f159f838c9eff53a9e6c713886b979"
+        },
+        {
+          "path": "chrome/sheet-recovered-copy.png",
+          "bytes": 31995,
+          "sha256": "155acbaee9e921bbd5fb5877bd5fa93f380e9a43f4af7926c534655996454bde"
+        },
+        {
+          "path": "chrome/versions.json",
+          "bytes": 824,
+          "sha256": "16c297d3ea2fd27a07f8416251726840979d917b031c1db742cdd28a52a817a9"
+        }
+      ]
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "name": "desktop-offline-firefox-macos-26-41813499184-1",
+      "artifactBytes": 453845,
+      "sha256": "ca2c99ebb58030c63a7c78725fe38389b2f9c497be83dacf8646fd9ccd641293",
+      "createdAt": "2026-11-04T10:23:55Z",
+      "expiresAt": "2026-11-18T10:23:54Z",
+      "expiredAtCollection": false,
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalJobLog": {
+        "bytes": 128695,
+        "sha256": "9891337daad0d3201cccfe34b20ea32fe526dc15a72471523a86538bf5c19d0c",
+        "encoding": "Connector-decoded UTF-8 text retained with terminal newline; not original HTTP response bytes."
+      },
+      "members": [
+        {
+          "path": "firefox/acceptance.json",
+          "bytes": 49865,
+          "sha256": "dca4a37ee03c6f948c2a8e18b3b1fe70cbb2c692b2eaa2a144dad0aab2cd3ba1"
+        },
+        {
+          "path": "firefox/d210617e-ed5d-414e-b9e9-48288652e2cf-before-doc-input.png",
+          "bytes": 38625,
+          "sha256": "e13b7b8378c27d4a1a836afc0e96759e1fae7dd9da6141c57a1c36b8989fa362"
+        },
+        {
+          "path": "firefox/doc-conflict-offline.png",
+          "bytes": 39845,
+          "sha256": "727cd20678a2d678b3ce81c639c6591d9e441d9a5d482408f5ee6906fa5ed27a"
+        },
+        {
+          "path": "firefox/402c2b38-7499-41d9-ad07-896e9a7a878e-before-doc-input.png",
+          "bytes": 38962,
+          "sha256": "05ed0925635862b2383d7bf959d3b44a2cfb81fe2661b19c46991e20ca1f2ff0"
+        },
+        {
+          "path": "firefox/doc-normal-offline.png",
+          "bytes": 39823,
+          "sha256": "9f71f24d6514b3110f222caf1875e4ecdfa9e43c3328f0dff69f28bfd3a1f108"
+        },
+        {
+          "path": "firefox/firefox-driver-1.log",
+          "bytes": 2224,
+          "sha256": "4c32ba046e62bde26f94ab7473c76a9a4e4ad64acad332b4f97bcc04404c2989"
+        },
+        {
+          "path": "firefox/firefox-driver-2.log",
+          "bytes": 2150,
+          "sha256": "0753ec12c36c75a23bec06f875d245f84135334083a5f637e82a35b1fb0aeab6"
+        },
+        {
+          "path": "firefox/doc-recovered-copy.png",
+          "bytes": 44109,
+          "sha256": "783e993f36f750b77ee904a87be2e03366ce6aedb73f48072d50c88e93a67741"
+        },
+        {
+          "path": "firefox/firefox-driver-3.log",
+          "bytes": 1760,
+          "sha256": "96877054f0d4ccaf3e7bea11e51beacade86cc387403f041a6705a2177c38ebe"
+        },
+        {
+          "path": "firefox/firefox-storage-prompt-1.json",
+          "bytes": 21974,
+          "sha256": "725023f5c846d3fe82b0c19420b16532f559989bb3eae739b50e33ba500b17c4"
+        },
+        {
+          "path": "firefox/firefox-storage-prompt-1.png",
+          "bytes": 147343,
+          "sha256": "5348a1b849fc19da0a7a0d92812d4f1bfba178cb176dc2646476fe798c2f864d"
+        },
+        {
+          "path": "firefox/sheet-conflict-offline.png",
+          "bytes": 51814,
+          "sha256": "93d032e1a3894e649ea6f6d60294bb2d8fede3a6426ac0e0be8b4325c4072a59"
+        },
+        {
+          "path": "firefox/sheet-normal-offline.png",
+          "bytes": 51418,
+          "sha256": "e7ef7f9fd49550b47c60f385bbbfd7b1ec9d18e6b648f97892d9c9113ffb2f3b"
+        },
+        {
+          "path": "firefox/sheet-recovered-copy.png",
+          "bytes": 55160,
+          "sha256": "da279e580807d755e63b50c69b60b1644d6978e871229c885905b034cb8ce67d"
+        },
+        {
+          "path": "firefox/versions.json",
+          "bytes": 650,
+          "sha256": "957c97cbcf43e9313c6fd4834fbcadc8cdfa6b68797ceee7ca38ad590251699a"
+        }
+      ]
+    },
+    {
+      "browser": "safari",
+      "artifactId": 13314155869,
+      "name": "desktop-offline-safari-macos-15-intel-41813499184-1",
+      "artifactBytes": 121766,
+      "sha256": "abb44d5bd3b7604a1523c45ddbf88d8e7ed30b983c987225d7a1e2eca18abc10",
+      "createdAt": "2026-11-04T10:22:47Z",
+      "expiresAt": "2026-11-18T10:22:46Z",
+      "expiredAtCollection": false,
+      "crcPassed": true,
+      "safePaths": true,
+      "regularFilesOnly": true,
+      "originalJobLog": {
+        "bytes": 36325,
+        "sha256": "351c50e71290cd098378e8573de0427e607ba43806abd7b36f64b3810991b7d3",
+        "encoding": "Connector-decoded UTF-8 text retained with terminal newline; not original HTTP response bytes."
+      },
+      "members": [
+        {
+          "path": "safari/versions.json",
+          "bytes": 1136,
+          "sha256": "11da02a52ca00c85bdf78bee23fbbf0c4bb8d9c86d1dd24f5e651f82f8c52ae6"
+        },
+        {
+          "path": "safari-capability-failure.png",
+          "bytes": 156458,
+          "sha256": "fce2d7878fe3168c61b9b8e646586440b542fc086ac548d34005fec425761ad8"
+        },
+        {
+          "path": "safari-profile-probe.json",
+          "bytes": 8784,
+          "sha256": "9482f3a7240884c9b773998876eeb5d9170a036b4005e6a8c286576b7ee81b1f"
+        }
+      ]
+    }
+  ],
+  "supplementaryImages": [
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/a403db24-8ef4-40bf-9995-032e2b3e731a-before-doc-input.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/6e521530-a256-4c83-97a9-b14314f4108a-before-doc-input.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/doc-conflict-offline.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/doc-normal-offline.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/doc-recovered-copy.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/sheet-conflict-offline.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/sheet-normal-offline.png"
+    },
+    {
+      "browser": "chrome",
+      "artifactId": 13313198177,
+      "memberPath": "chrome/sheet-recovered-copy.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/d210617e-ed5d-414e-b9e9-48288652e2cf-before-doc-input.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/doc-conflict-offline.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/402c2b38-7499-41d9-ad07-896e9a7a878e-before-doc-input.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/doc-normal-offline.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/doc-recovered-copy.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/firefox-storage-prompt-1.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/sheet-conflict-offline.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/sheet-normal-offline.png"
+    },
+    {
+      "browser": "firefox",
+      "artifactId": 13312854969,
+      "memberPath": "firefox/sheet-recovered-copy.png"
+    }
+  ],
+  "privacyReview": {
+    "source": "Original decoded UTF-8 inspected before encoding; no redactions or field trimming applied.",
+    "patternsChecked": [
+      "privateKey",
+      "githubToken",
+      "apiSecret",
+      "jwt",
+      "signedUrl"
+    ],
+    "sensitivePatternMatches": 0,
+    "maskedCredentialLabels": 9,
+    "qualification": "Pattern checks are supplemented by inspection of the records: synthetic localhost fixture content, runner paths, provider and Git identities, and already-masked checkout credentials. No signed download references are included."
+  },
+  "limitations": [
+    "All 32 selected original UTF-8 files are retained byte-for-byte inside the standard gzip JSON envelope, including BOMs and any embedded image hex/bytes.",
+    "All 13 non-PNG artifact members are included, including all 6 driver logs and Firefox accessibility evidence. No report fields are removed.",
+    "The original Safari capability-failure PNG is retained byte-for-byte. All 8 Chrome and 9 Firefox PNG files remain supplementary with exact member hashes and archive expiry.",
+    "Complete original ZIP files remain supplementary. Their provider digests, sizes, creation/expiry times and every member hash are retained.",
+    "Job logs are connector-decoded UTF-8 text retained with terminal newline, not original HTTP response bytes.",
+    "Transient earlier provider polling snapshots remain in scratch; the complete final run/attempt/jobs/artifacts and original source/tested Git objects are preserved here.",
+    "Source-specific image observations are in README.md. Reported paint counts are preserved; reviewer B did not recompute pixels for this run.",
+    "This is preservation of the third failed native execution, not a new execution or acceptance pass. No result establishes the historical pointer cause or effectiveness of the unexecuted cursor diagnostics."
+  ]
+}
