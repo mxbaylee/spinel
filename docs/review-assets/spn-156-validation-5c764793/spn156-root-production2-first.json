@@ -1,0 +1,130 @@
+{
+  "at": "2026-11-14T18:01:55.814945+00:00",
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "run": 43622831505,
+  "attempt": 1,
+  "job": 132532309874,
+  "artifact": 14124874768,
+  "zip_sha256": "4412d32ccc2db86a078d9e1e91e1edd8d199f9733d746c159bf299a09a82784d",
+  "report_sha256": "1d4f960827ea0458fc91ca00f50cedb79a5924136890cb99c3ff5757a46b244f",
+  "stats": {
+    "startTime": "2026-11-14T17:47:45.474Z",
+    "duration": 705214.154,
+    "expected": 84,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "errors": [],
+  "cases": [
+    {
+      "title": "real browser quota failure retains pending work and images without a partial new download",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 240000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 36713,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T17:50:38.863Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "spn-055-quota-boundary",
+                  "contentType": "application/json",
+                  "body": "ewogICJiZWZvcmUiOiB7CiAgICAidXNhZ2UiOiAyNTgyNzIwNiwKICAgICJxdW90YSI6IDg2NTY0MjMxOSwKICAgICJvdmVycmlkZUFjdGl2ZSI6IGZhbHNlLAogICAgInVzYWdlQnJlYWtkb3duIjogWwogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImZpbGVfc3lzdGVtcyIsCiAgICAgICAgInVzYWdlIjogMAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImluZGV4ZWRkYiIsCiAgICAgICAgInVzYWdlIjogMzAzMTA0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTg4MDgKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9LAogICJleGhhdXN0ZWQiOiB7CiAgICAidXNhZ2UiOiAzMzQ0NTc2NiwKICAgICJxdW90YSI6IDI1ODkyNzQyLAogICAgIm92ZXJyaWRlQWN0aXZlIjogdHJ1ZSwKICAgICJ1c2FnZUJyZWFrZG93biI6IFsKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJmaWxlX3N5c3RlbXMiLAogICAgICAgICJ1c2FnZSI6IDAKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJpbmRleGVkZGIiLAogICAgICAgICJ1c2FnZSI6IDc5MjE2NjQKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJjYWNoZV9zdG9yYWdlIiwKICAgICAgICAidXNhZ2UiOiAyNTQ5ODgwOAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogInNlcnZpY2Vfd29ya2VycyIsCiAgICAgICAgInVzYWdlIjogMjUyOTQKICAgICAgfQogICAgXQogIH0sCiAgImFybWVkIjogewogICAgInVzYWdlIjogMzM0NDU3NjYsCiAgICAicXVvdGEiOiAzMzk3MDA1NCwKICAgICJvdmVycmlkZUFjdGl2ZSI6IHRydWUsCiAgICAidXNhZ2VCcmVha2Rvd24iOiBbCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiZmlsZV9zeXN0ZW1zIiwKICAgICAgICAidXNhZ2UiOiAwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiaW5kZXhlZGRiIiwKICAgICAgICAidXNhZ2UiOiA3OTIxNjY0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTg4MDgKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9Cn0="
+                }
+              ]
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "ab2fe326f81a2e139708-9955a5de7218c0ac4a4f",
+      "file": "offline-device.spec.ts",
+      "line": 442,
+      "column": 1
+    },
+    {
+      "title": "writer locks and a newly pending copy prevent clean removal; explicit discard preserves the original",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 240000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 6803,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T17:51:32.928Z",
+              "annotations": [],
+              "attachments": []
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "ab2fe326f81a2e139708-070f4f9aa7cf4439b6de",
+      "file": "offline-device.spec.ts",
+      "line": 831,
+      "column": 1
+    },
+    {
+      "title": "offline exit locks both tabs, keeps exact Space changes, drains before an invitation and isolates the next account",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 180000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 7636,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T17:51:39.944Z",
+              "annotations": [],
+              "attachments": []
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "ccad38f60b47bfc68793-ce031142f7067623cb53",
+      "file": "offline-sign-out.spec.ts",
+      "line": 98,
+      "column": 1
+    }
+  ],
+  "limits": "Report read and ZIP digest verified; full attachment/source/assertion audit pending worker; no phone or final all-gates acceptance."
+}

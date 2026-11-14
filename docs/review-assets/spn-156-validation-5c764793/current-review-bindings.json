@@ -1,0 +1,38 @@
+{
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "tree": "d50abe8337f5855246e06511a5faf9e8bda7a138",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "reports": [
+    {
+      "reviewer": "/root/spn156_blind_a",
+      "path": "spn156-blind-a-5c764793.md",
+      "sha256": "a542d137cded82c0f14d8a2169ec485b4ca69fd6f77bca747430a580a6b37d9d",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": []
+    },
+    {
+      "reviewer": "/root/spn156_blind_b",
+      "path": "spn156-blind-b-5c764793.md",
+      "sha256": "2268c0c4f47628bab9f822d9226355cd4717f47230485688a7800e7369f79d93",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": []
+    }
+  ],
+  "managerVerification": "Root read both full reports, independently audited source, and accepted both reviewers exact-head PR receipts; no duplicate manager CLI execution. Instruction received2026-11-14.",
+  "historicalRuntimeIdentity": "d5a0bc7cad087ce30f48861b276996fd31d3af94",
+  "hostedAndPhone": "Pending; no acceptance or merge permission."
+}

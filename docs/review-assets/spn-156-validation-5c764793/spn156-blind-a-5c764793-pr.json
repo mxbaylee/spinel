@@ -1,0 +1,17 @@
+{
+  "name": "spn156-blind-a-5c764793-pr",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+    "--title",
+    "🔁 SPN-156 Sync saved edits while the file list is open"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 376,
+  "peakKiB": 179312
+}

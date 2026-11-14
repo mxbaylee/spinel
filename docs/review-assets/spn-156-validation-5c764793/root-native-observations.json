@@ -1,0 +1,125 @@
+{
+  "at": "2026-11-14T18:28:34.533983+00:00",
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "rawAttachments": [
+    {
+      "path": "sync-production/test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/sync-diagnostics.json.gz",
+      "submitCount": 2,
+      "ackCount": 2,
+      "checkpointRevision": 2,
+      "checkpointKeys": [
+        "version",
+        "unitId",
+        "revision",
+        "snapshot",
+        "sent",
+        "inflight",
+        "buffer"
+      ],
+      "storedInViews": [
+        true
+      ],
+      "consoleKinds": {
+        "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 2,
+        "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.": 4,
+        "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.": 4,
+        "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.": 4
+      },
+      "snapshotText": "File-list replay e685a0f85c7f5c4f492d-ad20d37de5c110e26e76\r\n",
+      "matchingUniqueNonduplicateAcks": true
+    },
+    {
+      "path": "sync-production/test-results/sync-production/offline-editing-downloaded-f7beb-or-creating-a-recovery-copy-sync-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "checkpointRevision": 1,
+      "checkpointKeys": [
+        "version",
+        "unitId",
+        "revision",
+        "snapshot",
+        "sent",
+        "inflight",
+        "buffer",
+        "failure",
+        "recoverySnapshot"
+      ],
+      "storedInViews": [
+        true
+      ],
+      "consoleKinds": {
+        "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.": 3,
+        "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.": 3,
+        "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.": 3,
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)": 1
+      }
+    },
+    {
+      "path": "production-2/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "checkpointRevision": 1,
+      "checkpointKeys": [
+        "version",
+        "unitId",
+        "revision",
+        "snapshot",
+        "sent",
+        "inflight",
+        "buffer"
+      ],
+      "storedInViews": [
+        true
+      ],
+      "consoleKinds": {
+        "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.": 7,
+        "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.": 7,
+        "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.": 7,
+        "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 3
+      }
+    },
+    {
+      "path": "production-2/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "checkpointRevision": null,
+      "checkpointKeys": [],
+      "storedInViews": [
+        false,
+        false
+      ],
+      "consoleKinds": {
+        "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.": 11,
+        "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.": 11,
+        "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.": 11,
+        "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 2
+      }
+    },
+    {
+      "path": "production-2/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "checkpointRevision": 1,
+      "checkpointKeys": [
+        "version",
+        "unitId",
+        "revision",
+        "snapshot",
+        "sent",
+        "inflight",
+        "buffer"
+      ],
+      "storedInViews": [
+        true
+      ],
+      "consoleKinds": {
+        "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.": 10,
+        "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.": 10,
+        "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.": 10,
+        "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 11,
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)": 6
+      }
+    }
+  ],
+  "limits": "Rawcurrentobservationschecked;sourceassertions/serverpeerproofandallarchivebindingsstillunderfinalaudit;phonepending."
+}

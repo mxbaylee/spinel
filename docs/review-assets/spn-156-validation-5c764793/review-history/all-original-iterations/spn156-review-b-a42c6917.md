@@ -1,0 +1,58 @@
+# 🔎 Independent full-L SPN-156 review B
+
+Candidate **a42c6917ea2d5c75dcc7cfa34467b5a58d44a8d8**, actual base **754e65317744e5ce97ede501935c6586e4875f2a**, worktree `/Users/mxbaylee/projects/spinel-spn-156`. Read-only nonimplementing review; no source edits, mutation, push, browser retry or compiler rerun. Other/prior numerical review sections were not consulted. Final HEAD and clean worktree independently verified.
+
+## ✅ Grade and findings
+
+**100/100**: scope35/35, correctness25/25, regression20/20, CI/workflow and operations10/10, maintainability/complexity10/10. No actionable findings or remaining point-bearing steps to100. No CI-result deduction. This is exact-head pre-push reviewability, not complete L acceptance, a CI pass, or merge permission.
+
+I read the original main ticket through `git show 754e6531:docs/todo/SPN-156.md`, complete candidate source/test delta and maintained evidence/landing changes, current canonical scope/architecture and final repair sections, process/runbook, testing guidance and all four personas. The full122-file outcome retains app-running Doc/Sheet file-list reconnect, foreground return, acknowledgment and second-device content, account/item authority, revocation, writer ownership, interruption, recovery and native/browser/installed-phone verification. No native or platform requirement was split away. The branch-local ticket deletion and completion-counter addition remain explicitly provisional; main's148/145/149/158/160 entries, next161 and Nov12 grooming identity survive.
+
+## 🧩 Complete implementation assessment
+
+The shared account-scoped replay owner coordinates file-list surfaces, serializes eligible pending copies, excludes foreground items, and uses account Web Locks across tabs. Admission rechecks prepared-account epoch and visible/online lifetime across asynchronous storage/module boundaries. A remount waits for the previous owner to drain. Reconnect, foreground and independent durable-change events wake it; the active job's own checkpoint notifications cannot create an idle retry loop. Missing/denied storage does not create an empty substitute. Ineligible read-only, creation, problem and uncertain copies stay with their existing owners.
+
+The nonvisual host reuses NativeReplica, OfflineSession and the existing binding/authority/checkpoint path. It reserves the same-tab handoff before async admission, retains the actual item lock, and joins persistence before foreground or maintenance admission. Binding stop first quiets producers/transport/reconnect activity, then waits for durable persistence and disposes. Nested cleanup finally blocks release session/native ownership and admission/completion waiters even if cleanup throws. A bounded job ends without claiming acknowledged success on timeout, account loss or failure. Background conflict cannot publish a hidden recovery copy; retained work remains available to the existing visible recovery flow. Guest links acquire no private replay store or owner.
+
+The deterministic owners cover real Web Locks, real host/session handoff and cleanup, delayed account/copy invalidation, disk errors and post-transaction notifications. The actual native Doc/Sheet checkpoint test restores authored native content, preserves immutable retry identity, verifies the server accepts once, and holds the acknowledgment persistence boundary before allowing clean state. The two added browser cases require actual pending IndexedDB edits, no originating editor present, exact server revisions/content and peer content, plus revoked edits retained with no submission or recovery copy. They are meaningful acceptance contracts; their source and lower-layer results are not substitutes for pending execution.
+
+Persona balance is appropriate: Owner gains automatic delivery without sacrificing durable work or foreground priority; Collaborator retains exact content and revocation protection; Operator gets one event-driven bounded native job using existing machinery; Link guest gains no private data or authority. Product UI, design and state vocabulary are unchanged. No new visual approval is claimed or required for this test-fixture repair; original rendering/interaction acceptance remains required.
+
+## 🖱️ Bounded pointer-readiness repair
+
+The only executable delta from40dee0d3 is in `scripts/ci/desktop-offline.ts`, `scripts/ci/desktop-pointer.ts` and `scripts/ci/desktop-pointer.test.ts`. I reviewed the helper and all actual named-control callers, including the conflict Doc save-details control and the downstream recovery/content assertions.
+
+`namedPointerTarget` locates the same normalized label/index, rejects disconnected/non-HTMLElement/disabled targets, takes the first client rectangle, rejects missing/non-finite/nonintersecting rectangles, clips it to the viewport and hit-tests the floored center. A hit on the element or its descendant is admitted; unrelated overlays are rejected. That geometry corresponds to the Chrome/Firefox WebDriver element click admission point. No scrolling, DOM change, dismissal or input is posted while polling. The existing45-second poll and250ms cadence remain unchanged, followed by exactly one unchanged `browser.click`. Chrome/Firefox still use their native WebDriver element click; Safari retains its existing focus/Enter path. A later race or persistent obstruction still fails; the helper is not described as guaranteeing atomic DOM identity between poll and click.
+
+The source contains exactly two backslashes in the TypeScript template's whitespace normalization, which cook to the intended single-backslash `/\s+/g` expression. It does not emit a regex matching literal backslash-s. The actual corrected source SHA256 is independently verified as `be3c3a510c6d18c751750eed633fea73102b45a629a246913b51a77c2e94ca34`.
+
+The16 new controls use the existing VM fixture and directly assert otherwise enabled/visible obstruction rejection, no posted input, descendant hit acceptance, disabled/hidden/missing/disconnected/mismatched labels, clipped edge coordinates, no-intersection and invalid rectangle rejection. Existing Safari pointer controls remain meaningful after fixture extension. I inspected the retained detecting negative: removing only hit-membership admission makes the covered target return0 instead of-1 in the named readiness regression, exit1 without timeout/resource abort. The corrected source was restored byte-for-byte. This proves a concrete failing oracle, not merely a test-count increase.
+
+## 🧪 My local result and cleanup
+
+On this exact head, normal memory pressure1, pinned Node26.13.0, shared `watch.ts` → `scripts/serial.ts`, unchanged2GiB/eight-minute watchdog:
+
+`node --test --test-concurrency=1 scripts/ci/desktop-pointer.test.ts`
+
+**65/65 passed on the first attempt**, exit0,225ms, peak260928KiB, no guard abort. Receipts: `/tmp/spinel-dependabot-2026-11-11/spn156-review-b-a42-pointer.json` and `.log`. These built-in Node VM controls do not use Vitest or shared module caches; no package install/cache mutation occurred. No browser, app or server was started. Explicit command/process audit at2026-11-14T08:10:10.783164+00:00 found no owned leftovers, no kills; shared serial lock was absent. Cleanup receipt: `/tmp/spinel-dependabot-2026-11-11/spn156-review-b-a42-cleanup.json`. I explicitly released the sole Mac workload slot immediately afterward; later work was read-only.
+
+No176-suite, compiler or browser rerun was necessary for the new three-file fixture delta. I independently verified all16 ticket replay runtime/test Git blobs and working SHA256s against40de and their recorded prior checked identities. Existing runtime evidence therefore retains applicability at its original source; it is not relabelled as a fresh run. Worker full typecheck8905ms/1759760KiB and targeted lint/format/backlog/PR receipts belong to `def39e338f9aab57e11a940aa1622b5015f1f930`; its delta to this a42 head is20 documentation/evidence paths only.
+
+## 🧾 Provenance, routing and first failure
+
+I verified all117 recorded dependency inputs against both this checkout and the reused dependency donor. Donor currently has clean HEAD5e72d33ac9cb3a86b3496345209493d6c86e469c. Historical2204 baseline and post-check23e observed HEAD are correctly distinguished; earlier donor cleanliness was not retrospectively invented. No workflow/routing/package/lock changes narrow acceptance. Desktop workflow paths include `scripts/ci/desktop-*.ts`; existing Node test globs include the pointer tests. Native checkpoint and integrated browser tests stay in their existing lib and sync-production owners; shared source/dependency and required aggregate contracts remain intact.
+
+Original Chrome failure: application40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47, tested mergeeaaf75f393ab91d9fd1120cbff63c034b481bada, Desktop run43572863994 attempt1, Chrome/macOS26 job132380800458, artifact14105073087. I independently verified downloaded ZIP SHA256 `c7887b140a624c9387eae654ca1a376cf0beee1e031739eeeba379acacf3b479`, inspected its acceptance/error record and viewed `failure.png`. The error reports the Save details button's click point(638,30) intercepted by a top-center warning toast; the screenshot visibly shows “This content is protected. This action is not allowed.” across that region. This supports the identified readiness gap. It does not establish the warning's product trigger or prove that warning cause repaired.
+
+The retained report shows normal Sheet reconnect, conflict Sheet copy/original checks and normal Doc reconnect completed before this failure. Later conflict-Doc and storage-loss assertions did not finish. Browser PID5058 and driver PID5054 are recorded exited. Safari/Firefox results belong to that original source and do not qualify Chrome, the repair head or installed phone. Six original local browser outcomes/resource limits remain preserved; no abort is converted into a pass. The first-failure archive is explicitly marked publication pending in committed evidence; the verified local raw artifact is not claimed to have an already published immutable tag.
+
+## 🚦Acceptance and delivery boundaries
+
+There are no remaining local repair findings or point deductions. Required external work remains:
+
+- In `docs/implementation/SPN-156.md` final repair checkpoint and `scripts/ci/desktop-offline.ts`, complete fresh exact-head native desktop acceptance with the warning and all original recovery/content/storage-loss assertions intact. Investigate any further actual failure; do not treat waiting for a click as a warning-cause fix.
+- In `e2e/offline-editing.spec.ts` and the original ticket Verify contract, execute both exact-head file-list Doc/Sheet replay and revoked-access cases, with current required hosted gates and native/build identity. Earlier comparator results do not replace these.
+- Obtain an already authorized installed-phone session and record exact repaired build/device/browser/Home Screen launch, offline edits, list-view reconnect/foreground and peer-content outcome. This is an unavailable execution prerequisite, not a human product-design sign-off or a waived requirement. The older Pixel10 symptom is not repair acceptance; iPhone scope remains SPN-152.
+- Finish durable first-outcome archive publication and final PR evidence before merge, preserving original failure, source identities and cleanup. Candidate bookkeeping stays provisional until all actual acceptance and merge conditions are satisfied.
+
+These are retained execution/delivery conditions, not CI-result deductions or concealed local findings. Any new executable repair requires independent exact-head revalidation.

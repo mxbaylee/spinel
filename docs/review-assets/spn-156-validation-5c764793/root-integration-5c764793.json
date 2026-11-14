@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-11-14T17:39:13.105155+00:00",
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "tree": "d50abe8337f5855246e06511a5faf9e8bda7a138",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "prior": "d5a0bc7cad087ce30f48861b276996fd31d3af94",
+  "allIncomingRecordsVerified": 26,
+  "unchangedOwnedRuntimeTestBlobs": 24,
+  "dependencyInputsVerifiedCandidateAndDonor": 117,
+  "donorHead": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "donorClean": true,
+  "incomingAndPackagingDeltaDocsOnly": true,
+  "packetFullAndCandidateDiffExact": true,
+  "grooming": {
+    "every": 7,
+    "last": "2026-11-14",
+    "completed_since": [
+      "SPN-156"
+    ]
+  },
+  "nextId": 161,
+  "currentHostedAndPhoneAcceptance": "pending",
+  "sourceClean": true,
+  "rootReaderCorrection": "Deleted157 record uses deleted:true rather than a mainBlob field; checked actual file absence, no source/evidence changed."
+}

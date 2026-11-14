@@ -1,0 +1,72 @@
+{
+  "checkedAt": "2026-11-14T17:43:36.548139+00:00",
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tree": "d50abe8337f5855246e06511a5faf9e8bda7a138",
+  "rootReadBothFullReports": true,
+  "reviews": [
+    {
+      "reviewer": "/root/spn156_blind_a",
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-a-5c764793.md",
+      "sha256": "a542d137cded82c0f14d8a2169ec485b4ca69fd6f77bca747430a580a6b37d9d",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "checks": [
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-a-5c764793-backlog.json",
+          "sha256": "d45d275f035e18f996ceb580f202d496ae267df5ba9244a02f7cc87c42d0b650",
+          "elapsedMs": 147,
+          "peakKiB": 0
+        },
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-a-5c764793-pr.json",
+          "sha256": "19e18c0cb295868246e11512b417b5df1daeb5d5f6d292e9a4402cd49b756b1c",
+          "elapsedMs": 376,
+          "peakKiB": 179312
+        }
+      ]
+    },
+    {
+      "reviewer": "/root/spn156_blind_b",
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-b-5c764793.md",
+      "sha256": "2268c0c4f47628bab9f822d9226355cd4717f47230485688a7800e7369f79d93",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "checks": [
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-b-5c764793-backlog.json",
+          "sha256": "47fa84d4ce721a07a13ab9d24d7fc34568124af6961dd6b8c98e1a1a606ae061",
+          "elapsedMs": 142,
+          "peakKiB": 0
+        },
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-b-5c764793-pr.json",
+          "sha256": "58e38ea2d06736eb82f3b1dd48d9e369d1c17a5e4f580c363f54ba80ae995e14",
+          "elapsedMs": 367,
+          "peakKiB": 179152
+        }
+      ]
+    }
+  ],
+  "sourceAudit": "/tmp/spn156-root-integration-5c764793.json",
+  "remaining": [
+    "Fresh hosted2replay+3lifecycle cases",
+    "Desktop interaction",
+    "all7 current gates",
+    "actual installed-phone repaired-build observation"
+  ],
+  "pushQualified": true,
+  "mergeQualified": false
+}

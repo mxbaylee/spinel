@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-11-14T09:37:35.996551+00:00",
+  "source": "d5a0bc7cad087ce30f48861b276996fd31d3af94",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "tree": "83053a286b939cdb1fc7c380c197f68d8594a522",
+  "rootReadBothFullReports": true,
+  "reports": {
+    "a": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-a-d5a0bc7c.md",
+      "sha256": "ce5e88c76c852a2e3bda1e03b522b7f31f6a63ba3a036d00b2de8164db310ec5",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ]
+    },
+    "b": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn156-blind-b-d5a0bc7c.md",
+      "sha256": "0258db3e163fe4ee9c2292a61453068995d1256844717a46ec9bfe9360190ad0",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ]
+    }
+  },
+  "rootInputAudit": "/tmp/spn156-review-d5a0bc7c/root-input-audit.json",
+  "candidateClean": true,
+  "remainingAcceptance": [
+    "current repaired hosted original2 plus repaired3 cases",
+    "Desktop actionability",
+    "all7 exact current gates",
+    "actual installed-phone repaired-build observation"
+  ],
+  "notPushed": true,
+  "laterBaseRequiresRevalidation": true
+}

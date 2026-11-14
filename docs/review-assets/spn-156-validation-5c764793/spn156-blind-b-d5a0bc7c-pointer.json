@@ -1,0 +1,14 @@
+{
+  "name": "spn156-blind-b-d5a0bc7c-pointer",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/desktop-pointer.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 216,
+  "peakKiB": 142992
+}

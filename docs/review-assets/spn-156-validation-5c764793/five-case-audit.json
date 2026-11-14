@@ -1,0 +1,248 @@
+[
+  {
+    "kind": "sync-production",
+    "zipSha256": "9e37fe31c19f414ba2d17e7b9638da2c0fcaf5c170af14ff72399dbad116df4c",
+    "zipCRC": "passed",
+    "reportEntry": "playwright-report/sync-production.json",
+    "reportSha256": "afacfa52a97c17e6496411a04e210ed01a2d07ac889d071c16a674e0373ad1ca",
+    "stats": {
+      "startTime": "2026-11-14T17:52:07.109Z",
+      "duration": 783232.162,
+      "expected": 100,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "cases": [
+      {
+        "title": "the file list replays queued Doc and Sheet edits without reopening either editor",
+        "ok": true,
+        "tags": [],
+        "tests": [
+          {
+            "timeout": 180000,
+            "annotations": [],
+            "expectedStatus": "passed",
+            "projectId": "sync-production",
+            "projectName": "sync-production",
+            "results": [
+              {
+                "workerIndex": 0,
+                "parallelIndex": 0,
+                "status": "passed",
+                "duration": 10657,
+                "errors": [],
+                "stdout": [],
+                "stderr": [],
+                "retry": 0,
+                "startTime": "2026-11-14T17:56:29.149Z",
+                "annotations": [],
+                "attachments": []
+              }
+            ],
+            "status": "expected"
+          }
+        ],
+        "id": "e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+        "file": "offline-editing.spec.ts",
+        "line": 53,
+        "column": 3
+      },
+      {
+        "title": "file-list replay retains revoked edits without sending them or creating a recovery copy",
+        "ok": true,
+        "tags": [],
+        "tests": [
+          {
+            "timeout": 180000,
+            "annotations": [],
+            "expectedStatus": "passed",
+            "projectId": "sync-production",
+            "projectName": "sync-production",
+            "results": [
+              {
+                "workerIndex": 0,
+                "parallelIndex": 0,
+                "status": "passed",
+                "duration": 3170,
+                "errors": [],
+                "stdout": [],
+                "stderr": [],
+                "retry": 0,
+                "startTime": "2026-11-14T17:56:39.815Z",
+                "annotations": [],
+                "attachments": []
+              }
+            ],
+            "status": "expected"
+          }
+        ],
+        "id": "e685a0f85c7f5c4f492d-14b05d72e5c01f03cbc0",
+        "file": "offline-editing.spec.ts",
+        "line": 167,
+        "column": 3
+      }
+    ],
+    "retainedAttachments": [
+      {
+        "zipEntry": "test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/sync-diagnostics.json",
+        "path": "sync-production/test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/sync-diagnostics.json.gz",
+        "decodedBytes": 49514,
+        "decodedSha256": "4ed56a3461765e94470dbfd8a3af5185a9aa22342ccc48abbd937bfa97751649"
+      },
+      {
+        "zipEntry": "test-results/sync-production/offline-editing-downloaded-f7beb-or-creating-a-recovery-copy-sync-production/sync-diagnostics.json",
+        "path": "sync-production/test-results/sync-production/offline-editing-downloaded-f7beb-or-creating-a-recovery-copy-sync-production/sync-diagnostics.json.gz",
+        "decodedBytes": 37079,
+        "decodedSha256": "cdfa51ae787b70a1539f5d545499a89aec237f349e093e6c811eb22dda838268"
+      }
+    ]
+  },
+  {
+    "kind": "production-2",
+    "zipSha256": "4412d32ccc2db86a078d9e1e91e1edd8d199f9733d746c159bf299a09a82784d",
+    "zipCRC": "passed",
+    "reportEntry": "playwright-report/production-2-of-2.json",
+    "reportSha256": "1d4f960827ea0458fc91ca00f50cedb79a5924136890cb99c3ff5757a46b244f",
+    "stats": {
+      "startTime": "2026-11-14T17:47:45.474Z",
+      "duration": 705214.154,
+      "expected": 84,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "errors": [],
+    "cases": [
+      {
+        "title": "real browser quota failure retains pending work and images without a partial new download",
+        "ok": true,
+        "tags": [],
+        "tests": [
+          {
+            "timeout": 240000,
+            "annotations": [],
+            "expectedStatus": "passed",
+            "projectId": "production",
+            "projectName": "production",
+            "results": [
+              {
+                "workerIndex": 1,
+                "parallelIndex": 0,
+                "status": "passed",
+                "duration": 36713,
+                "errors": [],
+                "stdout": [],
+                "stderr": [],
+                "retry": 0,
+                "startTime": "2026-11-14T17:50:38.863Z",
+                "annotations": [],
+                "attachments": [
+                  {
+                    "name": "spn-055-quota-boundary",
+                    "contentType": "application/json",
+                    "body": "ewogICJiZWZvcmUiOiB7CiAgICAidXNhZ2UiOiAyNTgyNzIwNiwKICAgICJxdW90YSI6IDg2NTY0MjMxOSwKICAgICJvdmVycmlkZUFjdGl2ZSI6IGZhbHNlLAogICAgInVzYWdlQnJlYWtkb3duIjogWwogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImZpbGVfc3lzdGVtcyIsCiAgICAgICAgInVzYWdlIjogMAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogImluZGV4ZWRkYiIsCiAgICAgICAgInVzYWdlIjogMzAzMTA0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTg4MDgKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9LAogICJleGhhdXN0ZWQiOiB7CiAgICAidXNhZ2UiOiAzMzQ0NTc2NiwKICAgICJxdW90YSI6IDI1ODkyNzQyLAogICAgIm92ZXJyaWRlQWN0aXZlIjogdHJ1ZSwKICAgICJ1c2FnZUJyZWFrZG93biI6IFsKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJmaWxlX3N5c3RlbXMiLAogICAgICAgICJ1c2FnZSI6IDAKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJpbmRleGVkZGIiLAogICAgICAgICJ1c2FnZSI6IDc5MjE2NjQKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJjYWNoZV9zdG9yYWdlIiwKICAgICAgICAidXNhZ2UiOiAyNTQ5ODgwOAogICAgICB9LAogICAgICB7CiAgICAgICAgInN0b3JhZ2VUeXBlIjogInNlcnZpY2Vfd29ya2VycyIsCiAgICAgICAgInVzYWdlIjogMjUyOTQKICAgICAgfQogICAgXQogIH0sCiAgImFybWVkIjogewogICAgInVzYWdlIjogMzM0NDU3NjYsCiAgICAicXVvdGEiOiAzMzk3MDA1NCwKICAgICJvdmVycmlkZUFjdGl2ZSI6IHRydWUsCiAgICAidXNhZ2VCcmVha2Rvd24iOiBbCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiZmlsZV9zeXN0ZW1zIiwKICAgICAgICAidXNhZ2UiOiAwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiaW5kZXhlZGRiIiwKICAgICAgICAidXNhZ2UiOiA3OTIxNjY0CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAic3RvcmFnZVR5cGUiOiAiY2FjaGVfc3RvcmFnZSIsCiAgICAgICAgInVzYWdlIjogMjU0OTg4MDgKICAgICAgfSwKICAgICAgewogICAgICAgICJzdG9yYWdlVHlwZSI6ICJzZXJ2aWNlX3dvcmtlcnMiLAogICAgICAgICJ1c2FnZSI6IDI1Mjk0CiAgICAgIH0KICAgIF0KICB9Cn0="
+                  }
+                ]
+              }
+            ],
+            "status": "expected"
+          }
+        ],
+        "id": "ab2fe326f81a2e139708-9955a5de7218c0ac4a4f",
+        "file": "offline-device.spec.ts",
+        "line": 442,
+        "column": 1
+      },
+      {
+        "title": "writer locks and a newly pending copy prevent clean removal; explicit discard preserves the original",
+        "ok": true,
+        "tags": [],
+        "tests": [
+          {
+            "timeout": 240000,
+            "annotations": [],
+            "expectedStatus": "passed",
+            "projectId": "production",
+            "projectName": "production",
+            "results": [
+              {
+                "workerIndex": 1,
+                "parallelIndex": 0,
+                "status": "passed",
+                "duration": 6803,
+                "errors": [],
+                "stdout": [],
+                "stderr": [],
+                "retry": 0,
+                "startTime": "2026-11-14T17:51:32.928Z",
+                "annotations": [],
+                "attachments": []
+              }
+            ],
+            "status": "expected"
+          }
+        ],
+        "id": "ab2fe326f81a2e139708-070f4f9aa7cf4439b6de",
+        "file": "offline-device.spec.ts",
+        "line": 831,
+        "column": 1
+      },
+      {
+        "title": "offline exit locks both tabs, keeps exact Space changes, drains before an invitation and isolates the next account",
+        "ok": true,
+        "tags": [],
+        "tests": [
+          {
+            "timeout": 180000,
+            "annotations": [],
+            "expectedStatus": "passed",
+            "projectId": "production",
+            "projectName": "production",
+            "results": [
+              {
+                "workerIndex": 1,
+                "parallelIndex": 0,
+                "status": "passed",
+                "duration": 7636,
+                "errors": [],
+                "stdout": [],
+                "stderr": [],
+                "retry": 0,
+                "startTime": "2026-11-14T17:51:39.944Z",
+                "annotations": [],
+                "attachments": []
+              }
+            ],
+            "status": "expected"
+          }
+        ],
+        "id": "ccad38f60b47bfc68793-ce031142f7067623cb53",
+        "file": "offline-sign-out.spec.ts",
+        "line": 98,
+        "column": 1
+      }
+    ],
+    "retainedAttachments": [
+      {
+        "zipEntry": "test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/sync-diagnostics.json",
+        "path": "production-2/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/sync-diagnostics.json.gz",
+        "decodedBytes": 24672,
+        "decodedSha256": "9c314b7dc9297cdecc713743903644a6dfc806f89f0a4f369aaf7a288f3a4abb"
+      },
+      {
+        "zipEntry": "test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/sync-diagnostics.json",
+        "path": "production-2/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/sync-diagnostics.json.gz",
+        "decodedBytes": 10082,
+        "decodedSha256": "15f8f1edd633a25a18b01abab56ca1bfe20cb35ebf71e5f4fadcd9716f3a5bcb"
+      },
+      {
+        "zipEntry": "test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/sync-diagnostics.json",
+        "path": "production-2/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/sync-diagnostics.json.gz",
+        "decodedBytes": 24022,
+        "decodedSha256": "cb70bd4a3b5fca940b2c4f10863c2e0424a96d9e9a5de8a7b19ce5f1b6d2cc8c"
+      }
+    ]
+  }
+]

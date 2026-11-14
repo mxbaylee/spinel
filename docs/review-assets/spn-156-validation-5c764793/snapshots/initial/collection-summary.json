@@ -1,0 +1,79 @@
+{
+  "observedAt": "2026-11-14T17:46:22.223Z",
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "pr": 289,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": "43622831505",
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "jobs": [
+        {
+          "id": 132532079232,
+          "name": "Classify changes (43622831505)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132532079453,
+          "name": "Pull request",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": "43622831580",
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "jobs": [
+        {
+          "id": 132532079175,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132532281671,
+          "name": "Build Storybook",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": "43622831488",
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "jobs": [
+        {
+          "id": 132532078689,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132532078984,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132532078990,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ]
+    }
+  ],
+  "archiveReady": false,
+  "note": "Raw collection only. Exact plan/tested-tree/aggregate/gate validation, privacy audit and review report inspection still required; no merge or archive publication is claimed."
+}

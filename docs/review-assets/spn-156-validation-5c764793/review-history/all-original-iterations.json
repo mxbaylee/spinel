@@ -1,0 +1,56 @@
+[
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-a-16f4bb3b.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-a-16f4bb3b.md",
+    "sha256": "35723c797898b26dcf41869055f7ee72db4fb8b28556f07d93e681106fcb78dc",
+    "bytes": 8165
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-a-32897ce3.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-a-32897ce3.md",
+    "sha256": "ea20913d40db0d9b5e1591241e07b83105f0032d951e417a483b98ebfe111df6",
+    "bytes": 9578
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-a-40dee0d3.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-a-40dee0d3.md",
+    "sha256": "a90110b08e1859f9cb418e54124eec6c46d7432c0afb91414c8b83701cb7eee0",
+    "bytes": 11937
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-a-8ca1ef65.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-a-8ca1ef65.md",
+    "sha256": "0f072b7776f656665cf5a628b4a765fe61bb05c1116f0a051292d754349a160c",
+    "bytes": 8699
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-a-a42c6917.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-a-a42c6917.md",
+    "sha256": "fece1129889642a841b3461049b51e77003d02f2fd9c3c380342f67d36f879d8",
+    "bytes": 10069
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-b-32897ce3.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-b-32897ce3.md",
+    "sha256": "5280d1aa828d4929e36de5254aabd8a60ebe9714a11ca4b9e0ecdf6c8e7129ee",
+    "bytes": 12604
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-b-40dee0d3.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-b-40dee0d3.md",
+    "sha256": "b3d3e5bd7a68bb280c36ba9ecf37ac57a45792e0f4659eb6f28898fc49533266",
+    "bytes": 12780
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-b-8ca1ef65.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-b-8ca1ef65.md",
+    "sha256": "8cd98e1f7192ce6640d4175f1026154ec7d5b0852c86a147ce9fbefd778598bc",
+    "bytes": 11468
+  },
+  {
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn156-review-b-a42c6917.md",
+    "preserved": "/tmp/spn156-publication-review-history/all-original-iterations/spn156-review-b-a42c6917.md",
+    "sha256": "78dcc5239f193cb32da9a20590e30363cc326ca946de072639d5ab83643d26fd",
+    "bytes": 11644
+  }
+]

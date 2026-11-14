@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-14T17:55:06.260611+00:00",
+  "snapshot": "/tmp/spn156-validation-5c764793-progress-2",
+  "verified_manifest_payloads": 14,
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tested": "525d423f4c7c942e01db3bca1bf9d31584867c3d",
+  "plan_digest": "ca2168a469c67ba8433ae1f60867e37da1335dde11fba4b6a1200ee1b02a346a",
+  "mode": "full",
+  "event": "pull_request",
+  "action": "synchronize",
+  "note": "Intermediate snapshot only; no terminal acceptance inferred. All stored and decoded manifest hashes checked.",
+  "source_tree": "d50abe8337f5855246e06511a5faf9e8bda7a138",
+  "tested_tree": "d50abe8337f5855246e06511a5faf9e8bda7a138",
+  "tested_parents": [
+    "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+    "5c764793f03f7f885873d08d6eca0660cd401bf0"
+  ]
+}

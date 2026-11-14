@@ -1,0 +1,33 @@
+{
+  "source": "d5a0bc7cad087ce30f48861b276996fd31d3af94",
+  "decodedCandidateAndPacketFiles": 175,
+  "priorNumericalAssessmentMatches": [],
+  "runtimeTestBlobsEqual16f": {
+    "e2e/offline-device.spec.ts": true,
+    "e2e/offline-editing.spec.ts": true,
+    "e2e/offline-locks.spec.ts": true,
+    "e2e/offline-sign-out.spec.ts": true,
+    "lib/sync-client/tests/headless-checkpoint.test.ts": true,
+    "scripts/ci/desktop-offline.ts": true,
+    "scripts/ci/desktop-pointer.test.ts": true,
+    "scripts/ci/desktop-pointer.ts": true,
+    "src/ui/offlineLifecycle.test.ts": true,
+    "src/ui/offlinePersistence.test.ts": true,
+    "src/ui/offlineReplay.test.ts": true,
+    "src/ui/offlineTransactionErrors.test.ts": true,
+    "src/ui/offlineWriterHandoff.test.ts": true,
+    "src/ui/spinelSync.test.ts": true,
+    "web/Dashboard.tsx": true,
+    "web/OfflineSpace.tsx": true,
+    "web/SpaceOfflineActions.tsx": true,
+    "web/offline/OfflineSession.ts": true,
+    "web/offline/offlineStore.ts": true,
+    "web/offline/replay.ts": true,
+    "web/offline/replayAdmission.ts": true,
+    "web/offline/replayHost.ts": true,
+    "web/offline/useOfflineDownloads.ts": true,
+    "web/spinelSync.ts": true
+  },
+  "serialLockPresent": false,
+  "clean": true
+}

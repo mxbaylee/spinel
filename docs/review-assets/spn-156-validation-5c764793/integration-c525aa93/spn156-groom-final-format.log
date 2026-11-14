@@ -1,0 +1,3 @@
+Checking formatting...
+All matched files use Prettier code style!
+{"name":"spn156-groom-final-format","args":["node","node_modules/prettier/bin/prettier.cjs","--check","docs/implementation/SPN-156.md","docs/implementation/evidence/SPN-156/integration-c525aa93/README.md","docs/implementation/evidence/SPN-156/integration-c525aa93/source-identity.json"],"code":0,"signal":null,"reason":null,"elapsedMs":250,"peakKiB":201376}

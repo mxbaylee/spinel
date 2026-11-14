@@ -1,0 +1,572 @@
+{
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "contracts": [
+    {
+      "path": "e2e/offline-editing.spec.ts",
+      "sourceSha256": "8ce42cb5431552e8765212d40626f4e1cb56b62498c9bda5f3531f3c0aa62dcd",
+      "gitBlob": "46bcd187e233516ed559ee49e8608af20ebdf453",
+      "startLine": 53,
+      "endLine": 166,
+      "assertionContract": "Real downloaded Doc and Sheet authored offline; durable checkpoints required before leaving; originating file-list has zero native editor both before and after reconnect; both outboxes drain; both server revisions increment once; Doc text occurs once and Sheet D1 is15642; exactly2unique mutation IDs; second native peers match server/content."
+    },
+    {
+      "path": "e2e/offline-editing.spec.ts",
+      "sourceSha256": "8ce42cb5431552e8765212d40626f4e1cb56b62498c9bda5f3531f3c0aa62dcd",
+      "gitBlob": "46bcd187e233516ed559ee49e8608af20ebdf453",
+      "startLine": 167,
+      "endLine": 210,
+      "assertionContract": "Actual editor authority revoked while offline; same buffer/revision retained with stale failure; no recovery record, no submit, unchanged server; file list has zero native editor."
+    },
+    {
+      "path": "e2e/offline-device.spec.ts",
+      "sourceSha256": "e517f9b07a662371df1d4636fd779a9c5c26bf3cc89e1670fd8e9be600d46b77",
+      "gitBlob": "3cba43c863f1759de68541cc4b9ecb737406af2b",
+      "startLine": 442,
+      "endLine": 553,
+      "assertionContract": "Authored pending552 established; real resume held while HTTP image/quota work continues; actual quota rejection; new download has no partial item/images; originalcopy exact and imagebytes retained; zero submit and originalserver unchanged before/after successful later download."
+    },
+    {
+      "path": "e2e/offline-device.spec.ts",
+      "sourceSha256": "e517f9b07a662371df1d4636fd779a9c5c26bf3cc89e1670fd8e9be600d46b77",
+      "gitBlob": "3cba43c863f1759de68541cc4b9ecb737406af2b",
+      "startLine": 831,
+      "endLine": 938,
+      "assertionContract": "Liveeditor initially refuses removal; clean removal retainsserver; authored pending556 provable beforetransition; protectiondialog and keepfocus; actual shared replay admission held with native resume held; cross-tab explicit discard removes onlydevicecopy, sendsnothing and preserves originalserver."
+    },
+    {
+      "path": "e2e/offline-sign-out.spec.ts",
+      "sourceSha256": "f3078977b9a36d7b917ac8854f02ddc51414f6a1fd25b78281740d998738b220",
+      "gitBlob": "7663a967d314f3b1bb29504540d1b4c1f10ad352",
+      "startLine": 98,
+      "endLine": 264,
+      "assertionContract": "Authored private pending5581 preserved across both-tab lock/failed logout and invitation barrier; nextaccount cannotsee/use originalcopy; both compatibilityholds retained; originalaccount serververified reclaim holds actualresume, exactcheckpoint and zero submit; offline reopen returns originaltext and server unchanged."
+    },
+    {
+      "path": "e2e/offline-fixture.ts",
+      "sourceSha256": "c3ff136c22192eaee37facf4221a39e21c16d1fac9ddcaf6d207932cafbcdc8c",
+      "gitBlob": "e911db7cd1b21d92e7b49227eb0d90a0236c90f6"
+    },
+    {
+      "path": "lib/sync-client/tests/headless-checkpoint.test.ts",
+      "sourceSha256": "3ad5c6e2cb17b5dbd261f85a4e880e63e70795f24779fab6658d819b1de3d505",
+      "gitBlob": "9e20388283d2732e0446123fadbe963688656957"
+    }
+  ],
+  "diagnostics": [
+    {
+      "path": "production-2/test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "submits": [],
+      "acks": [],
+      "observations": [
+        {
+          "url": "http://localhost:3101/",
+          "online": true,
+          "hasStored": true,
+          "layout": [],
+          "checkpointRevision": 1,
+          "failure": null,
+          "sent": null,
+          "inflight": [],
+          "buffer": [
+            [
+              {
+                "id": "sheet.mutation.set-range-values",
+                "params": {
+                  "unitId": "afc7592d-89e2-483a-a910-5043309a91e8",
+                  "subUnitId": "tab",
+                  "cellValue": {
+                    "0": {
+                      "3": {
+                        "t": 2,
+                        "v": 552,
+                        "f": null,
+                        "si": null,
+                        "s": {
+                          "cl": {
+                            "rgb": "#221832"
+                          }
+                        },
+                        "ft": null,
+                        "fd": null
+                      }
+                    }
+                  },
+                  "trigger": "sheet.command.set-range-values"
+                }
+              }
+            ]
+          ],
+          "snapshotDocText": null
+        }
+      ],
+      "errors": [],
+      "consoleErrorCount": 24
+    },
+    {
+      "path": "production-2/test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "submits": [],
+      "acks": [],
+      "observations": [
+        {
+          "url": "http://localhost:3101/",
+          "online": true,
+          "hasStored": false,
+          "layout": [],
+          "checkpointRevision": null,
+          "failure": null,
+          "sent": null,
+          "inflight": null,
+          "buffer": null,
+          "snapshotDocText": null
+        },
+        {
+          "url": "http://localhost:3101/profile#device",
+          "online": true,
+          "hasStored": false,
+          "layout": [],
+          "checkpointRevision": null,
+          "failure": null,
+          "sent": null,
+          "inflight": null,
+          "buffer": null,
+          "snapshotDocText": null
+        }
+      ],
+      "errors": [],
+      "consoleErrorCount": 35
+    },
+    {
+      "path": "production-2/test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "submits": [],
+      "acks": [],
+      "observations": [
+        {
+          "url": "http://localhost:3101/spaces/70905b68-6cbb-437d-8265-9dd7a4710f16?item=c67fb604-dc90-46e8-8723-c98020b15df5",
+          "online": true,
+          "hasStored": true,
+          "layout": [
+            {
+              "element": "DIV",
+              "className": "editor-content",
+              "label": null,
+              "bounds": {
+                "x": 0,
+                "y": 61,
+                "width": 1440,
+                "height": 1039,
+                "top": 61,
+                "right": 1440,
+                "bottom": 1100,
+                "left": 0
+              },
+              "canvases": 1
+            },
+            {
+              "element": "SECTION",
+              "className": "",
+              "label": "Offline copy",
+              "bounds": {
+                "x": 224,
+                "y": 97.1875,
+                "width": 1216,
+                "height": 1002.8125,
+                "top": 97.1875,
+                "right": 1440,
+                "bottom": 1100,
+                "left": 224
+              },
+              "canvases": 1
+            },
+            {
+              "element": "SECTION",
+              "className": "sheet-editor",
+              "label": "Doc document",
+              "bounds": {
+                "x": 224,
+                "y": 97.1875,
+                "width": 1216,
+                "height": 1002.8125,
+                "top": 97.1875,
+                "right": 1440,
+                "bottom": 1100,
+                "left": 224
+              },
+              "canvases": 1
+            },
+            {
+              "element": "DIV",
+              "className": "univer-container",
+              "label": null,
+              "bounds": {
+                "x": 224,
+                "y": 121.1875,
+                "width": 1216,
+                "height": 978.8125,
+                "top": 121.1875,
+                "right": 1440,
+                "bottom": 1100,
+                "left": 224
+              },
+              "canvases": 1
+            }
+          ],
+          "checkpointRevision": 1,
+          "failure": null,
+          "sent": null,
+          "inflight": [],
+          "buffer": [
+            [
+              {
+                "id": "doc.mutation.rich-text-editing",
+                "params": {
+                  "unitId": "c67fb604-dc90-46e8-8723-c98020b15df5",
+                  "segmentId": "",
+                  "actions": [
+                    "body",
+                    {
+                      "et": "text-x",
+                      "e": [
+                        {
+                          "t": "i",
+                          "body": {
+                            "dataStream": "Kept through account exit 5581 ",
+                            "textRuns": [
+                              {
+                                "st": 0,
+                                "ed": 31,
+                                "ts": {
+                                  "cl": {
+                                    "rgb": "#221832"
+                                  }
+                                }
+                              }
+                            ],
+                            "customRanges": [],
+                            "customDecorations": [],
+                            "__textXPreserveParagraphIds": true
+                          },
+                          "len": 31
+                        }
+                      ]
+                    }
+                  ],
+                  "textRanges": [
+                    {
+                      "startOffset": 31,
+                      "endOffset": 31,
+                      "collapsed": true
+                    }
+                  ],
+                  "debounce": true,
+                  "trigger": "doc.command.insert-text"
+                }
+              }
+            ]
+          ],
+          "snapshotDocText": "\r\n"
+        }
+      ],
+      "errors": [],
+      "consoleErrorCount": 47
+    },
+    {
+      "path": "sync-production/test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/sync-diagnostics.json.gz",
+      "submitCount": 2,
+      "ackCount": 2,
+      "submits": [
+        {
+          "type": "submit",
+          "mutationId": "c33a5f00-f6ca-4ba6-b8a1-c983265aa3c4",
+          "baseRevision": 1,
+          "mutations": [
+            {
+              "id": "sheet.mutation.set-range-values",
+              "params": {
+                "unitId": "616ea771-090b-45ce-96b7-c3112b34480d",
+                "subUnitId": "first",
+                "cellValue": {
+                  "0": {
+                    "3": {
+                      "t": 2,
+                      "v": 15642,
+                      "f": null,
+                      "si": null,
+                      "s": {
+                        "cl": {
+                          "rgb": "#221832"
+                        }
+                      },
+                      "ft": null,
+                      "fd": null
+                    }
+                  }
+                },
+                "trigger": "sheet.command.set-range-values"
+              }
+            }
+          ],
+          "expectedRevision": 1
+        },
+        {
+          "type": "submit",
+          "mutationId": "65db45c2-c535-4f35-b307-906ec49df93a",
+          "baseRevision": 1,
+          "mutations": [
+            {
+              "id": "doc.mutation.rich-text-editing",
+              "params": {
+                "unitId": "8cb84711-7ef9-4ee9-b380-04ec1091a8be",
+                "segmentId": "",
+                "actions": [
+                  "body",
+                  {
+                    "et": "text-x",
+                    "e": [
+                      {
+                        "t": "i",
+                        "body": {
+                          "dataStream": "File-list replay e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+                          "textRuns": [
+                            {
+                              "st": 0,
+                              "ed": 58,
+                              "ts": {
+                                "cl": {
+                                  "rgb": "#221832"
+                                }
+                              }
+                            }
+                          ],
+                          "customRanges": [],
+                          "customDecorations": [],
+                          "__textXPreserveParagraphIds": true
+                        },
+                        "len": 58
+                      }
+                    ]
+                  }
+                ],
+                "textRanges": [
+                  {
+                    "startOffset": 58,
+                    "endOffset": 58,
+                    "collapsed": true
+                  }
+                ],
+                "debounce": true,
+                "trigger": "doc.command.insert-text"
+              }
+            }
+          ],
+          "expectedRevision": 1
+        }
+      ],
+      "acks": [
+        {
+          "type": "ack",
+          "mutationId": "c33a5f00-f6ca-4ba6-b8a1-c983265aa3c4",
+          "duplicate": false,
+          "revision": 2,
+          "mutations": [
+            {
+              "id": "sheet.mutation.set-range-values",
+              "params": {
+                "unitId": "616ea771-090b-45ce-96b7-c3112b34480d",
+                "subUnitId": "first",
+                "cellValue": {
+                  "0": {
+                    "3": {
+                      "t": 2,
+                      "v": 15642,
+                      "f": null,
+                      "si": null,
+                      "s": {
+                        "cl": {
+                          "rgb": "#221832"
+                        }
+                      },
+                      "ft": null,
+                      "fd": null
+                    }
+                  }
+                },
+                "trigger": "sheet.command.set-range-values"
+              }
+            }
+          ],
+          "touched": {
+            "kind": "sheet",
+            "cells": [
+              {
+                "sheetId": "first",
+                "row": 0,
+                "column": 3
+              }
+            ]
+          },
+          "hash": "971d9f7b301b93e856d7fe400447c43e1bafc432f1f0eb391d37bd989d95722b"
+        },
+        {
+          "type": "ack",
+          "mutationId": "65db45c2-c535-4f35-b307-906ec49df93a",
+          "duplicate": false,
+          "revision": 2,
+          "mutations": [
+            {
+              "id": "doc.mutation.rich-text-editing",
+              "params": {
+                "unitId": "8cb84711-7ef9-4ee9-b380-04ec1091a8be",
+                "segmentId": "",
+                "actions": [
+                  "body",
+                  {
+                    "et": "text-x",
+                    "e": [
+                      {
+                        "t": "i",
+                        "body": {
+                          "dataStream": "File-list replay e685a0f85c7f5c4f492d-ad20d37de5c110e26e76",
+                          "textRuns": [
+                            {
+                              "st": 0,
+                              "ed": 58,
+                              "ts": {
+                                "cl": {
+                                  "rgb": "#221832"
+                                }
+                              }
+                            }
+                          ],
+                          "customRanges": [],
+                          "customDecorations": [],
+                          "__textXPreserveParagraphIds": true
+                        },
+                        "len": 58
+                      }
+                    ]
+                  }
+                ],
+                "textRanges": [
+                  {
+                    "startOffset": 58,
+                    "endOffset": 58,
+                    "collapsed": true
+                  }
+                ],
+                "debounce": true,
+                "trigger": "doc.command.insert-text"
+              }
+            }
+          ],
+          "touched": {
+            "kind": "doc"
+          },
+          "hash": "c4fa110ec460ad1732a1dfe41375eff4a469f6171789d5d2c1868eed3a262071"
+        }
+      ],
+      "observations": [
+        {
+          "url": "http://localhost:3105/",
+          "online": true,
+          "hasStored": true,
+          "layout": [],
+          "checkpointRevision": 2,
+          "failure": null,
+          "sent": null,
+          "inflight": [],
+          "buffer": [],
+          "snapshotDocText": "File-list replay e685a0f85c7f5c4f492d-ad20d37de5c110e26e76\r\n"
+        }
+      ],
+      "errors": [],
+      "consoleErrorCount": 14
+    },
+    {
+      "path": "sync-production/test-results/sync-production/offline-editing-downloaded-f7beb-or-creating-a-recovery-copy-sync-production/sync-diagnostics.json.gz",
+      "submitCount": 0,
+      "ackCount": 0,
+      "submits": [],
+      "acks": [],
+      "observations": [
+        {
+          "url": "http://localhost:3105/",
+          "online": true,
+          "hasStored": true,
+          "layout": [],
+          "checkpointRevision": 1,
+          "failure": "stale",
+          "sent": null,
+          "inflight": [],
+          "buffer": [
+            [
+              {
+                "id": "doc.mutation.rich-text-editing",
+                "params": {
+                  "unitId": "6fefe770-fac4-4728-9890-216da8c423f6",
+                  "segmentId": "",
+                  "actions": [
+                    "body",
+                    {
+                      "et": "text-x",
+                      "e": [
+                        {
+                          "t": "i",
+                          "body": {
+                            "dataStream": "Retained after file-list revocation",
+                            "textRuns": [
+                              {
+                                "st": 0,
+                                "ed": 35,
+                                "ts": {
+                                  "cl": {
+                                    "rgb": "#221832"
+                                  }
+                                }
+                              }
+                            ],
+                            "customRanges": [],
+                            "customDecorations": [],
+                            "__textXPreserveParagraphIds": true
+                          },
+                          "len": 35
+                        }
+                      ]
+                    }
+                  ],
+                  "textRanges": [
+                    {
+                      "startOffset": 35,
+                      "endOffset": 35,
+                      "collapsed": true
+                    }
+                  ],
+                  "debounce": true,
+                  "trigger": "doc.command.insert-text"
+                }
+              }
+            ]
+          ],
+          "snapshotDocText": "\r\n"
+        }
+      ],
+      "errors": [],
+      "consoleErrorCount": 10
+    }
+  ],
+  "limitations": [
+    "Primary Doc final checkpoint is retained in positive raw diagnostics; Sheet durable snapshot and second-peer content are verified by passed source assertions, not an invented separate Sheet payload.",
+    "Errors arrays are empty but consoleErrors are not: offlineHTTP403/503 and SDK duplicateidentifier warnings remain raw. No clean-console claim.",
+    "Raw frames retain order but no per-frame timestamps; no invented timeline or separate finalserverDB snapshot.",
+    "Fixture finally closes contexts and DB; runnercleanup logged. Desktop records explicitly confirm browser/driver exit; Chrome runner additionally terminated GoogleUpdater, retained in joblog."
+  ],
+  "readerCorrections": [
+    "Collector parser concern was display-level escaped-rendering false alarm; exactsource hasonebackslash and no failedparse occurred.",
+    "First binding reader sought literal (2 tests) in ANSI log and stopped; corrected reader strips displayescapes for matching while rawbytes remain unchanged. No product rerun or alteration."
+  ]
+}

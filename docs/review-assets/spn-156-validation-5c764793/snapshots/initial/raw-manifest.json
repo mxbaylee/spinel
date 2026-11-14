@@ -1,0 +1,131 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "path": "pr.json.gz",
+      "bytes": 9736,
+      "sha256": "199d7eb9c7a10d695bf77533f8d60969fc98e85ae4d865426cb5182d2666fcc1",
+      "decoded": {
+        "bytes": 34401,
+        "sha256": "fb583ce7e4b959b3252fe0161604e7f8fbdfa930c958972228572a5cf4b67ba8"
+      }
+    },
+    {
+      "path": "published-pr-body.md.gz",
+      "bytes": 7806,
+      "sha256": "1525080f2b5d20ce6cd5387b9d37e38dff26c8c5dc67a3a4982a1754912071ae",
+      "decoded": {
+        "bytes": 18940,
+        "sha256": "97db2fa658401f6b1d6fa7b8767916ffd61d611a785d2a235302725bada4e916"
+      }
+    },
+    {
+      "path": "source-commit.json.gz",
+      "bytes": 1971,
+      "sha256": "e841b743d5b0854d69ced784a980057966de764bba11be9a0ca118d17e03e1fb",
+      "decoded": {
+        "bytes": 13345,
+        "sha256": "140a19c17fba77b4777ab321c293c98c2141290aecd46b51b01b9b647580505b"
+      }
+    },
+    {
+      "path": "base-commit.json.gz",
+      "bytes": 27615,
+      "sha256": "73a0d2570e35a8ce208003e49dcd96f7d5d31be2f3797df3b7ff296a9fcb9afc",
+      "decoded": {
+        "bytes": 90910,
+        "sha256": "65ce9c2fbbdf5b29131e99cc972597294bc2cef4ee333d91352de0b54b6c7178"
+      }
+    },
+    {
+      "path": "source-check-runs.json.gz",
+      "bytes": 1978,
+      "sha256": "ac777969a367707a979d997759c511a5aac6d83ae4f13caeaed7e1be4bbdedde",
+      "decoded": {
+        "bytes": 24471,
+        "sha256": "701db3e5545f9e269177831844a09b67b9ce831f8275920db1e43bb137ffde82"
+      }
+    },
+    {
+      "path": "run-ci.json.gz",
+      "bytes": 1650,
+      "sha256": "6323bddd9e192c199e5c4a561395a6bd21eba2d0503d0a511ef88dae08591b98",
+      "decoded": {
+        "bytes": 12163,
+        "sha256": "06829efad3c347ea825d4a4daffe40debdd4a96ce50a560e9fcac50b06b351d1"
+      }
+    },
+    {
+      "path": "jobs-ci.json.gz",
+      "bytes": 872,
+      "sha256": "c05560f8ddd734f793a0dc995d426fbf18167a6e6c17a333344a0e7496a2c77f",
+      "decoded": {
+        "bytes": 4234,
+        "sha256": "c1f5719ba86073699799d019653edc48b0cc8328c4d1602b0e0b8fe9baecc550"
+      }
+    },
+    {
+      "path": "artifacts-ci.json.gz",
+      "bytes": 438,
+      "sha256": "e659b01cc8941a51f255feece37d2ac92570c9e293478a17a4792ef33fa088d5",
+      "decoded": {
+        "bytes": 722,
+        "sha256": "a950ea1737b157ac7f20b50f01eb2c8de3be62f381c38cc93cca17548a62a6d1"
+      }
+    },
+    {
+      "path": "run-storybook.json.gz",
+      "bytes": 1655,
+      "sha256": "154c4a6f39d308744ddca0100df0648d044a6f76d23b37e4c95781cb23a45045",
+      "decoded": {
+        "bytes": 12177,
+        "sha256": "4e49797f5fdbf69c73ca92e62d02cb35d6225d4dd14d66454e902b4973b15043"
+      }
+    },
+    {
+      "path": "jobs-storybook.json.gz",
+      "bytes": 947,
+      "sha256": "092a12b226818c92f648393eb4a9b59f2855145f3146aca1b3d04b8cb953ddff",
+      "decoded": {
+        "bytes": 4540,
+        "sha256": "0c25247ae046af499fce329a907c8bc3993856efda028ed2c8649cfdac1a2767"
+      }
+    },
+    {
+      "path": "artifacts-storybook.json.gz",
+      "bytes": 54,
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "decoded": {
+        "bytes": 34,
+        "sha256": "af3c25b59e7048d2e4b6ea03a688b2eced4e1786b5ae40f71516bc3ce0d4149e"
+      }
+    },
+    {
+      "path": "run-desktop.json.gz",
+      "bytes": 1663,
+      "sha256": "95a212eee647e8208f704431aff1df19a32e62655fc3eaab3946c637490c04d1",
+      "decoded": {
+        "bytes": 12188,
+        "sha256": "7aadb35d68a281d842c1c12ec121f146b6bca94d6ae424477fea171f355451bd"
+      }
+    },
+    {
+      "path": "jobs-desktop.json.gz",
+      "bytes": 1096,
+      "sha256": "e6a03b653cf3cb8b5cb1611bfc830413ded1731e78b60f20eb090af1baa0ea35",
+      "decoded": {
+        "bytes": 8468,
+        "sha256": "f3e02a2ae49e31e1e4d932db1117304638b873c9bd80ff384ac711c70950b859"
+      }
+    },
+    {
+      "path": "artifacts-desktop.json.gz",
+      "bytes": 54,
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "decoded": {
+        "bytes": 34,
+        "sha256": "af3c25b59e7048d2e4b6ea03a688b2eced4e1786b5ae40f71516bc3ce0d4149e"
+      }
+    }
+  ]
+}

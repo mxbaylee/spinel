@@ -1,0 +1,17 @@
+{
+  "name": "spn156-blind-b-5c764793-pr",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+    "--title",
+    "🔁 SPN-156 Sync saved edits while the file list is open"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 367,
+  "peakKiB": 179152
+}

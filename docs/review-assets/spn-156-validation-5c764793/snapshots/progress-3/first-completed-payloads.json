@@ -1,0 +1,23 @@
+[
+  {
+    "name": "theme-screenshots-production-2",
+    "artifactId": 14124874768,
+    "path": "first-artifact-14124874768.zip",
+    "sha256": "4412d32ccc2db86a078d9e1e91e1edd8d199f9733d746c159bf299a09a82784d",
+    "bytes": 18711883
+  },
+  {
+    "jobId": 132532309874,
+    "path": "first-job-132532309874.log.gz",
+    "sha256": "b3f92df4c39ea8e205a7737ae9ed5164d9a4872534c91b949ff61f80c403e1d6",
+    "decodedSha256": "2ce885ef9eb4c6bc3018ee009f94a4d02f31623da828a81b322288f3127bebf8",
+    "decodedBytes": 77137
+  },
+  {
+    "jobId": 132532309581,
+    "path": "first-job-132532309581.log.gz",
+    "sha256": "f3b20eba64ee05c81a3183b6642f3769780a4f094171c24d0cb4a673b420dcd8",
+    "decodedSha256": "ebfdab55434a5b0b5e75a7f2bc39f370916165b8150db4902aed7134fa366dfe",
+    "decodedBytes": 111798
+  }
+]

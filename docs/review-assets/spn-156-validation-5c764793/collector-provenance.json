@@ -1,0 +1,19 @@
+{
+  "executedPath": "/tmp/spn156-publication-5c764793/collect-hosted.ts",
+  "sha256": "5a76c98db1a5a1b9bc648a7d2ef1761720f79f928c708bc12d8eef6ef73d4c35",
+  "regexCodepoints": [
+    94,
+    92,
+    100,
+    43,
+    36
+  ],
+  "backslashCount": 1,
+  "diagnosis": "Exactly one literal backslash; valid digit parser. Escaped rendering was mistaken for two; no parser repair or alternative collector used.",
+  "snapshots": [
+    "/tmp/spn156-validation-5c764793-initial",
+    "/tmp/spn156-validation-5c764793-progress-2",
+    "/tmp/spn156-validation-5c764793-progress-3"
+  ],
+  "execution": "Pinned Node26.13.0; arguments289 43622831505 43622831580 43622831488 and corresponding fresh snapshot directory."
+}

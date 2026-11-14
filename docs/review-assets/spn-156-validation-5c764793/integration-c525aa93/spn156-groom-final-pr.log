@@ -1,0 +1,2 @@
+pull request ok
+{"name":"spn156-groom-final-pr","args":["node","scripts/backlog/cli.ts","pr","--base","c525aa933505d6e78b8fdd7a89940d87506d5cb3","--title","🔁 SPN-156 Sync saved edits while the file list is open"],"code":0,"signal":null,"reason":null,"elapsedMs":374,"peakKiB":179184}

@@ -1,0 +1,14 @@
+{
+  "publishedAt": "2026-11-14T17:45:54.595210+00:00",
+  "source": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "pr": 289,
+  "branch": "codex/spn-156-file-list-replay",
+  "priorRemote": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "bodySHA256": "97db2fa658401f6b1d6fa7b8767916ffd61d611a785d2a235302725bada4e916",
+  "bothCurrentReviewsAndSourceVerifiedBeforePush": true,
+  "bodyUpdatedOnceBeforeFastForwardPush": true,
+  "draft": true,
+  "requiredHostedAndPhone": "pending",
+  "dispatchObservation": "Immediately after push no fresh run appeared yet; recheck original dispatches and only cancel actually superseded metadata execution if present."
+}

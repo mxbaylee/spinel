@@ -1,0 +1,22 @@
+{
+  "name": "spn156-blind-a-d5a0bc7c-local-2",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/offlineReplay.test.ts",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/offlineTransactionErrors.test.ts",
+    "src/ui/offlineLifecycle.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-blind-a-d5a0bc7c-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9826,
+  "peakKiB": 1049280
+}

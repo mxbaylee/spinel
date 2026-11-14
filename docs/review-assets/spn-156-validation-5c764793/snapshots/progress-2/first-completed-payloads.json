@@ -1,0 +1,44 @@
+[
+  {
+    "name": "ci-plan",
+    "artifactId": 14124379018,
+    "path": "first-artifact-14124379018.zip",
+    "sha256": "6b61f50a1ac4e961a86aa8954d3181e8f0d9cb4bd1eb9d3a2de208ba9d90a6e0",
+    "bytes": 924
+  },
+  {
+    "name": "desktop-offline-chrome-macos-26-43622831488-1",
+    "artifactId": 14124663732,
+    "path": "first-artifact-14124663732.zip",
+    "sha256": "fddf2ac353a58fee50f7ff1ef0e2ac3903fda9afa234857cad08c8876533ca0a",
+    "bytes": 226477
+  },
+  {
+    "name": "desktop-offline-firefox-macos-26-43622831488-1",
+    "artifactId": 14124034895,
+    "path": "first-artifact-14124034895.zip",
+    "sha256": "03a0e64f49bc66c5971ade1fa57b2c54b1d14a3f90b7810024aebf99894b743a",
+    "bytes": 453258
+  },
+  {
+    "jobId": 132532078984,
+    "path": "first-job-132532078984.log.gz",
+    "sha256": "f90e36e736e03fbb80f608f0f241760a0d6836300ff1a43b361a791898b12839",
+    "decodedSha256": "6cf0c78ae71bab87717bf75c66e49e5c3558d54b51b5a3e9c71b2e177ff4a6ee",
+    "decodedBytes": 138880
+  },
+  {
+    "jobId": 132532078990,
+    "path": "first-job-132532078990.log.gz",
+    "sha256": "abc716b07d3bb8d31a16b333cc94bd01a0b2869c43d1870d5730bd797395caa0",
+    "decodedSha256": "b79252bebf3a4fdc2723dd249f444aa89d4588fe76c87d6d26b760a563e5f9d7",
+    "decodedBytes": 143656
+  },
+  {
+    "jobId": 132532079232,
+    "path": "first-job-132532079232.log.gz",
+    "sha256": "f3eb76e324ddc46d12f92405be347e3ec262427733fbec5c7e496ca5ae0b8667",
+    "decodedSha256": "b48bc001b5b39624d6974723338bab53c3c0593ff99843ed401c55d2b25038c8",
+    "decodedBytes": 57165
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "name": "spn156-groom-evidence-format-write",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "docs/implementation/evidence/SPN-156/integration-c525aa93/source-identity.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 144,
+  "peakKiB": 0
+}

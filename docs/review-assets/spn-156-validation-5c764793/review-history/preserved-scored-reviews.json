@@ -1,0 +1,16 @@
+[
+  {
+    "originalTree": "16f4bb3bc9b850b3d51fdbbbd0e29f2ace459ca8",
+    "originalPath": "docs/implementation/evidence/SPN-156/epoch-registration/review-a-32897ce3.md",
+    "stagedPath": "/tmp/spn156-publication-review-history/32897ce3/review-a-32897ce3.md",
+    "sha256": "ea20913d40db0d9b5e1591241e07b83105f0032d951e417a483b98ebfe111df6",
+    "bytes": 9578
+  },
+  {
+    "originalTree": "16f4bb3bc9b850b3d51fdbbbd0e29f2ace459ca8",
+    "originalPath": "docs/implementation/evidence/SPN-156/epoch-registration/review-b-32897ce3.md",
+    "stagedPath": "/tmp/spn156-publication-review-history/32897ce3/review-b-32897ce3.md",
+    "sha256": "5280d1aa828d4929e36de5254aabd8a60ebe9714a11ca4b9e0ecdf6c8e7129ee",
+    "bytes": 12604
+  }
+]
