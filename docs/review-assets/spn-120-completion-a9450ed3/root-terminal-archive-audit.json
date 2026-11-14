@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T22:05:45.235Z",
+  "archive": "af62c1b4df006320431673336efa86d4e373e3e9",
+  "parent": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "exclusiveAdditions": 289,
+  "payloads": 288,
+  "actualGzipDecoded": 6,
+  "allStoredHashesAndGitBlobsVerified": true,
+  "originalZIPsCRCAndHashesVerified": 28,
+  "inventoriedMembers": 1345,
+  "retainedOriginalMemberBindings": 212,
+  "manifestSHA256": "5166b844ecba0ab2d36254be541e5331f83445c89caab95f2facde4fc73bf481"
+}

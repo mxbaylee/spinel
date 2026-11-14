@@ -1,0 +1,825 @@
+{
+  "total_count": 15,
+  "jobs": [
+    {
+      "id": 132608178258,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BA4Ug",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608178258",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608178258",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:18:43Z",
+      "started_at": "2026-11-14T22:18:45Z",
+      "completed_at": "2026-11-14T22:19:05Z",
+      "name": "Classify changes (43647410618)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:18:46Z",
+          "completed_at": "2026-11-14T22:18:47Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 2,
+          "started_at": "2026-11-14T22:18:47Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Run node scripts/ci/changes.ts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Retain immutable coverage plan",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:03Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-14T22:19:03Z",
+          "completed_at": "2026-11-14T22:19:03Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608178258",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054179,
+      "runner_name": "GitHub Actions 1000054179",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608178540,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BA5bA",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608178540",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608178540",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:18:43Z",
+      "started_at": "2026-11-14T22:18:45Z",
+      "completed_at": "2026-11-14T22:19:05Z",
+      "name": "Pull request",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:18:46Z",
+          "completed_at": "2026-11-14T22:18:46Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 2,
+          "started_at": "2026-11-14T22:18:46Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Title, ticket, IDs and size",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:02Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T22:19:02Z",
+          "completed_at": "2026-11-14T22:19:03Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T22:19:03Z",
+          "completed_at": "2026-11-14T22:19:03Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608178540",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054180,
+      "runner_name": "GitHub Actions 1000054180",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608283802,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHUmg",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608283802",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608283802",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:08Z",
+      "completed_at": "2026-11-14T22:19:12Z",
+      "name": "Typecheck",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:19:09Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Require complete applicability",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 2,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Documentation-only change",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608283802",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054181,
+      "runner_name": "GitHub Actions 1000054181",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608283812,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHUpA",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608283812",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608283812",
+      "status": "in_progress",
+      "conclusion": null,
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:08Z",
+      "completed_at": null,
+      "name": "Lint",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:19:09Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:15Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:15Z",
+          "completed_at": "2026-11-14T22:19:20Z"
+        },
+        {
+          "name": "Install",
+          "status": "in_progress",
+          "conclusion": null,
+          "number": 4,
+          "started_at": "2026-11-14T22:19:20Z",
+          "completed_at": null
+        },
+        {
+          "name": "Lint",
+          "status": "pending",
+          "conclusion": null,
+          "number": 5,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "pending",
+          "conclusion": null,
+          "number": 9,
+          "started_at": null,
+          "completed_at": null
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "pending",
+          "conclusion": null,
+          "number": 10,
+          "started_at": null,
+          "completed_at": null
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608283812",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054182,
+      "runner_name": "GitHub Actions 1000054182",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608283825,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHUsQ",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608283825",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608283825",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:08Z",
+      "completed_at": "2026-11-14T22:19:24Z",
+      "name": "Backlog",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:19:09Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:17Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:17Z",
+          "completed_at": "2026-11-14T22:19:21Z"
+        },
+        {
+          "name": "Tickets and index",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-14T22:19:21Z",
+          "completed_at": "2026-11-14T22:19:21Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T22:19:21Z",
+          "completed_at": "2026-11-14T22:19:22Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T22:19:22Z",
+          "completed_at": "2026-11-14T22:19:22Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T22:19:22Z",
+          "completed_at": "2026-11-14T22:19:22Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608283825",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054183,
+      "runner_name": "GitHub Actions 1000054183",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608284466,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHXMg",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608284466",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608284466",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:08Z",
+      "completed_at": "2026-11-14T22:19:20Z",
+      "name": "Unit tests",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:19:09Z",
+          "completed_at": "2026-11-14T22:19:09Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T22:19:09Z",
+          "completed_at": "2026-11-14T22:19:14Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:14Z",
+          "completed_at": "2026-11-14T22:19:17Z"
+        },
+        {
+          "name": "Verify selected evidence and publish result",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4,
+          "started_at": "2026-11-14T22:19:17Z",
+          "completed_at": "2026-11-14T22:19:17Z"
+        },
+        {
+          "name": "Retain coverage result",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-14T22:19:17Z",
+          "completed_at": "2026-11-14T22:19:18Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-14T22:19:18Z",
+          "completed_at": "2026-11-14T22:19:18Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T22:19:18Z",
+          "completed_at": "2026-11-14T22:19:18Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-14T22:19:18Z",
+          "completed_at": "2026-11-14T22:19:18Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608284466",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054184,
+      "runner_name": "GitHub Actions 1000054184",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608284578,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHXog",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608284578",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608284578",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:08Z",
+      "completed_at": "2026-11-14T22:19:23Z",
+      "name": "Lib tests",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T22:19:09Z",
+          "completed_at": "2026-11-14T22:19:10Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T22:19:10Z",
+          "completed_at": "2026-11-14T22:19:15Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T22:19:15Z",
+          "completed_at": "2026-11-14T22:19:20Z"
+        },
+        {
+          "name": "Verify selected evidence and publish result",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4,
+          "started_at": "2026-11-14T22:19:20Z",
+          "completed_at": "2026-11-14T22:19:20Z"
+        },
+        {
+          "name": "Retain coverage result",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-14T22:19:20Z",
+          "completed_at": "2026-11-14T22:19:21Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-14T22:19:21Z",
+          "completed_at": "2026-11-14T22:19:21Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T22:19:21Z",
+          "completed_at": "2026-11-14T22:19:22Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-14T22:19:22Z",
+          "completed_at": "2026-11-14T22:19:22Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608284578",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000054185,
+      "runner_name": "GitHub Actions 1000054185",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132608285037,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHZbQ",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285037",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285037",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Unit tests (${{ matrix.suite }})",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285037",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285122,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHZwg",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285122",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285122",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Sized restore acceptance",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285122",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285218,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHaIg",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285218",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285218",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Retained sync transition",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285218",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285524,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHbVA",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285524",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285524",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Container smoke",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285524",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285542,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHbZg",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285542",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285542",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Lib tests (${{ matrix.suite }})",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285542",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285624,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHbuA",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285624",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285624",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Doc responsiveness (${{ matrix.preset }})",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285624",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285717,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHcFQ",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285717",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285717",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285717",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    },
+    {
+      "id": 132608285937,
+      "run_id": 43647410618,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43647410618",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe4BHc8Q",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132608285937",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43647410618/job/132608285937",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-14T22:19:06Z",
+      "started_at": "2026-11-14T22:19:06Z",
+      "completed_at": "2026-11-14T22:19:06Z",
+      "name": "Doc callback lifetimes (${{ matrix.preset }})",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132608285937",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "commit": "af62c1b4df006320431673336efa86d4e373e3e9",
+  "tree": "9bcb84b0c33da26487dc167b4d6b7d0ee15fa900",
+  "parent": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "path": "docs/review-assets/spn-120-validation-a9450ed3",
+  "stage": "/tmp/spn120-publication-a9450ed3/validation-archive-stage/docs/review-assets/spn-120-validation-a9450ed3",
+  "files": 289,
+  "payloadFiles": 288,
+  "payloadBytes": 23275926,
+  "manifestSha256": "5166b844ecba0ab2d36254be541e5331f83445c89caab95f2facde4fc73bf481",
+  "readmeSha256": "af3ebbc980d85960316779b9e6bf6c1807721912fedfaa5ad9092b2b31044f33",
+  "reservedTag": "archive/spn-120-validation-a9450ed3-20261114",
+  "published": false,
+  "implementationBranchUnchanged": true,
+  "additionOnly": true,
+  "isolatedIndex": true
+}

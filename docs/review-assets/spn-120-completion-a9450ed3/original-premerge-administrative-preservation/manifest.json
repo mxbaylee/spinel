@@ -1,0 +1,240 @@
+{
+  "readOnly": true,
+  "purpose": "Exact premerge ticket worktree administrative metadata, including missing registration index; not deletion authorization. Preserves original bytes compressed deterministically.",
+  "registrations": [
+    {
+      "administrativeDirectory": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-120",
+      "gitdir": "/Users/mxbaylee/projects/spinel-spn-120/.git\n",
+      "files": [
+        {
+          "path": "ORIG_HEAD",
+          "bytes": 41,
+          "sha256": "51b3156d75a79cc621f1fa8b53e7224183162e3d18f7cde03f624af4766c02e6",
+          "retained": "spinel-spn-120/ORIG_HEAD.gz",
+          "gzipSha256": "513d4ee1a1ef234080eb2bb5780e55e30838393fb2f47838aa076bd83cd83e1c"
+        },
+        {
+          "path": "commondir",
+          "bytes": 6,
+          "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47",
+          "retained": "spinel-spn-120/commondir.gz",
+          "gzipSha256": "bc417d3edef30f6587a627123c41224e45d1d68612000ac4357b76d242d6e415"
+        },
+        {
+          "path": "HEAD",
+          "bytes": 50,
+          "sha256": "32469c0353726daa4db6e6939bd0f2d7e5a84ece64cf155e832b4f69da8ef80b",
+          "retained": "spinel-spn-120/HEAD.gz",
+          "gzipSha256": "24ecd157b96badf8ef467bd417731470aebbc3174aef0a885a2a3f7cd66da278"
+        },
+        {
+          "path": "index",
+          "bytes": 236425,
+          "sha256": "de13bad5068ab859771647a194c348fd76eec309ee679837e4b5c7f6a3b8820f",
+          "retained": "spinel-spn-120/index.gz",
+          "gzipSha256": "533fc384df2366ecfe86b1221d956b11374220418626babf7849297c2e8c5520"
+        },
+        {
+          "path": "COMMIT_EDITMSG",
+          "bytes": 63,
+          "sha256": "06c12723c2bb5a6d06b04d27859a411d65b7416fdcf492479bce5cf4dd858261",
+          "retained": "spinel-spn-120/COMMIT_EDITMSG.gz",
+          "gzipSha256": "a6a001e6d9ecd03261b007fe6dc0df1625ae06e7e3433dfaaa10d0d50aebdc94"
+        },
+        {
+          "path": "gitdir",
+          "bytes": 45,
+          "sha256": "0aa28f642f0c3ee17c7d21fed10c1cc2a31385ee49a292cc3897b9a440a9d4bc",
+          "retained": "spinel-spn-120/gitdir.gz",
+          "gzipSha256": "f5b2d573f3c4e388d3a21e5b54dc7af9cbfa1bfebe54200c79fc473c4f13a86a"
+        },
+        {
+          "path": "logs/HEAD",
+          "bytes": 933,
+          "sha256": "5815842790cdcbe1cba383b8366a8654259a5c944eac4cfc507fa51980b3af19",
+          "retained": "spinel-spn-120/logs/HEAD.gz",
+          "gzipSha256": "0fa9eceadb57368194fc3cefd5f6097b9e7152f452958c57d7af3d0702dcae46"
+        }
+      ]
+    },
+    {
+      "administrativeDirectory": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-120-prerequisites",
+      "gitdir": "/Users/mxbaylee/projects/spinel-spn-120-prerequisites/.git\n",
+      "files": [
+        {
+          "path": "ORIG_HEAD",
+          "bytes": 41,
+          "sha256": "63d500668acb3fbaaa5cce1f724d0c0ac0cb6e4623d1e5279c1e4427eff02fec",
+          "retained": "spinel-spn-120-prerequisites/ORIG_HEAD.gz",
+          "gzipSha256": "75eff65d71e6538afe9117bb82da9290d82e2f13c4ddb0a53cad359ffe8f24c9"
+        },
+        {
+          "path": "commondir",
+          "bytes": 6,
+          "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47",
+          "retained": "spinel-spn-120-prerequisites/commondir.gz",
+          "gzipSha256": "bc417d3edef30f6587a627123c41224e45d1d68612000ac4357b76d242d6e415"
+        },
+        {
+          "path": "HEAD",
+          "bytes": 41,
+          "sha256": "1eca7e38306b12821ce256e39aed37ed2af3c8e5e7b43642fabb960cf3d2ef23",
+          "retained": "spinel-spn-120-prerequisites/HEAD.gz",
+          "gzipSha256": "39974c51171e2afc2bf4daac924324f77b5588fc2b79faa2c3bffe33ee19b875"
+        },
+        {
+          "path": "index",
+          "bytes": 267925,
+          "sha256": "e31167c5f5e2f21fc13dc130f297423e598c09045a76313ea87e89e2a2931388",
+          "retained": "spinel-spn-120-prerequisites/index.gz",
+          "gzipSha256": "e978c3a8a4e56982294505d6c9e0ba1e043a9e244c0a52df93ffc112067b862b"
+        },
+        {
+          "path": "COMMIT_EDITMSG",
+          "bytes": 50,
+          "sha256": "eca5d6f48ad5ef19a6eea3e607c318e0784be7e6abb4996e078719f6657f5eec",
+          "retained": "spinel-spn-120-prerequisites/COMMIT_EDITMSG.gz",
+          "gzipSha256": "b48abfffa850901df911944c8f0332229d297e6d5481aed65777ead8df3be631"
+        },
+        {
+          "path": "gitdir",
+          "bytes": 59,
+          "sha256": "145b0e9337201df7c37aae9889ed8370484f01b6e5f4856be351621e4df5bf1c",
+          "retained": "spinel-spn-120-prerequisites/gitdir.gz",
+          "gzipSha256": "621a353846bbc21311c334360e2884bd56c7fce0e4c0fb1427dfdaeab1092bf8"
+        },
+        {
+          "path": "logs/HEAD",
+          "bytes": 939,
+          "sha256": "b8d0973a9f890d98c498006ed97c0af539419aa1e03094b57815ea2fc076053e",
+          "retained": "spinel-spn-120-prerequisites/logs/HEAD.gz",
+          "gzipSha256": "7fb6891cfe211628eae535f892a8178327907ab0412e40d605b3698b6d0e5f38"
+        }
+      ]
+    },
+    {
+      "administrativeDirectory": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-120-merge",
+      "gitdir": "/Users/mxbaylee/projects/spinel-spn-120-merge/.git\n",
+      "files": [
+        {
+          "path": "ORIG_HEAD",
+          "bytes": 41,
+          "sha256": "0a4c1dea1b1872cb914fbf5f444e9c75605a8ccf34edcb5bc5731d4619914993",
+          "retained": "spinel-spn-120-merge/ORIG_HEAD.gz",
+          "gzipSha256": "2f30c6bd9e77c3937fd10efa3e97836d537284e5c66b8b32a8df6014f22a792c"
+        },
+        {
+          "path": "commondir",
+          "bytes": 6,
+          "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47",
+          "retained": "spinel-spn-120-merge/commondir.gz",
+          "gzipSha256": "bc417d3edef30f6587a627123c41224e45d1d68612000ac4357b76d242d6e415"
+        },
+        {
+          "path": "HEAD",
+          "bytes": 41,
+          "sha256": "c71d0d691243aadadbde25b7497a00abaaf668faef2171cf47b841d7acf43c1c",
+          "retained": "spinel-spn-120-merge/HEAD.gz",
+          "gzipSha256": "dc5df73bcc3d3d036f981e4ca6c409999bf062497e0ac86a1075cea9545e5a85"
+        },
+        {
+          "path": "index",
+          "bytes": 269137,
+          "sha256": "b61ecec56deb243c64a92e717d31d6fe3202a12760456155004bdfea06b72d8f",
+          "retained": "spinel-spn-120-merge/index.gz",
+          "gzipSha256": "7f915959dae59f3bb4ab9a6fa85a8427ab4954578ace0912075c45d3cbaaee87"
+        },
+        {
+          "path": "COMMIT_EDITMSG",
+          "bytes": 68,
+          "sha256": "47d1448fb327ca795413bcf6c4ec0376acf98ec09039eaa961667cf45ea65cbc",
+          "retained": "spinel-spn-120-merge/COMMIT_EDITMSG.gz",
+          "gzipSha256": "e4528b18243fbf5244c0af943262d7f7ee3176280987c0b9fdf71bbfc6723b79"
+        },
+        {
+          "path": "gitdir",
+          "bytes": 51,
+          "sha256": "c81dc5327b891b916a2c3e91dbfffa55180155c458c0f24686329afd31d04230",
+          "retained": "spinel-spn-120-merge/gitdir.gz",
+          "gzipSha256": "efaa017360c94b0453bef2dbfc11eb7e56fb635ca851ab1aa3a2899c74afeabe"
+        },
+        {
+          "path": "FETCH_HEAD",
+          "bytes": 2943,
+          "sha256": "d7149b12832c3e8ce544b2a98c01f31e3f598f1fbf1398f1812ce4109ea6143b",
+          "retained": "spinel-spn-120-merge/FETCH_HEAD.gz",
+          "gzipSha256": "ea7cf5fa381c9ea75b7ad6e37a0814a03cb8515c21971d872b881b9f28d0ec88"
+        },
+        {
+          "path": "logs/HEAD",
+          "bytes": 365,
+          "sha256": "4ff430ebbd3d93d19494b4dbcd0424709689a2bd7accfa17a0f035ecaa96e443",
+          "retained": "spinel-spn-120-merge/logs/HEAD.gz",
+          "gzipSha256": "755b88d63cfffeb635097b52ab2734938f52bc4cb534f51354583129ecf48b2d"
+        }
+      ]
+    },
+    {
+      "administrativeDirectory": "/Users/mxbaylee/projects/spinel/.git/worktrees/spinel-spn-120-production",
+      "gitdir": "/Users/mxbaylee/projects/spinel-spn-120-production/.git\n",
+      "files": [
+        {
+          "path": "ORIG_HEAD",
+          "bytes": 41,
+          "sha256": "052486669f8e215a8bc6eafee1e1e1f79cdfe6c74c0464941c6d090138ca5f4c",
+          "retained": "spinel-spn-120-production/ORIG_HEAD.gz",
+          "gzipSha256": "bade5af3c21df693ed02ca9e345a60602410979e179ef05fae2bff71564fcd81"
+        },
+        {
+          "path": "commondir",
+          "bytes": 6,
+          "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47",
+          "retained": "spinel-spn-120-production/commondir.gz",
+          "gzipSha256": "bc417d3edef30f6587a627123c41224e45d1d68612000ac4357b76d242d6e415"
+        },
+        {
+          "path": "HEAD",
+          "bytes": 53,
+          "sha256": "68d27beaaad629cc7aa31502473541dc989bca1728ca1e4d871177aa50ce5949",
+          "retained": "spinel-spn-120-production/HEAD.gz",
+          "gzipSha256": "917f00bcd197b80b6b557d091f06ae968581c2ef594bde418e0cc07a25df85fd"
+        },
+        {
+          "path": "index",
+          "bytes": 546760,
+          "sha256": "8d3674daeffaafdf18c763b2126167ecc9def7925d990a4411272543e113a270",
+          "retained": "spinel-spn-120-production/index.gz",
+          "gzipSha256": "ddf4dfd67a3f1e5322ee8b4f46a628127df24df579a2a88f60b73d12ba50dc16"
+        },
+        {
+          "path": "COMMIT_EDITMSG",
+          "bytes": 50,
+          "sha256": "0139b52d770a1c1a041c2b0cad292270a546d514d5f7ba9b12409eec39e65dbc",
+          "retained": "spinel-spn-120-production/COMMIT_EDITMSG.gz",
+          "gzipSha256": "db88fddd0c26504e3248975f9accf488f94fde5ecc40a4f5389388a9fd223f96"
+        },
+        {
+          "path": "gitdir",
+          "bytes": 56,
+          "sha256": "c6d6742bd910e1abd3a55e41645be863da0fabb454073f23de3f34744a7dd62f",
+          "retained": "spinel-spn-120-production/gitdir.gz",
+          "gzipSha256": "34ae8e142f8d619818e8346b4a35420b71aa0888aaefcff04618f1ca3f917239"
+        },
+        {
+          "path": "FETCH_HEAD",
+          "bytes": 86,
+          "sha256": "2345dbac1d4b7a7c7eb678295fc499247a7b4e02cd4d8babdc9251d10ce4c93c",
+          "retained": "spinel-spn-120-production/FETCH_HEAD.gz",
+          "gzipSha256": "0a3092bccfe94dd702ceb56185c51b4bb04224c2624542402b358bcfb9d70072"
+        },
+        {
+          "path": "logs/HEAD",
+          "bytes": 4280,
+          "sha256": "e243d577d02952d372405c8ad45cf75ef12bb656c20f49b10c8dd9f474a305ed",
+          "retained": "spinel-spn-120-production/logs/HEAD.gz",
+          "gzipSha256": "8d0778111df7d3d6c5e60a0c714ee3e83fb3e747f39322837830a78455fcf3d5"
+        }
+      ]
+    }
+  ]
+}

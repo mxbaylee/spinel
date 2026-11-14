@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-14T22:18:31.812Z",
+  "complete": true,
+  "originalCommandsInspected": 40,
+  "guardedMutationsVerified": true,
+  "remainingTicketRefs": [],
+  "existingWorktreesVerified": 3,
+  "missingRegistrationDetachedIndexUnchanged": true,
+  "unknownMissingUnstagedUntrackedPreservedAsUnavailable": true,
+  "remoteArchiveTagsUnchanged": 12,
+  "readerCorrection": "First audit counted 5 annotated-tag peeled lines as additional tags (17 vs12); complete before/after remote listing equality already passed; corrected exact tag-ref counting, no ref mutation.",
+  "openPRsChecked": 9,
+  "activeOwners": [],
+  "mainCleanAtSquash": true
+}

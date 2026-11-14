@@ -1,0 +1,13 @@
+{
+  "tree": "e4d6a299791fb94a9eb9613d5ae76c1591a634e4",
+  "parent": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "unpublishedCommitObjects": [
+    {
+      "commit": "9018bf3d2dd443617c6155d4a0a4c2ad8746a5c6",
+      "raw": "tree e4d6a299791fb94a9eb9613d5ae76c1591a634e4\nparent a9450ed32a55c1689fe46ebd575e45ff0fb66209\nauthor Baylee Schmeisser <github.mx@baylee.dev> 1794693789 -0800\ncommitter Baylee Schmeisser <github.mx@baylee.dev> 1794693789 -0800\n\n\ud83d\udd0e Preserve SPN-120 a945 original terminal validation\n"
+    }
+  ],
+  "manifestSha256": "9613268c698dced79902768edd29e216a6c417092f0342d9113df7a2af82c97b",
+  "guardFailure": "Line-based git diff name-status quotes the emoji Spaces path. NUL-delimited inspection verifies all 288 paths are additions under the exclusive prefix. No source or payload failure.",
+  "supersededReason": "Add newly supplied root terminal metrics audit before final seal and use NUL-safe guard."
+}

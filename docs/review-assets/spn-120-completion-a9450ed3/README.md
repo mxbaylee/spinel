@@ -1,0 +1,41 @@
+# ✅ SPN-120 merge and guarded cleanup
+
+This completion evidence is an archive-only direct child of actual squash **`312e5546386ece21f8e0845d696598cc4d85c731`**, exclusively under `docs/review-assets/spn-120-completion-a9450ed3`. The actual squash, guarded cleanup, exact final PR body and terminal redundant-run cancellation outcome are retained. The implementation worker created this archive-only commit using a private index; root independently audits and publishes its immutable tag. The worker made no PR body edit, remote branch mutation, cancellation request or test rerun.
+
+## 🔐 Verified landing
+
+PR228 was squash-merged at **2026-11-14 22:06:33 UTC**. Its parent is `c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423`; its tree `90b90d75271c9251ce753c39d5190ad5f9c7058c` exactly equals reviewed source `a9450ed32a55c1689fe46ebd575e45ff0fb66209` and ordinary tested merge `9006a831d6ff54bcdd5e37a67af40780f22b3c2c`. Root verified expected head, actual remote main, closed/merged PR status and clean local main fast-forward. No admin bypass was used.
+
+The [published validation archive](https://github.com/mxbaylee/spinel/tree/af62c1b4df006320431673336efa86d4e373e3e9/docs/review-assets/spn-120-validation-a9450ed3) is a direct child of a945. Root independently audited 289 Git files/288 payloads, all source/plan/review bindings, 28 original ZIPs with SHA/CRC, 1,345 inventoried members, 212 retained raw-member bindings and six decoded callback JSONs. All five original workflows passed: 33 CI jobs and all seven required gates, five exact 1,078-story catalog sets, three native desktop browsers, actual Spaces acceptance, and 24 actual first-attempt fixed cases. Historical failures and older source-bound acceptances remain in their immutable archives, not transferred to this source.
+
+## 🧹 Exact guarded branch cleanup
+
+Fresh complete-pagination API reads found no open PR owning either obsolete ticket branch as head or base. Before mutation, root's remotely published prerequisite tag `archive/spn-120-prerequisites-2206e7d2-20261114` protected head2206 and direct parent240501. The published validation ancestry protects a945, bcc1 and 597. Exact administrative/index/reflog bytes and branch configuration were retained before deletion.
+
+The worker used atomic expected-old `git update-ref -d` guards to delete:
+
+- Local `refs/heads/codex/spn-120-fixture-reliability` at `bcc1c17c538756e7886a60a413ee31a8ed5ff2ba`.
+- Local `refs/heads/codex/spn-120-production-integration` at `a9450ed32a55c1689fe46ebd575e45ff0fb66209`.
+- Stale local `refs/remotes/origin/codex/spn-120-fixture-reliability` at a945, after rechecking that the actual remote branch was absent.
+
+The remote implementation branch was already absent before cleanup and remained absent afterward. No remote branch deletion or push was performed by the worker. The first postcheck found the stale local tracking ref; its metadata was already preserved, and a separate exact-head deletion completed that remaining cleanup. The initial checkpoint and all subsequent commands/results remain recorded. The obsolete fixture branch's exact preserved configuration section was removed; the integration branch had no configuration section.
+
+All four ticket registrations remain detached at their original bcc1/597/2206/a945 commits. The three existing worktrees remained clean, with their ignored dependency symlinks and empty report directories unchanged. The missing original registration was detached by an expected-old HEAD update without touching its index. Its 2,191 mode/OID/stage/path entries exactly equal archived bcc1 HEAD; bcc1 remains reachable through published a945 archive ancestry. Raw index SHA-256 remained `de13bad5068ab859771647a194c348fd76eec309ee679837e4b5c7f6a3b8820f`. Unknown unstaged/untracked content in the missing directory remains unavailable, not clean.
+
+Postchecks found no remaining SPN-120 local implementation branch or remote-tracking branch, no active PR owner and no blocked cleanup refs. All 12 existing remote SPN-120 archive tags were unchanged. No worktree directory, ignored file, donor install, unrelated ref, global registration or application process was removed. There was no global prune, `git clean`, install, test/build workload or main CI/Storybook cancellation. Main remained clean at the actual squash during these postchecks.
+
+## 📦 Retained records and final publication
+
+`cleanup-command-receipt.json` retains the complete guarded command sequence and actual results; `cleanup-command-receipt-first-checkpoint.json` preserves the earlier tracking-ref postcheck. Full before/after PR pages and actual merged PR metadata retain ownership evidence. Original and fresh administrative archives preserve the raw HEAD/index/gitdir/commondir/reflog/branch-ref bytes as deterministic gzip; post-cleanup administrative bytes document actual detachment. Each metadata inventory records raw and compressed hashes. The missing-index proof and independent root audit preserve exact entry equality and the unavailable-content limit.
+
+Root's original merge receipt correctly says cleanup was pending when that receipt was written. This completion receipt supplies the later successful cleanup result. Likewise, the retained prior terminal-body draft and first unpublished validation-seal receipt preserve their original chronology. The implementation worker's first seal guard misread Git's quoted emoji path; NUL-delimited validation confirmed an addition-only archive, and the corrected final validation archive was independently audited before publication. These reader/guard corrections were not source or test failures.
+
+`final-pr-body-prepared.md` and `final-pr-body-published.md` are byte-identical. Root made **one final post-cleanup body edit at 2026-11-14 22:18:39 UTC** and verified SHA-256 **`6714ffe12c84aa2de657a8bb538bc91cdd49c5464adf1b51423aec4315443de8`**, 15,676 bytes. The raw resulting PR and publication receipt are retained. No second body edit or rerun occurred.
+
+That closed-PR metadata edit produced redundant CI **43647410618**, original attempt1 on sourcea945, created **22:18:42 UTC**. Root submitted normal cancellation at approximately 22:19 UTC. The last job completed at **22:20:17 UTC**; a complete snapshot at **22:21:01 UTC** confirms the run is terminal **cancelled**, with all **16 jobs terminal: two success, four failure and ten cancelled**. Normal cancellation was sufficient; no force cancellation was needed or sent.
+
+The four first failed outcomes are preserved accurately. Typecheck stopped at the applicability guard with `CLASSIFICATION: cancelled` and `Missing successful applicability decision.` Unit, Lib and final Playwright aggregates rejected the cancelled/missing plan with `Coverage plan digest changed or missing.` Their three original receipts say `passed=false` and retain the cancelled selected results. These are actual fail-closed cancellation-path guard outcomes, not passes, product compiler failures or replacement acceptance. Lint and Backlog completed successfully; ten jobs were cancelled. All eight available job logs are retained. The provider returned HTTP404 for logs from eight cancelled matrix/environment jobs; those raw responses and errors are retained rather than inventing missing logs. All16 job statuses remain in the complete paginated raw inventory. Three small original aggregate ZIPs are provider-digest/size/CRC verified and retained with their exact JSON members. Initial first-failure log bytes match the final terminal downloads.
+
+Accepted original CI **43642290667** remains successful and untouched. Useful main CI **43646326362** and Storybook **43646326402** were not cancelled or mutated. A read-only snapshot records main CI still in progress and main Storybook successful on actual squash312; this completion archive does not invent a terminal result for the ongoing main run. The final manifest hashes every payload except itself. The commit's sole parent is actual squash312, with additions confined to the completion directory.
+
+Reserved immutable completion tag: **`archive/spn-120-completion-a9450ed3-20261114`**. The worker created the local evidence-only commit and made no tag or remote publication; root owns the independent final audit and tag publication.

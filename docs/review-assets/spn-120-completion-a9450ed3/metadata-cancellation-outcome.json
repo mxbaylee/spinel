@@ -1,0 +1,85 @@
+{
+  "run": 43647410618,
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "attempt": 1,
+  "event": "pull_request",
+  "createdAt": "2026-11-14T22:18:42Z",
+  "status": "completed",
+  "conclusion": "cancelled",
+  "lastJobCompletedAt": "2026-11-14T22:20:17Z",
+  "terminalObservedAt": "2026-11-14T22:21:01Z",
+  "jobs": 16,
+  "jobConclusions": {
+    "success": 2,
+    "failure": 4,
+    "cancelled": 10
+  },
+  "normalCancellationSubmittedBy": "root",
+  "normalCancellationApproximateUTC": "2026-11-14T22:19Z",
+  "normalCancellationReceipt": "metadata-cancel-normal.log",
+  "forceCancellationNeeded": false,
+  "workerRemoteMutations": [],
+  "firstFailures": [
+    {
+      "jobId": 132608283802,
+      "name": "Typecheck",
+      "conclusion": "failure",
+      "guardMessage": "Missing successful applicability decision.",
+      "logSha256": "cebc9f23aaf06a853e6c7ae920c66aa85f3b847793db1724c9293fe11fafa747",
+      "causeEvidence": true,
+      "disposition": "Actual fail-closed applicability/coverage guard result after deliberate cancellation of the redundant metadata run; not a product compiler/test failure or a pass."
+    },
+    {
+      "jobId": 132608284466,
+      "name": "Unit tests",
+      "conclusion": "failure",
+      "guardMessage": "Coverage plan digest changed or missing.",
+      "logSha256": "556caa451f00c995a2aafbfd443e203b16bba1548a52f3d5a84efdf760337e6e",
+      "causeEvidence": true,
+      "disposition": "Actual fail-closed applicability/coverage guard result after deliberate cancellation of the redundant metadata run; not a product compiler/test failure or a pass."
+    },
+    {
+      "jobId": 132608284578,
+      "name": "Lib tests",
+      "conclusion": "failure",
+      "guardMessage": "Coverage plan digest changed or missing.",
+      "logSha256": "4b03f0c903943f22987fcd757adcc2f6e641c3075396cf321b9470b14b91ad5d",
+      "causeEvidence": true,
+      "disposition": "Actual fail-closed applicability/coverage guard result after deliberate cancellation of the redundant metadata run; not a product compiler/test failure or a pass."
+    },
+    {
+      "jobId": 132608528393,
+      "name": "Playwright smoke",
+      "conclusion": "failure",
+      "guardMessage": "Coverage plan digest changed or missing.",
+      "logSha256": "d7e1e4308df94c10cac95016ec6c5267e8ca26b9fd5ffd6015a4d1663d10d7cb",
+      "causeEvidence": true,
+      "disposition": "Actual fail-closed applicability/coverage guard result after deliberate cancellation of the redundant metadata run; not a product compiler/test failure or a pass."
+    }
+  ],
+  "logsAvailable": 8,
+  "logsUnavailable404": [
+    132608285037,
+    132608285122,
+    132608285218,
+    132608285524,
+    132608285542,
+    132608285624,
+    132608285717,
+    132608285937
+  ],
+  "unavailableDisposition": "Provider HTTP 404 responses retained for eight cancelled matrix/environment jobs; no fabricated logs. All 16 terminal jobs remain in raw API inventory.",
+  "failedAggregateArtifacts": [
+    14134374054,
+    14134029918,
+    14133689214
+  ],
+  "aggregateDigestCRCVerified": true,
+  "acceptedOriginalRunUnaffected": 43642290667,
+  "usefulMainRunsUntouched": [
+    43646326362,
+    43646326402
+  ],
+  "bodyEditedOnceByRoot": true,
+  "secondBodyEditOrRerun": false
+}

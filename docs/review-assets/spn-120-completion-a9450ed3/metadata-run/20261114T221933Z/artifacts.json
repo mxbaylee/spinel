@@ -1,0 +1,45 @@
+{
+  "total_count": 2,
+  "artifacts": [
+    {
+      "id": 14134374054,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzNDM3NDA1NA==",
+      "name": "ci-results-unit",
+      "size_in_bytes": 288,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134374054",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134374054/zip",
+      "expired": false,
+      "digest": "sha256:6142493515792d7177adad89c2e1567e1fc7a994e400a44a4c868570d1e08ed0",
+      "created_at": "2026-11-14T22:19:18Z",
+      "updated_at": "2026-11-14T22:19:18Z",
+      "expires_at": "2026-12-14T22:19:18Z",
+      "workflow_run": {
+        "id": 43647410618,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14134029918,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzNDAyOTkxOA==",
+      "name": "ci-results-lib",
+      "size_in_bytes": 288,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134029918",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134029918/zip",
+      "expired": false,
+      "digest": "sha256:84a7d6c8f7da6305e6dc5ff8e5bd8fd18f9fccbb30ee16a7135b73d6b3722218",
+      "created_at": "2026-11-14T22:19:21Z",
+      "updated_at": "2026-11-14T22:19:21Z",
+      "expires_at": "2026-12-14T22:19:21Z",
+      "workflow_run": {
+        "id": 43647410618,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    }
+  ]
+}

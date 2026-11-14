@@ -1,0 +1,28 @@
+{
+  "mergedAt": "2026-11-14T22:06:33Z",
+  "pr": 228,
+  "url": "https://github.com/mxbaylee/spinel/pull/228",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "squash": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "squashParent": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "squashTree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "treeEqualsReviewedAndTested": true,
+  "githubConfirmedClosedMerged": true,
+  "remoteMainVerified": true,
+  "localMainFastForwarded": true,
+  "expectedHeadGuard": true,
+  "squashOnly": true,
+  "adminBypass": false,
+  "allSevenRequiredAnd33OriginalCIJobsPassed": true,
+  "reviewGrades": [
+    100,
+    100
+  ],
+  "validationArchive": "af62c1b4df006320431673336efa86d4e373e3e9",
+  "validationTag": "archive/spn-120-validation-a9450ed3-20261114",
+  "validationTagPublishedRemoteVerified": true,
+  "rootArchiveAudit": "/tmp/spn120-root-terminal-archive-audit-a9450ed3.json",
+  "cleanup": "pending actual guarded completion",
+  "finalBody": "not yet edited; one final postcleanup edit planned"
+}

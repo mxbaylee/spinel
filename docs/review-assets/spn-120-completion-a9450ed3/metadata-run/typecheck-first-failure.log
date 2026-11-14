@@ -1,0 +1,48 @@
+﻿2026-11-14T22:19:09.6715676Z Current runner version: '2.338.2'
+2026-11-14T22:19:09.6740268Z ##[group]Runner Image Provisioner
+2026-11-14T22:19:09.6741232Z Hosted Compute Agent
+2026-11-14T22:19:09.6741945Z Version: 20261103.629
+2026-11-14T22:19:09.6742668Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-14T22:19:09.6743664Z Build Date: 2026-11-03T17:26:59Z
+2026-11-14T22:19:09.6744362Z Worker ID: {9b61c3bd-50f5-4762-b393-14728f6095f1}
+2026-11-14T22:19:09.6745143Z Region: westcentralus
+2026-11-14T22:19:09.6745731Z Cloud: Azure
+2026-11-14T22:19:09.6746386Z ##[endgroup]
+2026-11-14T22:19:09.6747981Z ##[group]Operating System
+2026-11-14T22:19:09.6748662Z Ubuntu
+2026-11-14T22:19:09.6749268Z 26.04.1
+2026-11-14T22:19:09.6749792Z LTS
+2026-11-14T22:19:09.6750325Z ##[endgroup]
+2026-11-14T22:19:09.6750936Z ##[group]Runner Image
+2026-11-14T22:19:09.6751539Z Image: ubuntu-26.04
+2026-11-14T22:19:09.6752130Z Version: 20261111.196.1
+2026-11-14T22:19:09.6753681Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-14T22:19:09.6755409Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-14T22:19:09.6756385Z ##[endgroup]
+2026-11-14T22:19:09.6757667Z ##[group]GITHUB_TOKEN Permissions
+2026-11-14T22:19:09.6759665Z Contents: read
+2026-11-14T22:19:09.6760411Z Metadata: read
+2026-11-14T22:19:09.6760979Z ##[endgroup]
+2026-11-14T22:19:09.6763235Z Secret source: Actions
+2026-11-14T22:19:09.6764301Z Cache mode: read
+2026-11-14T22:19:09.6765044Z Prepare workflow directory
+2026-11-14T22:19:09.7152574Z Prepare all required actions
+2026-11-14T22:19:09.7199208Z Getting action download info
+2026-11-14T22:19:09.9626042Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-14T22:19:10.0754675Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-14T22:19:10.2443123Z Complete job name: Typecheck
+2026-11-14T22:19:10.3246359Z ##[group]Run case "$CLASSIFICATION:$SELECTED" in
+2026-11-14T22:19:10.3247137Z [36;1mcase "$CLASSIFICATION:$SELECTED" in[0m
+2026-11-14T22:19:10.3247788Z [36;1m  success:true|success:false) ;;[0m
+2026-11-14T22:19:10.3248574Z [36;1m  *) echo 'Missing successful applicability decision.' >&2; exit 1 ;;[0m
+2026-11-14T22:19:10.3249316Z [36;1mesac[0m
+2026-11-14T22:19:10.3300601Z shell: /usr/bin/bash -e {0}
+2026-11-14T22:19:10.3301510Z env:
+2026-11-14T22:19:10.3301957Z   CLASSIFICATION: cancelled
+2026-11-14T22:19:10.3302462Z   SELECTED: 
+2026-11-14T22:19:10.3303107Z ##[endgroup]
+2026-11-14T22:19:10.3443686Z Missing successful applicability decision.
+2026-11-14T22:19:10.3458844Z ##[error]Process completed with exit code 1.
+2026-11-14T22:19:10.3661324Z Evaluate and set job outputs
+2026-11-14T22:19:10.3667070Z Set output 'evidence'
+2026-11-14T22:19:10.3669221Z Cleaning up orphan processes

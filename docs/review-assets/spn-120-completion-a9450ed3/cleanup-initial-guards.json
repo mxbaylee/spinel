@@ -1,0 +1,56 @@
+{
+  "observedAt": "2026-11-14T22:08:54.151371+00:00",
+  "localRefs": [
+    "refs/heads/codex/spn-120-fixture-reliability bcc1c17c538756e7886a60a413ee31a8ed5ff2ba",
+    "refs/heads/codex/spn-120-production-integration a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+    "refs/remotes/origin/codex/spn-120-fixture-reliability a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+    "refs/tags/archive/spn-120-blocked-integration-bcc1c17 2e28caa15cc78e88d58dfcaf1f144c47e51c6585",
+    "refs/tags/archive/spn-120-integration-597c3182 814bcdb74bad025791d1faa69ae4b131f6ba2f20",
+    "refs/tags/archive/spn-120-native-blockers-597c3182 87d6ca12eb452f5b5ea279cc9e0761bf2ebceeef",
+    "refs/tags/archive/spn-120-prerequisites-2206e7d2-20261114 2206e7d26a5401de6fc2fcf5cfe287f355baff69",
+    "refs/tags/archive/spn-120-prior-evidence-bcc1c17 f1ddbf00628e86f9e344c2d6844ad975d7b4ec20",
+    "refs/tags/archive/spn-120-review-5356f085-20261114 e0b4be00b8aa95b31324e04974504f50bcdd7740",
+    "refs/tags/archive/spn-120-review-a9450ed3-20261114 8979f8f8bed9ad53ee354625e00dbde0c3d1e93b",
+    "refs/tags/archive/spn-120-terminal-checkpoint-bcc1c17 a5ac3cad075955203da729e2cd5151135daea936",
+    "refs/tags/archive/spn-120-validation-47bf4aad-20261114 4bd84e3be7645a3b18c794c966e0007e6770cc9c",
+    "refs/tags/archive/spn-120-validation-5356f085-20261114 e9574cb5e19865916b8bf1952c83da131ed91ae7",
+    "refs/tags/archive/spn-120-validation-99e0a141-20261114 50d6e592e7f676b23a8ea5ab3851c7110ce20456",
+    "refs/tags/archive/spn-120-validation-a9450ed3-20261114 af62c1b4df006320431673336efa86d4e373e3e9"
+  ],
+  "remoteRefs": [
+    "2e28caa15cc78e88d58dfcaf1f144c47e51c6585\trefs/tags/archive/spn-120-blocked-integration-bcc1c17",
+    "51d5b48203f999ff27e3b01592a6668518f7ebf8\trefs/tags/archive/spn-120-blocked-integration-bcc1c17^{}",
+    "814bcdb74bad025791d1faa69ae4b131f6ba2f20\trefs/tags/archive/spn-120-integration-597c3182",
+    "c64816909e168c301bddb4765b461ed8121d8ddb\trefs/tags/archive/spn-120-integration-597c3182^{}",
+    "87d6ca12eb452f5b5ea279cc9e0761bf2ebceeef\trefs/tags/archive/spn-120-native-blockers-597c3182",
+    "b098d161fa4d4bb77f5d785a6ec6bee4f659c925\trefs/tags/archive/spn-120-native-blockers-597c3182^{}",
+    "2206e7d26a5401de6fc2fcf5cfe287f355baff69\trefs/tags/archive/spn-120-prerequisites-2206e7d2-20261114",
+    "f1ddbf00628e86f9e344c2d6844ad975d7b4ec20\trefs/tags/archive/spn-120-prior-evidence-bcc1c17",
+    "d825f803952506685c64362938192c4206a6e8d5\trefs/tags/archive/spn-120-prior-evidence-bcc1c17^{}",
+    "e0b4be00b8aa95b31324e04974504f50bcdd7740\trefs/tags/archive/spn-120-review-5356f085-20261114",
+    "8979f8f8bed9ad53ee354625e00dbde0c3d1e93b\trefs/tags/archive/spn-120-review-a9450ed3-20261114",
+    "a5ac3cad075955203da729e2cd5151135daea936\trefs/tags/archive/spn-120-terminal-checkpoint-bcc1c17",
+    "4c7f6a37eb5b9f6b11b7be928a9f859a15035624\trefs/tags/archive/spn-120-terminal-checkpoint-bcc1c17^{}",
+    "4bd84e3be7645a3b18c794c966e0007e6770cc9c\trefs/tags/archive/spn-120-validation-47bf4aad-20261114",
+    "e9574cb5e19865916b8bf1952c83da131ed91ae7\trefs/tags/archive/spn-120-validation-5356f085-20261114",
+    "50d6e592e7f676b23a8ea5ab3851c7110ce20456\trefs/tags/archive/spn-120-validation-99e0a141-20261114",
+    "af62c1b4df006320431673336efa86d4e373e3e9\trefs/tags/archive/spn-120-validation-a9450ed3-20261114"
+  ],
+  "openPRPages": 1,
+  "openPRCount": 9,
+  "activeOwners": [],
+  "mergedPR": {
+    "number": 228,
+    "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+    "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+    "merged": true,
+    "squash": "312e5546386ece21f8e0845d696598cc4d85c731"
+  },
+  "commands": [
+    "git for-each-ref --format=%(refname) %(objectname)",
+    "git ls-remote origin",
+    "gh api --paginate --slurp repos/mxbaylee/spinel/pulls?state=open&per_page=100",
+    "gh api repos/mxbaylee/spinel/pulls/228"
+  ],
+  "readerNote": "Initial separate gh command combined --slurp with --jq, rejected before a request. This corrected fully paginated raw JSON read succeeded; no mutation occurred."
+}

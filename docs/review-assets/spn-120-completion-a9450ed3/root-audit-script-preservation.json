@@ -1,0 +1,19 @@
+{
+  "purpose": "Original reader scripts retained losslessly as gzip evidence, not added as executable application/compiler inputs. First reader counted five peeled annotated-tag lines as extra refs; corrected final audit retains actual 12 tag refs with full listing equality.",
+  "files": [
+    {
+      "source": "/tmp/spn120-root-cleanup-audit-first.ts",
+      "retained": "spn120-root-cleanup-audit-first.ts.gz",
+      "bytes": 2723,
+      "rawSha256": "23799e6e01c41acc1011120df79f017fac0f4bb53126c3c32fcac5c52999e1c9",
+      "gzipSha256": "e0a10bf40004de99f280357850ba99df4d7b62c6f0df4d37ea78abd3490d1118"
+    },
+    {
+      "source": "/tmp/spn120-root-cleanup-audit.ts",
+      "retained": "spn120-root-cleanup-audit.ts.gz",
+      "bytes": 2954,
+      "rawSha256": "9386014fd440c76d429f7fb0a922f1863f688e3a9cbd7557b88c2387a8df5512",
+      "gzipSha256": "08b945250e4062b17edf8c4750d9bd54c6fbd9ae4bc97e1e88e79af7bfe5a318"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-14T22:18:53.116Z",
+  "updatedAt": "2026-11-14T22:18:39Z",
+  "pr": 228,
+  "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "merge": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "merged": true,
+  "bodyBytes": 15676,
+  "bodySha256": "6714ffe12c84aa2de657a8bb538bc91cdd49c5464adf1b51423aec4315443de8",
+  "exact": true
+}

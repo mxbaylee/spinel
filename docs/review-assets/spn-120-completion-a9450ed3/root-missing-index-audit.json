@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-14T21:55:57.683Z",
+  "head": "bcc1c17c538756e7886a60a413ee31a8ed5ff2ba",
+  "indexSha256": "de13bad5068ab859771647a194c348fd76eec309ee679837e4b5c7f6a3b8820f",
+  "entries": 2191,
+  "exactModeBlobStagePathEquality": true,
+  "headAncestorOfCurrentSource": true,
+  "indexBytesUnchanged": true,
+  "limits": "Missing worktree: no assertion about unavailable unstaged/untracked contents."
+}

@@ -1,0 +1,71 @@
+[
+  {
+    "artifactId": 14134374054,
+    "name": "ci-results-unit",
+    "providerDigest": "sha256:6142493515792d7177adad89c2e1567e1fc7a994e400a44a4c868570d1e08ed0",
+    "sha256": "6142493515792d7177adad89c2e1567e1fc7a994e400a44a4c868570d1e08ed0",
+    "bytes": 288,
+    "crcVerified": true,
+    "members": [
+      {
+        "member": "ci-results-unit.json",
+        "bytes": 177,
+        "sha256": "b2777cae312897c12225168197bcd9ac241dac4c215d5b6de83ad669397ca2c7",
+        "raw": {
+          "passed": false,
+          "evidence": {
+            "planSha256": "",
+            "error": "Error: Coverage plan digest changed or missing.",
+            "results": "{\"unit-tests\":\"cancelled\"}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "artifactId": 14134029918,
+    "name": "ci-results-lib",
+    "providerDigest": "sha256:84a7d6c8f7da6305e6dc5ff8e5bd8fd18f9fccbb30ee16a7135b73d6b3722218",
+    "sha256": "84a7d6c8f7da6305e6dc5ff8e5bd8fd18f9fccbb30ee16a7135b73d6b3722218",
+    "bytes": 288,
+    "crcVerified": true,
+    "members": [
+      {
+        "member": "ci-results-lib.json",
+        "bytes": 179,
+        "sha256": "456f695e71bd5fafb390d96213ebaaeb96d88120dac4ba5ac469d6b87df3bc3c",
+        "raw": {
+          "passed": false,
+          "evidence": {
+            "planSha256": "",
+            "error": "Error: Coverage plan digest changed or missing.",
+            "results": "{\"lib-test-run\":\"cancelled\"}"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "artifactId": 14133689214,
+    "name": "ci-results-browser",
+    "providerDigest": "sha256:cdae0588d506122afbd871d84af7e87812eca21bb32a7eb298c5d24b987e3944",
+    "sha256": "cdae0588d506122afbd871d84af7e87812eca21bb32a7eb298c5d24b987e3944",
+    "bytes": 414,
+    "crcVerified": true,
+    "members": [
+      {
+        "member": "ci-results-browser.json",
+        "bytes": 522,
+        "sha256": "ca65d102b55f95687b8800ba7bb7ed55b4874f6b35a6bc3ce908bfa8d1c0d3c8",
+        "raw": {
+          "passed": false,
+          "evidence": {
+            "planSha256": "",
+            "error": "Error: Coverage plan digest changed or missing.",
+            "results": "{\"backlog\":\"success\",\"pull-request\":\"cancelled\",\"lint\":\"success\",\"typecheck\":\"skipped\",\"unit-tests\":\"cancelled\",\"lib-test-run\":\"cancelled\",\"playwright-run\":\"cancelled\",\"container-smoke\":\"cancelled\",\"restore-timing\":\"cancelled\",\"sync-transition\":\"cancelled\",\"doc-responsiveness\":\"cancelled\",\"doc-callback-lifetimes\":\"cancelled\"}"
+          }
+        }
+      }
+    ]
+  }
+]

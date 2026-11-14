@@ -1,0 +1,18 @@
+{
+  "path": "/tmp/spn120-publication-a9450ed3/pr-body-terminal-draft.md",
+  "sha256": "a242fa4c8fd26f1a83a7b0ceef0accf9025cf72698a8db0f615b21e2ed80dfa1",
+  "bytes": 14158,
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "archiveCommit": "af62c1b4df006320431673336efa86d4e373e3e9",
+  "publication": "Unpublished draft; root updates actual archive publication, merge and cleanup disposition before ONE postmerge body edit.",
+  "pendingTruth": [
+    "validation tag remote verification",
+    "actual squash and guarded cleanup",
+    "completion archive publication"
+  ],
+  "rootTerminalArchiveAudit": {
+    "path": "/tmp/spn120-root-terminal-archive-audit-a9450ed3.json",
+    "sha256": "c4749186f4832d10a5fb81895cd0f4146f41b1882cdd030aa062b85bf1160205",
+    "passed": true
+  }
+}
