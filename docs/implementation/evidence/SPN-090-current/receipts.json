@@ -294,6 +294,37 @@
       "reason": null,
       "elapsedMs": 12027,
       "peakKiB": 767792
+    },
+    {
+      "name": "spn090-current-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 271,
+      "peakKiB": 224448
+    },
+    {
+      "name": "spn090-current-pr",
+      "args": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "origin/main",
+        "--title",
+        "\ud83e\uddea SPN-090 Verify offline launches on real phones"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 486,
+      "peakKiB": 258240
     }
   ],
   "pending": [
@@ -304,5 +335,6 @@
   "refusedStart": {
     "check": "format",
     "reason": "Ambient memory pressure elevated before process start; log retained; later pressure1 formatter succeeded"
-  }
+  },
+  "checkedCandidateBeforeEvidenceOnlyUpdate": "e057940b3a63f7e479237121bf318054a6ebbd90"
 }

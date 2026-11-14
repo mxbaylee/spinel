@@ -10,7 +10,7 @@ no historical phone observation is assigned its SHA.
 - **Passed:** private locked install; allocation of 154/155/156 using the backlog CLI;
   formatting and index generation; 202 Vitest tests across 10 relevant runtime files;
   23 Node tests covering bootstrap evidence, origin parser, image pixels, renderer grouping
-  and CI routing; complete lint/dependency/format check.
+  and CI routing; complete lint/dependency/format check; backlog shape and current-main PR check.
 - **Compiler pending:** guard terminated it after 2.296 seconds at 1,505,152 KiB under
   changing ambient pressure. No compiler diagnostic or pass. No repeated unchanged run.
 - **First failures preserved:** formatter refused before launch under elevated pressure;
@@ -59,3 +59,17 @@ The prior 0/4.5-unit phone trials are documented observations without retained s
 
 ![Installed icon, 192 pixels](visual/installed-icon-192.png)
 ![Installed icon, 512 pixels](visual/installed-icon-512.png)
+
+## 📏 Size and integration checks
+
+The first complete committed integration was `e057940b3a63f7e479237121bf318054a6ebbd90`,
+a merge with the actual remote head and current main as its two parents. The current-main
+PR check passes with a soft-size warning (15,368 changed lines at that checkpoint).
+Most additions are retained chronological decision/run evidence, including about 4,900
+canonical record lines and 4,370 lines in two physical capability JSON records; the
+provider harness itself is deleted. Keeping that unique evidence with the production
+repairs is coherent; moving it to an unowned branch would lose the required durable
+record. The separately implementable list-view replay outcome is explicitly SPN-156.
+`git diff origin/main --check` is clean. The merge's pre-commit index check also saw two
+historical SPN-145 capture whitespace lines arriving unchanged from main; these are not
+SPN-090 changes and the current-main diff has no such error.
