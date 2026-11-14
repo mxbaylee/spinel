@@ -47,6 +47,7 @@ import { AccessState } from './AccessState.tsx';
 import { AccessDetails } from './AccessDetails.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
+import { ITEM_REQUEST_DEADLINE_MS } from './offline/deadlines.ts';
 import { isNetworkFailure } from './offline/localStart.ts';
 import type { LocalStart } from './offline/localStart.ts';
 import { hasUsableCopy, isRequestTimeout, viewAfterNetworkFailure } from './offline/warmOpen.ts';
@@ -465,7 +466,7 @@ export function Dashboard({
       item: FileItem;
       children: FileItem[];
       ancestors: FileItem[];
-    }>(`/${currentId}`, 'GET', undefined, undefined, AbortSignal.timeout(15_000))
+    }>(`/${currentId}`, 'GET', undefined, undefined, AbortSignal.timeout(ITEM_REQUEST_DEADLINE_MS))
       .then((result) => {
         if (disposed) return;
         const view = [...result.ancestors, result.item, ...result.children];

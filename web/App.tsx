@@ -52,6 +52,7 @@ import {
   openLocalStart,
 } from './offline/localStart.ts';
 import { within } from './offline/shell.ts';
+import { requireBrowserOnline } from './offline/deadlines.ts';
 import { startupDone, startupStage } from './startupStage.ts';
 import {
   claimOnlineAccount,
@@ -235,8 +236,7 @@ function AccountApp() {
           // The browser already knows it is offline: skip the wait for a request that cannot
           // answer and start from the saved files. (`onLine` true proves nothing, so only
           // false short-circuits.)
-          if (globalThis.navigator?.onLine === false)
-            throw new TypeError('The browser is offline.');
+          requireBrowserOnline(globalThis.navigator);
           const { user, restore } = await api<{
             user: User;
             restore?: RestoreNoticeDetails | null;

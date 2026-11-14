@@ -350,6 +350,15 @@ network returns, when it refetches once and returns to the live editor; a failed
 keeps the device copy open. A request that hangs for 15 s counts as an outage. The decision
 lives in `web/offline/warmOpen.ts`.
 
+**⏱️ Deadlines.** A hang must never leave a start without an answer
+(`web/offline/deadlines.ts`). When the browser reports `onLine === false`, startup and
+page loads skip the wait and take the offline path at once; `onLine === true` proves
+nothing and never short-circuits. A page load slower than 8 s to first byte falls back to
+the saved app, and an item request slower than 15 s opens the device copy. On a slow but
+live network this chooses the saved copy over waiting; the app refetches once the
+connection answers. A start that is still waiting after 8 s names the step it is on
+(`web/startupStage.ts`), so a phone with no inspector can report where it stalled.
+
 **Local mode.** The shared network icon beside the gem reports **Offline**,
 **Reconnecting** or verified **Online**, independently of local durability.
 Its hover/focus/tap detail preserves **Files as of** and explains saved document

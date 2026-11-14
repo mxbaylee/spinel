@@ -10,6 +10,7 @@ import {
 import { ensureAccountRuntime, isRuntimeCompatible } from './runtime.ts';
 import type { AccountRuntimeRequirement } from './runtime.ts';
 import { readDeviceInventory } from './deviceStorage.ts';
+import { isRequestTimeout } from './warmOpen.ts';
 import type {
   OfflineCatalog,
   OfflineDownload,
@@ -31,9 +32,7 @@ export type LocalStart = {
  * either: airplane mode or a stalled radio can hang instead of failing fast.
  */
 export function isNetworkFailure(error: unknown) {
-  return (
-    error instanceof TypeError || (error instanceof DOMException && error.name === 'TimeoutError')
-  );
+  return error instanceof TypeError || isRequestTimeout(error);
 }
 
 /** Reads local mode's starting point; null when this device was not prepared. */

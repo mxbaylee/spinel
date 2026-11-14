@@ -21,6 +21,7 @@ import {
   writeRuntimeState,
 } from './offline/runtimeStore.ts';
 import type { RuntimeState } from './offline/runtimeStore.ts';
+import { NAVIGATION_DEADLINE_MS, requireBrowserOnline } from './offline/deadlines.ts';
 import {
   cachedAsset,
   cachedInstallationAsset,
@@ -315,11 +316,10 @@ self.addEventListener('message', (event) => {
 
 // A page load that cannot reach the server must fall back to the saved app quickly. In
 // airplane mode or on a stalled radio the browser can leave this fetch pending for minutes.
-const NAVIGATION_DEADLINE_MS = 8000;
 
 async function navigate(request: Request, url: URL) {
   try {
-    if (self.navigator.onLine === false) throw new TypeError('The browser is offline.');
+    requireBrowserOnline(self.navigator);
     return await fetch(request, {
       cache: 'no-store',
       signal: AbortSignal.timeout(NAVIGATION_DEADLINE_MS),
