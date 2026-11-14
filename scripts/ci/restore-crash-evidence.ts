@@ -54,7 +54,7 @@ export function verifyCrashReceipts(values: unknown[], source: CrashSource) {
   for (const value of values) {
     keys(
       value,
-      'version case source result snapshots observedFrozen controllers resources cuts kills primaryFailure secondaryFailures cleanup',
+      'version case source result snapshots observedFrozen controllers resources cuts terminations primaryFailure secondaryFailures cleanup',
     );
     const r = value as unknown as RestoreCrashReceipt;
     assert.ok(
@@ -93,22 +93,43 @@ export function verifyCrashReceipts(values: unknown[], source: CrashSource) {
       assert.ok(c.bytesWritten === null || number(c.bytesWritten));
     }
     assert.ok(
-      Array.isArray(r.kills) && r.kills.length === (cold || r.case === 'postcommit' ? 2 : 1),
+      Array.isArray(r.terminations) &&
+        r.terminations.length === (cold || r.case === 'postcommit' ? 2 : 1),
     );
-    for (const k of r.kills) {
-      keys(k, 'pid signal released');
+    for (const k of r.terminations) {
+      keys(k, 'pid action signal released');
       assert.ok(number(k.pid) && k.pid > 0);
-      assert.equal(k.signal, 'SIGKILL');
       assert.equal(k.released, true);
+      if (k.action === 'sigkill') assert.equal(k.signal, 'SIGKILL');
+      else {
+        assert.equal(k.action, 'already-exited');
+        assert.equal(k.signal, null);
+        assert.ok(
+          r.controllers.some((c) => c.pid === k.pid && (c.exitCode !== null || c.signal !== null)),
+          'No-op termination requires an observed terminal controller.',
+        );
+      }
     }
+    assert.ok(
+      r.terminations.some((k) => k.action === 'sigkill'),
+      'Actual SIGKILL cut missing.',
+    );
+    if (r.case === 'postcommit')
+      assert.ok(
+        r.snapshots[0].plannedChild &&
+          r.terminations.some(
+            (k) => k.pid === r.snapshots[0].plannedChild!.pid && k.action === 'sigkill',
+          ),
+        'Postcommit must SIGKILL its exact application writer.',
+      );
     const initial = r.controllers.find((c) => c.initial);
     assert.ok(
-      initial && r.kills.some((k) => k.pid === initial.pid),
+      initial && r.terminations.some((k) => k.pid === initial.pid),
       'Initial controller kill unproved.',
     );
     if (cold)
       assert.ok(
-        r.controllers.some((c) => c.cold && r.kills.some((k) => k.pid === c.pid)),
+        r.controllers.some((c) => c.cold && r.terminations.some((k) => k.pid === c.pid)),
         'Cold controller kill unproved.',
       );
     const recovers =

@@ -88,7 +88,10 @@ function complete(): RestoreCrashReceipt[] {
           : [],
       },
       child: null,
-      plannedChild: name === 'cold-trial-planned' ? { pid: 12, boot: id, start: '42' } : null,
+      plannedChild:
+        name === 'cold-trial-planned' || name === 'postcommit'
+          ? { pid: 12, boot: id, start: '42' }
+          : null,
     });
     return {
       version: 1,
@@ -131,9 +134,14 @@ function complete(): RestoreCrashReceipt[] {
         { name: cold ? 'original-activation' : name, pid: 10, bytesWritten: null },
         ...(cold ? [{ name, pid: 11, bytesWritten: null }] : []),
       ],
-      kills: [
-        { pid: 10, signal: 'SIGKILL', released: true },
-        ...(cold || name === 'postcommit' ? [{ pid: 11, signal: 'SIGKILL', released: true }] : []),
+      terminations: [
+        { pid: 10, action: 'sigkill' as const, signal: 'SIGKILL', released: true },
+        ...(cold
+          ? [{ pid: 11, action: 'sigkill' as const, signal: 'SIGKILL', released: true }]
+          : []),
+        ...(name === 'postcommit'
+          ? [{ pid: 12, action: 'sigkill' as const, signal: 'SIGKILL', released: true }]
+          : []),
       ],
       primaryFailure: null,
       secondaryFailures: [],
@@ -170,16 +178,16 @@ test('missing, duplicate, failed and stale receipts cannot satisfy recovery cove
     assert.throws(() => verifyCrashReceipts(r, source));
   }
 });
-test('unproved kills, cleanup, fingerprints, phases and cold authority cannot pass', () => {
+test('unproved terminations, cleanup, fingerprints, phases and cold authority cannot pass', () => {
   for (const mutate of [
     (r: RestoreCrashReceipt[]) => {
       r[14].resources[0].released = true;
     },
     (r: RestoreCrashReceipt[]) => {
-      r[5].kills[0].signal = 'SIGTERM';
+      r[5].terminations[0].signal = 'SIGTERM';
     },
     (r: RestoreCrashReceipt[]) => {
-      r[5].kills[0].pid = 99;
+      r[5].terminations[0].pid = 99;
     },
     (r: RestoreCrashReceipt[]) => {
       r[5].controllers[0].signal = null;
@@ -325,4 +333,16 @@ test('successful receipt precedes private deletion and final cleanup state; dele
   );
   assert.equal(saved.at(-1)!.result, 'failed');
   assert.equal(saved.at(-1)!.cleanup.temporaryData, 'retained');
+});
+
+test('postcommit retains actual writer SIGKILL while an already-exited controller is an explicit no-op', () => {
+  const r = complete(),
+    post = r.find((x) => x.case === 'postcommit')!;
+  post.controllers[0].exitCode = 0;
+  post.controllers[0].signal = null;
+  post.terminations[0] = { pid: 10, action: 'already-exited', signal: null, released: true };
+  assert.equal(verifyCrashReceipts(r, source).passed, true);
+  post.terminations[1].action = 'already-exited';
+  post.terminations[1].signal = null;
+  assert.throws(() => verifyCrashReceipts(r, source));
 });

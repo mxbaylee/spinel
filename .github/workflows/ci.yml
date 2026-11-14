@@ -558,6 +558,12 @@ jobs:
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip
+            test-results/**/restore-first-failure-*.zip
+            test-results/**/restore-startup-*.json
+            test-results/**/restore-diagnostic-collection-failures*.json
+            test-results/**/restore-failure-*.png
+            test-results/**/restore-state-*.txt
+            test-results/**/supervised-restore-first-attempt*.json
             playwright-report/*.json
           retention-days: 7
           if-no-files-found: warn

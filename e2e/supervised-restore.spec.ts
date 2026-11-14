@@ -1,7 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { copyFile, chmod, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test, startRestoreTrace, retainRestoreTrace } from './supervised-restore-tracing.ts';
+import { finishRestoreCrashCleanup } from '../src/server/maintenance/restore-crash-cleanup-fixture.ts';
 import type {
   APIResponse,
   Browser,
@@ -22,9 +24,8 @@ const startupEvidence = new WeakMap<BrowserContext, string[]>();
 async function observeStartup(context: BrowserContext) {
   const events: string[] = [];
   startupEvidence.set(context, events);
-  // These contexts are created manually, so the project trace setting does not
-  // cover them. Capture the original attempt, before any page can navigate.
-  await context.tracing.start({ screenshots: true, snapshots: true });
+  // The shared test fixture disables runner tracing; this is the sole owner.
+  await startRestoreTrace(context);
   context.on('page', (page) => {
     page.on('console', (message) => {
       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))
@@ -252,10 +253,12 @@ async function chooseSavedBackup(page: Page) {
 
 async function attachFailure(browser: Browser | undefined, info: TestInfo) {
   const collectionFailures: string[] = [];
+  const errors: unknown[] = [];
   const capture = async (name: string, collect: () => Promise<void>) => {
     try {
       await collect();
-    } catch {
+    } catch (error) {
+      errors.push(error);
       // A broken context/trace or attachment must not replace the test's
       // original rejection or prevent evidence from other contexts/pages.
       collectionFailures.push(name);
@@ -271,9 +274,7 @@ async function attachFailure(browser: Browser | undefined, info: TestInfo) {
       }),
     );
     await capture(`trace-${index}`, async () => {
-      const path = info.outputPath(`restore-first-failure-${index}.zip`);
-      await context.tracing.stop({ path });
-      await info.attach(`restore-first-failure-${index}`, { path, contentType: 'application/zip' });
+      await retainRestoreTrace(context, info, index);
     });
     let pageIndex = 0;
     for (const page of context.pages()) {
@@ -294,12 +295,13 @@ async function attachFailure(browser: Browser | undefined, info: TestInfo) {
     }
   }
   if (collectionFailures.length)
-    await info
-      .attach('restore-diagnostic-collection-failures', {
+    await capture('collection-failure-attachment', () =>
+      info.attach('restore-diagnostic-collection-failures', {
         body: JSON.stringify(collectionFailures),
         contentType: 'application/json',
-      })
-      .catch(() => {});
+      }),
+    );
+  return errors;
 }
 
 const skipUnsupported = (info: TestInfo) =>
@@ -308,16 +310,15 @@ const skipUnsupported = (info: TestInfo) =>
     'Supervised restore uses the Linux production supervisor and a filesystem catalog.',
   );
 
-// The old snapshot reset had only a passing retry trace. Retain the first failed
-// catalog journey without adding an execution or changing automatic retry policy.
-const it = test.extend({ trace: 'retain-on-failure' as const });
-it('a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients', async ({
+// Retain first-failure manual-context traces without changing configured retries.
+test('a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients', async ({
   playwright,
 }, info) => {
   skipUnsupported(info);
   test.setTimeout(600_000);
   const app = await startMaintenanceFixture({ catalog: true });
   let browser: Browser | undefined;
+  let primaryFailure: { error: unknown } | undefined;
   const failures: string[] = [];
   let snapshotPhase = 'before-backup';
   let snapshotReads = 0;
@@ -564,46 +565,57 @@ it('a catalog restore survives double-clicks, cancel and a lost reply, and fence
     expect(count('confirm')).toBe(2);
     expect(failures).toEqual([]);
   } catch (error) {
-    await attachFailure(browser, info);
-    throw error;
+    const evidenceFailures = await attachFailure(browser, info);
+    primaryFailure = {
+      error: evidenceFailures.length
+        ? new AggregateError(
+            [error, ...evidenceFailures],
+            'Restore failed and evidence capture also failed.',
+            { cause: error },
+          )
+        : error,
+    };
+    throw primaryFailure.error;
   } finally {
-    if (info.retry === 0) {
-      try {
-        const path = info.outputPath('sync-diagnostics.json');
-        await writeFile(
-          path,
-          JSON.stringify(
-            {
-              kind: 'supervised-restore-first-attempt',
-              sourceSha: process.env.SOURCE_SHA ?? null,
-              testedSha: process.env.GITHUB_SHA ?? null,
-              retry: info.retry,
-              capturedBeforeCleanup: true,
-              snapshotReads,
-              omittedSnapshotReads: snapshotReads - snapshotRequests.length,
-              snapshotRequests,
-              failureEvidence: failureEvidence ?? null,
-              finalEvidence: await app.diagnostics(),
-            },
-            null,
-            2,
-          ),
-        );
-        await info.attach('supervised-restore-first-attempt', {
-          path,
-          contentType: 'application/json',
-        });
-      } catch {
-        // Keep the feature's original rejection. Missing evidence is explicit
-        // and cannot support a diagnostic or merge-acceptance claim.
-        info.annotations.push({
-          type: 'diagnostics-unavailable',
-          description: 'First-attempt fixture evidence could not be retained.',
-        });
-      }
-    }
-    await browser?.close();
-    await app.close();
+    await finishRestoreCrashCleanup(
+      [
+        async () => {
+          if (info.retry === 0) {
+            const path = info.outputPath('sync-diagnostics.json');
+            await writeFile(
+              path,
+              JSON.stringify(
+                {
+                  kind: 'supervised-restore-first-attempt',
+                  sourceSha: process.env.SOURCE_SHA ?? null,
+                  testedSha: process.env.GITHUB_SHA ?? null,
+                  retry: info.retry,
+                  capturedBeforeCleanup: true,
+                  snapshotReads,
+                  omittedSnapshotReads: snapshotReads - snapshotRequests.length,
+                  snapshotRequests,
+                  failureEvidence: failureEvidence ?? null,
+                  finalEvidence: await app.diagnostics(),
+                },
+                null,
+                2,
+              ),
+            );
+            await info.attach('supervised-restore-first-attempt', {
+              path,
+              contentType: 'application/json',
+            });
+          }
+        },
+        async () => {
+          await browser?.close();
+        },
+        async () => {
+          await app.close();
+        },
+      ],
+      primaryFailure,
+    );
   }
 });
 
@@ -614,6 +626,7 @@ test('an admitted upload outlasts its passkey check and can still be cancelled',
   test.setTimeout(600_000);
   const app = await startMaintenanceFixture();
   let browser: Browser | undefined;
+  let primaryFailure: { error: unknown } | undefined;
   const uploadGate = Promise.withResolvers<boolean>();
   const heldUploads: Promise<void>[] = [];
   let uploadHeldAt: number | undefined;
@@ -669,14 +682,34 @@ test('an admitted upload outlasts its passkey check and can still be cancelled',
     const status = await publicStatus(app.publicOrigin);
     expect([status.phase, status.epoch]).toEqual(['running', app.running.epoch]);
   } catch (error) {
-    await attachFailure(browser, info);
-    throw error;
+    const evidenceFailures = await attachFailure(browser, info);
+    primaryFailure = {
+      error: evidenceFailures.length
+        ? new AggregateError(
+            [error, ...evidenceFailures],
+            'Restore failed and evidence capture also failed.',
+            { cause: error },
+          )
+        : error,
+    };
+    throw primaryFailure.error;
   } finally {
     // A failure before release aborts every intercepted request; never leave a
     // route handler suspended while browser and supervisor cleanup begins.
-    uploadGate.resolve(false);
-    await Promise.all(heldUploads.map((pending) => pending.catch(() => {})));
-    await browser?.close();
-    await app.close();
+    await finishRestoreCrashCleanup(
+      [
+        async () => {
+          uploadGate.resolve(false);
+          await Promise.all(heldUploads.map((pending) => pending.catch(() => {})));
+        },
+        async () => {
+          await browser?.close();
+        },
+        async () => {
+          await app.close();
+        },
+      ],
+      primaryFailure,
+    );
   }
 });

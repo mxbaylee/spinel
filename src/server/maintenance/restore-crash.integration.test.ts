@@ -264,7 +264,7 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
       controllers: [],
       resources: [],
       cuts: [],
-      kills: [],
+      terminations: [],
       primaryFailure: null,
       secondaryFailures: [],
       cleanup: { closure: 'not-reached', temporaryData: 'retained' },
@@ -614,7 +614,12 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
               timeout: 5000,
             })
             .toBe(true);
-          receipt.kills.push({ pid: application.pid, signal: 'SIGKILL', released: true });
+          receipt.terminations.push({
+            pid: application.pid,
+            action: 'sigkill',
+            signal: 'SIGKILL',
+            released: true,
+          });
           expect(statSync(`${databasePath}-wal`).size).toBeGreaterThan(32);
           const closedTuple = await Promise.all(
             [databasePath, `${databasePath}-wal`].map(async (path) =>
@@ -648,7 +653,12 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           ).toEqual(closedTuple);
         }
         const firstSignal = await kill(first);
-        receipt.kills.push({ pid: first.pid!, signal: firstSignal, released: !alive(first) });
+        receipt.terminations.push({
+          pid: first.pid!,
+          action: firstSignal === null ? 'already-exited' : 'sigkill',
+          signal: firstSignal,
+          released: !alive(first),
+        });
         await confirmation;
         // Expire the persisted operation authority, independent of its configured
         // lifetime. This is virtual expiry, not a wall-clock soak; keep the proof unchanged.
@@ -901,8 +911,9 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
             }
             const coldEvidence = await retains(root, retained);
             const coldSignal = await kill(controller!);
-            receipt.kills.push({
+            receipt.terminations.push({
               pid: controller!.pid!,
+              action: coldSignal === null ? 'already-exited' : 'sigkill',
               signal: coldSignal,
               released: !alive(controller!),
             });

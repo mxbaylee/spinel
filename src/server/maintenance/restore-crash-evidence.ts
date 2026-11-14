@@ -149,7 +149,12 @@ export interface RestoreCrashReceipt {
   }>;
   resources: Array<{ pid: number; boundary: 'cold-restart' | 'cold-recovered'; released: boolean }>;
   cuts: Array<{ name: string; pid: number; bytesWritten: number | null }>;
-  kills: Array<{ pid: number; signal: string | null; released: boolean }>;
+  terminations: Array<{
+    pid: number;
+    action: 'sigkill' | 'already-exited';
+    signal: string | null;
+    released: boolean;
+  }>;
   primaryFailure: ReturnType<typeof crashFailure> | null;
   secondaryFailures: ReturnType<typeof crashFailure>[];
   cleanup: { closure: 'not-reached' | 'passed' | 'failed'; temporaryData: 'retained' | 'removed' };
