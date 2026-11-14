@@ -1,0 +1,87 @@
+{
+  "sourceBefore": "27b87ff8767551fae03c163d2457744b31865ce3",
+  "testedBefore": "9a0537f7618f76bc64aa8b1addb41305daea202a",
+  "hostedFailure": {
+    "run": 43546428640,
+    "attempt": 1,
+    "job": 132299208406,
+    "artifact": 14094840518,
+    "artifactSha256": "a33f5064ddd948903387ab38da48654506f961b0f55102077bb91509faf70514"
+  },
+  "repair": "Await production status role before unchanged exact-text assertion; no render or timeout change.",
+  "sourceHashes": {
+    "web/StartupStage.stories.tsx": "4f43e676d353b03e9323e4c6a548ccafa12745a4c9569a2ab87aff3e973cc968",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+    ".storybook/main.ts": "65028312f728ee4ccc82b3257d34c4fafc5567316bb053b3f3c24a88c7052f3a",
+    ".storybook/preview.tsx": "7fccf62c47f7aa078057d8adbe6343febf4337147e1fb445bcf4e5d893f9bb1c",
+    "scripts/screenshots.ts": "7e1d391b61b3d431ea561e62573c0fe2786bd40a6e27477ea9b3fbd1b893fbdd"
+  },
+  "local": [
+    {
+      "name": "spn090-story-readiness-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "web/StartupStage.stories.tsx"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 144,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-story-readiness-build",
+      "args": [
+        "node",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "--config-dir",
+        "/tmp/spn090-current-focused-storybook",
+        "--output-dir",
+        "storybook-static"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 3532,
+      "peakKiB": 1091824
+    },
+    {
+      "name": "spn090-story-readiness-capture",
+      "args": ["node", "scripts/screenshots.ts", "current-production-startup-status--slow-start"],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 2266,
+      "peakKiB": 637136
+    },
+    {
+      "name": "spn090-story-readiness-lint",
+      "args": ["node", "node_modules/eslint/bin/eslint.js", "web/StartupStage.stories.tsx"],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 89,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-story-readiness-oxlint",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "web/StartupStage.stories.tsx"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 123,
+      "peakKiB": 0
+    }
+  ],
+  "captureScope": "Actual production review script; focused two-story production build using unchanged main/preview; selected only startup-status story, five viewport/theme variants. Full hosted catalog remains pending on repair.",
+  "processAudit": "After successful capture, ps scan found no Storybook, screenshot runner, port6007, or current-worktree task processes (only audit shell/rg).",
+  "firstLocalLintInvocation": "Mistaken ESLint path failed MODULE_NOT_FOUND before lint ran; package manifest identifies oxlint. Correct actual linter then passed."
+}
