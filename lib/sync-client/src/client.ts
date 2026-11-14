@@ -7,6 +7,7 @@ import {
   UnsupportedMutationError,
 } from '@spinel/sync-transform';
 import type { Mutation } from '@spinel/sync-transform';
+import { PendingBuffer } from './pending-buffer.ts';
 import { byteBudget, encodedBytes, envelopeBytes } from './budget.ts';
 import { clientFailures as failures, validateCheckpoint, validRevision } from './checkpoint.ts';
 import { hashTouched } from './hash.ts';
@@ -52,7 +53,7 @@ export class SyncClient {
   private awaitingResume = true;
   private sent: SubmitFrame | null = null;
   private inflight: Mutation[] = [];
-  private buffer: Mutation[][] = [];
+  private readonly buffer = new PendingBuffer();
   private readonly inbox = new Map<number, WireRevision>();
   private incomingBytes = 0;
   private lastEdit?: WireRevision;
@@ -102,7 +103,7 @@ export class SyncClient {
         this.retainedCheckpoint?.recoverySnapshot ||
         this.retainedCheckpoint?.recoveryMissing,
       ),
-      pendingMutations: this.inflight.length + this.buffer.flat().length,
+      pendingMutations: this.inflight.length + this.buffer.groups.flat().length,
       connected: this.connected,
       resyncing: Boolean(this.reason),
       ...((this.reason || this.persistenceFailed) && { failure: this.reason ?? 'unavailable' }),
@@ -126,16 +127,17 @@ export class SyncClient {
       if (mutations.length > MAX_BATCH_MUTATIONS || envelopeBytes(mutations) > MAX_WIRE_BYTES)
         throw new ClientError('capacity');
       const copied = clone([...mutations]);
-      const pending = [...this.inflight, ...this.buffer.flat()];
+      const pending = [...this.inflight, ...this.buffer.groups.flat()];
       if (pending.length + copied.length > 8192) throw new ClientError('capacity');
       const cells = cellsAfter(this.options.confirmed.cells(), pending, byteBudget());
       // Strict admission, including when there is no concurrent edit.
       transform(copied, [], 'right', { cells });
-      if (encodedBytes([...this.buffer, copied]) > MAX_PENDING_BYTES)
-        throw new ClientError('capacity');
+      // The buffer's size is kept incrementally; re-encoding it per edit is quadratic.
+      const groupBytes = encodedBytes(copied);
+      if (this.buffer.bytesWith(groupBytes) > MAX_PENDING_BYTES) throw new ClientError('capacity');
       // One group is never cut in two, including an absolute write and its tail.
       if (envelopeBytes(copied) > MAX_WIRE_BYTES) throw new ClientError('capacity');
-      this.buffer.push(copied);
+      this.buffer.push(copied, groupBytes);
       void this.changed();
       this.schedule();
     } catch (error) {
@@ -229,7 +231,7 @@ export class SyncClient {
       if (!this.processingCheckpoint) this.captureRecovery();
       this.sent = clone(this.retainedCheckpoint.sent);
       this.inflight = clone(this.retainedCheckpoint.inflight);
-      this.buffer = clone(this.retainedCheckpoint.buffer);
+      this.buffer.replace(clone(this.retainedCheckpoint.buffer));
       this.revision = this.retainedCheckpoint.revision;
       this.connected = false;
       this.awaitingResume = true;
@@ -242,7 +244,7 @@ export class SyncClient {
     }
     const first = !this.reason;
     this.reason ??= reason;
-    this.buffer = [];
+    this.buffer.replace([]);
     this.inbox.clear();
     this.incomingBytes = 0;
     clearTimeout(this.timer);
@@ -266,7 +268,7 @@ export class SyncClient {
       snapshot: clone(this.options.confirmed.snapshot()),
       sent: clone(this.sent),
       inflight: clone(this.inflight),
-      buffer: clone(this.buffer),
+      buffer: clone([...this.buffer.groups]),
     };
   }
 
@@ -304,7 +306,7 @@ export class SyncClient {
     transform(pending, [], 'right', { cells: this.options.confirmed.cells() });
     this.sent = clone(sent);
     this.inflight = clone(checkpoint.inflight);
-    this.buffer = clone(checkpoint.buffer);
+    this.buffer.replace(clone(checkpoint.buffer));
     if (checkpoint.failure) {
       this.reason = checkpoint.failure;
       this.retainedCheckpoint = clone(checkpoint);
@@ -349,7 +351,7 @@ export class SyncClient {
       return;
     const mutations: Mutation[] = [];
     let groups = 0;
-    for (const group of this.buffer) {
+    for (const group of this.buffer.groups) {
       const next = [...mutations, ...group];
       if (next.length > MAX_BATCH_MUTATIONS || envelopeBytes(next) > MAX_WIRE_BYTES) break;
       mutations.push(...group);
@@ -359,7 +361,7 @@ export class SyncClient {
       this.refuse('capacity');
       return;
     }
-    this.buffer.splice(0, groups);
+    this.buffer.drain(groups);
     const request: SubmitFrame = {
       type: 'submit',
       mutationId: this.options.mutationId?.() ?? crypto.randomUUID(),
@@ -501,7 +503,7 @@ export class SyncClient {
     if (edit.revision !== this.revision + 1) throw new ClientError('stale');
     const base = this.options.confirmed.cells();
     const oldInflight = this.inflight;
-    const oldBuffer = this.buffer.flat();
+    const oldBuffer = this.buffer.groups.flat();
     let incoming = edit.mutations;
     let inflight = oldInflight;
     if (oldInflight.length) {
@@ -526,7 +528,7 @@ export class SyncClient {
     this.inflight = inflight;
     // Split only at the transform's own boundaries; an absolute write and its
     // required tail are one group, so large buffers can drain in safe batches.
-    this.buffer = groups;
+    this.buffer.replace(groups);
     this.revision = edit.revision;
     this.lastEdit = clone(edit);
   }

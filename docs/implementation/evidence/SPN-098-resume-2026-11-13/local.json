@@ -1,0 +1,143 @@
+{
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "previousHead": "94c6968e29b57351c548dd5065cb0a61adfad896",
+  "node": "26.13.0",
+  "checks": [
+    {
+      "name": "spn098-current-install",
+      "args": [
+        "npm",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 5446,
+      "peakKiB": 1171920
+    },
+    {
+      "name": "spn098-current-feedback",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/server/diagnostics",
+        "src/ui/feedbackContext.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 5151,
+      "peakKiB": 545248
+    },
+    {
+      "name": "spn098-current-types",
+      "args": [
+        "node",
+        "node_modules/typescript/lib/tsc.js",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 3000,
+      "peakKiB": 1898288
+    },
+    {
+      "name": "spn098-current-lint",
+      "args": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 12005,
+      "peakKiB": 823424
+    },
+    {
+      "name": "spn098-current-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 252,
+      "peakKiB": 247680
+    },
+    {
+      "name": "spn098-current-pr",
+      "args": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "origin/main",
+        "--title",
+        "\ud83d\udce8 SPN-098 Send user feedback with diagnostic context"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 460,
+      "peakKiB": 265360
+    }
+  ],
+  "sourceHashes": {
+    ".github/workflows/ci.yml": "0262e9e0c9794ee9bd4b2d7982cf8c40ddddba6cab6f1bc7f84a07c0569e7874",
+    "e2e/diagnostics.spec.ts": "aa05dfa145fc0d0926d575e58ca239e4ab733ce9078d67453832f0ed69baec63",
+    "src/server/diagnostics/errors.ts": "683fdb2cfb4002daa8baf05b69e7de62b9aede42312c1f76c29b5f253879ad95",
+    "src/server/diagnostics/feedback-capacity.test.ts": "e90f205a344a4a7661f8ac7b77ee77b1bd4cf22d1d2eee9fec6bbc922fd3da1d",
+    "src/server/diagnostics/feedback-export-worker.ts": "db18adbb3048f0b79a0bf28470133775a7272d53383fc001b9a620cea4fc313b",
+    "src/server/diagnostics/feedback-exports.ts": "0929c46709d877ce284e25b118f3cf3d4e6a7775ca2ea5ebd439a7d1ed370aef",
+    "src/server/diagnostics/feedback-routes.test.ts": "3b198c32e6b0e80bd887b752af2425e8f50bee3ae1ef457c62602983e129b94f",
+    "src/server/diagnostics/feedback-transfer.test.ts": "55ea87cf467cd21de911a718c85c7ea7c353a801fb6b34ed16f564352d985d7f",
+    "src/server/diagnostics/feedback-transfer.ts": "1a0a9ef0178062626eb4661d9e4eb7adc0f635b819541fe1ff102f1cf43253c5",
+    "src/server/diagnostics/feedback.test.ts": "8f9f3e2a91607cad939d4a8876120962b6b92f7f0ac3a5017b2f8eaff06dbe2d",
+    "src/server/diagnostics/routes.ts": "c963e19937aa2838833f8f2af7cbf59d6a7eacd0c09556fa367c6a789f9caf17",
+    "src/server/diagnostics/store.ts": "13dd7e2ebade188dc60a5d4577eae59eb3b4b6acd686e0f373d1d5ec4e3c09ce",
+    "src/shared/diagnostics.ts": "a955aeaa8bfddb5a33b1fae7aacec283168a02f1af4e112372721a8784846b00",
+    "src/shared/feedback.ts": "2388f1ce6d874868765b179bf8c3e843772bd690fbcd523ae7bed6799ad7f7fe",
+    "src/ui/feedbackContext.test.ts": "72d3efd88bed705702586b53dcda24043930e58937d988c55075af5a76040a2a",
+    "src/ui/redesign/Controls.tsx": "6cbc993b713047a1c71c6bd2351c3dbef439e0a058cd90e261bd0e213965685b",
+    "web/AdminAccountRecovery.stories.tsx": "1130eb0b3f6816abcb77f391bcd3228187eba8fb55854e0e87380f4c920a911d",
+    "web/AdminDiagnostics.tsx": "b4908bb704d6bea41e143a0bd59afc5236b2c3c4e7e17cd2ee1da78334c2e358",
+    "web/AdminFeedback.stories.tsx": "2dbec0523c2dc48b3205dfac470ac90bfb2eb08354bb8764ed39a54daf28216b",
+    "web/AdminFeedback.tsx": "76182a4fd2b8063de44b782c942678ded7927a4ff9638b54ed8f8be62b7a71aa",
+    "web/AdminPage.stories.tsx": "e3e57cfbc556bbd3a022582e958d006b0c4e939f78fcd95fc3f16e2103714bfa",
+    "web/AdminUsers.stories.tsx": "8bd6b7f511836bc8009ae2b4911f58ee5980e19f3469b0a05240b4ff89a51f7c",
+    "web/AdminUsers.tsx": "095a316cc055c2ccf97248d3d1361e44fa46b45c3aba979d900d694e9dd1138d",
+    "web/Dashboard.tsx": "207160263feb0c1a6725c736ab6809ce82b6b4d0805f8e2dcbe8256a3ec3092c",
+    "web/EditorFrame.stories.tsx": "7685f223687e18bae754ccba338c5e76df9849913f81fb6388972784500f6daa",
+    "web/EditorFrame.tsx": "2e05a35862388e88fa470fb5bc5ec06c31c884cb49bb2889e498b49facbf348c",
+    "web/EditorTools.tsx": "24ef24a8611047ce9d97e5fb9bfe0f5e78b4c18f3997d4bc75157090f6e5f0b1",
+    "web/Feedback.stories.tsx": "df000779edab45744d9603e66d7198e924670a2f9ad2bd2b24409121edfa6712",
+    "web/Feedback.tsx": "4a0f38c17de7773c5b953f94af00a8a4cd12bb8d7a2f97fedef7e7c56f864c6d",
+    "web/Rail.stories.tsx": "04d5ae9a8eedebbd819124caa3ad40f6799fd3dd5338983c2f1c7ca125519c0a",
+    "web/Rail.tsx": "6a86f1460f394c630ec3945fe984c20e648bc355ebda02b6f1a1eb135c34e5b7",
+    "web/Space.stories.tsx": "c038e2162da0a96406b2b2630851ae675fb0bdbe665bafbfbcb188566aa0e5d1",
+    "web/Space.tsx": "30092b1a942c50182855f0a21ea298cfce1a3f820e55ab4f2594f9e9e611ec8c",
+    "web/SpaceGuest.stories.tsx": "e25d8624a399f687c0f2d0961ab868e6bd20a67ca469bb9814b9cca9d569f7ee",
+    "web/SpaceShell.tsx": "a4f24cf82cf99065c2d89022ae5cd1b1e75457aeb6581d86710a07830c7621c5",
+    "web/feedback.css": "30c86ce5e6a24c6e2aae4841f2fbdbdec0d6c3cfb74f52df70044bc6546dbba2",
+    "web/feedbackContext.ts": "da7294182fa29fd80bffd111c2b47542074c63085ac24f57e8d0ea9aecfbf460",
+    "web/feedbackStoryData.ts": "684a661b5bdf924040f12a84f12d8290a8a08649d23ff0b51a964aa2e498132f",
+    "package.json": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6",
+    "package-lock.json": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+    ".nvmrc": "6e775beae185bb3f5837d2f6d3fbe910e6f60e18fa507e661e312e84d707a92f",
+    "vitest.config.ts": "5d9906eaf4293df87618e9b889d848668f94c10c86eeb31537ad6c3762a2428b"
+  },
+  "limitations": [
+    "Hosted current-head acceptance and independent review pending.",
+    "Screenshots from ea6aa741 remain historical; current dependency rendering requires fresh images.",
+    "No old failure is waived by these local results."
+  ]
+}

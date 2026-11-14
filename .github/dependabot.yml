@@ -3,38 +3,57 @@ version: 2
 updates:
   - package-ecosystem: npm
     directory: /
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     cooldown:
       default-days: 7
     versioning-strategy: increase
     groups:
+      # Univer packages share a release line and must remain coordinated.
       univer:
+        applies-to: version-updates
         patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      univer-major:
+        applies-to: version-updates
+        patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['major']
+      # Preserve security fixes even when remediation requires a major release.
       univer-security:
         applies-to: security-updates
         patterns: ['@univerjs/*', '@univerjs-pro/*']
+      print-rendering:
+        applies-to: version-updates
+        patterns: ['@napi-rs/canvas', 'sharp', 'pdfjs-dist']
+        exclude-patterns: ['@univerjs/*', '@univerjs-pro/*']
+        update-types: ['minor', 'patch']
+      routine-npm:
+        applies-to: version-updates
+        patterns: ['*']
+        exclude-patterns:
+          ['@univerjs/*', '@univerjs-pro/*', '@napi-rs/canvas', 'sharp', 'pdfjs-dist']
+        update-types: ['minor', 'patch']
     # The trailing space prevents Dependabot adding a colon after "Bump".
     # Keep this literal prefix even if its generated description uses lowercase.
     commit-message:
       prefix: '⬆️ Bump '
   - package-ecosystem: docker
     directory: /
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     commit-message:
       prefix: '⬆️ Bump '
   - package-ecosystem: docker-compose
     directory: /deploy
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
     # SPINEL_IMAGE is an operator-selected built artifact, not an upstream image.
@@ -44,10 +63,15 @@ updates:
       prefix: '⬆️ Bump '
   - package-ecosystem: github-actions
     directory: /
+    open-pull-requests-limit: 2
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
       time: '09:00'
       timezone: America/Los_Angeles
+    groups:
+      github-actions:
+        applies-to: version-updates
+        patterns: ['actions/*']
+        update-types: ['minor', 'patch']
     commit-message:
       prefix: '⬆️ Bump '

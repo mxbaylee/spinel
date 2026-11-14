@@ -1,3 +1,9 @@
+import type { IDrawingJsonUndo1 } from '@univerjs/drawing';
+import { DrawingTypeEnum } from '@univerjs/core';
+import { SetRowHeightCommand } from '@univerjs/sheets';
+import { ISheetDrawingService, SheetDrawingAnchorType } from '@univerjs/sheets-drawing';
+import { Replica } from './harness.ts';
+import { drawingIds } from '../src/drawings.ts';
 import { setImmediate } from 'node:timers/promises';
 import { expect, test } from 'vitest';
 import { mixedCellEdit, commandEdit, sheetCut } from './generate-cells.ts';
@@ -6,6 +12,7 @@ import { drawingEdit } from './generate-drawings.ts';
 import { nameEdit } from './generate-names.ts';
 import { mergeEdit, propertyEdit, settingEdit } from './generate-sheet.ts';
 import {
+  capture,
   drawingCaptureCoverage,
   resetDrawingCaptureCoverage,
   seededWorkbook,
@@ -32,6 +39,54 @@ const generators = {
   docs: markedDocEdit,
 };
 
+// 1.3.1 rejects newly computed negative structural extents, so old random
+// seeds no longer necessarily create them. Keep all 100 original seeds intact
+// and separately prove the same capture path still handles retained old data.
+function captureRetainedDrawings() {
+  for (const width of [0, -20]) {
+    const replica = new Replica({ workbook: seededWorkbook() });
+    try {
+      const target = { unitId: 'wb', subUnitId: 's1' };
+      const service = replica.injector.get(ISheetDrawingService);
+      const marker = (row: number, column: number) => ({
+        row,
+        column,
+        rowOffset: 0,
+        columnOffset: 0,
+      });
+      const anchor = { from: marker(0, 0), to: marker(2, 1) };
+      const drawing = {
+        ...target,
+        drawingId: 'retained',
+        drawingType: DrawingTypeEnum.DRAWING_IMAGE,
+        imageSourceType: 'URL' as const,
+        source: '/images/retained.png',
+        anchorType: SheetDrawingAnchorType.Position,
+        sheetTransform: anchor,
+        axisAlignSheetTransform: anchor,
+        transform: { left: 0, top: 0, width, height: 40, angle: 0 },
+      };
+      const { redo, objects } = service.getBatchAddOp([drawing as never]) as IDrawingJsonUndo1;
+      replica.apply([{ id: drawingIds.apply, params: { ...target, op: redo, objects, type: 0 } }]);
+      const captured = capture(replica, SetRowHeightCommand.id, {
+        ...target,
+        ranges: [{ startRow: 0, endRow: 0, startColumn: 0, endColumn: 5 }],
+        value: 35,
+      });
+      expect(captured?.length, `retained width ${width} emits native mutations`).toBeGreaterThan(0);
+      replica.apply(captured!);
+      expect(service.getDrawingData('wb', 's1').retained).toMatchObject({
+        drawingId: 'retained',
+        source: drawing.source,
+        transform: { width, height: 40 },
+      });
+      expect(replica.workbook()!.getSheetBySheetId('s1')!.getRowHeight(0)).toBe(35);
+    } finally {
+      replica.univer.dispose();
+    }
+  }
+}
+
 const seeds = 100;
 const mutationsPerSeed = 1000;
 // Native history plus independent intent measured about 50s for ten seeds.
@@ -51,6 +106,9 @@ test(
     const coverage = new FamilyCoverage();
     const contentChecks = { doc: 0, sheetInsert: 0, sheetRemove: 0 };
     resetDrawingCaptureCoverage();
+    captureRetainedDrawings();
+    const retainedCaptures = drawingCaptureCoverage().withCollapsedDrawing;
+    expect(retainedCaptures).toBe(2);
     let total = 0;
     const started = performance.now();
     const selected = process.env.FUZZ_SEED
@@ -92,7 +150,7 @@ test(
       process.stdout.write(`Independent content-intent checks: ${JSON.stringify(contentChecks)}\n`);
     } finally {
       process.stdout.write(
-        `Native drawing capture evidence: ${JSON.stringify(drawingCaptureCoverage())}\n`,
+        `Native drawing capture evidence: ${JSON.stringify({ ...drawingCaptureCoverage(), retainedCaptures })}\n`,
       );
     }
     const drawingChecks = drawingCaptureCoverage();

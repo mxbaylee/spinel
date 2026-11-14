@@ -1,8 +1,9 @@
 import type { ItemAccess } from '../../src/shared/workspace.ts';
 import type { OfflineBundle } from '../../src/shared/offlineBundle.ts';
+import { CURRENT_SDK_VERSION } from '../../src/shared/offlineShell.ts';
 
 /** The pinned `@univerjs/core` version; a bundle from another SDK is not opened. */
-export const OFFLINE_SDK_VERSION = '1.1.0';
+export const OFFLINE_SDK_VERSION = CURRENT_SDK_VERSION;
 
 export type OfflineScope = Readonly<{
   origin: string;

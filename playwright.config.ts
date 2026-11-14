@@ -135,6 +135,11 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         baseURL: 'http://localhost:3108',
         trace: 'off',
+        // SPN-146 attribution only: V8 flags for the patch A/B (for example a larger young generation).
+        // Required CI never sets it.
+        ...(process.env.SPN146_AB_V8_FLAGS && {
+          launchOptions: { args: [`--js-flags=${process.env.SPN146_AB_V8_FLAGS}`] },
+        }),
       },
     },
     {
@@ -149,8 +154,8 @@ export default defineConfig({
     },
     {
       name: 'offline-upgrade',
-      // This suite builds the legacy baseline and two current compatibility
-      // fixtures. Its own server/browser must not race a normal webServer.
+      // This suite builds the eager legacy client, the last 1.1.0 host and
+      // the current compatibility fixture. Its own server/browser must not race a normal webServer.
       testMatch: '**/offline-upgrade.spec.ts',
       fullyParallel: false,
       use: { ...devices['Desktop Chrome'] },

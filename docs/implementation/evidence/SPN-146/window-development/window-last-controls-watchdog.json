@@ -1,0 +1,134 @@
+{
+  "root": 86689,
+  "started": 1793885363782,
+  "elapsedMs": 1297,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 91344,
+  "peakKiB": 320704,
+  "live": [
+    {
+      "pid": 86689,
+      "parent": 86663,
+      "group": 86689,
+      "rssKiB": 89792,
+      "started": "Thu Nov  5 05:29:23 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-last-controls-watchdog.json node --test scripts/ci/doc-native-window.test.ts scripts/ci/plan.test.ts scripts/ci/coverage-result.test.ts"
+    },
+    {
+      "pid": 86814,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 86689,
+      "parent": 86663,
+      "group": 86689,
+      "rssKiB": 89792,
+      "started": "Thu Nov  5 05:29:23 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-last-controls-watchdog.json node --test scripts/ci/doc-native-window.test.ts scripts/ci/plan.test.ts scripts/ci/coverage-result.test.ts"
+    },
+    {
+      "pid": 86708,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:23 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86734,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 59360,
+      "started": "Thu Nov  5 05:29:23 2026",
+      "command": "node --test scripts/ci/doc-native-window.test.ts scripts/ci/plan.test.ts scripts/ci/coverage-result.test.ts"
+    },
+    {
+      "pid": 86735,
+      "parent": 86734,
+      "group": 86689,
+      "rssKiB": 94304,
+      "started": "Thu Nov  5 05:29:23 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node --heap-prof-interval=524288 --watch-kill-signal=SIGTERM --inspect-publish-uid=stderr,http --test-timeout=0 --test-concurrency=0 --max-http-header-size=16384 --stack-trace-limit=10 --test-coverage-lines=0 --test-isolation=process --inspect-port=127.0.0.1:9229 --heapsnapshot-near-heap-limit=0 --test-coverage-functions=0 --test-coverage-branches=0 --cpu-prof-interval=1000 --report-signal=SIGUSR2 --experimental-addon-modules --use-largepages=off --network-family-autoselection-attempt-timeout=500 --secure-heap-min=2 --v8-pool-size=4 --secure-heap=0 --tls-cipher-list=TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA --node-snapshot --trace-event-file-pattern=node_trace.${rotation}.log scripts/ci/coverage-result.test.ts"
+    },
+    {
+      "pid": 86740,
+      "parent": 86735,
+      "group": 86689,
+      "rssKiB": 1184,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-146/scripts/ci/coverage-result.ts browser"
+    },
+    {
+      "pid": 86746,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86757,
+      "parent": 86735,
+      "group": 86689,
+      "rssKiB": 54512,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-146/scripts/ci/coverage-result.ts browser"
+    },
+    {
+      "pid": 86763,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86774,
+      "parent": 86735,
+      "group": 86689,
+      "rssKiB": 77136,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "(node)"
+    },
+    {
+      "pid": 86780,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86792,
+      "parent": 86735,
+      "group": 86689,
+      "rssKiB": 5216,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "/Users/mxbaylee/.nvm/versions/node/v26.12.1/bin/node /Users/mxbaylee/projects/spinel-spn-146/scripts/ci/coverage-result.ts unit"
+    },
+    {
+      "pid": 86798,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86814,
+      "parent": 86689,
+      "group": 86689,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:29:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -14,9 +14,9 @@
  * limitations under the License.
  *
  * Modified for Spinel: backport owned cursor/zoom callback lifetimes to the
- * pinned open-source @univerjs/docs-ui 1.1.0 ES/CJS builds. No Pro code is read.
+ * pinned open-source @univerjs/docs-ui 1.3.1 ES/CJS builds. No Pro code is read.
  * Source: packages/docs-ui/src/services/selection/text-range.ts and
- * controllers/render-controllers/zoom.render-controller.ts, dream-num/univer v1.1.0.
+ * controllers/render-controllers/zoom.render-controller.ts, dream-num/univer v1.3.1.
  * Prepared upstream repair: 1672ca2ad1debbcdb295e203308fae13bdb299b3.
  * Upstream: https://github.com/dream-num/univer/pull/7969
  * SPN-119 removes this temporary patch after a suitable upstream release.
@@ -27,8 +27,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const formats = {
-  es: '82ff8f5bb6a16cb52a0d7b10de81cebf5a1e004bb4c7fd629ddfc993d55913cf',
-  cjs: 'bc1e09498276d65c6d14240e6494a25a01d036cf3a0ab0a8aeeea6cc735b75bb',
+  es: '39edbad37992dd2af30f6bac56a05fc5d82c0a74078f330047e00fb0b48d1c11',
+  cjs: '5e9d899115f96bab1dd66debdc5446c879f2df69577b2ef32524288faafaa7eb',
 } as const;
 
 export function prepareDocsUiPatch(source: string, format: keyof typeof formats) {
@@ -173,7 +173,7 @@ export function prepareDocsUiPatch(source: string, format: keyof typeof formats)
 export async function patchInstalledDocsUi(root: string) {
   const directory = resolve(root, 'node_modules/@univerjs/docs-ui');
   const metadata = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
-  if (metadata.name !== '@univerjs/docs-ui' || metadata.version !== '1.1.0')
+  if (metadata.name !== '@univerjs/docs-ui' || metadata.version !== '1.3.1')
     throw new Error('Upgrading @univerjs/docs-ui: review callback lifetimes and SPN-119 first.');
   // Validate both builds before writing either; an unknown companion build fails closed.
   const updates = await Promise.all(

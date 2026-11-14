@@ -15,9 +15,9 @@
  *
  * Modified for Spinel: opt-in scalar observations at native flush boundaries.
  * Source: packages/docs/src/services/doc-state-change-manager.service.ts,
- * dream-num/univer v1.1.0. No Pro code is read or modified.
+ * dream-num/univer v1.3.1 (manager region unchanged from v1.1.0). No Pro code is read or modified.
  */
-// Exact transforms of the Apache-2.0 Univer v1.1.0 Doc state manager.
+// Exact transforms of the Apache-2.0 Univer v1.3.1 Doc state manager.
 // Modified for Spinel: opt-in scalar observations; native bodies stay unchanged.
 // Covered by patch-univer-docs.ts's complete original-file hash guard.
 export const docFlushObservationReplacements = [

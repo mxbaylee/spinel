@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { createHash } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 
 export type SafariTarget = {
   pid: number;
@@ -27,8 +29,7 @@ phase('running-application-class-begin');
 var runningApplication = $.NSClassFromString($('NSRunningApplication'));
 if (runningApplication.isNil()) throw new Error('The NSRunningApplication class is unavailable.');
 phase('running-application-class-end');
-function run(argv) {
-  var pid = Number(argv[0]);
+function readIdentity(pid, launchedAt, executablePath) {
   phase('process-lookup-begin');
   var running = runningApplication.runningApplicationWithProcessIdentifier(pid);
   phase('process-lookup-end');
@@ -51,14 +52,44 @@ function run(argv) {
   phase('identity-validation-begin');
   if (identity.pid !== pid || identity.bundleIdentifier !== 'com.apple.Safari' || !Number.isFinite(identity.launchedAt) || identity.launchedAt <= 0)
     throw new Error('The observed PID is not the expected Safari process: ' + JSON.stringify(identity));
-  if (argv[1] && identity.launchedAt !== Number(argv[1]))
+  if (launchedAt && identity.launchedAt !== Number(launchedAt))
     throw new Error('The observed Safari PID has been reused: ' + JSON.stringify(identity));
+  if (typeof identity.executablePath !== 'string' || identity.executablePath.charAt(0) !== '/' ||
+      (executablePath && identity.executablePath !== executablePath))
+    throw new Error('The observed Safari executable changed: ' + JSON.stringify(identity));
   phase('identity-validation-end');
+  return identity;
+}
+function run(argv) {
+  var pid = Number(argv[0]);
+  var identity = readIdentity(pid, argv[1], argv[5]);
   if (argv[2] === 'identify') return JSON.stringify(identity);
   console.log('Safari request target: ' + JSON.stringify(identity));
   phase('application-constructor-begin');
-  var app = Application(pid);
+  var app;
+  try {
+    app = Application(pid);
+  } catch (first) {
+    console.log('Safari constructor failure: ' + JSON.stringify({ attempt: 1, errorNumber: first.errorNumber, message: String(first) }));
+    // Only this constructor has run: no property read or requested action has
+    // been dispatched. Do not recover errors from any subsequent command.
+    if (first.errorNumber !== -2700 || first.message !== "Application can't be found.") throw first;
+    try {
+      phase('constructor-revalidation-begin');
+      readIdentity(pid, identity.launchedAt, identity.executablePath);
+      phase('constructor-revalidation-end');
+      phase('application-constructor-second-begin');
+      app = Application(pid);
+      phase('application-constructor-second-end');
+    } catch (second) {
+      console.log('Safari constructor recovery failure: ' + JSON.stringify({ errorNumber: second.errorNumber, message: String(second) }));
+      throw first;
+    }
+  }
   phase('application-constructor-end');
+  // Resolution is not authority to address a replacement process.
+  readIdentity(pid, identity.launchedAt, identity.executablePath);
+  phase('action-dispatch-begin');
   var seconds = Number(argv[4]);
   if (argv[2] === 'title') {
     var name = app.documents[0].name;
@@ -67,6 +98,14 @@ function run(argv) {
     var title = name({ timeout: seconds });
     phase('title-get-end');
     return title;
+  }
+  if (argv[2] === 'documents') {
+    // Read-only readiness: a reopened Safari may not have a document yet, which is
+    // a count of zero rather than an unresolved specifier. No JavaScript is sent.
+    phase('document-count-begin');
+    var count = app.documents().length;
+    phase('document-count-end');
+    return String(count);
   }
   if (argv[2] === 'evaluate') return app.doJavaScript(argv[3], { in: app.documents[0] }, { timeout: seconds });
   if (argv[2] === 'quit') { app.quit(); return 'Quit requested'; }
@@ -82,6 +121,187 @@ function run(argv) {
 }`;
 
 const run = promisify(execFile);
+
+export async function waitForSafariValue(
+  check: () => Promise<string>,
+  predicate: (value: string) => boolean,
+) {
+  const deadline = Date.now() + 30_000;
+  let latest = '';
+  while (Date.now() < deadline) {
+    // Only successful values may be polled. Identity, consent, dispatch and
+    // host-process failures remain fatal at the actual caller boundary.
+    latest = await check();
+    if (predicate(latest)) return latest;
+    await delay(250);
+  }
+  throw new Error(`Timed out: ${latest.slice(0, 1000)}`);
+}
+
+function describeRequestFailure(error: unknown) {
+  const failure = error as Error & {
+    code?: unknown;
+    signal?: unknown;
+    killed?: unknown;
+    stdout?: unknown;
+    stderr?: unknown;
+  };
+  return {
+    message: String(failure.message ?? error).split('\n')[0],
+    code: failure.code ?? null,
+    signal: failure.signal ?? null,
+    killed: failure.killed ?? false,
+    stdout: String(failure.stdout ?? ''),
+    stderr: String(failure.stderr ?? ''),
+  };
+}
+
+/** Observe the one pending title while the normal consent UI is serviced. */
+export function observeSafariTitle(work: Promise<string>, entry: Record<string, unknown>) {
+  let failed = false;
+  let failure: unknown;
+  const promise = work
+    .then(
+      (value) => {
+        entry.value = value;
+      },
+      (error) => {
+        failed = true;
+        failure = error;
+        entry.error = describeRequestFailure(error);
+      },
+    )
+    .finally(() => {
+      entry.finishedAt = new Date().toISOString();
+    });
+  return {
+    promise,
+    value() {
+      if (failed) throw failure;
+      return entry.value;
+    },
+  };
+}
+
+export type SafariTitleObservation = {
+  entry: { attempt?: unknown; finishedAt?: string };
+  promise: Promise<unknown>;
+  value(): unknown;
+};
+
+/**
+ * The consent loop's control flow. A completed title failure is fatal before any
+ * replacement request exists and beats the generic deadline error; only a
+ * finished but not-yet-ready title may be renewed. The UI step stays with the
+ * caller and may return false to stop early.
+ */
+export async function waitForSafariConsentTitle<T extends SafariTitleObservation>(options: {
+  expected: string;
+  deadline: number;
+  start: () => T;
+  step: () => Promise<boolean | void>;
+  pause: () => Promise<void>;
+  deadlineError: () => Error;
+  now?: () => number;
+}): Promise<T> {
+  const now = options.now ?? Date.now;
+  let request = options.start();
+  try {
+    while (now() < options.deadline) {
+      if (request.value() === options.expected) return request;
+      if (request.entry.finishedAt) request = options.start();
+      if ((await options.step()) === false) break;
+      await options.pause();
+    }
+    request.value(); // Retain a completed request failure instead of a generic deadline error.
+    throw options.deadlineError();
+  } finally {
+    // Every owned request has its own remaining-deadline timeout; leave none running.
+    await request.promise;
+  }
+}
+
+/** The required native helper is distinct from optional screenshot/readback diagnostics. */
+export async function readSafariBaseline(
+  read: () => Promise<string>,
+  entry: Record<string, unknown>,
+) {
+  try {
+    const state = JSON.parse(await read()) as {
+      title: string;
+      bounds: { x: number; y: number; width: number; height: number };
+    };
+    assert.equal(state.title, 'Spinel desktop profile probe');
+    const { x, y, width, height } = state.bounds;
+    assert.ok([x, y, width, height].every(Number.isFinite) && width > 0 && height > 0);
+    entry.state = state;
+    return state;
+  } catch (error) {
+    entry.error = describeRequestFailure(error);
+    throw error;
+  }
+}
+
+export async function requestSafari(
+  target: SafariTarget,
+  mode: 'title' | 'evaluate' | 'quit' | 'baseline' | 'documents',
+  source: string,
+  timeout: number,
+  entry: Record<string, unknown>,
+  execute: (
+    file: string,
+    args: readonly string[],
+    options: { timeout: number; maxBuffer: number; encoding: 'utf8' },
+  ) => Promise<{ stdout: string; stderr: string }> = run,
+) {
+  Object.assign(entry, {
+    mode,
+    target,
+    timeoutMs: timeout,
+    startedAt: new Date().toISOString(),
+    sourceSha256: createHash('sha256').update(source).digest('hex'),
+  });
+  const started = performance.now();
+  try {
+    const { stdout, stderr } = await execute(
+      '/usr/bin/osascript',
+      [
+        '-l',
+        'JavaScript',
+        '-e',
+        safariRequestScript,
+        String(target.pid),
+        String(target.launchedAt),
+        mode,
+        source,
+        String(Math.max(1, Math.floor(timeout / 1000))),
+        target.executablePath,
+      ],
+      { timeout, maxBuffer: 1024 * 1024, encoding: 'utf8' },
+    );
+    entry.trace = stderr;
+    entry.status = 'passed';
+    return stdout.trim();
+  } catch (error) {
+    const detail = error as Error & {
+      code?: unknown;
+      signal?: unknown;
+      killed?: unknown;
+      stderr?: unknown;
+    };
+    entry.status = 'failed';
+    entry.trace = String(detail.stderr ?? '');
+    entry.error = {
+      message: String(error).split('\n')[0],
+      code: detail.code,
+      signal: detail.signal,
+      killed: detail.killed,
+    };
+    throw error;
+  } finally {
+    entry.elapsedMs = Math.round(performance.now() - started);
+  }
+}
 
 // Keep the original deadline, and retain stderr on success as well as failure.
 export async function identifySafari(
