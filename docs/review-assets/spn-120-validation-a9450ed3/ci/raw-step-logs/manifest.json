@@ -1,0 +1,594 @@
+[
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 41131,
+    "sha256": "4f217327b7c538c56da5d298849786cd38055e21b24e2b47ba8cf087379ca49a",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (development)/8_Execute the predeclared first-attempt sample.txt",
+    "bytes": 2572,
+    "sha256": "517b6ef3537c2d764f3d55d82130c488329d36c5bdf5c96401df382642742926",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (development)/8_Execute the predeclared first-attempt sample.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (development)/9_Retain every attempt and process observation.txt",
+    "bytes": 2520,
+    "sha256": "940352a46559aeacb8cce56ed7db997f84414ad8fa73401b954141353bf78fbc",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (development)/9_Retain every attempt and process observation.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 41131,
+    "sha256": "24a090cb66b67933dc9ddc73620f543ce14ced2c2aaddd648ef08d8257a5e0f0",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (production)/8_Execute the predeclared first-attempt sample.txt",
+    "bytes": 4404,
+    "sha256": "d46b37b5af8db89d702f3cde2d0056b24b26cc0fd1db46b825e1ceb1f9c65616",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (production)/8_Execute the predeclared first-attempt sample.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (production)/9_Retain every attempt and process observation.txt",
+    "bytes": 2516,
+    "sha256": "28f0307d2a021490adff078eb2dd709f765ed6feee8fbd5566755d12d7ea70f0",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (production)/9_Retain every attempt and process observation.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 41131,
+    "sha256": "a0eb645164f03a40ee41b5c75f02dd4a0265a0b2ae18cd197f29799b3b36aab4",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (sync-production)/8_Execute the predeclared first-attempt sample.txt",
+    "bytes": 3874,
+    "sha256": "15a72d0836091ea24825e846fb9d1d0f67c7a214c0fbd60dc9edd39e9c1e27f7",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (sync-production)/8_Execute the predeclared first-attempt sample.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/audit-logs.zip",
+    "zipSha256": "a8b1cff8464c99a9af11b90c7c38420ae177b4e5a5561743feb380e9e9d540f4",
+    "member": "Fixture audit (sync-production)/9_Retain every attempt and process observation.txt",
+    "bytes": 2538,
+    "sha256": "70b83e631bcfb7fc6b089a47a0a68a783212d96587551faa48e6dbd60bec06d5",
+    "target": "ci/raw-step-logs/audit-logs/Fixture audit (sync-production)/9_Retain every attempt and process observation.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/desktop-logs.zip",
+    "zipSha256": "7169e5b30e9b594d1f2d2dd3a014b39fb9b627378d844fd8fee733af704e79f0",
+    "member": "Native desktop offline (safari, macos-15-intel)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 16058,
+    "sha256": "0b50fe72e3c5333d4aac353ee204fac9126ca9566d76bcc97612cfbc791f1fcd",
+    "target": "ci/raw-step-logs/desktop-logs/Native desktop offline (safari, macos-15-intel)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/desktop-logs.zip",
+    "zipSha256": "7169e5b30e9b594d1f2d2dd3a014b39fb9b627378d844fd8fee733af704e79f0",
+    "member": "Native desktop offline (chrome, macos-26)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 13057,
+    "sha256": "2731c0117637f2a9575a11f4dcafdf2a9feb37388d4eef75befa6d91a7438db0",
+    "target": "ci/raw-step-logs/desktop-logs/Native desktop offline (chrome, macos-26)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/desktop-logs.zip",
+    "zipSha256": "7169e5b30e9b594d1f2d2dd3a014b39fb9b627378d844fd8fee733af704e79f0",
+    "member": "Native desktop offline (firefox, macos-26)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11631,
+    "sha256": "82aec3cd82ecefa593ada2bc8f63b3e7857aaa1502272f3d6d19629487d79af1",
+    "target": "ci/raw-step-logs/desktop-logs/Native desktop offline (firefox, macos-26)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/spaces-logs.zip",
+    "zipSha256": "7048785f74936d2fd764cc314d3aff99b0dd58929ccf6afb5808187ff66a924a",
+    "member": "🦈 DigitalOcean Spaces/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11946,
+    "sha256": "f8cbdb67c66699a5047c92576ae759358042f0ea2c4a1e39c2f27259da8ce35b",
+    "target": "ci/raw-step-logs/spaces-logs/🦈 DigitalOcean Spaces/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Review Storybook states and interactions/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "d417d9d20272e1702d6d809c2dbf3a0f6b38c8aafe39983af5997a129bd0f750",
+    "target": "ci/raw-step-logs/storybook-logs/Review Storybook states and interactions/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Review Storybook mobile (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "0dde4a5272ffefa694d7422575303156714db04b38c15fba54a6517e52a9b1d1",
+    "target": "ci/raw-step-logs/storybook-logs/Review Storybook mobile (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Review Storybook desktop (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "423f79e9f514310eeb5154ae6969582c713269a4648e048583b9bca2949330a9",
+    "target": "ci/raw-step-logs/storybook-logs/Review Storybook desktop (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Review Storybook tablet/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "b8d0f884a2d9d833ccd7b124f72197754c29400b87af49ee4a83f08cc4b46033",
+    "target": "ci/raw-step-logs/storybook-logs/Review Storybook tablet/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Review Storybook desktop (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "ac1d5de09ac0885143e79b537b437fa9a6052ae099fe12bad029c8e73c94f4be",
+    "target": "ci/raw-step-logs/storybook-logs/Review Storybook desktop (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Review Storybook mobile (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "662f98bc819b903cc420cb592cbdf39ad2ef6c65f258bc045adc939ad4d216c2",
+    "target": "ci/raw-step-logs/storybook-logs/Review Storybook mobile (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Build Storybook/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11817,
+    "sha256": "efe715cdb57a3abbde8ff01c788719cacae4c132427367f0d2f7ff8d44285c7b",
+    "target": "ci/raw-step-logs/storybook-logs/Build Storybook/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/storybook-logs.zip",
+    "zipSha256": "a8a414cbfd99a853bfbd51c22c7b8001fa3bbbc3bc79da54f72fc6306b2e359f",
+    "member": "Classify changes/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 41296,
+    "sha256": "9e240726fa00715df44893e571a5a117113488b9b5d5a011f80e1552173135a5",
+    "target": "ci/raw-step-logs/storybook-logs/Classify changes/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "eb1478f4f2d3a3df20d9038ef7631867a843026e2c9eabfe376d5b958288ccdd",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke/4_Verify selected evidence and publish result.txt",
+    "bytes": 24053,
+    "sha256": "5e7a6439dbf58e5682dd8d571ed98faccb6248d8e91e24d65531a1f9c86293c1",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke/4_Verify selected evidence and publish result.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lib tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "851616887daded09bb30db5fa2edbafc8796a35bd24915dfd45df991dff1ace9",
+    "target": "ci/raw-step-logs/ci-logs/Lib tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lib tests/4_Verify selected evidence and publish result.txt",
+    "bytes": 16189,
+    "sha256": "54623d1378e33bb033993ed883563213ba7c680f415267602fc9cf3a7ca2afec",
+    "target": "ci/raw-step-logs/ci-logs/Lib tests/4_Verify selected evidence and publish result.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Unit tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "f7dfeee396eb1e0b8254756bc4664a27868df8c1f731d2ea7dd20ec7f5c99749",
+    "target": "ci/raw-step-logs/ci-logs/Unit tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Unit tests/4_Verify selected evidence and publish result.txt",
+    "bytes": 15908,
+    "sha256": "2480de85ef522f206caee0490cf02c9c0c75041f397bf3493cc7615361e2b8ae",
+    "target": "ci/raw-step-logs/ci-logs/Unit tests/4_Verify selected evidence and publish result.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (development 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "a61558cc4e8c6af415f72b3897cf738bbfe2045c0c5f2d33f5d963788de494d1",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (development 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (supervised-restore)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "4fcaae0be4eef4f4090ee4d2deb86b37cc551f5c58e109d94f766ae2b0b8fbd7",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (supervised-restore)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (sync-soak-sheet)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "a07f8ae7d32bc82fe9c046109e5e48068cf6ff973b79875692a4da6250d8a56d",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (sync-soak-sheet)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (offline-upgrade)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "8aadbf94d138491103a9b7ff79f999b4ad89375b50f0d0e77756e2e77ad6822b",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (offline-upgrade)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (sync-development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "eef7492693429d1d58b30145e43a85ee4ce2b82b474c19ca67f57da3306e0525",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (sync-development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (production 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "aee86e7f965c2b48d626e1685c28578b74546ed71785b2b4962a81c64e1eaf5d",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (production 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "529c6d068940b67ba119c4a3bdccf9fa8079c57fe38999a9a084f98c2d0d1242",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (mobile-https)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "c27449a3abcc183036d03ec60f3e966a7abd3e9f61cdde601e216790d25263d0",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (mobile-https)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (production 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "28c3536c5f66a01d708fc13b729920ff1f35f9e9bc7b80c816b7f49ca87c2e4f",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (production 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 12054,
+    "sha256": "d78075f15525358c2390d39c72b2642ce251aec967d36f993bec7e8a5e540b11",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (desktop)/10_Observe baseline first attempts.txt",
+    "bytes": 3421,
+    "sha256": "5e89dddc21bc165a7e1827405ef23af24611efcae9de0d19ac2a5c3c0a563b52",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (desktop)/10_Observe baseline first attempts.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (desktop)/12_Verify candidate responsiveness and boundaries.txt",
+    "bytes": 3663,
+    "sha256": "025e3dbbd5399d0c4c9d6e55587d0d9749297135ef94108d26b1ca84f01a0544",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (desktop)/12_Verify candidate responsiveness and boundaries.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (desktop)/13_Verify candidate evidence and selected paired comparison.txt",
+    "bytes": 10588,
+    "sha256": "e648d54844888605b063f9cc97467ee025974e83e3744b77a04cda0bd0ef7ddc",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (desktop)/13_Verify candidate evidence and selected paired comparison.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lib tests (cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "e6702dcae46f7b42fa7876198ee292496481a7aacf127defed8c91c4d71c36ad",
+    "target": "ci/raw-step-logs/ci-logs/Lib tests (cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (development 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "1ea4158f8414023f208a19bbd3836afc267582a2ca2d7abc3a27c8287a1425e5",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (development 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Retained sync transition/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "52423daddaa2113a4f6382a80ceaa564d5749af9c777fc00e78d0d688c03b1ad",
+    "target": "ci/raw-step-logs/ci-logs/Retained sync transition/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Retained sync transition/5_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 12326,
+    "sha256": "12d6646148801328e6db6df64a132a4838e24ce3a1457a5b0a3732ddcb0caade",
+    "target": "ci/raw-step-logs/ci-logs/Retained sync transition/5_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Typecheck/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "ec565c2131babe1f4779936d85a8734c8f46cfd3716a9d49d9659c9012acdea4",
+    "target": "ci/raw-step-logs/ci-logs/Typecheck/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Typecheck/6_Typecheck.txt",
+    "bytes": 361,
+    "sha256": "c30c1f30d35f86d76d7fdf4356e7327b3a8b591c0ec33e17de0c7c21a0a60a33",
+    "target": "ci/raw-step-logs/ci-logs/Typecheck/6_Typecheck.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Playwright smoke (sync-soak-doc)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "b7bcfb5b5cb6f3f63fde8a3600814ef577e56267040ab94c096108481fd51927",
+    "target": "ci/raw-step-logs/ci-logs/Playwright smoke (sync-soak-doc)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 12053,
+    "sha256": "8ff05adb05a6007e325d855e358e3edfc6eb5730b1decfe073b06720e8c4115a",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (mobile)/10_Observe baseline first attempts.txt",
+    "bytes": 3388,
+    "sha256": "dba737553715c63eecd24541fc5b184c22ee3c5ae230f634d914c85913413888",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (mobile)/10_Observe baseline first attempts.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (mobile)/12_Verify candidate responsiveness and boundaries.txt",
+    "bytes": 3687,
+    "sha256": "c0d36adf20b0a7667185b7a15151e84837a76aac1cc2db7c5ccee4051832a113",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (mobile)/12_Verify candidate responsiveness and boundaries.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc responsiveness (mobile)/13_Verify candidate evidence and selected paired comparison.txt",
+    "bytes": 10577,
+    "sha256": "87960ce93d0124291bb0e9e2006e469bd6df749b73d3306ea0b8ea676d295aac",
+    "target": "ci/raw-step-logs/ci-logs/Doc responsiveness (mobile)/13_Verify candidate evidence and selected paired comparison.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Sized restore acceptance/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "34df4c194cf044bc1453450d14f86dbe3eaa5d1ab8af256d3fb71943eecc974f",
+    "target": "ci/raw-step-logs/ci-logs/Sized restore acceptance/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 12057,
+    "sha256": "00340a4e5086d4eaf0734c2a2adeee9c10a1142c77eb660b03eedc13c67137a3",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (mobile)/6_Prepare pinned callback trace converter.txt",
+    "bytes": 1204,
+    "sha256": "eca5336e1a91d9c563afc2b7c66c3cb472a15a49789e0900749c39e04085b943",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (mobile)/6_Prepare pinned callback trace converter.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (mobile)/9_Match callback workload and read-only observations.txt",
+    "bytes": 1950,
+    "sha256": "25d63db379a16ad15e6a548e3d0f860343b5863eb42484aa13e230f50b806129",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (mobile)/9_Match callback workload and read-only observations.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (mobile)/13_Verify candidate first attempt.txt",
+    "bytes": 2547,
+    "sha256": "e5c3368d388dfb61e80c7519e2a9b220dc9cf4ca1971c6ebc15640c62a4f4e81",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (mobile)/13_Verify candidate first attempt.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (mobile)/14_Verify complete paired callback evidence.txt",
+    "bytes": 2061,
+    "sha256": "0daa2b22f048fe21d52dde7bd71913d6e3b1425658ae8dda8505ce47e698ad2c",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (mobile)/14_Verify complete paired callback evidence.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lib tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "7a1e582169b68a1b75a1f5dd175cb98aa1f0e6986a34cd8a6862e14a8940219b",
+    "target": "ci/raw-step-logs/ci-logs/Lib tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lib tests (mixed-fuzz)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "09ca49d15db0ac8aa671acbf6d9a6173b2e0d9e5215e5476528808e9d2a86cde",
+    "target": "ci/raw-step-logs/ci-logs/Lib tests (mixed-fuzz)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 12058,
+    "sha256": "974f8d7c5acf2e7f16cac2966d160e936c19fb8e33a1dd31f5f2498acb7c328a",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (desktop)/6_Prepare pinned callback trace converter.txt",
+    "bytes": 1205,
+    "sha256": "681df569d6bb2022b2354a23faed93306fb0d54f54b1071d5cb59d705f69e035",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (desktop)/6_Prepare pinned callback trace converter.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (desktop)/9_Match callback workload and read-only observations.txt",
+    "bytes": 1951,
+    "sha256": "108eaeeb2fc2e05f6f35d8926e3fe3fb911826d57add9576a723e1c1655ff983",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (desktop)/9_Match callback workload and read-only observations.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (desktop)/13_Verify candidate first attempt.txt",
+    "bytes": 2549,
+    "sha256": "3337e9b65589e880ab1239b6467cd1fbaba6d4cbf14433bdde10a14d4776896b",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (desktop)/13_Verify candidate first attempt.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Doc callback lifetimes (desktop)/14_Verify complete paired callback evidence.txt",
+    "bytes": 2062,
+    "sha256": "66e2e412cc015e77245d4d8ec3ca79cc6ea34cfa766799bf11cdaa8ec90e3061",
+    "target": "ci/raw-step-logs/ci-logs/Doc callback lifetimes (desktop)/14_Verify complete paired callback evidence.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Unit tests (recovery)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "6387c34a50775cdbc1f2d6a13d6d90e5944a051d00fdca98e9e670271138eb2c",
+    "target": "ci/raw-step-logs/ci-logs/Unit tests (recovery)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Unit tests (recovery)/6_Unit tests.txt",
+    "bytes": 79786,
+    "sha256": "d9ea0d75e0efd65a665aee688cc8d95298fb7c037cdeb24d7ebb7eefbe8982f8",
+    "target": "ci/raw-step-logs/ci-logs/Unit tests (recovery)/6_Unit tests.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Unit tests (supervisor)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "1ecf657cb8e8244abdf4edd57288e7b4affc389fa72c40c971814aa809fee997",
+    "target": "ci/raw-step-logs/ci-logs/Unit tests (supervisor)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lib tests (dense-cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "c020ae46ce2a9a672aef060a960798d4a2a0edbb0b5474cb5b3d870cd4f14827",
+    "target": "ci/raw-step-logs/ci-logs/Lib tests (dense-cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Container smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "18fb4d70f6a110df5183cb204e14ad2655151e53ebfbd695b05da2992e567c3a",
+    "target": "ci/raw-step-logs/ci-logs/Container smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Lint/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "b130bdc8a35159a12ec34da971b49c05b65dceea53fe1454f353da5b54b84c27",
+    "target": "ci/raw-step-logs/ci-logs/Lint/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Unit tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "84469586bc0b2f621e770153d737776d45801d274db945d1497f9270f8d51dbe",
+    "target": "ci/raw-step-logs/ci-logs/Unit tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Backlog/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 11721,
+    "sha256": "a3dfefea93e89bd97c028a898c86ae6034177f6a938a7e21e55913e2c635b9b0",
+    "target": "ci/raw-step-logs/ci-logs/Backlog/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Pull request/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 41296,
+    "sha256": "125ac4e480dcfdbb6e7004ea431b57f3e71c7607d561872347e6c0ff1929c2a6",
+    "target": "ci/raw-step-logs/ci-logs/Pull request/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-a9450ed3/ci-logs.zip",
+    "zipSha256": "ad4ec013abddfaf8dc4b79f3d2d868678b3f5e38b6463da705235ce7f8fa6f8a",
+    "member": "Classify changes (43642290667)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+    "bytes": 41296,
+    "sha256": "8982c0003873bbafe2e701d24b845ddabc05f1d21e7dede1425782786b94ba8d",
+    "target": "ci/raw-step-logs/ci-logs/Classify changes (43642290667)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt"
+  }
+]

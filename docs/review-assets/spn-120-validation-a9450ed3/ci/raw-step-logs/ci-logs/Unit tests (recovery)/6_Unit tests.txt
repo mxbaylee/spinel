@@ -1,0 +1,480 @@
+﻿2026-11-14T21:21:47.2124315Z ##[group]Run case "$SUITE" in
+2026-11-14T21:21:47.2124635Z [36;1mcase "$SUITE" in[0m
+2026-11-14T21:21:47.2124843Z [36;1m  supervisor)[0m
+2026-11-14T21:21:47.2125249Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/supervisor.test.ts[0m
+2026-11-14T21:21:47.2125977Z [36;1m    ;;[0m
+2026-11-14T21:21:47.2126155Z [36;1m  recovery)[0m
+2026-11-14T21:21:47.2126535Z [36;1m    node scripts/ci/pid-namespace.ts npx vitest run src/server/maintenance/ src/server/backup/ \[0m
+2026-11-14T21:21:47.2127067Z [36;1m      --exclude 'src/server/maintenance/supervisor.test.ts'[0m
+2026-11-14T21:21:47.2127371Z [36;1m    ;;[0m
+2026-11-14T21:21:47.2127559Z [36;1m  remaining)[0m
+2026-11-14T21:21:47.2127857Z [36;1m    # Exact exclusions keep future test files in this partition; it[0m
+2026-11-14T21:21:47.2128225Z [36;1m    # also runs the node:test script suites.[0m
+2026-11-14T21:21:47.2128605Z [36;1m    node scripts/ci/pid-namespace.ts npm test -- --exclude 'lib/**' \[0m
+2026-11-14T21:21:47.2129024Z [36;1m      --exclude 'src/server/maintenance/**' \[0m
+2026-11-14T21:21:47.2129316Z [36;1m      --exclude 'src/server/backup/**'[0m
+2026-11-14T21:21:47.2129560Z [36;1m    ;;[0m
+2026-11-14T21:21:47.2129736Z [36;1m  *)[0m
+2026-11-14T21:21:47.2129950Z [36;1m    echo "Unknown unit partition: $SUITE" >&2[0m
+2026-11-14T21:21:47.2130214Z [36;1m    exit 1[0m
+2026-11-14T21:21:47.2130384Z [36;1m    ;;[0m
+2026-11-14T21:21:47.2130558Z [36;1mesac[0m
+2026-11-14T21:21:47.2171298Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:21:47.2171458Z env:
+2026-11-14T21:21:47.2171576Z   SUITE: recovery
+2026-11-14T21:21:47.2171701Z ##[endgroup]
+2026-11-14T21:21:47.7226750Z 
+2026-11-14T21:21:47.7228222Z [1m[30m[46m RUN [49m[39m[22m [36mv5.1.0 [39m[90m/home/runner/work/spinel/spinel[39m
+2026-11-14T21:21:47.7229028Z 
+2026-11-14T21:21:52.7180333Z  [32m✓[39m src/server/maintenance/restore-jobs.test.ts [2m([22m[2m56 tests[22m[2m)[22m[33m 4688[2mms[22m[39m
+2026-11-14T21:21:52.7181087Z    [33m[2m✓[22m[39m persisted confirmation tampering fails closed instead of accepting altered preview[33m 347[2mms[22m[39m
+2026-11-14T21:21:52.7181708Z    [33m[2m✓[22m[39m retained IDs are bounded and never silently pruned for a new admission[33m 494[2mms[22m[39m
+2026-11-14T21:21:55.1930141Z  [32m✓[39m src/server/backup/restore-registry.test.ts [2m([22m[2m81 tests[22m[2m)[22m[33m 1939[2mms[22m[39m
+2026-11-14T21:21:56.6614591Z  [32m✓[39m src/server/maintenance/restore-files.test.ts [2m([22m[2m55 tests[22m[2m)[22m[33m 1340[2mms[22m[39m
+2026-11-14T21:21:58.4358367Z [90mstderr[2m | src/server/backup/restore-candidate.test.ts
+2026-11-14T21:21:58.4359261Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.4360075Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.4360812Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.4361220Z 
+2026-11-14T21:21:58.5232672Z [90mstderr[2m | src/server/backup/restore-candidate.test.ts
+2026-11-14T21:21:58.5233569Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.5234365Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.5235062Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.5235390Z 
+2026-11-14T21:21:58.5989114Z [90mstderr[2m | src/server/backup/restore-candidate.test.ts
+2026-11-14T21:21:58.5989693Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.5990395Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.5991045Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:21:58.5991905Z 
+2026-11-14T21:22:14.6547290Z  [32m✓[39m src/server/backup/restore-candidate.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 15515[2mms[22m[39m
+2026-11-14T21:22:14.6548380Z    [33m[2m✓[22m[39m source verification reads its authenticated private copy after the transfer path changes[33m 565[2mms[22m[39m
+2026-11-14T21:22:14.6549099Z    [33m[2m✓[22m[39m real rollback worker prepares a closed private original and retires attempted native identities[33m 1731[2mms[22m[39m
+2026-11-14T21:22:14.6549796Z    [33m[2m✓[22m[39m a wrong original witness is rejected by the actual rollback worker with complete staging cleanup[33m 501[2mms[22m[39m
+2026-11-14T21:22:14.6550561Z    [33m[2m✓[22m[39m isolated startup refuses wrong content, absent assets, malformed results and late cancellation without altering its source[33m 4076[2mms[22m[39m
+2026-11-14T21:22:14.6551284Z    [33m[2m✓[22m[39m actual rollback growth beyond the admitted disk cap fails without retaining output[33m 571[2mms[22m[39m
+2026-11-14T21:22:14.6551932Z    [33m[2m✓[22m[39m rollback cancellation at source-cleanup never publishes an otherwise valid result[33m 598[2mms[22m[39m
+2026-11-14T21:22:14.6552593Z    [33m[2m✓[22m[39m rollback retains original ownership, filing and content with only attempted negative evidence[33m 415[2mms[22m[39m
+2026-11-14T21:22:14.6555475Z    [33m[2m✓[22m[39m real isolated reconciliation publishes only the closed verified candidate, preserves inputs and removes current authority staging[33m 5967[2mms[22m[39m
+2026-11-14T21:22:17.8993577Z  [32m✓[39m src/server/backup/export-jobs.test.ts [2m([22m[2m16 tests[22m[2m)[22m[33m 3050[2mms[22m[39m
+2026-11-14T21:22:18.4457411Z [90mstderr[2m | src/server/backup/verification.test.ts
+2026-11-14T21:22:18.4458294Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4459120Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4459925Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4460294Z 
+2026-11-14T21:22:18.4460918Z    [33m[2m✓[22m[39m key and image failures stay private and bounded archive creation removes partial ciphertext and plaintext[33m 1494[2mms[22m[39m
+2026-11-14T21:22:18.4617734Z [90mstderr[2m | src/server/backup/verification.test.ts
+2026-11-14T21:22:18.4618647Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4619446Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4620212Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4620599Z 
+2026-11-14T21:22:18.4776583Z [90mstderr[2m | src/server/backup/verification.test.ts
+2026-11-14T21:22:18.4777591Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4778447Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:18.4779269Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:23.7320949Z 
+2026-11-14T21:22:23.7322328Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2ma small container and host memory pressure refuse verification before an OOM
+2026-11-14T21:22:23.7324730Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343731,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7326340Z 
+2026-11-14T21:22:23.7326771Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2ma small container and host memory pressure refuse verification before an OOM
+2026-11-14T21:22:23.7328602Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343731,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7330187Z 
+2026-11-14T21:22:23.7330865Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2ma small container and host memory pressure refuse verification before an OOM
+2026-11-14T21:22:23.7333110Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343732,"phase":"running","probes":["rejected","rejected","fulfilled","rejected"],"maximumBytes":null,"usedBytes":null,"chargedBytes":null,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":102400,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":false,"hostRefused":true}
+2026-11-14T21:22:23.7334383Z 
+2026-11-14T21:22:23.7334860Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7337488Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343732,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":0,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7339155Z 
+2026-11-14T21:22:23.7340000Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7342427Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343732,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":314572800,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7343473Z 
+2026-11-14T21:22:23.7343938Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7345913Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":314572800,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7347232Z 
+2026-11-14T21:22:23.7347918Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7350670Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":314572800,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7352707Z 
+2026-11-14T21:22:23.7353422Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7357463Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":209715200,"writebackBytes":104857600,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7359148Z 
+2026-11-14T21:22:23.7359881Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7362803Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":314572800,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":314572800,"cacheCountersValid":true,"availableKiB":102400,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":false,"hostRefused":true}
+2026-11-14T21:22:23.7364427Z 
+2026-11-14T21:22:23.7365194Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7368143Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":0,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7369732Z 
+2026-11-14T21:22:23.7370457Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7373409Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":314572800,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7375164Z 
+2026-11-14T21:22:23.7381508Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7384381Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":314572800,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7386412Z 
+2026-11-14T21:22:23.7387243Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7389106Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343733,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":314572800,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7390084Z 
+2026-11-14T21:22:23.7390509Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7392230Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343734,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":209715200,"writebackBytes":104857600,"reclaimableBytes":0,"cacheCountersValid":true,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7393212Z 
+2026-11-14T21:22:23.7393634Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification can reclaim clean inactive disk cache but preserves other memory charges
+2026-11-14T21:22:23.7395465Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343734,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":681574400,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":314572800,"cacheCountersValid":true,"availableKiB":102400,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":false,"hostRefused":true}
+2026-11-14T21:22:23.7396614Z 
+2026-11-14T21:22:23.7397072Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7399055Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343734,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7400162Z 
+2026-11-14T21:22:23.7400584Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7402376Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343734,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7403347Z 
+2026-11-14T21:22:23.7403763Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7405526Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343734,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7406842Z 
+2026-11-14T21:22:23.7407260Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7408978Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343734,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7410031Z 
+2026-11-14T21:22:23.7410442Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7412146Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7413108Z 
+2026-11-14T21:22:23.7413617Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7415314Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7416532Z 
+2026-11-14T21:22:23.7416948Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7418659Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7419705Z 
+2026-11-14T21:22:23.7420121Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7421831Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7423102Z 
+2026-11-14T21:22:23.7423518Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7425226Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7426458Z 
+2026-11-14T21:22:23.7426869Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7428578Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":1073741824,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7429604Z 
+2026-11-14T21:22:23.7430062Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7431730Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":315621376,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7432712Z 
+2026-11-14T21:22:23.7433127Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7434915Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":315621376,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7436043Z 
+2026-11-14T21:22:23.7436459Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7438123Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":315621376,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7439160Z 
+2026-11-14T21:22:23.7439729Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7441387Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":315621376,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7442435Z 
+2026-11-14T21:22:23.7442929Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7444607Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343735,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":null,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7445558Z 
+2026-11-14T21:22:23.7446139Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7447831Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7448779Z 
+2026-11-14T21:22:23.7449274Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7450942Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":null,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7451888Z 
+2026-11-14T21:22:23.7452376Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7454105Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":null,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7455195Z 
+2026-11-14T21:22:23.7455605Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mstart verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7457392Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"start","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":629145600,"chargedBytes":629145600,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":671088640,"hostRequiredKiB":786432,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7458515Z 
+2026-11-14T21:22:23.7458957Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7460599Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","rejected"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7461615Z 
+2026-11-14T21:22:23.7462122Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7463838Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":null,"inactiveBytes":null,"dirtyBytes":null,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7464802Z 
+2026-11-14T21:22:23.7465219Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7467106Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7468086Z 
+2026-11-14T21:22:23.7468508Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7470263Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7471278Z 
+2026-11-14T21:22:23.7471691Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7473506Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343736,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7474555Z 
+2026-11-14T21:22:23.7475004Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7476966Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7478032Z 
+2026-11-14T21:22:23.7478447Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7480167Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7481190Z 
+2026-11-14T21:22:23.7481658Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7483526Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7484580Z 
+2026-11-14T21:22:23.7484999Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7486830Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7487906Z 
+2026-11-14T21:22:23.7488323Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7490148Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":1073741824,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7491163Z 
+2026-11-14T21:22:23.7491614Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7495203Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":315621376,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7496555Z 
+2026-11-14T21:22:23.7496972Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7498725Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":315621376,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7499761Z 
+2026-11-14T21:22:23.7500249Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7501913Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":315621376,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7502893Z 
+2026-11-14T21:22:23.7503399Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7505138Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":315621376,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7506315Z 
+2026-11-14T21:22:23.7506733Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7508365Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343737,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":null,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7509438Z 
+2026-11-14T21:22:23.7509853Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7511681Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343738,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":null,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7512938Z 
+2026-11-14T21:22:23.7513349Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7515145Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343738,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":null,"dirtyBytes":0,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7516357Z 
+2026-11-14T21:22:23.7516775Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7518615Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343738,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":null,"writebackBytes":0,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7519678Z 
+2026-11-14T21:22:23.7520094Z [90mstderr[2m | src/server/backup/verification.test.ts[2m > [22m[2mrunning verification falls back to raw cgroup usage for incomplete or invalid cache counters
+2026-11-14T21:22:23.7521879Z [22m[39mspinel:recovery-memory-headroom {"version":1,"observedAtMs":1794691343738,"phase":"running","probes":["fulfilled","fulfilled","fulfilled","fulfilled"],"maximumBytes":1073741824,"usedBytes":996147200,"chargedBytes":996147200,"fileBytes":314572800,"sharedBytes":0,"inactiveBytes":314572800,"dirtyBytes":0,"writebackBytes":null,"reclaimableBytes":0,"cacheCountersValid":false,"availableKiB":8388608,"cgroupRequiredBytes":134217728,"hostRequiredKiB":262144,"cgroupRefused":true,"hostRefused":false}
+2026-11-14T21:22:23.7522840Z 
+2026-11-14T21:22:25.8842616Z  [32m✓[39m src/server/backup/verification.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 7359[2mms[22m[39m
+2026-11-14T21:22:25.8843303Z    [33m[2m✓[22m[39m a real isolated process authenticates inventory, native content, image bytes and access structure[33m 521[2mms[22m[39m
+2026-11-14T21:22:25.8843923Z    [33m[2m✓[22m[39m restore preparation retains verified bytes without activating data or returning deployment secrets[33m 501[2mms[22m[39m
+2026-11-14T21:22:25.8844587Z    [33m[2m✓[22m[39m encrypted candidate preparation preserves a populated recovery hold and permits later authorized recovery[33m 503[2mms[22m[39m
+2026-11-14T21:22:25.8845252Z    [33m[2m✓[22m[39m incompatible or interrupted preparation leaves no candidate and preserves the encrypted source[33m 897[2mms[22m[39m
+2026-11-14T21:22:25.8845955Z    [33m[2m✓[22m[39m a freshly authenticated but semantically broken snapshot is rejected[33m 485[2mms[22m[39m
+2026-11-14T21:22:25.8846478Z    [33m[2m✓[22m[39m an online snapshot preserves an interrupted staged generation without activating it[33m 551[2mms[22m[39m
+2026-11-14T21:22:25.8847052Z    [33m[2m✓[22m[39m a completed imported head verifies before and after a real native edit, but missing receipts fail[33m 1605[2mms[22m[39m
+2026-11-14T21:22:25.8847637Z    [33m[2m✓[22m[39m wrong key, incompatible image, bounded decompression and killed worker preserve the source[33m 1667[2mms[22m[39m
+2026-11-14T21:22:25.8848206Z    [33m[2m✓[22m[39m an old encrypted bundle restores unchanged but cannot claim complete verification coverage[33m 453[2mms[22m[39m
+2026-11-14T21:22:26.4158200Z [90mstderr[2m | src/server/maintenance/http.test.ts
+2026-11-14T21:22:26.4159372Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4160969Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4161825Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4162281Z 
+2026-11-14T21:22:26.4300382Z [90mstderr[2m | src/server/maintenance/http.test.ts
+2026-11-14T21:22:26.4301064Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4301581Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4302041Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4302300Z 
+2026-11-14T21:22:26.4442826Z [90mstderr[2m | src/server/maintenance/http.test.ts
+2026-11-14T21:22:26.4443413Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4443902Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4444350Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:22:26.4444571Z 
+2026-11-14T21:22:28.2616800Z  [32m✓[39m src/server/maintenance/http.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 1469[2mms[22m[39m
+2026-11-14T21:23:52.4593131Z  [32m✓[39m src/server/maintenance/restore-crash.integration.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 83973[2mms[22m[39m
+2026-11-14T21:23:52.4594143Z    [33m[2m✓[22m[39m real SIGKILL at admission preserves the durable restore decision and all retained evidence[33m 4408[2mms[22m[39m
+2026-11-14T21:23:52.4595023Z    [33m[2m✓[22m[39m real SIGKILL at custody preserves the durable restore decision and all retained evidence[33m 4403[2mms[22m[39m
+2026-11-14T21:23:52.4595656Z    [33m[2m✓[22m[39m real SIGKILL at freeze preserves the durable restore decision and all retained evidence[33m 4841[2mms[22m[39m
+2026-11-14T21:23:52.4597868Z    [33m[2m✓[22m[39m real SIGKILL at activation-plan preserves the durable restore decision and all retained evidence[33m 7834[2mms[22m[39m
+2026-11-14T21:23:52.4598793Z    [33m[2m✓[22m[39m real SIGKILL at staging preserves the durable restore decision and all retained evidence[33m 8532[2mms[22m[39m
+2026-11-14T21:23:52.4599701Z    [33m[2m✓[22m[39m real SIGKILL at activation preserves the durable restore decision and all retained evidence[33m 6870[2mms[22m[39m
+2026-11-14T21:23:52.4600642Z    [33m[2m✓[22m[39m real SIGKILL at private-open preserves the durable restore decision and all retained evidence[33m 7734[2mms[22m[39m
+2026-11-14T21:23:52.4601568Z    [33m[2m✓[22m[39m real SIGKILL at commit preserves the durable restore decision and all retained evidence[33m 8967[2mms[22m[39m
+2026-11-14T21:23:52.4602485Z    [33m[2m✓[22m[39m real SIGKILL at postcommit preserves the durable restore decision and all retained evidence[33m 8826[2mms[22m[39m
+2026-11-14T21:23:52.4603464Z    [33m[2m✓[22m[39m real SIGKILL at original-activation preserves the durable restore decision and all retained evidence[33m 9781[2mms[22m[39m
+2026-11-14T21:23:52.4604422Z    [33m[2m✓[22m[39m real SIGKILL at original-commit preserves the durable restore decision and all retained evidence[33m 11775[2mms[22m[39m
+2026-11-14T21:23:52.6077746Z  [32m✓[39m src/server/maintenance/supervisor-client.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+2026-11-14T21:23:59.0181593Z  [32m✓[39m src/server/backup/service.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 6203[2mms[22m[39m
+2026-11-14T21:23:59.0182552Z    [33m[2m✓[22m[39m actual scheduling publishes and verifies encrypted local archives, catches up and avoids duplicate jobs[33m 949[2mms[22m[39m
+2026-11-14T21:23:59.0183207Z    [33m[2m✓[22m[39m failed newest recovery retains source and last success; old and new keys remain verifiable after rotation[33m 2613[2mms[22m[39m
+2026-11-14T21:23:59.0183974Z    [33m[2m✓[22m[39m resource refusal reports a safe reason, stops key retries and preserves the last recovery point[33m 534[2mms[22m[39m
+2026-11-14T21:23:59.0184525Z    [33m[2m✓[22m[39m backup and verifier share a real lease, and shutdown drains active retrieval[33m 483[2mms[22m[39m
+2026-11-14T21:23:59.0185075Z    [33m[2m✓[22m[39m a destination cleanup failure releases the lease and keeps the published backup recoverable[33m 476[2mms[22m[39m
+2026-11-14T21:23:59.0185668Z    [33m[2m✓[22m[39m expired verification is visible, retry reconciles only owned staging and preserves foreign paths[33m 895[2mms[22m[39m
+2026-11-14T21:24:06.2309305Z  [32m✓[39m src/server/backup/restore-http.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 7091[2mms[22m[39m
+2026-11-14T21:24:06.2310030Z    [33m[2m✓[22m[39m real Operator HTTP confirmation crosses custody ACK and Begin into committed private release[33m 7090[2mms[22m[39m
+2026-11-14T21:24:10.5709448Z  [32m✓[39m src/server/backup/routes.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 4061[2mms[22m[39m
+2026-11-14T21:24:10.5710489Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after disconnect[33m 893[2mms[22m[39m
+2026-11-14T21:24:10.5711420Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after revocation[33m 1883[2mms[22m[39m
+2026-11-14T21:24:10.5712067Z    [33m[2m✓[22m[39m a real backpressured HTTP download releases its archive and lease after maintenance[33m 846[2mms[22m[39m
+2026-11-14T21:24:10.7718711Z  [32m✓[39m src/server/maintenance/restore-prepare.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 91[2mms[22m[39m
+2026-11-14T21:24:11.2878848Z [90mstderr[2m | src/server/backup/restore-generations.test.ts
+2026-11-14T21:24:11.2880100Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.2881386Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.2882181Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.2882542Z 
+2026-11-14T21:24:11.3024105Z [90mstderr[2m | src/server/backup/restore-generations.test.ts
+2026-11-14T21:24:11.3024794Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.3025323Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.3025998Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.3026273Z 
+2026-11-14T21:24:11.3168022Z [90mstderr[2m | src/server/backup/restore-generations.test.ts
+2026-11-14T21:24:11.3168687Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.3169210Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.3169683Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:11.3169916Z 
+2026-11-14T21:24:12.1288218Z  [32m✓[39m src/server/backup/restore-generations.test.ts [2m([22m[2m9 tests[22m[2m)[22m[33m 742[2mms[22m[39m
+2026-11-14T21:24:12.6671773Z [90mstderr[2m | src/server/backup/restore-receipts.test.ts
+2026-11-14T21:24:12.6673025Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6674068Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6676415Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6677186Z 
+2026-11-14T21:24:12.6823253Z [90mstderr[2m | src/server/backup/restore-receipts.test.ts
+2026-11-14T21:24:12.6823854Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6824394Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6824865Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6825095Z 
+2026-11-14T21:24:12.6968591Z [90mstderr[2m | src/server/backup/restore-receipts.test.ts
+2026-11-14T21:24:12.6969310Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6969828Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6970331Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:12.6970559Z 
+2026-11-14T21:24:14.1212981Z  [32m✓[39m src/server/backup/restore-receipts.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 1382[2mms[22m[39m
+2026-11-14T21:24:14.8653782Z  [32m✓[39m src/server/backup/restore-grants.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 536[2mms[22m[39m
+2026-11-14T21:24:15.6293468Z  [32m✓[39m src/server/backup/restore-ownership.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 630[2mms[22m[39m
+2026-11-14T21:24:16.3657301Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3658632Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3659681Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3660653Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3661551Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3662445Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3672790Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3675120Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:16.3676101Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2038249Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2041122Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2042113Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2063001Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2066214Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2066973Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2076292Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2077503Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:18.2078345Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9072675Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9073689Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9075090Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9091550Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9092378Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9093693Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9102477Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9103917Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:19.9104566Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5718115Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5719076Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5719788Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5741224Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5742121Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5743048Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5753904Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5757310Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:21.5758077Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2215637Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2216988Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2217953Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2233459Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2234501Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2235469Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2244331Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2245500Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:23.2246566Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7898994Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7900272Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7901230Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7916994Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7918296Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7919187Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7927666Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7929447Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:24.7932012Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3513051Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3514176Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3515010Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3535234Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3536206Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3537009Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3548513Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3550424Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:26.3550906Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9504124Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9505339Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9506427Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9520522Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9522852Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9523658Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9531199Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9533551Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:27.9534303Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:28.9729514Z  [32m✓[39m src/server/maintenance/restore-trial.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 13234[2mms[22m[39m
+2026-11-14T21:24:28.9730255Z    [33m[2m✓[22m[39m real trial stays private until exact release after barrier cleanup, and repeated release is harmless[33m 1817[2mms[22m[39m
+2026-11-14T21:24:28.9730871Z    [33m[2m✓[22m[39m an unexpected running state cannot open trial HTTP or rehabilitate readiness[33m 1711[2mms[22m[39m
+2026-11-14T21:24:28.9731442Z    [33m[2m✓[22m[39m an unexpected unavailable state cannot open trial HTTP or rehabilitate readiness[33m 1676[2mms[22m[39m
+2026-11-14T21:24:28.9732051Z    [33m[2m✓[22m[39m an unexpected expired state cannot open trial HTTP or rehabilitate readiness[33m 1658[2mms[22m[39m
+2026-11-14T21:24:28.9732652Z    [33m[2m✓[22m[39m permit validation refuses non-scalar role and a process identity that no longer exists[33m 1587[2mms[22m[39m
+2026-11-14T21:24:28.9733233Z    [33m[2m✓[22m[39m a permitted handoff with mismatched bytes never opens SQLite or reports health[33m 1564[2mms[22m[39m
+2026-11-14T21:24:28.9733798Z    [33m[2m✓[22m[39m a permitted handoff with mismatched policy never opens SQLite or reports health[33m 1574[2mms[22m[39m
+2026-11-14T21:24:28.9734410Z    [33m[2m✓[22m[39m failed real app trial records terminal content after expired opening and waits for its exact ACK[33m 1647[2mms[22m[39m
+2026-11-14T21:24:29.8522718Z  [32m✓[39m src/server/backup/restore-credentials.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 685[2mms[22m[39m
+2026-11-14T21:24:30.5958239Z  [32m✓[39m src/server/backup/backup.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 535[2mms[22m[39m
+2026-11-14T21:24:31.0046804Z  [32m✓[39m src/server/maintenance/restore-activate.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 305[2mms[22m[39m
+2026-11-14T21:24:31.1933542Z  [32m✓[39m src/server/backup/spaces.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+2026-11-14T21:24:32.0896115Z  [32m✓[39m src/server/backup/restore-routes.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 617[2mms[22m[39m
+2026-11-14T21:24:32.0897205Z    [33m[2m✓[22m[39m only the owned upload continues after the passkey and ordinary HTTP body window[33m 522[2mms[22m[39m
+2026-11-14T21:24:32.2827383Z  [32m✓[39m src/server/maintenance/gate.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 64[2mms[22m[39m
+2026-11-14T21:24:32.5536677Z  [32m✓[39m src/server/maintenance/restore-failed-custody.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 160[2mms[22m[39m
+2026-11-14T21:24:32.6743816Z  [32m✓[39m src/server/maintenance/restore-capacity.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+2026-11-14T21:24:41.3690119Z  [32m✓[39m src/server/backup/restore-admission.integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 8569[2mms[22m[39m
+2026-11-14T21:24:41.3691305Z    [33m[2m✓[22m[39m real published-failure admission releases only its logical hold and permits a new Operator preparation[33m 4015[2mms[22m[39m
+2026-11-14T21:24:41.3692328Z    [33m[2m✓[22m[39m real full-journal admission releases only its logical hold and permits a new Operator preparation[33m 4553[2mms[22m[39m
+2026-11-14T21:24:41.6785889Z  [32m✓[39m src/server/backup/filesystem.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 177[2mms[22m[39m
+2026-11-14T21:24:41.8122252Z  [32m✓[39m src/server/maintenance/restore-authority.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+2026-11-14T21:24:44.6472524Z  [32m✓[39m src/server/backup/restore-freeze.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 2736[2mms[22m[39m
+2026-11-14T21:24:44.6473560Z    [33m[2m✓[22m[39m isolated freeze preserves WAL-only authority changes and never modifies original custody[33m 461[2mms[22m[39m
+2026-11-14T21:24:44.6474553Z    [33m[2m✓[22m[39m a clean earlier WAL commit cannot replace the independent current-state witness[33m 450[2mms[22m[39m
+2026-11-14T21:24:44.6475143Z    [33m[2m✓[22m[39m freezes a checkpointed main with an explicitly false empty WAL[33m 419[2mms[22m[39m
+2026-11-14T21:24:44.6475633Z    [33m[2m✓[22m[39m freezes a checkpointed main with an explicitly true empty WAL[33m 428[2mms[22m[39m
+2026-11-14T21:24:44.6476359Z    [33m[2m✓[22m[39m freeze rechecks the original passkey proof against witnessed current data (revoked=false)[33m 490[2mms[22m[39m
+2026-11-14T21:24:44.6476967Z    [33m[2m✓[22m[39m freeze rechecks the original passkey proof against witnessed current data (revoked=true)[33m 475[2mms[22m[39m
+2026-11-14T21:24:44.8570035Z  [32m✓[39m src/server/backup/restore-input.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 118[2mms[22m[39m
+2026-11-14T21:24:48.6619607Z  [32m✓[39m src/server/backup/restore-registry.integration.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 3655[2mms[22m[39m
+2026-11-14T21:24:48.6620371Z    [33m[2m✓[22m[39m complete-app catalog and manual upload converge on the real encrypted preparation boundary[33m 3654[2mms[22m[39m
+2026-11-14T21:24:49.2366861Z  [32m✓[39m src/server/backup/restore-fences.test.ts [2m([22m[2m14 tests[22m[2m)[22m[33m 444[2mms[22m[39m
+2026-11-14T21:24:49.3555111Z  [32m✓[39m src/server/maintenance/ownership.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+2026-11-14T21:24:49.6725877Z  [32m✓[39m src/server/backup/transfer.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 175[2mms[22m[39m
+2026-11-14T21:24:50.3327073Z [90mstderr[2m | src/server/maintenance/restore-rich-fixture.test.ts
+2026-11-14T21:24:50.3328444Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3328997Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3329902Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3330141Z 
+2026-11-14T21:24:50.3475125Z [90mstderr[2m | src/server/maintenance/restore-rich-fixture.test.ts
+2026-11-14T21:24:50.3476016Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3476537Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3477058Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3477297Z 
+2026-11-14T21:24:50.3624051Z [90mstderr[2m | src/server/maintenance/restore-rich-fixture.test.ts
+2026-11-14T21:24:50.3624970Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3626239Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3627046Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:50.3627415Z 
+2026-11-14T21:24:50.8531301Z  [32m✓[39m src/server/maintenance/restore-rich-fixture.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 269[2mms[22m[39m
+2026-11-14T21:24:50.9550654Z  [32m✓[39m src/server/maintenance/process-exit.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-11-14T21:24:51.2906511Z  [32m✓[39m src/server/backup/restore-operations.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 160[2mms[22m[39m
+2026-11-14T21:24:51.4556548Z  [32m✓[39m src/server/backup/config.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+2026-11-14T21:24:51.5496978Z  [32m✓[39m src/server/maintenance/supervisor-test-control.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-11-14T21:24:51.6531021Z  [32m✓[39m src/server/maintenance/restore-job-intent.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+2026-11-14T21:24:51.7560960Z  [32m✓[39m src/server/maintenance/cold-files.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+2026-11-14T21:24:55.4605099Z  [32m✓[39m src/server/backup/recovery-rows.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 3616[2mms[22m[39m
+2026-11-14T21:24:55.4605940Z    [33m[2m✓[22m[39m a native process inventories 512 MiB of payloads below the unchanged 512 MiB worker ceiling[33m 3609[2mms[22m[39m
+2026-11-14T21:24:56.0938671Z [90mstderr[2m | src/server/backup/restore-drain-app.test.ts
+2026-11-14T21:24:56.0939816Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.0940912Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.0941931Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.0942460Z 
+2026-11-14T21:24:56.1080396Z [90mstderr[2m | src/server/backup/restore-drain-app.test.ts
+2026-11-14T21:24:56.1081129Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.1081915Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.1082630Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.1082863Z 
+2026-11-14T21:24:56.1228260Z [90mstderr[2m | src/server/backup/restore-drain-app.test.ts
+2026-11-14T21:24:56.1228887Z [22m[39mIdentifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.1231653Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.1232324Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:56.1232912Z 
+2026-11-14T21:24:56.5600189Z  [32m✓[39m src/server/backup/restore-drain-app.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 238[2mms[22m[39m
+2026-11-14T21:24:56.6508641Z  [32m✓[39m src/server/maintenance/restore-failure.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+2026-11-14T21:24:56.7488991Z  [32m✓[39m src/server/backup/restore-notice.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+2026-11-14T21:24:56.8554942Z  [32m✓[39m src/server/backup/restore-drain.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+2026-11-14T21:24:56.9374234Z  [32m✓[39m src/server/maintenance/restore-stop.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+2026-11-14T21:24:57.3836556Z  [32m✓[39m src/server/maintenance/cli.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 352[2mms[22m[39m
+2026-11-14T21:24:57.3837682Z    [33m[2m✓[22m[39m cold setup and backup failures exit promptly and release ownership of a corrupt file[33m 351[2mms[22m[39m
+2026-11-14T21:24:57.3876087Z 
+2026-11-14T21:24:57.3886826Z [2m Test Files [22m [1m[32m49 passed[39m[22m[90m (49)[39m
+2026-11-14T21:24:57.3887368Z [2m      Tests [22m [1m[32m619 passed[39m[22m[90m (619)[39m
+2026-11-14T21:24:57.3887756Z [2m   Start at [22m 21:21:47
+2026-11-14T21:24:57.3888189Z [2m   Duration [22m 189.64s[2m (tests 95%, import 4%, transform 1%)[22m
+2026-11-14T21:24:57.3896408Z 

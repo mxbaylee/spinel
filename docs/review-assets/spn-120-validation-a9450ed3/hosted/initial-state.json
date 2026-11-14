@@ -1,0 +1,352 @@
+{
+  "observedAt": "2026-11-14T21:23:51.661988+00:00",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "testedMerge": "Pending actual checkout/plan evidence",
+  "runs": [
+    {
+      "id": 43642290667,
+      "name": "\ud83d\udc8e CI",
+      "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "createdAt": "2026-11-14T21:20:27Z",
+      "jobs": [
+        {
+          "id": 132592284660,
+          "name": "Classify changes (43642290667)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592284924,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592504861,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592504900,
+          "name": "Unit tests (supervisor)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592504907,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592504924,
+          "name": "Lib tests (dense-cells)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592504930,
+          "name": "Unit tests (recovery)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592504935,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592504952,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592504959,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592504964,
+          "name": "Unit tests (remaining)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592504966,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592504998,
+          "name": "Lib tests (remaining)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505003,
+          "name": "Doc responsiveness (mobile)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505009,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505019,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505024,
+          "name": "Sized restore acceptance",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505027,
+          "name": "Doc responsiveness (desktop)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505037,
+          "name": "Lib tests (cells)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505067,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592505090,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505092,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592505093,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592505103,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505107,
+          "name": "Playwright smoke (sync-development)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505118,
+          "name": "Playwright smoke (sync-production)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592505142,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592505147,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592505158,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592505180,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "id": 43642290711,
+      "name": "\ud83d\udcda Storybook",
+      "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "createdAt": "2026-11-14T21:20:27Z",
+      "jobs": [
+        {
+          "id": 132592284734,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592516521,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592789604,
+          "name": "Review Storybook desktop (dark)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592789625,
+          "name": "Review Storybook tablet",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592789630,
+          "name": "Review Storybook mobile (dark)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592789637,
+          "name": "Review Storybook desktop (light)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592789713,
+          "name": "Review Storybook mobile (light)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592790940,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "id": 43642290703,
+      "name": "\ud83d\udcbb Desktop offline",
+      "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "createdAt": "2026-11-14T21:20:27Z",
+      "jobs": [
+        {
+          "id": 132592284424,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132592284716,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592284723,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "id": 43642290705,
+      "name": "\ud83e\udd88 DigitalOcean Spaces",
+      "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "createdAt": "2026-11-14T21:20:27Z",
+      "jobs": [
+        {
+          "id": 132592284448,
+          "name": "\ud83e\udd88 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 43642371547,
+      "name": "Browser fixture audit",
+      "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "createdAt": "2026-11-14T21:21:20Z",
+      "jobs": [
+        {
+          "id": 132592534991,
+          "name": "Fixture audit (sync-production)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132592535225,
+          "name": "Fixture audit (production)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132592535253,
+          "name": "Fixture audit (development)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    }
+  ],
+  "firstFailures": [],
+  "manualAudit": {
+    "run": 43642371547,
+    "workflow": 403808598,
+    "source": "candidate",
+    "baseline": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+    "baselinePurpose": "eventBase only; no baseline audit execution",
+    "dispatchCount": 1,
+    "rawAcceptance": "Pending"
+  },
+  "archive": {
+    "parent": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+    "path": "docs/review-assets/spn-120-validation-a9450ed3",
+    "tag": "archive/spn-120-validation-a9450ed3-20261114",
+    "status": "Pending all original outcomes; no terminal seal"
+  },
+  "prior5356Archive": "e9574cb5e19865916b8bf1952c83da131ed91ae7",
+  "noAcceptanceTransfer": true
+}

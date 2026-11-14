@@ -1,0 +1,145 @@
+{
+  "total_count": 7,
+  "artifacts": [
+    {
+      "id": 14133500983,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMzUwMDk4Mw==",
+      "name": "storybook-check-mobile-dark",
+      "size_in_bytes": 17769,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14133500983",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14133500983/zip",
+      "expired": false,
+      "digest": "sha256:4733c0d3d6e811e1b1e5716c0499cd3c71d9bb5e9d17ca8e521709aed41ec9a3",
+      "created_at": "2026-11-14T21:36:04Z",
+      "updated_at": "2026-11-14T21:36:04Z",
+      "expires_at": "2026-11-28T21:36:03Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14133261938,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMzI2MTkzOA==",
+      "name": "storybook-check-mobile-light",
+      "size_in_bytes": 17677,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14133261938",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14133261938/zip",
+      "expired": false,
+      "digest": "sha256:985b10f8d8a565e6a20ba801bda7b9d192368ee84166d99af7361eb29290b122",
+      "created_at": "2026-11-14T21:37:03Z",
+      "updated_at": "2026-11-14T21:37:03Z",
+      "expires_at": "2026-11-28T21:37:03Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132995343,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjk5NTM0Mw==",
+      "name": "storybook-review",
+      "size_in_bytes": 6262592,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132995343",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132995343/zip",
+      "expired": false,
+      "digest": "sha256:8458643a4edb730de896486689eed12fe8d2cc00731d5b3cf1d7980fb2d97865",
+      "created_at": "2026-11-14T21:22:15Z",
+      "updated_at": "2026-11-14T21:22:15Z",
+      "expires_at": "2026-11-21T21:22:13Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132738005,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjczODAwNQ==",
+      "name": "storybook-check-desktop-light",
+      "size_in_bytes": 17757,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132738005",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132738005/zip",
+      "expired": false,
+      "digest": "sha256:def0bf95156182f05c2a6bbdae12bf8e03878e2e8b3bb430b57f007397ac05a1",
+      "created_at": "2026-11-14T21:36:52Z",
+      "updated_at": "2026-11-14T21:36:52Z",
+      "expires_at": "2026-11-28T21:36:52Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132714912,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjcxNDkxMg==",
+      "name": "storybook-check-tablet",
+      "size_in_bytes": 17694,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132714912",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132714912/zip",
+      "expired": false,
+      "digest": "sha256:eddb60f78ba25a8bd251fca0f7aeffead71618ccd70d1d523657624acda74bb7",
+      "created_at": "2026-11-14T21:36:21Z",
+      "updated_at": "2026-11-14T21:36:21Z",
+      "expires_at": "2026-11-28T21:36:20Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132453884,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjQ1Mzg4NA==",
+      "name": "storybook-check-desktop-dark",
+      "size_in_bytes": 17687,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132453884",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132453884/zip",
+      "expired": false,
+      "digest": "sha256:d4170c2d7c6165516f95452de057926ded211081f81e1281cd7167946476166b",
+      "created_at": "2026-11-14T21:36:59Z",
+      "updated_at": "2026-11-14T21:36:59Z",
+      "expires_at": "2026-11-28T21:36:57Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132228380,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjIyODM4MA==",
+      "name": "entity-icon-checks",
+      "size_in_bytes": 509,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132228380",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132228380/zip",
+      "expired": false,
+      "digest": "sha256:e4ef12bc5cee952c92d1ea0306fb2cd95a88d6988758b60d5a5de2f251d1dfc6",
+      "created_at": "2026-11-14T21:28:39Z",
+      "updated_at": "2026-11-14T21:28:39Z",
+      "expires_at": "2027-02-12T21:20:28Z",
+      "workflow_run": {
+        "id": 43642290711,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    }
+  ]
+}

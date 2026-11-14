@@ -1,0 +1,195 @@
+{
+  "source": "5669bcac09db35180c4a19556849028b38ad40cd",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "runtime": "Node26.13.0",
+  "runtimePath": "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+  "compilerToolEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "resourceLimits": {
+    "maxProcessTreeKiB": 2097152,
+    "maxMs": 480000,
+    "normalPressureRequired": true,
+    "singleSharedSerialWorkload": true
+  },
+  "sourceInputCount": 1396,
+  "sourceInputMapSha256": "ea260a66688dd64a95f1c85b010b75dfac0915d98aca9df75a9f6815a93289fd",
+  "sourceInputMap": "/tmp/spn120-5669-runtime-source-map.json",
+  "installFileCount": 241,
+  "installInputsDigest": "0991ca194cf1783b99e4eb1bf318a15141fc0b7d7ad43e456d8898cb5e78ccf0",
+  "checks": [
+    {
+      "name": "spn120-c1-index",
+      "args": [
+        "node",
+        "scripts/backlog/cli.ts",
+        "index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 152,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-c1-format-write",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "e2e/sync-client.spec.ts",
+        "docs/todo/backlog.json"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 248,
+      "peakKiB": 204992
+    },
+    {
+      "name": "spn120-c1-controls",
+      "args": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/app-process.test.ts",
+        "scripts/ci/fixture-audit.test.ts",
+        "scripts/ci/fixture-evidence.test.ts",
+        "scripts/ci/fixture-session-http.test.ts",
+        "scripts/ci/fixture-session.test.ts",
+        "scripts/ci/bootstrap-evidence.test.ts",
+        "scripts/ci/plan.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 6729,
+      "peakKiB": 287200
+    },
+    {
+      "name": "spn120-c1-types",
+      "args": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 9587,
+      "peakKiB": 1649536
+    },
+    {
+      "name": "spn120-c1-dependencies",
+      "args": [
+        "node",
+        "scripts/dependencies/no-univer-pro.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 119,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-c1-lint",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 216,
+      "peakKiB": 81296
+    },
+    {
+      "name": "spn120-c1-backlog",
+      "args": [
+        "node",
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 147,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-c1-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--check",
+        ".github/workflows/ci.yml",
+        ".github/workflows/fixture-audit.yml",
+        "e2e/app-process.ts",
+        "e2e/doc-phone-navigation.spec.ts",
+        "e2e/fixture-evidence.ts",
+        "e2e/fixture-session.ts",
+        "e2e/offline-fixture.ts",
+        "e2e/offline-recovery.spec.ts",
+        "e2e/offline-sign-out.spec.ts",
+        "e2e/owned-process.ts",
+        "e2e/passkey-management.spec.ts",
+        "e2e/sync-client.spec.ts",
+        "package.json",
+        "playwright.config.ts",
+        "scripts/ci/app-process.test.ts",
+        "scripts/ci/fixture-audit-reporter.ts",
+        "scripts/ci/fixture-audit.test.ts",
+        "scripts/ci/fixture-audit.ts",
+        "scripts/ci/fixture-evidence.test.ts",
+        "scripts/ci/fixture-session-http.test.ts",
+        "scripts/ci/fixture-session.test.ts",
+        "scripts/e2e-server.ts",
+        "docs/review-assets/spn-120-current/collection-driver.ts",
+        "docs/todo/backlog.json"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 563,
+      "peakKiB": 315968
+    }
+  ],
+  "preCommitChecks": [
+    "spn120-c1-index",
+    "spn120-c1-format-write"
+  ],
+  "cleanup": {
+    "at": "2026-11-14T20:59:24.949077+00:00",
+    "source": "5669bcac09db35180c4a19556849028b38ad40cd",
+    "sharedLockAbsent": true,
+    "taskWatchdogsOrChildrenObserved": [],
+    "taskServersStarted": false,
+    "sharedInstallMutation": false,
+    "donor": "/Users/mxbaylee/projects/spinel-spn-098-production",
+    "donorHead": "7a0451917ef38524138fa2eac432d4520fbed008",
+    "donorClean": true,
+    "equivalentInstallFiles": 241,
+    "installFieldsEqual": [
+      "dependencies",
+      "devDependencies",
+      "optionalDependencies",
+      "overrides",
+      "workspaces",
+      "engines",
+      "packageManager"
+    ]
+  },
+  "fullLocalBrowserMatrixRun": false,
+  "notes": [
+    "77 controls comprise prior62 fixture controls plus15 existing bootstrap/routing controls.",
+    "Index/format-write were integration preparation before source commit; all other checks executed source5669.",
+    "RSS0 means unsampled before first polling tick, not zero memory.",
+    "Earlier first failures/resource aborts remain retained; no abort occurred in this batch.",
+    "Full current hosted/native/Storybook/fixed24 acceptance remains pending."
+  ]
+}

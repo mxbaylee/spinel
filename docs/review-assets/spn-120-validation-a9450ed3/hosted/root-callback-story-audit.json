@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-14T21:42:02.452Z",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "tested": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+  "callbacks": [
+    {
+      "preset": "desktop",
+      "role": "baselineObservation",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "harnessBindings": 0,
+      "completePassed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      }
+    },
+    {
+      "preset": "desktop",
+      "role": "candidate",
+      "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "attempt": 0,
+      "harnessBindings": 16,
+      "completePassed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      }
+    },
+    {
+      "preset": "mobile",
+      "role": "baselineObservation",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "harnessBindings": 0,
+      "completePassed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      }
+    },
+    {
+      "preset": "mobile",
+      "role": "candidate",
+      "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "attempt": 0,
+      "harnessBindings": 16,
+      "completePassed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "preset": "desktop",
+      "accepted": true
+    },
+    {
+      "preset": "mobile",
+      "accepted": true
+    }
+  ],
+  "completeRawCallbackMembersBound": 6,
+  "storyIndex": 14132995343,
+  "storyExactSets": 5,
+  "storyIDs": 1078,
+  "scope": "Original complete retained measurement and manifest bytes, current candidate harness hashes; ZIP-wide hash/CRC and workflow logs remain separate archive audit."
+}

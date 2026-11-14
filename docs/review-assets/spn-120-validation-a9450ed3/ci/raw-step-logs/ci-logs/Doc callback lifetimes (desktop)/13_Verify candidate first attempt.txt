@@ -1,0 +1,32 @@
+﻿2026-11-14T21:24:23.7708056Z ##[group]Run npx playwright test --project=doc-callback-lifetimes --grep "$PRESET "
+2026-11-14T21:24:23.7708506Z [36;1mnpx playwright test --project=doc-callback-lifetimes --grep "$PRESET "[0m
+2026-11-14T21:24:23.7734789Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:24:23.7734993Z env:
+2026-11-14T21:24:23.7735173Z   PRESET: desktop
+2026-11-14T21:24:23.7735344Z   VITE_SYNC_EVIDENCE: 0
+2026-11-14T21:24:23.7735508Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-14T21:24:23.7735698Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-14T21:24:23.7735908Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-14T21:24:23.7736188Z   SPINEL_TRACE_PROCESSOR: /home/runner/work/_temp/spinel-trace-processor
+2026-11-14T21:24:23.7736446Z   SPN113_BASELINE: 0
+2026-11-14T21:24:23.7736807Z ##[endgroup]
+2026-11-14T21:24:25.4907874Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4908419Z 
+2026-11-14T21:24:25.4909287Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4909839Z 
+2026-11-14T21:24:25.4910294Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4921259Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4925089Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4925424Z 
+2026-11-14T21:24:25.4925979Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4926374Z 
+2026-11-14T21:24:25.4936688Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4937184Z 
+2026-11-14T21:24:25.4939389Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4940032Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:24:25.4940294Z 
+2026-11-14T21:24:27.0871866Z 
+2026-11-14T21:24:27.0872711Z Running 1 test using 1 worker
+2026-11-14T21:24:27.0873065Z 
+2026-11-14T21:24:27.5570525Z [1/1] [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:109:3 › desktop native callback lifetimes
+2026-11-14T21:26:10.9217258Z   1 passed (1.8m)

@@ -1,0 +1,336 @@
+﻿2026-11-14T21:20:32.3275336Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-14T21:20:32.3276457Z with:
+2026-11-14T21:20:32.3276903Z   fetch-depth: 0
+2026-11-14T21:20:32.3277383Z   persist-credentials: false
+2026-11-14T21:20:32.3277920Z   repository: mxbaylee/spinel
+2026-11-14T21:20:32.3281764Z   token: ***
+2026-11-14T21:20:32.3282214Z   ssh-strict: true
+2026-11-14T21:20:32.3282670Z   ssh-user: git
+2026-11-14T21:20:32.3283267Z   clean: true
+2026-11-14T21:20:32.3283731Z   sparse-checkout-cone-mode: true
+2026-11-14T21:20:32.3284279Z   fetch-tags: false
+2026-11-14T21:20:32.3284735Z   show-progress: true
+2026-11-14T21:20:32.3285194Z   lfs: false
+2026-11-14T21:20:32.3285624Z   submodules: false
+2026-11-14T21:20:32.3286088Z   set-safe-directory: true
+2026-11-14T21:20:32.3286614Z   allow-unsafe-pr-checkout: false
+2026-11-14T21:20:32.3287396Z ##[endgroup]
+2026-11-14T21:20:32.6480343Z Syncing repository: mxbaylee/spinel
+2026-11-14T21:20:32.6483115Z ##[group]Getting Git version info
+2026-11-14T21:20:32.6484619Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-14T21:20:32.6486015Z [command]/usr/bin/git version
+2026-11-14T21:20:32.6504281Z git version 2.56.1
+2026-11-14T21:20:32.6531737Z ##[endgroup]
+2026-11-14T21:20:32.6539633Z Temporarily overriding HOME='/home/runner/work/_temp/5d6d96c9-5fbf-4caf-a0bf-a8df4a20f69c' before making global git config changes
+2026-11-14T21:20:32.6542486Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T21:20:32.6544764Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T21:20:32.6624829Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-14T21:20:32.6628062Z ##[group]Determining repository object format
+2026-11-14T21:20:32.6629649Z ##[endgroup]
+2026-11-14T21:20:32.6631358Z ##[group]Initializing the repository
+2026-11-14T21:20:32.6634270Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-14T21:20:32.6765602Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-14T21:20:32.6767171Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-14T21:20:32.6768283Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-14T21:20:32.6769201Z hint: call:
+2026-11-14T21:20:32.6769668Z hint:
+2026-11-14T21:20:32.6770279Z hint: 	git config --global init.defaultBranch <name>
+2026-11-14T21:20:32.6771006Z hint:
+2026-11-14T21:20:32.6771690Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-14T21:20:32.6773050Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-14T21:20:32.6773981Z hint:
+2026-11-14T21:20:32.6774464Z hint: 	git branch -m <name>
+2026-11-14T21:20:32.6775025Z hint:
+2026-11-14T21:20:32.6775769Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-14T21:20:32.6788042Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-14T21:20:32.6800654Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-14T21:20:32.6867066Z ##[endgroup]
+2026-11-14T21:20:32.6869363Z ##[group]Disabling automatic garbage collection
+2026-11-14T21:20:32.6871044Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-14T21:20:32.6917097Z ##[endgroup]
+2026-11-14T21:20:32.6919096Z ##[group]Setting up auth
+2026-11-14T21:20:32.6920473Z Removing SSH command configuration
+2026-11-14T21:20:32.6922320Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T21:20:32.6958493Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T21:20:32.7553925Z Removing HTTP extra header
+2026-11-14T21:20:32.7561994Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T21:20:32.7607700Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T21:20:32.7912443Z Removing includeIf entries pointing to credentials config files
+2026-11-14T21:20:32.7919829Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T21:20:32.7965208Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T21:20:32.8260506Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-14T21:20:32.8303154Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:20:32.8336112Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:20:32.8374402Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:20:32.8409990Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:20:32.8441019Z ##[endgroup]
+2026-11-14T21:20:32.8442010Z ##[group]Fetching the repository
+2026-11-14T21:20:32.8449486Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +9006a831d6ff54bcdd5e37a67af40780f22b3c2c:refs/remotes/pull/228/merge
+2026-11-14T21:21:08.3635325Z From https://github.com/mxbaylee/spinel
+2026-11-14T21:21:08.3637540Z  * [new branch]        ci-baseline/doc-callback-canvas-excluded-2026-11-07 -> origin/ci-baseline/doc-callback-canvas-excluded-2026-11-07
+2026-11-14T21:21:08.3639701Z  * [new branch]        ci-baseline/doc-callback-storybook-10.6.5 -> origin/ci-baseline/doc-callback-storybook-10.6.5
+2026-11-14T21:21:08.3641638Z  * [new branch]        ci-baseline/doc-responsiveness-canvas-excluded-2026-11-07 -> origin/ci-baseline/doc-responsiveness-canvas-excluded-2026-11-07
+2026-11-14T21:21:08.3643897Z  * [new branch]        ci-baseline/doc-responsiveness-storybook-10.6.5 -> origin/ci-baseline/doc-responsiveness-storybook-10.6.5
+2026-11-14T21:21:08.3645008Z  * [new branch]        ci/browserstack-accounting               -> origin/ci/browserstack-accounting
+2026-11-14T21:21:08.3646267Z  * [new branch]        codex/pr251-final-evidence-e82257a       -> origin/codex/pr251-final-evidence-e82257a
+2026-11-14T21:21:08.3647777Z  * [new branch]        codex/pr251-identity-prerequisite        -> origin/codex/pr251-identity-prerequisite
+2026-11-14T21:21:08.3649501Z  * [new branch]        codex/spn-068-sheet-images               -> origin/codex/spn-068-sheet-images
+2026-11-14T21:21:08.3650952Z  * [new branch]        codex/spn-087-storybook-cleanup          -> origin/codex/spn-087-storybook-cleanup
+2026-11-14T21:21:08.3652438Z  * [new branch]        codex/spn-087-storybook-layout-cleanup   -> origin/codex/spn-087-storybook-layout-cleanup
+2026-11-14T21:21:08.3654286Z  * [new branch]        codex/spn-089-alignment-evidence-ee996e95 -> origin/codex/spn-089-alignment-evidence-ee996e95
+2026-11-14T21:21:08.3655809Z  * [new branch]        codex/spn-089-c-failure-evidence-472a130c -> origin/codex/spn-089-c-failure-evidence-472a130c
+2026-11-14T21:21:08.3657397Z  * [new branch]        codex/spn-089-dialog-title-icons         -> origin/codex/spn-089-dialog-title-icons
+2026-11-14T21:21:08.3658786Z  * [new branch]        codex/spn-089-review-evidence-ef899b     -> origin/codex/spn-089-review-evidence-ef899b
+2026-11-14T21:21:08.3659924Z  * [new branch]        codex/spn-099-stock-core                 -> origin/codex/spn-099-stock-core
+2026-11-14T21:21:08.3660928Z  * [new branch]        codex/spn-106-viewer-startup             -> origin/codex/spn-106-viewer-startup
+2026-11-14T21:21:08.3661705Z  * [new branch]        codex/spn-110-diagnostic-retention       -> origin/codex/spn-110-diagnostic-retention
+2026-11-14T21:21:08.3662516Z  * [new branch]        codex/spn-120-fixture-reliability        -> origin/codex/spn-120-fixture-reliability
+2026-11-14T21:21:08.3663725Z  * [new branch]        codex/spn-123-operation-diagnostics      -> origin/codex/spn-123-operation-diagnostics
+2026-11-14T21:21:08.3664537Z  * [new branch]        codex/spn-123-production-integration     -> origin/codex/spn-123-production-integration
+2026-11-14T21:21:08.3665361Z  * [new branch]        codex/spn-128-original-recovery          -> origin/codex/spn-128-original-recovery
+2026-11-14T21:21:08.3666098Z  * [new branch]        codex/spn-156-file-list-replay           -> origin/codex/spn-156-file-list-replay
+2026-11-14T21:21:08.3666886Z  * [new branch]        main                                     -> origin/main
+2026-11-14T21:21:08.3667854Z  * [new tag]           archive/delivery-repair-registration-completion-9733de55-20261114 -> archive/delivery-repair-registration-completion-9733de55-20261114
+2026-11-14T21:21:08.3669092Z  * [new tag]           archive/delivery-repair-registration-validation-9733de55-20261114 -> archive/delivery-repair-registration-validation-9733de55-20261114
+2026-11-14T21:21:08.3670084Z  * [new tag]           archive/dependabot-277-before-73983bb0   -> archive/dependabot-277-before-73983bb0
+2026-11-14T21:21:08.3670852Z  * [new tag]           archive/dependabot-callback-dd6b3f39     -> archive/dependabot-callback-dd6b3f39
+2026-11-14T21:21:08.3671608Z  * [new tag]           archive/dependabot-final-ci-43217021903  -> archive/dependabot-final-ci-43217021903
+2026-11-14T21:21:08.3672529Z  * [new tag]           archive/dependabot-final-evidence-f3fbdeeb -> archive/dependabot-final-evidence-f3fbdeeb
+2026-11-14T21:21:08.3674000Z  * [new tag]           archive/dependabot-followup-evidence-be95b873 -> archive/dependabot-followup-evidence-be95b873
+2026-11-14T21:21:08.3674922Z  * [new tag]           archive/dependabot-followup-final-ci-0d6e1ffa -> archive/dependabot-followup-final-ci-0d6e1ffa
+2026-11-14T21:21:08.3675773Z  * [new tag]           archive/dependabot-responsiveness-b21979c3 -> archive/dependabot-responsiveness-b21979c3
+2026-11-14T21:21:08.3676676Z  * [new tag]           archive/full-groom-completion-6adc637b-20261114 -> archive/full-groom-completion-6adc637b-20261114
+2026-11-14T21:21:08.3677620Z  * [new tag]           archive/full-groom-validation-6adc637b-20261114 -> archive/full-groom-validation-6adc637b-20261114
+2026-11-14T21:21:08.3678399Z  * [new tag]           archive/grooming-2026-11-12-final        -> archive/grooming-2026-11-12-final
+2026-11-14T21:21:08.3679456Z  * [new tag]           archive/maintenance-diagnostics-registration-completion-06a1d3c5-20261114 -> archive/maintenance-diagnostics-registration-completion-06a1d3c5-20261114
+2026-11-14T21:21:08.3680919Z  * [new tag]           archive/maintenance-diagnostics-registration-validation-06a1d3c5-20261114 -> archive/maintenance-diagnostics-registration-validation-06a1d3c5-20261114
+2026-11-14T21:21:08.3682273Z  * [new tag]           archive/native-drawing-registration-completion-fa39c086-20261114 -> archive/native-drawing-registration-completion-fa39c086-20261114
+2026-11-14T21:21:08.3683706Z  * [new tag]           archive/native-drawing-registration-validation-fa39c086-20261114 -> archive/native-drawing-registration-validation-fa39c086-20261114
+2026-11-14T21:21:08.3684811Z  * [new tag]           archive/native-validation-registration-9e1a314 -> archive/native-validation-registration-9e1a314
+2026-11-14T21:21:08.3685623Z  * [new tag]           archive/pr-245-reviewed-4ccc67f5         -> archive/pr-245-reviewed-4ccc67f5
+2026-11-14T21:21:08.3686430Z  * [new tag]           archive/reservation-first-ci-blocked-523deee -> archive/reservation-first-ci-blocked-523deee
+2026-11-14T21:21:08.3687457Z  * [new tag]           archive/spn-065-final-evidence-be55f33   -> archive/spn-065-final-evidence-be55f33
+2026-11-14T21:21:08.3688261Z  * [new tag]           archive/spn-065-flush-diagnostic-14300ef -> archive/spn-065-flush-diagnostic-14300ef
+2026-11-14T21:21:08.3688992Z  * [new tag]           archive/spn-065-legacy-d37553f           -> archive/spn-065-legacy-d37553f
+2026-11-14T21:21:08.3689687Z  * [new tag]           archive/spn-068-desktop-6f2d902e         -> archive/spn-068-desktop-6f2d902e
+2026-11-14T21:21:08.3690439Z  * [new tag]           archive/spn-071-allocation-proof-fdde643 -> archive/spn-071-allocation-proof-fdde643
+2026-11-14T21:21:08.3691218Z  * [new tag]           archive/spn-071-components-c0e2502       -> archive/spn-071-components-c0e2502
+2026-11-14T21:21:08.3691966Z  * [new tag]           archive/spn-071-final-evidence-c514585   -> archive/spn-071-final-evidence-c514585
+2026-11-14T21:21:08.3692909Z  * [new tag]           archive/spn-071-flush-diagnostic-6008c8e -> archive/spn-071-flush-diagnostic-6008c8e
+2026-11-14T21:21:08.3693825Z  * [new tag]           archive/spn-071-focus-proof-d75f46f      -> archive/spn-071-focus-proof-d75f46f
+2026-11-14T21:21:08.3694589Z  * [new tag]           archive/spn-071-hosted-visuals-53ad684   -> archive/spn-071-hosted-visuals-53ad684
+2026-11-14T21:21:08.3695342Z  * [new tag]           archive/spn-071-hosted-visuals-c514585   -> archive/spn-071-hosted-visuals-c514585
+2026-11-14T21:21:08.3696176Z  * [new tag]           archive/spn-071-main-callback-baseline-3233f93 -> archive/spn-071-main-callback-baseline-3233f93
+2026-11-14T21:21:08.3697040Z  * [new tag]           archive/spn-071-main-restore-entry-cc83646 -> archive/spn-071-main-restore-entry-cc83646
+2026-11-14T21:21:08.3697833Z  * [new tag]           archive/spn-071-mobile-failure-53ad684   -> archive/spn-071-mobile-failure-53ad684
+2026-11-14T21:21:08.3698608Z  * [new tag]           archive/spn-071-restore-failure-c0e2502  -> archive/spn-071-restore-failure-c0e2502
+2026-11-14T21:21:08.3699512Z  * [new tag]           archive/spn-087-before-18a8759c          -> archive/spn-087-before-18a8759c
+2026-11-14T21:21:08.3700369Z  * [new tag]           archive/spn-090-build-outcome-3ac03e9e   -> archive/spn-090-build-outcome-3ac03e9e
+2026-11-14T21:21:08.3701411Z  * [new tag]           archive/spn-090-build-publication-3ac03e9e -> archive/spn-090-build-publication-3ac03e9e
+2026-11-14T21:21:08.3702276Z  * [new tag]           archive/spn-090-completion-43d3ee62-20261114 -> archive/spn-090-completion-43d3ee62-20261114
+2026-11-14T21:21:08.3703490Z  * [new tag]           archive/spn-090-failure-43626186157-20261114 -> archive/spn-090-failure-43626186157-20261114
+2026-11-14T21:21:08.3704560Z  * [new tag]           archive/spn-090-final-outcome-6f9a92e4   -> archive/spn-090-final-outcome-6f9a92e4
+2026-11-14T21:21:08.3705611Z  * [new tag]           archive/spn-090-handoff-29b465b4         -> archive/spn-090-handoff-29b465b4
+2026-11-14T21:21:08.3706463Z  * [new tag]           archive/spn-090-input-publication-29b465b4 -> archive/spn-090-input-publication-29b465b4
+2026-11-14T21:21:08.3707437Z  * [new tag]           archive/spn-090-native-checkpoint-fe1fddd8 -> archive/spn-090-native-checkpoint-fe1fddd8
+2026-11-14T21:21:08.3708285Z  * [new tag]           archive/spn-090-native-failure-fe1fddd8  -> archive/spn-090-native-failure-fe1fddd8
+2026-11-14T21:21:08.3709112Z  * [new tag]           archive/spn-090-native-publication-fe1fddd8 -> archive/spn-090-native-publication-fe1fddd8
+2026-11-14T21:21:08.3709936Z  * [new tag]           archive/spn-090-original-local-7ffab533  -> archive/spn-090-original-local-7ffab533
+2026-11-14T21:21:08.3710712Z  * [new tag]           archive/spn-090-preservation-67111d9c    -> archive/spn-090-preservation-67111d9c
+2026-11-14T21:21:08.3711529Z  * [new tag]           archive/spn-090-recovery-failure-43548838838 -> archive/spn-090-recovery-failure-43548838838
+2026-11-14T21:21:08.3712362Z  * [new tag]           archive/spn-090-renderer-outcome-5265ab8d -> archive/spn-090-renderer-outcome-5265ab8d
+2026-11-14T21:21:08.3714168Z  * [new tag]           archive/spn-090-renderer-publication-5265ab8d -> archive/spn-090-renderer-publication-5265ab8d
+2026-11-14T21:21:08.3715037Z  * [new tag]           archive/spn-090-resume-audit-e0abee4     -> archive/spn-090-resume-audit-e0abee4
+2026-11-14T21:21:08.3715805Z  * [new tag]           archive/spn-090-review-43d3ee62-20261114 -> archive/spn-090-review-43d3ee62-20261114
+2026-11-14T21:21:08.3716617Z  * [new tag]           archive/spn-090-startup-acceptance-d4eeeb8b -> archive/spn-090-startup-acceptance-d4eeeb8b
+2026-11-14T21:21:08.3717487Z  * [new tag]           archive/spn-090-startup-publication-d4eeeb8b -> archive/spn-090-startup-publication-d4eeeb8b
+2026-11-14T21:21:08.3718313Z  * [new tag]           archive/spn-090-startup-safari-d4eeeb8b  -> archive/spn-090-startup-safari-d4eeeb8b
+2026-11-14T21:21:08.3719094Z  * [new tag]           archive/spn-090-startup-visual-d4eeeb8b  -> archive/spn-090-startup-visual-d4eeeb8b
+2026-11-14T21:21:08.3719950Z  * [new tag]           archive/spn-090-superseded-integration-9608f783 -> archive/spn-090-superseded-integration-9608f783
+2026-11-14T21:21:08.3720797Z  * [new tag]           archive/spn-090-takeover-6f9a92e4        -> archive/spn-090-takeover-6f9a92e4
+2026-11-14T21:21:08.3721548Z  * [new tag]           archive/spn-090-terminal-43548838838     -> archive/spn-090-terminal-43548838838
+2026-11-14T21:21:08.3722345Z  * [new tag]           archive/spn-090-validation-43d3ee62-20261114 -> archive/spn-090-validation-43d3ee62-20261114
+2026-11-14T21:21:08.3723392Z  * [new tag]           archive/spn-090-validation-724b5777-20261114 -> archive/spn-090-validation-724b5777-20261114
+2026-11-14T21:21:08.3724230Z  * [new tag]           archive/spn-098-acceptance-2204b8c4-20261114 -> archive/spn-098-acceptance-2204b8c4-20261114
+2026-11-14T21:21:08.3725058Z  * [new tag]           archive/spn-098-completion-7a045191-20261114 -> archive/spn-098-completion-7a045191-20261114
+2026-11-14T21:21:08.3726026Z  * [new tag]           archive/spn-098-current-outcome-94c6968e -> archive/spn-098-current-outcome-94c6968e
+2026-11-14T21:21:08.3726809Z  * [new tag]           archive/spn-098-current-visuals-24e00a7  -> archive/spn-098-current-visuals-24e00a7
+2026-11-14T21:21:08.3810497Z  * [new tag]           archive/spn-098-failure-43544143900-20261114 -> archive/spn-098-failure-43544143900-20261114
+2026-11-14T21:21:08.3811731Z  * [new tag]           archive/spn-098-native-flush-first-failures-24e00a7 -> archive/spn-098-native-flush-first-failures-24e00a7
+2026-11-14T21:21:08.3831175Z  * [new tag]           archive/spn-098-original-failures-91f2d57 -> archive/spn-098-original-failures-91f2d57
+2026-11-14T21:21:08.3832414Z  * [new tag]           archive/spn-098-prior-acceptance-969b98c0 -> archive/spn-098-prior-acceptance-969b98c0
+2026-11-14T21:21:08.3833885Z  * [new tag]           archive/spn-098-publication-94c6968e     -> archive/spn-098-publication-94c6968e
+2026-11-14T21:21:08.3834877Z  * [new tag]           archive/spn-098-tablet-setup-24e00a7     -> archive/spn-098-tablet-setup-24e00a7
+2026-11-14T21:21:08.3835855Z  * [new tag]           archive/spn-098-terminal-43544143900-20261114 -> archive/spn-098-terminal-43544143900-20261114
+2026-11-14T21:21:08.3836785Z  * [new tag]           archive/spn-098-terminal-checkpoint-24e00a7 -> archive/spn-098-terminal-checkpoint-24e00a7
+2026-11-14T21:21:08.3837738Z  * [new tag]           archive/spn-098-validation-5e72d33a-20261114 -> archive/spn-098-validation-5e72d33a-20261114
+2026-11-14T21:21:08.3838661Z  * [new tag]           archive/spn-098-validation-7a045191-20261114 -> archive/spn-098-validation-7a045191-20261114
+2026-11-14T21:21:08.3839544Z  * [new tag]           archive/spn-106-safari-pointer-b9e57e46  -> archive/spn-106-safari-pointer-b9e57e46
+2026-11-14T21:21:08.3840355Z  * [new tag]           archive/spn-110-desktop-09093eb6         -> archive/spn-110-desktop-09093eb6
+2026-11-14T21:21:08.3841232Z  * [new tag]           archive/spn-110-feedback-integration-f8c4b746 -> archive/spn-110-feedback-integration-f8c4b746
+2026-11-14T21:21:08.3843197Z  * [new tag]           archive/spn-120-blocked-integration-bcc1c17 -> archive/spn-120-blocked-integration-bcc1c17
+2026-11-14T21:21:08.3845070Z  * [new tag]           archive/spn-120-integration-597c3182     -> archive/spn-120-integration-597c3182
+2026-11-14T21:21:08.3846762Z  * [new tag]           archive/spn-120-native-blockers-597c3182 -> archive/spn-120-native-blockers-597c3182
+2026-11-14T21:21:08.3848493Z  * [new tag]           archive/spn-120-prior-evidence-bcc1c17   -> archive/spn-120-prior-evidence-bcc1c17
+2026-11-14T21:21:08.3850162Z  * [new tag]           archive/spn-120-review-5356f085-20261114 -> archive/spn-120-review-5356f085-20261114
+2026-11-14T21:21:08.3851806Z  * [new tag]           archive/spn-120-review-a9450ed3-20261114 -> archive/spn-120-review-a9450ed3-20261114
+2026-11-14T21:21:08.3853139Z  * [new tag]           archive/spn-120-terminal-checkpoint-bcc1c17 -> archive/spn-120-terminal-checkpoint-bcc1c17
+2026-11-14T21:21:08.3854047Z  * [new tag]           archive/spn-120-validation-47bf4aad-20261114 -> archive/spn-120-validation-47bf4aad-20261114
+2026-11-14T21:21:08.3854893Z  * [new tag]           archive/spn-120-validation-5356f085-20261114 -> archive/spn-120-validation-5356f085-20261114
+2026-11-14T21:21:08.3855729Z  * [new tag]           archive/spn-120-validation-99e0a141-20261114 -> archive/spn-120-validation-99e0a141-20261114
+2026-11-14T21:21:08.3856525Z  * [new tag]           archive/spn-123-current-local-54307c19   -> archive/spn-123-current-local-54307c19
+2026-11-14T21:21:08.3857294Z  * [new tag]           archive/spn-123-current-safari-54307c19  -> archive/spn-123-current-safari-54307c19
+2026-11-14T21:21:08.3858063Z  * [new tag]           archive/spn-123-review-6ef945ea-20261114 -> archive/spn-123-review-6ef945ea-20261114
+2026-11-14T21:21:08.3858817Z  * [new tag]           archive/spn-123-review-c270973a-20261114 -> archive/spn-123-review-c270973a-20261114
+2026-11-14T21:21:08.3859611Z  * [new tag]           archive/spn-123-validation-6ef945ea-20261114 -> archive/spn-123-validation-6ef945ea-20261114
+2026-11-14T21:21:08.3860623Z  * [new tag]           archive/spn-128-current-local-2fcbbec7   -> archive/spn-128-current-local-2fcbbec7
+2026-11-14T21:21:08.3861387Z  * [new tag]           archive/spn-128-current-local-a6dd085d   -> archive/spn-128-current-local-a6dd085d
+2026-11-14T21:21:08.3862134Z  * [new tag]           archive/spn-128-previous-ci-740e97cc     -> archive/spn-128-previous-ci-740e97cc
+2026-11-14T21:21:08.3863114Z  * [new tag]           archive/spn-128-review-3812ed9b-20261114 -> archive/spn-128-review-3812ed9b-20261114
+2026-11-14T21:21:08.3863932Z  * [new tag]           archive/spn-129-adoption-cutoff-41510513950 -> archive/spn-129-adoption-cutoff-41510513950
+2026-11-14T21:21:08.3864823Z  * [new tag]           archive/spn-129-adoption-implementation-10f65f29 -> archive/spn-129-adoption-implementation-10f65f29
+2026-11-14T21:21:08.3865709Z  * [new tag]           archive/spn-129-adoption-inventory-54e30561 -> archive/spn-129-adoption-inventory-54e30561
+2026-11-14T21:21:08.3866541Z  * [new tag]           archive/spn-129-adoption-review-0a7e856c -> archive/spn-129-adoption-review-0a7e856c
+2026-11-14T21:21:08.3867340Z  * [new tag]           archive/spn-129-history-foundation-6b9eeaf4 -> archive/spn-129-history-foundation-6b9eeaf4
+2026-11-14T21:21:08.3868165Z  * [new tag]           archive/spn-129-history-foundation-df6cb48e -> archive/spn-129-history-foundation-df6cb48e
+2026-11-14T21:21:08.3869015Z  * [new tag]           archive/spn-129-history-integration-96bae9a0 -> archive/spn-129-history-integration-96bae9a0
+2026-11-14T21:21:08.3869776Z  * [new tag]           archive/spn-129-resume-de6549d0          -> archive/spn-129-resume-de6549d0
+2026-11-14T21:21:08.3870529Z  * [new tag]           archive/spn-129-retired-checkpoint-944050cc -> archive/spn-129-retired-checkpoint-944050cc
+2026-11-14T21:21:08.3871360Z  * [new tag]           archive/spn-129-retired-diagnostic-e58514b7 -> archive/spn-129-retired-diagnostic-e58514b7
+2026-11-14T21:21:08.3872129Z  * [new tag]           archive/spn-130-validated-d36d44c2       -> archive/spn-130-validated-d36d44c2
+2026-11-14T21:21:08.3873280Z  * [new tag]           archive/spn-131-diagnostic-sample-7a168ca -> archive/spn-131-diagnostic-sample-7a168ca
+2026-11-14T21:21:08.3874098Z  * [new tag]           archive/spn-131-ec2-first-failure-190a36c -> archive/spn-131-ec2-first-failure-190a36c
+2026-11-14T21:21:08.3874880Z  * [new tag]           archive/spn-131-final-evidence-91c0efb   -> archive/spn-131-final-evidence-91c0efb
+2026-11-14T21:21:08.3875637Z  * [new tag]           archive/spn-132-final-evidence-a107a2b   -> archive/spn-132-final-evidence-a107a2b
+2026-11-14T21:21:08.3876379Z  * [new tag]           archive/spn-132-marker-proof-60690a1     -> archive/spn-132-marker-proof-60690a1
+2026-11-14T21:21:08.3877200Z  * [new tag]           archive/spn-132-marker-proof-60690a1-corrected -> archive/spn-132-marker-proof-60690a1-corrected
+2026-11-14T21:21:08.3878015Z  * [new tag]           archive/spn-132-registration-862a365     -> archive/spn-132-registration-862a365
+2026-11-14T21:21:08.3878782Z  * [new tag]           archive/spn-132-storybook-setup-a107a2b  -> archive/spn-132-storybook-setup-a107a2b
+2026-11-14T21:21:08.3879572Z  * [new tag]           archive/spn-133-composition-probes-f8a9364 -> archive/spn-133-composition-probes-f8a9364
+2026-11-14T21:21:08.3880370Z  * [new tag]           archive/spn-133-final-evidence-ba89b83   -> archive/spn-133-final-evidence-ba89b83
+2026-11-14T21:21:08.3881161Z  * [new tag]           archive/spn-133-first-ci-superseded-a75556e -> archive/spn-133-first-ci-superseded-a75556e
+2026-11-14T21:21:08.3881968Z  * [new tag]           archive/spn-133-first-diagnostic-97d5b82 -> archive/spn-133-first-diagnostic-97d5b82
+2026-11-14T21:21:08.3882861Z  * [new tag]           archive/spn-133-narrow-diagnostic-4a6f59c -> archive/spn-133-narrow-diagnostic-4a6f59c
+2026-11-14T21:21:08.3883830Z  * [new tag]           archive/spn-133-prefix-unit-attempts-a75556e -> archive/spn-133-prefix-unit-attempts-a75556e
+2026-11-14T21:21:08.3884847Z  * [new tag]           archive/spn-134-acceptance-97b0db55      -> archive/spn-134-acceptance-97b0db55
+2026-11-14T21:21:08.3885569Z  * [new tag]           archive/spn-134-recurrence-2f1c9304      -> archive/spn-134-recurrence-2f1c9304
+2026-11-14T21:21:08.3886376Z  * [new tag]           archive/spn-135-native-capture-controls-af25f9b -> archive/spn-135-native-capture-controls-af25f9b
+2026-11-14T21:21:08.3887220Z  * [new tag]           archive/spn-135-phase-diagnostic-0dae3ded -> archive/spn-135-phase-diagnostic-0dae3ded
+2026-11-14T21:21:08.3888062Z  * [new tag]           archive/spn-135-refined-first-attempt-1d5c972 -> archive/spn-135-refined-first-attempt-1d5c972
+2026-11-14T21:21:08.3888845Z  * [new tag]           archive/spn-135-reviewed-b29fd408        -> archive/spn-135-reviewed-b29fd408
+2026-11-14T21:21:08.3889567Z  * [new tag]           archive/spn-135-terminal-cache-3fca2b9   -> archive/spn-135-terminal-cache-3fca2b9
+2026-11-14T21:21:08.3890298Z  * [new tag]           archive/spn-137-checkpoint-6c0080d5      -> archive/spn-137-checkpoint-6c0080d5
+2026-11-14T21:21:08.3891001Z  * [new tag]           archive/spn-140-checkpoint-85a0e3c3      -> archive/spn-140-checkpoint-85a0e3c3
+2026-11-14T21:21:08.3891740Z  * [new tag]           archive/spn-141-blocked-receipt-4e593fba -> archive/spn-141-blocked-receipt-4e593fba
+2026-11-14T21:21:08.3892518Z  * [new tag]           archive/spn-141-deadline-blocker-403bd8c1 -> archive/spn-141-deadline-blocker-403bd8c1
+2026-11-14T21:21:08.3893586Z  * [new tag]           archive/spn-141-firefox-provisioning-2f1c9304 -> archive/spn-141-firefox-provisioning-2f1c9304
+2026-11-14T21:21:08.3894501Z  * [new tag]           archive/spn-141-mobile-blocker-4e593fba  -> archive/spn-141-mobile-blocker-4e593fba
+2026-11-14T21:21:08.3895290Z  * [new tag]           archive/spn-141-mobile-blocker-c4e64fa1  -> archive/spn-141-mobile-blocker-c4e64fa1
+2026-11-14T21:21:08.3896068Z  * [new tag]           archive/spn-141-native-checkpoint-2f1c9304 -> archive/spn-141-native-checkpoint-2f1c9304
+2026-11-14T21:21:08.3897079Z  * [new tag]           archive/spn-141-native-checkpoint-388262cc -> archive/spn-141-native-checkpoint-388262cc
+2026-11-14T21:21:08.3897840Z  * [new tag]           archive/spn-142-acceptance-adc86fc8      -> archive/spn-142-acceptance-adc86fc8
+2026-11-14T21:21:08.3898590Z  * [new tag]           archive/spn-142-first-candidate-2b173b29 -> archive/spn-142-first-candidate-2b173b29
+2026-11-14T21:21:08.3899337Z  * [new tag]           archive/spn-142-registration-f6943c89    -> archive/spn-142-registration-f6943c89
+2026-11-14T21:21:08.3900051Z  * [new tag]           archive/spn-143-acceptance-96b11bf0      -> archive/spn-143-acceptance-96b11bf0
+2026-11-14T21:21:08.3900750Z  * [new tag]           archive/spn-144-acceptance-7b06d751      -> archive/spn-144-acceptance-7b06d751
+2026-11-14T21:21:08.3901438Z  * [new tag]           archive/spn-144-acceptance-968649bd      -> archive/spn-144-acceptance-968649bd
+2026-11-14T21:21:08.3902146Z  * [new tag]           archive/spn-144-registration-7aee6699    -> archive/spn-144-registration-7aee6699
+2026-11-14T21:21:08.3903129Z  * [new tag]           archive/spn-146-final-application-02ef01a4 -> archive/spn-146-final-application-02ef01a4
+2026-11-14T21:21:08.3903940Z  * [new tag]           archive/spn-146-first-linux-app-483bf8ae -> archive/spn-146-first-linux-app-483bf8ae
+2026-11-14T21:21:08.3904714Z  * [new tag]           archive/spn-146-launcher-outcome-8b682819 -> archive/spn-146-launcher-outcome-8b682819
+2026-11-14T21:21:08.3905485Z  * [new tag]           archive/spn-146-launcher-probe-a4eb19e4  -> archive/spn-146-launcher-probe-a4eb19e4
+2026-11-14T21:21:08.3906307Z  * [new tag]           archive/spn-146-launcher-publication-8b682819 -> archive/spn-146-launcher-publication-8b682819
+2026-11-14T21:21:08.3907116Z  * [new tag]           archive/spn-146-linear-outcome-97d0b320  -> archive/spn-146-linear-outcome-97d0b320
+2026-11-14T21:21:08.3907898Z  * [new tag]           archive/spn-146-linear-publication-97d0b320 -> archive/spn-146-linear-publication-97d0b320
+2026-11-14T21:21:08.3908881Z  * [new tag]           archive/spn-146-map-repair-outcome-df76fb78 -> archive/spn-146-map-repair-outcome-df76fb78
+2026-11-14T21:21:08.3909751Z  * [new tag]           archive/spn-146-map-repair-publication-df76fb78 -> archive/spn-146-map-repair-publication-df76fb78
+2026-11-14T21:21:08.3910625Z  * [new tag]           archive/spn-146-preparation-outcome-a4eb19e4 -> archive/spn-146-preparation-outcome-a4eb19e4
+2026-11-14T21:21:08.3911514Z  * [new tag]           archive/spn-146-preparation-publication-a4eb19e4 -> archive/spn-146-preparation-publication-a4eb19e4
+2026-11-14T21:21:08.3912414Z  * [new tag]           archive/spn-146-qualification-outcome-02ef01a4 -> archive/spn-146-qualification-outcome-02ef01a4
+2026-11-14T21:21:08.3913485Z  * [new tag]           archive/spn-146-retained-closure-8b682819 -> archive/spn-146-retained-closure-8b682819
+2026-11-14T21:21:08.3914242Z  * [new tag]           archive/spn-146-single-clone-97d0b320    -> archive/spn-146-single-clone-97d0b320
+2026-11-14T21:21:08.3915090Z  * [new tag]           archive/spn-146-single-clone-checkpoint-49cb60b1 -> archive/spn-146-single-clone-checkpoint-49cb60b1
+2026-11-14T21:21:08.3916022Z  * [new tag]           archive/spn-146-single-clone-publication-49cb60b1 -> archive/spn-146-single-clone-publication-49cb60b1
+2026-11-14T21:21:08.3916859Z  * [new tag]           archive/spn-146-source-probe-fcd9fcb6    -> archive/spn-146-source-probe-fcd9fcb6
+2026-11-14T21:21:08.3917595Z  * [new tag]           archive/spn-146-window-outcome-ab896604  -> archive/spn-146-window-outcome-ab896604
+2026-11-14T21:21:08.3918380Z  * [new tag]           archive/spn-146-window-publication-ab896604 -> archive/spn-146-window-publication-ab896604
+2026-11-14T21:21:08.3919195Z  * [new tag]           archive/spn-149-completion-8177c146-20261114 -> archive/spn-149-completion-8177c146-20261114
+2026-11-14T21:21:08.3919996Z  * [new tag]           archive/spn-149-prior-acceptance-20261113 -> archive/spn-149-prior-acceptance-20261113
+2026-11-14T21:21:08.3920989Z  * [new tag]           archive/spn-149-validation-8177c146-20261114 -> archive/spn-149-validation-8177c146-20261114
+2026-11-14T21:21:08.3921797Z  * [new tag]           archive/spn-156-validation-40dee0d3-20261114 -> archive/spn-156-validation-40dee0d3-20261114
+2026-11-14T21:21:08.3922600Z  * [new tag]           archive/spn-156-validation-5c764793-20261114 -> archive/spn-156-validation-5c764793-20261114
+2026-11-14T21:21:08.3923525Z  * [new tag]           archive/spn-157-completion-f59d23ce-20261114 -> archive/spn-157-completion-f59d23ce-20261114
+2026-11-14T21:21:08.3924294Z  * [new tag]           archive/spn-157-local-44f9a536-20261114  -> archive/spn-157-local-44f9a536-20261114
+2026-11-14T21:21:08.3925072Z  * [new tag]           archive/spn-157-validation-f59d23ce-20261114 -> archive/spn-157-validation-f59d23ce-20261114
+2026-11-14T21:21:08.3925878Z  * [new tag]           archive/spn-158-completion-3d8b1ef7-20261114 -> archive/spn-158-completion-3d8b1ef7-20261114
+2026-11-14T21:21:08.3926692Z  * [new tag]           archive/spn-158-validation-3d8b1ef7-20261114 -> archive/spn-158-validation-3d8b1ef7-20261114
+2026-11-14T21:21:08.3927504Z  * [new tag]           archive/spn-158-validation-bfeb0b23-20261114 -> archive/spn-158-validation-bfeb0b23-20261114
+2026-11-14T21:21:08.3928314Z  * [new tag]           archive/spn-159-completion-88b24d96-20261114 -> archive/spn-159-completion-88b24d96-20261114
+2026-11-14T21:21:08.3929110Z  * [new tag]           archive/spn-159-validation-88b24d96-20261114 -> archive/spn-159-validation-88b24d96-20261114
+2026-11-14T21:21:08.3929932Z  * [new tag]           archive/spn-160-completion-a623fb42-2026-11-14 -> archive/spn-160-completion-a623fb42-2026-11-14
+2026-11-14T21:21:08.3930777Z  * [new tag]           archive/spn-160-validation-a623fb42-2026-11-14 -> archive/spn-160-validation-a623fb42-2026-11-14
+2026-11-14T21:21:08.3931566Z  * [new tag]           archive/spn-236-final-evidence-7ed82b8   -> archive/spn-236-final-evidence-7ed82b8
+2026-11-14T21:21:08.3932440Z  * [new tag]           archive/spn-236-index-helper-5bfb003     -> archive/spn-236-index-helper-5bfb003
+2026-11-14T21:21:08.3933205Z  * [new tag]           review-assets/spn-033                    -> review-assets/spn-033
+2026-11-14T21:21:08.3933786Z  * [new tag]           review-assets/spn-034                    -> review-assets/spn-034
+2026-11-14T21:21:08.3934353Z  * [new tag]           review-assets/spn-036                    -> review-assets/spn-036
+2026-11-14T21:21:08.3934981Z  * [new tag]           review-assets/spn-036-prototype          -> review-assets/spn-036-prototype
+2026-11-14T21:21:08.3935606Z  * [new tag]           review-assets/spn-044                    -> review-assets/spn-044
+2026-11-14T21:21:08.3936174Z  * [new tag]           review-assets/spn-077                    -> review-assets/spn-077
+2026-11-14T21:21:08.3936737Z  * [new ref]           9006a831d6ff54bcdd5e37a67af40780f22b3c2c -> pull/228/merge
+2026-11-14T21:21:08.3938160Z ##[endgroup]
+2026-11-14T21:21:08.3938621Z ##[group]Determining the checkout info
+2026-11-14T21:21:08.3939119Z ##[endgroup]
+2026-11-14T21:21:08.3939500Z [command]/usr/bin/git sparse-checkout disable
+2026-11-14T21:21:08.3940326Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-14T21:21:08.3941328Z ##[group]Checking out the ref
+2026-11-14T21:21:08.3941770Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/228/merge
+2026-11-14T21:21:09.1320709Z Note: switching to 'refs/remotes/pull/228/merge'.
+2026-11-14T21:21:09.1321168Z 
+2026-11-14T21:21:09.1321913Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-14T21:21:09.1322987Z changes and commit them, and you can discard any commits you make in this
+2026-11-14T21:21:09.1324245Z state without impacting any branches by switching back to a branch.
+2026-11-14T21:21:09.1324756Z 
+2026-11-14T21:21:09.1325055Z If you want to create a new branch to retain commits you create, you may
+2026-11-14T21:21:09.1325767Z do so (now or later) by using -c with the switch command. Example:
+2026-11-14T21:21:09.1326453Z 
+2026-11-14T21:21:09.1326619Z   git switch -c <new-branch-name>
+2026-11-14T21:21:09.1326899Z 
+2026-11-14T21:21:09.1327078Z Or undo this operation with:
+2026-11-14T21:21:09.1327336Z 
+2026-11-14T21:21:09.1327467Z   git switch -
+2026-11-14T21:21:09.1327659Z 
+2026-11-14T21:21:09.1328010Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-14T21:21:09.1328509Z 
+2026-11-14T21:21:09.1329090Z HEAD is now at 9006a831 Merge a9450ed32a55c1689fe46ebd575e45ff0fb66209 into c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:21:09.1371823Z ##[endgroup]
+2026-11-14T21:21:09.1418201Z [command]/usr/bin/git log -1 --format=%H
+2026-11-14T21:21:09.1446549Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c
+2026-11-14T21:21:09.1456352Z ##[group]Removing auth
+2026-11-14T21:21:09.1457013Z Removing SSH command configuration
+2026-11-14T21:21:09.1461166Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T21:21:09.1495382Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T21:21:09.1778831Z Removing HTTP extra header
+2026-11-14T21:21:09.1783276Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T21:21:09.1818416Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T21:21:09.2095879Z Removing includeIf entries pointing to credentials config files
+2026-11-14T21:21:09.2100687Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T21:21:09.2128476Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T21:21:09.2129408Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T21:21:09.2130351Z includeif.gitdir:/github/workspace/.git.path
+2026-11-14T21:21:09.2130911Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T21:21:09.2138077Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T21:21:09.2163044Z /home/runner/work/_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:21:09.2174473Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-cab87b9a\-ba1f\-4ce3\-851b\-a3ec8501df55\.config
+2026-11-14T21:21:09.2214537Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T21:21:09.2245449Z /home/runner/work/_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:21:09.2255566Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-cab87b9a\-ba1f\-4ce3\-851b\-a3ec8501df55\.config
+2026-11-14T21:21:09.2290531Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-14T21:21:09.2314728Z /github/runner_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:21:09.2322638Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-cab87b9a\-ba1f\-4ce3\-851b\-a3ec8501df55\.config
+2026-11-14T21:21:09.2364769Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T21:21:09.2389891Z /github/runner_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config
+2026-11-14T21:21:09.2398140Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-cab87b9a\-ba1f\-4ce3\-851b\-a3ec8501df55\.config
+2026-11-14T21:21:09.2431627Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T21:21:09.2717311Z Removing credentials config '/home/runner/work/_temp/git-credentials-cab87b9a-ba1f-4ce3-851b-a3ec8501df55.config'
+2026-11-14T21:21:09.2718870Z ##[endgroup]

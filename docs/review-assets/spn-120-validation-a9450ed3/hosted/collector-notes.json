@@ -1,0 +1,17 @@
+{
+  "entries": [
+    {
+      "phase": "terminal numerical verification",
+      "failures": [
+        "Initial helper looked up a hosted synthetic merge object not installed locally.",
+        "Second helper assumed REST commits shape instead of the retained Git commits API shape."
+      ],
+      "correction": "Verified raw Git API tree/parents and local a945 tree equality, then bound candidate harness bytes to a945. Measurement source remains tested merge. These were reader-only errors; no artifact or workload failure and no new browser execution."
+    },
+    {
+      "phase": "isolated archive seal",
+      "failure": "Line-delimited git diff name-status guard did not decode Git quoted emoji filename for Spaces checkout step.",
+      "correction": "NUL-delimited guard verifies all 288 original paths were addition-only under the required prefix. Original tree, commit object and manifest retained outside final stage; no source change. New root metrics audit added before final seal."
+    }
+  ]
+}

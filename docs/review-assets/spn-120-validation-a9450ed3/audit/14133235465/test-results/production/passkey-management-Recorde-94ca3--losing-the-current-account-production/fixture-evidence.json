@@ -1,0 +1,76 @@
+{
+  "sourceSha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "testId": "5af9f0c6976febdaf1f3-f44b12a4dca4651b84e8",
+  "project": "production",
+  "retry": 0,
+  "repeatEachIndex": 0,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 2987,
+        "runId": "fe9b4a61-4710-443d-b07b-7a4d24ce4e93",
+        "updatedAt": 1794691569864,
+        "pid": 2998,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    },
+    {
+      "elapsedMs": 37,
+      "phase": "invitation-enrollment"
+    },
+    {
+      "elapsedMs": 457,
+      "phase": "invitation-heading"
+    },
+    {
+      "elapsedMs": 9807,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 1
+    },
+    {
+      "elapsedMs": 9808,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 2987,
+        "runId": "fe9b4a61-4710-443d-b07b-7a4d24ce4e93",
+        "updatedAt": 1794691579639,
+        "pid": 2998,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}

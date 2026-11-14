@@ -1,0 +1,65 @@
+{
+  "total_count": 3,
+  "artifacts": [
+    {
+      "id": 14133070305,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMzA3MDMwNQ==",
+      "name": "desktop-offline-chrome-macos-26-43642290703-1",
+      "size_in_bytes": 219981,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14133070305",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14133070305/zip",
+      "expired": false,
+      "digest": "sha256:0bcabdc8ca321d0e6a335c8dc1aa63b862b7f8f4f470b142e5776ed19603823f",
+      "created_at": "2026-11-14T21:23:47Z",
+      "updated_at": "2026-11-14T21:23:47Z",
+      "expires_at": "2026-11-28T21:23:46Z",
+      "workflow_run": {
+        "id": 43642290703,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132691651,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjY5MTY1MQ==",
+      "name": "desktop-offline-firefox-macos-26-43642290703-1",
+      "size_in_bytes": 496674,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132691651",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132691651/zip",
+      "expired": false,
+      "digest": "sha256:0063815a8e711cf0621ce0ebb878140f095b7085e16247040ccbfe294484a1b7",
+      "created_at": "2026-11-14T21:23:03Z",
+      "updated_at": "2026-11-14T21:23:03Z",
+      "expires_at": "2026-11-28T21:23:02Z",
+      "workflow_run": {
+        "id": 43642290703,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    },
+    {
+      "id": 14132578969,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzMjU3ODk2OQ==",
+      "name": "desktop-offline-safari-macos-15-intel-43642290703-1",
+      "size_in_bytes": 1029047,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132578969",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14132578969/zip",
+      "expired": false,
+      "digest": "sha256:1626017d6c850d3220a2e8ce8f2b8bbd9dfa5c0b37e8be7c54720aaf752f939c",
+      "created_at": "2026-11-14T21:27:46Z",
+      "updated_at": "2026-11-14T21:27:46Z",
+      "expires_at": "2026-11-28T21:27:45Z",
+      "workflow_run": {
+        "id": 43642290703,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-120-fixture-reliability",
+        "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209"
+      }
+    }
+  ]
+}

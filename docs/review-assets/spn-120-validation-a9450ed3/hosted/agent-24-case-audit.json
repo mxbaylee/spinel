@@ -1,0 +1,649 @@
+{
+  "verifiedAt": "2026-11-14T21:31:31.868017+00:00",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "run": 43642371547,
+  "attempt": 1,
+  "totalPassed": 24,
+  "allActualFirstAttempts": true,
+  "noScenarioRetryOrSetupRecovery": true,
+  "allCleanupVerified": true,
+  "rootIndependentVerification": "Not claimed; implementer original-artifact analysis.",
+  "projects": [
+    {
+      "project": "production",
+      "artifactId": 14133235465,
+      "zipSha256": "d3b3a01109ab31705ee9272ad25fa8f48df2d1e6c0ab470d5fc07fe7d99730a3",
+      "source": {
+        "source": "candidate",
+        "project": "production",
+        "sourceSha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "sourceTree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+        "driverSha256": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+        "driverCommit": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "eventHead": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "eventBase": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+        "workflowRunId": "43642371547",
+        "workflowRunAttempt": "1",
+        "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+        "node": "v26.13.0",
+        "repetitions": 2,
+        "retries": 0,
+        "setupRecoveryAllowed": false,
+        "startedAt": "2026-11-14T21:25:00.500Z",
+        "baselineDeltaSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "actualFirstAttemptsPassed": 12,
+      "attempts": [
+        {
+          "specId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+          "testId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 12631,
+          "startTime": "2026-11-14T21:25:04.989Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+          "testId": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 14325,
+          "startTime": "2026-11-14T21:25:17.690Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+          "testId": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 17548,
+          "startTime": "2026-11-14T21:25:32.023Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+          "testId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 18083,
+          "startTime": "2026-11-14T21:25:49.584Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+          "testId": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 12212,
+          "startTime": "2026-11-14T21:26:20.215Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+          "testId": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 12625,
+          "startTime": "2026-11-14T21:26:32.489Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+          "testId": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 17492,
+          "startTime": "2026-11-14T21:26:45.126Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+          "testId": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 18106,
+          "startTime": "2026-11-14T21:27:02.630Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "ccad38f60b47bfc68793-dc2ce66896d5e230117f",
+          "testId": "ccad38f60b47bfc68793-dc2ce66896d5e230117f",
+          "file": "offline-sign-out.spec.ts",
+          "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+          "project": "production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1958,
+          "startTime": "2026-11-14T21:26:07.970Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "ccad38f60b47bfc68793-7be8898b7f5fb244873f",
+          "testId": "ccad38f60b47bfc68793-7be8898b7f5fb244873f",
+          "file": "offline-sign-out.spec.ts",
+          "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+          "project": "production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1990,
+          "startTime": "2026-11-14T21:27:21.050Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "5af9f0c6976febdaf1f3-f44b12a4dca4651b84e8",
+          "testId": "5af9f0c6976febdaf1f3-f44b12a4dca4651b84e8",
+          "file": "passkey-management.spec.ts",
+          "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+          "project": "production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 9884,
+          "startTime": "2026-11-14T21:26:09.940Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "5af9f0c6976febdaf1f3-3464d5456fcdb271e02f",
+          "testId": "5af9f0c6976febdaf1f3-3464d5456fcdb271e02f",
+          "file": "passkey-management.spec.ts",
+          "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+          "project": "production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 10567,
+          "startTime": "2026-11-14T21:27:23.054Z",
+          "workerIndex": 1
+        }
+      ],
+      "reportStats": {
+        "startTime": "2026-11-14T21:25:01.308Z",
+        "duration": 152473.38999999998,
+        "expected": 12,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanupJournals": 12,
+      "dropped": 0,
+      "cleanupErrors": 0,
+      "serverExitCode": 0,
+      "serverRunId": "fe9b4a61-4710-443d-b07b-7a4d24ce4e93",
+      "payloads": [
+        {
+          "path": "fixture-audit/attempt-identities.json",
+          "sha256": "f8137f7f8a2dcc0c99726ac7c01b50b364019353f2a9f91caedb20de438e6dea"
+        },
+        {
+          "path": "fixture-audit/source.json",
+          "sha256": "ff2f6a02e0c5fff59029ace2b2a9565b85116817426502956c3a751982b66f72"
+        },
+        {
+          "path": "fixture-audit/results.json",
+          "sha256": "2ebdd47671f0f81388bbc3a15cf06917fe1d542226d52f0e0d89246ef9fe37fa"
+        },
+        {
+          "path": "playwright-report/server-3101.json",
+          "sha256": "300e35838030d44388d1235d0ba9c4037f36a49d907e834824645328b7627a91"
+        },
+        {
+          "path": "playwright-report/production.json",
+          "sha256": "056996604962daf242215ca06f109e9ad7f93356dc73691b90247af73c651908"
+        },
+        {
+          "path": "test-results/production/offline-sign-out-Recorded--855e9-cannot-clear-the-new-cookie-production/fixture-evidence.json",
+          "sha256": "8fdd8e9305734e1acf44823544edd089d404c906bc04ae10ea395e1b54d8bccc"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-8794b-avior-preserve-the-document-production/fixture-evidence.json",
+          "sha256": "7d0d17fc78a18712b3f2f351c11ff00bac71bf5d90de3197bbf592f8abd41c04"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+          "sha256": "76d292ffd987bbb3f8a7e6a14e8db711e3815fe5c248b71e4ffccf9a6c6ee13b"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-production/fixture-evidence.json",
+          "sha256": "56f62cd3650400e0d5293706954206374fe543c68958e67bb4faf8f15fb73f89"
+        },
+        {
+          "path": "test-results/production/passkey-management-Recorde-94ca3--losing-the-current-account-production-repeat1/fixture-evidence.json",
+          "sha256": "2e4cfc670d05d4a9542dfb903034e7602f92e594b4eff9ef89b10bec5002799d"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production/fixture-evidence.json",
+          "sha256": "3600bc5881e9bca1b08afa549a3fc4509fd7fcc75389a4b64a90e6f4cff1826d"
+        },
+        {
+          "path": "test-results/production/offline-sign-out-Recorded--855e9-cannot-clear-the-new-cookie-production-repeat1/fixture-evidence.json",
+          "sha256": "ac22255c2cec546419e37e52f52c3102965555699f9c5c978262f127373c1b65"
+        },
+        {
+          "path": "test-results/production/passkey-management-Recorde-94ca3--losing-the-current-account-production/fixture-evidence.json",
+          "sha256": "23a9885e2a9a83057b6a542ce1d4bb403ccd5d7f8b940abb020461f69e31ab9c"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-8794b-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+          "sha256": "96292f377c5d802aee9ae1f9f6fd9792b2bb33ef3c9da784927f4019cb95390b"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+          "sha256": "65683f862a70700d31c46a48ba95cd3073c6c4cd2f556c0c07df6d4b5a2e81a0"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-production/fixture-evidence.json",
+          "sha256": "16aaf6c5dcb037025f5b1e83f3dbcc70b504bed846d89b46e12ab7b623a05bfe"
+        },
+        {
+          "path": "test-results/production/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-production-repeat1/fixture-evidence.json",
+          "sha256": "97f43d592184d98019d8b3ed7d14987236482fb226d6dc213236faad4584ad75"
+        }
+      ]
+    },
+    {
+      "project": "development",
+      "artifactId": 14132439909,
+      "zipSha256": "b11b8b7f09fda701156ce7a448a2ba7279960e3a09989f38144df6407fac6a74",
+      "source": {
+        "source": "candidate",
+        "project": "development",
+        "sourceSha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "sourceTree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+        "driverSha256": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+        "driverCommit": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "eventHead": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "eventBase": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+        "workflowRunId": "43642371547",
+        "workflowRunAttempt": "1",
+        "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+        "node": "v26.13.0",
+        "repetitions": 2,
+        "retries": 0,
+        "setupRecoveryAllowed": false,
+        "startedAt": "2026-11-14T21:27:42.541Z",
+        "baselineDeltaSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "actualFirstAttemptsPassed": 8,
+      "attempts": [
+        {
+          "specId": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+          "testId": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 17353,
+          "startTime": "2026-11-14T21:27:47.130Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+          "testId": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 16132,
+          "startTime": "2026-11-14T21:28:04.553Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+          "testId": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 22553,
+          "startTime": "2026-11-14T21:28:20.695Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+          "testId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 23132,
+          "startTime": "2026-11-14T21:28:43.260Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+          "testId": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 16296,
+          "startTime": "2026-11-14T21:29:06.805Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+          "testId": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 16655,
+          "startTime": "2026-11-14T21:29:23.162Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+          "testId": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 23630,
+          "startTime": "2026-11-14T21:29:39.827Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+          "testId": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+          "file": "doc-phone-navigation.spec.ts",
+          "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+          "project": "development",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 23302,
+          "startTime": "2026-11-14T21:30:03.471Z",
+          "workerIndex": 1
+        }
+      ],
+      "reportStats": {
+        "startTime": "2026-11-14T21:27:43.289Z",
+        "duration": 163688.651,
+        "expected": 8,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanupJournals": 8,
+      "dropped": 0,
+      "cleanupErrors": 0,
+      "serverExitCode": 0,
+      "serverRunId": "3767bccd-6eec-42ed-8a93-e99b1459f4e2",
+      "payloads": [
+        {
+          "path": "fixture-audit/attempt-identities.json",
+          "sha256": "7a6151e42ac722e0306bd36525f7a1062922aa9a6c47c631f09d981dc39e4f9a"
+        },
+        {
+          "path": "fixture-audit/source.json",
+          "sha256": "d4429d8365d1747bccdfbcc658d437e8a0e1852941554caa4902b4cabe3af342"
+        },
+        {
+          "path": "fixture-audit/results.json",
+          "sha256": "e9600bb2fd290ab9408a1691465e4447951f66406c6a7330f4e4fc694da1f2cd"
+        },
+        {
+          "path": "playwright-report/server-3100.json",
+          "sha256": "87aa7753785e80939a0bf71d1b5200862d440bdc70fc350cafda810269761279"
+        },
+        {
+          "path": "playwright-report/development.json",
+          "sha256": "30bdaae5cfd4dd57107b5299556e85cdcc25ffc9e5e07edb4455564d4912ace9"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-8794b-avior-preserve-the-document-development/fixture-evidence.json",
+          "sha256": "f4ec5750a1fc6af275f34917c28cc9035241fb9473b3c476e81c106ebaa31f54"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-development/fixture-evidence.json",
+          "sha256": "9018290d152c6d69df29654273d09f70e4fd4f302d2c1cefb25604a587f031ab"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-development/fixture-evidence.json",
+          "sha256": "291eaf4ff45d594dd6b2efda118720c9885eb34d39c39ae2fff5fe252eace2d0"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-2f8ad-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+          "sha256": "23340590be83e0aa1340433a27e719726781fc6ef49a00daab9b088dc68f6501"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-5ed7c-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+          "sha256": "e3ede4ce298d464d89b671613e66abad6fc384e9b62981571097a7dfd134abbe"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-cf057-avior-preserve-the-document-development/fixture-evidence.json",
+          "sha256": "88c6a885e42a0aff087d92af04c8ad68c7dbbaf3bc242f0c484bb24502d091f1"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-8794b-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+          "sha256": "a6df487817cec6a2fc19d5decdb96ff379926db14a7c26c49cb077ade4aa4536"
+        },
+        {
+          "path": "test-results/development/doc-phone-navigation-phone-cf057-avior-preserve-the-document-development-repeat1/fixture-evidence.json",
+          "sha256": "e6b8488144c4c74ec1fe490faedb769bf89a1b3f47174f1a9b829e385b7f29f8"
+        }
+      ]
+    },
+    {
+      "project": "sync-production",
+      "artifactId": 14133240250,
+      "zipSha256": "229868233d62a831869c5f8fb5a04cbe45f3859edfcedcd4e8462755e4c29516",
+      "source": {
+        "source": "candidate",
+        "project": "sync-production",
+        "sourceSha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "sourceTree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+        "driverSha256": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+        "driverCommit": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "eventHead": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+        "eventBase": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+        "workflowRunId": "43642371547",
+        "workflowRunAttempt": "1",
+        "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+        "node": "v26.13.0",
+        "repetitions": 2,
+        "retries": 0,
+        "setupRecoveryAllowed": false,
+        "startedAt": "2026-11-14T21:25:00.555Z",
+        "baselineDeltaSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "actualFirstAttemptsPassed": 4,
+      "attempts": [
+        {
+          "specId": "d4610c33918c0d3d6a19-c2031c9a72e169522ee1",
+          "testId": "d4610c33918c0d3d6a19-c2031c9a72e169522ee1",
+          "file": "offline-recovery.spec.ts",
+          "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+          "project": "sync-production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 13065,
+          "startTime": "2026-11-14T21:25:06.713Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+          "testId": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+          "file": "offline-recovery.spec.ts",
+          "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+          "project": "sync-production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 12418,
+          "startTime": "2026-11-14T21:25:36.149Z",
+          "workerIndex": 1
+        },
+        {
+          "specId": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+          "testId": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+          "file": "sync-client.spec.ts",
+          "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+          "project": "sync-production",
+          "sampleOrdinal": 0,
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 14828,
+          "startTime": "2026-11-14T21:25:20.133Z",
+          "workerIndex": 0
+        },
+        {
+          "specId": "542c6445fd575a52fb22-08bba0e21594e3c6e808",
+          "testId": "542c6445fd575a52fb22-08bba0e21594e3c6e808",
+          "file": "sync-client.spec.ts",
+          "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+          "project": "sync-production",
+          "sampleOrdinal": 1,
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 14898,
+          "startTime": "2026-11-14T21:25:48.881Z",
+          "workerIndex": 1
+        }
+      ],
+      "reportStats": {
+        "startTime": "2026-11-14T21:25:01.811Z",
+        "duration": 62099.68,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cleanupJournals": 4,
+      "dropped": 0,
+      "cleanupErrors": 0,
+      "serverExitCode": 0,
+      "serverRunId": "fa71802e-1f1d-4a27-ab2d-3a503f5a2287",
+      "payloads": [
+        {
+          "path": "fixture-audit/attempt-identities.json",
+          "sha256": "549f6ddb6dc2ebef46d6c88a972485953608cddf887fd037bbf24e515bf3fbd8"
+        },
+        {
+          "path": "fixture-audit/source.json",
+          "sha256": "fe2da7ae83000ecb06553eb85ef75292aacb59e813bee7a6a920a127dc983e76"
+        },
+        {
+          "path": "fixture-audit/results.json",
+          "sha256": "6b84c4085fb6f16c103bd8d16b0e22e432d679f38c41439b9bb122cdae4a456d"
+        },
+        {
+          "path": "playwright-report/sync-production.json",
+          "sha256": "fedaed82cd4ec1dcb7f8f0b058295b8fdea2742c20d9a21e440abb44f94ffa55"
+        },
+        {
+          "path": "playwright-report/server-3105.json",
+          "sha256": "fce3283da6ea286396b301806f56f917821968ee183aa54e413ef1ffdcdbb9e9"
+        },
+        {
+          "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production/fixture-evidence.json",
+          "sha256": "3d4db8c1e0d2aa3411748c77082d157f202c11c9dc7482a96fa2312a222d8d26"
+        },
+        {
+          "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production/sync-diagnostics.json",
+          "sha256": "22feb83e06c86d6ee32364c3f64552e10a8d40f58ebf4323218f3d11e1e17671"
+        },
+        {
+          "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production-repeat1/fixture-evidence.json",
+          "sha256": "dfae8d373b0610c459b619e97a8d2c3f6ce1d58d6f1f5203d90d35ecea21b8b9"
+        },
+        {
+          "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production-repeat1/sync-diagnostics.json",
+          "sha256": "b855c8967bd029a6a3937d8838383d935e5e388c4d4f55b690306909a43ffd69"
+        },
+        {
+          "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production-repeat1/fixture-evidence.json",
+          "sha256": "d37c6f28f10de4c1ec73898acf218e9e85c43582817bdeef9885e99f4cc062a5"
+        },
+        {
+          "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production-repeat1/sync-diagnostics.json",
+          "sha256": "9b76cd30a8b07424c778810b0d4112e0150a2133feb0483c67fe276439d3210a"
+        },
+        {
+          "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production/fixture-evidence.json",
+          "sha256": "068a9e9cd6db329af257d1377a5b8a1ca36385e05952d0b914265a90c9945126"
+        },
+        {
+          "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production/sync-diagnostics.json",
+          "sha256": "db28fae9542200f0316873d15f33a42a22a6260fb9ddff26943501a4c17e0930"
+        }
+      ]
+    }
+  ]
+}

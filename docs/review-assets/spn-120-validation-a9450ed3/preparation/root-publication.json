@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-14T21:20:18.078Z",
+  "metadataUpdatedAt": "2026-11-14T21:18:45Z",
+  "observationThrough": "2026-11-14T21:20:02Z",
+  "observedNewOldHeadMetadataRuns": 0,
+  "noCausalExplanationClaimed": true,
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "priorRemote": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "reviewArchive": "8979f8f8bed9ad53ee354625e00dbde0c3d1e93b",
+  "archivePublished": true,
+  "bodyByteVerified": true,
+  "bodySHA256": "ed6c7151b97e2f9e53665b19964d8ffcb7fb6bc4f91857b23f6667b9026f6c05",
+  "reviews": [
+    {
+      "reviewer": "/root/spn120_current_a",
+      "score": 100
+    },
+    {
+      "reviewer": "/root/spn120_current_b",
+      "score": 100
+    }
+  ],
+  "sourcePushPending": false,
+  "sourcePublished": true,
+  "sourcePushEventAt": "2026-11-14T21:20:27Z",
+  "remoteSourceAndActualBaseVerified": true,
+  "originalRuns": {
+    "ci": 43642290667,
+    "storybook": 43642290711,
+    "desktop": 43642290703,
+    "spaces": 43642290705
+  },
+  "manualAudit": {
+    "intentAt": "2026-11-14T21:21:14.952Z",
+    "workflow": 403808598,
+    "ref": "codex/spn-120-fixture-reliability",
+    "source": "candidate",
+    "baseline": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+    "baselinePurpose": "eventBase only, not baseline execution",
+    "dispatchCountPlanned": 1,
+    "dispatchPending": false,
+    "dispatchCount": 1,
+    "run": 43642371547,
+    "cliExitCode": 0,
+    "output": "https://github.com/mxbaylee/spinel/actions/runs/43642371547",
+    "recordedAt": "2026-11-14T21:22:16.684Z"
+  }
+}

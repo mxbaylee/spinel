@@ -1,0 +1,30 @@
+﻿2026-11-14T21:26:10.9466893Z ##[group]Run comparison_status=0
+2026-11-14T21:26:10.9467173Z [36;1mcomparison_status=0[0m
+2026-11-14T21:26:10.9467351Z [36;1mbaseline=-[0m
+2026-11-14T21:26:10.9467513Z [36;1mexpected_baseline=skipped[0m
+2026-11-14T21:26:10.9467918Z [36;1mif [ "$PAIRED" = true ]; then baseline=baseline-callback-source/test-results/doc-callback-lifetimes; expected_baseline=success; fi[0m
+2026-11-14T21:26:10.9468395Z [36;1mnode scripts/ci/doc-callback-comparison.ts "$PRESET" \[0m
+2026-11-14T21:26:10.9468635Z [36;1m  "$baseline" \[0m
+2026-11-14T21:26:10.9468821Z [36;1m  test-results/doc-callback-lifetimes \[0m
+2026-11-14T21:26:10.9469120Z [36;1m  "test-results/spn113-comparison-$PRESET.json" || comparison_status=$?[0m
+2026-11-14T21:26:10.9469500Z [36;1mif [ "$BASELINE_OUTCOME" != "$expected_baseline" ] || [ "$CANDIDATE_OUTCOME" != success ]; then[0m
+2026-11-14T21:26:10.9469965Z [36;1m  echo "::error::Callback browser run failed or was skipped: baseline=$BASELINE_OUTCOME candidate=$CANDIDATE_OUTCOME"[0m
+2026-11-14T21:26:10.9470355Z [36;1m  exit 1[0m
+2026-11-14T21:26:10.9470498Z [36;1mfi[0m
+2026-11-14T21:26:10.9470645Z [36;1mexit "$comparison_status"[0m
+2026-11-14T21:26:10.9498948Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:26:10.9499162Z env:
+2026-11-14T21:26:10.9499327Z   PRESET: desktop
+2026-11-14T21:26:10.9499482Z   VITE_SYNC_EVIDENCE: 0
+2026-11-14T21:26:10.9499690Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-14T21:26:10.9499876Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-14T21:26:10.9500187Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-14T21:26:10.9500494Z   SPINEL_TRACE_PROCESSOR: /home/runner/work/_temp/spinel-trace-processor
+2026-11-14T21:26:10.9500944Z   PAIRED: true
+2026-11-14T21:26:10.9501106Z   BASELINE_OUTCOME: success
+2026-11-14T21:26:10.9501281Z   CANDIDATE_OUTCOME: success
+2026-11-14T21:26:10.9501451Z ##[endgroup]
+2026-11-14T21:26:26.8538047Z {
+2026-11-14T21:26:26.8538386Z   "accepted": true,
+2026-11-14T21:26:26.8538621Z   "failures": []
+2026-11-14T21:26:26.8538812Z }

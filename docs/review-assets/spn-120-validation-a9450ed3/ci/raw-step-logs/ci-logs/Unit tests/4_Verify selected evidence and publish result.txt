@@ -1,0 +1,186 @@
+﻿2026-11-14T21:27:35.4813698Z ##[group]Run node scripts/ci/coverage-result.ts unit
+2026-11-14T21:27:35.4814205Z [36;1mnode scripts/ci/coverage-result.ts unit[0m
+2026-11-14T21:27:35.4869844Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:27:35.4870117Z env:
+2026-11-14T21:27:35.4870325Z   CLASSIFICATION: success
+2026-11-14T21:27:35.4883322Z   COVERAGE_PLAN: {"version":1,"event":"pull_request","action":"synchronize","base":"c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423","head":"a9450ed32a55c1689fe46ebd575e45ff0fb66209","tested":"9006a831d6ff54bcdd5e37a67af40780f22b3c2c","mode":"full","labels":[],"paths":null,"suites":{"backlog":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"pull-request":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"lint":{"selected":true,"dependencies":["complete immutable change range and current event metadata"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"typecheck":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"unit-tests":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"lib-test-run":{"selected":true,"dependencies":["lib/**","scripts/dependencies/**","package{,-lock}.json","vitest.config.ts","tsconfig.json",".nvmrc",".github/workflows/ci.yml"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"playwright-run":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"container-smoke":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"restore-timing":{"selected":true,"dependencies":["server/**","src/{server,shared}/**","lib/**","web/** and src/ui/** (shared application/authentication bundle)","e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)","runtime/build/dependency/workflow inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"sync-transition":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"doc-responsiveness":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"doc-callback-lifetimes":{"selected":true,"dependencies":["all application, auth, persistence, sync, runtime, build, dependency and harness inputs"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"responsiveness-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"callback-baseline":{"selected":true,"dependencies":["web/**","server/**","lib/**","e2e/**","src/shared/**","src/server/{sync,history,collaboration}/**","scripts/{ci,dependencies,sync-transition}/**","build/runtime/dependency/workflow configuration"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."},"phone-compatibility":{"selected":true,"dependencies":["full plan backstop; ordinary phone owners remain in routine browser coverage"],"inputs":[],"reason":"Immutable range or event labels unavailable; full coverage."}}}
+2026-11-14T21:27:35.4897167Z   COVERAGE_PLAN_SHA256: f2c922d09545798baa889498207206465ac92d6a5af1cd931461c590f73a7b7a
+2026-11-14T21:27:35.4897639Z   COVERAGE_RESULTS: {"unit-tests":"success"}
+2026-11-14T21:27:35.4898099Z ##[endgroup]
+2026-11-14T21:27:35.5765429Z {
+2026-11-14T21:27:35.5766234Z   "passed": true,
+2026-11-14T21:27:35.5766733Z   "evidence": {
+2026-11-14T21:27:35.5767557Z     "planSha256": "f2c922d09545798baa889498207206465ac92d6a5af1cd931461c590f73a7b7a",
+2026-11-14T21:27:35.5768570Z     "plan": {
+2026-11-14T21:27:35.5769058Z       "version": 1,
+2026-11-14T21:27:35.5769599Z       "event": "pull_request",
+2026-11-14T21:27:35.5770197Z       "action": "synchronize",
+2026-11-14T21:27:35.5770914Z       "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+2026-11-14T21:27:35.5771719Z       "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+2026-11-14T21:27:35.5772919Z       "tested": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+2026-11-14T21:27:35.5773521Z       "mode": "full",
+2026-11-14T21:27:35.5773951Z       "labels": [],
+2026-11-14T21:27:35.5774446Z       "paths": null,
+2026-11-14T21:27:35.5774991Z       "suites": {
+2026-11-14T21:27:35.5775593Z         "backlog": {
+2026-11-14T21:27:35.5776149Z           "selected": true,
+2026-11-14T21:27:35.5776875Z           "dependencies": [
+2026-11-14T21:27:35.5777599Z             "complete immutable change range and current event metadata"
+2026-11-14T21:27:35.5778404Z           ],
+2026-11-14T21:27:35.5778645Z           "inputs": [],
+2026-11-14T21:27:35.5779051Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5779440Z         },
+2026-11-14T21:27:35.5779642Z         "pull-request": {
+2026-11-14T21:27:35.5779882Z           "selected": true,
+2026-11-14T21:27:35.5780131Z           "dependencies": [
+2026-11-14T21:27:35.5780522Z             "complete immutable change range and current event metadata"
+2026-11-14T21:27:35.5780896Z           ],
+2026-11-14T21:27:35.5781098Z           "inputs": [],
+2026-11-14T21:27:35.5781479Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5781844Z         },
+2026-11-14T21:27:35.5782030Z         "lint": {
+2026-11-14T21:27:35.5782235Z           "selected": true,
+2026-11-14T21:27:35.5782464Z           "dependencies": [
+2026-11-14T21:27:35.5782819Z             "complete immutable change range and current event metadata"
+2026-11-14T21:27:35.5783202Z           ],
+2026-11-14T21:27:35.5783400Z           "inputs": [],
+2026-11-14T21:27:35.5783784Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5784239Z         },
+2026-11-14T21:27:35.5784565Z         "typecheck": {
+2026-11-14T21:27:35.5784933Z           "selected": true,
+2026-11-14T21:27:35.5785169Z           "dependencies": [
+2026-11-14T21:27:35.5785650Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5786152Z           ],
+2026-11-14T21:27:35.5786350Z           "inputs": [],
+2026-11-14T21:27:35.5786727Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5787095Z         },
+2026-11-14T21:27:35.5787283Z         "unit-tests": {
+2026-11-14T21:27:35.5787508Z           "selected": true,
+2026-11-14T21:27:35.5787740Z           "dependencies": [
+2026-11-14T21:27:35.5788884Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5789828Z           ],
+2026-11-14T21:27:35.5790178Z           "inputs": [],
+2026-11-14T21:27:35.5790824Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5791466Z         },
+2026-11-14T21:27:35.5791791Z         "lib-test-run": {
+2026-11-14T21:27:35.5792188Z           "selected": true,
+2026-11-14T21:27:35.5792581Z           "dependencies": [
+2026-11-14T21:27:35.5793247Z             "lib/**",
+2026-11-14T21:27:35.5793672Z             "scripts/dependencies/**",
+2026-11-14T21:27:35.5794187Z             "package{,-lock}.json",
+2026-11-14T21:27:35.5794726Z             "vitest.config.ts",
+2026-11-14T21:27:35.5795132Z             "tsconfig.json",
+2026-11-14T21:27:35.5795576Z             ".nvmrc",
+2026-11-14T21:27:35.5796040Z             ".github/workflows/ci.yml"
+2026-11-14T21:27:35.5796577Z           ],
+2026-11-14T21:27:35.5797041Z           "inputs": [],
+2026-11-14T21:27:35.5797985Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5798770Z         },
+2026-11-14T21:27:35.5799161Z         "playwright-run": {
+2026-11-14T21:27:35.5799660Z           "selected": true,
+2026-11-14T21:27:35.5800108Z           "dependencies": [
+2026-11-14T21:27:35.5801062Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5801932Z           ],
+2026-11-14T21:27:35.5802627Z           "inputs": [],
+2026-11-14T21:27:35.5803391Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5804148Z         },
+2026-11-14T21:27:35.5804563Z         "container-smoke": {
+2026-11-14T21:27:35.5805000Z           "selected": true,
+2026-11-14T21:27:35.5805539Z           "dependencies": [
+2026-11-14T21:27:35.5806468Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5807252Z           ],
+2026-11-14T21:27:35.5807592Z           "inputs": [],
+2026-11-14T21:27:35.5808446Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5809092Z         },
+2026-11-14T21:27:35.5809399Z         "restore-timing": {
+2026-11-14T21:27:35.5809760Z           "selected": true,
+2026-11-14T21:27:35.5810123Z           "dependencies": [
+2026-11-14T21:27:35.5810478Z             "server/**",
+2026-11-14T21:27:35.5810885Z             "src/{server,shared}/**",
+2026-11-14T21:27:35.5811312Z             "lib/**",
+2026-11-14T21:27:35.5811867Z             "web/** and src/ui/** (shared application/authentication bundle)",
+2026-11-14T21:27:35.5812814Z             "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+2026-11-14T21:27:35.5813528Z             "runtime/build/dependency/workflow inputs"
+2026-11-14T21:27:35.5813833Z           ],
+2026-11-14T21:27:35.5814041Z           "inputs": [],
+2026-11-14T21:27:35.5814435Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5814814Z         },
+2026-11-14T21:27:35.5815022Z         "sync-transition": {
+2026-11-14T21:27:35.5815278Z           "selected": true,
+2026-11-14T21:27:35.5815516Z           "dependencies": [
+2026-11-14T21:27:35.5815990Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5816430Z           ],
+2026-11-14T21:27:35.5816623Z           "inputs": [],
+2026-11-14T21:27:35.5817016Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5817383Z         },
+2026-11-14T21:27:35.5817610Z         "doc-responsiveness": {
+2026-11-14T21:27:35.5818141Z           "selected": true,
+2026-11-14T21:27:35.5818460Z           "dependencies": [
+2026-11-14T21:27:35.5818926Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5819369Z           ],
+2026-11-14T21:27:35.5819568Z           "inputs": [],
+2026-11-14T21:27:35.5819938Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5820306Z         },
+2026-11-14T21:27:35.5820531Z         "doc-callback-lifetimes": {
+2026-11-14T21:27:35.5820794Z           "selected": true,
+2026-11-14T21:27:35.5821034Z           "dependencies": [
+2026-11-14T21:27:35.5821494Z             "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5822163Z           ],
+2026-11-14T21:27:35.5822355Z           "inputs": [],
+2026-11-14T21:27:35.5822728Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5823102Z         },
+2026-11-14T21:27:35.5823335Z         "responsiveness-baseline": {
+2026-11-14T21:27:35.5823611Z           "selected": true,
+2026-11-14T21:27:35.5823844Z           "dependencies": [
+2026-11-14T21:27:35.5824068Z             "web/**",
+2026-11-14T21:27:35.5824278Z             "server/**",
+2026-11-14T21:27:35.5824495Z             "lib/**",
+2026-11-14T21:27:35.5824705Z             "e2e/**",
+2026-11-14T21:27:35.5824914Z             "src/shared/**",
+2026-11-14T21:27:35.5825230Z             "src/server/{sync,history,collaboration}/**",
+2026-11-14T21:27:35.5825627Z             "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-14T21:27:35.5826037Z             "build/runtime/dependency/workflow configuration"
+2026-11-14T21:27:35.5826349Z           ],
+2026-11-14T21:27:35.5826544Z           "inputs": [],
+2026-11-14T21:27:35.5827058Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5827424Z         },
+2026-11-14T21:27:35.5827770Z         "callback-baseline": {
+2026-11-14T21:27:35.5828604Z           "selected": true,
+2026-11-14T21:27:35.5829063Z           "dependencies": [
+2026-11-14T21:27:35.5829431Z             "web/**",
+2026-11-14T21:27:35.5829763Z             "server/**",
+2026-11-14T21:27:35.5830108Z             "lib/**",
+2026-11-14T21:27:35.5830417Z             "e2e/**",
+2026-11-14T21:27:35.5830741Z             "src/shared/**",
+2026-11-14T21:27:35.5831068Z             "src/server/{sync,history,collaboration}/**",
+2026-11-14T21:27:35.5831468Z             "scripts/{ci,dependencies,sync-transition}/**",
+2026-11-14T21:27:35.5831884Z             "build/runtime/dependency/workflow configuration"
+2026-11-14T21:27:35.5832196Z           ],
+2026-11-14T21:27:35.5832395Z           "inputs": [],
+2026-11-14T21:27:35.5832792Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5833201Z         },
+2026-11-14T21:27:35.5833442Z         "phone-compatibility": {
+2026-11-14T21:27:35.5833708Z           "selected": true,
+2026-11-14T21:27:35.5833939Z           "dependencies": [
+2026-11-14T21:27:35.5834401Z             "full plan backstop; ordinary phone owners remain in routine browser coverage"
+2026-11-14T21:27:35.5834831Z           ],
+2026-11-14T21:27:35.5835032Z           "inputs": [],
+2026-11-14T21:27:35.5835434Z           "reason": "Immutable range or event labels unavailable; full coverage."
+2026-11-14T21:27:35.5835868Z         }
+2026-11-14T21:27:35.5836131Z       }
+2026-11-14T21:27:35.5836449Z     },
+2026-11-14T21:27:35.5836769Z     "gateResults": {},
+2026-11-14T21:27:35.5837136Z     "results": [
+2026-11-14T21:27:35.5837464Z       {
+2026-11-14T21:27:35.5838000Z         "suite": "unit-tests",
+2026-11-14T21:27:35.5838432Z         "selected": true,
+2026-11-14T21:27:35.5838834Z         "dependencies": [
+2026-11-14T21:27:35.5839649Z           "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+2026-11-14T21:27:35.5840422Z         ],
+2026-11-14T21:27:35.5840764Z         "inputs": [],
+2026-11-14T21:27:35.5841717Z         "reason": "Immutable range or event labels unavailable; full coverage.",
+2026-11-14T21:27:35.5842638Z         "result": "success"
+2026-11-14T21:27:35.5843149Z       }
+2026-11-14T21:27:35.5843563Z     ]
+2026-11-14T21:27:35.5843940Z   }
+2026-11-14T21:27:35.5844345Z }

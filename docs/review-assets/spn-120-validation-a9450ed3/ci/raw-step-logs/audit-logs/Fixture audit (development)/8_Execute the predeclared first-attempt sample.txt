@@ -1,0 +1,25 @@
+﻿2026-11-14T21:27:42.4720766Z ##[group]Run node "$RUNNER_TEMP/fixture-audit.ts"
+2026-11-14T21:27:42.4721013Z [36;1mnode "$RUNNER_TEMP/fixture-audit.ts"[0m
+2026-11-14T21:27:42.4761002Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:27:42.4761146Z env:
+2026-11-14T21:27:42.4761258Z   AUDIT_SOURCE: candidate
+2026-11-14T21:27:42.4761416Z   AUDIT_HEAD: a9450ed32a55c1689fe46ebd575e45ff0fb66209
+2026-11-14T21:27:42.4761618Z   AUDIT_BASE: c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:27:42.4761798Z   SPINEL_E2E_PROJECT: development
+2026-11-14T21:27:42.4761941Z   VITE_DOC_SELECTION_EVIDENCE: 0
+2026-11-14T21:27:42.4762077Z ##[endgroup]
+2026-11-14T21:27:46.2540831Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:27:46.2541923Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:27:46.2542708Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:27:46.8458511Z 
+2026-11-14T21:27:46.8459247Z Running 8 tests using 1 worker
+2026-11-14T21:27:46.8459452Z 
+2026-11-14T21:27:47.1316362Z [1/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and editor behavior preserve the document
+2026-11-14T21:28:04.5539939Z [2/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and editor behavior preserve the document
+2026-11-14T21:28:20.6964124Z [3/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:28:43.2613112Z [4/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:29:06.8062448Z [5/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and editor behavior preserve the document
+2026-11-14T21:29:23.1641016Z [6/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and editor behavior preserve the document
+2026-11-14T21:29:39.8278572Z [7/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:30:03.4741450Z [8/8] [development] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:30:26.9785526Z   8 passed (2.7m)

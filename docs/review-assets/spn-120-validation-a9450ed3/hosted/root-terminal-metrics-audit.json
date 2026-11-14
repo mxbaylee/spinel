@@ -1,0 +1,30 @@
+{
+  "at": "2026-11-14T22:02:51.629Z",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "tested": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+  "presets": [
+    {
+      "preset": "desktop",
+      "physicalDevice": false,
+      "actualCases": 7,
+      "rawMeasurements": 8,
+      "worstInputP95Ms": 29.0999999998603,
+      "longestTaskMs": 51,
+      "worstFirstVerifiedBrowserLocalDrainMs": 352.10000000009313,
+      "latestReadUpperBoundMsDescriptiveOnly": 1196.8000000000466
+    },
+    {
+      "preset": "mobile",
+      "physicalDevice": false,
+      "actualCases": 7,
+      "rawMeasurements": 8,
+      "worstInputP95Ms": 76.10000000009313,
+      "longestTaskMs": 167,
+      "worstFirstVerifiedBrowserLocalDrainMs": 409.70000000018626,
+      "latestReadUpperBoundMsDescriptiveOnly": 5009.100000000093
+    }
+  ],
+  "completeRawMetrics": 16,
+  "candidateHarnessGitBindings": 120,
+  "originalAggregatesVerified": 3
+}

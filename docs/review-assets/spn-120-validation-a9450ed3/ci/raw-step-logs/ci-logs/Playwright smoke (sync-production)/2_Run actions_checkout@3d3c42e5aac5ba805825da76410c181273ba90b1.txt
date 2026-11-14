@@ -1,0 +1,126 @@
+﻿2026-11-14T21:23:13.8502318Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-14T21:23:13.8503257Z with:
+2026-11-14T21:23:13.8503688Z   persist-credentials: false
+2026-11-14T21:23:13.8504403Z   repository: mxbaylee/spinel
+2026-11-14T21:23:13.8507698Z   token: ***
+2026-11-14T21:23:13.8508110Z   ssh-strict: true
+2026-11-14T21:23:13.8508552Z   ssh-user: git
+2026-11-14T21:23:13.8508955Z   clean: true
+2026-11-14T21:23:13.8509358Z   sparse-checkout-cone-mode: true
+2026-11-14T21:23:13.8509897Z   fetch-depth: 1
+2026-11-14T21:23:13.8510332Z   fetch-tags: false
+2026-11-14T21:23:13.8510986Z   show-progress: true
+2026-11-14T21:23:13.8511432Z   lfs: false
+2026-11-14T21:23:13.8511813Z   submodules: false
+2026-11-14T21:23:13.8512281Z   set-safe-directory: true
+2026-11-14T21:23:13.8512780Z   allow-unsafe-pr-checkout: false
+2026-11-14T21:23:13.8513507Z ##[endgroup]
+2026-11-14T21:23:16.0200814Z Syncing repository: mxbaylee/spinel
+2026-11-14T21:23:16.0202910Z ##[group]Getting Git version info
+2026-11-14T21:23:16.0203564Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-14T21:23:16.0204908Z [command]/usr/bin/git version
+2026-11-14T21:23:16.0210956Z git version 2.56.1
+2026-11-14T21:23:16.0224785Z ##[endgroup]
+2026-11-14T21:23:16.0231539Z Temporarily overriding HOME='/home/runner/work/_temp/c3308ef2-fd8f-45f3-8194-1f327f8f715f' before making global git config changes
+2026-11-14T21:23:16.0232476Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T21:23:16.0234574Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T21:23:16.0316869Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-14T21:23:16.0318767Z ##[group]Determining repository object format
+2026-11-14T21:23:16.0319860Z ##[endgroup]
+2026-11-14T21:23:16.0321015Z ##[group]Initializing the repository
+2026-11-14T21:23:16.0322432Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-14T21:23:16.0769715Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-14T21:23:16.0770677Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-14T21:23:16.0771219Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-14T21:23:16.0771601Z hint: call:
+2026-11-14T21:23:16.0771896Z hint:
+2026-11-14T21:23:16.0772257Z hint: 	git config --global init.defaultBranch <name>
+2026-11-14T21:23:16.0772596Z hint:
+2026-11-14T21:23:16.0772945Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-14T21:23:16.0773408Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-14T21:23:16.0773813Z hint:
+2026-11-14T21:23:16.0774094Z hint: 	git branch -m <name>
+2026-11-14T21:23:16.0774619Z hint:
+2026-11-14T21:23:16.0775031Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-14T21:23:16.0792719Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-14T21:23:16.0802334Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-14T21:23:16.0864167Z ##[endgroup]
+2026-11-14T21:23:16.0865320Z ##[group]Disabling automatic garbage collection
+2026-11-14T21:23:16.0865900Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-14T21:23:16.0894731Z ##[endgroup]
+2026-11-14T21:23:16.0896194Z ##[group]Setting up auth
+2026-11-14T21:23:16.0896913Z Removing SSH command configuration
+2026-11-14T21:23:16.0899583Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T21:23:16.0921925Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T21:23:16.3066652Z Removing HTTP extra header
+2026-11-14T21:23:16.3071380Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T21:23:16.3096823Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T21:23:16.3276027Z Removing includeIf entries pointing to credentials config files
+2026-11-14T21:23:16.3279923Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T21:23:16.3303221Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T21:23:16.3483179Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-14T21:23:16.3511678Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:16.3532315Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:16.3557064Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:16.3577117Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:16.3596278Z ##[endgroup]
+2026-11-14T21:23:16.3596726Z ##[group]Fetching the repository
+2026-11-14T21:23:16.3601301Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9006a831d6ff54bcdd5e37a67af40780f22b3c2c:refs/remotes/pull/228/merge
+2026-11-14T21:23:20.3622227Z From https://github.com/mxbaylee/spinel
+2026-11-14T21:23:20.3622811Z  * [new ref]         9006a831d6ff54bcdd5e37a67af40780f22b3c2c -> pull/228/merge
+2026-11-14T21:23:20.3625536Z ##[endgroup]
+2026-11-14T21:23:20.3626082Z ##[group]Determining the checkout info
+2026-11-14T21:23:20.3626569Z ##[endgroup]
+2026-11-14T21:23:20.3630584Z [command]/usr/bin/git sparse-checkout disable
+2026-11-14T21:23:20.3687012Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-14T21:23:20.3711194Z ##[group]Checking out the ref
+2026-11-14T21:23:20.3712003Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/228/merge
+2026-11-14T21:23:20.9900962Z Note: switching to 'refs/remotes/pull/228/merge'.
+2026-11-14T21:23:20.9901442Z 
+2026-11-14T21:23:20.9901667Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-14T21:23:20.9902406Z changes and commit them, and you can discard any commits you make in this
+2026-11-14T21:23:20.9902898Z state without impacting any branches by switching back to a branch.
+2026-11-14T21:23:20.9903122Z 
+2026-11-14T21:23:20.9903307Z If you want to create a new branch to retain commits you create, you may
+2026-11-14T21:23:20.9903732Z do so (now or later) by using -c with the switch command. Example:
+2026-11-14T21:23:20.9903966Z 
+2026-11-14T21:23:20.9904099Z   git switch -c <new-branch-name>
+2026-11-14T21:23:20.9904395Z 
+2026-11-14T21:23:20.9904584Z Or undo this operation with:
+2026-11-14T21:23:20.9904765Z 
+2026-11-14T21:23:20.9904881Z   git switch -
+2026-11-14T21:23:20.9905078Z 
+2026-11-14T21:23:20.9905245Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-14T21:23:20.9905534Z 
+2026-11-14T21:23:20.9905804Z HEAD is now at 9006a83 Merge a9450ed32a55c1689fe46ebd575e45ff0fb66209 into c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:23:20.9930142Z ##[endgroup]
+2026-11-14T21:23:20.9985053Z [command]/usr/bin/git log -1 --format=%H
+2026-11-14T21:23:21.0005045Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c
+2026-11-14T21:23:21.0011278Z ##[group]Removing auth
+2026-11-14T21:23:21.0011708Z Removing SSH command configuration
+2026-11-14T21:23:21.0014890Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T21:23:21.0037179Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T21:23:21.0228391Z Removing HTTP extra header
+2026-11-14T21:23:21.0232536Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T21:23:21.0254632Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T21:23:21.0435328Z Removing includeIf entries pointing to credentials config files
+2026-11-14T21:23:21.0435965Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T21:23:21.0452085Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T21:23:21.0452758Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T21:23:21.0453322Z includeif.gitdir:/github/workspace/.git.path
+2026-11-14T21:23:21.0453757Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T21:23:21.0458675Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T21:23:21.0474194Z /home/runner/work/_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:21.0481401Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-87abc782\-0715\-4e43\-a870\-1c59b6c0188e\.config
+2026-11-14T21:23:21.0506303Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T21:23:21.0523340Z /home/runner/work/_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:21.0528759Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-87abc782\-0715\-4e43\-a870\-1c59b6c0188e\.config
+2026-11-14T21:23:21.0551159Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-14T21:23:21.0566993Z /github/runner_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:21.0571188Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-87abc782\-0715\-4e43\-a870\-1c59b6c0188e\.config
+2026-11-14T21:23:21.0594498Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T21:23:21.0611769Z /github/runner_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config
+2026-11-14T21:23:21.0616096Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-87abc782\-0715\-4e43\-a870\-1c59b6c0188e\.config
+2026-11-14T21:23:21.0637994Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T21:23:21.0822593Z Removing credentials config '/home/runner/work/_temp/git-credentials-87abc782-0715-4e43-a870-1c59b6c0188e.config'
+2026-11-14T21:23:21.0828748Z ##[endgroup]

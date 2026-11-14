@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T21:03:04.769Z",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "testedLocalSource": "5669bcac09db35180c4a19556849028b38ad40cd",
+  "runtimeInputHashesVerified": 1396,
+  "inputMapSHA256": "ea260a66688dd64a95f1c85b010b75dfac0915d98aca9df75a9f6815a93289fd",
+  "docsOnlySinceTests": true,
+  "clean": true,
+  "mainAncestor": true,
+  "bookkeepingVerified": true,
+  "workflowAndSyncConflictResolutionRead": true
+}

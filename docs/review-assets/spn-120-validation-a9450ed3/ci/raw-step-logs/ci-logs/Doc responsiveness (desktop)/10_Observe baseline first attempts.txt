@@ -1,0 +1,39 @@
+﻿2026-11-14T21:23:14.4324227Z ##[group]Run npx playwright test --project=doc-responsiveness --grep "$PRESET sustained native typing"
+2026-11-14T21:23:14.4324961Z [36;1mnpx playwright test --project=doc-responsiveness --grep "$PRESET sustained native typing"[0m
+2026-11-14T21:23:14.4354247Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:23:14.4354516Z env:
+2026-11-14T21:23:14.4354713Z   PRESET: desktop
+2026-11-14T21:23:14.4354924Z   VITE_SYNC_EVIDENCE: 0
+2026-11-14T21:23:14.4355161Z   VITE_DOC_SELECTION_EVIDENCE: 0
+2026-11-14T21:23:14.4355423Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-14T21:23:14.4355715Z   SPINEL_E2E_PROJECT: doc-responsiveness
+2026-11-14T21:23:14.4355987Z   SPN108_BASELINE: 1
+2026-11-14T21:23:14.4356193Z ##[endgroup]
+2026-11-14T21:23:18.2737285Z GitCommitInfo: timeout of 3000ms exceeded while running "git fetch origin c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423 --no-auto-maintenance --no-auto-gc --no-tags --no-recurse-submodules --depth=1"
+2026-11-14T21:23:19.2365279Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2366780Z 
+2026-11-14T21:23:19.2367971Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2370058Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2380525Z 
+2026-11-14T21:23:19.2387413Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2392835Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2393701Z 
+2026-11-14T21:23:19.2394420Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2394912Z 
+2026-11-14T21:23:19.2395175Z 
+2026-11-14T21:23:19.2408229Z 
+2026-11-14T21:23:19.2409283Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2410391Z 
+2026-11-14T21:23:19.2411474Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:19.2412377Z 
+2026-11-14T21:23:19.2412911Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:23:21.0608292Z 
+2026-11-14T21:23:21.0608921Z Running 4 tests using 1 worker
+2026-11-14T21:23:21.0609270Z 
+2026-11-14T21:23:21.7911745Z [1/4] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › desktop sustained native typing plain-1
+2026-11-14T21:25:24.8848758Z [2/4] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › desktop sustained native typing plain-2
+2026-11-14T21:27:25.7365756Z [3/4] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › desktop sustained native typing plain-3
+2026-11-14T21:29:26.8135851Z [4/4] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › desktop sustained native typing profile
+2026-11-14T21:31:30.7346211Z   Slow test file: [doc-responsiveness] › e2e/doc-responsiveness.spec.ts (8.1m)
+2026-11-14T21:31:30.7347464Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+2026-11-14T21:31:30.7348318Z   4 passed (8.3m)

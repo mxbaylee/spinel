@@ -1,0 +1,16 @@
+﻿2026-11-14T21:22:01.7005159Z ##[group]Run cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-proto.ts e2e/doc-responsiveness-callback-converter.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
+2026-11-14T21:22:01.7007028Z [36;1mcp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-proto.ts e2e/doc-responsiveness-callback-converter.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/[0m
+2026-11-14T21:22:01.7008348Z [36;1mcp scripts/ci/doc-callback-lifetimes.ts scripts/ci/doc-trace-processor.ts baseline-callback-source/scripts/ci/[0m
+2026-11-14T21:22:01.7008883Z [36;1mcp web/docResponsivenessEvidence.ts baseline-callback-source/web/[0m
+2026-11-14T21:22:01.7009498Z [36;1mcp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-callback-source/src/ui/[0m
+2026-11-14T21:22:01.7010049Z [36;1mcp playwright.config.ts baseline-callback-source/playwright.config.ts[0m
+2026-11-14T21:22:01.7010482Z [36;1mcp package-lock.json baseline-callback-source/package-lock.json[0m
+2026-11-14T21:22:01.7039295Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:22:01.7039561Z env:
+2026-11-14T21:22:01.7039825Z   PRESET: mobile
+2026-11-14T21:22:01.7040078Z   VITE_SYNC_EVIDENCE: 0
+2026-11-14T21:22:01.7040355Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-14T21:22:01.7040628Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-14T21:22:01.7040907Z   SPINEL_E2E_PROJECT: doc-callback-lifetimes
+2026-11-14T21:22:01.7041272Z   SPINEL_TRACE_PROCESSOR: /home/runner/work/_temp/spinel-trace-processor
+2026-11-14T21:22:01.7041619Z ##[endgroup]

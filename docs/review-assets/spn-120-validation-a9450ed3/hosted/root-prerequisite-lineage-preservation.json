@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T21:55:29.767Z",
+  "tag": "archive/spn-120-prerequisites-2206e7d2-20261114",
+  "commit": "2206e7d26a5401de6fc2fcf5cfe287f355baff69",
+  "directParent": "2405014e49fd0b5c0bfbd53ef2c7c63f6bea8131",
+  "worktree": "/Users/mxbaylee/projects/spinel-spn-120-prerequisites",
+  "originalHeadAndCleanStatusVerified": true,
+  "localAndRemoteTagInitiallyAbsent": true,
+  "localRefCreatedWithExpectedAbsentGuard": true,
+  "pushExitCode": 0,
+  "remoteLsRemoteVerified": true,
+  "scope": "Immutable historical prerequisite preservation only; no implementation landing or acceptance claim; no branch deletion."
+}

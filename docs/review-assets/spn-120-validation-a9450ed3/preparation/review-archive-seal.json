@@ -1,0 +1,22 @@
+{
+  "sealedAt": "2026-11-14T21:16:15.870286+00:00",
+  "parent": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "commit": "8979f8f8bed9ad53ee354625e00dbde0c3d1e93b",
+  "tree": "486ece4e430a99142866b5ded9aa88c7abbf8734",
+  "path": "docs/review-assets/spn-120-review-a9450ed3",
+  "tagReservation": "archive/spn-120-review-a9450ed3-20261114",
+  "files": 1626,
+  "payloads": 1625,
+  "bytes": 19918589,
+  "manifestSha256": "fb331f0713fe1e65a0158d4d3e0a4f150f539f88f9c93757cce174b5fd0f246c",
+  "bodySha256": "ed6c7151b97e2f9e53665b19964d8ffcb7fb6bc4f91857b23f6667b9026f6c05",
+  "readmeSha256": "613e4fd6992d58687f14b835162e7d792d4a191de228277e0ccb5304bebcb337",
+  "packetManifestSha256": "af3f4f0fcb5ff3a1e379ec8ef0e0809c7ba3905f914838a50b628922442082dc",
+  "fullPacketBindings": 1561,
+  "executedInputMapSha256": "ea260a66688dd64a95f1c85b010b75dfac0915d98aca9df75a9f6815a93289fd",
+  "sourceUnchangedAndClean": true,
+  "onlyArchiveAdditions": true,
+  "remoteActionsPerformed": false,
+  "rootAuditPublicationPending": true
+}

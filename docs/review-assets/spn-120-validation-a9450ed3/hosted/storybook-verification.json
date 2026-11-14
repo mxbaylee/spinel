@@ -1,0 +1,120 @@
+{
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "testedMerge": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+  "tree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "run": 43642290711,
+  "attempt": 1,
+  "indexArtifactId": 14132995343,
+  "indexSha256": "3caac902f1cff72e598b712ad18eb7c455d0c85ec7d980ec0fcdcb96ea56e29e",
+  "indexEntryCount": 1078,
+  "checkedSets": [
+    {
+      "artifactId": 14133500983,
+      "name": "storybook-check-mobile-dark",
+      "zipSha256": "4733c0d3d6e811e1b1e5716c0499cd3c71d9bb5e9d17ca8e521709aed41ec9a3",
+      "manifestSha256": "9c6c505a015a805515970a99101b1e7f2c5d977e02d4e7cd7b7253cf0402506d",
+      "requested": 1078,
+      "checked": 1078,
+      "exactBuiltCatalogSet": true,
+      "failures": 0,
+      "captureScreenshots": false
+    },
+    {
+      "artifactId": 14133261938,
+      "name": "storybook-check-mobile-light",
+      "zipSha256": "985b10f8d8a565e6a20ba801bda7b9d192368ee84166d99af7361eb29290b122",
+      "manifestSha256": "4c5a5ea7436090e923fccdbbb54af38d4c64df690f54de5865125b6239b2775b",
+      "requested": 1078,
+      "checked": 1078,
+      "exactBuiltCatalogSet": true,
+      "failures": 0,
+      "captureScreenshots": false
+    },
+    {
+      "artifactId": 14132738005,
+      "name": "storybook-check-desktop-light",
+      "zipSha256": "def0bf95156182f05c2a6bbdae12bf8e03878e2e8b3bb430b57f007397ac05a1",
+      "manifestSha256": "011b9745bb9a7ba8edf3b61ba42819693eaee8f405953b9d5953bef5ccff75d9",
+      "requested": 1078,
+      "checked": 1078,
+      "exactBuiltCatalogSet": true,
+      "failures": 0,
+      "captureScreenshots": false
+    },
+    {
+      "artifactId": 14132714912,
+      "name": "storybook-check-tablet",
+      "zipSha256": "eddb60f78ba25a8bd251fca0f7aeffead71618ccd70d1d523657624acda74bb7",
+      "manifestSha256": "3a29626ff552cddd292d217186bea667d3458cb0ca950c72d996cae9e435a426",
+      "requested": 1078,
+      "checked": 1078,
+      "exactBuiltCatalogSet": true,
+      "failures": 0,
+      "captureScreenshots": false
+    },
+    {
+      "artifactId": 14132453884,
+      "name": "storybook-check-desktop-dark",
+      "zipSha256": "d4170c2d7c6165516f95452de057926ded211081f81e1281cd7167946476166b",
+      "manifestSha256": "242dfeb82734840656f3545dde155d0b4787191aad4fdf04bab21de00dd27c0c",
+      "requested": 1078,
+      "checked": 1078,
+      "exactBuiltCatalogSet": true,
+      "failures": 0,
+      "captureScreenshots": false
+    }
+  ],
+  "actualMergeCheckoutLogBindings": [
+    {
+      "member": "Review Storybook states and interactions/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 98,
+      "checkoutOutput": "2026-11-14T21:37:15.2936006Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:37:15.2910201Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Review Storybook mobile (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 98,
+      "checkoutOutput": "2026-11-14T21:28:05.2557123Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:28:05.2533756Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Review Storybook desktop (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 98,
+      "checkoutOutput": "2026-11-14T21:27:45.1797701Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:27:45.1765618Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Review Storybook tablet/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 98,
+      "checkoutOutput": "2026-11-14T21:27:29.8857127Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:27:29.8832264Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Review Storybook desktop (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 98,
+      "checkoutOutput": "2026-11-14T21:27:48.5861811Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:27:48.5830380Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Review Storybook mobile (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 98,
+      "checkoutOutput": "2026-11-14T21:27:31.8469244Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:27:31.8447210Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Build Storybook/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 100,
+      "checkoutOutput": "2026-11-14T21:21:42.8511190Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:21:42.8484899Z [command]/usr/bin/git log -1 --format=%H"
+    },
+    {
+      "member": "Classify changes/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "line": 308,
+      "checkoutOutput": "2026-11-14T21:21:09.7875433Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+      "command": "2026-11-14T21:21:09.7848674Z [command]/usr/bin/git log -1 --format=%H"
+    }
+  ],
+  "drawingCaseIds": [
+    "editor-sync-native--doc-drawing-capture"
+  ]
+}

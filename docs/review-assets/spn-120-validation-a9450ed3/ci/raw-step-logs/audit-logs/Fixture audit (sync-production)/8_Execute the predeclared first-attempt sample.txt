@@ -1,0 +1,39 @@
+﻿2026-11-14T21:25:00.4502672Z ##[group]Run node "$RUNNER_TEMP/fixture-audit.ts"
+2026-11-14T21:25:00.4503310Z [36;1mnode "$RUNNER_TEMP/fixture-audit.ts"[0m
+2026-11-14T21:25:00.4551149Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:25:00.4551403Z env:
+2026-11-14T21:25:00.4551877Z   AUDIT_SOURCE: candidate
+2026-11-14T21:25:00.4552159Z   AUDIT_HEAD: a9450ed32a55c1689fe46ebd575e45ff0fb66209
+2026-11-14T21:25:00.4552517Z   AUDIT_BASE: c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:25:00.4552841Z   SPINEL_E2E_PROJECT: sync-production
+2026-11-14T21:25:00.4553118Z   VITE_DOC_SELECTION_EVIDENCE: 0
+2026-11-14T21:25:00.4553355Z ##[endgroup]
+2026-11-14T21:25:04.4213437Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.4216954Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.4218529Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.9689271Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.9691087Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.9692877Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.9708116Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.9709767Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.9711318Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:05.6246145Z 
+2026-11-14T21:25:05.6246860Z Running 4 tests using 1 worker
+2026-11-14T21:25:05.6247156Z 
+2026-11-14T21:25:06.6466216Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:06.6467899Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:06.6469464Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:06.6470705Z 
+2026-11-14T21:25:06.6470960Z 
+2026-11-14T21:25:06.6470980Z 
+2026-11-14T21:25:06.7175153Z [1/4] [sync-production] › e2e/offline-recovery.spec.ts:398:5 › offline recovery copies › Recorded fixture first attempt › an unfinished native Sheet draft remains copyable before recovery freezes the queued edits
+2026-11-14T21:25:20.1343872Z [2/4] [sync-production] › e2e/sync-client.spec.ts:384:3 › Recorded fixture first attempt › native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits
+2026-11-14T21:25:36.0693062Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:36.0694739Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:36.0696280Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:36.0697056Z 
+2026-11-14T21:25:36.0697075Z 
+2026-11-14T21:25:36.0697085Z 
+2026-11-14T21:25:36.1510715Z [3/4] [sync-production] › e2e/offline-recovery.spec.ts:398:5 › offline recovery copies › Recorded fixture first attempt › an unfinished native Sheet draft remains copyable before recovery freezes the queued edits
+2026-11-14T21:25:48.8823184Z [4/4] [sync-production] › e2e/sync-client.spec.ts:384:3 › Recorded fixture first attempt › native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits
+2026-11-14T21:26:03.9124389Z   4 passed (1.0m)

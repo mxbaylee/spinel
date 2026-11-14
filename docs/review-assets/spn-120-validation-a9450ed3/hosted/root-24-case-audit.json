@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-14T21:31:39.131Z",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "run": 43642371547,
+  "attempt": 1,
+  "driverSHA256": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+  "projects": [
+    {
+      "project": "production",
+      "artifact": 14133235465,
+      "zipSHA256": "d3b3a01109ab31705ee9272ad25fa8f48df2d1e6c0ab470d5fc07fe7d99730a3",
+      "cases": 12,
+      "journals": 12,
+      "serverExit": 0,
+      "rawMembersVerified": 17
+    },
+    {
+      "project": "development",
+      "artifact": 14132439909,
+      "zipSHA256": "b11b8b7f09fda701156ce7a448a2ba7279960e3a09989f38144df6407fac6a74",
+      "cases": 8,
+      "journals": 8,
+      "serverExit": 0,
+      "rawMembersVerified": 13
+    },
+    {
+      "project": "sync-production",
+      "artifact": 14133240250,
+      "zipSHA256": "229868233d62a831869c5f8fb5a04cbe45f3859edfcedcd4e8462755e4c29516",
+      "cases": 4,
+      "journals": 4,
+      "serverExit": 0,
+      "rawMembersVerified": 9
+    }
+  ],
+  "total": 24,
+  "independentOriginalZipAndRawContractVerified": true
+}

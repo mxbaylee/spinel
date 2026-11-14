@@ -1,0 +1,78 @@
+{
+  "verifiedAt": "2026-11-14T21:28:20.347784+00:00",
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "run": 43642371547,
+  "attempt": 1,
+  "project": "sync-production",
+  "artifactId": 14133240250,
+  "zipSha256": "229868233d62a831869c5f8fb5a04cbe45f3859edfcedcd4e8462755e4c29516",
+  "actualFirstAttemptsPassed": 4,
+  "repetitionsPerCase": [
+    0,
+    1
+  ],
+  "scenarioRetries": 0,
+  "setupRecoveryAllowed": false,
+  "journalCount": 4,
+  "allCleanupErrors": 0,
+  "allJournalsDropped": 0,
+  "serverExpectedExitCode": 0,
+  "scope": "Sync sample only; full24 not yet claimed. Includes actual new bootstrap assertions in both native Doc repetitions.",
+  "independentRootAuditClaimed": false,
+  "payloads": [
+    {
+      "path": "fixture-audit/attempt-identities.json",
+      "sha256": "549f6ddb6dc2ebef46d6c88a972485953608cddf887fd037bbf24e515bf3fbd8"
+    },
+    {
+      "path": "fixture-audit/source.json",
+      "sha256": "fe2da7ae83000ecb06553eb85ef75292aacb59e813bee7a6a920a127dc983e76"
+    },
+    {
+      "path": "fixture-audit/results.json",
+      "sha256": "6b84c4085fb6f16c103bd8d16b0e22e432d679f38c41439b9bb122cdae4a456d"
+    },
+    {
+      "path": "playwright-report/sync-production.json",
+      "sha256": "fedaed82cd4ec1dcb7f8f0b058295b8fdea2742c20d9a21e440abb44f94ffa55"
+    },
+    {
+      "path": "playwright-report/server-3105.json",
+      "sha256": "fce3283da6ea286396b301806f56f917821968ee183aa54e413ef1ffdcdbb9e9"
+    },
+    {
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production/fixture-evidence.json",
+      "sha256": "3d4db8c1e0d2aa3411748c77082d157f202c11c9dc7482a96fa2312a222d8d26"
+    },
+    {
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production/sync-diagnostics.json",
+      "sha256": "22feb83e06c86d6ee32364c3f64552e10a8d40f58ebf4323218f3d11e1e17671"
+    },
+    {
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production-repeat1/fixture-evidence.json",
+      "sha256": "dfae8d373b0610c459b619e97a8d2c3f6ce1d58d6f1f5203d90d35ecea21b8b9"
+    },
+    {
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production-repeat1/sync-diagnostics.json",
+      "sha256": "b855c8967bd029a6a3937d8838383d935e5e388c4d4f55b690306909a43ffd69"
+    },
+    {
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production-repeat1/fixture-evidence.json",
+      "sha256": "d37c6f28f10de4c1ec73898acf218e9e85c43582817bdeef9885e99f4cc062a5"
+    },
+    {
+      "path": "test-results/sync-production/sync-client-Recorded-fixtu-2a31b-pture-actual-image-UI-edits-sync-production-repeat1/sync-diagnostics.json",
+      "sha256": "9b76cd30a8b07424c778810b0d4112e0150a2133feb0483c67fe276439d3210a"
+    },
+    {
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production/fixture-evidence.json",
+      "sha256": "068a9e9cd6db329af257d1377a5b8a1ca36385e05952d0b914265a90c9945126"
+    },
+    {
+      "path": "test-results/sync-production/offline-recovery-offline-r-c748c-ry-freezes-the-queued-edits-sync-production/sync-diagnostics.json",
+      "sha256": "db28fae9542200f0316873d15f33a42a22a6260fb9ddff26943501a4c17e0930"
+    }
+  ]
+}

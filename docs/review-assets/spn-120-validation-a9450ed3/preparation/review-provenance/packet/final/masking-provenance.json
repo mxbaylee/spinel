@@ -1,0 +1,61 @@
+{
+  "draftV1": "/tmp/spn120-review-packet-a9450ed3-v1",
+  "draftV1ManifestSha256": "1ef87bdba017b40d2d4df7152407b5e4475f80e2cb8749f5ade39d138244f152",
+  "v1WasNotProvidedToReviewers": true,
+  "corrections": [
+    {
+      "path": "AGENTS.md",
+      "kind": "Restored policy thresholds and full rubric; these are instructions, not historical numerical assessments."
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "kind": "Restored policy thresholds and full rubric; these are instructions, not historical numerical assessments."
+    },
+    {
+      "path": "docs/run-backlog.md",
+      "kind": "Restored policy thresholds and full rubric; these are instructions, not historical numerical assessments."
+    },
+    {
+      "path": "docs/todo/process.md",
+      "kind": "Restored policy thresholds and full rubric; these are instructions, not historical numerical assessments."
+    },
+    {
+      "path": "docs/implementation/backlog-workflow.md",
+      "kind": "Restored policy thresholds and full rubric; these are instructions, not historical numerical assessments."
+    },
+    {
+      "path": "docs/implementation/grooming-2026-11-02.md",
+      "kind": "Restored policy thresholds and full rubric; these are instructions, not historical numerical assessments."
+    },
+    {
+      "path": "docs/implementation/SPN-090.md",
+      "lines": [
+        2875,
+        2939,
+        4059
+      ],
+      "kind": "Restored actual passing-test counts and phase time budgets; not assessments."
+    },
+    {
+      "path": "docs/implementation/SPN-141.md",
+      "lines": [
+        108
+      ],
+      "kind": "Restored actual passing-test counts and phase time budgets; not assessments."
+    },
+    {
+      "path": "docs/implementation/SPN-160.md",
+      "lines": [
+        204,
+        301
+      ],
+      "kind": "Restored actual passing-test counts and phase time budgets; not assessments."
+    },
+    {
+      "path": "docs/design/component-review.md",
+      "kind": "Masked remaining prior component/deduction assessments; preserved findings and severity."
+    }
+  ],
+  "originalRepositoryUnchanged": true,
+  "substantiveFindingsAndActualMeasurementCountsRetained": true
+}

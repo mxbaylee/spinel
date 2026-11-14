@@ -1,0 +1,401 @@
+{
+  "total_count": 3,
+  "jobs": [
+    {
+      "id": 132592284424,
+      "run_id": 43642290703,
+      "workflow_name": "💻 Desktop offline",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43642290703",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe3x2zCA",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132592284424",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43642290703/job/132592284424",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T21:20:28Z",
+      "started_at": "2026-11-14T21:20:30Z",
+      "completed_at": "2026-11-14T21:23:07Z",
+      "name": "Native desktop offline (firefox, macos-26)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T21:20:31Z",
+          "completed_at": "2026-11-14T21:20:31Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T21:20:31Z",
+          "completed_at": "2026-11-14T21:20:41Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T21:20:41Z",
+          "completed_at": "2026-11-14T21:20:47Z"
+        },
+        {
+          "name": "Use current vendor stable browsers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-14T21:20:47Z",
+          "completed_at": "2026-11-14T21:21:27Z"
+        },
+        {
+          "name": "Prove same-profile ordinary Safari restart",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-14T21:21:27Z",
+          "completed_at": "2026-11-14T21:21:27Z"
+        },
+        {
+          "name": "Install locked application dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-14T21:21:27Z",
+          "completed_at": "2026-11-14T21:21:40Z"
+        },
+        {
+          "name": "Build the production offline runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T21:21:40Z",
+          "completed_at": "2026-11-14T21:21:42Z"
+        },
+        {
+          "name": "Trust the disposable loopback fixture certificate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T21:21:42Z",
+          "completed_at": "2026-11-14T21:21:43Z"
+        },
+        {
+          "name": "Verify retained documents, edits, images and reconnect",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T21:21:43Z",
+          "completed_at": "2026-11-14T21:23:02Z"
+        },
+        {
+          "name": "Retain native profile and application evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T21:23:02Z",
+          "completed_at": "2026-11-14T21:23:03Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-14T21:23:03Z",
+          "completed_at": "2026-11-14T21:23:03Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-14T21:23:03Z",
+          "completed_at": "2026-11-14T21:23:04Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-14T21:23:04Z",
+          "completed_at": "2026-11-14T21:23:06Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132592284424",
+      "labels": [
+        "macos-26"
+      ],
+      "runner_id": 1000054092,
+      "runner_name": "GitHub Actions 1000054092",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132592284716,
+      "run_id": 43642290703,
+      "workflow_name": "💻 Desktop offline",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43642290703",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe3x20LA",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132592284716",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43642290703/job/132592284716",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T21:20:28Z",
+      "started_at": "2026-11-14T21:20:31Z",
+      "completed_at": "2026-11-14T21:23:51Z",
+      "name": "Native desktop offline (chrome, macos-26)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T21:20:31Z",
+          "completed_at": "2026-11-14T21:20:32Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T21:20:32Z",
+          "completed_at": "2026-11-14T21:20:42Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T21:20:42Z",
+          "completed_at": "2026-11-14T21:20:56Z"
+        },
+        {
+          "name": "Use current vendor stable browsers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-14T21:20:56Z",
+          "completed_at": "2026-11-14T21:22:17Z"
+        },
+        {
+          "name": "Prove same-profile ordinary Safari restart",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-14T21:22:17Z",
+          "completed_at": "2026-11-14T21:22:17Z"
+        },
+        {
+          "name": "Install locked application dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-14T21:22:17Z",
+          "completed_at": "2026-11-14T21:22:34Z"
+        },
+        {
+          "name": "Build the production offline runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T21:22:34Z",
+          "completed_at": "2026-11-14T21:22:37Z"
+        },
+        {
+          "name": "Trust the disposable loopback fixture certificate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T21:22:37Z",
+          "completed_at": "2026-11-14T21:22:37Z"
+        },
+        {
+          "name": "Verify retained documents, edits, images and reconnect",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T21:22:37Z",
+          "completed_at": "2026-11-14T21:23:46Z"
+        },
+        {
+          "name": "Retain native profile and application evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T21:23:46Z",
+          "completed_at": "2026-11-14T21:23:47Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-14T21:23:47Z",
+          "completed_at": "2026-11-14T21:23:47Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-14T21:23:47Z",
+          "completed_at": "2026-11-14T21:23:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-14T21:23:48Z",
+          "completed_at": "2026-11-14T21:23:49Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132592284716",
+      "labels": [
+        "macos-26"
+      ],
+      "runner_id": 1000054097,
+      "runner_name": "GitHub Actions 1000054097",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 132592284723,
+      "run_id": 43642290703,
+      "workflow_name": "💻 Desktop offline",
+      "head_branch": "codex/spn-120-fixture-reliability",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43642290703",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAe3x20Mw",
+      "head_sha": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132592284723",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43642290703/job/132592284723",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T21:20:28Z",
+      "started_at": "2026-11-14T21:20:31Z",
+      "completed_at": "2026-11-14T21:27:57Z",
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-14T21:20:32Z",
+          "completed_at": "2026-11-14T21:20:34Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-14T21:20:34Z",
+          "completed_at": "2026-11-14T21:20:43Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-14T21:20:43Z",
+          "completed_at": "2026-11-14T21:20:56Z"
+        },
+        {
+          "name": "Use current vendor stable browsers",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-14T21:20:56Z",
+          "completed_at": "2026-11-14T21:21:44Z"
+        },
+        {
+          "name": "Prove same-profile ordinary Safari restart",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-14T21:21:44Z",
+          "completed_at": "2026-11-14T21:22:03Z"
+        },
+        {
+          "name": "Install locked application dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-14T21:22:03Z",
+          "completed_at": "2026-11-14T21:22:40Z"
+        },
+        {
+          "name": "Build the production offline runtime",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-14T21:22:40Z",
+          "completed_at": "2026-11-14T21:22:45Z"
+        },
+        {
+          "name": "Trust the disposable loopback fixture certificate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-14T21:22:45Z",
+          "completed_at": "2026-11-14T21:22:45Z"
+        },
+        {
+          "name": "Verify retained documents, edits, images and reconnect",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-14T21:22:45Z",
+          "completed_at": "2026-11-14T21:27:45Z"
+        },
+        {
+          "name": "Retain native profile and application evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-14T21:27:45Z",
+          "completed_at": "2026-11-14T21:27:46Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-14T21:27:46Z",
+          "completed_at": "2026-11-14T21:27:46Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-14T21:27:46Z",
+          "completed_at": "2026-11-14T21:27:48Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-14T21:27:48Z",
+          "completed_at": "2026-11-14T21:27:50Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132592284723",
+      "labels": [
+        "macos-15-intel"
+      ],
+      "runner_id": 1000054098,
+      "runner_name": "GitHub Actions 1000054098",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+﻿2026-11-14T21:20:34.9862050Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-14T21:20:34.9864320Z with:
+2026-11-14T21:20:34.9865080Z   persist-credentials: false
+2026-11-14T21:20:34.9866130Z   repository: mxbaylee/spinel
+2026-11-14T21:20:34.9884070Z   token: ***
+2026-11-14T21:20:34.9884800Z   ssh-strict: true
+2026-11-14T21:20:34.9885570Z   ssh-user: git
+2026-11-14T21:20:34.9886360Z   clean: true
+2026-11-14T21:20:34.9887160Z   sparse-checkout-cone-mode: true
+2026-11-14T21:20:34.9888260Z   fetch-depth: 1
+2026-11-14T21:20:34.9889010Z   fetch-tags: false
+2026-11-14T21:20:34.9889820Z   show-progress: true
+2026-11-14T21:20:34.9890640Z   lfs: false
+2026-11-14T21:20:34.9891360Z   submodules: false
+2026-11-14T21:20:34.9892190Z   set-safe-directory: true
+2026-11-14T21:20:34.9893220Z   allow-unsafe-pr-checkout: false
+2026-11-14T21:20:34.9894890Z env:
+2026-11-14T21:20:34.9895810Z   SOURCE_SHA: a9450ed32a55c1689fe46ebd575e45ff0fb66209
+2026-11-14T21:20:34.9897600Z   DESKTOP_RUNNER: macos-15-intel
+2026-11-14T21:20:34.9898730Z ##[endgroup]
+2026-11-14T21:20:35.3349340Z Syncing repository: mxbaylee/spinel
+2026-11-14T21:20:35.3352600Z ##[group]Getting Git version info
+2026-11-14T21:20:35.3354220Z Working directory is '/Users/runner/work/spinel/spinel'
+2026-11-14T21:20:35.3356640Z [command]/usr/local/bin/git version
+2026-11-14T21:20:35.3647870Z git version 2.55.0
+2026-11-14T21:20:35.3672380Z ##[endgroup]
+2026-11-14T21:20:35.3681500Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/99ec5a28-eec0-41f2-adb1-d3d4990157ea/.gitconfig'
+2026-11-14T21:20:35.3696170Z Temporarily overriding HOME='/Users/runner/work/_temp/99ec5a28-eec0-41f2-adb1-d3d4990157ea' before making global git config changes
+2026-11-14T21:20:35.3700860Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T21:20:35.3705460Z [command]/usr/local/bin/git config --global --add safe.directory /Users/runner/work/spinel/spinel
+2026-11-14T21:20:35.3826050Z Deleting the contents of '/Users/runner/work/spinel/spinel'
+2026-11-14T21:20:35.3831000Z ##[group]Determining repository object format
+2026-11-14T21:20:35.3833140Z ##[endgroup]
+2026-11-14T21:20:35.3834870Z ##[group]Initializing the repository
+2026-11-14T21:20:35.3836770Z [command]/usr/local/bin/git init /Users/runner/work/spinel/spinel
+2026-11-14T21:20:35.4215800Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-14T21:20:35.4219220Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-14T21:20:35.4224020Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-14T21:20:35.4226980Z hint: call:
+2026-11-14T21:20:35.4228330Z hint:
+2026-11-14T21:20:35.4229490Z hint: 	git config --global init.defaultBranch <name>
+2026-11-14T21:20:35.4231190Z hint:
+2026-11-14T21:20:35.4233240Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-14T21:20:35.4237340Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-14T21:20:35.4240040Z hint:
+2026-11-14T21:20:35.4241700Z hint: 	git branch -m <name>
+2026-11-14T21:20:35.4242850Z hint:
+2026-11-14T21:20:35.4244950Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-14T21:20:35.4261520Z Initialized empty Git repository in /Users/runner/work/spinel/spinel/.git/
+2026-11-14T21:20:35.4275510Z [command]/usr/local/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-14T21:20:35.4920890Z ##[endgroup]
+2026-11-14T21:20:35.4922830Z ##[group]Disabling automatic garbage collection
+2026-11-14T21:20:35.4925770Z [command]/usr/local/bin/git config --local gc.auto 0
+2026-11-14T21:20:35.5019580Z ##[endgroup]
+2026-11-14T21:20:35.5021180Z ##[group]Setting up auth
+2026-11-14T21:20:35.5022280Z Removing SSH command configuration
+2026-11-14T21:20:35.5027580Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T21:20:35.5123800Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T21:20:35.6461180Z Removing HTTP extra header
+2026-11-14T21:20:35.6466550Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T21:20:35.6556230Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T21:20:35.8797640Z Removing includeIf entries pointing to credentials config files
+2026-11-14T21:20:35.8836830Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T21:20:35.8879160Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T21:20:35.9912540Z [command]/usr/local/bin/git config --file /Users/runner/work/_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-14T21:20:36.0024610Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git.path /Users/runner/work/_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:36.0131400Z [command]/usr/local/bin/git config --local includeIf.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path /Users/runner/work/_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:36.0231090Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:36.0328070Z [command]/usr/local/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:36.0426320Z ##[endgroup]
+2026-11-14T21:20:36.0428790Z ##[group]Fetching the repository
+2026-11-14T21:20:36.0434910Z [command]/usr/local/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +9006a831d6ff54bcdd5e37a67af40780f22b3c2c:refs/remotes/pull/228/merge
+2026-11-14T21:20:40.7396360Z From https://github.com/mxbaylee/spinel
+2026-11-14T21:20:40.7398560Z  * [new ref]         9006a831d6ff54bcdd5e37a67af40780f22b3c2c -> pull/228/merge
+2026-11-14T21:20:40.7402490Z ##[endgroup]
+2026-11-14T21:20:40.7403860Z ##[group]Determining the checkout info
+2026-11-14T21:20:40.7405130Z ##[endgroup]
+2026-11-14T21:20:40.7410060Z [command]/usr/local/bin/git sparse-checkout disable
+2026-11-14T21:20:40.7567560Z [command]/usr/local/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-14T21:20:40.7696390Z ##[group]Checking out the ref
+2026-11-14T21:20:40.7701850Z [command]/usr/local/bin/git checkout --progress --force refs/remotes/pull/228/merge
+2026-11-14T21:20:41.8113020Z Updating files:  25% (1098/4318)
+2026-11-14T21:20:41.8230830Z Updating files:  26% (1123/4318)
+2026-11-14T21:20:41.8335520Z Updating files:  27% (1166/4318)
+2026-11-14T21:20:41.8534190Z Updating files:  28% (1210/4318)
+2026-11-14T21:20:41.8706590Z Updating files:  29% (1253/4318)
+2026-11-14T21:20:41.8845800Z Updating files:  30% (1296/4318)
+2026-11-14T21:20:41.8976120Z Updating files:  31% (1339/4318)
+2026-11-14T21:20:41.9087260Z Updating files:  32% (1382/4318)
+2026-11-14T21:20:41.9209730Z Updating files:  33% (1425/4318)
+2026-11-14T21:20:41.9345200Z Updating files:  34% (1469/4318)
+2026-11-14T21:20:41.9473300Z Updating files:  35% (1512/4318)
+2026-11-14T21:20:41.9605290Z Updating files:  36% (1555/4318)
+2026-11-14T21:20:41.9727720Z Updating files:  37% (1598/4318)
+2026-11-14T21:20:41.9959110Z Updating files:  38% (1641/4318)
+2026-11-14T21:20:42.0213140Z Updating files:  39% (1685/4318)
+2026-11-14T21:20:42.0407860Z Updating files:  40% (1728/4318)
+2026-11-14T21:20:42.0573730Z Updating files:  41% (1771/4318)
+2026-11-14T21:20:42.0742300Z Updating files:  42% (1814/4318)
+2026-11-14T21:20:42.0922660Z Updating files:  43% (1857/4318)
+2026-11-14T21:20:42.1088700Z Updating files:  44% (1900/4318)
+2026-11-14T21:20:42.1200750Z Updating files:  45% (1944/4318)
+2026-11-14T21:20:42.1372450Z Updating files:  46% (1987/4318)
+2026-11-14T21:20:42.1529670Z Updating files:  47% (2030/4318)
+2026-11-14T21:20:42.1863900Z Updating files:  48% (2073/4318)
+2026-11-14T21:20:42.2018590Z Updating files:  49% (2116/4318)
+2026-11-14T21:20:42.3104220Z Updating files:  50% (2159/4318)
+2026-11-14T21:20:42.3349730Z Updating files:  51% (2203/4318)
+2026-11-14T21:20:42.3527500Z Updating files:  52% (2246/4318)
+2026-11-14T21:20:42.4561880Z Updating files:  53% (2289/4318)
+2026-11-14T21:20:42.4566900Z Updating files:  54% (2332/4318)
+2026-11-14T21:20:42.4854280Z Updating files:  55% (2375/4318)
+2026-11-14T21:20:42.4880470Z Updating files:  56% (2419/4318)
+2026-11-14T21:20:42.4883050Z Updating files:  57% (2462/4318)
+2026-11-14T21:20:42.5353330Z Updating files:  58% (2505/4318)
+2026-11-14T21:20:42.5428360Z Updating files:  59% (2548/4318)
+2026-11-14T21:20:42.5530130Z Updating files:  60% (2591/4318)
+2026-11-14T21:20:42.5788450Z Updating files:  61% (2634/4318)
+2026-11-14T21:20:42.6014220Z Updating files:  62% (2678/4318)
+2026-11-14T21:20:42.6118280Z Updating files:  63% (2721/4318)
+2026-11-14T21:20:42.6226980Z Updating files:  64% (2764/4318)
+2026-11-14T21:20:42.6333590Z Updating files:  65% (2807/4318)
+2026-11-14T21:20:42.6438010Z Updating files:  66% (2850/4318)
+2026-11-14T21:20:42.6539020Z Updating files:  67% (2894/4318)
+2026-11-14T21:20:42.6645150Z Updating files:  68% (2937/4318)
+2026-11-14T21:20:42.6747190Z Updating files:  69% (2980/4318)
+2026-11-14T21:20:42.6873520Z Updating files:  70% (3023/4318)
+2026-11-14T21:20:42.6986800Z Updating files:  71% (3066/4318)
+2026-11-14T21:20:42.7110820Z Updating files:  72% (3109/4318)
+2026-11-14T21:20:42.7261220Z Updating files:  73% (3153/4318)
+2026-11-14T21:20:42.7375600Z Updating files:  74% (3196/4318)
+2026-11-14T21:20:42.7502040Z Updating files:  75% (3239/4318)
+2026-11-14T21:20:42.7625950Z Updating files:  76% (3282/4318)
+2026-11-14T21:20:42.7722850Z Updating files:  77% (3325/4318)
+2026-11-14T21:20:42.7820350Z Updating files:  78% (3369/4318)
+2026-11-14T21:20:42.7889980Z Updating files:  79% (3412/4318)
+2026-11-14T21:20:42.7929230Z Updating files:  79% (3440/4318)
+2026-11-14T21:20:42.8046780Z Updating files:  80% (3455/4318)
+2026-11-14T21:20:42.8143820Z Updating files:  81% (3498/4318)
+2026-11-14T21:20:42.8253980Z Updating files:  82% (3541/4318)
+2026-11-14T21:20:42.9234330Z Updating files:  83% (3584/4318)
+2026-11-14T21:20:42.9347050Z Updating files:  84% (3628/4318)
+2026-11-14T21:20:42.9475890Z Updating files:  85% (3671/4318)
+2026-11-14T21:20:42.9757080Z Updating files:  86% (3714/4318)
+2026-11-14T21:20:42.9856840Z Updating files:  87% (3757/4318)
+2026-11-14T21:20:42.9956430Z Updating files:  88% (3800/4318)
+2026-11-14T21:20:43.0049200Z Updating files:  89% (3844/4318)
+2026-11-14T21:20:43.0135000Z Updating files:  90% (3887/4318)
+2026-11-14T21:20:43.1310760Z Updating files:  91% (3930/4318)
+2026-11-14T21:20:43.1323550Z Updating files:  92% (3973/4318)
+2026-11-14T21:20:43.1340220Z Updating files:  93% (4016/4318)
+2026-11-14T21:20:43.1476600Z Updating files:  94% (4059/4318)
+2026-11-14T21:20:43.1604130Z Updating files:  95% (4103/4318)
+2026-11-14T21:20:43.1737870Z Updating files:  96% (4146/4318)
+2026-11-14T21:20:43.1966890Z Updating files:  97% (4189/4318)
+2026-11-14T21:20:43.1970810Z Updating files:  98% (4232/4318)
+2026-11-14T21:20:43.2018710Z Updating files:  99% (4275/4318)
+2026-11-14T21:20:43.2019310Z Updating files: 100% (4318/4318)
+2026-11-14T21:20:43.2020410Z Updating files: 100% (4318/4318), done.
+2026-11-14T21:20:43.2105290Z HEAD is now at 9006a83 Merge a9450ed32a55c1689fe46ebd575e45ff0fb66209 into c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:20:43.2203770Z ##[endgroup]
+2026-11-14T21:20:43.2302670Z [command]/usr/local/bin/git log -1 --format=%H
+2026-11-14T21:20:43.2421290Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c
+2026-11-14T21:20:43.2442590Z ##[group]Removing auth
+2026-11-14T21:20:43.2461910Z Removing SSH command configuration
+2026-11-14T21:20:43.2466430Z [command]/usr/local/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T21:20:43.2551710Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T21:20:43.4029200Z Removing HTTP extra header
+2026-11-14T21:20:43.4033320Z [command]/usr/local/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T21:20:43.4227740Z [command]/usr/local/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T21:20:43.5500500Z Removing includeIf entries pointing to credentials config files
+2026-11-14T21:20:43.5505210Z [command]/usr/local/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T21:20:43.5626130Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-14T21:20:43.5628250Z includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T21:20:43.5629360Z includeif.gitdir:/github/workspace/.git.path
+2026-11-14T21:20:43.5630500Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T21:20:43.5639690Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path
+2026-11-14T21:20:43.5736590Z /Users/runner/work/_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:43.5754390Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git.path \/Users\/runner\/work\/_temp\/git\-credentials\-563f1b80\-2fb0\-4c0e\-9338\-83237ff5a80c\.config
+2026-11-14T21:20:43.5856640Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T21:20:43.5938170Z /Users/runner/work/_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:43.5949430Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/Users/runner/work/spinel/spinel/.git/worktrees/*.path \/Users\/runner\/work\/_temp\/git\-credentials\-563f1b80\-2fb0\-4c0e\-9338\-83237ff5a80c\.config
+2026-11-14T21:20:43.6044280Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-14T21:20:43.6123140Z /github/runner_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:43.6133310Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-563f1b80\-2fb0\-4c0e\-9338\-83237ff5a80c\.config
+2026-11-14T21:20:43.6227080Z [command]/usr/local/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T21:20:43.6307690Z /github/runner_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config
+2026-11-14T21:20:43.6317370Z [command]/usr/local/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-563f1b80\-2fb0\-4c0e\-9338\-83237ff5a80c\.config
+2026-11-14T21:20:43.6418240Z [command]/usr/local/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T21:20:43.7909740Z Removing credentials config '/Users/runner/work/_temp/git-credentials-563f1b80-2fb0-4c0e-9338-83237ff5a80c.config'
+2026-11-14T21:20:43.7915910Z ##[endgroup]

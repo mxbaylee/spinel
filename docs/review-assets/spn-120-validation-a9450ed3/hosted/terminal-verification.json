@@ -1,0 +1,1505 @@
+{
+  "source": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tested": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+  "tree": "90b90d75271c9251ce753c39d5190ad5f9c7058c",
+  "verifiedAt": "2026-11-14T22:01:13.144572+00:00",
+  "runs": [
+    {
+      "id": 43642290667,
+      "attempt": 1,
+      "jobs": 33,
+      "success": 33,
+      "skipped": 0
+    },
+    {
+      "id": 43642290711,
+      "attempt": 1,
+      "jobs": 10,
+      "success": 8,
+      "skipped": 2
+    },
+    {
+      "id": 43642290703,
+      "attempt": 1,
+      "jobs": 3,
+      "success": 3,
+      "skipped": 0
+    },
+    {
+      "id": 43642290705,
+      "attempt": 1,
+      "jobs": 1,
+      "success": 1,
+      "skipped": 0
+    },
+    {
+      "id": 43642371547,
+      "attempt": 1,
+      "jobs": 3,
+      "success": 3,
+      "skipped": 0
+    }
+  ],
+  "aggregates": [
+    {
+      "artifactId": 14133285327,
+      "name": "unit",
+      "sha256": "c01062937553afce4e2e5786c2592c3b27ecdc13254951fae02b0cf54a513667",
+      "passed": true,
+      "planSha256": "f2c922d09545798baa889498207206465ac92d6a5af1cd931461c590f73a7b7a",
+      "gateResults": {},
+      "results": [
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "artifactId": 14133126642,
+      "name": "lib",
+      "sha256": "55fa3f38fb0e9b255643fa5e07cb786147aa40ce1cbc8955e8953a2830ba2917",
+      "passed": true,
+      "planSha256": "f2c922d09545798baa889498207206465ac92d6a5af1cd931461c590f73a7b7a",
+      "gateResults": {},
+      "results": [
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "artifactId": 14133681592,
+      "name": "browser",
+      "sha256": "13e583458fa23c93acad3b52424a625d0ad4000d3c9fc9b09d655ccd977e169e",
+      "passed": true,
+      "planSha256": "f2c922d09545798baa889498207206465ac92d6a5af1cd931461c590f73a7b7a",
+      "gateResults": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      },
+      "results": [
+        {
+          "suite": "backlog",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "pull-request",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "lint",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "typecheck",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "playwright-run",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "container-smoke",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "restore-timing",
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "sync-transition",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "doc-responsiveness",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "doc-callback-lifetimes",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ]
+    }
+  ],
+  "responsiveness": [
+    {
+      "artifactId": 14133047783,
+      "preset": "desktop",
+      "physicalDevice": false,
+      "comparisonPassed": true,
+      "stats": {
+        "startTime": "2026-11-14T21:31:34.030Z",
+        "duration": 372348.863,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "retry": 0,
+      "metrics": [
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+          "sha256": "dbb64217ed35ba8c05e8e429386f3fd0d7b4620f12600624b663e51381c67a71",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "plain-3",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+          "sha256": "04f7a3c98cc9cc3fdba5ba0e3bb1fc2f66f7fa5c9b3789e32720725b2c32f96a",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "profile",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+          "sha256": "91061e46613fd599df46b80f5255200577aa10a539aca10fd49468bde501f34a",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "plain-2",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+          "sha256": "3db8aa14bff50be837a1f985d10723ba5e0eb9fd5bca8bdae36adbdbc2aacc22",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "plain-1",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+          "sha256": "92ea268ec4ec10b2e54326d97f301190e689ce8c24ab6e8c40211df353a8e7fa",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "plain-3",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+          "sha256": "a1ba9acea3e030ce9d40e8baba54e7492c01fc49e960980c54e8467b7e584e5b",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "profile",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+          "sha256": "f0c7a298e23505f4112a17d7185ac214ecbb2c280cc1e809289af7c5997ad9c4",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "plain-2",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+          "sha256": "192b2f18d3ba7c89add72c368c80187b78e1e62d1284c4ff23c2e78c193a208a",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "plain-1",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifactId": 14133394723,
+      "preset": "mobile",
+      "physicalDevice": false,
+      "comparisonPassed": true,
+      "stats": {
+        "startTime": "2026-11-14T21:44:34.262Z",
+        "duration": 751854.255,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "retry": 0,
+      "metrics": [
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+          "sha256": "61d5ac5fcee389aa2d4edcea86e3d0f4c9861c4692f9e4d6baa01e5f7c5c3a64",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "profile",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+          "sha256": "86126c09deaf79a81e268f14e631c4d7250f0b48b91efed22f6613a8723fd1b3",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "plain-3",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+          "sha256": "ec046b70832775c8ca5fe4d470d2223c86235b96dfd58f9cf00567e84bf0a3c5",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "plain-2",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+          "sha256": "1d82e04ba7a30f9de0584e9a2bdcc41df19e85dd2ca5dc8de59c0de075c047a1",
+          "role": "baseline-observation",
+          "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+          "sample": "plain-1",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": []
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+          "sha256": "b78f59488cb53cee99e650d1c7f54642fea832cef25cd561d3c0f3525ef43ffd",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "profile",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+          "sha256": "3eeeb55f4a331d610f495cd84af6cc956b23c21ce5202a2b15b00a3bf1e79de5",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "plain-3",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+          "sha256": "bc5a997f3f0d4cca9ce05b8c9dd6374ce61ffdbcad4d339727bdcbd70008a205",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "plain-2",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        },
+        {
+          "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+          "sha256": "790e18f7f3220fad7b6921ef5e8c50637e82ba4b974052d128df2c0963e5dc91",
+          "role": "candidate",
+          "source": "9006a831d6ff54bcdd5e37a67af40780f22b3c2c",
+          "sample": "plain-1",
+          "attempt": 0,
+          "completed": true,
+          "harnessGitBindings": [
+            {
+              "path": "e2e/doc-responsiveness.ts",
+              "sha256": "820dff75e7d61baa059f0dc5ab891e04bde95eba95d6a546df8c47cd204adbc5",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness.spec.ts",
+              "sha256": "ad4b3a60379fcd74cb6e55c94f24212c04f4f564feabee0310694bbf3d094251",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-fixture.ts",
+              "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-boundaries.ts",
+              "sha256": "7875ed78948227bf6a781be987230b9fbd0b1391a67d7683f0961169c8672705",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-trace.ts",
+              "sha256": "d32f5a9936a7528644b1d7b949f49403a73cdc11529b2c78a43fd44eddf6d888",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-window.ts",
+              "sha256": "fa335f3b0e508cb2a37ec3d5e666740ce37e7678dbdece16e989eab8e61f873b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-native-sources.ts",
+              "sha256": "8000570913f5290a088b47c60c939b083102fe4fb852a23a9b71bd9de2004436",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-trace.ts",
+              "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "e2e/doc-responsiveness-callback-progress.ts",
+              "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "web/docResponsivenessEvidence.ts",
+              "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/docIdleEpisode.ts",
+              "sha256": "87625be81fb86bf7a982d855a3153e963ebaf895ddc3ce605bee3dae024bbce1",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlush.ts",
+              "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "src/ui/nativeDocFlushDiagnostic.ts",
+              "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "playwright.config.ts",
+              "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            },
+            {
+              "path": "package-lock.json",
+              "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+              "gitSource": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+              "verifiedSameTreeAsTested": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "checkoutWitnesses": [
+    {
+      "member": "Playwright smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "eb1478f4f2d3a3df20d9038ef7631867a843026e2c9eabfe376d5b958288ccdd",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:57:21.1384181Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Lib tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "851616887daded09bb30db5fa2edbafc8796a35bd24915dfd45df991dff1ace9",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:32:35.5951692Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Unit tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "f7dfeee396eb1e0b8254756bc4664a27868df8c1f731d2ea7dd20ec7f5c99749",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:27:31.1990450Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (development 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "a61558cc4e8c6af415f72b3897cf738bbfe2045c0c5f2d33f5d963788de494d1",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:26:18.6784278Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (supervised-restore)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "4fcaae0be4eef4f4090ee4d2deb86b37cc551f5c58e109d94f766ae2b0b8fbd7",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:26:45.6278016Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (sync-soak-sheet)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "a07f8ae7d32bc82fe9c046109e5e48068cf6ff973b79875692a4da6250d8a56d",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:26:18.7363592Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (offline-upgrade)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "8aadbf94d138491103a9b7ff79f999b4ad89375b50f0d0e77756e2e77ad6822b",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:25:12.0674980Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (sync-development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "eef7492693429d1d58b30145e43a85ee4ce2b82b474c19ca67f57da3306e0525",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:22:28.9516059Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (production 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "aee86e7f965c2b48d626e1685c28578b74546ed71785b2b4962a81c64e1eaf5d",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:26:00.9735519Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "529c6d068940b67ba119c4a3bdccf9fa8079c57fe38999a9a084f98c2d0d1242",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:23:21.0005045Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (mobile-https)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "c27449a3abcc183036d03ec60f3e966a7abd3e9f61cdde601e216790d25263d0",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:57.5138568Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (production 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "28c3536c5f66a01d708fc13b729920ff1f35f9e9bc7b80c816b7f49ca87c2e4f",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:23:00.2513974Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Doc responsiveness (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "d78075f15525358c2390d39c72b2642ce251aec967d36f993bec7e8a5e540b11",
+      "witnesses": [
+        {
+          "line": 104,
+          "value": "2026-11-14T21:22:17.6235192Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Lib tests (cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "e6702dcae46f7b42fa7876198ee292496481a7aacf127defed8c91c4d71c36ad",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:22:12.5734902Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (development 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "1ea4158f8414023f208a19bbd3836afc267582a2ca2d7abc3a27c8287a1425e5",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:23:39.7789478Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Retained sync transition/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "52423daddaa2113a4f6382a80ceaa564d5749af9c777fc00e78d0d688c03b1ad",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:43.9439620Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Typecheck/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "ec565c2131babe1f4779936d85a8734c8f46cfd3716a9d49d9659c9012acdea4",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:24.2258715Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Playwright smoke (sync-soak-doc)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "b7bcfb5b5cb6f3f63fde8a3600814ef577e56267040ab94c096108481fd51927",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.4950604Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Doc responsiveness (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "8ff05adb05a6007e325d855e358e3edfc6eb5730b1decfe073b06720e8c4115a",
+      "witnesses": [
+        {
+          "line": 104,
+          "value": "2026-11-14T21:21:23.0718014Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Sized restore acceptance/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "34df4c194cf044bc1453450d14f86dbe3eaa5d1ab8af256d3fb71943eecc974f",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.2301889Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Doc callback lifetimes (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "00340a4e5086d4eaf0734c2a2adeee9c10a1142c77eb660b03eedc13c67137a3",
+      "witnesses": [
+        {
+          "line": 104,
+          "value": "2026-11-14T21:21:23.4065215Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Lib tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "7a1e582169b68a1b75a1f5dd175cb98aa1f0e6986a34cd8a6862e14a8940219b",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:27.7854601Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Lib tests (mixed-fuzz)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "09ca49d15db0ac8aa671acbf6d9a6173b2e0d9e5215e5476528808e9d2a86cde",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.3191418Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Doc callback lifetimes (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "974f8d7c5acf2e7f16cac2966d160e936c19fb8e33a1dd31f5f2498acb7c328a",
+      "witnesses": [
+        {
+          "line": 104,
+          "value": "2026-11-14T21:21:23.4285970Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Unit tests (recovery)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "6387c34a50775cdbc1f2d6a13d6d90e5944a051d00fdca98e9e670271138eb2c",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.6693377Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Unit tests (supervisor)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "1ecf657cb8e8244abdf4edd57288e7b4affc389fa72c40c971814aa809fee997",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:22.9835272Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Lib tests (dense-cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "c020ae46ce2a9a672aef060a960798d4a2a0edbb0b5474cb5b3d870cd4f14827",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.4910726Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Container smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "18fb4d70f6a110df5183cb204e14ad2655151e53ebfbd695b05da2992e567c3a",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.4934653Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Lint/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "b130bdc8a35159a12ec34da971b49c05b65dceea53fe1454f353da5b54b84c27",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:24.3666743Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Unit tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "84469586bc0b2f621e770153d737776d45801d274db945d1497f9270f8d51dbe",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:23.5992296Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Backlog/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "a3dfefea93e89bd97c028a898c86ae6034177f6a938a7e21e55913e2c635b9b0",
+      "witnesses": [
+        {
+          "line": 98,
+          "value": "2026-11-14T21:21:28.6019484Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Pull request/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "125ac4e480dcfdbb6e7004ea431b57f3e71c7607d561872347e6c0ff1929c2a6",
+      "witnesses": [
+        {
+          "line": 308,
+          "value": "2026-11-14T21:21:09.1446549Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    },
+    {
+      "member": "Classify changes (43642290667)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+      "sha256": "8982c0003873bbafe2e701d24b845ddabc05f1d21e7dede1425782786b94ba8d",
+      "witnesses": [
+        {
+          "line": 308,
+          "value": "2026-11-14T21:21:07.6668342Z 9006a831d6ff54bcdd5e37a67af40780f22b3c2c"
+        }
+      ]
+    }
+  ],
+  "recovery": {
+    "tests": 619,
+    "files": 49,
+    "postcommitSIGKILLms": 8826,
+    "member": "Unit tests (recovery)/6_Unit tests.txt",
+    "sha256": "d9ea0d75e0efd65a665aee688cc8d95298fb7c037cdeb24d7ebb7eefbe8982f8",
+    "matchingLines": [
+      "2026-11-14T21:23:52.4602485Z    \u2713 real SIGKILL at postcommit preserves the durable restore decision and all retained evidence 8826ms",
+      "2026-11-14T21:24:57.3886826Z  Test Files  49 passed (49)",
+      "2026-11-14T21:24:57.3887368Z       Tests  619 passed (619)"
+    ]
+  }
+}

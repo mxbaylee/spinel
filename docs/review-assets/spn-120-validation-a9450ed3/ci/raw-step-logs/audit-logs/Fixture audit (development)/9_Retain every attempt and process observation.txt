@@ -1,0 +1,38 @@
+﻿2026-11-14T21:30:27.0434272Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-14T21:30:27.0434504Z with:
+2026-11-14T21:30:27.0434636Z   name: fixture-audit-candidate-development
+2026-11-14T21:30:27.0435261Z   path: fixture-audit/
+playwright-report/
+test-results/**/fixture-evidence.json
+test-results/**/sync-diagnostics.json
+test-results/**/phone-doc-caret-events*.json
+test-results/**/phone-doc-selection-evidence*.json
+test-results/**/test-failed-*.png
+test-results/**/error-context.md
+test-results/**/trace.zip
+
+2026-11-14T21:30:27.0435898Z   retention-days: 14
+2026-11-14T21:30:27.0436035Z   if-no-files-found: error
+2026-11-14T21:30:27.0436169Z   compression-level: 6
+2026-11-14T21:30:27.0436285Z   overwrite: false
+2026-11-14T21:30:27.0436406Z   include-hidden-files: false
+2026-11-14T21:30:27.0436537Z   archive: true
+2026-11-14T21:30:27.0436646Z env:
+2026-11-14T21:30:27.0436754Z   AUDIT_SOURCE: candidate
+2026-11-14T21:30:27.0436904Z   AUDIT_HEAD: a9450ed32a55c1689fe46ebd575e45ff0fb66209
+2026-11-14T21:30:27.0437123Z   AUDIT_BASE: c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:30:27.0437286Z ##[endgroup]
+2026-11-14T21:30:27.1448296Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-14T21:30:27.1449537Z The least common ancestor is /home/runner/work/spinel/spinel. This will be the root directory of the artifact
+2026-11-14T21:30:27.1450128Z With the provided path, there will be 13 files uploaded
+2026-11-14T21:30:27.1452482Z Artifact name is valid!
+2026-11-14T21:30:27.1452976Z Root directory input is valid!
+2026-11-14T21:30:27.3938402Z Uploading artifact: fixture-audit-candidate-development.zip
+2026-11-14T21:30:27.3960133Z Beginning upload of artifact content to blob storage
+2026-11-14T21:30:27.5942785Z Uploaded bytes 12709
+2026-11-14T21:30:27.6417570Z Finished uploading artifact content to blob storage!
+2026-11-14T21:30:27.6418198Z SHA256 digest of uploaded artifact is b11b8b7f09fda701156ce7a448a2ba7279960e3a09989f38144df6407fac6a74
+2026-11-14T21:30:27.6418637Z Finalizing artifact upload
+2026-11-14T21:30:28.0504024Z Artifact fixture-audit-candidate-development successfully finalized. Artifact ID 14132439909
+2026-11-14T21:30:28.0504858Z Artifact fixture-audit-candidate-development has been successfully uploaded! Final size is 12709 bytes. Artifact ID is 14132439909
+2026-11-14T21:30:28.0506905Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/43642371547/artifacts/14132439909

@@ -1,0 +1,41 @@
+﻿2026-11-14T21:25:00.4223383Z ##[group]Run node "$RUNNER_TEMP/fixture-audit.ts"
+2026-11-14T21:25:00.4223619Z [36;1mnode "$RUNNER_TEMP/fixture-audit.ts"[0m
+2026-11-14T21:25:00.4264927Z shell: /usr/bin/bash -e {0}
+2026-11-14T21:25:00.4265218Z env:
+2026-11-14T21:25:00.4265328Z   AUDIT_SOURCE: candidate
+2026-11-14T21:25:00.4265486Z   AUDIT_HEAD: a9450ed32a55c1689fe46ebd575e45ff0fb66209
+2026-11-14T21:25:00.4265684Z   AUDIT_BASE: c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423
+2026-11-14T21:25:00.4265859Z   SPINEL_E2E_PROJECT: production
+2026-11-14T21:25:00.4266007Z   VITE_DOC_SELECTION_EVIDENCE: 1
+2026-11-14T21:25:00.4266139Z ##[endgroup]
+2026-11-14T21:25:03.8620613Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:03.8621578Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:03.8622298Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:25:04.6796308Z 
+2026-11-14T21:25:04.6797081Z Running 12 tests using 1 worker
+2026-11-14T21:25:04.6797336Z 
+2026-11-14T21:25:04.9917047Z [1/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and editor behavior preserve the document
+2026-11-14T21:25:17.6917119Z [2/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and editor behavior preserve the document
+2026-11-14T21:25:32.0241994Z [3/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:25:49.5857129Z [4/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:26:07.9622220Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:26:07.9622801Z 
+2026-11-14T21:26:07.9623526Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:26:07.9623987Z 
+2026-11-14T21:26:07.9627202Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:26:07.9627593Z 
+2026-11-14T21:26:07.9717341Z [5/12] [production] › e2e/offline-sign-out.spec.ts:319:3 › Recorded passkey fixture › ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie
+2026-11-14T21:26:09.9411059Z [6/12] [production] › e2e/passkey-management.spec.ts:66:3 › Recorded passkey fixture › profile signs out another browser, then verifies and removes its passkey without losing the current account
+2026-11-14T21:26:20.2161496Z [7/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and editor behavior preserve the document
+2026-11-14T21:26:32.4903427Z [8/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and editor behavior preserve the document
+2026-11-14T21:26:45.1269737Z [9/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc light native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:27:02.6327225Z [10/12] [production] › e2e/doc-phone-navigation.spec.ts:214:5 › phone Doc dark native pan, zoom and guest-viewer behavior preserve the document
+2026-11-14T21:27:21.0408579Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:27:21.0408917Z 
+2026-11-14T21:27:21.0409020Z 
+2026-11-14T21:27:21.0410925Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T21:27:21.0411292Z 
+2026-11-14T21:27:21.0411806Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T21:27:21.0513668Z [11/12] [production] › e2e/offline-sign-out.spec.ts:319:3 › Recorded passkey fixture › ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie
+2026-11-14T21:27:23.0551086Z [12/12] [production] › e2e/passkey-management.spec.ts:66:3 › Recorded passkey fixture › profile signs out another browser, then verifies and removes its passkey without losing the current account
+2026-11-14T21:27:33.7825287Z   12 passed (2.5m)
