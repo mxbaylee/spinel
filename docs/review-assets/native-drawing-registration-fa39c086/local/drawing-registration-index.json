@@ -1,0 +1,13 @@
+{
+  "name": "drawing-registration-index",
+  "args": [
+    "npm",
+    "run",
+    "backlog:index"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 278,
+  "peakKiB": 215792
+}

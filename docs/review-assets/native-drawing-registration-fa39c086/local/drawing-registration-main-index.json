@@ -1,0 +1,13 @@
+{
+  "name": "drawing-registration-main-index",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog.ts",
+    "index"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 100,
+  "peakKiB": 0
+}

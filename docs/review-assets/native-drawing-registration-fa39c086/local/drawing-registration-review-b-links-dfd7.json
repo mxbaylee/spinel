@@ -1,0 +1,12 @@
+{
+  "name": "drawing-registration-review-b-links-dfd7",
+  "args": [
+    "node",
+    "/tmp/spinel-dependabot-2026-11-11/drawing-registration-review-b-check-dfd7.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 190,
+  "peakKiB": 0
+}

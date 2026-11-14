@@ -1,0 +1,13 @@
+{
+  "name": "drawing-registration-review-b-backlog-c40",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 163,
+  "peakKiB": 0
+}

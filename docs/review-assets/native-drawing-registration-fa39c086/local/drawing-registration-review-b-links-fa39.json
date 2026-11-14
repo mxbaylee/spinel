@@ -1,0 +1,12 @@
+{
+  "name": "drawing-registration-review-b-links-fa39",
+  "args": [
+    "node",
+    "/tmp/spinel-dependabot-2026-11-11/drawing-registration-review-b-check-fa39.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 217,
+  "peakKiB": 174336
+}

@@ -1,0 +1,13 @@
+{
+  "name": "drawing-registration-review-a-backlog-dfd7",
+  "args": [
+    "npm",
+    "run",
+    "backlog:check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 301,
+  "peakKiB": 160016
+}

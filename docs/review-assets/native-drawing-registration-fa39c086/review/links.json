@@ -1,0 +1,12 @@
+{
+  "head": "fa39c086e8df8a542c2703ffcc614dfc17afd030",
+  "checked": [
+    "docs/todo/SPN-120.md",
+    "docs/todo/SPN-159.md",
+    "docs/implementation/SPN-120.md",
+    "docs/implementation/SPN-159.md",
+    "docs/implementation/grooming-native-drawing-2026-11-13.md"
+  ],
+  "missingFileTargets": [],
+  "scope": "Local Markdown file targets checked at predecessor; all destinations unchanged in wording-only repair, independently compare diff."
+}

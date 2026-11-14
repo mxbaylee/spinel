@@ -1,0 +1,16 @@
+{
+  "name": "drawing-registration-allocate-159",
+  "args": [
+    "npm",
+    "run",
+    "backlog:new",
+    "--",
+    "📐",
+    "Observe completed native drawing resizes"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 281,
+  "peakKiB": 160672
+}

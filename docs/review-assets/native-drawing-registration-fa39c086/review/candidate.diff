@@ -1,0 +1,454 @@
+diff --git a/docs/implementation/SPN-120.md b/docs/implementation/SPN-120.md
+new file mode 100644
+index 00000000..ba34a29a
+--- /dev/null
++++ b/docs/implementation/SPN-120.md
+@@ -0,0 +1,26 @@
++# SPN-120 — Remaining recorded browser fixture failures
++
++## 🧭 New independent validation prerequisites
++
++**Date/status/source:** 2026-11-13, accepted registration/sequencing judgment under
++standing four-persona delegation; SPN-120 remains open. Published source
++`47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee` integrates actual main
++`89e4426dfff1c3469b260305e21180ffd79fdb7f`, including SPN-140/141. The older
++597c3182 source/prerequisite checkpoint remains historical evidence. The complete
++[unmerged implementation and original-case record](https://github.com/mxbaylee/spinel/blob/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee/docs/implementation/SPN-120.md)
++remains immutable provenance; this focused record imports no implementation.
++
++Fresh required validation retains a postcommit authentication HTTP 503 before the
++intended SIGKILL, under the already registered [SPN-158 admission fixture outcome](SPN-158.md),
++and the [SPN-159 native drawing failure](SPN-159.md#-retained-failure-and-source-limits).
++Add both explicit prerequisites. These independent repairs do not expand or remove
++the finite SPN-120 historical case inventory, replace its first-attempt audit,
++waive any gate or establish either failure's unknown historical cause. SPN-087's
++obsolete CSS cleanup is not assigned the native drawing investigation.
++
++Operator retains a trustworthy first-failure gate and bounded investigation.
++Owner and Collaborator keep authentication, saved content, cancellation,
++revocation, unsaved work and native pending-edit contracts. Link guest retains
++scoped access and the relevant native interaction/denial checks. The [focused
++registration decision](grooming-native-drawing-2026-11-13.md) preserves every
++remaining scope and the current-main grooming date/completion counter.
+diff --git a/docs/implementation/SPN-159.md b/docs/implementation/SPN-159.md
+new file mode 100644
+index 00000000..5929f963
+--- /dev/null
++++ b/docs/implementation/SPN-159.md
+@@ -0,0 +1,122 @@
++# SPN-159 — Completed native drawing resizes
++
++## 🧭 Complete outcome and persona decision
++
++**Date/status/source:** 2026-11-13, accepted registration and complete scope;
++implementation and acceptance pending. Agent delivery-manager judgment under the
++owner's continuous backlog instruction and [standing persona authority](../todo/process.md#decisions),
++following independent SPN-120 source/fixture assessment. This is an independent
++newly observed native interaction failure, not completion or narrowing of SPN-120.
++
++**Question:** how should the failed native Doc drawing story receive a useful
++first-attempt diagnosis and repair without retrying it to green or silently
++expanding the finite browser-fixture audit or obsolete CSS cleanup?
++
++Options were an unchanged rerun, weakened counter comparison, absorption into
++SPN-120/SPN-087, or one complete **M, pre-launch** investigation and repair. Choose
++the separate outcome, explicitly blocking SPN-120. Retain actual native image
++insertion, image/text selection and drawing-control refresh, with unchanged
++authored pending work and no UI-only selection operation entering the mutation
++queue. Registration or another variant's pass does not resolve the failed gate.
++
++The estimate includes source/native investigation, bounded stage/geometry
++diagnostics, demonstrated readiness correction, negative controls, original
++privacy/resource/cleanup boundaries and current five-variant Storybook acceptance.
++**Before execution**, declare a bounded experiment with exact source, relevant
++native events, phase identities, geometry observations, viewport and stopping
++condition. Start with the existing fixture and capture helpers. Reassess before
++expanding into native engine, product rendering, persistence or authority changes;
++a short diff does not make that wider work automatically M.
++
++The global counters may observe an unrelated pending resize before the requested
++width has completed. That is a **hypothesis**, not an established historical cause.
++Before choosing a correction, demonstrate the causal transition/readiness boundary
++in the predeclared new controlled experiment. The original failed comparison and
++phase remain unknown; do not require reconstruction of unavailable historical
++evidence or treat a plausible hypothesis as a demonstrated cause. The corrected
++readiness control must reject missing narrow and missing restore completion;
++where relevant, deliberately unrelated resize activity must not satisfy it. Keep
++all original timing budgets and behavioral assertions. No sleep-based readiness,
++unconditional retry, skipped variant, weaker greater-than comparison or timeout
++increase is acceptance.
++
++**All four personas:** Operator gains a trustworthy bounded native gate and useful
++phase-specific failure evidence. Owner and Collaborator retain native drawing
++edits while selection and resize cannot masquerade as authored changes. Link guest
++retains the applicable native interaction and read-only/edit authority boundaries;
++this fixture grants no new access. A separate repair makes the newly discovered
++work visible and reviewable, at the cost of delaying SPN-120 until its required
++acceptance is genuinely complete.
++
++## 🔎 Retained failure and source limits
++
++[Storybook run 43554616505](https://github.com/mxbaylee/spinel/actions/runs/43554616505),
++attempt 1, [desktop-light job 132324964897](https://github.com/mxbaylee/spinel/actions/runs/43554616505/job/132324964897),
++failed on published SPN-120 source
++`47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee`, integrated base
++`89e4426dfff1c3469b260305e21180ffd79fdb7f`. The artifact is **14097504548**;
++ZIP SHA-256 **c203f06d01059c23bdeb0eb6f8737fd689186e852d3edd9557cf19f1b067d167**.
++Its manifest records **1,041 requested, 1,040 checked, one failed** in **394,633 ms**,
++desktop light, 1280×900, reviewed at **2026-11-14 04:11:19.167 UTC**.
++
++The failed story is `editor-sync-native--doc-drawing-capture`; its retained inner
++message is **`expected 2 to be greater than 2`**. The outer fail-closed capture check
++found a `playFunctionThrewException` although Storybook's `storyFinished` event
++reported success. No unhandled-error event was recorded. Other selected variants'
++results do not supersede this failure. No unchanged rerun was requested.
++
++The [exact play source](https://github.com/mxbaylee/spinel/blob/47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee/web/SyncNative.stories.tsx#L376)
++has three possible counter comparisons: resized and controls-created after Narrow
++editor (lines 380–381), and resized after Restore editor width (line 386). The
++retained error is truncated and does **not** identify which assertion or phase
++failed. The later host, layout and canvas widths are all 1280; the synthetic image
++is selected in the failure screenshot. This later full-width state cannot prove
++which transition failed or whether an event was missing.
++
++`web/SyncNative.stories.tsx` last changed in SPN-058 commit
++`12aa9b0d4f7c43f458729a38a390a5988d33bc58`. Its source SHA-256 is
++**cb49b99f39451671822b4816902dca54eb2182390706fc293d83e7edb1741bb9**
++on both current main 89e4426d and the failed candidate 47bf4aad. The SPN-120 diff
++has no `web/`, `.storybook/`, screenshot-runner or lockfile changes; package.json
++changes only formatting command paths. These are provenance facts, not proof
++that broader source/runner behavior cannot contribute or that a product is faulty.
++
++The fixture samples observations into hidden output every 100 ms. Its global
++resize/control counters do not explicitly bind completion to the requested native
++width. Investigate this as one supported hypothesis while retaining the possibility
++of a missing native resize/control event. The original ZIP remains locally at
++`/tmp/spn120-storybook-light-14097504548.zip` and in the expiring hosted artifact.
++The durable archive retains the relevant extracted manifest, diagnostic JSON,
++synthetic screenshot and log, plus the original ZIP digest; it does not contain
++the full ZIP.
++The [published immutable failed-validation archive](https://github.com/mxbaylee/spinel/blob/4bd84e3be7645a3b18c794c966e0007e6770cc9c/docs/review-assets/spn-120-validation-47bf4aad/README.md)
++retains those extracted files and digest at commit
++`4bd84e3be7645a3b18c794c966e0007e6770cc9c`,
++sole parent 47bf4aad, under tag
++`archive/spn-120-validation-47bf4aad-20261114`. The delivery manager verified
++the archive payload hashes and exact remote tag before this link was recorded.
++This is retained failure evidence, not repaired acceptance.
++
++## 🧪 Verification plan and registration status
++
++The existing native story and screenshot interaction runner own the real image,
++selection, layout and pending-queue contract. Extend bounded diagnostics with
++fixed phase/counter/geometry fields, without recording document contents or
++credentials. Reuse the lowest meaningful shared readiness control for deterministic
++negatives, and execute the affected real native interaction. The existing five
++Storybook theme/viewport variants own compatibility; no new matrix or repeated
++full local catalog is introduced. Keep relevant shared native drawing/selection,
++sync, CSS/layout, story and runner/config paths in CI selection, with selected
++failed/missing work unable to pass.
++
++The fixture uses a synthetic image and local pending queue; it does not simulate
++a server connection or save acknowledgement. Preserve exact native insertion,
++image/text focus, drawing controls, pending count/IDs, exclusion of
++`doc.operation.clear-drawing-transformer` from mutations and the empty native
++failure list and no-alert assertion. Dispose editor subscriptions/timers and owned browser/server work
++on success or failure, retaining the first cause and bounded cleanup evidence.
++
++This registration performs no native experiment, fix, new capture or acceptance
++run. Its documentation checks cover the ID allocation, complete scope, evidence
++limits, dependencies and generated index. [Focused registration sequencing](grooming-native-drawing-2026-11-13.md)
++preserves the grooming counter and the independent existing repair requirements.
+diff --git a/docs/implementation/grooming-native-drawing-2026-11-13.md b/docs/implementation/grooming-native-drawing-2026-11-13.md
+new file mode 100644
+index 00000000..e4452647
+--- /dev/null
++++ b/docs/implementation/grooming-native-drawing-2026-11-13.md
+@@ -0,0 +1,108 @@
++# Focused native drawing registration — 2026-11-13
++
++## 🧭 Decision, complete scope and sequencing
++
++**Date/status/source:** 2026-11-13, accepted agent delivery-manager judgment under
++the owner's continuous backlog instruction and [standing decision authority](../todo/process.md#decisions).
++This is focused registration, not a full grooming, implementation, repaired gate
++or completed product ticket.
++
++**Question and options:** selected validation of the resumed SPN-120 found a native
++drawing interaction failure outside its finite historical fixture inventory.
++Treating a green variant or unchanged retry as acceptance, assigning it to unrelated
++SPN-087 CSS cleanup, or hiding it inside SPN-120 would lose that boundary. Register
++one complete **M, pre-launch** investigation/repair, SPN-159, and keep SPN-120 open
++with explicit prerequisites SPN-158 and SPN-159. The former owns the separately
++observed postcommit admission readiness HTTP 503; the latter owns native drawing
++resize observation and its full interaction/pending-mutation contract.
++
++SPN-159 retains diagnosis before repair, a predeclared bounded source/native
++experiment, meaningful phase/geometry observations, missing-transition negative
++controls, actual native insertion/selection/control refresh, original budgets,
++privacy, cleanup and all existing five Storybook variants. Its exact historical
++assertion and cause remain unknown. Establish the causal transition/readiness
++boundary through a predeclared new controlled experiment before choosing a repair;
++this does not require reconstructing the unavailable original failure phase.
++Reassess before expanding into a broader
++product/native-engine issue. SPN-120's L outcome and original finite cases remain
++intact; no product acceptance is removed to improve a grade.
++
++Operator gains visible work ownership and reliable gate evidence. Owner and
++Collaborator keep authored native changes distinct from UI-only resize/selection
++activity and retain SPN-120's data/access checks. Link guest retains native
++interaction and permission boundaries without gaining content or management
++access. Separate registration permits the investigation to proceed while retaining
++every failed gate and the cost of its complete verification.
++
++## 🧾 Allocation and preserved backlog state
++
++Preparation starts from independently verified actual main
++`89e4426dfff1c3469b260305e21180ffd79fdb7f`, next ID 159. No SPN-159 ticket path
++exists in the available Git history. The existing completed registration PR #284,
++its clean detached checkout, validation/completion archive tags and all prior
++ticket identities are preserved unchanged.
++
++Exactly one allocation ran through `npm run backlog:new -- 📐 "Observe completed
++native drawing resizes"`, advancing 159 to **160**. It passed under pinned Node
++26.13.0, the shared serial runner and runtime memory watchdog in **281 ms**, peak
++**160,672 KiB**, with normal pressure and no resource abort. The exact allocation
++commit remains in this branch's history; no ID was reused or manually allocated.
++
++No ticket is deleted or appended as completed. Preserve the current main's
++grooming date and completion list, and regenerate the index through the CLI.
++At the initial base these are **2026-11-12** and **[SPN-148, SPN-145]**. The manager
++plans publication after the already validating SPN-149 PR if its acceptance passes,
++to avoid invalidating near-ready CI. Before publication, integrate the actual new
++main, preserve any newly landed completion, run the relevant checks and obtain
++both independent exact-head reviews. That initial sequencing has now completed: SPN-149 landed in actual main
++`a3dfc6f3373babecf979d5b851bbbf46c6dbb3b9`, which this registration integrates.
++Its ticket removal and completion list **[SPN-148, SPN-145, SPN-149]** remain
++intact; last full grooming remains **2026-11-12**, with next ID **160**. The sole
++generated-index merge conflict was resolved by running the index CLI, not editing
++the generated file. This registration completes no product ticket.
++
++## 🔎 First failure, investigation limits and checks
++
++The [SPN-159 canonical record](SPN-159.md#-retained-failure-and-source-limits)
++retains source 47bf4aad, base 89e4426d, Storybook run 43554616505 attempt 1,
++desktop-light job 132324964897, artifact 14097504548 and its exact ZIP hash.
++The recorded counter error does not identify one of the three possible assertion
++sites. Post-failure full-width geometry does not diagnose an earlier transition.
++The source/main story hashes match, while the native source/runner contribution
++remains an investigation question. No native experiment or rerun is performed by
++this documentation PR. The [immutable failed-validation archive](https://github.com/mxbaylee/spinel/blob/4bd84e3be7645a3b18c794c966e0007e6770cc9c/docs/review-assets/spn-120-validation-47bf4aad/README.md)
++is now published at verified commit `4bd84e3be7645a3b18c794c966e0007e6770cc9c`;
++the original failed attempt remains visible and is not replaced by a retry.
++
++The complete open-PR listing during preparation returned **13 PRs**, all authored
++by `mxbaylee`: 220, 223, 224, 227, 228, 229, 230, 246, 247, 260, 281, 282 and 285.
++There are **no open Dependabot PRs** requiring security, compatibility, current-CI
++or grouping disposition. No dependency was changed or merged. Recheck this audit
++at the final publication base rather than treating this snapshot as permanent.
++The refreshed audit after integrating a3dfc6f3 returned **12 open PRs**, the same
++list excluding merged #282, all authored by `mxbaylee`; no Dependabot disposition
++is outstanding.
++
++Documentation verification owns allocation/history, exact heading, scope/persona
++rationale, dependency and phase ordering, evidence limits, local/immutable links,
++generated index and PR title/size rules. No application or UI implementation is
++changed. Product tests or routine new screenshots are not invented for registration;
++the existing failure screenshot is diagnostic provenance, not approval of a design.
++
++The initial generated-index check passed in **278 ms**, peak **215,792 KiB**;
++`backlog:check` passed for **31 open tickets** in **274 ms**, peak **212,496 KiB**,
++with only existing ticket-length guidance. Both used the pinned Node, shared serial
++runner and watchdog with normal pressure and no abort. `git diff --check` and
++local Markdown file-target resolution passed. The exact-head PR checker, final
++base integration and two independent reviews remain pending; these documentation
++checks are not native repair acceptance.
++
++After main integration, the index CLI passed in **172 ms** and `backlog:check`
++passed for **30 open tickets** in **149 ms**, with ticket-length guidance only.
++Both finished before the watchdog's first memory sample, so no measured peak
++is available; both passed normal-pressure preflight and had no resource abort.
++An earlier index invocation used a nonexistent `scripts/backlog.ts` path and
++failed before performing backlog work. Correcting it to the package script's
++`scripts/backlog/cli.ts index` produced the successful result above; retain both
++receipts rather than reporting the failed invocation as a pass. Final exact-head
++PR validation and independent reviews remain separate publication requirements.
+diff --git a/docs/todo/SPN-120.md b/docs/todo/SPN-120.md
+index 2a6605dc..7ec5437c 100644
+--- a/docs/todo/SPN-120.md
++++ b/docs/todo/SPN-120.md
+@@ -7,7 +7,7 @@ impact_owner: S
+ impact_collaborator: S
+ impact_guest: S
+ score: 22
+-depends_on: []
++depends_on: [SPN-158, SPN-159]
+ decisions: []
+ ---
+ 
+@@ -28,7 +28,8 @@ And missing readiness or a crashed server still fails clearly with the original
+ 
+ ## Rules
+ 
+-- PR #228 integrated the merged SPN-130/131/139 repairs and passed its recorded 24-case audit, but selected native checks found distinct Safari constructor and Firefox cache-deletion failures. SPN-140 (Safari constructor) and SPN-141 (storage-loss preparation) have since completed on main. 🔎 The open PR's head `597c3182ae34a9bb0734b3e2f599ba5d845cf849` still predates those squashes: integrate current main and retain every SPN-120 acceptance requirement before fresh validation. Landed prerequisites are available, not evidence that this draft is integrated or passing. [Current handoff](../implementation/grooming-2026-11-12.md#existing-ticket-and-documentation-corrections), 2026-11-12; [Safari evidence](../implementation/SPN-140.md#registration-and-scope), [storage repair](../implementation/SPN-141.md#-leave-active-producers-before-deleting-storage). The [older prerequisite record](../implementation/SPN-130.md#registration-and-current-recurrence) remains historical provenance.
++- Current published PR #228 source `47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee` integrates main `89e4426d`, including the completed SPN-140/141 prerequisites. Its fresh required validation still fails the postcommit authentication boundary owned by [SPN-158](SPN-158.md) and the newly observed native drawing interaction owned by [SPN-159](SPN-159.md). Keep this ticket open and wait on both complete outcomes; retain its finite historical inventory and every original acceptance requirement. [Current evidence and sequencing](../implementation/SPN-120.md#-new-independent-validation-prerequisites), agent judgment, 2026-11-13.
++- Historical PR source `597c3182` integrated SPN-130/131/139 and passed its recorded 24-case audit, then found distinct Safari constructor and Firefox storage-loss preparation failures. SPN-140/141 later landed; their provenance remains in the [November 12 handoff](../implementation/grooming-2026-11-12.md#existing-ticket-and-documentation-corrections), [Safari record](../implementation/SPN-140.md#registration-and-scope) and [storage record](../implementation/SPN-141.md#-leave-active-producers-before-deleting-storage). Neither an old successful audit nor a landed prerequisite proves the current combined candidate's required acceptance.
+ 
+ - Follow [sustainable testing](../testing.md); keep the Verify plan and progress evidence current. [Policy](../implementation/SPN-115.md#guidance-for-every-open-ticket-and-progress-checkpoint), owner 2026-11-01.
+ 
+diff --git a/docs/todo/SPN-159.md b/docs/todo/SPN-159.md
+new file mode 100644
+index 00000000..37a177e4
+--- /dev/null
++++ b/docs/todo/SPN-159.md
+@@ -0,0 +1,53 @@
++---
++id: SPN-159
++emoji: 📐
++effort: M
++phase: pre_launch
++impact_operator: M
++impact_owner: S
++impact_collaborator: S
++impact_guest: S
++score: 23
++depends_on: []
++decisions: []
++---
++
++# 📐 SPN-159 Observe completed native drawing resizes
++
++## Story
++
++As the [Operator](../product/personas.md#operator), I want the native drawing check to observe each completed editor resize, so that it verifies real drawing behavior and identifies a failed transition without uncertain reruns.
++
++## Scenarios
++
++### Narrowing and restoring complete the intended native transitions
++
++Given the native fixture has inserted and selected its synthetic image,
++When the editor narrows and then returns to its original width,
++Then each intended host/native geometry transition and required drawing-control refresh is observed,
++And unrelated resize activity cannot make missing narrow or restore work pass.
++
++### Selection and resize leave the authored pending work intact
++
++Given image insertion has produced the expected native pending edit,
++When the image and neighboring text are selected and the editor resizes,
++Then the pending authored work remains unchanged,
++And UI-only selection operations never enter the pending mutation queue.
++
++## Rules
++
++- Registration only; the retained desktop-light failure is `expected 2 to be greater than 2`, with no exact assertion/phase identity. The final full-width geometry does not establish its cause. [First failure and limits](../implementation/SPN-159.md#-retained-failure-and-source-limits), agent judgment, 2026-11-13.
++- Complete **M** includes a predeclared bounded source/native experiment, phase/geometry diagnostics, demonstrated readiness repair, meaningful negative controls, native insertion/selection/control refresh, pending-mutation safety, integration and all existing selected Storybook variants. [Scope and personas](../implementation/SPN-159.md#-complete-outcome-and-persona-decision). Reassess before a broader native product/rendering/persistence repair.
++- Investigate the global-counter readiness hypothesis; do not label it the historical diagnosis or a product defect. Demonstrate the causal transition/readiness boundary in the predeclared new controlled experiment before correcting it; the original failed comparison and phase remain unknown. Preserve original deadlines, assertions, privacy and cleanup. No arbitrary sleep, blanket retry, raised budget, weakened comparison or unchanged rerun until green.
++- Reuse `web/SyncNative.stories.tsx` and the existing screenshot/native geometry helpers. Prove missing narrow and restore transitions cannot pass, including unrelated pending resize activity where relevant. Retain native image insertion, text/image selection, control refresh, unchanged pending count/IDs, absent `doc.operation.clear-drawing-transformer` mutation, no native failures and no alerts.
++- This is distinct from SPN-120's finite historical fixture inventory and SPN-087's obsolete CSS cleanup. Both retain their original scope; registering this prerequisite does not waive a failed gate. Follow [sustainable testing](../testing.md).
++
++## Out of scope
++
++- A new Storybook/browser matrix, production UI redesign, generic retry framework, unproved engine or data-loss repair, and SPN-120/SPN-087 implementation.
++
++## Verify
++
++- Contract/negatives: predeclare the bounded experiment and source/viewport before execution; observe phase, host/canvas geometry and relevant native counters without content. Use the lowest meaningful shared control plus the actual native story; deliberately withhold narrow/restore completion so neither can pass accidentally.
++- Fixture/cleanup: retain the existing synthetic image/Doc and actual native insertion/selection path, original timing budgets and first-failure diagnostics; dispose editor, timers and owned server/browser resources. UI-only operations must not change authored pending work; this local fixture does not simulate server acknowledgement.
++- Environment/routing/evidence: existing five Storybook theme/viewport owners verify affected native interaction; do not duplicate the full matrix on the Mac. Preserve shared story, native drawing/selection/sync, CSS/layout and screenshot/config dependencies in selection. Retain exact source/run/attempt, phase/geometry evidence, negative controls, original failure and current native result; a later pass cannot prove the unknown historical cause.
+diff --git a/docs/todo/backlog.json b/docs/todo/backlog.json
+index 2684f0d0..fee8fea2 100644
+--- a/docs/todo/backlog.json
++++ b/docs/todo/backlog.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "Spinel",
+   "prefix": "SPN",
+-  "next_id": 159,
++  "next_id": 160,
+   "personas": "docs/product/personas.md",
+   "grooming": {
+     "every": 7,
+diff --git a/docs/todo/readme.md b/docs/todo/readme.md
+index 104d95cc..d2f32b7c 100644
+--- a/docs/todo/readme.md
++++ b/docs/todo/readme.md
+@@ -2,11 +2,11 @@
+ 
+ <!-- Generated by `npm run backlog:index` from the SPN-NNN.md tickets and backlog.json. Don't edit it by hand; CI fails if it is stale. -->
+ 
+-How this backlog works: [process.md](process.md). Next ID: **SPN-159**. Grooming: **3** tickets completed since 2026-11-12: SPN-148, SPN-145, SPN-149. Reminder every 7; grooming on request, never a work gate.
++How this backlog works: [process.md](process.md). Next ID: **SPN-160**. Grooming: **3** tickets completed since 2026-11-12: SPN-148, SPN-145, SPN-149. Reminder every 7; grooming on request, never a work gate.
+ 
+ Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.
+ 
+-## Open tickets (29)
++## Open tickets (30)
+ 
+ Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.
+ 
+@@ -17,39 +17,40 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
+ | 1 | 🛟 [SPN-157](SPN-157.md) Recover maintenance and restore across process handoffs | 🌳 L | 🩷 L | 32 | — |
+ | 2 | 🔁 [SPN-156](SPN-156.md) Sync saved edits while the file list is open | 🌳 L | 🩷 L | 32 | — |
+ | 3 | 🛂 [SPN-158](SPN-158.md) Wait for writable admission after restore | 🌿 M | 💜 M | 24 (own 21) | — |
+-| 4 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | [SPN-158](SPN-158.md) |
+-| 5 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | [SPN-157](SPN-157.md) |
+-| 6 | 🔎 [SPN-120](SPN-120.md) Resolve the remaining recorded browser fixture failures | 🌳 L | 💜 M | 22 | — |
+-| 7 | 📊 [SPN-123](SPN-123.md) Complete operation and sync diagnostic coverage | 🌳 L | 💜 M | 22 | — |
+-| 8 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
+-| 9 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
+-| 10 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
+-| 11 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
+-| 12 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
+-| 13 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
+-| 14 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
+-| 15 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
++| 4 | 📐 [SPN-159](SPN-159.md) Observe completed native drawing resizes | 🌿 M | 💜 M | 23 (own 21) | — |
++| 5 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | [SPN-158](SPN-158.md) |
++| 6 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | [SPN-157](SPN-157.md) |
++| 7 | 🔎 [SPN-120](SPN-120.md) Resolve the remaining recorded browser fixture failures | 🌳 L | 💜 M | 22 | [SPN-158](SPN-158.md), [SPN-159](SPN-159.md) |
++| 8 | 📊 [SPN-123](SPN-123.md) Complete operation and sync diagnostic coverage | 🌳 L | 💜 M | 22 | — |
++| 9 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
++| 10 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
++| 11 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
++| 12 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
++| 13 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
++| 14 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
++| 15 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
++| 16 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
+ 
+ ### Launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 16 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
++| 17 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
+ 
+ ### After launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 17 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
+-| 18 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
+-| 19 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
+-| 20 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
+-| 21 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
+-| 22 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
+-| 23 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
+-| 24 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
+-| 25 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
+-| 26 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
+-| 27 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
+-| 28 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
+-| 29 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |
++| 18 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
++| 19 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
++| 20 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
++| 21 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
++| 22 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
++| 23 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
++| 24 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
++| 25 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
++| 26 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
++| 27 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
++| 28 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
++| 29 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
++| 30 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |

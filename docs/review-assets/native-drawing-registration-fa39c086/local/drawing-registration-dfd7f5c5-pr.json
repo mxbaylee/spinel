@@ -1,0 +1,17 @@
+{
+  "name": "drawing-registration-dfd7f5c5-pr",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "a3dfc6f3373babecf979d5b851bbbf46c6dbb3b9",
+    "--title",
+    "🧹 Groom backlog register native drawing repair"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 419,
+  "peakKiB": 178784
+}

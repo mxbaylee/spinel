@@ -1,0 +1,13 @@
+{
+  "name": "drawing-registration-review-a-backlog-c40",
+  "args": [
+    "npm",
+    "run",
+    "backlog:check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 342,
+  "peakKiB": 156944
+}

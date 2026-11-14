@@ -1,0 +1,9 @@
+{
+  "reviewedPriorHead": "dfd7f5c53be1138a929b9c6d40e38a052217c33f",
+  "finding": "SPN-159 archive description could imply original ZIP bytes are included, but the durable archive contains extracted evidence and ZIP digest.",
+  "source": "Independent reviewer A, relayed by delivery manager",
+  "repairHead": "fa39c086e8df8a542c2703ffcc614dfc17afd030",
+  "file": "docs/implementation/SPN-159.md",
+  "disposition": "Explicitly distinguish local/expiring hosted original ZIP from committed extracted evidence plus digest; no redundant ZIP publication.",
+  "verification": "Exact-head PR check passed; both independent new-head reassessments pending."
+}
