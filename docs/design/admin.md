@@ -159,10 +159,14 @@ stories and independent theme/persona screenshot review on the implementation PR
 ## User feedback handoff (SPN-098)
 
 Owner direction, 2026-10-22; [scope and rationale](../implementation/SPN-098.md).
-Production work is pending. An everyday account's menu opens a short feedback
+An everyday account's **Account actions → Send feedback…** menu beside Your
+profile opens the production feedback
 dialog using existing form/status patterns, explaining that the message and page
 context go to the server Operator. Submission success requires persistence; keep
 the draft on failure and prevent duplicate submissions while pending.
+Standalone editors, which hide the account rail, expose the same production
+dialog in **Document actions → Send feedback…** with their current file identity.
+Signed-in Space pages also have that entry; guest frames never receive it.
 
 The admin user list shows an accessible **Feedback available** flag when stored
 feedback exists for that user. Beside it, a compact action menu offers
@@ -181,6 +185,15 @@ unfinished prepared downloads and refreshes flags. Do not imply that handing a
 file to the browser proves the Operator saved it. Add light/dark/phone stories
 for the submission dialog, flag and both download actions, including keyboard
 focus return, loading, empty/expired and failed states, for independent review.
+
+The first download menu choice prepares the pair and starts its chosen scope;
+the shared dialog retains both buttons, the receipt-time span, counts and a
+collection-limits disclosure. Closing disposes unfinished work. Failed sends
+retain their original message/context as read-only for an exact retry, including
+after reopening within the same view. A cleared generation requires the explicit
+**Start a new report** action. A saved submission has one **Done** action and an
+optional **Send another report** control. Production stories live under
+**Current production/Account/Feedback** and **Current production/Admin/Feedback**.
 
 ## Assistant connection metadata (SPN-034)
 

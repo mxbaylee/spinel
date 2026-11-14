@@ -4,6 +4,9 @@ import { api } from './api.ts';
 import { AdminAccountRecovery } from './AdminAccountRecovery.tsx';
 import type { RecoveryAction } from './AdminAccountRecovery.tsx';
 import { adminAccountLabel } from './adminAccountLabel.ts';
+import { AdminFeedbackDownloads, useFeedbackFlags } from './AdminFeedback.tsx';
+import type { FeedbackScope } from '../src/shared/feedback.ts';
+import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import './administration.css';
 
 type User = {
@@ -39,6 +42,13 @@ export function AdminUsers({
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [feedbackRevision, setFeedbackRevision] = useState(0);
+  const feedback = useFeedbackFlags(feedbackRevision);
+  const [feedbackSelection, setFeedbackSelection] = useState<{
+    user: User;
+    scope: FeedbackScope;
+  } | null>(null);
+  const feedbackTrigger = useRef<HTMLButtonElement | null>(null);
   const refreshButton = useRef<HTMLButtonElement>(null);
   const mounted = useRef(false);
   const request = useRef(0);
@@ -58,6 +68,7 @@ export function AdminUsers({
     return () => onBusyChange?.(false);
   }, [busy, recoveryBusy, onBusyChange]);
   async function refresh() {
+    setFeedbackRevision((value) => value + 1);
     const generation = ++request.current;
     setLoading(true);
     try {
@@ -168,6 +179,17 @@ export function AdminUsers({
       <p className="sp-muted">Manage the instance. Document content stays private.</p>
       {error && !action && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
+      {feedback.loading && (
+        <p className="sp-muted" role="status">
+          Checking feedback…
+        </p>
+      )}
+      {feedback.error && (
+        <p role="alert">
+          Feedback status is unavailable.{' '}
+          <Button onClick={feedback.reload}>Retry feedback status</Button>
+        </p>
+      )}
       {loading && <p role="status">Loading users…</p>}
       {loaded && !loading && !users.length && <p>No accounts are available.</p>}
       <ul className="admin-people-list">
@@ -190,6 +212,26 @@ export function AdminUsers({
                   <p className="sp-muted">
                     {user.passkeys.length} {user.passkeys.length === 1 ? 'passkey' : 'passkeys'}
                   </p>
+                  {feedback.flags?.actors.includes(user.id) && (
+                    <div className="admin-feedback-flag">
+                      <span>
+                        <ProfileIcon icon="lucide:message-square" size={16} />
+                        Feedback available
+                      </span>
+                      <ActionMenu
+                        label={`Feedback downloads for ${adminAccountLabel(user, users)}`}
+                        finalFocus={() => (feedbackSelection ? false : feedbackTrigger.current)}
+                        actions={(['user', 'system'] as const).map((scope) => ({
+                          label: `Download ${scope} metrics`,
+                          disabled: busy || loading,
+                          onClick: (trigger) => {
+                            feedbackTrigger.current = trigger ?? null;
+                            setFeedbackSelection({ user, scope });
+                          },
+                        }))}
+                      />
+                    </div>
+                  )}
                 </div>
                 <ActionMenu
                   label={`Actions for ${adminAccountLabel(user, users)}`}
@@ -254,6 +296,19 @@ export function AdminUsers({
           </li>
         ))}
       </ul>
+      {feedbackSelection && (
+        <AdminFeedbackDownloads
+          key={feedbackSelection.user.id}
+          actorId={feedbackSelection.user.id}
+          accountName={adminAccountLabel(feedbackSelection.user, users)}
+          initialScope={feedbackSelection.scope}
+          onClose={() => setFeedbackSelection(null)}
+          onRefreshFlags={feedback.reload}
+          finalFocus={() =>
+            feedbackTrigger.current?.isConnected ? feedbackTrigger.current : refreshButton.current
+          }
+        />
+      )}
       {member && (
         <Modal
           open
