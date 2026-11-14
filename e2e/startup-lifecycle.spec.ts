@@ -80,29 +80,37 @@ async function readySpace(page: Page) {
 // to verify entry lifecycle, DOM removal and timer disposal.
 test('guest startup reporting ends when a ready guest mounts after slow app code', async ({
   page,
+  context,
 }) => {
   await readySpace(page);
   let release!: () => void;
   const gate = new Promise<void>((resolve) => {
     release = resolve;
   });
-  let requested!: () => void;
-  const applicationRequested = new Promise<void>((resolve) => {
+  let requested!: (owner: 'service worker' | 'app code') => void;
+  const applicationRequested = new Promise<'service worker' | 'app code'>((resolve) => {
     requested = resolve;
   });
-  await page.route(
+  // Production precaches the imported application through its real worker;
+  // page.route cannot intercept that worker-owned fetch. Keep both owners gated.
+  await context.route(
     /\/(?:application\.tsx(?:\?.*)?|assets\/application-[^/]+\.js)$/,
     async (route) => {
-      requested();
+      requested(route.request().serviceWorker() ? 'service worker' : 'app code');
       await gate;
       await route.continue();
     },
   );
   try {
     await page.goto('/share/' + id, { waitUntil: 'commit' });
-    await applicationRequested;
+    const owner = await applicationRequested;
+    test.info().annotations.push({ type: 'application delivery gate', description: owner });
     await beyondDeadline(page, 9000);
+    // Network ownership does not rename the bootstrap's application-import stage.
     await expect(slowLine(page)).toContainText('Still starting: app code');
+    await expect(
+      page.getByRole('heading', { name: 'This Space is empty', exact: true }),
+    ).toHaveCount(0);
     await reporterCleared(page, false);
     release();
     await expect(

@@ -190,7 +190,19 @@ test('pending invitations prevent section changes, manual copying works, and lea
     await expect(address).toBeFocused();
     // The once-only address remains the focus target while a slow readback keeps Create disabled.
     await expect(page.getByRole('button', { name: 'Create invite', exact: true })).toBeDisabled();
+    const healthLink = page.getByRole('link', { name: 'Backups & health', exact: true });
+    await expect(healthLink).toHaveAttribute('aria-disabled', 'true');
+    // Seeing the created link is not completion: the real readback still owns
+    // the navigation fence. Dispatch the disabled anchor's event directly to
+    // exercise its handler; Playwright correctly refuses a user click here.
+    await healthLink.dispatchEvent('click');
+    await expect(page).toHaveURL(/#invites$/);
+    await page.evaluate(() => {
+      location.hash = 'health';
+    });
+    await expect(page).toHaveURL(/#invites$/);
     releaseReadback();
+    await expect(healthLink).not.toHaveAttribute('aria-disabled', 'true');
     await expect(page.getByRole('button', { name: 'Refresh invites', exact: true })).toBeEnabled();
     await expect(address).toBeFocused();
     const secret = await address.inputValue();
@@ -210,6 +222,10 @@ test('pending invitations prevent section changes, manual copying works, and lea
     ).toHaveText('Select the link below and copy it manually.');
     await expect(address).toHaveValue(secret);
     const nav = page.getByRole('navigation', { name: 'Administration sections' });
+    await healthLink.click();
+    await expect(
+      page.getByRole('heading', { name: 'Backups & health', exact: true }),
+    ).toBeVisible();
     await nav.getByRole('link', { name: 'People', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'People', exact: true })).toBeVisible();
     await nav.getByRole('link', { name: 'Invites', exact: true }).click();
