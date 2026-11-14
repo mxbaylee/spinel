@@ -1,0 +1,8 @@
+{
+  "checkedAt": "2026-11-14T05:47:17.071976+00:00",
+  "worktree": "/Users/mxbaylee/projects/spinel-spn-158",
+  "method": "ps pid/ppid/start-time/command followed by lsof cwd for node/esbuild/tsgo/vitest processes",
+  "candidateProcessesInspected": 3,
+  "ownedSurvivors": [],
+  "kills": []
+}

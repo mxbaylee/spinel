@@ -1,0 +1,8 @@
+{
+  "observedAt": "2026-11-14T05:40:00.336677+00:00",
+  "source": "d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a",
+  "cwdOwnedWorkloads": [],
+  "commandOwnedWorkloads": [],
+  "lsofExitCode": 0,
+  "scope": "Actual cwd inventory plus task-specific command/private-cache inventory; no unrelated process terminated."
+}
