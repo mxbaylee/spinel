@@ -1,0 +1,57 @@
+{
+  "parentArchive": "fdc2d7351527607ed67d3d540df7ae22e19a9db6",
+  "source": "67111d9c106c6518b813c6f1cf332068526c254c",
+  "collectedAt": "2026-11-14T03:30:00.408381+00:00",
+  "files": {
+    "README.md": "bdb2e91750000bad1125615113ec021b8cba56a39ad6dd8a99df8cba8913c61a",
+    "api/43548838838-artifacts.json.gz": "17ce5fdfced492d0b5c774697ccedfe51f407e5f18085ffd8cbbc68fd362037e",
+    "api/43548838838-jobs.json.gz": "a7d5298f53e7edcf683d9a450f5fd444af90e0afd1a03c97405f29b8132b9e5e",
+    "api/43548838838-run.json.gz": "18b9778ebbe6f2fef1cd31e5ddae6fc42bf8fc514b9049423c7f6218123788e9",
+    "api/43548838841-artifacts.json.gz": "66331eef966444b09b47c36136e814ae26462ae62afb4fc3f34783007adf7ab6",
+    "api/43548838841-jobs.json.gz": "62ea7aceca386110edd49d21d3f0c88494c5fe052077df97bde3e6b572e3deef",
+    "api/43548838841-run.json.gz": "10f139e54811496efe59c6a6f41cfb8c4837be68d4f0d6c3957e2893df5eff96",
+    "api/43548838849-artifacts.json.gz": "4e8b237d9a42229658e19097fca474c48e3461199cee7863727d99e3f31d5713",
+    "api/43548838849-jobs.json.gz": "278f4496c6113e23177a8484b5f0701d559fc7b8aa06ae025c287ec6a85ae2d9",
+    "api/43548838849-run.json.gz": "38c5b07c44eb904b0f3b3141e0d884c076fc6451f5a2d048afa2e26783661db9",
+    "gates/ci-plan.json.gz": "dac69fb9c7794854010ae395786682f1098243bb23530c56a4970d24716ecfb8",
+    "gates/ci-results-browser.json.gz": "7893b52d3cd1872dee8aace9d3a6dbc6ff9abe08ed032929c876c41f56521baa",
+    "gates/ci-results-lib.json.gz": "a792b76184a43318412a70446a523085e06789d3274a20ace468e322f3452f37",
+    "gates/ci-results-unit.json.gz": "034895db6ee22325bc7566c4246d180b7af635a21f93a5e5c60d4882a14ba821",
+    "logs/job-132306723840.log.gz": "51f761b3094038a1fc48a1244218b1d634c5fe7f26fc872047ce29fb5d0614b7",
+    "logs/job-132306723849.log.gz": "f1cbc5578b40dca9ef363f41ea4a363733e4cc54bb060c1206e040dc852f26b8",
+    "logs/job-132306724084.log.gz": "c6f34359044f695763831e0ea32f4bf87c08fcb41c8de75dfb5de176a7ec83bd",
+    "logs/job-132308782209.log.gz": "7d7bb7e3522ca7c2b37c9430d0e99ad931aa2de40b6b29ca94bb05d57fee749f",
+    "logs/job-132311043994.log.gz": "373645a8aa64e619c900afc5c8964503fbedc7536c8ff6543a84e2ca9e18f424",
+    "logs/job-132314895913.log.gz": "036759d4506f1a7c672591bd52e39158fba5393a69375c27ffc016680caf896f",
+    "metrics/desktop-comparison.json.gz": "e57ad9f14b6b326014cb3de14624bacdbe597d3a22d8eae7421e1fbc8dadf686",
+    "metrics/mobile-comparison.json.gz": "bde3a658658128662f59acbb1289c1ea9f4c24a093c3e88385cf79b8cf0b29ef",
+    "native/desktop-chrome-acceptance.json.gz": "85b2cdea3a5864c7461d59e4426ec49d5909d6a5fd17cc19e321ad05a67f2dbc",
+    "native/desktop-firefox-acceptance.json.gz": "a39ecf25a83495bec8eacf5ed2493c387103a85369c7865c7f5484278a71db20",
+    "native/desktop-safari-acceptance.json.gz": "d68ea248a24bc34fd8e211a8e079e2848933bc461c62f2b6562f26b0c5a13fee",
+    "source/e2e-offline.spec.ts.gz": "1108f8e5a130ce6599c9a78f0247bf5205be8b228ea88a2fc8cf70ade330a1c7",
+    "storybook/design-review-desktop-dark-manifest.json.gz": "004c67fa35512eab390824f7e761e60d2270d09020a62fa4901a29efe784c671",
+    "storybook/design-review-desktop-light-manifest.json.gz": "44be303265d20024c326640dea650e0f82cff9ba709a6c7809160bc40ff1a66c",
+    "storybook/design-review-mobile-dark-manifest.json.gz": "381e3d558f6654f844c711e5f74659cd4e68b352378438a44854512edb58f0d1",
+    "storybook/design-review-mobile-light-manifest.json.gz": "4a97887f11911dad0fe31c70d0f78b725c1a30364f6215bfbe38fd1905ccbf69",
+    "storybook/design-review-tablet-manifest.json.gz": "e85f63cc1a8f7b424016af820ceffd9546d2e7ac6205a21dd3e6b8d00d1884a2",
+    "terminal-summary.json.gz": "f3d9a9be8c38c91fb61c4c0b7c1f569343a8bd3d17693e45b5d7f5fa9ad6eb57"
+  },
+  "privacyAudit": {
+    "patterns": [
+      "privateKey",
+      "githubToken",
+      "personalHomePath",
+      "bearerLiteral"
+    ],
+    "findings": [
+      {
+        "pattern": "personalHomePath",
+        "match": "/Users/runner",
+        "occurrences": 80,
+        "disposition": "Relevant GitHub-hosted macOS runner profile/source paths, not a personal user home. Original source evidence preserved."
+      }
+    ],
+    "scope": "Decompressed curated metadata, logs, reports and exact source; generated fixture identities only; no binary content stores included.",
+    "unresolvedFindings": []
+  }
+}
