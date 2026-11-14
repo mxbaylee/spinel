@@ -1,0 +1,62 @@
+# 🔎 Independent review B — SPN-098
+
+Reviewed candidate: **5e72d33ac9cb3a86b3496345209493d6c86e469c**. Actual base: **754e65317744e5ce97ede501935c6586e4875f2a**. Worktree: `/Users/mxbaylee/projects/spinel-spn-098-production`. This is an independent, nonimplementing review of the complete candidate against the original main SPN-098 L specification, not merely the final evidence commit. No source edits, push or merge. Other/prior numerical reviews were not consulted; the grade-free packet retained technical history and disclosed masking provenance.
+
+## ✅ Assessment and rubric
+
+**100/100: scope 35/35; correctness 25/25; regression 20/20; CI/workflow and operations 10/10; maintainability and complexity 10/10.** No actionable code, test, scope, evidence or visual findings remain from this review. No deductions, hence no additional point-bearing steps to 100. CI results did not affect the grade. This assessment is pre-push reviewability, not a CI pass or merge authorization.
+
+I inspected the original ticket, complete 156-file base-to-head diff, maintained implementation and packet history, sustainable testing/process/runbook requirements, all four personas, design playbook/theme, runtime callers, tests and retained evidence. The complete durable-feedback/paired-export outcome remains one L ticket. SPN-157 remains its explicit prerequisite and merge block; supporting validation with landed SPN-160 diagnostics does not claim to complete the original SPN-157 L repair/acceptance. Candidate-only ticket deletion and conditional completion bookkeeping do not waive that dependency. Main completions 148/145/149/158/160 and next ID161 are preserved.
+
+## 🔐 Source and contract review
+
+The feedback write commits a bounded explicit message with verified actor and authorized file/allowlisted route context, server receipt/build/correlation metadata, and synchronous durable transaction before acknowledgment. Failed writes roll back; capacity/rate failure preserves the draft. Generation fencing precedes duplicate acknowledgment, and session-bound context plus exact immutable retry payload prevents cross-account transplantation, duplicate reports or resurrection after truncation. Server routes do not accept caller-supplied actor identity or automatic titles/content/raw URLs. Operator and guest submission restrictions and everyday-account read boundaries are maintained.
+
+The paired exports use one immutable SQLite snapshot and generation/watermark, the complete retained actor receipt-time span, inclusive boundaries and full rows. User selection includes all attributed frontend/backend/feedback rows; system selection includes every actor and unattributed rows within exactly that span. New activity or later TTL deletion cannot change the second artifact. Fresh filtered SQLite files avoid deleted-page content leakage. Empty actor selection does not grant unrelated system export; old feedback remains visible when its observations are gone. Counts, retained completeness and unknown historical completeness, drop/retention limits and fixed windows are exposed without implying that missing historical observations exist.
+
+Preparation and transfer have explicit byte/free-space/deadline limits. Session/operator/generation authority is checked after preparation and during transfer; cancellation, expiry, truncation and interrupted transfer revoke the pair. The transfer deadline includes destination finalization after source EOF. Private staging, startup orphan cleanup, worker termination and cleanup-failure admission fencing prevent unbounded retained temporary work. Idle lost-ack reuse retains original pair identity and expiry. Truncation clears queued pre-clear observations and feedback and refreshes flags; new intentional reports may set flags again.
+
+The UI retains drafts across dismissal and failures, freezes uncertain attempted payloads, requires deliberate new submission after a generation change, and distinguishes browser download handoff from a saved file. Operator flags mean stored feedback exists rather than unread status; unknown loading failure is not a false empty state. The UI remains two scoped download actions rather than a feedback inbox/query system. Role/session changes, expired and old-context states, cancellation and focus return are represented. The long expanded-limits modal uses a bounded scroll container rather than requiring all controls to fit simultaneously in one phone viewport; the control assertion checks target sizes and horizontal bounds and is not misrepresented here as a full vertical visibility proof.
+
+Persona assessment: Owner and Collaborator get the same intentional, private, durable reporting and retry behavior without assembling diagnostics; Operator gets bounded, consistent artifacts and truthful missing-data/cleanup states without seeing report content in People; Link guest retains view-only behavior and no feedback entry or report-reading authority. These tradeoffs preserve the declared privacy and product scope.
+
+## 🧪 Independent local verification
+
+I ran the relevant lowest-layer diagnostics/context suites plus the integrated maintenance ownership and supervisor-control contracts once on the exact candidate, under pinned Node26.13.0 and the shared serial/runtime watchdog with normal-pressure, 2GiB/eight-minute limits and a private module cache:
+
+`node node_modules/vitest/vitest.mjs run src/server/diagnostics src/ui/feedbackContext.test.ts src/server/maintenance/ownership.test.ts src/server/maintenance/supervisor-test-control.test.ts --cache=false --fsModuleCachePath=/tmp/spinel-dependabot-2026-11-11/spn098-review-b-5e72-module-cache`
+
+**81 tests in 13 files passed on the first attempt**, exit0, 4355ms, peak541840KiB; no watchdog abort. Receipt/log: `/tmp/spinel-dependabot-2026-11-11/spn098-review-b-5e72-controls.json` and `.log`. These real SQLite/HTTP/worker/transfer controls cover idempotence/reopen, rollback and storage ceilings, paired exact membership/time boundaries, later ingestion/TTL, empty and old-feedback selection, expiry/cancellation/truncate, session/operator revocation, private artifacts and cleanup failures. The browser source independently asserts real committed writes with lost acknowledgment, exact retry payload, both downloaded SQLite row sets/window/manifests, intervening activity exclusion, denied account reads and generation clearing; source inspection is not a claim that those browser cases ran at this head.
+
+No current browser/full compiler matrix was repeated. Maintained worker receipts record the current type/lint/dependency/format/backlog and focused production-story checks; root exact-head/base PR check separately passed in465ms/189120KiB. These are identified external-to-this-review receipts, not my own reruns.
+
+Owned-process audit at **2026-11-14T07:37:59.892447+00:00** found no owned command/cache or worktree-cwd processes remaining, no processes killed. Receipt: `/tmp/spinel-dependabot-2026-11-11/spn098-review-b-5e72-cleanup.json`. The sole Mac workload slot was explicitly released after that audit; subsequent inspection was read-only. Exact head and clean tracked worktree were rechecked.
+
+## 🧾 Provenance and retained failures
+
+I independently verified all51 current source hashes against the worktree and capture/runtime source **23e7553ff4f35f5f03dfe51a644840994e52929e**, all16 current evidence payload stored hashes/lengths and decoded hashes where applicable. Final5e72 changes after that source are documentation/evidence only. The current manifest stored gzip SHA and decoded JSON SHA are separate and correct; the old stale-manifest mapping finding is resolved, not carried as an unverified waiver. All32 retained PNGs have verified byte counts, hashes and PNG dimensions, and all32 map uniquely to their original manifest story ID, variant, title and capture filename.
+
+The current capture manifest records44 requested stories,220 checked states,220 captures and zero failures. Only16 selected current PNGs are retained for visual review; the successful plays/capture counts do not imply that I visually inspected all220. The focused local catalog and reactDocgen:false configuration are disclosed; these are production components and unchanged play assertions with synthetic API fixtures, not the entire hosted Storybook matrix.
+
+Original failed supervisor run43544143900 at2204, prior successful comparator43540593013 and their exact retained identities remain evidence. The earlier131.2ms mobile result against a100ms bound remains a historical failure, not erased by later work. The actual-connection SQLite probe finds the same FULL synchronous/WAL settings on the tested Mac baseline and candidate; it neither proves Linux settings/timing nor establishes historical causality. Its short run ended before RSS sampling, so an unsampled value is not zero memory consumption. Main-only SPN-160 success is a comparator, not feedback-source acceptance.
+
+## 🎨 Independent visual approval — agent review only
+
+**I approve the visual result on exact5e72d33ac9cb3a86b3496345209493d6c86e469c, agent review only.** I actually inspected all16 historical proposed/reference images under `docs/review-assets/spn-098/` and all16 fresh actual images under `docs/review-assets/spn-098-post160/`, against the design playbook, theme and all four personas. This approval is based on those viewed images plus their verified source/state/caption binding, not hashes or rendering checks alone.
+
+The following filenames were each inspected in both directories (32 total):
+
+- account-draft-light.png; account-draft-dark.png; account-draft-phone.png.
+- account-failed-draft-phone-dark.png; account-long-message-phone.png; account-access-changed-phone.png.
+- admin-feedback-flag-light.png.
+- admin-paired-downloads-light.png; admin-paired-downloads-dark.png; admin-paired-downloads-phone-dark.png.
+- admin-download-failed-phone.png; admin-expanded-limits-phone.png; admin-access-changed-phone-dark.png; admin-old-feedback-only-phone.png.
+- editor-guest-phone.png; admin-diagnostics-clear-phone.png.
+
+Observed states preserve legible privacy/draft/error text, clear primary/secondary actions, visible focus indicators, theme-consistent surfaces/contrast, suitable phone target sizes and wrapping, consistent paired-span/count presentation, explicit failed/denied/expired-context recovery, and destructive-confirmation wording. Guest evidence shows no feedback entry; it is an editor-frame geometry fixture, not native-editor acceptance. The current compact typography differs from the historical reference while retaining the same hierarchy and product intent. No actionable visual defect was found.
+
+Reference source: **ea6aa741c89b3e52350849b73dbbc41ef3893fbc**. Current render/build source: **23e7553ff4f35f5f03dfe51a644840994e52929e**, byte-bound through51 source hashes to reviewed final5e72. Desktop views use1280×900; phone views use390×900 with emulated touch; light/dark are identified by each manifest variant. `admin-diagnostics-clear-phone.png` is a full-page PNG: historical390×4289, current390×4083, both captured with390×900 viewport. Other selected phone PNGs are390×900. Captions correctly distinguish viewport from full-page image height; the external gallery wording correction changed no image/source/manifest. Fixtures use2026-10-20T16:00:00Z, reduced motion and disabled animations; examples contain synthetic API/name/message/export data. Tablet states are present in the manifest but were not among the32 images I visually reviewed. No physical-device or screen-reader validation is claimed.
+
+## 🚦Remaining merge conditions, without score deductions
+
+There are no actionable local findings from this review. External acceptance remains pending: the current feedback-source required hosted gates, selected native Linux supervisor/recovery/browser acceptance, and the complete original SPN-157 L diagnosis/repair/acceptance required by the explicit dependency. Locations: original main `docs/todo/SPN-098.md` Rules and `docs/implementation/SPN-157.md`, together with the current SPN-098 checkpoint and required CI workflow. Complete those contracts with retained first-failure evidence and exact-source results; do not infer causality or a repair from diagnostics alone or substitute earlier successful runs. Any repair changes the reviewed head and requires revalidation. These are merge conditions, not invented local findings or deductions for pending/failing CI.

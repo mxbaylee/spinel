@@ -1,0 +1,822 @@
+{
+  "maintainedAt": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "images": [
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/account-draft-light.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "518bcd8a989a7dbc26c1b28bc0d72d4cec1aca96cec241f354b5b5f434282c7d",
+      "bytes": 48063,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/account-draft-dark.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "2e03dd4a3b499647e028a83844537e170e97abcb880243066044eb458e19d3d2",
+      "bytes": 53174,
+      "variant": "dark",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/account-draft-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "3abc3a59142cac551ec4e438c6068204cbaedbf2d8136eb465b62f041d901332",
+      "bytes": 39034,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/account-failed-draft-phone-dark.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "027ca08ae2d10fbce1faa6149efce0a5d6c890a30c89dc03ee82279110ea7d8d",
+      "bytes": 57730,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/account-long-message-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "8f55660ff8d8edad2b977dc9d69c1ce6c87bd7924eb715c3c40c0ebb1e9bada8",
+      "bytes": 46894,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/account-access-changed-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "9d048725de3fe1d65f01d60b556a8ddfa68ce39e6d7a672418a598a7b6e63d1a",
+      "bytes": 53707,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-feedback-flag-light.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "ecce3da59b0b92c4bf2ea3a220b1a01f9ae268a1eecb498528ac72256341201b",
+      "bytes": 33400,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-paired-downloads-light.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "8a71c00a90675b8bc0c8f9b9752cf211ce3904f78a99c3679a598f5a817172d4",
+      "bytes": 99376,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-paired-downloads-dark.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "d9f63361fb258c1751665c801869b91a6ea1dbba5e0549e5c07b687df05368a1",
+      "bytes": 103866,
+      "variant": "dark",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-paired-downloads-phone-dark.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "ed86de784ea6f87b2cf7b1041410fa8647d679351029a10e97726b7352a2bc16",
+      "bytes": 64214,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-download-failed-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "4b2a1ff283f93826768d7e1b2106f449f2c379f3e4e7e4b3bd6fd3a4448ad44a",
+      "bytes": 56158,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-expanded-limits-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "164becdde4726a2435791b76beaf824b3b997d79742679a87f854a06b1f373d2",
+      "bytes": 75851,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-access-changed-phone-dark.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "7a9d64a2b3e53d3f363ca23bbd65bca6c09bebfa0b7d07115950cfb5f9dcce5d",
+      "bytes": 52306,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-old-feedback-only-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "287deea1bc109b0446b6337489f7619308585fbeffff3a3f571a8db4b0f86a6c",
+      "bytes": 70443,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/editor-guest-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "8639970399ce2fbaa68a1cce64223968d9ab76966fcc0f6fd44e59ebb8f904d3",
+      "bytes": 20821,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "historical proposals",
+      "file": "docs/review-assets/spn-098/admin-diagnostics-clear-phone.png",
+      "source": "ea6aa741c89b3e52350849b73dbbc41ef3893fbc",
+      "sha256": "66346ed4aaba7fad806d3b2cdae74a01142a9e0db3caf5b165a212e5b7de0c08",
+      "bytes": 331950,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 4289,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/account-draft-light.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "7209f871cd25fdafa67849af16b2d6e9da18f6da21f541b00a61433f65946c25",
+      "bytes": 51210,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/account-draft-dark.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "aabb1b0dc9259abc44d60a05d541a7b44a51fd681d74fba1d52b10ca4f2a6ca9",
+      "bytes": 55716,
+      "variant": "dark",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/account-draft-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "ec83cfbba0ce832afd00310cfd11992a209021fec4c265ba9ddf2fef75a34138",
+      "bytes": 41958,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/account-failed-draft-phone-dark.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "fbedc06be82fd3a9aa7e14ab1e95b226f2df27d8e8f16b27e30c5bf12ad46984",
+      "bytes": 61135,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/account-long-message-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "4e2ed8b3d7827e2ee45e6c7638bd556105b2349bd505d3a2ffecaf43100435ff",
+      "bytes": 47310,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/account-access-changed-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "9d9dfb2006e0d3857ab5bfd0c1b2ec171cef30d9467df444a0dae51977d0f0e8",
+      "bytes": 57589,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-feedback-flag-light.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "924c6b29fc5b82b52f2140e2cf8b69269f833a8ba6c815f7805b3de79a82f9c6",
+      "bytes": 34269,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-paired-downloads-light.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "5f759f97ad06e1369f9fc7f0f2d675c7bd722d431ebbf057f8a70b22570aa8d8",
+      "bytes": 105409,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-paired-downloads-dark.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "b015e28cb8abc4dc89f1db5c1158ff1ccdbea7418ce6577d787dfa3c44269a80",
+      "bytes": 110667,
+      "variant": "dark",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-paired-downloads-phone-dark.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "583ac14ae788624d89088304ba009094204568816a6bf634c06cac5cd8b323bf",
+      "bytes": 71709,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-download-failed-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "73500bb866a79508eeae01ece39cbc107de476bbda8247f39ad51ee8ac79d2e9",
+      "bytes": 60150,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-expanded-limits-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "d95e1adaaf39f5d71f58fb3e05ce0eea17e727b9be1dbc47244aec86f729da8b",
+      "bytes": 80082,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-access-changed-phone-dark.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "df9b0e5d70e56626edad622fc8940ddfed8aa699eca1a01c23f3e4c9c4485ce8",
+      "bytes": 56147,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-old-feedback-only-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "bdb4c65c53a532f0674d323187f325f03ac48b5ad11401dc5ab9106ee6b88732",
+      "bytes": 72022,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/editor-guest-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "7b46deb1342caac26c87c6e53fb9e3340d8918ae8c655b2cf5a4542208c191ca",
+      "bytes": 19872,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "prior actual captures",
+      "file": "docs/review-assets/spn-098-current/admin-diagnostics-clear-phone.png",
+      "source": "8e986617a40977eb96d016be7dc361366003384f",
+      "sha256": "b197250e0f4a98bb0757582bdd562175845230d3cd45c51f14f99a0419195865",
+      "bytes": 338429,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 4083,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/account-draft-light.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "7209f871cd25fdafa67849af16b2d6e9da18f6da21f541b00a61433f65946c25",
+      "bytes": 51210,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/account-draft-dark.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "aabb1b0dc9259abc44d60a05d541a7b44a51fd681d74fba1d52b10ca4f2a6ca9",
+      "bytes": 55716,
+      "variant": "dark",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/account-draft-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "ec83cfbba0ce832afd00310cfd11992a209021fec4c265ba9ddf2fef75a34138",
+      "bytes": 41958,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/account-failed-draft-phone-dark.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "fbedc06be82fd3a9aa7e14ab1e95b226f2df27d8e8f16b27e30c5bf12ad46984",
+      "bytes": 61135,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/account-long-message-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "4e2ed8b3d7827e2ee45e6c7638bd556105b2349bd505d3a2ffecaf43100435ff",
+      "bytes": 47310,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/account-access-changed-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "9d9dfb2006e0d3857ab5bfd0c1b2ec171cef30d9467df444a0dae51977d0f0e8",
+      "bytes": 57589,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-feedback-flag-light.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "924c6b29fc5b82b52f2140e2cf8b69269f833a8ba6c815f7805b3de79a82f9c6",
+      "bytes": 34269,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-paired-downloads-light.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "1ebb1e7ce902c77c56e8aa98e8806433cf5ca194265261aeb5c707bf77cf86cd",
+      "bytes": 105053,
+      "variant": "light",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-paired-downloads-dark.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "71b7817a5176ff7fa8771a15a7bc1d2d28b4ab4bdeaeda4d49f4bc62619fce00",
+      "bytes": 110320,
+      "variant": "dark",
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "isMobile": false,
+        "hasTouch": false
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-paired-downloads-phone-dark.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "d4dbab00b11187dbb7ecb1bd3d9ace3287e26bf84a9a80e9afe8b4db670aeb56",
+      "bytes": 71563,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-download-failed-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "73500bb866a79508eeae01ece39cbc107de476bbda8247f39ad51ee8ac79d2e9",
+      "bytes": 60150,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-expanded-limits-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "26861ddfa66c35a936643a988033ba11f4da0e0ea5a5e8e1af683f5dd537fca9",
+      "bytes": 80087,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-access-changed-phone-dark.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "df9b0e5d70e56626edad622fc8940ddfed8aa699eca1a01c23f3e4c9c4485ce8",
+      "bytes": 56147,
+      "variant": "phone-dark",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "dark",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-old-feedback-only-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "a86164f9c2cf696163c69833177a6e3ade5ee07a81109c1b530bd432829d70f0",
+      "bytes": 71823,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/editor-guest-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "7b46deb1342caac26c87c6e53fb9e3340d8918ae8c655b2cf5a4542208c191ca",
+      "bytes": 19872,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    },
+    {
+      "role": "fresh current actual captures",
+      "file": "docs/review-assets/spn-098-post160/admin-diagnostics-clear-phone.png",
+      "source": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+      "sha256": "b197250e0f4a98bb0757582bdd562175845230d3cd45c51f14f99a0419195865",
+      "bytes": 338429,
+      "variant": "phone",
+      "pixelWidth": 390,
+      "pixelHeight": 4083,
+      "viewport": {
+        "theme": "light",
+        "width": 390,
+        "height": 900,
+        "isMobile": true,
+        "hasTouch": true
+      }
+    }
+  ],
+  "note": "All48 images remain in the parent candidate. Independent reviewers inspected16 historical proposals and16 fresh actual images each. Prior16 actual images remain historical. Full-page pixel height is not viewport height."
+}

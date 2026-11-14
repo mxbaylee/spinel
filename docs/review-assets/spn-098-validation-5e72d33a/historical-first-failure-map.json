@@ -1,0 +1,128 @@
+[
+  {
+    "file": "historical-first-failures/supervisor-2204/README.md",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/README.md",
+    "bytes": 2978,
+    "sha256": "3dbc125f622a8f5da1b4ff1507d6e835eb5395f01ebb3c57862af1263401f9d0"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/files.json",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/files.json",
+    "bytes": 1866,
+    "sha256": "8ea85eb9194d26d21f09d556e215b533c66f29475244e05b6336f6e2162b12cd"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/local-reproduction-watchdog.json",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/local-reproduction-watchdog.json",
+    "bytes": 442,
+    "sha256": "0e79ee6d03b62fd2b335c58c2cc68b188ddd19f7199dc3756a9e4858f93bdb52"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/local-supervisor-first-reproduction.log.gz",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/local-supervisor-first-reproduction.log.gz",
+    "bytes": 3956,
+    "sha256": "7f5a8804b5b299031e9da3867128383785974bf475b343fffcb9d181ca3c5dd5"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/metadata-ci-artifact-pages.json",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/metadata-ci-artifact-pages.json",
+    "bytes": 726,
+    "sha256": "f7140deebdbac83572c3fcc60ae7472e83bae0468155373829b5a1a5baa0a0f8"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/metadata-ci-jobs-pages.json",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/metadata-ci-jobs-pages.json",
+    "bytes": 100916,
+    "sha256": "d2fbe360c9e6663ce745643a19a49adbb71a72bd06f630c4f32bff6c2009fb19"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/metadata-ci-plan.zip",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/metadata-ci-plan.zip",
+    "bytes": 930,
+    "sha256": "efb9343a2e3a17bea254e19e472dde6a17a34f68a6ca08bc7fcd1d58ae631ec5"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/metadata-ci-run.json",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/metadata-ci-run.json",
+    "bytes": 12175,
+    "sha256": "34c5a38e1d7204f56592095709dfa91d2351ac38649f50969ca9424f24658196"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/metadata-supervisor-failure.log.gz",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/metadata-supervisor-failure.log.gz",
+    "bytes": 17702,
+    "sha256": "62907dcd8d58f40a14b81439113075d6bfbb72117bc6f567146cd31be438339c"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/original-supervisor-success.log.gz",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/original-supervisor-success.log.gz",
+    "bytes": 15950,
+    "sha256": "df946e2ed51d83086c9a8d41ea3e128313a6fa2538acbdc21f1ca938a9099134"
+  },
+  {
+    "file": "historical-first-failures/supervisor-2204/receipt.json",
+    "originalCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "originalPath": "docs/review-assets/spn-098-failure-43544143900/receipt.json",
+    "bytes": 2932,
+    "sha256": "7fc149334c292c2230f546124600cdc0e36186d1416bd167597eff0e6239df70"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/README.md",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/README.md",
+    "bytes": 4158,
+    "sha256": "f1cee0f21c2a5b44178ec6263f07a8ffea7763ebe4fead350a38a45e23097b84"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/ci-artifacts.json",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/ci-artifacts.json",
+    "bytes": 16488,
+    "sha256": "5803d9d227812b35bd7d54ae4eadf462e786681885edf63abfe4e55f5c9e26fc"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/ci-jobs.json",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/ci-jobs.json",
+    "bytes": 101767,
+    "sha256": "d0a2ec79e5d49788b45c469a6ffb063715ba4ae8db04f59df5209fb5446860cb"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/ci-run.json",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/ci-run.json",
+    "bytes": 12191,
+    "sha256": "8dbaca3799c99511ea07ba63bffb0df826f91461bd1fa16734e07ea8d3af1f6c"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/manifest.json",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/manifest.json",
+    "bytes": 13523,
+    "sha256": "d93621cc7a19482e4e043b1e81f10045d37df58b91495976dc6efc17c7240502"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/mobile-job.log.gz",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/mobile-job.log.gz",
+    "bytes": 18065,
+    "sha256": "7da5c3a115c20b095a76688cf281ea883481401c1a86c397f586f5741fc420a1"
+  },
+  {
+    "file": "historical-first-failures/native-94c6968e/mobile.zip",
+    "originalCommit": "e213439aee55d6772858a71cdd7b350134c4465f",
+    "originalPath": "docs/review-assets/spn-098-current-outcome-94c6968e/mobile.zip",
+    "bytes": 3083848,
+    "sha256": "34a6c65ce950be7fafaddc12c707cd4392246a68ff4cfc018acf51e6f1ca3812"
+  }
+]

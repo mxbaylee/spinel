@@ -1,0 +1,13 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-098-production
+
+
+ Test Files  13 passed (13)
+      Tests  81 passed (81)
+   Start at  23:37:43
+   Duration  4.09s (tests 66%, import 18%, transform 16%, worker 1%)
+
+    Isolate  13 workers spawned · ~55ms startup each (spawn + environment, per file)
+             at least ~660ms faster with isolate: false — reuses workers across files instead of one per file
+
+{"name":"spn098-review-b-5e72-controls","args":["node","node_modules/vitest/vitest.mjs","run","src/server/diagnostics","src/ui/feedbackContext.test.ts","src/server/maintenance/ownership.test.ts","src/server/maintenance/supervisor-test-control.test.ts","--cache=false","--fsModuleCachePath=/tmp/spinel-dependabot-2026-11-11/spn098-review-b-5e72-module-cache"],"code":0,"signal":null,"reason":null,"elapsedMs":4355,"peakKiB":541840}

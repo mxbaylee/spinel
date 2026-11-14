@@ -1,0 +1,17 @@
+{
+  "name": "spn098-root-final-pr-5e72d33a",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "754e65317744e5ce97ede501935c6586e4875f2a",
+    "--title",
+    "📨 SPN-098 Send user feedback with diagnostic context"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 465,
+  "peakKiB": 189120
+}

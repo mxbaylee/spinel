@@ -1,0 +1,17 @@
+{
+  "name": "spn098-supervisor-first-reproduction",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/supervisor.test.ts",
+    "-t",
+    "SIGKILL at durable running|selected candidate: readiness-first",
+    "--reporter=verbose"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 10782,
+  "peakKiB": 494608
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "archive": "design-review-desktop-light.zip",
+    "member": "manifest.json",
+    "requested": 1076,
+    "checked": 1076,
+    "captures": 1076,
+    "failures": [],
+    "durationMs": 548888
+  },
+  {
+    "archive": "design-review-mobile-dark.zip",
+    "member": "manifest.json",
+    "requested": 1076,
+    "checked": 1076,
+    "captures": 1076,
+    "failures": [],
+    "durationMs": 503782
+  },
+  {
+    "archive": "design-review-mobile-light.zip",
+    "member": "manifest.json",
+    "requested": 1076,
+    "checked": 1076,
+    "captures": 1076,
+    "failures": [],
+    "durationMs": 443567
+  },
+  {
+    "archive": "design-review-tablet.zip",
+    "member": "manifest.json",
+    "requested": 1076,
+    "checked": 1076,
+    "captures": 1076,
+    "failures": [],
+    "durationMs": 547383
+  },
+  {
+    "archive": "design-review-desktop-dark.zip",
+    "member": "manifest.json",
+    "requested": 1076,
+    "checked": 1076,
+    "captures": 1076,
+    "failures": [],
+    "durationMs": 533840
+  }
+]

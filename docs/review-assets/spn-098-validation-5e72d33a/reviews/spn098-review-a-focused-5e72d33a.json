@@ -1,0 +1,20 @@
+{
+  "name": "spn098-review-a-focused-5e72d33a",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/diagnostics",
+    "src/ui/feedbackContext.test.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn098-review-a-cache-5e72d33a"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 4522,
+  "peakKiB": 548096
+}

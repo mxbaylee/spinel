@@ -1,0 +1,98 @@
+[
+  {
+    "preset": "desktop",
+    "accepted": true,
+    "failures": [],
+    "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+    "candidateSource": "c603a21de6446d623145589eca811ab6dfb38152",
+    "families": {
+      "cursor": {
+        "pendingHighWater": 4,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 2,
+          "finalKey": 2,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-init": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-update": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      }
+    }
+  },
+  {
+    "preset": "mobile",
+    "accepted": true,
+    "failures": [],
+    "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+    "candidateSource": "c603a21de6446d623145589eca811ab6dfb38152",
+    "families": {
+      "cursor": {
+        "pendingHighWater": 4,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 2,
+          "finalKey": 2,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-init": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-update": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      }
+    }
+  }
+]

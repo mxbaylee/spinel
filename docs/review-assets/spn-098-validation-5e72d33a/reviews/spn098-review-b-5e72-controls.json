@@ -1,0 +1,19 @@
+{
+  "name": "spn098-review-b-5e72-controls",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/diagnostics",
+    "src/ui/feedbackContext.test.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath=/tmp/spinel-dependabot-2026-11-11/spn098-review-b-5e72-module-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 4355,
+  "peakKiB": 541840
+}
