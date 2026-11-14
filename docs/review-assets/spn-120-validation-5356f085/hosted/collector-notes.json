@@ -1,0 +1,6 @@
+{
+  "collectionOnly": [
+    "Initial generic JSON inspection assumed bundle-size.json was an object; it is an array. Inspection stopped with AttributeError, then completed using only manifest.json. No browser/test execution or run mutation occurred.",
+    "Inventory collector initially called hashlib.file_digest, unavailable in installed Python; corrected to explicit chunked SHA256 reads. No artifact/test/run mutation occurred."
+  ]
+}

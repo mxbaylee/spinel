@@ -1,0 +1,17 @@
+2026-11-14T19:57:59.5778946Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T19:57:59.5779403Z 
+2026-11-14T19:58:01.8799378Z  [32m✓[39m src/server/maintenance/http.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 1724[2mms[22m[39m
+2026-11-14T19:58:01.8800814Z    [33m[2m✓[22m[39m a real socket submission drains to durable acknowledgment while later old-epoch frames are fenced[33m 329[2mms[22m[39m
+2026-11-14T20:00:19.4147516Z  [32m✓[39m src/server/maintenance/restore-crash.integration.test.ts [2m([22m[2m11 tests[22m[2m)[22m[33m 137224[2mms[22m[39m
+2026-11-14T20:00:19.4149287Z    [33m[2m✓[22m[39m real SIGKILL at admission preserves the durable restore decision and all retained evidence[33m 6985[2mms[22m[39m
+2026-11-14T20:00:19.4150619Z    [33m[2m✓[22m[39m real SIGKILL at custody preserves the durable restore decision and all retained evidence[33m 7090[2mms[22m[39m
+2026-11-14T20:00:19.4151912Z    [33m[2m✓[22m[39m real SIGKILL at freeze preserves the durable restore decision and all retained evidence[33m 7881[2mms[22m[39m
+2026-11-14T20:00:19.4153551Z    [33m[2m✓[22m[39m real SIGKILL at activation-plan preserves the durable restore decision and all retained evidence[33m 12776[2mms[22m[39m
+2026-11-14T20:00:19.4155614Z    [33m[2m✓[22m[39m real SIGKILL at staging preserves the durable restore decision and all retained evidence[33m 12794[2mms[22m[39m
+2026-11-14T20:00:19.4157773Z    [33m[2m✓[22m[39m real SIGKILL at activation preserves the durable restore decision and all retained evidence[33m 11437[2mms[22m[39m
+2026-11-14T20:00:19.4160048Z    [33m[2m✓[22m[39m real SIGKILL at private-open preserves the durable restore decision and all retained evidence[33m 12731[2mms[22m[39m
+2026-11-14T20:00:19.4161982Z    [33m[2m✓[22m[39m real SIGKILL at commit preserves the durable restore decision and all retained evidence[33m 14279[2mms[22m[39m
+2026-11-14T20:00:19.4164074Z    [33m[2m✓[22m[39m real SIGKILL at postcommit preserves the durable restore decision and all retained evidence[33m 14709[2mms[22m[39m
+2026-11-14T20:00:19.4165966Z    [33m[2m✓[22m[39m real SIGKILL at original-activation preserves the durable restore decision and all retained evidence[33m 16786[2mms[22m[39m
+2026-11-14T20:00:19.4167863Z    [33m[2m✓[22m[39m real SIGKILL at original-commit preserves the durable restore decision and all retained evidence[33m 19753[2mms[22m[39m
+2026-11-14T20:00:19.6845862Z  [32m✓[39m src/server/maintenance/supervisor-client.test.ts [2m([22m[2m36 tests[22m[2m)[22m[32m 57[2mms[22m[39m

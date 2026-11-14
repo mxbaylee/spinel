@@ -1,0 +1,7 @@
+2026-11-14T19:58:36.5973438Z 
+2026-11-14T19:58:37.2989599Z 
+2026-11-14T19:58:37.2990220Z Running 1 test using 1 worker
+2026-11-14T19:58:37.2990465Z 
+2026-11-14T19:58:37.7474876Z [1/1] [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:109:3 › desktop native callback lifetimes
+2026-11-14T20:00:35.3673337Z   1 passed (2.0m)
+2026-11-14T20:00:35.3956168Z ##[group]Run npm run build -- --sourcemap hidden

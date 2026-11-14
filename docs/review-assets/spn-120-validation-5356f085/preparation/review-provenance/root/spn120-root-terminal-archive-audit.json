@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T19:29:57.865697+00:00",
+  "commit": "50d6e592e7f676b23a8ea5ab3851c7110ce20456",
+  "parent": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tested": "c7ddc1edefc1f814bc17f1611c38077bae6a851a",
+  "files": 186,
+  "payloads": 185,
+  "originalZIPsVerified": 20,
+  "CRCEntries": 159,
+  "allFiveRunsOriginalAttemptSuccess": true,
+  "all33CIJobsSuccess": true,
+  "fiveStoryManifests1041": true,
+  "threeNativeSourcesVerified": true,
+  "root24AuditByteExact": true,
+  "rawResponsivenessAccepted": true,
+  "rootReadREADME": true,
+  "manifestSha256": "80fa798e96cd3a1e6d923b4fda01b15cc2c43a23c3569cf11dfa4e1e3a06b8bc",
+  "publishedTag": "archive/spn-120-validation-99e0a141-20261114",
+  "remoteVerified": "50d6e592e7f676b23a8ea5ab3851c7110ce20456"
+}

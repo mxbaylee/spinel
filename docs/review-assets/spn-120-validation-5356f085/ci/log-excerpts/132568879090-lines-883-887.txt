@@ -1,0 +1,5 @@
+2026-11-14T20:02:41.2743882Z 
+2026-11-14T20:02:41.2744600Z Running 1 test using 1 worker
+2026-11-14T20:02:41.2745006Z 
+2026-11-14T20:02:41.8946154Z [1/1] [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:109:3 › mobile native callback lifetimes
+2026-11-14T20:06:42.2169099Z   1 passed (4.1m)

@@ -1,0 +1,47 @@
+[
+  {
+    "artifactId": 14130395147,
+    "name": "storybook-check-desktop-light",
+    "sha256": "6bc8583c57b692bc9d0e64d5c3852f0073ddd9b400c616a9e892329d8244a472",
+    "requested": 1076,
+    "checked": 1076,
+    "failures": 0,
+    "captureScreenshots": false
+  },
+  {
+    "artifactId": 14130072742,
+    "name": "storybook-check-mobile-light",
+    "sha256": "2e41b88b7b09ac8c3bdc586348ea26ea1dec11250fc4d7ca49d315989abb2413",
+    "requested": 1076,
+    "checked": 1076,
+    "failures": 0,
+    "captureScreenshots": false
+  },
+  {
+    "artifactId": 14129972657,
+    "name": "storybook-check-desktop-dark",
+    "sha256": "542589269e5d3d11b421f9978e8cd452dcf923e89c0567ed52e0257d9bd2538e",
+    "requested": 1076,
+    "checked": 1076,
+    "failures": 0,
+    "captureScreenshots": false
+  },
+  {
+    "artifactId": 14129507664,
+    "name": "storybook-check-tablet",
+    "sha256": "dd10cb1c5ddffd2b10d6db1f65603402ae469042c8e5d8d3d2c9ffafec8b3f00",
+    "requested": 1076,
+    "checked": 1076,
+    "failures": 0,
+    "captureScreenshots": false
+  },
+  {
+    "artifactId": 14129444277,
+    "name": "storybook-check-mobile-dark",
+    "sha256": "8ed59995c0cf7036b64377ae421e9b158e0842a82d99dbd2b6467e34f58114b1",
+    "requested": 1076,
+    "checked": 1076,
+    "failures": 0,
+    "captureScreenshots": false
+  }
+]

@@ -1,0 +1,9 @@
+2026-11-14T20:01:57.4809199Z  [32m✓[39m src/server/maintenance/cli.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 540[2mms[22m[39m
+2026-11-14T20:01:57.4810217Z    [33m[2m✓[22m[39m cold setup and backup failures exit promptly and release ownership of a corrupt file[33m 538[2mms[22m[39m
+2026-11-14T20:01:57.4867162Z 
+2026-11-14T20:01:57.4874323Z [2m Test Files [22m [1m[32m49 passed[39m[22m[90m (49)[39m
+2026-11-14T20:01:57.4878281Z [2m      Tests [22m [1m[32m619 passed[39m[22m[90m (619)[39m
+2026-11-14T20:01:57.4879297Z [2m   Start at [22m 19:57:05
+2026-11-14T20:01:57.4885633Z [2m   Duration [22m 292.43s[2m (tests 94%, import 4%, transform 1%)[22m
+2026-11-14T20:01:57.4899553Z 
+2026-11-14T20:01:57.5584046Z Post job cleanup.

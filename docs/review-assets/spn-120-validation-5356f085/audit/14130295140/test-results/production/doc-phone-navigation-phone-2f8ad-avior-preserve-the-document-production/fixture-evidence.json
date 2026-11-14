@@ -1,0 +1,84 @@
+{
+  "sourceSha": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "testId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+  "project": "production",
+  "retry": 0,
+  "repeatEachIndex": 0,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 3172,
+        "runId": "a21e5e6a-6e7d-4b3c-bbaf-a13323539ca2",
+        "updatedAt": 1794686206841,
+        "pid": 3183,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    },
+    {
+      "elapsedMs": 118,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 125,
+      "phase": "phone-seed"
+    },
+    {
+      "elapsedMs": 13510,
+      "phase": "phone-reload"
+    },
+    {
+      "elapsedMs": 15548,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 0
+    },
+    {
+      "elapsedMs": 15549,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 3172,
+        "runId": "a21e5e6a-6e7d-4b3c-bbaf-a13323539ca2",
+        "updatedAt": 1794686222375,
+        "pid": 3183,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 43,
+          "tail": "[ready]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}

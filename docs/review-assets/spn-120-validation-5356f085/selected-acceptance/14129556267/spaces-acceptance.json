@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "sourceCommit": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "checks": [
+    "bucket-retention-policy",
+    "private-publication-and-readback",
+    "anonymous-access-denial",
+    "authenticated-download-and-encrypted-restore",
+    "paginated-complete-catalog-and-pending-cleanup",
+    "retention-and-deletion",
+    "complete-app-provider-fixture",
+    "operator-provider-catalog",
+    "catalog-source-preparation",
+    "catalog-confirmation-and-private-release",
+    "provider-restore-session-revocation-and-outcome",
+    "provider-restored-content-and-current-passkey"
+  ],
+  "cleanup": "complete",
+  "archiveBytes": 664,
+  "supervisedRestore": {
+    "status": "passed",
+    "checks": [
+      "complete-app-provider-fixture",
+      "operator-provider-catalog",
+      "catalog-source-preparation",
+      "catalog-confirmation-and-private-release",
+      "provider-restore-session-revocation-and-outcome",
+      "provider-restored-content-and-current-passkey"
+    ],
+    "runtime": "real-app-child-process",
+    "imagePolicy": "synthetic-fixture",
+    "localCleanup": "safe",
+    "archiveBytes": 12331,
+    "sourceSha256": "d45fab8eedf8420219a6c351f94020692702d5c735a68166ab646115a9549646"
+  },
+  "durationMs": 13470
+}

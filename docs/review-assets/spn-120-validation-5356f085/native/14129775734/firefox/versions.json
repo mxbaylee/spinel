@@ -1,0 +1,13 @@
+{
+  "sourceSha": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "checkedAt": "2026-11-14T19:54:29.057Z",
+  "kind": "firefox",
+  "status": "passed",
+  "before": "159.0",
+  "releaseSource": "https://product-details.mozilla.org/1.0/firefox_versions.json",
+  "requiredStable": "160.0",
+  "installationCopy": "ditto --norsrc, followed by strict codesign and Gatekeeper assessment",
+  "signature": "/Users/runner/work/spinel/spinel/test-results/desktop-browser-release-firefox/Firefox.app: accepted\nsource=Notarized Developer ID\n",
+  "download": "https://download.mozilla.org/?product=firefox-latest-ssl&os=osx&lang=en-US",
+  "installed": "160.0"
+}

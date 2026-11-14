@@ -1,0 +1,7 @@
+2026-11-14T19:56:51.4497056Z 
+2026-11-14T19:56:51.4497825Z Running 1 test using 1 worker
+2026-11-14T19:56:51.4498144Z 
+2026-11-14T19:56:52.0946663Z [1/1] [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts:109:3 › mobile native callback lifetimes
+2026-11-14T20:02:33.0940232Z   Slow test file: [doc-callback-lifetimes] › e2e/doc-responsiveness-callbacks.spec.ts (5.6m)
+2026-11-14T20:02:33.0941231Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+2026-11-14T20:02:33.0941897Z   1 passed (5.8m)

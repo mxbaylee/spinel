@@ -1,0 +1,40 @@
+{
+  "at": "2026-11-14T20:04:41.563089+00:00",
+  "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "tree": "401aa9565137473347ff1e5340e8d7f3dfb27dd7",
+  "run": 43634635688,
+  "attempt": 1,
+  "driverSHA256": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+  "projects": [
+    {
+      "project": "production",
+      "artifact": 14130295140,
+      "zipSHA256": "38939a5a0e3dc41b58659096a1a7e7f7ee772f282a67101ec85e1087a3bf917e",
+      "cases": 12,
+      "journals": 12,
+      "serverExit": 0,
+      "rawMembersVerified": 17
+    },
+    {
+      "project": "development",
+      "artifact": 14129556918,
+      "zipSHA256": "92a51f5a20ee534c31366aebbeba77fbee504e1a9d74d04b212c4fd6a580ffe2",
+      "cases": 8,
+      "journals": 8,
+      "serverExit": 0,
+      "rawMembersVerified": 13
+    },
+    {
+      "project": "sync-production",
+      "artifact": 14129461790,
+      "zipSHA256": "3c7063eb7af8e259f68fbc5db434f892fa9a4692143867ada4db0e5f041d962d",
+      "cases": 4,
+      "journals": 4,
+      "serverExit": 0,
+      "rawMembersVerified": 13
+    }
+  ],
+  "total": 24,
+  "independentOriginalZipAndRawContractVerified": true
+}

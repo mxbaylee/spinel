@@ -1,0 +1,34 @@
+{
+  "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "reviewers": {
+    "a": {
+      "originalPath": "/tmp/spn120-review-5356f085-a.md",
+      "sha256": "7732262aa429f231a9542fc55ce61097c013e078a57c40ca762c224d55b88a9c",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "rootReadFull": "Confirmed by root coordination message before this staging; preserved root file snapshot may predate final B binding."
+    },
+    "b": {
+      "originalPath": "/tmp/spn120-review-5356f085-b.md",
+      "sha256": "c364ceb135759d670d1ee744f1b1c05370282b85a1492e212bd220390a9b2b73",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "findings": [],
+      "rootReadFull": "Confirmed by root coordination message before this staging; preserved root file snapshot may predate final B binding."
+    }
+  }
+}

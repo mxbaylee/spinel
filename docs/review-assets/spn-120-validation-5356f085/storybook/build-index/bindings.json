@@ -1,0 +1,55 @@
+{
+  "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "testedMerge": "af02918a9d3d58b33db8e4be15aeea87c7d5cfa3",
+  "run": 43634587023,
+  "attempt": 1,
+  "artifactId": 14129368022,
+  "zipSha256": "485face5757d8f9eba4a417d5ba892158a44648216824cb803241fcddc714802",
+  "zipBytes": 6259389,
+  "zipCRCVerified": true,
+  "member": "index.json",
+  "rawSha256": "50c382816ea208fb20f47586f554dae74d7ba3b52fca93a01cde210d5a8957db",
+  "indexEntryCount": 1076,
+  "variantIdentityChecks": [
+    {
+      "artifactId": 14130395147,
+      "requestedEqualsIndex": true,
+      "checkedEqualsIndex": true,
+      "distinctRequested": 1076,
+      "distinctChecked": 1076,
+      "failures": 0
+    },
+    {
+      "artifactId": 14129507664,
+      "requestedEqualsIndex": true,
+      "checkedEqualsIndex": true,
+      "distinctRequested": 1076,
+      "distinctChecked": 1076,
+      "failures": 0
+    },
+    {
+      "artifactId": 14129444277,
+      "requestedEqualsIndex": true,
+      "checkedEqualsIndex": true,
+      "distinctRequested": 1076,
+      "distinctChecked": 1076,
+      "failures": 0
+    },
+    {
+      "artifactId": 14130072742,
+      "requestedEqualsIndex": true,
+      "checkedEqualsIndex": true,
+      "distinctRequested": 1076,
+      "distinctChecked": 1076,
+      "failures": 0
+    },
+    {
+      "artifactId": 14129972657,
+      "requestedEqualsIndex": true,
+      "checkedEqualsIndex": true,
+      "distinctRequested": 1076,
+      "distinctChecked": 1076,
+      "failures": 0
+    }
+  ]
+}

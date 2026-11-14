@@ -1,0 +1,10 @@
+{
+  "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "run": "43634635688",
+  "artifact": 14129461790,
+  "actualAttempts": 4,
+  "journals": 4,
+  "allFirstAttempts": true,
+  "allCleanupPhases": true,
+  "allServersClosedExpectedCode0": true
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-14T19:54:32.190088+00:00",
+  "head": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "oldHead": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "bodySHA256": "bea0ceb4b96994abb1c61c8ea09e9b6ed4f1aeabe7618b09c98d164804b88b9c",
+  "archivePublished": "e0b4be00b8aa95b31324e04974504f50bcdd7740",
+  "metadataUpdated": "2026-11-14T19:52:39Z",
+  "metadataObservationThrough": "2026-11-14T19:53:56Z",
+  "oldHeadEditRunsObserved": [],
+  "cancellationPerformed": false,
+  "observationLimit": "No new run observed during bounded window; old PR conflicting, causal attribution not established.",
+  "fastForwardPush": true,
+  "remoteHeadBaseBodyVerified": true,
+  "draft": true,
+  "initialValidationRuns": [
+    43634587037,
+    43634587091,
+    43634587054,
+    43634587023
+  ],
+  "manualAudit": {
+    "run": 43634635688,
+    "head": "5356f085f84302c85490acf473adab72cc0b7eb9",
+    "event": "workflow_dispatch",
+    "source": "candidate",
+    "baseline": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+    "purpose": "eventBase only; no baseline execution",
+    "dispatchCount": 1,
+    "fixedSample": 24
+  }
+}

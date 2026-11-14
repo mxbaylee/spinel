@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-14T20:54:25.517811+00:00",
+  "supersededUnpublishedLocalSeal": "f037910c4e097e1053988848eccbd12651c367ee",
+  "reason": "Root audit requested raw callback numerical acceptance and complete Storybook identity set binding.",
+  "newExecution": false,
+  "newRemoteAction": false,
+  "retainedCallbackJsons": 6,
+  "storyIndexEntries": 1076,
+  "artifactZipsVerified": 23,
+  "artifactMembersVerified": 711,
+  "largeTracePayloadsInGit": false
+}

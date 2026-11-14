@@ -1,0 +1,25 @@
+{
+  "originalZip": "ci-logs.zip",
+  "members": [
+    {
+      "zipMember": "Doc responsiveness (mobile)/10_Observe baseline first attempts.txt",
+      "bytes": 3388,
+      "sha256": "7bc6ccd97dc2197e30a9f52d4b53fb8aca609c7e59a07f043f3c1519405150ee"
+    },
+    {
+      "zipMember": "Doc responsiveness (mobile)/12_Verify candidate responsiveness and boundaries.txt",
+      "bytes": 3687,
+      "sha256": "dfbfe2b9fce097bd108050eb04750d0361b52875ff7ada80ebfd96e0b7edcb59"
+    },
+    {
+      "zipMember": "Doc responsiveness (mobile)/13_Verify candidate evidence and selected paired comparison.txt",
+      "bytes": 10637,
+      "sha256": "ab93a9d840e79e794e351e74ba2cb5646bef5799f9044e19d99d26f98a151742"
+    },
+    {
+      "zipMember": "Playwright smoke/4_Verify selected evidence and publish result.txt",
+      "bytes": 23903,
+      "sha256": "21e9e030d66cc575668ec433b23959288cb5f0275494a18ac3dc804946c3d94b"
+    }
+  ]
+}

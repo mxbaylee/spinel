@@ -1,0 +1,3177 @@
+[
+  {
+    "privateZip": "/tmp/spn120-hosted-5356f085/ci-logs.zip",
+    "bytes": 1154218,
+    "sha256": "a285746fc23fe816b55739b57b660b2312379e746fc83114c1e40d8a6cff2233",
+    "crcVerified": true,
+    "members": [
+      {
+        "path": "0_Playwright smoke.txt",
+        "bytes": 42759,
+        "sha256": "c55cacdede07a0c0030a8e43b3f3d5d23106f2fa91ff293f22bd00efab6f36dd"
+      },
+      {
+        "path": "Playwright smoke/system.txt",
+        "bytes": 572,
+        "sha256": "74c5f4c9333b291baf1fd2ff09f2317bb04c6fae8a48f3a9741a9d0604cd3ac3"
+      },
+      {
+        "path": "Playwright smoke/1_Set up job.txt",
+        "bytes": 2278,
+        "sha256": "a618726a86292883251800fc295784afc00c8ea58ab6cc185aa217c8686c2c30"
+      },
+      {
+        "path": "Playwright smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "c4fbeaceb1ac6e967693375626ebb6c3b25f0d4f050592f2df661f2110e4ce8f"
+      },
+      {
+        "path": "Playwright smoke/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "e76cab9ac13058cbbe92a276dd77f4b61794cf8e1726231904f025d209ba28d6"
+      },
+      {
+        "path": "Playwright smoke/4_Verify selected evidence and publish result.txt",
+        "bytes": 23903,
+        "sha256": "21e9e030d66cc575668ec433b23959288cb5f0275494a18ac3dc804946c3d94b"
+      },
+      {
+        "path": "Playwright smoke/5_Retain coverage result.txt",
+        "bytes": 1663,
+        "sha256": "0573d39f3d4b62956cc44c1f9f7b96ebee4659557b8418c348867ea84ae41366"
+      },
+      {
+        "path": "Playwright smoke/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "ecc17342a3a79239d1fb89bbb815f150f47a1c8e20205390268497958ecb2eb8"
+      },
+      {
+        "path": "Playwright smoke/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "21a3a0d43c5ec82c31739b8576f1774e6dff45431ddb07c386bf73e49b7c1cbd"
+      },
+      {
+        "path": "Playwright smoke/11_Complete job.txt",
+        "bytes": 61,
+        "sha256": "5ae18dc3c189a5e9f22cc26b5aaf47411a21ca8c12538778c6b54d39037e6afb"
+      },
+      {
+        "path": "1_Lib tests.txt",
+        "bytes": 34923,
+        "sha256": "58e58fdc4dc37161fe6227058aaa2dc2813e88936ea99e52a63847c0f41f23de"
+      },
+      {
+        "path": "Lib tests/system.txt",
+        "bytes": 571,
+        "sha256": "12cd4c90cc3316079309e63922927c6aecf217721828ea1c0f50d4f1e68b55cd"
+      },
+      {
+        "path": "Lib tests/1_Set up job.txt",
+        "bytes": 2276,
+        "sha256": "8a234af1fd4451afac5b03bb5b30fddacdd9dd445cf692d98b3e885be1781ea5"
+      },
+      {
+        "path": "Lib tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "4eef0a0db6deb1eb1ac292fbce752350bb996fc3b92a002f085135c99323fa94"
+      },
+      {
+        "path": "Lib tests/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "45a78b0f2fe3f454257c441d3b0f0de225342895fcfd52edb91ba3abdd357a66"
+      },
+      {
+        "path": "Lib tests/4_Verify selected evidence and publish result.txt",
+        "bytes": 16089,
+        "sha256": "fbb373cea0341a5e570e7f066e1eb9ad7c7d7d7dc690c35fd910338bdd4e7787"
+      },
+      {
+        "path": "Lib tests/5_Retain coverage result.txt",
+        "bytes": 1643,
+        "sha256": "681017ea563091288570fb8d25b4865d7c53ad3dad854be7aa399b264376247d"
+      },
+      {
+        "path": "Lib tests/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "80287682463f2cb6b9532a67c83e3105224407b9935b8c32f5403ed756ddd8e0"
+      },
+      {
+        "path": "Lib tests/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "89af378d32105376771fc17c6744dbf88dcfb628822e9359fdf49dd985ceb799"
+      },
+      {
+        "path": "Lib tests/11_Complete job.txt",
+        "bytes": 61,
+        "sha256": "85bdb2c065d870fd01e8e19c58c792bca173d7fff3cb308120ae11a170183487"
+      },
+      {
+        "path": "2_Unit tests.txt",
+        "bytes": 34749,
+        "sha256": "ef6f18281b10eadc044cabd93241bbc331410040c853d674ba7f63cc6440500e"
+      },
+      {
+        "path": "Unit tests/system.txt",
+        "bytes": 727,
+        "sha256": "1dd4d557106273541f106355909703a59fd8702334e4b719c142a404acc95c12"
+      },
+      {
+        "path": "Unit tests/1_Set up job.txt",
+        "bytes": 2269,
+        "sha256": "fa143313371944badd97edbd17d53fbc3ff23c86fccfc7f72a6c358ade4ab664"
+      },
+      {
+        "path": "Unit tests/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "6f63b3b2672bde937e3907aac1606268362e95b6d487524c66e6427d5914f5ec"
+      },
+      {
+        "path": "Unit tests/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "b7de2c9452b0fbb3ece2aee5298511c6232b1ac1f4f9efe69123d37a9210ecac"
+      },
+      {
+        "path": "Unit tests/4_Verify selected evidence and publish result.txt",
+        "bytes": 15808,
+        "sha256": "6449ce8a2a5fbea327087c1dc71893b1cb5b89e5b4a4156b8694816fb59d994b"
+      },
+      {
+        "path": "Unit tests/5_Retain coverage result.txt",
+        "bytes": 1648,
+        "sha256": "58d582ce0a4adf885a97a17ecf2c512aabf3e797c9fe429b226a06ed91218c07"
+      },
+      {
+        "path": "Unit tests/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "45d21368ecfee6416e0c3165e6c92033867a1ec2ee59f91b2c2d8627044bd2ef"
+      },
+      {
+        "path": "Unit tests/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "6e952954d16d98ab1fdbc56d5ed1e95d6b482e68bbedfbfc26ca50fd5d9bd553"
+      },
+      {
+        "path": "Unit tests/11_Complete job.txt",
+        "bytes": 170,
+        "sha256": "8b558290c0616c5f491964e1f79d472ba3910d5e7bd8fec097878db0d240f02c"
+      },
+      {
+        "path": "3_Typecheck.txt",
+        "bytes": 19989,
+        "sha256": "dc8de7b7fd3948fbb549cec5097a8c964f10832b9d789239363b9b39f2dc6eb8"
+      },
+      {
+        "path": "Typecheck/system.txt",
+        "bytes": 726,
+        "sha256": "e004d66bb4dcff67cdf6f38a322d0ea050498bf9e5632be5ace2ba80b079f5e7"
+      },
+      {
+        "path": "Typecheck/1_Set up job.txt",
+        "bytes": 2099,
+        "sha256": "66f81dd14013575496a6ac47794e8e4a0dc60a46b2948ce45956b2d1aac9db9b"
+      },
+      {
+        "path": "Typecheck/2_Require complete applicability.txt",
+        "bytes": 619,
+        "sha256": "23d3da3dc9a63d4184556b3bafd094644afb3546621e447bf51b97ea4a9effef"
+      },
+      {
+        "path": "Typecheck/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "7d9f2149af90eb13821d9d0b58d33542fd33dc18dc26958b4c5f1ee5d892689f"
+      },
+      {
+        "path": "Typecheck/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "c9ba5e1d0c2fc3ac62e48dd8ce0ef6df8e17e7c332c298cb6bed4de57855aca8"
+      },
+      {
+        "path": "Typecheck/5_Install.txt",
+        "bytes": 1889,
+        "sha256": "8261866072adec6add3e0b55f80de49f8c1dcf8246c4e8b3cae3bebf2710f84e"
+      },
+      {
+        "path": "Typecheck/6_Typecheck.txt",
+        "bytes": 361,
+        "sha256": "994acdd6b9197b4cfde2527fd6f0e733e1357c4b6d31329845a578258a0bef1b"
+      },
+      {
+        "path": "Typecheck/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "6d02ddc53cc445abb715a953ca7de59946f1237e376d1cca025a11020e72fe25"
+      },
+      {
+        "path": "Typecheck/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "271161964ff89c3259637c3afadffe88087b52f818846baeffeb1eced14e2f08"
+      },
+      {
+        "path": "Typecheck/15_Complete job.txt",
+        "bytes": 170,
+        "sha256": "890516f5cd505cf40345069eeebbce35b2503545e7eeeb0e0a0f27a8e20b5f95"
+      },
+      {
+        "path": "4_Lib tests (remaining).txt",
+        "bytes": 110704,
+        "sha256": "01489127a746d577417d6ce5b7967c0cf9b91669c9f80c56a7db87754ecd0d50"
+      },
+      {
+        "path": "Lib tests (remaining)/system.txt",
+        "bytes": 852,
+        "sha256": "f001bf79d3f9d02cdfb21752fe3d9ce93fc1acbf7c179bd3bae554f4a34714bc"
+      },
+      {
+        "path": "Lib tests (remaining)/1_Set up job.txt",
+        "bytes": 2283,
+        "sha256": "9d8630ed4a1f7925846df4457229410375d7b6cabea60d87d60e816b6efbc6c0"
+      },
+      {
+        "path": "Lib tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "beed8eab479a8817389cecfe0741df6ea700915fb3117e3106d124e3d37a4b06"
+      },
+      {
+        "path": "Lib tests (remaining)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "db2309d5a2214abbd1f4f80964e1fc54427aaf5cfcc921e3e28c5e753d77c401"
+      },
+      {
+        "path": "Lib tests (remaining)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "f58cd40bf93abae029b9fdf35a4701f93364eb25f6f3b58c211055aa21982e6b"
+      },
+      {
+        "path": "Lib tests (remaining)/5_Lib tests.txt",
+        "bytes": 88103,
+        "sha256": "c59b100dfd19572f38f8bf50553555282f15fa891ed58a85415f12306e99d79c"
+      },
+      {
+        "path": "Lib tests (remaining)/6_Synthetic Sheet PDF evidence.txt",
+        "bytes": 1752,
+        "sha256": "63c031841515b4d2d15f3e993ad087d7d5a018a9dff808e608a34ba8c22e6e23"
+      },
+      {
+        "path": "Lib tests (remaining)/7_Synthetic Doc PDF evidence.txt",
+        "bytes": 1768,
+        "sha256": "146ee7443f71bec5365bdd7d5e060a1c3abf893aecca27d3b2455faebd44b1fc"
+      },
+      {
+        "path": "Lib tests (remaining)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "b4b28ce09afcd3f7cdc34ed495d95b4a97b96c8edc871c5b45395810eac59ecb"
+      },
+      {
+        "path": "Lib tests (remaining)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "579011c2778c16dc82ce8913e88b94d23878c166d0c9caca79ce805dd850b901"
+      },
+      {
+        "path": "Lib tests (remaining)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "b2ab286496fcc5a455c6bba5ddebdc8c24cf5a53d62bc73390e28192de47ef12"
+      },
+      {
+        "path": "5_Playwright smoke (production 2_2).txt",
+        "bytes": 73387,
+        "sha256": "03333be18748b1a98251dc99ffdb9902d184c712d19b3be1287d036a78aa3b2e"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/system.txt",
+        "bytes": 856,
+        "sha256": "1c2be8039f1221c8e90c74d6bcc13ed68e6ac81e5989544dad2688699f86b67d"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/1_Set up job.txt",
+        "bytes": 2290,
+        "sha256": "4b2f905594eea31aec17766f498674be4ff833a0b8ceb1837ae23ae063c94897"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "9ee486fcef2f2287e617be386b019d589704a537441097efc37e49962a485448"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "0ec25bd8a759303624a25909ffe936c82f9fa2cd7fbc1384d42367ef8a98187f"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "8291c4c33e3aff110dedb9bb0350dd1a6520407f50001d7d09537f93149f4a41"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/5_Install Chromium.txt",
+        "bytes": 23503,
+        "sha256": "1b04490e342094f9cb00f9e07b1bd66189ad85b20d0ea8867948a7bde2edb7cf"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/6_Install maintenance fixture init.txt",
+        "bytes": 3455,
+        "sha256": "304d89eb7333bde35c97293d5cc6b9ffd757d2103d33ce7070f3220c16809d49"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "6142500da13c4659184eb9b3b5e91b91566f6c56c3b8c8e4a59303094af7951e"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/12_Playwright smoke.txt",
+        "bytes": 17618,
+        "sha256": "b4310e05eee6517956b3fa1143e438c0b837d2afbe298929b727e766356fb7e8"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/13_Artifact name.txt",
+        "bytes": 473,
+        "sha256": "05d5a82fc7ae35e2b0da9b0ce046ab2333e958fed09542b625996aafd22a0122"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/14_Theme screenshots.txt",
+        "bytes": 2820,
+        "sha256": "01218e7892154660f0d422cac19f18b928281547a815dc9968736c7f72fb955c"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "0d3acea6b79b87a7020b1830aa32c71d57f40407e1d47814d184eb50d47aa54d"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "7449ccda896fff3544cb42f974be67bdababf9278952d70d59541be1c4ca7ff3"
+      },
+      {
+        "path": "Playwright smoke (production 2_2)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "ec4885d8e9abd87baaee99a85b12fe9d27cb25ccaa46705544d2822ed326fb44"
+      },
+      {
+        "path": "6_Lint.txt",
+        "bytes": 20336,
+        "sha256": "1a9ba827c783ba1c0bfc18922e0566dc29475c0f9b86c4fcee9b0b92318f0c60"
+      },
+      {
+        "path": "Lint/system.txt",
+        "bytes": 721,
+        "sha256": "064774ef12d841590e77993767803bf09a0b3e2b6ca31f42cd37ef19ba94c075"
+      },
+      {
+        "path": "Lint/1_Set up job.txt",
+        "bytes": 2093,
+        "sha256": "0c35f3b636162b77bf0191041aa98ca5a674867742f740be40d6201a89b78f83"
+      },
+      {
+        "path": "Lint/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "bc7fedd2549a51cf782cf366ab4e834081fe2826c329bf8f1995826201813c60"
+      },
+      {
+        "path": "Lint/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "93af92d10a8109d5adeab778ab9b625a07b41000c98394cd520bffb37f185fb1"
+      },
+      {
+        "path": "Lint/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "78aafd8b55cde8f0fd0875bd2b79f09629457912556ede05e4069e85489d15d7"
+      },
+      {
+        "path": "Lint/5_Lint.txt",
+        "bytes": 1439,
+        "sha256": "99d3461b88287ae9811effa1e06ce147e28f60fcdebf371b8aa57c3f6248a041"
+      },
+      {
+        "path": "Lint/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "fb8ca051d126d7ae4e2a5c49684c7598e1e690387226e93e8ee280dd140f83f1"
+      },
+      {
+        "path": "Lint/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "3823ea69b4a1db8eb08ce335f73a93d08e624482d861bd7468d7b19b8bb9331f"
+      },
+      {
+        "path": "Lint/11_Complete job.txt",
+        "bytes": 61,
+        "sha256": "8a6ae687f4f1dfceec65110c12a988115b9e332d4c106480c9c66037a41522e8"
+      },
+      {
+        "path": "7_Playwright smoke (mobile-https).txt",
+        "bytes": 70243,
+        "sha256": "317b6fc9790d359fa5ce7b33f9f6ee65c8973c75af94e48d18bb04ddcfd8715c"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/system.txt",
+        "bytes": 856,
+        "sha256": "0028639cb741e78e3f9a847f51c8aedff12ab52fa25d76d5a0a31fb452939ca2"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/1_Set up job.txt",
+        "bytes": 2290,
+        "sha256": "567bac04b63b94c7b9dc93b64308e910b8b68e7ccfaeb4fee252655b6c8c01b9"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "08cd813c7fb362945fdc5ea9b4ca4577588ca0bafc3e1505d9c8f6874de29de9"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "5ec6419151ba29a2c5d5aadd0875b81cfd7ac5c6795cebb03e379b77c4799174"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "76253c288e9df7c585c8053896386c5f6338d874fe0ba321b80d28e33c00a631"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/5_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "e858197088218020537ba28c95c8a9a4aa8783ed0fa9d3000178184746a9e456"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "cd53c44fdfb3d1fa4db5835de199b74bf9d3865a3f646ab7acb2061d5e2518a1"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/12_Playwright smoke.txt",
+        "bytes": 17554,
+        "sha256": "83b611c937bbb048ce838b444875eff16599f7495968812495d2b999c1d6076a"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/13_Artifact name.txt",
+        "bytes": 472,
+        "sha256": "b668d5e5a671fafcb1b03be876cd689ec228276cf2718132f8dadf74edc3c517"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/14_Theme screenshots.txt",
+        "bytes": 2712,
+        "sha256": "1bf7b6f786e9e6d9f079ef8e26e35d97360a52c479c88b5e16fb0cb5929fb76a"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "25361bbca7fa28a45db7ca73387dc2ead24c60a7cd166885ce71fdb52161d669"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "25e3031f93725df034d559aa78b182704bbf8495ac651b310c236ebb046745a6"
+      },
+      {
+        "path": "Playwright smoke (mobile-https)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "4ec05731c8b04eb5ec386296266d42bcef028ae48eb6745e9f9b10561301f9c3"
+      },
+      {
+        "path": "8_Playwright smoke (sync-development).txt",
+        "bytes": 59071,
+        "sha256": "78492a06842c468c3ffbf945997ce94a910ddb873460a80292a23d2b29c09818"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/system.txt",
+        "bytes": 856,
+        "sha256": "85820eb562987ed334af451d220142f97a3a39c548fd608a313ec08da3ae868b"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/1_Set up job.txt",
+        "bytes": 2292,
+        "sha256": "9cbcb8d74570095efeed869f53db17624fdf0f4bdb84d15c99c6f730f2d246fa"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "4e29eb9f41df447c0e54c1afb93cb40df54d92a140d184bcd735c66505f81942"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "d99a18fc10576d67694ae7abc1a77db68756ff72653c23520305826ca67b911e"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "c3cbbb0bb4567924ddf72c023a312b9febef61e9345df6c2dfda4767574993c2"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/5_Install Chromium.txt",
+        "bytes": 23503,
+        "sha256": "178fe3cc008336541151086c6b590dd8301db085daddaf852dff02eb220719b4"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "06954d171448b1de859fa35d487e7d2d1295fc4342d54aa39e61d1e648809741"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/12_Playwright smoke.txt",
+        "bytes": 6841,
+        "sha256": "b228c976820f4fa4b9bad3f4e80d1f33bb173cbc2fb4ae84487bcfbb215f6c6f"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/13_Artifact name.txt",
+        "bytes": 476,
+        "sha256": "96f8eeb206c27eccd587527e0e531bbeb8c06a9c80a8cb240b4c73d02bcfbef6"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/14_Theme screenshots.txt",
+        "bytes": 2728,
+        "sha256": "330195615ff5d40a1a288703394ba8f81042aa260a3c370194f48d00413eacbb"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "2d6bc5ffc162cd1fe84c17c0a80a4a91e01b2c7f409aef0cab329f08fe140e72"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "f76f3494bde8934bbacf95da49c60613b57f7b6c3eea44f6afa3146de4a9a0d9"
+      },
+      {
+        "path": "Playwright smoke (sync-development)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "58ba217a221ec67230700997bb093611fd66ca6f8669c664ea0b958ca3cc2396"
+      },
+      {
+        "path": "9_Playwright smoke (development 2_2).txt",
+        "bytes": 67996,
+        "sha256": "8a3cc8303c9fdadb0bb4f73ec802bcc2652aefe2f8eb683388de259ebbb84a78"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/system.txt",
+        "bytes": 856,
+        "sha256": "d8fc1f3e5c1d846ed1517fb538e6daf6c56b26b2e3eeee895840584a29b5352b"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/1_Set up job.txt",
+        "bytes": 2300,
+        "sha256": "9a343f5a2d4735e5538a13fb4f00d66956ac0b5db6c0b7fa8a9a4f16a0b0c89e"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "2cdb653da8bd7344298efd7cf1ad5641bf5a6babefdc4294949ceda4c181e1c2"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "4f4812b6183ea79c1ea4c195edb02c385418f9bfcd04592d4d3237881f74cabc"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "154ff97dbe6c2d9cbbeec412ecbbeaf051aa872552f0ec2a9e4532d82ca83c1a"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/5_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "ba34ecc70d17df3e083ef9d392b3df67b4fd8bf83314330d6974e5293dfc617a"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "a9c35f2bfaffeae05be8f4e342865012ac030d400d5da39a8212254b2071449e"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/12_Playwright smoke.txt",
+        "bytes": 15183,
+        "sha256": "bfa7d535336027a7b1e11735c1f7b12c95f0674dd195c739291860fbbd6eec4e"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/13_Artifact name.txt",
+        "bytes": 474,
+        "sha256": "54e147f690b08c5f8f6a427fe831ccd68ca3037d7efc301065291d24da401a98"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/14_Theme screenshots.txt",
+        "bytes": 2824,
+        "sha256": "9969f31e1debe57f67b463e3423910c5682232d877b33bbe6e94a1ed651435d9"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "1f882db332d7d4bfc985dc5dffd7e3efeb4e391d0d91581e984e04c58fa6bb4f"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "0efcd867c373c815d8ec5c2208c893c02ced9d99226cfa299162b1be68f93e2a"
+      },
+      {
+        "path": "Playwright smoke (development 2_2)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "43778446ad5aa2f2db77f72ba06413fb0653189631b6812a88b859acb12aa5d1"
+      },
+      {
+        "path": "10_Playwright smoke (sync-soak-sheet).txt",
+        "bytes": 54260,
+        "sha256": "a42b5ba0c4a2b5e20172bbdb640c483291c0e4d9e20ebcb0246127ddf5536ab3"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/system.txt",
+        "bytes": 856,
+        "sha256": "0268b713a65794f56cc6071e617d5595c862c0e96b8148e35e638271052b7e02"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/1_Set up job.txt",
+        "bytes": 2291,
+        "sha256": "0bfe3a1b93c82a4e179afe9178640a7a5998ab72986f004143c2d78a75652a81"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "30e5a2047c5e044876c1ff630b6f8bb30b942446d294cbdf2c2f2793a4e00ee7"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "3ccd9607a47666bdf23eba384e92e919c9da12ad7e1e54963fba07db4ccaeb06"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "a65a94056124cefa7892f5762eaf243ba943c2ac376d95718cb6db460501809c"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/5_Install Chromium.txt",
+        "bytes": 23503,
+        "sha256": "44d5fea1a535d667f6bb8bbb7f9188fcb73003bd561ffabe868774421677c9b3"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "24b4c5531c3904838df923cb6c0794bc670598a103568e6d02a2a5abb3cc212c"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/12_Playwright smoke.txt",
+        "bytes": 2039,
+        "sha256": "a0f62bc99b1afe35f8591e379164021935cf3a04dd061be45bac4fef06ff14b9"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/13_Artifact name.txt",
+        "bytes": 475,
+        "sha256": "dbc4d2e672044557bfdc8ac5baea295c30e958a079b131c23c80aa341bbd20b1"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/14_Theme screenshots.txt",
+        "bytes": 2721,
+        "sha256": "ef7c0aca9e15c2c1a50149d2736bdeb6faf2b968ed6f67bd799bd895978924a9"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "e385b8096f1a9fc31a0c56ecc0c1273ee708daeaff40b111e7d9806bf84ac54f"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "f3f7c9a15d24a589c385532dc6b12039a6579f2056a5f78350ee321e99dc8db4"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-sheet)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "6ff5185c1e4ebc9f884d774d846a62cb7db2b18758af6f6fc088f3467af89c99"
+      },
+      {
+        "path": "11_Playwright smoke (sync-soak-doc).txt",
+        "bytes": 54725,
+        "sha256": "587d2d58383c3b938ad6425d20b834b19eb4db4846870206ca4af24a01cb873a"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/system.txt",
+        "bytes": 856,
+        "sha256": "6a93eb43102f6a1dd5650ca54751a03501d4400fcd5f06c217316a3637dad3aa"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/1_Set up job.txt",
+        "bytes": 2292,
+        "sha256": "affb293185630dc0751ef3b63572693c6a770443a7d5dbb1c77a216fe86d9370"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "32fdc3d268d556cc2c119c4d17bfb0ce000c37b41a5e205c6a762774c5d18f88"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "12a9562afae2a9aff58b1da56fc2c83a81ba7eaa2797bec8bdb547230eb37bcc"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "36298d338d0ef54552e316ea857c53c98789c0c77df74b9c35bf30b9c880d385"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/5_Install Chromium.txt",
+        "bytes": 23982,
+        "sha256": "23ca5cd1dddd11aaebba93cbb74be0ef7c1cec602e9d7d4571478b291ad4d4a6"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "567f72e27244fa15ecf60a91a795d7c354eb769785f3bde5716d3340119321cb"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/12_Playwright smoke.txt",
+        "bytes": 2033,
+        "sha256": "5508b6f7560c75334a40f54639b5e6c3305f4f0b3b53fce27952f77041011efc"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/13_Artifact name.txt",
+        "bytes": 473,
+        "sha256": "2fdca52c8ae09864eee450ceb5a3854086f68498568478e46f7ad7109bcc06b5"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/14_Theme screenshots.txt",
+        "bytes": 2713,
+        "sha256": "e0fb8bc847198a426700d3190c0cf2d04a60d7c28259c81e6aa464032fbab5a1"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "f7263fd7505b85c33770e066aaf5be65cfd3525230733c12ec646adc882022fb"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "b6abf3b12ff617f6c51b2f25b9e399f7db939c5126d1bf67b46de1a2546d6bdf"
+      },
+      {
+        "path": "Playwright smoke (sync-soak-doc)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "35df7ad1eb68e49fa20d59658c739c9eb34512e6ddf10f0cd1ca8e3d6a3abbeb"
+      },
+      {
+        "path": "12_Playwright smoke (supervised-restore).txt",
+        "bytes": 57810,
+        "sha256": "c19815a16623cb55363e2346855f61209f5ad508011c5cb3426273e35aa1656f"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/system.txt",
+        "bytes": 856,
+        "sha256": "39dc926bb67cc10295f01cbbcea67cb406b59775e80bc67f52ba3ff314264026"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/1_Set up job.txt",
+        "bytes": 2304,
+        "sha256": "ecb69f3146cfb710704f78a70677353a3d75c5ec97785815f3111e14144df7df"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "3c764e814d813d0489f26d51744a6a7c8b8cebc044ee902d4c46ee339586dd4e"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "719a0d259587ead91741bb3ee87fe781ab5ce7cfecc4506a4b6cb8d0652150d3"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "dd1d2b4306d4d98be5c216767e5c02122cf4d311f2b4efac85f127f353f52d71"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/5_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "21efa80696b3bb3fbc8684a08bc77ee1664f5aecd22d3d7f02511186a14786cb"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/6_Install maintenance fixture init.txt",
+        "bytes": 3456,
+        "sha256": "7f29d10d084b87df77af0333fc054f4ed5559261355b83b7110432de28bc38dd"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "ade2831f8bbe22adbe64d13f7cc1e7fae9a6ebe687acef574a1cd12d4117a8e4"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/12_Playwright smoke.txt",
+        "bytes": 1628,
+        "sha256": "9da1b7e4ec6adc69aebef2a5c45aa305e74af33f4e6332185d2cd193c357e227"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/13_Artifact name.txt",
+        "bytes": 478,
+        "sha256": "89b40c1af2d570c5e54a898758b6e436589731f9a5146e91ca41469db392ae56"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/14_Theme screenshots.txt",
+        "bytes": 2732,
+        "sha256": "07250eb7bf922162667a1dc82e374cb010bce11bc145ea21953b76e23c19a43e"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "30261f9be94916781347109f45341ba8ff5a5ce2f72e2f1773bbc4f3b1329927"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "770fc7ad8a324047a044e1cc6bcb74e213fecdfae35720a5ea866a27dc596ed2"
+      },
+      {
+        "path": "Playwright smoke (supervised-restore)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "7dbc6857c86b5192b9d48e9207a3bb60ccd457ce9ba632772a435aaf8c90363b"
+      },
+      {
+        "path": "13_Playwright smoke (offline-upgrade).txt",
+        "bytes": 80605,
+        "sha256": "8f0cde9d3e6af47c9200ea879241a236a3fbca4c2191bf954c6e2892cb1c97c6"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/system.txt",
+        "bytes": 856,
+        "sha256": "c589655f5e9ffc4e2b1f30e4576b46793c81805a5c94cacdd37ec333d56666b3"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/1_Set up job.txt",
+        "bytes": 2296,
+        "sha256": "d636792c30a20e5f52f22b870f25ccc7d4809f8ffb91649757c6d54dfdb7c967"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "bad791deb4fd3a92ef05d89747f2fcd1bc723d7c5baad100a6b5c25b0999e84a"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "7f55553dc6e16ec139be215fd9e3ccc9391f64fe19cccdfccd3d2e91bf6162a6"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "922cb5f50a52b4d7faa779b43b21ed1767f05273726fd6e4cab232ec3e6dd062"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/5_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "77d41d22bc2b84a3d2572f891ed8475d91b268dbafd18a7e440c21319a3c231b"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/7_Immutable offline source for adoption evidence.txt",
+        "bytes": 12387,
+        "sha256": "17ce26d8f6e74e628a7110fe022041ae984cfa18276ed71fb8d88b26fc96df5c"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/8_Install immutable offline build dependencies.txt",
+        "bytes": 1788,
+        "sha256": "6aa732b591ee7e5158c269c0b63dc8daaf145e1cb30c55dfe66b426cf60ba689"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/9_Immutable last 1.1.0 offline host and backend.txt",
+        "bytes": 12421,
+        "sha256": "fc5698d1f2ece9ddad1c298e1560d6c0e14ae10e616c4be9c07c89da89e9be09"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/10_Install previous offline host dependencies.txt",
+        "bytes": 1888,
+        "sha256": "f7ffbd1887edf132ec3ee56b5475e2b407c8aa116b6093b0804e8ab060e232cd"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/12_Playwright smoke.txt",
+        "bytes": 2346,
+        "sha256": "f943401782afe8b02ca47ae444b2ba30f36bce32810077a1e6737321ca44177b"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/13_Artifact name.txt",
+        "bytes": 475,
+        "sha256": "f4bf41d1b74b5c8affad4cb624a408ffb6fa8177e18a1332b0a473bd8b59700d"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/14_Theme screenshots.txt",
+        "bytes": 2721,
+        "sha256": "0eb056dbd3f32b917453e3afa7d973d6222a5eaf9ff6fb1384c42d902007a420"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/25_Post Immutable last 1.1.0 offline host and backend.txt",
+        "bytes": 1763,
+        "sha256": "3c8c9ac21b43c9d05fe0539b028569b91ed132666f63f445e3e84f04928147ad"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/26_Post Immutable offline source for adoption evidence.txt",
+        "bytes": 1761,
+        "sha256": "dbdf1fd4800e24327e3ab7429710c6830463f39e6dd65615fe1668ad1c956105"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "4de1f81a6101ac516984787a724469ceffcf3297d147b62fc8fa8100d9063801"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "2fcc555e0489de6bbd29731a76cb1e7f4baab74abac0e786b93204dd3dee38f6"
+      },
+      {
+        "path": "Playwright smoke (offline-upgrade)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "4659fa867f9a131670ae4f1c294dfd6ddb33bfe8c618e3425810a9943a9a9170"
+      },
+      {
+        "path": "14_Doc responsiveness (mobile).txt",
+        "bytes": 95815,
+        "sha256": "21d2b9c921b29de736a283c86c7dd5e48203624148ac61067d040f8bd70d1706"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/system.txt",
+        "bytes": 864,
+        "sha256": "4ec468bbdaaa5c7f3b369987aa5e0a793a51709aef09031d0d0d38e1482168f1"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/1_Set up job.txt",
+        "bytes": 2293,
+        "sha256": "19104b42cb909e76fc9cc9c76e053bd2cf53e241b1e9e5400ff27adf75c4a101"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/2_Require comparison applicability.txt",
+        "bytes": 744,
+        "sha256": "3ae52d349b0dc2ff9aff1ddbdb466913bdd483ebd41464184a84f286710e103d"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 12053,
+        "sha256": "def2888bca5b2ba6b48045a5734462cdc58247b2a19fda9996dc7bea42283ae4"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1697,
+        "sha256": "6314a76e6441cc91ae240cc9c06256d499731268b6e3339116a5df8c862efb92"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/5_Install candidate.txt",
+        "bytes": 2221,
+        "sha256": "96a82d2024965c2817247390364a4c533e1f68882ed7f88ce243b0d9d6842604"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/6_Install Chromium.txt",
+        "bytes": 24315,
+        "sha256": "5d999730efc60ac7908d14a6a226b88cb062c40841a24b9b5f43a28f9d729f0b"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/7_Immutable uncapped source with matched compatibility and native observations.txt",
+        "bytes": 12659,
+        "sha256": "4acf3e995d25ea1869421d5b6af4d6e8dc9744e98fc4b7f55fda0cdcc41b6ebf"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/8_Use identical browser workload on both sources.txt",
+        "bytes": 1087,
+        "sha256": "3ec3fa9b57768ff5597e74064037689d62dfe4c9d1bcb255ec92ecda2390a47a"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/9_Install and build baseline.txt",
+        "bytes": 8141,
+        "sha256": "9d7d87e47bcc0814859085c68a51eb25ea5e0642d7a95874fdc66567ec3b699d"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/10_Observe baseline first attempts.txt",
+        "bytes": 3388,
+        "sha256": "7bc6ccd97dc2197e30a9f52d4b53fb8aca609c7e59a07f043f3c1519405150ee"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/11_Build candidate.txt",
+        "bytes": 6623,
+        "sha256": "1d444220d5eb5e299194e5b39ddc5a93c0701f66b18f7081c3e63bb8831ac163"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/12_Verify candidate responsiveness and boundaries.txt",
+        "bytes": 3687,
+        "sha256": "dfbfe2b9fce097bd108050eb04750d0361b52875ff7ada80ebfd96e0b7edcb59"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/13_Verify candidate evidence and selected paired comparison.txt",
+        "bytes": 10637,
+        "sha256": "ab93a9d840e79e794e351e74ba2cb5646bef5799f9044e19d99d26f98a151742"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/14_Retain every baseline and candidate attempt.txt",
+        "bytes": 2712,
+        "sha256": "fc4bc78ce4a064bf4925d18f0f3ae55684ceb374829bb5368f5ef050f8fd56a5"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/26_Post Immutable uncapped source with matched compatibility and native observations.txt",
+        "bytes": 1759,
+        "sha256": "edab54a83a779b4b9efc2e55635b05e7458c02547858a4c23f3a857782dd9bb7"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "5a62b96b031051ba77269ac74acf5b1e768379eb8d0da1f1db08ad47f532241f"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "c91c0e2a071639fd6b3869499de15068f87c00d6adc7de314aa4e7217e5fb3d0"
+      },
+      {
+        "path": "Doc responsiveness (mobile)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "8f112da057cab6fee27ded006bcc13896a45cddee953e593acacad7bf7ae3a72"
+      },
+      {
+        "path": "15_Playwright smoke (development 1_2).txt",
+        "bytes": 73964,
+        "sha256": "e3b0c8041c8818a1daf5729a886936a81bc5211ee217138eb353f622eddc4734"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/system.txt",
+        "bytes": 856,
+        "sha256": "b35c6df425ab68793514e08465919cb2fe5044b6f8dfdb74df380f3e7122cc27"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/1_Set up job.txt",
+        "bytes": 2296,
+        "sha256": "e8c71702b00ffb77cfeae4c25de0d28459b5e66d25559d6dfe629e17ef324a5a"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "1ba6143b99bd13e6de5c4371180a9145703e82dc35973b5eacd9de8a5c4aca20"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "97e4de6a1ea77602325b3d91f3de5af445204dcd945b4f2f2a8a290a0c361e2e"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "01f09c4fdc507afc1ed14e84a7438027db9767c6e745f40bb1eff529e608e878"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/5_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "e2e0f0ab7cfdab82cee6dd438791fdb6c9f0cd8523a51a2847088bf0de629131"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "9b3862a9554d00e78ecb2a4cf813134cdd4fce27c78af2a9d2816b74fa19ffab"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/12_Playwright smoke.txt",
+        "bytes": 21103,
+        "sha256": "51bdbc371578eaf4a2b5dd50aa59787a133fafa66f40a779dd37fc8ad11a5f81"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/13_Artifact name.txt",
+        "bytes": 474,
+        "sha256": "eac09894f33c987858ba5e995c353062dd4a6f6ba71cf4b069489246067438ad"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/14_Theme screenshots.txt",
+        "bytes": 2877,
+        "sha256": "c1ab981a13274f29335db997033d86ca46b3ca2c138205d9d9cc891dd5418559"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "1cf11ace4da03eda85d846cc83fef050194a5e96f11e928662df2249f4c6b217"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "268ade4c4901d770dd7f9967851e0ba0ff04004759686cc1703d8a37b2c5e272"
+      },
+      {
+        "path": "Playwright smoke (development 1_2)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "5cf8238374ac0f23e439a6e10ea02658c202cf7beefbd76415fc34cbb9d36302"
+      },
+      {
+        "path": "16_Playwright smoke (production 1_2).txt",
+        "bytes": 78588,
+        "sha256": "ca08485ddea017d5c837deca4062b2f4f11769b92eebf31dd1f6660bb102cb95"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/system.txt",
+        "bytes": 856,
+        "sha256": "63f2f109840b6c4fabe8c7a45f025feaa9265593a8aed7757e7eb4e635883fca"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/1_Set up job.txt",
+        "bytes": 2293,
+        "sha256": "be7a25436ad74398732c7026b3aeba2dc43316da77a248b37d16f61f021c43fb"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "24d32becb03dd9a700834f479a402621ac0388f8e79a69c9ceae656d8da9b88a"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "8945781f05113a37b373930631e7cdaa2f7e517eefb9f724c0bd9c78b0e1be45"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "8d2174391f1064b4535f5c56c1e84833424bd637b9bc1c0b36273ef5a1f9ef54"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/5_Install Chromium.txt",
+        "bytes": 23982,
+        "sha256": "623719806a5da72784d0a3b671f000081f80158adaecd0190ce7b549833d967a"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/6_Install maintenance fixture init.txt",
+        "bytes": 3456,
+        "sha256": "83f3f20aa188db6b10054b0a63ae842b92f18025f0a0ca4a3654b31380965591"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "d6140ed9fcbb7843765086ee0276a063c43bb2072b91d5ddbd85e15c50ca7a12"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/12_Playwright smoke.txt",
+        "bytes": 22229,
+        "sha256": "232c914bb6ea86d94d50dc0ea0be5cb3d9e0495de2aef2ff1ebaf51dccde3ad1"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/13_Artifact name.txt",
+        "bytes": 473,
+        "sha256": "f8a0b66860bc43b217ed80467d1f1a1b697f21ed4f589f259d6bf225f9224388"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/14_Theme screenshots.txt",
+        "bytes": 2926,
+        "sha256": "fb07248b8c6ca5ec0040144a30f940ea36928eef7ef9b3a92c6e498f2009c54c"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "dd7afac9b0060fd295fc31942458daafad4268a8226c2f9622f7b091c0a31b52"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "755869f6691327ff411f7457bfd899e420a3f30fc48abb410f510635aeea54ce"
+      },
+      {
+        "path": "Playwright smoke (production 1_2)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "8b01d723b56db51572f96038eaedffdba5c8e4eba213ebaf5e1f497771c2903d"
+      },
+      {
+        "path": "17_Playwright smoke (sync-production).txt",
+        "bytes": 76959,
+        "sha256": "1b4a5fc56d481995260b70d0bc79e9c9e069ce8d7bef179d442f87e71399fd13"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/system.txt",
+        "bytes": 856,
+        "sha256": "c4b78b2eafa369ec2982fb7918d0f2b32cd660a4421edb34f667a337d8cfea34"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/1_Set up job.txt",
+        "bytes": 2291,
+        "sha256": "ea5032ea72f8c8e4cd95010462ed7109edda6491f55f4592996e6ca85c9fe3ef"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "517846ed86535edbf536a45b8836b136434b672fadede98bcf72f602b723fe43"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "d617f162d8e2dd313fb7161d591d15cb8e860075628db04da21a1f82402a6546"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "f452f6ea293f1754d45a256751d7ca9d68291c8bad6eddcc5595f8c20c78794f"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/5_Install Chromium.txt",
+        "bytes": 23503,
+        "sha256": "344935870235aa50a8b7ac8f905fe71e2a34a6e664acf3120f9c9707dc6978c6"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/11_Build.txt",
+        "bytes": 6440,
+        "sha256": "fcda0c0cff56c33658f2d66ab3fc51e24f724721b03f3eb06137ddc2a3dca072"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/12_Playwright smoke.txt",
+        "bytes": 24734,
+        "sha256": "87a5438a385bb59bc68379ccdcea6e5eaf28f949b75174e7f16de50201177660"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/13_Artifact name.txt",
+        "bytes": 475,
+        "sha256": "7ac335c2c65f5f6d8bf8867c820c361dd34ba526fc16972e74800fcbf258d248"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/14_Theme screenshots.txt",
+        "bytes": 2725,
+        "sha256": "a05cbc19566e2f12d426431b7b7f66dd15826306929e1e7f1f7cc0817e967e6e"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "c763192f65faae7639977dc9439cbbb0d1cda96cb53dbbb2c3ae9b389337f830"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "a3c6914552819f6485a15262bf6cc4203cfbb764bfc7edadad6138fcf52ac7ad"
+      },
+      {
+        "path": "Playwright smoke (sync-production)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "0745de173e485341eae92e481e9c93cdf1f1d99f1f454a89885cb205a509f215"
+      },
+      {
+        "path": "18_Lib tests (dense-cells).txt",
+        "bytes": 23840,
+        "sha256": "b7f150923a0da2cae77d138b7b45a739b6c5a58a4b34cd6d3942aa39c59b406b"
+      },
+      {
+        "path": "Lib tests (dense-cells)/system.txt",
+        "bytes": 852,
+        "sha256": "fd1951a3ce3e0baa44b34755415116f9ee17adb463f957189255da21045e750c"
+      },
+      {
+        "path": "Lib tests (dense-cells)/1_Set up job.txt",
+        "bytes": 2289,
+        "sha256": "e8f1a372c3804b6854fb904802c086218ae90a755a6b52504ba1f9463917a641"
+      },
+      {
+        "path": "Lib tests (dense-cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "f06d96231b4b0502f0128172ab883f13290f56869b5ececed2d0ab153cabc385"
+      },
+      {
+        "path": "Lib tests (dense-cells)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "27268383a7a6350c158365872105b80780c83623aea21c06007e56f3f07a19d1"
+      },
+      {
+        "path": "Lib tests (dense-cells)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "de3a178c4d5ed2256ff9f458a7a642023ec04fe1de33163d733a10250b98156d"
+      },
+      {
+        "path": "Lib tests (dense-cells)/5_Lib tests.txt",
+        "bytes": 4747,
+        "sha256": "6ae9bb97405820346ae0890330fb9301471f7d9e40cb3ff431b52626a1bb0663"
+      },
+      {
+        "path": "Lib tests (dense-cells)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "dc7296b733e0e06f35e0f26e976950d4442647332bc54a37c6860cb295290a06"
+      },
+      {
+        "path": "Lib tests (dense-cells)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "aade1b95bb628f46679325a19b2fc38edb7f7a5de0afb0829a585831e653b9b7"
+      },
+      {
+        "path": "Lib tests (dense-cells)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "5bd03a256f253848f868bfa9d778fb7b0b3974e90b68e89629845700c2e7117e"
+      },
+      {
+        "path": "19_Retained sync transition.txt",
+        "bytes": 37371,
+        "sha256": "79d460e5241ebd905159eda1e0584536d2fa030469d87660fc859ee0e04eacd5"
+      },
+      {
+        "path": "Retained sync transition/system.txt",
+        "bytes": 858,
+        "sha256": "79602bf6892c4363a4418a7477f8c692630bd762a54477e8820a1128c8900c63"
+      },
+      {
+        "path": "Retained sync transition/1_Set up job.txt",
+        "bytes": 2111,
+        "sha256": "e13a64343b5dce8fb028d887bbc84e24c29b9e58cc89c3a405298f9428c7a24d"
+      },
+      {
+        "path": "Retained sync transition/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "781807af644a230a931532c226d22c13331bcdb33dc6a534c269841e7b99ff1f"
+      },
+      {
+        "path": "Retained sync transition/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "9d32f3c2158177f6ff658115be09c20a52709aa7cbdc5043e2e110883b6cc47b"
+      },
+      {
+        "path": "Retained sync transition/4_Install current application.txt",
+        "bytes": 1888,
+        "sha256": "529062edf3d4c91313010e6ac83cb06457435bf4f01fa4e60e88e43501b2124f"
+      },
+      {
+        "path": "Retained sync transition/5_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 12326,
+        "sha256": "5a0b1ca3bf481e6c481c4ff82a861289c86590b0ca8e85758cc0bc23deef9193"
+      },
+      {
+        "path": "Retained sync transition/6_Install pinned legacy export environment.txt",
+        "bytes": 1788,
+        "sha256": "c03bbce9b0061fbdb559d1136c540dcb73b1676181e67c883209e1719b8c8c8f"
+      },
+      {
+        "path": "Retained sync transition/7_Retain, interrupt, resume and verify real legacy data.txt",
+        "bytes": 2594,
+        "sha256": "f86a52e928ba1b659a0d444ee2bee53253d30338b503f3b1bd1bd5c9fc61339b"
+      },
+      {
+        "path": "Retained sync transition/12_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1758,
+        "sha256": "a6074b1a25a9befcf28d0973041ad9309eb532c9a730c0c629cbf73c9d5e76ca"
+      },
+      {
+        "path": "Retained sync transition/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "21a4a3d4f83035d0fdcbb43ae002cfd98a4b58c1a866d939b6eb489d1ac30aac"
+      },
+      {
+        "path": "Retained sync transition/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "3b264e6c9ece785ddc922fd4a64543508584673c3f7a9fff372c8e962df658be"
+      },
+      {
+        "path": "Retained sync transition/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "52fd932276763c1afd52f9ab0865fe8966b162f87ef81fdf37fd631750dba704"
+      },
+      {
+        "path": "20_Doc responsiveness (desktop).txt",
+        "bytes": 95750,
+        "sha256": "16d06362ad5baefa73303f25afde889524966a9ddb514c5f2ad96021e0993526"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/system.txt",
+        "bytes": 864,
+        "sha256": "fc0a22b8fb1f14b6c9f080bf1f7f2edf7288716d78b507fa5a65b3b43e108c3f"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/1_Set up job.txt",
+        "bytes": 2288,
+        "sha256": "04feba8b51c54d3488513396fad82f2abf3a258f4f85501440d991e234150ccb"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/2_Require comparison applicability.txt",
+        "bytes": 745,
+        "sha256": "0ac58ffc1ab2c9a9a1e2aa2b3e69f61246b97f636f79db9b84daaed52459c591"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 12054,
+        "sha256": "96b37d791a99997f47fa158feff04adef75dd543ceb3628853c3ab49f47935bd"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1698,
+        "sha256": "a1dd5e5c041b746283b755dbdfa346da7a1ed6604b44c4b4f6bebda059bf5785"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/5_Install candidate.txt",
+        "bytes": 2222,
+        "sha256": "6fd8163ce1bfe906e5bd33be100f35385ec67cbf9ea0912fd307222f6f1e83c5"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/6_Install Chromium.txt",
+        "bytes": 24316,
+        "sha256": "3d3421dfe15a922d72c9e42be271bdef0836416658b5015ed4f9c1fc0f9920c6"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/7_Immutable uncapped source with matched compatibility and native observations.txt",
+        "bytes": 12660,
+        "sha256": "e2ff1508b34dc6f47bd996573e8460dae3ea9e3db770531f01171228a9274af8"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/8_Use identical browser workload on both sources.txt",
+        "bytes": 1088,
+        "sha256": "795768ccf38fd2574ec61db99fa04175827330d8d13e0b422d8990ea4fad3b6f"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/9_Install and build baseline.txt",
+        "bytes": 8142,
+        "sha256": "add2fc9f5a732d1290c0bfb18fbc36a454713a5c2063f60e6d32422594f3bf59"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/10_Observe baseline first attempts.txt",
+        "bytes": 3391,
+        "sha256": "4d43b6c72e9b6a961959a7d8b99e54f5e4a42cae0d27d60ebc8e3826aeef7b04"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/11_Build candidate.txt",
+        "bytes": 6624,
+        "sha256": "fc1fe4eeb15a157026aaf06b6ff173d27018512d207a6dc33c3fde510e43f522"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/12_Verify candidate responsiveness and boundaries.txt",
+        "bytes": 3723,
+        "sha256": "6ae3b1c4af42a70e3bac4f4ef7c507033616d7b4dec56bedd3425a458c83ace0"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/13_Verify candidate evidence and selected paired comparison.txt",
+        "bytes": 10524,
+        "sha256": "ac8eb2b1e1543d1a7d67e6e4c6db3179f32a9e86cb4fbad16347f4d689c88a0b"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/14_Retain every baseline and candidate attempt.txt",
+        "bytes": 2717,
+        "sha256": "6d84b278a4cfa2b76159d68b03d1f1f698d12acda228557f3a0b60447b53ca43"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/26_Post Immutable uncapped source with matched compatibility and native observations.txt",
+        "bytes": 1759,
+        "sha256": "c5f8d5c62174ce20c857925e6cb6bf5a0629d061f0f7e0271355e15ccae41d0b"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/27_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "6c3c062a3f21c973129278e40c490e3e1718e3687e2b339269542b208c9eb218"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/28_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "4f6162d2067609e26cdafe13043b4d9d1621b690bb3975706eca9ec0909a221c"
+      },
+      {
+        "path": "Doc responsiveness (desktop)/29_Complete job.txt",
+        "bytes": 61,
+        "sha256": "562e929ef83d0b13c70982b2418c05dd11dfc4ba3ed5096c0c0a10e490eb5576"
+      },
+      {
+        "path": "21_Unit tests (supervisor).txt",
+        "bytes": 137505,
+        "sha256": "ead52cdfadd32da589e444cd6423674b21bc0f02abf6c0e2e515fa4107d7a78f"
+      },
+      {
+        "path": "Unit tests (supervisor)/system.txt",
+        "bytes": 851,
+        "sha256": "a7c285f57d943b11c2328881594e249ffd4ed19bd037cddd9385deb0bff2fcb5"
+      },
+      {
+        "path": "Unit tests (supervisor)/1_Set up job.txt",
+        "bytes": 2283,
+        "sha256": "befbf5ab848c22cb1d53c2202919ba573c58c44b40d9b4b739caca5feebd4795"
+      },
+      {
+        "path": "Unit tests (supervisor)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "f28cd5ef3bf00d85887cdc2c35d315dc81a7394e4829e4f0bb9788ace3101ad6"
+      },
+      {
+        "path": "Unit tests (supervisor)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "292f78b5a4183fa1b3e7d33e8f2e5aa707fa0e0861eab058a0d789e2d07a3e54"
+      },
+      {
+        "path": "Unit tests (supervisor)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "a91fe9d05706f64f36c95364a9470d093d37cf0af5886e2aeb63ab4c4e2af1ea"
+      },
+      {
+        "path": "Unit tests (supervisor)/5_Install fixture init.txt",
+        "bytes": 7127,
+        "sha256": "6aebeccdc7abff2320b77db662a03b9858efb241306d581288a6ca0d46affdf1"
+      },
+      {
+        "path": "Unit tests (supervisor)/6_Unit tests.txt",
+        "bytes": 111294,
+        "sha256": "06e62a925c7a937d6237639e996ab99c1df2af528bafcff41c40738926b6a9de"
+      },
+      {
+        "path": "Unit tests (supervisor)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "f342e11aace12b28ae5153273cf0ac5b2cc7c0c02b1df8b6f4491b4636debd99"
+      },
+      {
+        "path": "Unit tests (supervisor)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "2f259b8d807f7d1d2483263b37f8f8078d50721f9c787e9234fc00769bdfbb85"
+      },
+      {
+        "path": "Unit tests (supervisor)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "cc65c9feb33eb786ba0b2182daf138fd1e12dc07c1420f616d00b36a622761b5"
+      },
+      {
+        "path": "22_Lib tests (mixed-fuzz).txt",
+        "bytes": 25937,
+        "sha256": "bbda6a7836b307a1b12bb606dc08228aaf8902e9fb25c6e3cb6504f6dc8b4c4d"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/system.txt",
+        "bytes": 852,
+        "sha256": "60d2b15a36edd2106384947c68c22b417a057d0ad14062b813733602bb7b826b"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/1_Set up job.txt",
+        "bytes": 2282,
+        "sha256": "ec308003921a49e14eb368262a5e44f3d982d75ec0127eef0de4a8a32d2de541"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "8bb4d6b8547cb8d532622025ff2310ea47130ac4dd144d1ce171570dfb0a08bb"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "cc3e129927e4da1b83bad229a59dcfd18f7fa14d523546f529c7162939bf7ad9"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "b0751010665c7efcf9a9194535c31254110ea79a2cf37d13eb6d5a327779321d"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/5_Lib tests.txt",
+        "bytes": 6851,
+        "sha256": "1c1313fc84192463df3af300a86ce307d22a7ba36a169a331858db1f58a6b08b"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "a920d024ee3f68717c375591979a60f6faed0881e8357a1c170490dc31e1c0b3"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "3f0047bfeadef039b730727b1d6ea8e0b09618b9751bb832d0ee51043bfcfde7"
+      },
+      {
+        "path": "Lib tests (mixed-fuzz)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "957037fd1cdad215c39fbbd7b4a0d82244b08528204476c924ae13cdc98fe66d"
+      },
+      {
+        "path": "23_Unit tests (remaining).txt",
+        "bytes": 740202,
+        "sha256": "740cdad6e782696e7acc9a28ff62b878c2664b3b5f70f16261c157e5b8d14865"
+      },
+      {
+        "path": "Unit tests (remaining)/system.txt",
+        "bytes": 851,
+        "sha256": "c69fb29ab489182c7737bd4bc541c4a82e142a6b08e2abc1cb82f0e04991de24"
+      },
+      {
+        "path": "Unit tests (remaining)/1_Set up job.txt",
+        "bytes": 2289,
+        "sha256": "365d9483cfacace00064879326ed6d0846b022f67086c0603d561a43239c4dfd"
+      },
+      {
+        "path": "Unit tests (remaining)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "4c5b4f7f224a6bb5a2d6d7630307c325f711b4e7c4e90e6523ff599847ae9eb4"
+      },
+      {
+        "path": "Unit tests (remaining)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "cfed3bbfbea5cd4becd1fdc219a5a43278f616edc0665ef5290c000734904089"
+      },
+      {
+        "path": "Unit tests (remaining)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "5e48b52e739e4c58019320716a773bf9dc1439013399dfc44fa0b03ae086bd5f"
+      },
+      {
+        "path": "Unit tests (remaining)/5_Install fixture init.txt",
+        "bytes": 7127,
+        "sha256": "66dd8b20a9601d28df50ff059d35f8990211d8872708b4e3443e7b8db021f6fc"
+      },
+      {
+        "path": "Unit tests (remaining)/6_Unit tests.txt",
+        "bytes": 712289,
+        "sha256": "e5ce37c01f1d0dfb4aacacfc560cb6589e2440fc1e45e485b863688743645e84"
+      },
+      {
+        "path": "Unit tests (remaining)/7_PDF collaboration overlap evidence.txt",
+        "bytes": 1699,
+        "sha256": "a47b50474d5f44fec849be9fe8f6ee151aa8116bf2fcb018e2268ccfd60dc547"
+      },
+      {
+        "path": "Unit tests (remaining)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "b99991f7016d90089d4a4bc997256ee4724235908411d1c26be0d781f6d8cf6a"
+      },
+      {
+        "path": "Unit tests (remaining)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "a689bbfff1b1220192805fa7edec38887a88b46f5edc7aa2bbf87336a13aee97"
+      },
+      {
+        "path": "Unit tests (remaining)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "98d59bfb19d3bc97ad66932071ac0b58d0bb5a64b767af3d93d5326192484626"
+      },
+      {
+        "path": "24_Doc callback lifetimes (desktop).txt",
+        "bytes": 90796,
+        "sha256": "8685604f7176d033bc40f46cdee3ef0210f9dd07e6f0c7ba1894177cc8019cd5"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/system.txt",
+        "bytes": 872,
+        "sha256": "f847b522b55beb57ab90200b45692c264c529f8bc83aaa4f803155a3e715b70d"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/1_Set up job.txt",
+        "bytes": 2292,
+        "sha256": "9eec8da1472f3b2c25fc103395d5aadfd1f70c94f7af05e5aba8dcfd22f9c02f"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/2_Require comparison applicability.txt",
+        "bytes": 749,
+        "sha256": "62adc6be723d9e5ae2ff410ce5916a01ca3ea8cbeae671b852c487e0bfe15c34"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 12058,
+        "sha256": "fa9a731a19a925fdba70866ba7741e19f03623defbfd19ccb93efffe9fc03c9d"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1702,
+        "sha256": "2451ef25b188ce3769275ab0b4cc68115e47ad8f8dee61aa18484171fdf99061"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/5_Install candidate.txt",
+        "bytes": 2225,
+        "sha256": "69e1f2ca87d67be62237d12b4ac99322a59e41d546f2b985ba6ad30f8c929371"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/6_Prepare pinned callback trace converter.txt",
+        "bytes": 1205,
+        "sha256": "88d87bb9490177ffcf070762d73d7107e38a4f573e1525e0080aab9ab0b744d6"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/7_Install Chromium.txt",
+        "bytes": 24422,
+        "sha256": "b39912cda522c9ec6e0708fc777793160632fa7a22547a0626d7ef1b3f60a2ce"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/8_Immutable merged SPN-108 baseline.txt",
+        "bytes": 12869,
+        "sha256": "3bfb2f94a6fd41a1919fb474d971a7a9363ca3e4c21c107b8ec01f4bb421b105"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/9_Match callback workload and read-only observations.txt",
+        "bytes": 1951,
+        "sha256": "aac7a6c93e06a6af78db09aef2ae551244eb1f305ce1b73e3a5ce82b8e6172b2"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/10_Install and build baseline with source maps.txt",
+        "bytes": 8992,
+        "sha256": "13d570d125f6df04534305943b4297427792712062df4de3459c3e1d9219bc27"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/11_Retain baseline first attempt.txt",
+        "bytes": 2833,
+        "sha256": "deae280ab44f19c289889913b858748f83ca4be3357c0494b8e4f990a58fd42e"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/12_Build candidate with identical source-map settings.txt",
+        "bytes": 7519,
+        "sha256": "df850351e2cb9c9c141e2f21260ece756da30e2a571accbb8f9d6e3da0d2b2cc"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/13_Verify candidate first attempt.txt",
+        "bytes": 2579,
+        "sha256": "d1ea2ede77da172f5c26ab0a81883eba05cb99d2ff54afa4dad20439370b979b"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/14_Verify complete paired callback evidence.txt",
+        "bytes": 2062,
+        "sha256": "cec385497d02b17261c5bf277b012045de6962a583aabc3a3002221b6565f235"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/15_Retain raw traces, source maps and every first attempt.txt",
+        "bytes": 3778,
+        "sha256": "68a983b3a80a1b87c8134aaf19d99d715d479abb0e563fc16c5e8009c1517319"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/28_Post Immutable merged SPN-108 baseline.txt",
+        "bytes": 1764,
+        "sha256": "c6a188e57dff31f5132811ac6fbb76d5db7df556029f24b855f7f69dd85a7eca"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/29_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "0bf650b47e703e8722a429bbd618804cefa5c9d1e5a772eb393bc6874d8e67d2"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/30_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "12725ce6a3bc49d0f94d5ac945eae274606034d5c76ccfb25ebbd57643d33a67"
+      },
+      {
+        "path": "Doc callback lifetimes (desktop)/31_Complete job.txt",
+        "bytes": 61,
+        "sha256": "7ae6fde4846b775ac85e61d2f3525a2c742bc414047813165dc901eaae1a7cf5"
+      },
+      {
+        "path": "25_Backlog.txt",
+        "bytes": 19544,
+        "sha256": "2d2cf4b1e70b24abd88fec1935d152b3eee8ed3cccd1f08540f72e70732e16d3"
+      },
+      {
+        "path": "Backlog/system.txt",
+        "bytes": 724,
+        "sha256": "fca99f58700e4407435e43f308eb38bd0bbc273f991a4d9e2846de5f35daec24"
+      },
+      {
+        "path": "Backlog/1_Set up job.txt",
+        "bytes": 2097,
+        "sha256": "eb415fc6e83beab5463492fdda26f1940023ae017365a7f7116e3b50fa0a9541"
+      },
+      {
+        "path": "Backlog/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "04bc1190a0c5eeeb16c43df1f8c3b4e43ee80e0525a4b3a775e678cda00f2f17"
+      },
+      {
+        "path": "Backlog/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "766530fee87c2fa1915df29d232351c0d0c55ca678959308316d434c2fe1e21b"
+      },
+      {
+        "path": "Backlog/4_Tickets and index.txt",
+        "bytes": 2529,
+        "sha256": "aba46067e37d3ced8e664faaf5eb9a746806d2e3c812a47b329e6ac9a6715d30"
+      },
+      {
+        "path": "Backlog/7_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "7bf9953790a150f2f7de5bdcdd7765f839200c095b02e1b6f3c73339ac61be51"
+      },
+      {
+        "path": "Backlog/8_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "bb95691521fc1ea200bc3ea8b322e9aceb746b3e6635a444603fbd56d0f33fa2"
+      },
+      {
+        "path": "Backlog/9_Complete job.txt",
+        "bytes": 61,
+        "sha256": "1212cb91bf70897f81108fffa7fc6e86045a68528f02889aba88a7666289a40a"
+      },
+      {
+        "path": "26_Lib tests (cells).txt",
+        "bytes": 24127,
+        "sha256": "0e4676d858b4cb45ee226216b1b5a06b48245e7d3f6265ee9337002c2768d5f2"
+      },
+      {
+        "path": "Lib tests (cells)/system.txt",
+        "bytes": 852,
+        "sha256": "0edaaa2b1ac1402fa35913cb72ede213322f87f794f5c36cc0268dade82b4501"
+      },
+      {
+        "path": "Lib tests (cells)/1_Set up job.txt",
+        "bytes": 2279,
+        "sha256": "2de8933fbd1981e340eec02b50a59690bf6013b4aee10e0303873140d38df144"
+      },
+      {
+        "path": "Lib tests (cells)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "0233eebc01c05f3705f7f3a134f01cb46c67ec12e5e28d51b25a568e52be5afa"
+      },
+      {
+        "path": "Lib tests (cells)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "f382a1bb2f886732a7cce9d48212a5be742005f7c08650a8aaa382ca13b7a140"
+      },
+      {
+        "path": "Lib tests (cells)/4_Install.txt",
+        "bytes": 1888,
+        "sha256": "0f92b3162a2e999e4e0507c2fb184b2ebb350b69f91777cfc40e0e48002ecbe4"
+      },
+      {
+        "path": "Lib tests (cells)/5_Lib tests.txt",
+        "bytes": 5045,
+        "sha256": "a0cc1f253b9b95e4d20ed1643cedfb8f640ae5ad00ed2c6aeeb05cb3faa79fac"
+      },
+      {
+        "path": "Lib tests (cells)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "38e27f64d826fd661439cb4c65b96a43b69ee673f9ef39f744ae0e1f4372c700"
+      },
+      {
+        "path": "Lib tests (cells)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "20b6870765f87d6fbc03aa72354ccce98709e933ad92575cbebb672aa1e2aa9e"
+      },
+      {
+        "path": "Lib tests (cells)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "2023087f798103f6a9c5fa15398934471a15701e7512bb98d20e5750ddd74555"
+      },
+      {
+        "path": "27_Container smoke.txt",
+        "bytes": 39152,
+        "sha256": "67fcdd255e9c9bfd658ce4ebf16d9d3940de5301b2000407de4c1de37f1691ae"
+      },
+      {
+        "path": "Container smoke/system.txt",
+        "bytes": 858,
+        "sha256": "f6ab6bdac1840ac9db58e99be2601a4f42e7389e034da29485136d81023c18cd"
+      },
+      {
+        "path": "Container smoke/1_Set up job.txt",
+        "bytes": 2105,
+        "sha256": "7522872acfd1ce2d0606e7be3addda4df9465ae847110d65f38e26c5d34f3e37"
+      },
+      {
+        "path": "Container smoke/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "1c918d0987382e320a996515ef56e7cf30a6248b7f288908d6fc5824bc2f0d08"
+      },
+      {
+        "path": "Container smoke/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "e0c07b77e22d19f3904dc10feb840ec021a465a6894db3c5604d2f075fdcf4df"
+      },
+      {
+        "path": "Container smoke/4_Install PDF verification tools.txt",
+        "bytes": 1889,
+        "sha256": "71ffa9f8e288f7030b3f9c02d4fb68415983664549ff7559b0fa015d8cf64d33"
+      },
+      {
+        "path": "Container smoke/5_Build and exercise the final image.txt",
+        "bytes": 20243,
+        "sha256": "055ab770b2d994f09a71edf0b4c35229ba58d46525610943fa0d047da84a4e33"
+      },
+      {
+        "path": "Container smoke/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "f93bc12d0652ce9cbf23e1af70e69152ae8df0cae515a9e5cca0e1b1b18d7791"
+      },
+      {
+        "path": "Container smoke/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "ed2f45fe3698c04873509ebf747a60146006c89f0ac05ec3d679de717ed298e2"
+      },
+      {
+        "path": "Container smoke/11_Complete job.txt",
+        "bytes": 61,
+        "sha256": "55597666b8e89503c8195f45acd5c34225c65d47f3e590d99269e57fa9f92e97"
+      },
+      {
+        "path": "28_Unit tests (recovery).txt",
+        "bytes": 106406,
+        "sha256": "07e586927508ac92456373164324507f0b98f33d9107a177f967f376ed2fe571"
+      },
+      {
+        "path": "Unit tests (recovery)/system.txt",
+        "bytes": 851,
+        "sha256": "f6780890dc4c64de6a8c6c94bc19370f3a0cb8c81c1eae2981b403a97cf62dcf"
+      },
+      {
+        "path": "Unit tests (recovery)/1_Set up job.txt",
+        "bytes": 2281,
+        "sha256": "94dd9f7f55cac81241a4e9ccfba3e290a0938a6289bcd04cea64c4652494dfb0"
+      },
+      {
+        "path": "Unit tests (recovery)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "7a5ceca58ef5bbffea90f028599133143b6baf402ad79480a228f7bbaed865b5"
+      },
+      {
+        "path": "Unit tests (recovery)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "fc10e00b19f58a67befd269a91e23fc69ce017d6039086073960c5efd9535ccd"
+      },
+      {
+        "path": "Unit tests (recovery)/4_Install.txt",
+        "bytes": 1889,
+        "sha256": "b5bcee2c8b7c9f5500f5111cb3809d612308308224a787e199685da343cef061"
+      },
+      {
+        "path": "Unit tests (recovery)/5_Install fixture init.txt",
+        "bytes": 7127,
+        "sha256": "3e09bb91c24b449aa4c63b789349f7ebbb929711169702f4c29729fa2cef2af2"
+      },
+      {
+        "path": "Unit tests (recovery)/6_Unit tests.txt",
+        "bytes": 80197,
+        "sha256": "19a785f6e9e787c35aeea04fd91d7ac447b3cbccd2a613c782b8f9a0f04e144b"
+      },
+      {
+        "path": "Unit tests (recovery)/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "e96c6cbee1581865244aba0380ee174ac113e58e72392df7cf25c8672748c250"
+      },
+      {
+        "path": "Unit tests (recovery)/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "1385b06a62e2a43a0d3ff6925c1a9df02a513cf53525bf2d499df04064ad7ec5"
+      },
+      {
+        "path": "Unit tests (recovery)/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "0be9a8a57350bd5b7b1623047d75c2a985edfd9cd4ed86172965b126999a3f32"
+      },
+      {
+        "path": "29_Sized restore acceptance.txt",
+        "bytes": 64239,
+        "sha256": "6fbc4c3161839820d7b1fb88774898be38e9a3a4f2fc9b8de8a62a26a97121c8"
+      },
+      {
+        "path": "Sized restore acceptance/system.txt",
+        "bytes": 856,
+        "sha256": "ba44c78851da02f3ba5bfc5c6767c5aac6c308e41e59ba671e61e211fa90fec5"
+      },
+      {
+        "path": "Sized restore acceptance/1_Set up job.txt",
+        "bytes": 2281,
+        "sha256": "bc0b94d5c427bcf53321f2ec1e14bd8f1831eebc7f4adeeb925e401dc1d55577"
+      },
+      {
+        "path": "Sized restore acceptance/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "7c5fac235879f37b92a878888cedb9542424734287a87b8fb41c1f7bcca6cbb6"
+      },
+      {
+        "path": "Sized restore acceptance/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "9226fd20ffb510fe3c555f3dbdcd27b3186915162d4a6b2ca53028b6d46c0fae"
+      },
+      {
+        "path": "Sized restore acceptance/4_Install acceptance driver and Chromium.txt",
+        "bytes": 25206,
+        "sha256": "9b726a5df1a2072a1e6027a6df7b883f01b7d854b17a981093b0101b8ed21261"
+      },
+      {
+        "path": "Sized restore acceptance/5_Build the exact production image.txt",
+        "bytes": 19174,
+        "sha256": "500fa298d7bc03a7ca6a11924d7f296ba63b09926bc0629677636709c90caf4b"
+      },
+      {
+        "path": "Sized restore acceptance/6_Measure and verify the real 256 MiB restore.txt",
+        "bytes": 624,
+        "sha256": "d712fd0557c3fc396c11baa15728a43231f64f012e69eeef855c8e6ca993bfa3"
+      },
+      {
+        "path": "Sized restore acceptance/7_Preserve safe timing and integrity evidence.txt",
+        "bytes": 2045,
+        "sha256": "aaf5d0e7cd2fde23c1f53fb9e157e4db90bf5d12c7224c2e3d4a2284820ce4bd"
+      },
+      {
+        "path": "Sized restore acceptance/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "2a6bdc6315c7ced9cf991bc9d7e01e2d83e3b64813bda406047288f2de11edc7"
+      },
+      {
+        "path": "Sized restore acceptance/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "0909d0191389777a7a4f60bed8e73480947c26b5b66fda4b545522e17ea94788"
+      },
+      {
+        "path": "Sized restore acceptance/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "473ed2c344a8fac5b1c05e1b2af1ebae0ac36acadd36a327245a124c31b2999e"
+      },
+      {
+        "path": "30_Doc callback lifetimes (mobile).txt",
+        "bytes": 90918,
+        "sha256": "55342b152e0257bf6d79da3e78d451e6a85a8469c61d42e8ea67ecd665922f92"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/system.txt",
+        "bytes": 872,
+        "sha256": "bed1c269da3ace0834d6ca380aa1250d6a7d9442581c31882c4c6024afe7e8c6"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/1_Set up job.txt",
+        "bytes": 2293,
+        "sha256": "7f062300aae5b2c47377607bf3a95b938c31d8b42598c148fa2ce53003538eef"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/2_Require comparison applicability.txt",
+        "bytes": 748,
+        "sha256": "528097926ecc5c7cee9f66b8b48e60fa6c9885c8b12ccec033815818f2ceb90f"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/3_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 12057,
+        "sha256": "641a3a75df948358b934b8ee261673699e43d7dd040f9527bfd058c693f70693"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1701,
+        "sha256": "512b55a3dc1c5dc138a68031ac1acd29b93cd5b6da061bf8bb6e45461fa67fcd"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/5_Install candidate.txt",
+        "bytes": 2225,
+        "sha256": "cf4edefd9bf2b82504ef1661bd0855ed6cd8ec70c261425dbe37b719aabc7c79"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/6_Prepare pinned callback trace converter.txt",
+        "bytes": 1204,
+        "sha256": "748b01efeb427d1ed118a1ffb8e37ff822d9d47a89f78f55a8938fa0f14505a5"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/7_Install Chromium.txt",
+        "bytes": 24421,
+        "sha256": "fa2e7a8854e6c54da80e307c9c62811d435a445ee8334fc8bb3eb226cc31c33c"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/8_Immutable merged SPN-108 baseline.txt",
+        "bytes": 12868,
+        "sha256": "a2f2608c730beec289ddc439956331c55c1bffe816a25a0ee92c7411f17331f7"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/9_Match callback workload and read-only observations.txt",
+        "bytes": 1950,
+        "sha256": "a96a5876120c7089b12aaacc3fce1395c3611982c7bcbc0f7e389142968b2e3a"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/10_Install and build baseline with source maps.txt",
+        "bytes": 8991,
+        "sha256": "f6fd450739a59e6b872c9a36fc39f7fe7e1bbdeed6a2051cca703e791f620765"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/11_Retain baseline first attempt.txt",
+        "bytes": 3055,
+        "sha256": "2667ee8e5a44bf17d11f2ebe15ba33fcf2b63e3318a8d85125ae6b34a2174ba9"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/12_Build candidate with identical source-map settings.txt",
+        "bytes": 7518,
+        "sha256": "c6daed2372842ed25c60610911265b7adee4c00f909a2bae2bfa6a686e019367"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/13_Verify candidate first attempt.txt",
+        "bytes": 2547,
+        "sha256": "7ec0f70e14c60264b322d9a946b8385953e3cf9a6939febb60c2115803e83aa8"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/14_Verify complete paired callback evidence.txt",
+        "bytes": 2061,
+        "sha256": "e40d1742e97e216db2bd7bf801b415592c7fe989140ae4af9fd54cd42aa5271a"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/15_Retain raw traces, source maps and every first attempt.txt",
+        "bytes": 3719,
+        "sha256": "5bbe05da6add3bfd67ea704ea7a975d3c8a019417818e5c575a012c08a80cabc"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/28_Post Immutable merged SPN-108 baseline.txt",
+        "bytes": 1764,
+        "sha256": "bd8d74df15e78d6e1be5a01b6fd9c4152dc9f2a7c93ada1a837974adf1f0b54a"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/29_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "50e4d78be18ee510b90a82f1064fd1f948b7f0c1dc9e349dc2f38e7045851c33"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/30_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "ebf712496541ca39f26dc112950c648f7cf298673e865becac2cb9235766058d"
+      },
+      {
+        "path": "Doc callback lifetimes (mobile)/31_Complete job.txt",
+        "bytes": 61,
+        "sha256": "cdd651f5b99edcf1a91f4720d5ab124bc81f68b63afe3ab6076b8cd7bcf34821"
+      },
+      {
+        "path": "31_Pull request.txt",
+        "bytes": 46157,
+        "sha256": "b7db2e07f02c20de924c78df45d30aeafe9af1c9196cbaa89c9da99a8c5433e7"
+      },
+      {
+        "path": "Pull request/system.txt",
+        "bytes": 859,
+        "sha256": "91b2f70a56bd294d9e701a4dd817129310dd77d128a89095a1aa0fff2939f6d5"
+      },
+      {
+        "path": "Pull request/1_Set up job.txt",
+        "bytes": 2102,
+        "sha256": "d9ecd4629515ec869dca726ee12ccdcacb6fee74d7782dd1db92409fc35ddc28"
+      },
+      {
+        "path": "Pull request/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 40154,
+        "sha256": "99ce0b46360880f39a0c34c94c4ea91c5ac3f79efd034f48314f54583c3c375d"
+      },
+      {
+        "path": "Pull request/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "e9d75e53f40176c71b751443d1b18eebb7dc9a9b96f8a4c7bf6d9320d615e109"
+      },
+      {
+        "path": "Pull request/4_Title, ticket, IDs and size.txt",
+        "bytes": 704,
+        "sha256": "8deab99cec4f1b14f2d4ee359b6197227d4c9f5ab9e0a6f0c4830562b8b719e9"
+      },
+      {
+        "path": "Pull request/7_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "ec1c161bbea9c16e69b6081fefc86605adb0f11421a4c394ae4bba863f98f4df"
+      },
+      {
+        "path": "Pull request/8_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "b595d8aeb0f0abbc27a9567cabb12542150581651a05b4747a0ba8da02782973"
+      },
+      {
+        "path": "Pull request/9_Complete job.txt",
+        "bytes": 61,
+        "sha256": "c75636bfc267c5e799dff9c0186182921e62b307178a3f6b06e7950b3e654aaf"
+      },
+      {
+        "path": "32_Classify changes (43634587037).txt",
+        "bytes": 58168,
+        "sha256": "ac7e0f21f4890645ffaad8c3a6a60b59e812e5f25b57f2cb935f4e87730c276c"
+      },
+      {
+        "path": "Classify changes (43634587037)/system.txt",
+        "bytes": 725,
+        "sha256": "c41520698c66021c6e77e8e0d670209d11557573639b204e3fbc7cadce551c66"
+      },
+      {
+        "path": "Classify changes (43634587037)/1_Set up job.txt",
+        "bytes": 2290,
+        "sha256": "c3f0c96b127b7b4e61450fae99c8e52a33f314a78d6326204360ca622a6be223"
+      },
+      {
+        "path": "Classify changes (43634587037)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 40154,
+        "sha256": "4240a87ed25efb7e084d1c4d7c13d76324fef3b29ed49434d7161ab47d70ba8f"
+      },
+      {
+        "path": "Classify changes (43634587037)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "b5c0e4337c6ec4e1f80387dbd6b16b74e2ae65c0e06670fc9f18f28681758ff2"
+      },
+      {
+        "path": "Classify changes (43634587037)/4_Run node scripts_ci_changes.ts.txt",
+        "bytes": 9861,
+        "sha256": "6d7d9ab19bac08898efe68b9635221247ce2339e76165d3d51199888ab5efd03"
+      },
+      {
+        "path": "Classify changes (43634587037)/5_Retain immutable coverage plan.txt",
+        "bytes": 1607,
+        "sha256": "d7ad98e199e989f07666fc7287a7318d3967d09ec00a8b320d603cd691cf6836"
+      },
+      {
+        "path": "Classify changes (43634587037)/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "fd152013b53b5ffe0cb11d54f729c4b39a5fa2dc54ac0609c2eb36832ac8e309"
+      },
+      {
+        "path": "Classify changes (43634587037)/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "dbe62197d63c7a04b05117212f50d6213d909be292c11408f0cda7ee69d5942f"
+      },
+      {
+        "path": "Classify changes (43634587037)/11_Complete job.txt",
+        "bytes": 1123,
+        "sha256": "883a72dc372021e8268b5fa7f600c4e9e32824f9171ef203f7bf52d3b4711316"
+      }
+    ]
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-5356f085/storybook-logs.zip",
+    "bytes": 378161,
+    "sha256": "978f971acb4428f18e170b0e70ce2e0d44ee909c5fd5b38e739a65ed898662b5",
+    "crcVerified": true,
+    "members": [
+      {
+        "path": "1_Review Storybook states and interactions.txt",
+        "bytes": 17857,
+        "sha256": "8f4849c41f213ce6202c9112ce34ac08474518952027d2214e0e8304bed1c74d"
+      },
+      {
+        "path": "Review Storybook states and interactions/system.txt",
+        "bytes": 730,
+        "sha256": "fbe5049e9c8e5fb1fb17eaf1d22e783420af510480ba41e89d7c010c83715a9c"
+      },
+      {
+        "path": "Review Storybook states and interactions/1_Set up job.txt",
+        "bytes": 2129,
+        "sha256": "767823488125c67e75993659ca797fc1b2a137d59662e1fd0d683fa5f608d9af"
+      },
+      {
+        "path": "Review Storybook states and interactions/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "e4d81a28bb628761f8fa660dbb8395cde5e006a53d5fc25355a5cc12939af2a9"
+      },
+      {
+        "path": "Review Storybook states and interactions/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "e3380e1ce4eeba67469a4a9780a3b5019a11b9f168012b70735a9a493d731c6f"
+      },
+      {
+        "path": "Review Storybook states and interactions/4_Require every viewport review.txt",
+        "bytes": 810,
+        "sha256": "a38054601c7806580ef518c4cedd88cce7c7a253cdc3ac3714afc8b29c4bf842"
+      },
+      {
+        "path": "Review Storybook states and interactions/7_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "dfe846d7ca2eed94ba4528bbbfb906733d7da50ce216dc3ecb8d24e1aef08c71"
+      },
+      {
+        "path": "Review Storybook states and interactions/8_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "7f27dfae23b7af0a2a37bcea2f0e6311a4525734be3baf8dabd3f64acaa7446b"
+      },
+      {
+        "path": "Review Storybook states and interactions/9_Complete job.txt",
+        "bytes": 61,
+        "sha256": "bb1a3a77b6002dc6f199632767c9f888e432c7aefe74b900c578f8e76c3ac653"
+      },
+      {
+        "path": "3_Review Storybook mobile (light).txt",
+        "bytes": 134208,
+        "sha256": "57857761d32b223ab6d8ad48a47bec7231ac599755b36aaf09be9661a3432acf"
+      },
+      {
+        "path": "Review Storybook mobile (light)/system.txt",
+        "bytes": 863,
+        "sha256": "df66017d1bd0229f7d8849b38fac8da65c896318df88c42cd20fcceb7451ee05"
+      },
+      {
+        "path": "Review Storybook mobile (light)/1_Set up job.txt",
+        "bytes": 2463,
+        "sha256": "0baa3052e3d4072eca11294f273789e4662f161d8db09fa1733118bf249293dd"
+      },
+      {
+        "path": "Review Storybook mobile (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "5f071c1092eebcd351e0da25c409b65268d35fd9701fa7b74067a14b87828fd0"
+      },
+      {
+        "path": "Review Storybook mobile (light)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "854ec27a4551fe32a2229cfab8e05d73b72b6d8563172bc85eae81b02c9c241e"
+      },
+      {
+        "path": "Review Storybook mobile (light)/4_Run npm ci --no-audit.txt",
+        "bytes": 1375,
+        "sha256": "162b3f70c64d205ce57d2c612c4bdb47c437c7f1dd896ba04b02fae8006bd4d1"
+      },
+      {
+        "path": "Review Storybook mobile (light)/5_Run actions_download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333.txt",
+        "bytes": 1948,
+        "sha256": "ea928c56922227c70a264059a41cd4f1cf388182d17fdfe97ba8b5ff352fb70f"
+      },
+      {
+        "path": "Review Storybook mobile (light)/6_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "38b618273e95ab02bd8155be8415483b12bc7ed7b27a8afcadf1965dbe4fd4c4"
+      },
+      {
+        "path": "Review Storybook mobile (light)/7_Review stories and verify shared controls.txt",
+        "bytes": 87823,
+        "sha256": "4e05d578f03b7865b1d4d209d564efe100e18e2d766997d02f63b4e6d63694c0"
+      },
+      {
+        "path": "Review Storybook mobile (light)/8_Upload review evidence.txt",
+        "bytes": 1710,
+        "sha256": "89122ba2e82fb9ca883561733a5e994692c8c87db0f1c0eb2b120bd312580d05"
+      },
+      {
+        "path": "Review Storybook mobile (light)/15_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "d1200e816e3b82e7a1a609e20c540c3022b9e7159299e35a960f7cad8e193c9b"
+      },
+      {
+        "path": "Review Storybook mobile (light)/16_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "c9f0da84e51b24af72b10bf7a3fde617cac65a49563459a3390c982ac1fa43bc"
+      },
+      {
+        "path": "Review Storybook mobile (light)/17_Complete job.txt",
+        "bytes": 61,
+        "sha256": "ce49a4093ebc3c2280a960d102dd6cc181ce47b1a28565778555982445f15559"
+      },
+      {
+        "path": "4_Review Storybook desktop (dark).txt",
+        "bytes": 133132,
+        "sha256": "91ed69cd5be41da67e6be62cc0c3f13f3d4205de3f0a80d45cda908e6be8ef87"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/system.txt",
+        "bytes": 864,
+        "sha256": "fcf9018edb032a9dea8e2b404f716f1d538ca1b66e061718fae1bf13250e1773"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/1_Set up job.txt",
+        "bytes": 2463,
+        "sha256": "122209c8d297286d476fa64b9879b4151bed3529c58c1d3f77e6f8a0019cce95"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "3957dfe96c2b990aa6032a3d680acccba803daf5de72f4aeff282086f0f7b8b2"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "f7a1ef901c521ad26c31410810d96fc53ae84d810d6e8a7f9ae0794826e7e6ef"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/4_Run npm ci --no-audit.txt",
+        "bytes": 1375,
+        "sha256": "09773214b6c1a45eea25bf3b56492e824340aa8b31f4eefc0233afb820fe050c"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/5_Run actions_download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333.txt",
+        "bytes": 1948,
+        "sha256": "ed7fc7300ac090aaad9bbf1d0fa5834ad4f78a86bba58c17bebfd4423ea2855c"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/6_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "020ebdf081bdd6b330e26433464b1c6e8a79a7ceac3807a7ca95759817d2cf1b"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/9_Review stories and verify shared controls.txt",
+        "bytes": 86747,
+        "sha256": "66e20f053905a2689cc64fa970dee135ba89fd72c170d297d0a109be2596b4a6"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/10_Upload review evidence.txt",
+        "bytes": 1710,
+        "sha256": "0c6937ebbf6e05b5ebf1b8188486fa06e5947529eba595c7b75ab60b8c0be832"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/19_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "5aebc9e269ce738087d5a1ba0cff5600535e8ad8bc604a33b919e8f55a46f187"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/20_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "bb64084c315f1b5bdd9b08e1c174d10985300e7b65555b8849f7e37cb7b44331"
+      },
+      {
+        "path": "Review Storybook desktop (dark)/21_Complete job.txt",
+        "bytes": 61,
+        "sha256": "e4e21323358afc3ee21ad6d731af851b10c89cd4790337937bea73af5bdc1959"
+      },
+      {
+        "path": "5_Review Storybook desktop (light).txt",
+        "bytes": 136104,
+        "sha256": "8da7a75b8a5e55c6ba9a62040e6242bfeec425660e16fcebc47c62ccd146c491"
+      },
+      {
+        "path": "Review Storybook desktop (light)/system.txt",
+        "bytes": 864,
+        "sha256": "99cfd4d463d144c873fd087962bb8978073e1c4d088f84965731542e3ff2b230"
+      },
+      {
+        "path": "Review Storybook desktop (light)/1_Set up job.txt",
+        "bytes": 2461,
+        "sha256": "11e746dbe997cbcbc7dd0180056b0f1ea39b1aedd4eba5bf9d40a859fa17f11c"
+      },
+      {
+        "path": "Review Storybook desktop (light)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "cd2b9e9d41115f44c4d8a07aeb815f57a725d9bd3cbc098e777d7644a6bdd8b7"
+      },
+      {
+        "path": "Review Storybook desktop (light)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "4d4ec54f7b6d7ca04b68850ac8c84887456e432d5bbcadd29d1b66d47289faae"
+      },
+      {
+        "path": "Review Storybook desktop (light)/4_Run npm ci --no-audit.txt",
+        "bytes": 1374,
+        "sha256": "36671f9dd0d13b3c7366e4bf47c995d344a6b93856c87f8e6a4179ec4a6216eb"
+      },
+      {
+        "path": "Review Storybook desktop (light)/5_Run actions_download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333.txt",
+        "bytes": 1948,
+        "sha256": "0a9eef0ba125cfa6ddc82e7f908607d15328b6c4386278d749e7f01c15397882"
+      },
+      {
+        "path": "Review Storybook desktop (light)/6_Install Chromium.txt",
+        "bytes": 23503,
+        "sha256": "2d3201143d80a0fb91b27531473dde6f39baad40faebb3a66657b8e31cc19c5c"
+      },
+      {
+        "path": "Review Storybook desktop (light)/7_Check icon and integration stories.txt",
+        "bytes": 764,
+        "sha256": "d6b0af576f45063402aba7efed3cfbeb08d6f6f2fe1ba288c493ff27ba02bc0f"
+      },
+      {
+        "path": "Review Storybook desktop (light)/8_Upload icon evidence.txt",
+        "bytes": 1614,
+        "sha256": "b772e508b4b2079ca975a1fe60e1d545e44dd672e4c5ef1e35a6f5c6b2e6d4f6"
+      },
+      {
+        "path": "Review Storybook desktop (light)/9_Review stories and verify shared controls.txt",
+        "bytes": 87826,
+        "sha256": "d89fb0e6afef2fd480b77852880e84614b1ca88e4ed64e32a3cc671ead88015f"
+      },
+      {
+        "path": "Review Storybook desktop (light)/10_Upload review evidence.txt",
+        "bytes": 1714,
+        "sha256": "cac2ad40c16d1a4cb450344cc7995892ec62fca52d151aa8346cd8e991c91095"
+      },
+      {
+        "path": "Review Storybook desktop (light)/19_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "2a059b1c00463ce0be2488be5a33dd945b6c01161e035fc8fbfa36c4220e4a96"
+      },
+      {
+        "path": "Review Storybook desktop (light)/20_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "3701146e90d3b3d52dac6d77a8dbca00b511fca84fb01237388183e95a49c8b2"
+      },
+      {
+        "path": "Review Storybook desktop (light)/21_Complete job.txt",
+        "bytes": 61,
+        "sha256": "34c6fc4155121e1c2d586e1d1d29b850c576743c78f19b5e579bd16cdf2f161b"
+      },
+      {
+        "path": "6_Review Storybook tablet.txt",
+        "bytes": 135165,
+        "sha256": "0756bdb53621556d8592d8203fe8d321392b3da784c4b882b431e64c33f8be2e"
+      },
+      {
+        "path": "Review Storybook tablet/system.txt",
+        "bytes": 863,
+        "sha256": "4f25ce8a7dd19a90b38e37529bec09162bef3f0a107bb19d90cab8697ce755d1"
+      },
+      {
+        "path": "Review Storybook tablet/1_Set up job.txt",
+        "bytes": 2457,
+        "sha256": "842ebc272422f9a689668bea08805567f3d70b1819dd07eff0ff134c57b4c0bd"
+      },
+      {
+        "path": "Review Storybook tablet/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "50705ac76475aae63a9cb2b79586c5714511d0c1ab27371e1f73663966618c75"
+      },
+      {
+        "path": "Review Storybook tablet/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "e8520a0a2283150937e314264d96f953d8fb565a5cd2c3afde26e64d651451ea"
+      },
+      {
+        "path": "Review Storybook tablet/4_Run npm ci --no-audit.txt",
+        "bytes": 1375,
+        "sha256": "fd93488ea7fa41f86bf81e054fde182d788d991bd381b2f25058b5e08d26c303"
+      },
+      {
+        "path": "Review Storybook tablet/5_Run actions_download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333.txt",
+        "bytes": 1948,
+        "sha256": "0a9dc70c21727a9f2667b23f0ddfc93738edb466ed9fe854a3fb884c1f69d59b"
+      },
+      {
+        "path": "Review Storybook tablet/6_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "80db77e14cd031bf625cdc6a85e7e83448198f7785c13d668b836d0a77e5a205"
+      },
+      {
+        "path": "Review Storybook tablet/7_Review stories and verify shared controls.txt",
+        "bytes": 88810,
+        "sha256": "044049e8d2bb6b9870878b7a4fb723c5ea1906797ae56b6a56f1788a234642d9"
+      },
+      {
+        "path": "Review Storybook tablet/8_Upload review evidence.txt",
+        "bytes": 1686,
+        "sha256": "5b47fed818f03ae144da32a572d4ee5d6cd449a03b0acef4c49571f2696e145b"
+      },
+      {
+        "path": "Review Storybook tablet/15_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "4304a8cc9a7df9ab2c3e828df8574a70e70698042e10d648fd30261e7b3bdfcd"
+      },
+      {
+        "path": "Review Storybook tablet/16_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "7b3c9c5169f95b5cc26fb433752c825165c67c22410404db02ac42c0d6cfd24f"
+      },
+      {
+        "path": "Review Storybook tablet/17_Complete job.txt",
+        "bytes": 61,
+        "sha256": "82bc3f0ab146397fd7b6b2721f3d118d68934a6d0efe8c06d8230b10db599005"
+      },
+      {
+        "path": "7_Review Storybook mobile (dark).txt",
+        "bytes": 139588,
+        "sha256": "f0728c99d02d544d9e31fa46047a7c98d5966c736e6e0c4f40c4f18daf3d099c"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/system.txt",
+        "bytes": 863,
+        "sha256": "bd3f692da810d3d045f0af7ab1c7bea6d29e59524d9b2b9368db670b43c7c2ed"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/1_Set up job.txt",
+        "bytes": 2469,
+        "sha256": "e48028cf11c31f415fab6d4fa4e990a67848d157c6ef65d6ad6588cefa7393ee"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11721,
+        "sha256": "af8607dc1e249c3ed53d65b3d202482ce17ae33452f406b0556066a07eabd122"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "aa55b18d279f715677c0cce1a0f601b323ee52d976af9c868e11b5846924e137"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/4_Run npm ci --no-audit.txt",
+        "bytes": 1375,
+        "sha256": "486a25dcae1b051a00c18c6989143e5635bb2e9ecc336db2d2ec16aa4480627e"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/5_Run actions_download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333.txt",
+        "bytes": 1948,
+        "sha256": "e4b3faa56db7ba16499ab02ae16e70db5758335d827d4cd2efe76570f384d5e0"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/6_Install Chromium.txt",
+        "bytes": 23983,
+        "sha256": "f7eaa129a3854df4e200f3be874ad0c9ba9ce6e5fbdd8f07deb245afa8bedeec"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/7_Review stories and verify shared controls.txt",
+        "bytes": 93201,
+        "sha256": "03016aae4c4ce5facd6ba7544bd960629be9f362aff7de35338d84f89a2d3e92"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/8_Upload review evidence.txt",
+        "bytes": 1706,
+        "sha256": "b50724211ef815e2c460f14f848adb01c4b1e42f5fa6d0e2ba9a367703b22aad"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/15_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "47e875247507601852fa3acbd9da5230a0f54a00067c9637134d25a1a585efab"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/16_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "f5625b0b33a42d8387b5019fc393566cec84610c8e3f24ee8f2a202bdb77c226"
+      },
+      {
+        "path": "Review Storybook mobile (dark)/17_Complete job.txt",
+        "bytes": 61,
+        "sha256": "40c91608d7880c7f16c2d96201a7750a9eebce5c6175bd5ce07e9c097912c9ed"
+      },
+      {
+        "path": "8_Build Storybook.txt",
+        "bytes": 84634,
+        "sha256": "80c32e8f958fc9794061a59edbc18b2e380e87ff4a6a186471534d55f0599fd2"
+      },
+      {
+        "path": "Build Storybook/system.txt",
+        "bytes": 730,
+        "sha256": "7395366c6934435a42d3e4b2cfc778819205986938f30b1f6a13a53e1c1827c9"
+      },
+      {
+        "path": "Build Storybook/1_Set up job.txt",
+        "bytes": 2681,
+        "sha256": "ff64219cce7206d926be4d987e09af6295d27675a7c495d3c059fa96be5c3ac2"
+      },
+      {
+        "path": "Build Storybook/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11817,
+        "sha256": "b8f4ecfa9d4d51c9d28a6f1205392be2b924aef3e3f578690e80ede30dc55d0f"
+      },
+      {
+        "path": "Build Storybook/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1461,
+        "sha256": "1cdcb0e14f830544d21d99a0e1f2bc3f5966aba3755ebfc10de4a1d1dc5c3757"
+      },
+      {
+        "path": "Build Storybook/4_Install.txt",
+        "bytes": 1985,
+        "sha256": "92ee57e7bee6b735dff0741425d6d447abcf6b29585f85296f7f21a1e4a8f78c"
+      },
+      {
+        "path": "Build Storybook/5_Build.txt",
+        "bytes": 63111,
+        "sha256": "23f85376f0392b2459f2aad0bfa24a2fd53887d9d6cbcda5bc315166effc6b46"
+      },
+      {
+        "path": "Build Storybook/6_Upload interactive review build.txt",
+        "bytes": 1753,
+        "sha256": "fabbf4ff015d0feb3d82390c8cb1a1f5ca472dd1543ad8905c4810368560b99b"
+      },
+      {
+        "path": "Build Storybook/15_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "d4196fcfa27355188e2590e4004536fc01b807504e27219e0e42f8430babe2d4"
+      },
+      {
+        "path": "Build Storybook/16_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "88a796170af9a80f2c4a0c520b1514f62c7a64a4c0cd4944f753436d98559ad5"
+      },
+      {
+        "path": "Build Storybook/17_Complete job.txt",
+        "bytes": 61,
+        "sha256": "a738198e6d30ba02a3f586c01be771ad6169f78556e00becf5bc0088e6fffc75"
+      },
+      {
+        "path": "9_Classify changes.txt",
+        "bytes": 56290,
+        "sha256": "f7d0fd4190c64ccda417250f24d7b013131908aded7a1d7d55dca78a0d0fd584"
+      },
+      {
+        "path": "Classify changes/system.txt",
+        "bytes": 577,
+        "sha256": "1d6995693fb58cb3f9bbf0a316098337992abba392f50507187d4d73d954ffc2"
+      },
+      {
+        "path": "Classify changes/1_Set up job.txt",
+        "bytes": 2108,
+        "sha256": "70ba9dab82c21d65848609dbb21ce4a541c7d782e5719d79c6aa9aff1de64a4c"
+      },
+      {
+        "path": "Classify changes/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 40154,
+        "sha256": "30630d88e84e8f6ccff0e058d22a6646e755613e842cf8182cca3863ec34555c"
+      },
+      {
+        "path": "Classify changes/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "4e3dbba15de7e3cc54f35fa2578687e34792c3ddc8ca75a5c47372c7546090e6"
+      },
+      {
+        "path": "Classify changes/4_Run if [ $GITHUB_EVENT_NAME = pull_request ]; then.txt",
+        "bytes": 10147,
+        "sha256": "d002e6a668c0dc01547de31f3bffb37c6b76a21554d4189a7a5835d19aa093cf"
+      },
+      {
+        "path": "Classify changes/5_Choose screenshot evidence.txt",
+        "bytes": 457,
+        "sha256": "e520ee082f8a623941b5862d76c379b5fad212990a5c231af82f91e9f51f803c"
+      },
+      {
+        "path": "Classify changes/9_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "83ef826dd927dfc8097169f1198a4c34407b76c1ce57342f29c5dc3ba540d881"
+      },
+      {
+        "path": "Classify changes/10_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "2c3074a01de9f3ad8987a1e489b96f57bed30a2a49b195e93bbdc51c0498e199"
+      },
+      {
+        "path": "Classify changes/11_Complete job.txt",
+        "bytes": 291,
+        "sha256": "486c75c1e38a963c5940228b7310c2e76ecdb59dba1bed255cdd2c337c8fe87b"
+      }
+    ]
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-5356f085/desktop-logs.zip",
+    "bytes": 215042,
+    "sha256": "c54da3951c76c97db203561e468117652ec9c81d26e62d40a2ab277dd557937b",
+    "crcVerified": true,
+    "members": [
+      {
+        "path": "0_Native desktop offline (chrome, macos-26).txt",
+        "bytes": 143908,
+        "sha256": "0bf5542b4631a9d6cdbd4d4206d40e13fa17145b98ee0603f22adb977b204f38"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/system.txt",
+        "bytes": 578,
+        "sha256": "f957bd5f352c3bc029e2c298508180c107c7ddf9bb643d81c64d1dc663ccc815"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/1_Set up job.txt",
+        "bytes": 2324,
+        "sha256": "9914d15db1d51f7e5120cc3790d70d63b530993bf6e5f1d8c115e6183aaf0e9f"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 17746,
+        "sha256": "e455d7c252e7b39a9d3eda271f7bae1b2783f7f83fed8a7691fb4f4fbb6d52dd"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1505,
+        "sha256": "126d530377107e963f053ca0aeec58c213f20509d9ab73065724bf550a781370"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/4_Use current vendor stable browsers.txt",
+        "bytes": 1765,
+        "sha256": "fffd7e85c0935ab26a4d9a8d9852685617eb0a5d6581652e7b4ac447ef106980"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/6_Install locked application dependencies.txt",
+        "bytes": 2315,
+        "sha256": "a99775d7091d75ececdcd7384499c43e23474bc019135790a09539035a005889"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/7_Build the production offline runtime.txt",
+        "bytes": 6671,
+        "sha256": "7efa0f3ad975915de332854b8f08b011ec592e574d0702088e9350251e22cc20"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/8_Trust the disposable loopback fixture certificate.txt",
+        "bytes": 1973,
+        "sha256": "477eb512e8da80c6ba462225b1621f1688ab559e5438ecd96aa1470845daac26"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/9_Verify retained documents, edits, images and reconnect.txt",
+        "bytes": 105473,
+        "sha256": "68f58401f151fc4a45790879345b851402f2b3d1c9d2eec46a60dc1d296ef5ac"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/10_Retain native profile and application evidence.txt",
+        "bytes": 2103,
+        "sha256": "c5a692a34d0003949dcda42f7cf6e912db2ce1ca6ef91148254b52c2d371e5a7"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/19_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "d1b265eb67050369cdbec538a08e3a70f79d0a9cf790d5517f180390ac45962b"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/20_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1955,
+        "sha256": "0a17cc0855c31c7b2cf6967ad851a41c03cfd386303382976e581ffb784784d4"
+      },
+      {
+        "path": "Native desktop offline (chrome, macos-26)/21_Complete job.txt",
+        "bytes": 61,
+        "sha256": "f4a0790aa517138b2517c5c1959c78e7cb9744b3faca1497e0a13741be3a843c"
+      },
+      {
+        "path": "1_Native desktop offline (safari, macos-15-intel).txt",
+        "bytes": 333462,
+        "sha256": "69ce0278837bb125505fd12dd5f95630ce2bff5aa23f6cb3d7c940d03ec80789"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/system.txt",
+        "bytes": 740,
+        "sha256": "0f764b6c2ec6cc0f7097595a34e5a3dad96047668e1cc967358ed2837afa41cc"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/1_Set up job.txt",
+        "bytes": 2267,
+        "sha256": "1b5f2d0fd0392abda60ae447f783abcd64d4a4ba72dbf4216a4c2173c3b44a5f"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 15438,
+        "sha256": "c28c11821670fe6caf7aaeadcc16623ab8970ae4654586bdc2d9a59426325230"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1507,
+        "sha256": "fd94dcbbc57b8f3cf000b996776baaa0a20f8d018bd98f56bc2e120624c088e3"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/4_Use current vendor stable browsers.txt",
+        "bytes": 2025,
+        "sha256": "063186386f70a617588798332c58129fde40e218aaa578def90b7235dd5f260f"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/5_Prove same-profile ordinary Safari restart.txt",
+        "bytes": 195044,
+        "sha256": "20560d77042f353e4679e877bdba1f3139738fc4b74e2ee27d50f80575a3f66a"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/6_Install locked application dependencies.txt",
+        "bytes": 2173,
+        "sha256": "f0ee6941e86660870971ccba8c21d77e55be0f10b357c7492f106417261cf4be"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/7_Build the production offline runtime.txt",
+        "bytes": 6529,
+        "sha256": "161db0153d3b2641d47ae5e058c1d049bd1f7a190b2e4d661ea0b0a701efe7de"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/8_Trust the disposable loopback fixture certificate.txt",
+        "bytes": 1392,
+        "sha256": "b7933dbf0a82ff4ae67128cc27664b9ca6884e96d858d45cf22657279b3c892d"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/9_Verify retained documents, edits, images and reconnect.txt",
+        "bytes": 103012,
+        "sha256": "95aae6832f5ad808a66c1f4b42befdd80e50576a643af2d8868b05b73d9cb9aa"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/10_Retain native profile and application evidence.txt",
+        "bytes": 1987,
+        "sha256": "fc0d7afed8cbcb7186ce249730df4a87d36d42d4ae1265ad7c9fc6135ab1de56"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/19_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "a64b33042e063c898c42343edd11fe99465bd14b79fe3a8ee45e3313fd550d0e"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/20_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1931,
+        "sha256": "7debc26de94d800f849b64039b0c013bff12c70463065dedcc073ab65748bf23"
+      },
+      {
+        "path": "Native desktop offline (safari, macos-15-intel)/21_Complete job.txt",
+        "bytes": 143,
+        "sha256": "a8954dce73a205669d597bdaaaa0f3cb251b25e6e8983867869a55b1a7fc7bad"
+      },
+      {
+        "path": "2_Native desktop offline (firefox, macos-26).txt",
+        "bytes": 138964,
+        "sha256": "38c73181352c41ad0fe6d50afdfc0be4d88eb820eb114a95c18a71577ad57eb6"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/system.txt",
+        "bytes": 578,
+        "sha256": "d3d86c00dfdc77b85b8107f3c614a9c35e045f2c1eba5b0c17b8de46efd4dacf"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/1_Set up job.txt",
+        "bytes": 2325,
+        "sha256": "fcd5d2cec9bf4125f9902e632f0a990e0c66e93671774e7d2ca3873809cf14a9"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11314,
+        "sha256": "eb5d9e8c16767d41cb5bd76d84ed984615a710a327dcfbd19f101f24bee71bfa"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1505,
+        "sha256": "f60b30268352ddbb7f18e6acb2ebe802f15452509c34516f933cacf6fcf0be80"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/4_Use current vendor stable browsers.txt",
+        "bytes": 1557,
+        "sha256": "b537be8c5f5d09db6f08683516ec1905792a47e406782a733e13375acc5da0b1"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/6_Install locked application dependencies.txt",
+        "bytes": 2167,
+        "sha256": "7e765da590fba19812977668d62e45aa7e4bf15786ca36903b76f20fbc1158c6"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/7_Build the production offline runtime.txt",
+        "bytes": 6523,
+        "sha256": "87f4b6c4a78e3e2c9aeb4b3a1f84dad2c70fc2fcaf02db0082535967af78d37f"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/8_Trust the disposable loopback fixture certificate.txt",
+        "bytes": 2593,
+        "sha256": "c919deb4687d1d119b9a8dc12b434884411856c7c292c21c49b96e15aba2cbe9"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/9_Verify retained documents, edits, images and reconnect.txt",
+        "bytes": 106906,
+        "sha256": "beeef32143db1b899d1305142306691d5cf1a2c0fa88bb9dbf43d2a9aa15bd47"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/10_Retain native profile and application evidence.txt",
+        "bytes": 1959,
+        "sha256": "3aa769019847e233b6e6e34e15bb622e47713e8435e986efcf25de939a5b845e"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/19_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "415a87d9b6937ff397e0ade02a7978eff63751bbb7a02b2d6ccc1c76e06483f9"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/20_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1955,
+        "sha256": "b684b154fbec7c08af4c6d1f3425b844bfa384f8398ba0ccee9329116cbf0965"
+      },
+      {
+        "path": "Native desktop offline (firefox, macos-26)/21_Complete job.txt",
+        "bytes": 143,
+        "sha256": "426afd77ed4e34a251ce6fa9db64a1c3440315ec9e4284b74b6aaa4080d94844"
+      }
+    ]
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-5356f085/spaces-logs.zip",
+    "bytes": 19241,
+    "sha256": "eb42e2a8f53b16846eec1db012148f5da981c14175e02a54788b4db718555e81",
+    "crcVerified": true,
+    "members": [
+      {
+        "path": "0_\ud83e\udd88 DigitalOcean Spaces.txt",
+        "bytes": 28881,
+        "sha256": "5bf8bc85a7c366f34a4afe6920744e76de4731658c813c0e29c2e7ff7bb057e5"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/system.txt",
+        "bytes": 843,
+        "sha256": "aed0d5874347e24bb8cc6ba21b79aaddc3f6e0bbc64e4bc88f29f648fed2aa78"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/1_Set up job.txt",
+        "bytes": 2281,
+        "sha256": "5fe77706afeacfa0d3db7020363a736b991038e95da3200d09dc181a2d2f886e"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 11953,
+        "sha256": "dd7f8fe4a9ea3f5eed9ea4c9eb27e22f3c2979648e4b665ebebc3cfcb001e3cf"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/3_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1365,
+        "sha256": "de689bfcd85ae07865bf350a0f7d29a8c4f8a2b03eada74daa5ea73ac808b4f7"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/4_Inspect available credential format without disclosing values.txt",
+        "bytes": 742,
+        "sha256": "c37828e703df348e4c3bde6a24f83aa9bb80e440ed0337cf68436fb97007075e"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/5_Install without provider credentials.txt",
+        "bytes": 8350,
+        "sha256": "af1eb2d9cc6ba4e91032b0604d0e81e8101e8bc25420d4b6b9db3b874fbceef0"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/6_Verify encrypted provider backups and supervised catalog restore.txt",
+        "bytes": 701,
+        "sha256": "08b8bdc84db93ade494cb2b0cd8b60cf872decdeb5e78d5d6409f1a01942862d"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/7_Preserve redacted acceptance evidence.txt",
+        "bytes": 1666,
+        "sha256": "e317bfad270d453a20e2d90d97c88f18e9d4d003bc0b86c5106e22be5a38e768"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/13_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "2209600d646b1e4af381c580a3e165a82d186081d91aad0a2decddd991740c0c"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/14_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "6ca178a29f47d52bf137aed318e85c07cb9d8700f6b9f8bf0088aed08345b5a1"
+      },
+      {
+        "path": "\ud83e\udd88 DigitalOcean Spaces/15_Complete job.txt",
+        "bytes": 61,
+        "sha256": "7fab7c817e9bd7311df8f4d7698971e9fdc227ad546cd51b87959fdf22abca89"
+      }
+    ]
+  },
+  {
+    "privateZip": "/tmp/spn120-hosted-5356f085/audit-logs.zip",
+    "bytes": 118092,
+    "sha256": "6bd553f025a544ffa09da94220cea52b16dccc3d8af9c4563d0d8b1dba722a6f",
+    "crcVerified": true,
+    "members": [
+      {
+        "path": "0_Fixture audit (production).txt",
+        "bytes": 86723,
+        "sha256": "81d980456a88fc609448439e0f3cdb629f8866cd679beb86f89f8110ced8cc9d"
+      },
+      {
+        "path": "Fixture audit (production)/system.txt",
+        "bytes": 1273,
+        "sha256": "1b0cfe048a6e338a9cc29aac4327e09e3b72340a9b444d671a0a16dd9d6da03c"
+      },
+      {
+        "path": "Fixture audit (production)/1_Set up job.txt",
+        "bytes": 2286,
+        "sha256": "7d91b2dcab392761e09225174561dabf53f32a0f59fe7b03e2b95beea7fa47fd"
+      },
+      {
+        "path": "Fixture audit (production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 39982,
+        "sha256": "f5445de7e95a0d4edc88fc927d626e925d8ee0a9a776e8a911c1be4dce84bac4"
+      },
+      {
+        "path": "Fixture audit (production)/3_Retain the candidate's audit driver and select immutable source.txt",
+        "bytes": 1047,
+        "sha256": "a4e48dc750935a31aaa2dcbd527bc5391aa835c9bec701977fc7f9aa25d16801"
+      },
+      {
+        "path": "Fixture audit (production)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1622,
+        "sha256": "f7c699b00aca74b3d42004c8c851d807891ae4c21b59cb5b23b889134dc16225"
+      },
+      {
+        "path": "Fixture audit (production)/5_Install pinned dependencies.txt",
+        "bytes": 2146,
+        "sha256": "9a8972d51ba2983d00fe043370caa530bb8374c12abf58d1351363d27db12b68"
+      },
+      {
+        "path": "Fixture audit (production)/6_Install pinned Chromium.txt",
+        "bytes": 24240,
+        "sha256": "d4062cff1308a99500be475537a9b4188cef4249818503344ef25667b0ebcd99"
+      },
+      {
+        "path": "Fixture audit (production)/7_Build the selected source.txt",
+        "bytes": 6663,
+        "sha256": "9bd9fc10f96beb853eef045d2e08e5af491b80be90a75e17daa30ddec390d527"
+      },
+      {
+        "path": "Fixture audit (production)/8_Execute the predeclared first-attempt sample.txt",
+        "bytes": 4404,
+        "sha256": "6884b806d17eace07c9f2021348805ad9576cf56661aad49a83f846f32ff57d0"
+      },
+      {
+        "path": "Fixture audit (production)/9_Retain every attempt and process observation.txt",
+        "bytes": 2516,
+        "sha256": "f33f04c1f62798e1c8bcb1f4fafcfada4aabfe94683e475777b9f900021879fe"
+      },
+      {
+        "path": "Fixture audit (production)/17_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "1f3bba1c008669be97ec308e4d867140ece7b9ae09a3494a96f81b7cba78f6a1"
+      },
+      {
+        "path": "Fixture audit (production)/18_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "70e9789a34c7d20e8119528c56f105d2a5ec0322a51138e5d311d7f94696a6d9"
+      },
+      {
+        "path": "Fixture audit (production)/19_Complete job.txt",
+        "bytes": 61,
+        "sha256": "2352ae90f9e77b37890fe784daa9039b953e98de7d26eea8f04e5a488ea24aa1"
+      },
+      {
+        "path": "1_Fixture audit (development).txt",
+        "bytes": 78235,
+        "sha256": "701c41306929a62037b1bb461be1268bdcdd2dc30640ebc2b6ec26a39b555bd6"
+      },
+      {
+        "path": "Fixture audit (development)/system.txt",
+        "bytes": 1273,
+        "sha256": "06fea4b717bddfc26661ca275f6f961c7c34dc9ad1e89f223ce757da8ce330c6"
+      },
+      {
+        "path": "Fixture audit (development)/1_Set up job.txt",
+        "bytes": 2286,
+        "sha256": "7c3a158834095317260efeebfb42265021230a66afa534c880efd2ad694417ea"
+      },
+      {
+        "path": "Fixture audit (development)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 39982,
+        "sha256": "422dd293eb550daa7eba8e2b0081bdc1680f96bd8dbd60a20a4497c0824b2cba"
+      },
+      {
+        "path": "Fixture audit (development)/3_Retain the candidate's audit driver and select immutable source.txt",
+        "bytes": 1047,
+        "sha256": "6edc58c0c3a3194b1c6c6d466623c82ca3f9c831dcceb4c980caf57b22d5fe29"
+      },
+      {
+        "path": "Fixture audit (development)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1622,
+        "sha256": "d453d830c435d2f06997ca1a7e1edfd0568792b1f84a825a8d2b0d7a5eae0dd5"
+      },
+      {
+        "path": "Fixture audit (development)/5_Install pinned dependencies.txt",
+        "bytes": 2146,
+        "sha256": "e9fe9d829a2f3d78fc133e78b5e4c6f894c93495c7af8fa9e1298e30ce3cc65e"
+      },
+      {
+        "path": "Fixture audit (development)/6_Install pinned Chromium.txt",
+        "bytes": 24240,
+        "sha256": "bb87f72b72cbec8658ff8922b25f39100f394fd2a6045e4acc154aba85fe5860"
+      },
+      {
+        "path": "Fixture audit (development)/8_Execute the predeclared first-attempt sample.txt",
+        "bytes": 2572,
+        "sha256": "a1688d2eac45332209ab366e152e8c7c86f92e348c9816299ef9140b7afcc117"
+      },
+      {
+        "path": "Fixture audit (development)/9_Retain every attempt and process observation.txt",
+        "bytes": 2520,
+        "sha256": "839139064831485a209c0488badec2a1ec952cd6d0232572ea52d09e474e0f47"
+      },
+      {
+        "path": "Fixture audit (development)/17_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "48de4c726f635c40d409106c3abac8e3378922f22bf0ff57a02bb80eb568cdea"
+      },
+      {
+        "path": "Fixture audit (development)/18_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "1ac3fec5cc12204a284a2a9fbdb1a53e0fd9a80e130d912a64851f38d46c2d66"
+      },
+      {
+        "path": "Fixture audit (development)/19_Complete job.txt",
+        "bytes": 61,
+        "sha256": "dad9aaca88e5ea0c19fe18e2f8e2aaa097f3b36b0ed2f9b6c977b87f549b6e24"
+      },
+      {
+        "path": "2_Fixture audit (sync-production).txt",
+        "bytes": 86220,
+        "sha256": "0ad262208309d8d27a3a89bbea8144b831afe8af0b28cb7ca6f55d9f229571a7"
+      },
+      {
+        "path": "Fixture audit (sync-production)/system.txt",
+        "bytes": 1273,
+        "sha256": "e49e34c73472aeedebb9e2b9cec72b8dbf4004b9685d56f8d70fde0349f4df7c"
+      },
+      {
+        "path": "Fixture audit (sync-production)/1_Set up job.txt",
+        "bytes": 2291,
+        "sha256": "1c0dc2c51f2f3fa5fde7ca9163b2e731e23d5a4274c556369a03b51f9f5a2233"
+      },
+      {
+        "path": "Fixture audit (sync-production)/2_Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 39982,
+        "sha256": "76640ca104070e36c76035e12df896a28e29e685209788a9e589dd638ea51b0e"
+      },
+      {
+        "path": "Fixture audit (sync-production)/3_Retain the candidate's audit driver and select immutable source.txt",
+        "bytes": 1047,
+        "sha256": "4a9c7c35345514514cddf70a1b527ef2377f868029a91a5dc994511419912d3a"
+      },
+      {
+        "path": "Fixture audit (sync-production)/4_Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 1622,
+        "sha256": "05988bae254140e4184d6575efb4ce4864ca92e278f7942ebf0ac8b6f4cb034f"
+      },
+      {
+        "path": "Fixture audit (sync-production)/5_Install pinned dependencies.txt",
+        "bytes": 2146,
+        "sha256": "ccd8b42f2a76d342db360220172a2d476e3dd90796c7f057a48d7e769e241685"
+      },
+      {
+        "path": "Fixture audit (sync-production)/6_Install pinned Chromium.txt",
+        "bytes": 24240,
+        "sha256": "3368c4926a6d5b5c2374622311dd22bd68c7cf35db36a7e4020a5b1a4e28a015"
+      },
+      {
+        "path": "Fixture audit (sync-production)/7_Build the selected source.txt",
+        "bytes": 6663,
+        "sha256": "5e2078e85c22eefff5dcc2d8a46ad0336c4f8775fd211026e1e882966bcf61a8"
+      },
+      {
+        "path": "Fixture audit (sync-production)/8_Execute the predeclared first-attempt sample.txt",
+        "bytes": 3874,
+        "sha256": "adbdba67b3b4fa77a71517125e62961bead0ccaa07eaec4ba7330aab44c2a704"
+      },
+      {
+        "path": "Fixture audit (sync-production)/9_Retain every attempt and process observation.txt",
+        "bytes": 2538,
+        "sha256": "df57b1cb562671b5ca46c852413b1e29e01f60643fc4b1a1f34f992d672ae867"
+      },
+      {
+        "path": "Fixture audit (sync-production)/17_Post Run actions_setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1.txt",
+        "bytes": 50,
+        "sha256": "46439ca7640c95afcf4a70a7c6366a3de5fe06fc8bb754c6bedb10f5355dd2b6"
+      },
+      {
+        "path": "Fixture audit (sync-production)/18_Post Run actions_checkout@3d3c42e5aac5ba805825da76410c181273ba90b1.txt",
+        "bytes": 1739,
+        "sha256": "b2c31f35cbc1dce7306eacb6284791d9af893eec78636b7e801df4005e3de4dc"
+      },
+      {
+        "path": "Fixture audit (sync-production)/19_Complete job.txt",
+        "bytes": 61,
+        "sha256": "1956f7cd488b002ce9ce76bc16f93784f91781be210ef7739ec0d975d3eb0a91"
+      }
+    ]
+  }
+]

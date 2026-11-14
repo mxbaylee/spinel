@@ -1,0 +1,84 @@
+{
+  "sourceSha": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "testId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+  "project": "development",
+  "retry": 0,
+  "repeatEachIndex": 0,
+  "events": [
+    {
+      "elapsedMs": 0,
+      "phase": "server-ready",
+      "server": {
+        "ownerPid": 3186,
+        "runId": "39214705-fff9-4e1d-bf16-62453e9c718e",
+        "updatedAt": 1794686282423,
+        "pid": 3197,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 154,
+          "tail": "[ready]\n[output redacted]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    },
+    {
+      "elapsedMs": 65,
+      "phase": "authenticated-setup",
+      "attempt": 1,
+      "status": 200,
+      "identityMatch": true,
+      "result": "verified"
+    },
+    {
+      "elapsedMs": 66,
+      "phase": "phone-seed"
+    },
+    {
+      "elapsedMs": 27318,
+      "phase": "phone-reload"
+    },
+    {
+      "elapsedMs": 32562,
+      "phase": "cleanup",
+      "errors": 0,
+      "contexts": 1
+    },
+    {
+      "elapsedMs": 32563,
+      "phase": "scenario-finished",
+      "server": {
+        "ownerPid": 3186,
+        "runId": "39214705-fff9-4e1d-bf16-62453e9c718e",
+        "updatedAt": 1794686315010,
+        "pid": 3197,
+        "ready": true,
+        "expectedClose": false,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "firstFailure": null,
+        "exitCode": null,
+        "signal": null,
+        "stdout": {
+          "bytes": 154,
+          "tail": "[ready]\n[output redacted]"
+        },
+        "stderr": {
+          "bytes": 870,
+          "tail": "[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"
+        }
+      }
+    }
+  ],
+  "dropped": 0
+}

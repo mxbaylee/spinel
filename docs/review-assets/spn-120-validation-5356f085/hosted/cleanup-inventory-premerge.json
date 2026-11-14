@@ -1,0 +1,303 @@
+{
+  "observedAt": "2026-11-14T20:23:05.505076+00:00",
+  "readOnly": true,
+  "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "main": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "refs": [
+    {
+      "ref": "refs/heads/codex/spn-120-fixture-reliability",
+      "head": "bcc1c17c538756e7886a60a413ee31a8ed5ff2ba",
+      "activePrOwnership": [
+        {
+          "number": 228,
+          "url": "https://github.com/mxbaylee/spinel/pull/228",
+          "head": "codex/spn-120-fixture-reliability",
+          "headSha": "5356f085f84302c85490acf473adab72cc0b7eb9",
+          "base": "main",
+          "baseSha": "ec42f0741415e4e712395fb47c30b911bc4e64ea"
+        }
+      ]
+    },
+    {
+      "ref": "refs/heads/codex/spn-120-production-integration",
+      "head": "5356f085f84302c85490acf473adab72cc0b7eb9",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/remotes/origin/codex/spn-120-fixture-reliability",
+      "head": "5356f085f84302c85490acf473adab72cc0b7eb9",
+      "activePrOwnership": [
+        {
+          "number": 228,
+          "url": "https://github.com/mxbaylee/spinel/pull/228",
+          "head": "codex/spn-120-fixture-reliability",
+          "headSha": "5356f085f84302c85490acf473adab72cc0b7eb9",
+          "base": "main",
+          "baseSha": "ec42f0741415e4e712395fb47c30b911bc4e64ea"
+        }
+      ]
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-blocked-integration-bcc1c17",
+      "head": "2e28caa15cc78e88d58dfcaf1f144c47e51c6585",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-integration-597c3182",
+      "head": "814bcdb74bad025791d1faa69ae4b131f6ba2f20",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-native-blockers-597c3182",
+      "head": "87d6ca12eb452f5b5ea279cc9e0761bf2ebceeef",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-prior-evidence-bcc1c17",
+      "head": "f1ddbf00628e86f9e344c2d6844ad975d7b4ec20",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-review-5356f085-20261114",
+      "head": "e0b4be00b8aa95b31324e04974504f50bcdd7740",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-terminal-checkpoint-bcc1c17",
+      "head": "a5ac3cad075955203da729e2cd5151135daea936",
+      "activePrOwnership": []
+    },
+    {
+      "ref": "refs/tags/archive/spn-120-validation-99e0a141-20261114",
+      "head": "50d6e592e7f676b23a8ea5ab3851c7110ce20456",
+      "activePrOwnership": []
+    }
+  ],
+  "remoteRefsRaw": "5356f085f84302c85490acf473adab72cc0b7eb9\trefs/heads/codex/spn-120-fixture-reliability\n2e28caa15cc78e88d58dfcaf1f144c47e51c6585\trefs/tags/archive/spn-120-blocked-integration-bcc1c17\n51d5b48203f999ff27e3b01592a6668518f7ebf8\trefs/tags/archive/spn-120-blocked-integration-bcc1c17^{}\n814bcdb74bad025791d1faa69ae4b131f6ba2f20\trefs/tags/archive/spn-120-integration-597c3182\nc64816909e168c301bddb4765b461ed8121d8ddb\trefs/tags/archive/spn-120-integration-597c3182^{}\n87d6ca12eb452f5b5ea279cc9e0761bf2ebceeef\trefs/tags/archive/spn-120-native-blockers-597c3182\nb098d161fa4d4bb77f5d785a6ec6bee4f659c925\trefs/tags/archive/spn-120-native-blockers-597c3182^{}\nf1ddbf00628e86f9e344c2d6844ad975d7b4ec20\trefs/tags/archive/spn-120-prior-evidence-bcc1c17\nd825f803952506685c64362938192c4206a6e8d5\trefs/tags/archive/spn-120-prior-evidence-bcc1c17^{}\ne0b4be00b8aa95b31324e04974504f50bcdd7740\trefs/tags/archive/spn-120-review-5356f085-20261114\na5ac3cad075955203da729e2cd5151135daea936\trefs/tags/archive/spn-120-terminal-checkpoint-bcc1c17\n4c7f6a37eb5b9f6b11b7be928a9f859a15035624\trefs/tags/archive/spn-120-terminal-checkpoint-bcc1c17^{}\n4bd84e3be7645a3b18c794c966e0007e6770cc9c\trefs/tags/archive/spn-120-validation-47bf4aad-20261114\n50d6e592e7f676b23a8ea5ab3851c7110ce20456\trefs/tags/archive/spn-120-validation-99e0a141-20261114\n",
+  "worktrees": [
+    {
+      "worktree": "/Users/mxbaylee/projects/spinel-spn-120",
+      "HEAD": "bcc1c17c538756e7886a60a413ee31a8ed5ff2ba",
+      "branch": "refs/heads/codex/spn-120-fixture-reliability",
+      "prunable": "gitdir file points to non-existent location",
+      "exists": false,
+      "uniqueCommitsOutsideCurrentSourceMainAndArchiveTags": [],
+      "retainingTags": [
+        "archive/spn-120-blocked-integration-bcc1c17",
+        "archive/spn-120-prior-evidence-bcc1c17",
+        "archive/spn-120-review-5356f085-20261114",
+        "archive/spn-120-terminal-checkpoint-bcc1c17",
+        "archive/spn-120-validation-99e0a141-20261114"
+      ],
+      "uniqueCommitsOutsideCurrentSourceMainAndAllAvailableRemoteEvidenceTags": []
+    },
+    {
+      "worktree": "/Users/mxbaylee/projects/spinel-spn-120-merge",
+      "HEAD": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+      "detached": true,
+      "exists": true,
+      "status": "",
+      "ignoredTopLevel": "!! node_modules\n!! playwright-report/\n",
+      "symlinks": [
+        {
+          "path": "node_modules",
+          "target": "/Users/mxbaylee/projects/spinel/node_modules"
+        }
+      ],
+      "uniqueCommitsOutsideCurrentSourceMainAndArchiveTags": [],
+      "retainingTags": [
+        "archive/spn-120-review-5356f085-20261114",
+        "archive/spn-120-validation-99e0a141-20261114"
+      ],
+      "ignoredReportFiles": [],
+      "uniqueCommitsOutsideCurrentSourceMainAndAllAvailableRemoteEvidenceTags": []
+    },
+    {
+      "worktree": "/Users/mxbaylee/projects/spinel-spn-120-prerequisites",
+      "HEAD": "2206e7d26a5401de6fc2fcf5cfe287f355baff69",
+      "detached": true,
+      "exists": true,
+      "status": "",
+      "ignoredTopLevel": "",
+      "symlinks": [],
+      "uniqueCommitsOutsideCurrentSourceMainAndArchiveTags": [
+        "2206e7d26a5401de6fc2fcf5cfe287f355baff69",
+        "2405014e49fd0b5c0bfbd53ef2c7c63f6bea8131"
+      ],
+      "retainingTags": [],
+      "ignoredReportFiles": [],
+      "uniqueCommitSummary": "2206e7d2 Clarify prospective native validation declaration\n docs/implementation/SPN-140.md | 5 +++--\n 1 file changed, 3 insertions(+), 2 deletions(-)\n2405014e Register SPN-120 native validation prerequisites\n docs/implementation/SPN-140.md | 56 ++++++++++++++++++++++++++++++++++++++++++\n docs/implementation/SPN-141.md | 54 ++++++++++++++++++++++++++++++++++++++++\n docs/todo/SPN-120.md           |  4 +--\n docs/todo/SPN-140.md           | 46 ++++++++++++++++++++++++++++++++++\n docs/todo/SPN-141.md           | 46 ++++++++++++++++++++++++++++++++++\n docs/todo/backlog.json         |  7 ++++--\n docs/todo/readme.md            | 46 +++++++++++++++++-----------------\n 7 files changed, 233 insertions(+), 26 deletions(-)\n",
+      "uniqueCommitsOutsideCurrentSourceMainAndAllAvailableRemoteEvidenceTags": [
+        "2206e7d26a5401de6fc2fcf5cfe287f355baff69",
+        "2405014e49fd0b5c0bfbd53ef2c7c63f6bea8131"
+      ]
+    },
+    {
+      "worktree": "/Users/mxbaylee/projects/spinel-spn-120-production",
+      "HEAD": "5356f085f84302c85490acf473adab72cc0b7eb9",
+      "branch": "refs/heads/codex/spn-120-production-integration",
+      "exists": true,
+      "status": "",
+      "ignoredTopLevel": "!! node_modules\n!! playwright-report/\n",
+      "symlinks": [
+        {
+          "path": "node_modules",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules"
+        }
+      ],
+      "uniqueCommitsOutsideCurrentSourceMainAndArchiveTags": [],
+      "retainingTags": [
+        "archive/spn-120-review-5356f085-20261114"
+      ],
+      "ignoredReportFiles": [],
+      "uniqueCommitsOutsideCurrentSourceMainAndAllAvailableRemoteEvidenceTags": []
+    }
+  ],
+  "openPrOwnership": [
+    {
+      "number": 289,
+      "url": "https://github.com/mxbaylee/spinel/pull/289",
+      "head": "codex/spn-156-file-list-replay",
+      "headSha": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+      "base": "main",
+      "baseSha": "c525aa933505d6e78b8fdd7a89940d87506d5cb3"
+    },
+    {
+      "number": 281,
+      "url": "https://github.com/mxbaylee/spinel/pull/281",
+      "head": "codex/spn-087-storybook-layout-cleanup",
+      "headSha": "0ed9ef8b23bccbae4f24f4b608a6b55b54c47526",
+      "base": "main",
+      "baseSha": "04baabd6a68abe7c0b225f8699681532e2205b60"
+    },
+    {
+      "number": 260,
+      "url": "https://github.com/mxbaylee/spinel/pull/260",
+      "head": "codex/spn-089-dialog-title-icons",
+      "headSha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "base": "main",
+      "baseSha": "1045e729c391c47a9b6a895782a2fa69dc6fa044"
+    },
+    {
+      "number": 247,
+      "url": "https://github.com/mxbaylee/spinel/pull/247",
+      "head": "codex/spn-110-diagnostic-retention",
+      "headSha": "09093eb64c08cd262acc8390c64581a7f82c5fc2",
+      "base": "main",
+      "baseSha": "18a8759c498574a1d9cc24a969a558cd97a798ed"
+    },
+    {
+      "number": 246,
+      "url": "https://github.com/mxbaylee/spinel/pull/246",
+      "head": "codex/spn-106-viewer-startup",
+      "headSha": "b9e57e465727870542177170b9acdc56656584ab",
+      "base": "main",
+      "baseSha": "18a8759c498574a1d9cc24a969a558cd97a798ed"
+    },
+    {
+      "number": 230,
+      "url": "https://github.com/mxbaylee/spinel/pull/230",
+      "head": "codex/spn-068-sheet-images",
+      "headSha": "6f2d902e236a4070cf89b3c6cb16a6897b22f701",
+      "base": "main",
+      "baseSha": "18a8759c498574a1d9cc24a969a558cd97a798ed"
+    },
+    {
+      "number": 229,
+      "url": "https://github.com/mxbaylee/spinel/pull/229",
+      "head": "codex/spn-128-original-recovery",
+      "headSha": "a6dd085d549d1a6e7b3894ccaa8d3c4fa03bcbb3",
+      "base": "main",
+      "baseSha": "18a8759c498574a1d9cc24a969a558cd97a798ed"
+    },
+    {
+      "number": 228,
+      "url": "https://github.com/mxbaylee/spinel/pull/228",
+      "head": "codex/spn-120-fixture-reliability",
+      "headSha": "5356f085f84302c85490acf473adab72cc0b7eb9",
+      "base": "main",
+      "baseSha": "ec42f0741415e4e712395fb47c30b911bc4e64ea"
+    },
+    {
+      "number": 224,
+      "url": "https://github.com/mxbaylee/spinel/pull/224",
+      "head": "codex/spn-090-real-devices",
+      "headSha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "base": "main",
+      "baseSha": "ec42f0741415e4e712395fb47c30b911bc4e64ea"
+    },
+    {
+      "number": 223,
+      "url": "https://github.com/mxbaylee/spinel/pull/223",
+      "head": "codex/spn-099-stock-core",
+      "headSha": "f4e7db978a553a0dcc286937503de87b79ee9d06",
+      "base": "main",
+      "baseSha": "e63956c7ec214af03c825104a81f63517eb87d0b"
+    },
+    {
+      "number": 220,
+      "url": "https://github.com/mxbaylee/spinel/pull/220",
+      "head": "codex/spn-123-operation-diagnostics",
+      "headSha": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+      "base": "main",
+      "baseSha": "ec42f0741415e4e712395fb47c30b911bc4e64ea"
+    }
+  ],
+  "cleanupPerformed": false,
+  "guards": "No deletion before actual merge and refreshed exact heads/active PR ownership/unique work preservation; retained archive tags are excluded from deletion.",
+  "remoteEvidenceTagObjectsAvailable": [
+    [
+      "2e28caa15cc78e88d58dfcaf1f144c47e51c6585",
+      "refs/tags/archive/spn-120-blocked-integration-bcc1c17"
+    ],
+    [
+      "51d5b48203f999ff27e3b01592a6668518f7ebf8",
+      "refs/tags/archive/spn-120-blocked-integration-bcc1c17^{}"
+    ],
+    [
+      "814bcdb74bad025791d1faa69ae4b131f6ba2f20",
+      "refs/tags/archive/spn-120-integration-597c3182"
+    ],
+    [
+      "c64816909e168c301bddb4765b461ed8121d8ddb",
+      "refs/tags/archive/spn-120-integration-597c3182^{}"
+    ],
+    [
+      "87d6ca12eb452f5b5ea279cc9e0761bf2ebceeef",
+      "refs/tags/archive/spn-120-native-blockers-597c3182"
+    ],
+    [
+      "b098d161fa4d4bb77f5d785a6ec6bee4f659c925",
+      "refs/tags/archive/spn-120-native-blockers-597c3182^{}"
+    ],
+    [
+      "f1ddbf00628e86f9e344c2d6844ad975d7b4ec20",
+      "refs/tags/archive/spn-120-prior-evidence-bcc1c17"
+    ],
+    [
+      "d825f803952506685c64362938192c4206a6e8d5",
+      "refs/tags/archive/spn-120-prior-evidence-bcc1c17^{}"
+    ],
+    [
+      "e0b4be00b8aa95b31324e04974504f50bcdd7740",
+      "refs/tags/archive/spn-120-review-5356f085-20261114"
+    ],
+    [
+      "a5ac3cad075955203da729e2cd5151135daea936",
+      "refs/tags/archive/spn-120-terminal-checkpoint-bcc1c17"
+    ],
+    [
+      "4c7f6a37eb5b9f6b11b7be928a9f859a15035624",
+      "refs/tags/archive/spn-120-terminal-checkpoint-bcc1c17^{}"
+    ],
+    [
+      "4bd84e3be7645a3b18c794c966e0007e6770cc9c",
+      "refs/tags/archive/spn-120-validation-47bf4aad-20261114"
+    ],
+    [
+      "50d6e592e7f676b23a8ea5ab3851c7110ce20456",
+      "refs/tags/archive/spn-120-validation-99e0a141-20261114"
+    ]
+  ],
+  "remoteEvidenceTagObjectsMissing": []
+}

@@ -1,0 +1,40 @@
+﻿2026-11-14T20:31:08.5165507Z ##[group]Run npx playwright test --project=doc-responsiveness --grep "$PRESET "
+2026-11-14T20:31:08.5166136Z [36;1mnpx playwright test --project=doc-responsiveness --grep "$PRESET "[0m
+2026-11-14T20:31:08.5217208Z shell: /usr/bin/bash -e {0}
+2026-11-14T20:31:08.5217482Z env:
+2026-11-14T20:31:08.5217675Z   PRESET: mobile
+2026-11-14T20:31:08.5217901Z   VITE_SYNC_EVIDENCE: 0
+2026-11-14T20:31:08.5218126Z   VITE_DOC_SELECTION_EVIDENCE: 0
+2026-11-14T20:31:08.5218446Z   VITE_DOC_RESPONSIVENESS_EVIDENCE: 1
+2026-11-14T20:31:08.5218733Z   SPINEL_E2E_PROJECT: doc-responsiveness
+2026-11-14T20:31:08.5218996Z   SPN108_BASELINE: 0
+2026-11-14T20:31:08.5219199Z ##[endgroup]
+2026-11-14T20:31:10.8907479Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8909996Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8910876Z 
+2026-11-14T20:31:10.8912659Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8914667Z 
+2026-11-14T20:31:10.8932728Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8933548Z 
+2026-11-14T20:31:10.8934801Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8935862Z 
+2026-11-14T20:31:10.8938434Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8940736Z 
+2026-11-14T20:31:10.8956682Z [WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8957611Z 
+2026-11-14T20:31:10.8959814Z 
+2026-11-14T20:31:10.8960740Z [WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:10.8961673Z [WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+2026-11-14T20:31:12.6852798Z 
+2026-11-14T20:31:12.6853552Z Running 7 tests using 1 worker
+2026-11-14T20:31:12.6854077Z 
+2026-11-14T20:31:13.5289214Z [1/7] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › mobile sustained native typing plain-1
+2026-11-14T20:34:00.3748938Z [2/7] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › mobile sustained native typing plain-2
+2026-11-14T20:36:24.5439560Z [3/7] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › mobile sustained native typing plain-3
+2026-11-14T20:38:56.7597510Z [4/7] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:369:5 › mobile sustained native typing profile
+2026-11-14T20:41:39.0494252Z [5/7] [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:1264:3 › mobile resumes native typing after a quiet pause
+2026-11-14T20:44:01.7667287Z [6/7] [doc-responsiveness] › e2e/doc-responsiveness-boundaries.ts:131:7 › native boundary checks › mobile pending composition crosses the group limit without partial history
+2026-11-14T20:44:06.8537444Z [7/7] [doc-responsiveness] › e2e/doc-responsiveness-boundaries.ts:283:7 › native boundary checks › mobile revocation refuses pending guest input and a late composition event
+2026-11-14T20:44:11.1937141Z   Slow test file: [doc-responsiveness] › e2e/doc-responsiveness.spec.ts (12.8m)
+2026-11-14T20:44:11.1938984Z   Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+2026-11-14T20:44:11.1939684Z   7 passed (13.0m)

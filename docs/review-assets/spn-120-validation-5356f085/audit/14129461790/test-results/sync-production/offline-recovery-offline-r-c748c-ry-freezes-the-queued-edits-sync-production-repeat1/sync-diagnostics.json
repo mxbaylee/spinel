@@ -1,0 +1,292 @@
+{
+  "observed": [
+    {
+      "status": "fulfilled",
+      "value": {
+        "url": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+        "online": true,
+        "preparedAccount": "a5d10629-b8ff-46a9-a12e-76842ab03194",
+        "native": {},
+        "status": "Your offline changes were saved as Offline sheet (offline copy, 2026-11-14 19:57). The original was not changed.",
+        "focus": "<a href=\"/?item=00f4e135-b749-4321-a634-da78a2faeee0\">Open copy</a>",
+        "layout": [
+          {
+            "element": "DIV",
+            "className": "editor-content",
+            "label": null,
+            "bounds": {
+              "x": 0,
+              "y": 61,
+              "width": 1440,
+              "height": 1039,
+              "top": 61,
+              "right": 1440,
+              "bottom": 1100,
+              "left": 0
+            },
+            "canvases": 3
+          },
+          {
+            "element": "SECTION",
+            "className": "",
+            "label": "Offline copy",
+            "bounds": {
+              "x": 0,
+              "y": 61,
+              "width": 1440,
+              "height": 1039,
+              "top": 61,
+              "right": 1440,
+              "bottom": 1100,
+              "left": 0
+            },
+            "canvases": 3
+          },
+          {
+            "element": "SECTION",
+            "className": "sheet-editor",
+            "label": "Sheet document",
+            "bounds": {
+              "x": 0,
+              "y": 61,
+              "width": 1440,
+              "height": 1039,
+              "top": 61,
+              "right": 1440,
+              "bottom": 1100,
+              "left": 0
+            },
+            "canvases": 3
+          },
+          {
+            "element": "DIV",
+            "className": "univer-container",
+            "label": null,
+            "bounds": {
+              "x": 0,
+              "y": 61,
+              "width": 1440,
+              "height": 1039,
+              "top": 61,
+              "right": 1440,
+              "bottom": 1100,
+              "left": 0
+            },
+            "canvases": 3
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator."
+    },
+    {
+      "page": "http://localhost:3105/?item=df15a25d-b780-439e-b751-2f5350b3fc73",
+      "message": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    }
+  ],
+  "outgoing": [
+    {
+      "type": "cursor",
+      "selection": "first!A1"
+    }
+  ],
+  "incoming": [
+    {
+      "type": "resume",
+      "version": 1,
+      "unitId": "df15a25d-b780-439e-b751-2f5350b3fc73",
+      "fromRevision": 1,
+      "revision": 1,
+      "edits": []
+    },
+    {
+      "type": "presence",
+      "selfId": "tjj5vlPyie6uvuOTg1blbBA5",
+      "members": [
+        {
+          "id": "tjj5vlPyie6uvuOTg1blbBA5",
+          "name": "Offline editor d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+          "avatar": "/profile-avatar/user-round/error-strong.svg"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "tjj5vlPyie6uvuOTg1blbBA5",
+      "members": [
+        {
+          "id": "tjj5vlPyie6uvuOTg1blbBA5",
+          "name": "Offline editor d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+          "avatar": "/profile-avatar/user-round/error-strong.svg",
+          "selection": "first!A1"
+        }
+      ]
+    },
+    {
+      "type": "resume",
+      "version": 1,
+      "unitId": "df15a25d-b780-439e-b751-2f5350b3fc73",
+      "fromRevision": 1,
+      "revision": 2,
+      "edits": [
+        {
+          "revision": 2,
+          "mutations": [
+            {
+              "id": "sheet.mutation.set-range-values",
+              "params": {
+                "unitId": "df15a25d-b780-439e-b751-2f5350b3fc73",
+                "subUnitId": "first",
+                "cellValue": {
+                  "0": {
+                    "3": {
+                      "t": 2,
+                      "v": 824,
+                      "f": null,
+                      "si": null,
+                      "s": {
+                        "cl": {
+                          "rgb": "#221832"
+                        }
+                      },
+                      "ft": null,
+                      "fd": null
+                    }
+                  }
+                },
+                "trigger": "sheet.command.set-range-values"
+              }
+            }
+          ],
+          "touched": {
+            "kind": "sheet",
+            "cells": [
+              {
+                "sheetId": "first",
+                "row": 0,
+                "column": 3
+              }
+            ]
+          },
+          "hash": "5400a78f457ce4cff1a772d4e31fade177d71d93cef9b8ae6cac4a3be2085a45"
+        }
+      ]
+    },
+    {
+      "type": "presence",
+      "selfId": "_PBb-TqTKulS7Wm923tBHqr-",
+      "members": [
+        {
+          "id": "_PBb-TqTKulS7Wm923tBHqr-",
+          "name": "Offline editor d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+          "avatar": "/profile-avatar/user-round/error-strong.svg"
+        }
+      ]
+    }
+  ]
+}
