@@ -9,8 +9,8 @@
     "e2e/sync-client.spec.ts"
   ],
   "allOtherChangedSourceByteExact": true,
-  "workflowResolution": "Exactmain plusfixture-evidence artifact; syncflag andfeedbackpair retained",
-  "syncResolution": "Exact5356 plusmain bootstrap import/assertions inside recorded fixture wrapper",
+  "workflowResolution": "Exact main plus fixture-evidence artifact; sync flag and feedback-pair artifact retained",
+  "syncResolution": "Exact source5356 plus main bootstrap import/assertions inside recorded fixture wrapper",
   "allOtherLiveTicketsExactMain": true,
   "SPN110HandoffExactMain": true,
   "SPN090CanonicalExactMain": true,
