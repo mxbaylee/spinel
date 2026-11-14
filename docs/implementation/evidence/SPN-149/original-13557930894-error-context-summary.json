@@ -1,0 +1,14 @@
+{
+  "source_member": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/error-context.md",
+  "source_sha256": "91949a9b460bc9312dee73d1d4c6ccc81a2f0f3f2b0e8f3690501b00e9a17068",
+  "source_bytes": 8142,
+  "selected_generic_dom_lines": [
+    "      - heading \"Your workspace.\" [level=1] [ref=f1e52]",
+    "        - button \"Sign in with a passkey\" [ref=f1e56] [cursor=pointer]"
+  ],
+  "sign_in_button_in_snapshot": true,
+  "workspace_heading_in_snapshot": true,
+  "first_attempt_trace_present": false,
+  "retry_trace_present": true,
+  "limits": "These selected DOM observations establish a sign-in UI snapshot only. They do not establish actual socket closure, request denial, revocation/navigation ordering or later assertions. The original first-attempt timeline remains unavailable. No fixture content or cookies are copied."
+}
