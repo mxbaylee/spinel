@@ -54,7 +54,11 @@ import { applicationPolicy } from '../../../server/application-policy.ts';
 import { prepareRestoreArchive } from '../backup/verification.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
-import { OWNERSHIP_CHANNEL, shareWorkspaceOwnership } from './ownership.ts';
+import {
+  OWNERSHIP_CHANNEL,
+  ownershipFailureDetails,
+  shareWorkspaceOwnership,
+} from './ownership.ts';
 
 const cleanups: Array<() => unknown | Promise<unknown>> = [];
 afterEach(async () => {
@@ -65,6 +69,14 @@ afterEach(async () => {
   }
 });
 const actorId = randomUUID();
+// Journal failure/phase fields are machine codes, never arbitrary exception text.
+// Bound malformed fixture state too; do not dump a journal into a failed test.
+const diagnosticCode = (value: unknown) =>
+  value === null
+    ? null
+    : typeof value === 'string' && /^[a-z-]{1,64}$/.test(value)
+      ? value
+      : 'invalid';
 const proof = (now = Date.now()) => ({
   actorId,
   sessionHash: 'a'.repeat(64),
@@ -733,6 +745,16 @@ test.each(['before', 'during'])(
     const refused = await message(parent, (value) => value.refused === true);
     expect(refused.code).toBe(1);
     expect(refused.lateClosed).toBe(pending === 'during');
+    if (pending === 'during')
+      expect(refused.receiverFailure).toEqual({
+        side: 'receiver',
+        offerReceived: false,
+        // Receipt of the request does not order its sender's IPC callback.
+        requestCallback: expect.any(Boolean),
+        handlesReceived: 2,
+        heldSent: false,
+        heldCallback: false,
+      });
     expect((await exited)[0]).toBe(0);
     await expect(lstat(`${f.databasePath}.opened`)).rejects.toMatchObject({ code: 'ENOENT' });
     expect(await readFile(f.databasePath)).toEqual(before);
@@ -1073,8 +1095,31 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
     }
     const child = await launch();
     let operationId = randomUUID();
-    const control = (action: 'verify' | 'start' | 'resume' | 'pause' | 'stop') =>
-      maintenanceControl(f.root, { action, operationId });
+    let stage: 'setup' | 'transition' | 'reconcile' = 'setup';
+    const control = async (action: 'verify' | 'start' | 'resume' | 'pause' | 'stop' | 'status') => {
+      try {
+        return await maintenanceControl(
+          f.root,
+          action === 'status' ? { action } : { action, operationId },
+        );
+      } catch (error) {
+        // Snapshot before afterEach can stop the child or remove the journal.
+        let journal: { phase: string; lastFailure: string | null } | 'unavailable' = 'unavailable';
+        try {
+          const state = JSON.parse(readFileSync(join(f.root, 'journal.json'), 'utf8'));
+          journal = {
+            phase: diagnosticCode(state.phase) ?? 'invalid',
+            lastFailure: diagnosticCode(state.lastFailure),
+          };
+        } catch {
+          /* Keep the original control failure if the journal cannot be read. */
+        }
+        throw new Error(
+          `Durable phase control failed: ${JSON.stringify({ phase, stage, action, journal })}`,
+          { cause: error },
+        );
+      }
+    };
     await control('verify');
     if (phase !== 'starting') await control('start');
     if (!['starting', 'running'].includes(phase)) {
@@ -1094,14 +1139,16 @@ for (const phase of ['starting', 'running', 'draining', 'paused', 'stopping', 's
           : ['draining', 'paused'].includes(phase)
             ? 'pause'
             : 'stop';
+    stage = 'transition';
     const pending = control(action).catch(() => undefined);
     await reached;
     const exit = once(child, 'exit');
     child.kill('SIGKILL');
     await exit;
     await pending;
+    stage = 'reconcile';
     const restarted = await launch();
-    const after = await maintenanceControl(f.root, { action: 'status' });
+    const after = await control('status');
     expect(after.status.phase).toBe('recovery-required');
     expect(after.status.readyToResume).toBe(false);
     expect(() => assertWorkspaceHandlesClosed(f.databasePath)).not.toThrow();
@@ -2480,7 +2527,10 @@ test
         return result;
       });
     }
-    let controllerFailure: string | null = null;
+    let controllerFailure: {
+      category: 'ownership' | 'readiness-timeout' | 'other';
+      handoff: ReturnType<typeof ownershipFailureDetails>;
+    } | null = null;
     const controller = supervisor as unknown as {
       executeRestoreStopOwned(request: {
         id: string;
@@ -2493,8 +2543,15 @@ test
       try {
         await execute(request);
       } catch (error) {
-        controllerFailure =
-          error instanceof Error ? error.message.slice(0, 300) : 'Unknown fixture failure';
+        const handoff = ownershipFailureDetails(error);
+        controllerFailure = {
+          category: handoff
+            ? 'ownership'
+            : error instanceof Error && error.message === 'Restore trial readiness timed out.'
+              ? 'readiness-timeout'
+              : 'other',
+          handoff,
+        };
         if (longOperation && operationElapsed === 0) crossingFailed(error);
         throw error;
       }
@@ -2587,17 +2644,36 @@ test
       assertWorkspaceHandlesClosed(f.databasePath);
       return;
     }
-    await expect
-      .poll(() => privateReadyObserved || supervisor.status().phase === 'recovery-required', {
-        timeout: 30_000,
-      })
-      .toBe(true);
-    expect({
-      ready: privateReadyObserved,
-      phase: supervisor.status().phase,
-      jobPhase: JSON.parse(readFileSync(statePath, 'utf8')).phase,
-      controllerFailure,
-    }).toMatchObject({ ready: true });
+    const readinessSnapshot = () => {
+      let jobPhase: string | null = 'unavailable';
+      try {
+        jobPhase = diagnosticCode(JSON.parse(readFileSync(statePath, 'utf8')).phase);
+      } catch {
+        /* A missing journal must not mask the first readiness failure. */
+      }
+      return {
+        ordering,
+        ready: privateReadyObserved,
+        phase: supervisor.status().phase,
+        lastFailure: supervisor.status().lastFailure,
+        jobPhase,
+        controllerFailure,
+      };
+    };
+    try {
+      await expect
+        .poll(() => privateReadyObserved || supervisor.status().phase === 'recovery-required', {
+          timeout: 30_000,
+        })
+        .toBe(true);
+      expect(privateReadyObserved).toBe(true);
+    } catch (error) {
+      // A partial object matcher omits the other fields from Vitest's diff.
+      // Capture both polling and false-readiness failures before cleanup.
+      throw new Error(`Restore readiness failed: ${JSON.stringify(readinessSnapshot())}`, {
+        cause: error,
+      });
+    }
     expect(await pausedProbe).toBe(503);
     if (forcedStop) {
       await expect.poll(() => supervisor.journal.state.child, { timeout: 40_000 }).toBeNull();

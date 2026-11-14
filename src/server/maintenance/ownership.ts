@@ -24,6 +24,37 @@ const HANDOFF_MS = 10_000;
 const heldServers = new Set<Server>();
 let inherited: WorkspaceOwnership | undefined;
 
+type HandoffProgress =
+  | {
+      side: 'sender';
+      offerCallback: boolean;
+      requestReceived: boolean;
+      handleCallbacks: number;
+      heldReceived: boolean;
+    }
+  | {
+      side: 'receiver';
+      offerReceived: boolean;
+      requestCallback: boolean;
+      handlesReceived: number;
+      heldSent: boolean;
+      heldCallback: boolean;
+    };
+
+class HandoffFailure extends Error {
+  readonly ownershipHandoff: Readonly<HandoffProgress>;
+  constructor(error: Error, progress: HandoffProgress) {
+    // Keep the original error/message; only fixed counters and flags supplement
+    // internal stderr. No path, identity, nonce, authority or IPC payload is copied.
+    super(error.message, { cause: error });
+    this.ownershipHandoff = Object.freeze({ ...progress });
+  }
+}
+
+export function ownershipFailureDetails(error: unknown) {
+  return error instanceof HandoffFailure ? error.ownershipHandoff : undefined;
+}
+
 function record(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -53,6 +84,13 @@ export function shareWorkspaceOwnership(
   const addresses = workspaceOwnershipAddresses(ownership.databasePath, ownership.databaseIdentity);
   return new Promise<void>((resolve, reject) => {
     assertOpening();
+    const progress: Extract<HandoffProgress, { side: 'sender' }> = {
+      side: 'sender',
+      offerCallback: false,
+      requestReceived: false,
+      handleCallbacks: 0,
+      heldReceived: false,
+    };
     let sending = false;
     let settled = false;
     const finish = (error?: Error) => {
@@ -63,7 +101,7 @@ export function shareWorkspaceOwnership(
       child.off('error', failed);
       child.off('exit', failed);
       child.off('disconnect', failed);
-      if (error) reject(error);
+      if (error) reject(new HandoffFailure(error, progress));
       else resolve();
     };
     const failed = () => finish(new Error('Workspace ownership handoff was interrupted.'));
@@ -77,9 +115,14 @@ export function shareWorkspaceOwnership(
           rejectSend(new Error('Workspace ownership channel is unavailable.'));
           return;
         }
-        child.send({ channel: OWNERSHIP_CHANNEL, ...message }, handle, (error) =>
-          error ? rejectSend(error) : resolveSend(),
-        );
+        child.send({ channel: OWNERSHIP_CHANNEL, ...message }, handle, (error) => {
+          if (error) rejectSend(error);
+          else {
+            if (message.kind === 'offer') progress.offerCallback = true;
+            if (message.kind === 'handle') progress.handleCallbacks++;
+            resolveSend();
+          }
+        });
       });
     const sendHandles = async () => {
       for (const role of workspaceOwnershipRoles) {
@@ -107,6 +150,7 @@ export function shareWorkspaceOwnership(
     function onMessage(value: unknown) {
       if (!record(value) || value.channel !== OWNERSHIP_CHANNEL) return;
       if (value.kind === 'request' && !sending) {
+        progress.requestReceived = true;
         sending = true;
         void sendHandles().catch((error: Error) => finish(error));
       } else if (
@@ -115,6 +159,7 @@ export function shareWorkspaceOwnership(
         sending &&
         value.trialNonce === trial?.nonce
       ) {
+        progress.heldReceived = true;
         try {
           assertOpening();
           finish();
@@ -155,6 +200,14 @@ export async function receiveWorkspaceOwnership(
   }
   const expected = workspaceOwnershipAddresses(canonical, identity);
   return new Promise<WorkspaceOwnership>((resolve, reject) => {
+    const progress: Extract<HandoffProgress, { side: 'receiver' }> = {
+      side: 'receiver',
+      offerReceived: false,
+      requestCallback: false,
+      handlesReceived: 0,
+      heldSent: false,
+      heldCallback: false,
+    };
     const handles: Partial<Record<WorkspaceOwnershipRole, Server>> = {};
     let transferId: string | undefined;
     let mode: 'ordinary' | 'trial' | undefined;
@@ -210,7 +263,7 @@ export async function receiveWorkspaceOwnership(
           heldServers.delete(handle);
           handle.close();
         }
-        reject(error);
+        reject(new HandoffFailure(error, progress));
       } else {
         inherited = received!;
         resolve(inherited);
@@ -225,12 +278,17 @@ export async function receiveWorkspaceOwnership(
       if (!process.connected) return disconnected();
       process.send!({ channel: OWNERSHIP_CHANNEL, ...message }, (error: Error | null) => {
         if (error) finish(error);
-        else done?.();
+        else {
+          if (message.kind === 'request') progress.requestCallback = true;
+          if (message.kind === 'held') progress.heldCallback = true;
+          done?.();
+        }
       });
     };
     function onMessage(value: unknown, handle: unknown) {
       if (!record(value) || value.channel !== OWNERSHIP_CHANNEL) return;
       if (value.kind === 'offer') {
+        progress.offerReceived = true;
         if (!complete) send({ kind: 'request' });
         return;
       }
@@ -277,9 +335,11 @@ export async function receiveWorkspaceOwnership(
         handle.unref();
         heldServers.add(handle);
         handles[role] = handle;
+        progress.handlesReceived++;
         transferId = value.transferId;
         if (workspaceOwnershipRoles.every((key) => handles[key])) {
           complete = true;
+          progress.heldSent = true;
           send({ kind: 'held', transferId, ...(trial ? { trialNonce: trial.nonce } : {}) }, () =>
             finish(),
           );
