@@ -1,0 +1,68 @@
+{
+  "observed": "2026-11-14",
+  "localSource": "65b7c98208be011aaa2f4675952471905df74984",
+  "integratedMain": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "originalSource": "a6dd085d549d1a6e7b3894ccaa8d3c4fa03bcbb3",
+  "failedRun": 41501654342,
+  "attempt": 1,
+  "failedJob": 125560262408,
+  "rawJobLogSha256": "39f9d2e2b43de296f9ed223f1c99cd0a8f38761f0e762fbe038c60ec1e0b2693",
+  "retention": "Only fixed failure names, numeric expiry assertions, source locations and totals from hosted log; local command logs are complete gzip. Prior mobile/reset evidence remains in original archive tags.",
+  "node": "26.13.0",
+  "watchdog": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+  "watchdogSha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba",
+  "files": [
+    {
+      "file": "backlog-watchdog.json",
+      "sha256": "b0b55a5d9f40b86f887f29868dc3f9e3664d564d749cf46c590e7cc443262499"
+    },
+    {
+      "file": "backlog.log.gz",
+      "sha256": "d0cdb26f5f7358270b33e881c06942c6cef9540b1b74a81fae3e82cd9c2ae98d"
+    },
+    {
+      "file": "contracts-watchdog.json",
+      "sha256": "ee5bf748804e35dd57d2eaacca064f1174be8e8457be5a54749f00f3791c094d"
+    },
+    {
+      "file": "contracts.log.gz",
+      "sha256": "4d71b1653437b1863a829a5e818ed2259d3fa27e12cc0de38733063add5e3812"
+    },
+    {
+      "file": "evidence-watchdog.json",
+      "sha256": "d3c3c3e9ff277ea46961947af69b8e2977ad6bba3433ae5c8b48c72382a5e7e0"
+    },
+    {
+      "file": "evidence.log.gz",
+      "sha256": "c560b95724597592bf68bbf3b66b73272a3d9571f2b423fd0ebe13fda8f828b6"
+    },
+    {
+      "file": "lint-watchdog.json",
+      "sha256": "60df934fb4a79d6f8472aa77ff5511b57d9d7e85c638c975167def2fd07eaefe"
+    },
+    {
+      "file": "lint.log.gz",
+      "sha256": "9a0c6677cc27640d38c3f8f3ef97e58af0400bf87e843c9ef1c6d67bebc92611"
+    },
+    {
+      "file": "pr-watchdog.json",
+      "sha256": "a4f72aa52f911a32984ac3d9da4774ffb46b7313a1d39c6a057c1bfe0454c6da"
+    },
+    {
+      "file": "pr.log.gz",
+      "sha256": "d5e71c1ef17fd3802f9ad96992393cb64ad146cd918ab35697b86d993234dd9c"
+    },
+    {
+      "file": "recovery-first-failures.log",
+      "sha256": "1049de0dda6c98db0a6b277e78e2abfd42f83c70b6a3d5ba7b9b9c753812a98f"
+    },
+    {
+      "file": "types-watchdog.json",
+      "sha256": "c2f7269ef63978099f11a70bb56693ec66ef52fb58c8e81e9f50b11d12d5edab"
+    },
+    {
+      "file": "types.log.gz",
+      "sha256": "3b6d65dde0e711d49c8c6f4ff0bc4eb7db846ff940af6d1a271396c3cbbbe93c"
+    }
+  ]
+}

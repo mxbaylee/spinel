@@ -1,0 +1,48 @@
+2026-11-02T23:15:48.4909852Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at activation preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.4911798Z AssertionError: expected 1793661202509 to be greater than 1793662627392
+2026-11-02T23:15:48.4912858Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:862:38
+2026-11-02T23:15:48.5065043Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at private-open preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5066807Z AssertionError: expected 1793661225537 to be greater than 1793662652347
+2026-11-02T23:15:48.5068489Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:862:38
+2026-11-02T23:15:48.5080324Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at original-activation preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5082649Z AssertionError: expected 1793661280800 to be greater than 1793662705481
+2026-11-02T23:15:48.5084337Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:862:38
+2026-11-02T23:15:48.5095159Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at cold-admission preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5097224Z AssertionError: expected 1793661333736 to be greater than 1793662758289
+2026-11-02T23:15:48.5099062Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5108741Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at cold-prepared preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5110465Z AssertionError: expected 1793661364923 to be greater than 1793662789432
+2026-11-02T23:15:48.5111908Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5121553Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at cold-activation preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5123661Z AssertionError: expected 1793661398633 to be greater than 1793662822465
+2026-11-02T23:15:48.5125479Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5135367Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at cold-trial-planned preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5137795Z AssertionError: expected 1793661433687 to be greater than 1793662857733
+2026-11-02T23:15:48.5139264Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5149252Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at cold-private-open preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5151377Z AssertionError: expected 1793661468660 to be greater than 1793662892825
+2026-11-02T23:15:48.5152914Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5162745Z  FAIL  src/server/maintenance/restore-crash.integration.test.ts > real SIGKILL at cold-commit preserves the durable restore decision and all retained evidence
+2026-11-02T23:15:48.5164782Z AssertionError: expected 1793661493800 to be greater than 1793662918589
+2026-11-02T23:15:48.5166301Z  ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5176273Z  Test Files  1 failed | 48 passed (49)
+2026-11-02T23:15:48.5178094Z       Tests  9 failed | 651 passed (660)
+2026-11-02T23:15:48.5180123Z    Duration  581.75s (tests 97%, import 2%, transform 1%)
+2026-11-02T23:15:48.5212439Z ##[error]AssertionError: expected 1793661202509 to be greater than 1793662627392
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:862:38
+2026-11-02T23:15:48.5228428Z ##[error]AssertionError: expected 1793661225537 to be greater than 1793662652347
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:862:38
+2026-11-02T23:15:48.5232951Z ##[error]AssertionError: expected 1793661280800 to be greater than 1793662705481
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:862:38
+2026-11-02T23:15:48.5237703Z ##[error]AssertionError: expected 1793661333736 to be greater than 1793662758289
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5242298Z ##[error]AssertionError: expected 1793661364923 to be greater than 1793662789432
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5246819Z ##[error]AssertionError: expected 1793661398633 to be greater than 1793662822465
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5251222Z ##[error]AssertionError: expected 1793661433687 to be greater than 1793662857733
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5255422Z ##[error]AssertionError: expected 1793661468660 to be greater than 1793662892825
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
+2026-11-02T23:15:48.5259823Z ##[error]AssertionError: expected 1793661493800 to be greater than 1793662918589
+ ❯ src/server/maintenance/restore-crash.integration.test.ts:771:37
