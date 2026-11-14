@@ -1,0 +1,64 @@
+{
+  "algorithm": "sha256",
+  "excludes": "manifest.json itself",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2578,
+      "sha256": "066859c2138512d88cf73bbaa66426543203c037527480385eab729f9793e875"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 1235,
+      "sha256": "c73043575feaa0ec502030fa4236535ecc58794af02e489554ef845baf0b84a3"
+    },
+    {
+      "path": "content-audit.json",
+      "bytes": 403,
+      "sha256": "d8b8315144439d7bc725b62696e2bc3f77a4692958da793df47c0af25df06330"
+    },
+    {
+      "path": "merged-backlog.json",
+      "bytes": 549,
+      "sha256": "f70f1ed026cd49bcfddc20ec1fa0834225a385c7d8ca4333919537f9d85485d5"
+    },
+    {
+      "path": "open-prs.json.gz",
+      "bytes": 770,
+      "sha256": "e72281179b8ad7b32ad33f66e9b58ff11fdbeaa115db4b78aa5df145387ca092",
+      "decoded": {
+        "bytes": 3134,
+        "sha256": "a2ba904aad488877d49fe13712b79ba3b5e8c96de1ad0369d0c86819c5b0de2a"
+      }
+    },
+    {
+      "path": "pr-merged.json.gz",
+      "bytes": 3930,
+      "sha256": "4cd3fe97f6119dbc2ba33fb2f75986e1ef993f97c0152c156dd99cfd0c41c9bb",
+      "decoded": {
+        "bytes": 20980,
+        "sha256": "dfebcbbd1b7ad5f6fb453fe867ec8378377c5234e222373e3783aaa6ef3f66fa"
+      }
+    },
+    {
+      "path": "remote-after.txt",
+      "bytes": 173,
+      "sha256": "0b9d5cecf34e728afef07243e3fc0b4e1a96cfe6d4405cec2d00171f0558d6bf"
+    },
+    {
+      "path": "remote-before.txt",
+      "bytes": 173,
+      "sha256": "0b9d5cecf34e728afef07243e3fc0b4e1a96cfe6d4405cec2d00171f0558d6bf"
+    },
+    {
+      "path": "worktrees-after.txt",
+      "bytes": 10503,
+      "sha256": "8a940fc1b795217a6e16944e2e5274ac464fb589d240c99748bb79ea119d15f7"
+    },
+    {
+      "path": "worktrees-before.txt",
+      "bytes": 10547,
+      "sha256": "8d314a997a8c716f27586ea900961be07e43cba649e66eab059c98e54d5f3c48"
+    }
+  ]
+}

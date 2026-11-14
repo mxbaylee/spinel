@@ -1,0 +1,297 @@
+worktree <workspace-parent>/spinel
+HEAD 7c38f7d32e6a55d8000239923113155de6a07c8c
+branch refs/heads/main
+
+worktree /private/tmp/spn135-runtime-preparation
+HEAD dbbe5ccaf085ce20b79068d3596a35dcf2142223
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/tmp/spn135-unsampled-runtime
+HEAD dbbe5ccaf085ce20b79068d3596a35dcf2142223
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-validation-160-l5q29h62
+HEAD 16089ccbc4c886826e1d3527efc2649c9ba4884a
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-validation-280-m6k_ezp8
+HEAD 280d2e72ee07c3f11c3b62049adf57ee2e17fb56
+detached
+prunable gitdir file points to non-existent location
+
+worktree /private/var/folders/ps/901m_rt10gq_nlynvsf_r82m0000gn/T/spinel112-validation-2c-2z_fmcjh
+HEAD 2c63feac6d5d8fdc4a699a2a20ae9b326c4bb2c1
+detached
+prunable gitdir file points to non-existent location
+
+worktree <user-home>/.codex/worktrees/backlog-pdf-slides/spinel
+HEAD 66813d13b33dd12826d9dd9b614cb6b81f7c7921
+branch refs/heads/codex/spn-036-profile
+
+worktree <user-home>/.codex/worktrees/backlog-run/spinel
+HEAD 014e2f1d5be1d4885a6b16c0d6ed3e408060927c
+branch refs/heads/codex/spn-103-formula-recovery
+
+worktree <user-home>/.codex/worktrees/spn-029-deployment/spinel
+HEAD bdc9397df1087ffd9226c43fe8b7953596580c05
+branch refs/heads/codex/spn-029-deployment
+
+worktree <user-home>/.codex/worktrees/spn-032-diagnostics/spinel
+HEAD e8d07f77cbc305d04b543370e9628304a292de2e
+branch refs/heads/codex/spn-032-diagnostics
+
+worktree <user-home>/.codex/worktrees/spn-045-profile/spinel
+HEAD 7a89e73bcc0a534d5c11bd0589362e10521ec2ec
+branch refs/heads/codex/spn-045-profile
+
+worktree <user-home>/.codex/worktrees/spn-048-dashboard/spinel
+HEAD 6a3b64450daeecd08194b83f0ad994560670a83c
+branch refs/heads/codex/spn-048-dashboard
+
+worktree <user-home>/.codex/worktrees/spn-049-theatre/spinel
+HEAD 850a7460ae1b70e3d135cd54d20ef332b8f8fe6d
+branch refs/heads/codex/spn-049-theatre
+
+worktree <user-home>/.codex/worktrees/spn-050-fill-toolbar/spinel
+HEAD 915542e633ba0d9ec1f721ca5f6f49a36c409808
+branch refs/heads/codex/spn-050-fill-toolbar
+
+worktree <user-home>/.codex/worktrees/spn-056-review/spinel
+HEAD f8732cfdf6b3e133e4973328210934e1233a8389
+detached
+
+worktree <user-home>/.codex/worktrees/spn-062-patching/spinel
+HEAD 48f6777e67dfd95978360b94729956046c6cc25b
+branch refs/heads/codex/spn-062-patching
+
+worktree <user-home>/.codex/worktrees/spn-070-passkeys/spinel
+HEAD ad3939979b7f27b1205c33ba39903ce5267cf26b
+branch refs/heads/codex/spn-070-passkeys
+
+worktree <user-home>/.codex/worktrees/spn-074-remove-slides/spinel
+HEAD d6a1d5181171550cc0cc6a9d904deea93ec3f422
+branch refs/heads/codex/spn-033-design
+
+worktree <user-home>/.codex/worktrees/spn-081-sharing/spinel
+HEAD 837f5190170647ad9d76ecf7f9e515f9b10d497b
+branch refs/heads/codex/spn-081-sharing
+
+worktree <user-home>/.codex/worktrees/spn-082-administration/spinel
+HEAD fe02477059e1ac83a8b7260a8c6c2f63ce6c75f0
+branch refs/heads/codex/spn-082-administration
+
+worktree <user-home>/.codex/worktrees/spn-083-entry/spinel
+HEAD 9ff4f32e851893febdf8890e67363c82acb44168
+branch refs/heads/codex/spn-083-entry
+
+worktree <user-home>/.codex/worktrees/spn-084-guest/spinel
+HEAD c9e87750d0434090c7b09929795714b9f673a015
+branch refs/heads/codex/spn-084-guest
+
+worktree <user-home>/.codex/worktrees/spn-085-history/spinel
+HEAD dd1412f16e46b154b6ff6d96a131d250a44fa7ea
+branch refs/heads/codex/spn-085-history
+
+worktree <user-home>/.codex/worktrees/spn-090-real-devices/spinel
+HEAD 7ffab5330689abc0f79c2285b37f374bbc5483d5
+branch refs/heads/codex/spn-090-real-devices
+
+worktree <user-home>/.codex/worktrees/spn-096-decision-records/spinel
+HEAD 379cd5974d2ab0b97949cbb09a5fd2ec4b865203
+branch refs/heads/codex/spn-096-decision-records
+
+worktree <user-home>/.codex/worktrees/spn-097-pdf-feasibility/spinel
+HEAD 4314b7d24cae910976185be0394f1cf4b7fbab4c
+branch refs/heads/codex/spn-097-pdf-feasibility
+
+worktree <user-home>/.codex/worktrees/spn-101-sheet-pdf/spinel
+HEAD e8d761e28df6afb8bfdb4522d4e7141ac1367544
+branch refs/heads/codex/spn-101-sheet-pdf
+
+worktree <user-home>/.codex/worktrees/spn-105-parser-refresh/spinel
+HEAD 123af7012366ec810ad211893406168d1a3139a7
+branch refs/heads/codex/spn-105-request-body-parser
+
+worktree <user-home>/.codex/worktrees/spn-111-final-review/spinel
+HEAD 71bd96b132412cf1d1e1da3bd259dfe381de3a30
+detached
+
+worktree <user-home>/.codex/worktrees/spn-112-review-fixes/spinel
+HEAD 55cab757084519af6de6bb3aa1f91b4ff46880af
+detached
+
+worktree <user-home>/.codex/worktrees/spn-115-ci-routing/spinel
+HEAD 54d9db0474cd2163b8b5e51c8cfed22ddd287783
+detached
+
+worktree <user-home>/.codex/worktrees/spn-118-final-integration/spinel
+HEAD 6ab585dcb4aeb8c5e94e64b3a2f7594aada744a5
+branch refs/heads/codex/spn-118-preserve-edited-transition
+
+worktree <workspace-parent>/spinel-delivery-registration
+HEAD 9733de55de0333e395361fd3e0b1043e815d6a6a
+detached
+
+worktree <workspace-parent>/spinel-drawing-registration
+HEAD fa39c086e8df8a542c2703ffcc614dfc17afd030
+detached
+
+worktree <workspace-parent>/spinel-spn-068
+HEAD 6f2d902e236a4070cf89b3c6cb16a6897b22f701
+branch refs/heads/codex/spn-068-sheet-images
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-087
+HEAD 8ba0bd91c0105b0d1c767ee84ec554c50abc3890
+branch refs/heads/codex/spn-087-storybook-cleanup
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-090-current
+HEAD 67111d9c106c6518b813c6f1cf332068526c254c
+branch refs/heads/codex/spn-090-current-integration
+
+worktree <workspace-parent>/spinel-spn-090-production
+HEAD 9608f78348ab014295cd7b604da4299e3a1ac230
+branch refs/heads/codex/spn-090-production-integration
+
+worktree <workspace-parent>/spinel-spn-098
+HEAD 1183a71300d9b003960dcdee7f19e5622b982cd4
+branch refs/heads/codex/spn-098-feedback-diagnostics
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-098-production
+HEAD 2204b8c40ce6feb8ad03c65720c976510535ad00
+branch refs/heads/codex/spn-098-production-integration
+
+worktree <workspace-parent>/spinel-spn-106
+HEAD b9e57e465727870542177170b9acdc56656584ab
+branch refs/heads/codex/spn-106-viewer-startup
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-110
+HEAD 09093eb64c08cd262acc8390c64581a7f82c5fc2
+branch refs/heads/codex/spn-110-diagnostic-retention
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-110-feedback-integration
+HEAD f8c4b7461f7df5b9bc35459c0e6b5538c8161115
+branch refs/heads/codex/spn-110-feedback-integration
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-120
+HEAD bcc1c17c538756e7886a60a413ee31a8ed5ff2ba
+branch refs/heads/codex/spn-120-fixture-reliability
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-120-merge
+HEAD 597c3182ae34a9bb0734b3e2f599ba5d845cf849
+detached
+
+worktree <workspace-parent>/spinel-spn-120-prerequisites
+HEAD 2206e7d26a5401de6fc2fcf5cfe287f355baff69
+detached
+
+worktree <workspace-parent>/spinel-spn-120-production
+HEAD 43846f1d680dc9eab8ca70493bdabe31c10231c9
+branch refs/heads/codex/spn-120-production-integration
+
+worktree <workspace-parent>/spinel-spn-123
+HEAD 54307c19c075c5dd67a8012341cc7cee716a09a3
+branch refs/heads/codex/spn-123-operation-diagnostics
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-123-production
+HEAD aeee60266b505b1ac6f928c4725639d90c768073
+branch refs/heads/codex/spn-123-production-integration
+
+worktree <workspace-parent>/spinel-spn-128
+HEAD a6dd085d549d1a6e7b3894ccaa8d3c4fa03bcbb3
+branch refs/heads/codex/spn-128-original-recovery
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-129-retire
+HEAD 642eb32bb52dd7dd13b6582869ef9482910e04ec
+detached
+
+worktree <workspace-parent>/spinel-spn-130
+HEAD 77cdd6c556c186cb5705b4d24e312da3aea36d3e
+detached
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-134-integration
+HEAD 97b0db550385b51cdbc8f0543aaa21524c1e05dc
+detached
+
+worktree <workspace-parent>/spinel-spn-135
+HEAD cb84f05b99b2e8b984d710bc51d7872d40f7ed9d
+detached
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-135-diagnostic
+HEAD 0dae3dedf5ad11ceeebb318f5823097a33b24d95
+detached
+prunable gitdir file points to non-existent location
+
+worktree <workspace-parent>/spinel-spn-137
+HEAD 6c0080d5aa492e654a225b4d22073f0d251cfb4d
+branch refs/heads/codex/spn-137-safari-pointer
+
+worktree <workspace-parent>/spinel-spn-140
+HEAD 85a0e3c32066abccc913b2756316b2fff9651aea
+branch refs/heads/codex/spn-140-safari-constructor
+
+worktree <workspace-parent>/spinel-spn-141
+HEAD 4e593fbaf9ea89585920053b9415f9a8eac0944f
+branch refs/heads/codex/spn-141-storage-quiescence
+
+worktree <workspace-parent>/spinel-spn-142
+HEAD adc86fc835e93f1960b1b1133864fb43b0aa69e7
+detached
+
+worktree <workspace-parent>/spinel-spn-142-registration
+HEAD f6943c89da4da3d898523a58ff32037beda5c7e2
+detached
+
+worktree <workspace-parent>/spinel-spn-143
+HEAD 96b11bf0374540d28e5537d4a9cddb1280403e21
+detached
+
+worktree <workspace-parent>/spinel-spn-144
+HEAD 968649bdec92469e8761d6e09ed7f6900c79abc0
+detached
+
+worktree <workspace-parent>/spinel-spn-144-registration
+HEAD 7aee66999f211f702d397d9f737b6478bebca862
+detached
+
+worktree <workspace-parent>/spinel-spn-146
+HEAD 49cb60b1d3336112eaf24a501caa33b490feb791
+branch refs/heads/codex/spn-146-mobile-flush
+
+worktree <workspace-parent>/spinel-spn-149-production
+HEAD 8177c1466ace555817cf2dbb9a2e5f2b5abc2c62
+detached
+
+worktree <workspace-parent>/spinel-spn-156
+HEAD d6f1b8c27590df5e49c5004a397bfe38a9eff942
+branch refs/heads/codex/spn-156-file-list-replay
+
+worktree <workspace-parent>/spinel-spn-157
+HEAD 44f9a5365fe290236b882606933e63b8ef317363
+branch refs/heads/codex/spn-157-supervisor-handoffs
+
+worktree <workspace-parent>/spinel-spn-158
+HEAD bfeb0b23953a67aae8afcba8af6eadd8b24f1040
+branch refs/heads/codex/spn-158-restore-admission
+
+worktree <workspace-parent>/spinel-spn159
+HEAD 3282e4333933c59804a1d2e65b3d333509fa219b
+branch refs/heads/codex/spn-159-native-resize
+
+worktree <workspace-parent>/spinel-validation-prerequisites
+HEAD ccaa49c130cf559e8da7b5cdb60fc1053aec6156
+detached
+prunable gitdir file points to non-existent location

@@ -1,0 +1,7 @@
+{
+  "observedAt": "2026-11-14T05:27:51.830247+00:00",
+  "payloadsScanned": 9,
+  "scope": "Bounded private-key/GitHub-token/AWS-key/personal-checkout patterns plus source review; not universal credential detection",
+  "findings": [],
+  "preparationDisposition": "Initial audit caught personal home paths in other-worktree inventory; normalized before archive seal. No secrets were found or published."
+}

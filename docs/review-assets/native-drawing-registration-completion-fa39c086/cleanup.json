@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-11-14T05:26:51.299616+00:00",
+  "pr": 286,
+  "source": "fa39c086e8df8a542c2703ffcc614dfc17afd030",
+  "squash": "7c38f7d32e6a55d8000239923113155de6a07c8c",
+  "mergedAt": "2026-11-14T05:25:54Z",
+  "validation": "40acfc22ea8ff4e3a79b5007a5754f0d7b0bbc1e",
+  "sourceSquashTrees": {
+    "source": "df98d78a59838e8e1a969feaa1a0deb2921e7bde",
+    "squash": "df98d78a59838e8e1a969feaa1a0deb2921e7bde"
+  },
+  "guardedBranch": "codex/native-drawing-registration",
+  "cleanBefore": true,
+  "activePrOwners": [],
+  "allocationAncestorPreserved": "19337e04fad8a6b59ebb62e7fedec5243b72afd8",
+  "actions": [
+    {
+      "action": "detach clean registration worktree at exact source",
+      "result": ""
+    },
+    {
+      "action": "delete local branch with expected-head guard",
+      "expected": "fa39c086e8df8a542c2703ffcc614dfc17afd030",
+      "result": "deleted"
+    },
+    {
+      "action": "remote branch deletion",
+      "result": "already absent after merge; no deletion sent"
+    },
+    {
+      "action": "delete obsolete tracking ref with expected-head guard",
+      "expected": "fa39c086e8df8a542c2703ffcc614dfc17afd030",
+      "result": "deleted"
+    }
+  ],
+  "accessFailures": [],
+  "cleanDetachedAfter": true
+}

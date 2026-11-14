@@ -1,0 +1,2 @@
+7c38f7d32e6a55d8000239923113155de6a07c8c	refs/heads/main
+40acfc22ea8ff4e3a79b5007a5754f0d7b0bbc1e	refs/tags/archive/native-drawing-registration-validation-fa39c086-20261114
