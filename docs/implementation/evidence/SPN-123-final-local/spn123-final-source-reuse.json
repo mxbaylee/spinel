@@ -1,0 +1,11 @@
+{
+  "sourceParent": "e0ba8a1bdbbc0234f6d39cac344ab2c355769146",
+  "integratedMain": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "reusedRuntimeSources": 70,
+  "dependencyInputs": 16,
+  "SDKFiles": 10,
+  "candidateWorkspaces": 7,
+  "donorHead": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "donorClean": true,
+  "result": "all prior hashes and links match; actual main integration is documentation only; no repeated typecheck/native-control batch needed"
+}

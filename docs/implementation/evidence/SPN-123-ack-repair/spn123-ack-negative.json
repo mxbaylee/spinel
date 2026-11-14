@@ -1,0 +1,21 @@
+{
+  "name": "spn123-ack-negative",
+  "args": [
+    "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "lib/sync-client/tests/diagnostics.test.ts",
+    "-t",
+    "a refused client cannot report success",
+    "--config",
+    "/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts",
+    "--configLoader",
+    "native",
+    "--cache=false"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 897,
+  "peakKiB": 700128
+}

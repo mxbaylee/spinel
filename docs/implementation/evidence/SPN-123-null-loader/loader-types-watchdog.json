@@ -1,0 +1,70 @@
+{
+  "root": 80766,
+  "started": 1793882304894,
+  "elapsedMs": 327,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 89968,
+  "peakKiB": 171056,
+  "live": [
+    {
+      "pid": 80766,
+      "parent": 80740,
+      "group": 80766,
+      "rssKiB": 88416,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-types-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc --ignoreConfig --noEmit --target esnext --module nodenext --allowImportingTsExtensions --skipLibCheck --typeRoots /Users/mxbaylee/projects/spinel/node_modules/@types --types node scripts/ci/desktop-safari-identity.ts scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80817,
+      "parent": 80766,
+      "group": 80766,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 80766,
+      "parent": 80740,
+      "group": 80766,
+      "rssKiB": 88416,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-types-watchdog.json env GOMAXPROCS=1 GOMEMLIMIT=384MiB node /Users/mxbaylee/projects/spinel/node_modules/typescript/bin/tsc --ignoreConfig --noEmit --target esnext --module nodenext --allowImportingTsExtensions --skipLibCheck --typeRoots /Users/mxbaylee/projects/spinel/node_modules/@types --types node scripts/ci/desktop-safari-identity.ts scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80785,
+      "parent": 80766,
+      "group": 80766,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80797,
+      "parent": 80766,
+      "group": 80766,
+      "rssKiB": 81232,
+      "started": "Thu Nov  5 04:38:24 2026",
+      "command": "(tsc)"
+    },
+    {
+      "pid": 80804,
+      "parent": 80766,
+      "group": 80766,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80817,
+      "parent": 80766,
+      "group": 80766,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:38:25 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

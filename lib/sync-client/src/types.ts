@@ -1,5 +1,6 @@
 import type { IDocumentData, IWorkbookData, Univer } from '@univerjs/core';
 import type { BaseCells, Mutation } from '@spinel/sync-transform';
+import type { DiagnosticSource } from '@spinel/diagnostics';
 
 export type NativeSnapshot = IWorkbookData | IDocumentData;
 export type DocumentKind = 'sheet' | 'doc';
@@ -104,6 +105,10 @@ export interface SyncReplica {
   dispose(): void;
 }
 export interface SyncClientOptions {
+  /** Optional observations cannot participate in synchronization or persistence. */
+  diagnostics?: DiagnosticSource;
+  /** Monotonic diagnostic clock. Never used for edit or persistence decisions. */
+  diagnosticNow?(): number;
   unitId: string;
   revision: number;
   confirmed: SyncReplica;

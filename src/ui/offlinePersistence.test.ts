@@ -8,6 +8,7 @@ import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import * as offlineStorage from '../../web/offline/offlineStore.ts';
 import type { OfflineStore } from '../../web/offline/offlineStore.ts';
+import type { DiagnosticEvent } from '@spinel/diagnostics';
 
 const cleanup: (() => void)[] = [];
 const scope = {
@@ -143,6 +144,78 @@ function native(active: OfflineSession) {
     },
   };
 }
+
+test('local durable diagnostics wait for the real checkpoint commit and distinguish a skipped store', async () => {
+  const events: DiagnosticEvent[] = [];
+  const f = session();
+  f.active.diagnostics = () => ({
+    sink: (event) => events.push(event),
+    context: { component: 'editor' },
+  });
+  await f.active.persist(() => checkpoint);
+  expect(events).toEqual([
+    expect.objectContaining({
+      name: 'offline.persistence',
+      details: expect.objectContaining({ outcome: 'skipped', reason: 'not-prepared' }),
+    }),
+  ]);
+  f.store.bundle.mockResolvedValue(downloaded());
+  const entered = Promise.withResolvers<void>();
+  const commit = Promise.withResolvers<void>();
+  f.store.saveCheckpoint.mockImplementationOnce(async (_scope, value, verify) => {
+    entered.resolve();
+    await commit.promise;
+    verify();
+    f.saved.push(structuredClone(value));
+  });
+  const saving = f.active.persist(() => checkpoint);
+  try {
+    await entered.promise;
+    expect(events.some((event) => event.name === 'operation.result')).toBe(false);
+    commit.resolve();
+    await saving;
+    expect(f.saved).toHaveLength(1);
+    expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+      expect.objectContaining({
+        details: expect.objectContaining({ operation: 'document-save-local', outcome: 'success' }),
+      }),
+    ]);
+    expect(
+      events.some(
+        (event) =>
+          event.name === 'operation.result' &&
+          event.details.operation === 'document-save-server-ack',
+      ),
+    ).toBe(false);
+  } finally {
+    commit.resolve();
+  }
+});
+
+test('a failing real store preserves its original exception while a throwing observer cannot prevent a durable write', async () => {
+  const f = session(downloaded());
+  const events: DiagnosticEvent[] = [];
+  f.active.diagnostics = () => ({
+    sink: (event) => {
+      events.push(event);
+      throw new Error('observer');
+    },
+    context: { component: 'editor' },
+  });
+  const failure = new Error('disk full');
+  f.store.saveCheckpoint.mockRejectedValueOnce(failure);
+  await expect(f.active.persist(() => checkpoint)).rejects.toBe(failure);
+  expect(f.saved).toHaveLength(0);
+  expect(events).toContainEqual(
+    expect.objectContaining({
+      name: 'offline.persistence',
+      details: expect.objectContaining({ outcome: 'failure' }),
+    }),
+  );
+  await f.active.persist(() => checkpoint);
+  expect(f.saved).toHaveLength(1);
+  expect(f.active.checkpoint).toEqual(checkpoint);
+});
 
 test.each([false, true])(
   'inactive persistence captures no confirmed snapshots (prepared account=%s)',

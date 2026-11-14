@@ -1,0 +1,54 @@
+{
+  "root": 80226,
+  "started": 1793881981949,
+  "elapsedMs": 251,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 93216,
+  "peakKiB": 93216,
+  "live": [
+    {
+      "pid": 80226,
+      "parent": 80200,
+      "group": 80226,
+      "rssKiB": 91680,
+      "started": "Thu Nov  5 04:33:01 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-probe-watchdog.json node /tmp/spn123-production-inventory/probe-loader.ts"
+    },
+    {
+      "pid": 80279,
+      "parent": 80226,
+      "group": 80226,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:33:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 80226,
+      "parent": 80200,
+      "group": 80226,
+      "rssKiB": 91680,
+      "started": "Thu Nov  5 04:33:01 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-probe-watchdog.json node /tmp/spn123-production-inventory/probe-loader.ts"
+    },
+    {
+      "pid": 80245,
+      "parent": 80226,
+      "group": 80226,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:33:01 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80279,
+      "parent": 80226,
+      "group": 80226,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:33:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

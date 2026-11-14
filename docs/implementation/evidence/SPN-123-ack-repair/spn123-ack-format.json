@@ -1,0 +1,16 @@
+{
+  "name": "spn123-ack-format",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "lib/sync-client/src/client.ts",
+    "lib/sync-client/tests/diagnostics.test.ts",
+    "docs/diagnostics.md"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 368,
+  "peakKiB": 192672
+}

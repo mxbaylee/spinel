@@ -5,6 +5,7 @@ import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
 import {
   exactKeys,
+  isClientDiagnosticEvent,
   isDiagnosticRecord,
   isObject,
   isUuid,
@@ -146,7 +147,16 @@ export function diagnosticsRoutes(
     if (
       records.some(
         ({ event, context }) =>
-          !event.name.startsWith('operation.') ||
+          (![
+            'operation.result',
+            'operation.failed',
+            'operation.duration',
+            'operation.count',
+          ].includes(event.name) &&
+            !isClientDiagnosticEvent(event) &&
+            !['sync.edit.resync', 'sync.edit.resync.log', 'sync.resync.pending'].includes(
+              event.name,
+            )) ||
           context.component === 'server' ||
           context.component === 'health',
       )

@@ -20,6 +20,12 @@ import { expiredCheckpoints, MINUTE } from './policy.ts';
 import type { Checkpoint } from './policy.ts';
 import { observeJob } from '../health/jobs.ts';
 import type { ObserveJob } from '../health/jobs.ts';
+import { observe } from '@spinel/diagnostics';
+import type {
+  DiagnosticContext,
+  DiagnosticEvent,
+  HistoryDiagnosticEvent,
+} from '@spinel/diagnostics';
 
 const compress = promisify(gzip),
   decompress = promisify(gunzip);
@@ -42,15 +48,22 @@ export class HistoryStore {
   private ticking: Promise<void> | undefined;
   private closing = false;
   private readonly observeMaintenance?: ObserveJob;
+  private readonly diagnostics?: (
+    event: DiagnosticEvent,
+    context: DiagnosticContext,
+    actorId?: string,
+  ) => void;
 
   constructor(
     workspace: WorkspaceStore,
     collaboration: CollaborationStore,
     observeMaintenance?: ObserveJob,
+    diagnostics?: (event: DiagnosticEvent, context: DiagnosticContext, actorId?: string) => void,
   ) {
     this.workspace = workspace;
     this.collaboration = collaboration;
     this.observeMaintenance = observeMaintenance;
+    this.diagnostics = diagnostics;
     const db = workspace.auth.database;
     db.exec(`
       CREATE TABLE IF NOT EXISTS history_checkpoints (
@@ -209,49 +222,89 @@ export class HistoryStore {
     source: Source,
     customData: Record<string, unknown>,
   ) {
-    const db = this.workspace.auth.database;
-    const migrated = () =>
-      source === 'native' &&
-      db.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id);
-    // A scan's cached row may predate the migration fence. Never capture that old native copy.
-    if (migrated()) return;
-    const generation =
-      source === 'collaboration' ? this.collaboration.generations.active(id) : undefined;
-    const data =
-      source === 'collaboration'
-        ? await this.collaboration.load(user, id, customData)
-        : this.native(user, id, customData);
-    resolveDocument(this.workspace, user, id, 'read', customData);
-    if (!data) return;
-    const observedAt = this.workspace.auth.now();
-    const bytes = Buffer.from(JSON.stringify(data.snapshot));
-    if (bytes.length > 10 * 1024 * 1024)
-      throw new Error('Checkpoint exceeds the document size limit.');
-    const packed = await compress(bytes);
-    this.workspace.auth.transaction(() => {
-      resolveDocument(this.workspace, user, id, 'read', customData);
-      // Migration may finish while native compression yields. Its baseline supersedes this pending capture.
-      if (migrated()) return;
-      if (generation) {
-        const current = this.collaboration.generations.active(id);
-        if (current.unitId !== generation.unitId || current.offset !== generation.offset)
-          throw new AuthError(409, 'The document changed while saving history. Try again.');
+    const started = performance.now();
+    const observed = (
+      outcome: HistoryDiagnosticEvent['details']['outcome'],
+      reason: HistoryDiagnosticEvent['details']['reason'],
+    ) => {
+      if (!this.diagnostics) return;
+      try {
+        resolveDocument(this.workspace, user, id, 'read', customData);
+        // Automatic history uses current access for safety, not actor attribution:
+        // a background scan's chosen reader is not the person who made the edit.
+        observe(
+          this.diagnostics,
+          {
+            name: 'history.checkpoint',
+            metric: { kind: 'counter', unit: 'count', value: 1 },
+            details: {
+              source,
+              outcome,
+              reason,
+              durationMs: Math.max(0, performance.now() - started),
+            },
+          },
+          {
+            component: 'server',
+            fileId: id,
+            ...(typeof customData.spaceId === 'string' ? { spaceId: customData.spaceId } : {}),
+          },
+        );
+      } catch {
+        /* A failed observer or revoked read cannot change checkpoint persistence. */
       }
-      db.prepare('INSERT OR IGNORE INTO history_checkpoints VALUES(?,?,?,?,?,NULL,?)').run(
-        randomUUID(),
-        id,
-        source,
-        data.revision,
-        observedAt,
-        packed,
-      );
-      // A concurrent confirmed edit retains its newer revision and idle timestamp.
-      db.prepare(
-        `INSERT INTO history_progress VALUES(?,?,?,?,?) ON CONFLICT(item_id,source) DO UPDATE SET
+    };
+    try {
+      const db = this.workspace.auth.database;
+      const migrated = () =>
+        source === 'native' &&
+        db.prepare('SELECT 1 FROM workspace_collaboration WHERE item_id=?').get(id);
+      // A scan's cached row may predate the migration fence. Never capture that old native copy.
+      if (migrated()) {
+        observed('skipped', 'migrated');
+        return;
+      }
+      const generation =
+        source === 'collaboration' ? this.collaboration.generations.active(id) : undefined;
+      const data =
+        source === 'collaboration'
+          ? await this.collaboration.load(user, id, customData)
+          : this.native(user, id, customData);
+      resolveDocument(this.workspace, user, id, 'read', customData);
+      if (!data) {
+        observed('skipped', 'missing');
+        return;
+      }
+      const observedAt = this.workspace.auth.now();
+      const bytes = Buffer.from(JSON.stringify(data.snapshot));
+      if (bytes.length > 10 * 1024 * 1024)
+        throw new Error('Checkpoint exceeds the document size limit.');
+      const packed = await compress(bytes);
+      const result = this.workspace.auth.transaction(() => {
+        resolveDocument(this.workspace, user, id, 'read', customData);
+        // Migration may finish while native compression yields. Its baseline supersedes this pending capture.
+        if (migrated()) return 'migrated';
+        if (generation) {
+          const current = this.collaboration.generations.active(id);
+          if (current.unitId !== generation.unitId || current.offset !== generation.offset)
+            throw new AuthError(409, 'The document changed while saving history. Try again.');
+        }
+        const written = db
+          .prepare('INSERT OR IGNORE INTO history_checkpoints VALUES(?,?,?,?,?,NULL,?)')
+          .run(randomUUID(), id, source, data.revision, observedAt, packed);
+        // A concurrent confirmed edit retains its newer revision and idle timestamp.
+        db.prepare(
+          `INSERT INTO history_progress VALUES(?,?,?,?,?) ON CONFLICT(item_id,source) DO UPDATE SET
         revision=max(revision,excluded.revision), captured_at=max(captured_at,excluded.captured_at)`,
-      ).run(id, source, data.revision, observedAt, observedAt);
-      if (typeof customData.spaceId === 'string') this.maintainedSpaces.add(id);
-    });
+        ).run(id, source, data.revision, observedAt, observedAt);
+        if (typeof customData.spaceId === 'string') this.maintainedSpaces.add(id);
+        return Number(written.changes) ? 'capture' : 'unchanged';
+      });
+      observed(result === 'capture' ? 'captured' : 'skipped', result);
+    } catch (error) {
+      observed('failure', 'unavailable');
+      throw error;
+    }
   }
 
   private accountAccess(
