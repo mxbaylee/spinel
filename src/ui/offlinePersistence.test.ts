@@ -213,11 +213,17 @@ test.each([false, true])(
       opening = foreground.activate().then(() => {
         opened = true;
       });
+      void opening.catch(() => {});
       await stopping.promise;
+      let released = false;
+      void replay.stop().then(() => {
+        released = true;
+      });
       expect(opened).toBe(false);
       expect(disposed).not.toHaveBeenCalled();
       committed.resolve();
       expect(await outcome).toBe(cleanupFails ? cleanupError : undefined);
+      expect(released).toBe(true);
       await opening;
       expect(foreground.enabled).toBe(true);
       expect(foreground.readOnly).toBe(false);
@@ -225,9 +231,8 @@ test.each([false, true])(
       expect(disposed).toHaveBeenCalledOnce();
     } finally {
       committed.resolve();
-      await replay.stop();
+      void replay.stop();
       await outcome;
-      await opening;
       foreground.dispose();
     }
   },
