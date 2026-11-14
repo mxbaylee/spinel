@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-14T18:24:29.889775+00:00",
+  "stagedEntriesVerified": 152,
+  "allStoredAndDecodedHashesVerified": true,
+  "collectorConcern": "corrected display-level concern; no demonstrated earlier090syntax failure",
+  "realManifestBug": "preserved and corrected independently",
+  "candidateUnchanged": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "publishedBodySha256": "7566a55e3cf4983a20269ce49b25b22bd66caed564cb99a3ca7ee3d5e0e65c86",
+  "initialHostedSnapshot": "/tmp/spn090-publication-724b5777/initial-20261114T182352Z",
+  "noCurrentHostedFailureObserved": true,
+  "allHostedAcceptanceComplete": false
+}

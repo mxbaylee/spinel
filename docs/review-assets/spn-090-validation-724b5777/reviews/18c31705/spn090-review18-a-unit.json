@@ -1,0 +1,27 @@
+{
+  "name": "spn090-review18-a-unit",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn090-review18-a-vitest-cache",
+    "src/ui/warmCatalog.test.ts",
+    "src/ui/warmOpen.test.ts",
+    "src/ui/startupDeadlines.test.ts",
+    "src/shared/serviceWorker.test.ts",
+    "src/shared/offlineShell.test.ts",
+    "src/ui/offlineProtection.test.ts",
+    "src/ui/offlineRuntime.test.ts",
+    "src/ui/offlineDownload.test.ts",
+    "src/ui/bootstrapFailure.test.ts",
+    "src/ui/appIcon.test.ts",
+    "src/ui/spinelSync.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2469,
+  "peakKiB": 607808
+}

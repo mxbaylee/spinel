@@ -1,0 +1,30 @@
+{
+  "name": "spn090-groom-focused",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn090-groom-vitest-cache",
+    "src/ui/warmCatalog.test.ts",
+    "src/ui/warmOpen.test.ts",
+    "src/ui/startupDeadlines.test.ts",
+    "src/shared/serviceWorker.test.ts",
+    "src/shared/offlineShell.test.ts",
+    "src/ui/offlineProtection.test.ts",
+    "src/ui/offlineRuntime.test.ts",
+    "src/ui/offlineDownload.test.ts",
+    "src/ui/bootstrapFailure.test.ts",
+    "src/ui/appIcon.test.ts",
+    "src/ui/nativeDrawingResize.test.ts",
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 5978,
+  "peakKiB": 1213808
+}

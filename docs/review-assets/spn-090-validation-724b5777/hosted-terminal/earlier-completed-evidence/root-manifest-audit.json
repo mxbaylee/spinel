@@ -1,0 +1,8 @@
+{
+  "at": "2026-11-14T18:47:03.752637+00:00",
+  "storedFilesVerified": 85,
+  "decodedFilesVerified": 85,
+  "snapshotOnly": true,
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "note": "Later production2 failure remains; this snapshot is not terminal acceptance."
+}

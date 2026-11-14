@@ -1,0 +1,69 @@
+{
+  "candidate": "18c3170590c162bebe118a17e4b47d7df40f36ad",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "integration": "abe24a24c6fa44e41ff51faef36ca8b907aa5625",
+  "fullDiffSha256": "170fb55c6532d559bdcb060e1eb2b015e57838f2b4809968fd020a699913a69c",
+  "gradeFreePackagingDiffSha256": "6041b840b0c5c1f0f3246198ccef4244a4fa78f129aaf243edf06d178d9033d4",
+  "packagingSourcePaths": [
+    "docs/implementation/SPN-090-input-delivery.md",
+    "docs/implementation/SPN-090.md",
+    "spinel-spn-090-rubric-notes.md"
+  ],
+  "runtimeDelta": "none; documentation only",
+  "numericalAssessmentScan": {
+    "changedTextAndGzip": true,
+    "fullDiff": true,
+    "gradeFreePackagingDiff": true,
+    "findings": []
+  },
+  "historicalOriginals": "Retained manager-side byte-exact at original published source and integration source; original hashes excluded from review packet content only to avoid accidentally supplying raw score-bearing reports.",
+  "localChecks": {
+    "PR": {
+      "name": "spn090-grade-free-final-pr",
+      "args": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+        "--title",
+        "\ud83e\uddea SPN-090 Verify offline launches on real phones"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 488,
+      "peakKiB": 266000
+    },
+    "format": {
+      "name": "spn090-grade-free-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "docs/implementation/SPN-090.md",
+        "docs/implementation/SPN-090-input-delivery.md",
+        "spinel-spn-090-rubric-notes.md"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 489,
+      "peakKiB": 286160
+    },
+    "backlog": {
+      "name": "spn090-grade-free-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 234,
+      "peakKiB": 251184
+    }
+  }
+}

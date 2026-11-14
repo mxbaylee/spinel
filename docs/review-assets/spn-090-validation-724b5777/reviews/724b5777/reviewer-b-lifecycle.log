@@ -1,0 +1,32 @@
+[WebServer] (node:29154) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+
+Running 5 tests using 1 worker
+
+(node:29306) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/5] [development] › e2e/startup-lifecycle.spec.ts:81:1 › guest startup reporting ends when a ready guest mounts after slow app code
+[2/5] [development] › e2e/startup-lifecycle.spec.ts:124:3 › guest startup reporting ends for unavailable entry
+[3/5] [development] › e2e/startup-lifecycle.spec.ts:124:3 › guest startup reporting ends for revoked entry
+[4/5] [development] › e2e/startup-lifecycle.spec.ts:124:3 › guest startup reporting ends for unsupported entry
+[5/5] [development] › e2e/startup-lifecycle.spec.ts:150:1 › account startup reporting remains live while actual admission is pending
+  5 passed (6.6s)
+{"name":"spn090-724-review-b-lifecycle","args":["node","node_modules/@playwright/test/cli.js","test","e2e/startup-lifecycle.spec.ts","--project=development","--workers=1","--retries=0","--output=/tmp/spn090-review-724b5777/browser-output"],"code":0,"signal":null,"reason":null,"elapsedMs":6973,"peakKiB":1200496}

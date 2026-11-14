@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-11-14T19:01:36.549974+00:00",
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "allTerminal": true,
+  "jobs": 46,
+  "newJobLogs": [
+    132542712082,
+    132542712402,
+    132542712412,
+    132542712418,
+    132542712470,
+    132552796173
+  ],
+  "network": "GET only; original attempts; no reruns/cancellations/mutations",
+  "immutableOriginalFailure": "a9dd1e0f4b70963fb87e149228cc67a2a6b56990",
+  "firstManifestObject": "6c5e64670f61d0a7095461c94492efc20315abba"
+}

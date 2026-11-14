@@ -1,0 +1,13 @@
+{
+  "name": "spn090-guest-types",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9002,
+  "peakKiB": 1707360
+}

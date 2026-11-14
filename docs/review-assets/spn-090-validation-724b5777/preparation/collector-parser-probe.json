@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-14T18:17:40.054Z",
+  "sourceSha256": "d8cda61940a7f3b0df8ffcf663fdf99b27bb5ac832021f685bbea9529d21dab2",
+  "numericExpression": "/^\\d+$/",
+  "numericExpressionBackslashCount": 1,
+  "acceptsDecimalRunIds": true,
+  "rejectsLettersAndLiteralBackslashD": true,
+  "delimiterCodepoints": [
+    10
+  ],
+  "multiLineJsonSelection": true,
+  "networkCalls": 0,
+  "note": "The expanded current collector already contains single source escapes. This probe evaluates only its extracted parser expressions; it does not import/execute the collector or claim full collection validation."
+}

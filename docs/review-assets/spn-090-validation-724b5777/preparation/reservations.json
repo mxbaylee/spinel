@@ -1,0 +1,27 @@
+{
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "pullRequest": 224,
+  "branch": "codex/spn-090-real-devices",
+  "validation": {
+    "ref": "archive/spn-090-validation-724b5777-20261114",
+    "path": "docs/review-assets/spn-090-validation-724b5777",
+    "status": "reserved only; no ref or remote publication performed; terminal evidence not yet collected"
+  },
+  "completion": {
+    "ref": "archive/spn-090-completion-724b5777-20261114",
+    "path": "docs/review-assets/spn-090-completion-724b5777",
+    "status": "reserved only; requires actual merge, cleanup and final evidence"
+  },
+  "reviews": {
+    "firstSource": "18c3170590c162bebe118a17e4b47d7df40f36ad",
+    "firstPaths": [
+      "reviews/18c31705/reviewer-a.md",
+      "reviews/18c31705/reviewer-b.md"
+    ],
+    "finalPaths": [
+      "reviews/724b5777/reviewer-a.md",
+      "reviews/724b5777/reviewer-b.md"
+    ]
+  }
+}

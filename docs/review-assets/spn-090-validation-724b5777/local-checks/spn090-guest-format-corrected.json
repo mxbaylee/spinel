@@ -1,0 +1,14 @@
+{
+  "name": "spn090-guest-format-corrected",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "e2e/startup-lifecycle.spec.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 161,
+  "peakKiB": 0
+}

@@ -1,0 +1,598 @@
+{
+  "observedAt": "2026-11-14T18:42:18.469Z",
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "pr": 224,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": "43626186157",
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "allJobsTerminal": false,
+      "jobs": [
+        {
+          "id": 132542394091,
+          "name": "Classify changes (43626186157)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542394336,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542711897,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542711999,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712007,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712017,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712029,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712034,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712057,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712066,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712069,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712082,
+          "name": "Doc responsiveness (mobile)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132542712084,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712095,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712098,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712115,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712131,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712156,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712177,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712288,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712322,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712350,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712360,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712362,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712389,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712402,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132542712406,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542712412,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132542712418,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132542712470,
+          "name": "Playwright smoke (sync-production)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132545913910,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132546155726,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": "43626186192",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "allJobsTerminal": true,
+      "jobs": [
+        {
+          "id": 132542394127,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542638323,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542916899,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542916913,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542916918,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542916965,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542916995,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542918422,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132547045840,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132547197455,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": "43626186152",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "allJobsTerminal": true,
+      "jobs": [
+        {
+          "id": 132542393614,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542393837,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542393902,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14126516802,
+      "name": "ci-results-unit",
+      "bytes": 1184,
+      "downloadedZipSha256": "d52b23fbaa90ad638c5d74fd851d1cb840fe77b6e58215670621d3e93c6505c0",
+      "githubDigest": "sha256:d52b23fbaa90ad638c5d74fd851d1cb840fe77b6e58215670621d3e93c6505c0",
+      "jsonMembers": [
+        {
+          "originalPath": "ci-results-unit.json",
+          "storedPath": "artifact-14126516802-json-0.json.gz",
+          "bytes": 6278,
+          "sha256": "f50c7212346667274cd11eb7b15d3158088c3d74213c3f52656aad9a5fed05b8"
+        }
+      ]
+    },
+    {
+      "id": 14126391170,
+      "name": "ci-plan",
+      "bytes": 960,
+      "downloadedZipSha256": "2b65cc7b31781f3105e3f3d84bc8ceca9e0366c0ca33eedb4747800aba5cbbc8",
+      "githubDigest": "sha256:2b65cc7b31781f3105e3f3d84bc8ceca9e0366c0ca33eedb4747800aba5cbbc8",
+      "jsonMembers": [
+        {
+          "originalPath": "ci-plan.json",
+          "storedPath": "artifact-14126391170-json-0.json.gz",
+          "bytes": 3952,
+          "sha256": "e87592c66c081bc376d26d4520c9206a991afe820508ea46b29bd4c00c3eb283"
+        }
+      ]
+    },
+    {
+      "id": 14126042899,
+      "name": "ci-results-lib",
+      "bytes": 1202,
+      "downloadedZipSha256": "54c77828bd7470003778935b46be45472182c324a016dfa077733dcc8935076a",
+      "githubDigest": "sha256:54c77828bd7470003778935b46be45472182c324a016dfa077733dcc8935076a",
+      "jsonMembers": [
+        {
+          "originalPath": "ci-results-lib.json",
+          "storedPath": "artifact-14126042899-json-0.json.gz",
+          "bytes": 6385,
+          "sha256": "764bea4804bf6fb2fa3f4477c5a3e512fbd5c4c5803917ce9d5988d543beaaba"
+        }
+      ]
+    },
+    {
+      "id": 14127076885,
+      "name": "design-review-tablet",
+      "bytes": 44867209,
+      "downloadedZipSha256": "e37db0de8935fb512e9957e226a6c4da4c2cfc3a1043e06f4579d331c312f9eb",
+      "githubDigest": "sha256:e37db0de8935fb512e9957e226a6c4da4c2cfc3a1043e06f4579d331c312f9eb",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14127076885-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "edf6366e76f1c2974853e530497a40588f6c1e0852dd02845bd09802cfe5bd29"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14127076885-json-1.json.gz",
+          "bytes": 385597,
+          "sha256": "e7df0b8ab9a29aaa8854471747e4a874f9412f5d93214779dac61e7f1b2a0d11"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-tablet-initial-geometry.json",
+          "storedPath": "artifact-14127076885-json-2.json.gz",
+          "bytes": 1214,
+          "sha256": "b27eaf73d36b052b1cf2a6a43724e8ab5d6ed9f0666f6b87a26d206b8cdf2233"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-tablet-initial-geometry.json",
+          "storedPath": "artifact-14127076885-json-3.json.gz",
+          "bytes": 719,
+          "sha256": "dc177b69762f8ac5d8674418e7368fccc88fd2e9d4501d54e7c3b0348a09a160"
+        }
+      ]
+    },
+    {
+      "id": 14126831772,
+      "name": "design-review-mobile-light",
+      "bytes": 40801812,
+      "downloadedZipSha256": "4fd09ca6729f31de8f1966bd236d73de8ffdf5ab8b372b8e0c23907371b80acd",
+      "githubDigest": "sha256:4fd09ca6729f31de8f1966bd236d73de8ffdf5ab8b372b8e0c23907371b80acd",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14126831772-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "edf6366e76f1c2974853e530497a40588f6c1e0852dd02845bd09802cfe5bd29"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14126831772-json-1.json.gz",
+          "bytes": 382460,
+          "sha256": "48216165f6c3b1c2f08ebd268133b6f8d41e9bfeae1eee2b075d834bcda13d54"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-phone-initial-geometry.json",
+          "storedPath": "artifact-14126831772-json-2.json.gz",
+          "bytes": 1214,
+          "sha256": "636f24123ca74786f1c9e9bf7a2363744e1e8726bf4f77dc209098ff1a59b162"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-phone-initial-geometry.json",
+          "storedPath": "artifact-14126831772-json-3.json.gz",
+          "bytes": 719,
+          "sha256": "335196a0601155359d0d43121c377d241fdee0c9ce31835b2bc40a1d943fa638"
+        }
+      ]
+    },
+    {
+      "id": 14126826723,
+      "name": "design-review-desktop-light",
+      "bytes": 48514529,
+      "downloadedZipSha256": "2f6f87fbd434f1fa12a8886bc733148722085d667221c6d51dfa9e6cb706788b",
+      "githubDigest": "sha256:2f6f87fbd434f1fa12a8886bc733148722085d667221c6d51dfa9e6cb706788b",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14126826723-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "edf6366e76f1c2974853e530497a40588f6c1e0852dd02845bd09802cfe5bd29"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14126826723-json-1.json.gz",
+          "bytes": 382677,
+          "sha256": "697ef679d9e213f2ddb32a340c90eeb16b26ceac74ee86fd454985d399cd8b5d"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-light-initial-geometry.json",
+          "storedPath": "artifact-14126826723-json-2.json.gz",
+          "bytes": 1226,
+          "sha256": "0b492d18d7c2238eb0b9c288ec31cd9f5d1185c5bee107ad172966f65e3d7379"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-light-initial-geometry.json",
+          "storedPath": "artifact-14126826723-json-3.json.gz",
+          "bytes": 888,
+          "sha256": "7c8fb2c6363a42eab744501493befabc52e147109a42ba54295a0d2997627b44"
+        }
+      ]
+    },
+    {
+      "id": 14126816548,
+      "name": "design-review-mobile-dark",
+      "bytes": 41177980,
+      "downloadedZipSha256": "37cb409240d8c0b4f4f193ff9b3639288957f50f636c3cc9d113b575e2cb4468",
+      "githubDigest": "sha256:37cb409240d8c0b4f4f193ff9b3639288957f50f636c3cc9d113b575e2cb4468",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14126816548-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "edf6366e76f1c2974853e530497a40588f6c1e0852dd02845bd09802cfe5bd29"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14126816548-json-1.json.gz",
+          "bytes": 398154,
+          "sha256": "389f87d88401bcd8048ee34a3a924ba48da092fe407c0c6091da86c3cd59996d"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-phone-dark-initial-geometry.json",
+          "storedPath": "artifact-14126816548-json-2.json.gz",
+          "bytes": 1214,
+          "sha256": "636f24123ca74786f1c9e9bf7a2363744e1e8726bf4f77dc209098ff1a59b162"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-phone-dark-initial-geometry.json",
+          "storedPath": "artifact-14126816548-json-3.json.gz",
+          "bytes": 719,
+          "sha256": "335196a0601155359d0d43121c377d241fdee0c9ce31835b2bc40a1d943fa638"
+        }
+      ]
+    },
+    {
+      "id": 14126014718,
+      "name": "design-review-desktop-dark",
+      "bytes": 49066548,
+      "downloadedZipSha256": "b93bf8be3e7121ba59a7becdc1f29bcbf22046d95d744dfa784c1e24c10079b6",
+      "githubDigest": "sha256:b93bf8be3e7121ba59a7becdc1f29bcbf22046d95d744dfa784c1e24c10079b6",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14126014718-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "edf6366e76f1c2974853e530497a40588f6c1e0852dd02845bd09802cfe5bd29"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14126014718-json-1.json.gz",
+          "bytes": 379321,
+          "sha256": "3c39ee060284879f48e5ce7810fb27838c68a93f31187559a78137a692664e07"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-dark-initial-geometry.json",
+          "storedPath": "artifact-14126014718-json-2.json.gz",
+          "bytes": 1226,
+          "sha256": "0b492d18d7c2238eb0b9c288ec31cd9f5d1185c5bee107ad172966f65e3d7379"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-dark-initial-geometry.json",
+          "storedPath": "artifact-14126014718-json-3.json.gz",
+          "bytes": 888,
+          "sha256": "7c8fb2c6363a42eab744501493befabc52e147109a42ba54295a0d2997627b44"
+        }
+      ]
+    },
+    {
+      "id": 14126976088,
+      "name": "desktop-offline-safari-macos-15-intel-43626186152-1",
+      "bytes": 1050211,
+      "downloadedZipSha256": "dd99b07a55024d8c31481f94af945a65c79665e493e19593aaaddff403b6ee8b",
+      "githubDigest": "sha256:dd99b07a55024d8c31481f94af945a65c79665e493e19593aaaddff403b6ee8b",
+      "jsonMembers": [
+        {
+          "originalPath": "safari/acceptance.json",
+          "storedPath": "artifact-14126976088-json-0.json.gz",
+          "bytes": 52830,
+          "sha256": "1519bdd4b84a96cc2571e8364028649bb0d617fc3671bdf401d4d3ece336a48f"
+        },
+        {
+          "originalPath": "safari/versions.json",
+          "storedPath": "artifact-14126976088-json-1.json.gz",
+          "bytes": 858,
+          "sha256": "8d9ddbefa9108a64c9e4f4249fb637a2e7a35158d50d2edb610bd5223e2db6e4"
+        },
+        {
+          "originalPath": "safari-profile-probe.json",
+          "storedPath": "artifact-14126976088-json-2.json.gz",
+          "bytes": 167250,
+          "sha256": "441ee614a9c44a5abc9e84adcb7137315f9354cdac107191101150c1d947fae6"
+        }
+      ]
+    },
+    {
+      "id": 14126685247,
+      "name": "desktop-offline-firefox-macos-26-43626186152-1",
+      "bytes": 497433,
+      "downloadedZipSha256": "62a690f5b45fe6bdc3656c4e2c0b0b5af0193cf752d4e1620b58674790be9a8f",
+      "githubDigest": "sha256:62a690f5b45fe6bdc3656c4e2c0b0b5af0193cf752d4e1620b58674790be9a8f",
+      "jsonMembers": [
+        {
+          "originalPath": "firefox/acceptance.json",
+          "storedPath": "artifact-14126685247-json-0.json.gz",
+          "bytes": 56442,
+          "sha256": "0b18e14fbe64350dd437f690ae8f6407534e93f03583651ccae55c340c6582dc"
+        },
+        {
+          "originalPath": "firefox/firefox-storage-prompt-1.json",
+          "storedPath": "artifact-14126685247-json-1.json.gz",
+          "bytes": 21983,
+          "sha256": "7490dcb11631831bf7d46a86af9c8fa7a14f747cd63b954d038396ed22a9e25e"
+        },
+        {
+          "originalPath": "firefox/versions.json",
+          "storedPath": "artifact-14126685247-json-2.json.gz",
+          "bytes": 644,
+          "sha256": "c2cf6b1d5e2e1198bafd63b12d19ed571e06bd76427c8bd2afb25127f8b9a420"
+        }
+      ]
+    },
+    {
+      "id": 14126192059,
+      "name": "desktop-offline-chrome-macos-26-43626186152-1",
+      "bytes": 226043,
+      "downloadedZipSha256": "1787a76637e573ce897f33595a5fece66e093ecd5e458e77f4b8f567050d6181",
+      "githubDigest": "sha256:1787a76637e573ce897f33595a5fece66e093ecd5e458e77f4b8f567050d6181",
+      "jsonMembers": [
+        {
+          "originalPath": "chrome/acceptance.json",
+          "storedPath": "artifact-14126192059-json-0.json.gz",
+          "bytes": 55185,
+          "sha256": "c1302b33c58f2d5bf9baed7e738b1b8534f514f04ae8b5de014406d3ed8608bd"
+        },
+        {
+          "originalPath": "chrome/versions.json",
+          "storedPath": "artifact-14126192059-json-1.json.gz",
+          "bytes": 824,
+          "sha256": "2d493a38a74b56c34b125866fa2d83bfbb3012c0dcb849cef518f749ee5ac420"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "archiveReady": false,
+  "note": "Raw GET-only checkpoint. Exact plan/tested-tree/gate/result identity and first-failure/privacy review still required. No current pass, merge or archive publication inferred."
+}

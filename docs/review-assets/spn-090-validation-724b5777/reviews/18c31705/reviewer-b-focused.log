@@ -1,0 +1,13 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-090-current
+
+
+ Test Files  14 passed (14)
+      Tests  161 passed (161)
+   Start at  09:54:11
+   Duration  5.26s (transform 41%, import 31%, tests 28%, worker 1%)
+
+    Isolate  14 workers spawned · ~56ms startup each (spawn + environment, per file)
+             at least ~729ms faster with isolate: false — reuses workers across files instead of one per file
+
+{"name":"spn090-review-b-focused","args":["node","node_modules/vitest/vitest.mjs","run","--cache=false","--fsModuleCachePath","/tmp/spn090-review-18c31705/reviewer-b-cache","src/ui/warmCatalog.test.ts","src/ui/warmOpen.test.ts","src/ui/startupDeadlines.test.ts","src/shared/serviceWorker.test.ts","src/shared/offlineShell.test.ts","src/ui/offlineProtection.test.ts","src/ui/offlineRuntime.test.ts","src/ui/offlineDownload.test.ts","src/ui/bootstrapFailure.test.ts","src/ui/appIcon.test.ts","src/ui/nativeDrawingResize.test.ts","src/server/maintenance/http.test.ts","src/server/maintenance/ownership.test.ts","src/server/maintenance/supervisor-test-control.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":5502,"peakKiB":1047184}

@@ -1,0 +1,6 @@
+{
+  "status": "Preparation audit, not source/runtime test or hosted collection",
+  "earlierObservation": "Delivery manager and SPN-098 worker independently observed a prior prepared collector with double-escaped digit regex/newline split before the expanded rewrite; those exact earlier SPN-090 bytes were not captured by this worker before replacement. Do not infer the bug never existed.",
+  "retainedVersion": "collect-hosted-first-preparation.ts is the first snapshot retained by this worker: the already-expanded correct collector before parser probe. It is not represented as the earlier malformed bytes.",
+  "probe": "collector-parser-probe.json proves current actual parser expressions with zero network calls; no actual collector import, workflow collection or archive publication occurred."
+}

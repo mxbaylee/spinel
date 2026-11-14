@@ -1,0 +1,2 @@
+{"kind":"actual-startup-module + static-guest-dispatch probe","afterGuestBoot":"Still starting: styles (120 s)","intervalStillActive":true,"nativeBrowserClaim":false}
+{"name":"spn090-review-b-guest-probe","args":["node","/tmp/spn090-review-18c31705/reviewer-b-guest-probe.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":112,"peakKiB":0}

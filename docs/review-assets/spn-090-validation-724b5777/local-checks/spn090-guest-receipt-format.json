@@ -1,0 +1,14 @@
+{
+  "name": "spn090-guest-receipt-format",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/receipts.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 125,
+  "peakKiB": 0
+}

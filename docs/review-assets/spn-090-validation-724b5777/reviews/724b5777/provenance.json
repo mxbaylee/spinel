@@ -1,0 +1,11 @@
+{
+  "candidate": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "previous": "18c3170590c162bebe118a17e4b47d7df40f36ad",
+  "fullDiffSha256": "d12895fdedb5a773d79a0b1c376dc27b39a84dae04b97357d64139b034c63ee1",
+  "repairDiffSha256": "73723aa54a5133c45a458624abd6e612b8b49faf558fdcb655c863fe7255fa15",
+  "priorNumericalAssessmentIncluded": false,
+  "remoteExpected": "67111d9c106c6518b813c6f1cf332068526c254c",
+  "hostedCurrentAcceptance": "pending",
+  "sourceStatus": "tracked clean; original untracked artifacts preserved"
+}

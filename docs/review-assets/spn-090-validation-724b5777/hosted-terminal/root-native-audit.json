@@ -1,0 +1,26 @@
+{
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "run": 43626186152,
+  "attempt": 1,
+  "decodedPayloadsVerified": 8,
+  "reports": [
+    {
+      "browser": "safari",
+      "status": "passed",
+      "launches": 4,
+      "stages": 46
+    },
+    {
+      "browser": "firefox",
+      "status": "passed",
+      "launches": 4,
+      "stages": 44
+    },
+    {
+      "browser": "chrome",
+      "status": "passed",
+      "launches": 4,
+      "stages": 44
+    }
+  ]
+}

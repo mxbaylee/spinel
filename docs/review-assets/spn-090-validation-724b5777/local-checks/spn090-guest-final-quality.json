@@ -1,0 +1,18 @@
+{
+  "name": "spn090-guest-final-quality",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "web/GuestApp.tsx",
+    "e2e/startup-lifecycle.spec.ts",
+    "docs/implementation/SPN-090.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/README.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/receipts.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 568,
+  "peakKiB": 286048
+}

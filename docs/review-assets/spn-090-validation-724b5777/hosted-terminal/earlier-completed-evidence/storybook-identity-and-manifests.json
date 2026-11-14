@@ -1,0 +1,140 @@
+{
+  "artifact": 14126251433,
+  "zipSha256": "a8218dc2af0bfd19f58295e1a910276793d42e80352bf152412d07314f3155b6",
+  "zipBytes": 6245816,
+  "members": [
+    {
+      "originalPath": "index.json",
+      "path": "storybook-build-index.json.gz",
+      "decodedSha256": "30127312b263204e333c72ae0755aa99e9bcb56f5053381e89d2893d71d0da55",
+      "decodedBytes": 353413
+    },
+    {
+      "originalPath": "sha.json",
+      "path": "storybook-build-sha.json.gz",
+      "decodedSha256": "371549271f141b6ee6dd0a794d8d5bf84b1e18ef4d16704f9afc264aded23e17",
+      "decodedBytes": 304
+    }
+  ],
+  "identity": {
+    "sha": "724b577791273e0962ff08a38dea77a5aa632d84",
+    "checkedOutSha": "6c28675d5fb1cc2d0a0a695413f95967b568ee40",
+    "branch": "codex/spn-090-real-devices",
+    "pullRequest": 224,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/43626186192",
+    "builtAt": "2026-11-14T18:23:34.536Z"
+  },
+  "fullBuildStories": 1043,
+  "variants": [
+    {
+      "artifact": 14127076885,
+      "name": "design-review-tablet",
+      "downloadedZipSha256": "e37db0de8935fb512e9957e226a6c4da4c2cfc3a1043e06f4579d331c312f9eb",
+      "checked": 1043,
+      "requested": 1043,
+      "captures": 1043,
+      "failures": [],
+      "durationMs": 458614,
+      "startupChecked": [
+        {
+          "id": "current-production-startup-status--slow-start",
+          "variant": "tablet"
+        }
+      ],
+      "drawingChecked": [
+        {
+          "id": "editor-sync-native--doc-drawing-capture",
+          "variant": "tablet"
+        }
+      ]
+    },
+    {
+      "artifact": 14126831772,
+      "name": "design-review-mobile-light",
+      "downloadedZipSha256": "4fd09ca6729f31de8f1966bd236d73de8ffdf5ab8b372b8e0c23907371b80acd",
+      "checked": 1043,
+      "requested": 1043,
+      "captures": 1043,
+      "failures": [],
+      "durationMs": 442537,
+      "startupChecked": [
+        {
+          "id": "current-production-startup-status--slow-start",
+          "variant": "phone"
+        }
+      ],
+      "drawingChecked": [
+        {
+          "id": "editor-sync-native--doc-drawing-capture",
+          "variant": "phone"
+        }
+      ]
+    },
+    {
+      "artifact": 14126826723,
+      "name": "design-review-desktop-light",
+      "downloadedZipSha256": "2f6f87fbd434f1fa12a8886bc733148722085d667221c6d51dfa9e6cb706788b",
+      "checked": 1043,
+      "requested": 1043,
+      "captures": 1043,
+      "failures": [],
+      "durationMs": 487451,
+      "startupChecked": [
+        {
+          "id": "current-production-startup-status--slow-start",
+          "variant": "light"
+        }
+      ],
+      "drawingChecked": [
+        {
+          "id": "editor-sync-native--doc-drawing-capture",
+          "variant": "light"
+        }
+      ]
+    },
+    {
+      "artifact": 14126816548,
+      "name": "design-review-mobile-dark",
+      "downloadedZipSha256": "37cb409240d8c0b4f4f193ff9b3639288957f50f636c3cc9d113b575e2cb4468",
+      "checked": 1043,
+      "requested": 1043,
+      "captures": 1043,
+      "failures": [],
+      "durationMs": 409320,
+      "startupChecked": [
+        {
+          "id": "current-production-startup-status--slow-start",
+          "variant": "phone-dark"
+        }
+      ],
+      "drawingChecked": [
+        {
+          "id": "editor-sync-native--doc-drawing-capture",
+          "variant": "phone-dark"
+        }
+      ]
+    },
+    {
+      "artifact": 14126014718,
+      "name": "design-review-desktop-dark",
+      "downloadedZipSha256": "b93bf8be3e7121ba59a7becdc1f29bcbf22046d95d744dfa784c1e24c10079b6",
+      "checked": 1043,
+      "requested": 1043,
+      "captures": 1043,
+      "failures": [],
+      "durationMs": 499786,
+      "startupChecked": [
+        {
+          "id": "current-production-startup-status--slow-start",
+          "variant": "dark"
+        }
+      ],
+      "drawingChecked": [
+        {
+          "id": "editor-sync-native--doc-drawing-capture",
+          "variant": "dark"
+        }
+      ]
+    }
+  ]
+}

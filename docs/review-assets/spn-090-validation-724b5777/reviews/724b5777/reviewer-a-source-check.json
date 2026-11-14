@@ -1,0 +1,49 @@
+{
+  "head": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "finalInputChecks": {
+    "web/GuestApp.tsx": true,
+    "web/application.tsx": true,
+    "web/main.tsx": true,
+    "web/App.tsx": true,
+    "web/startupStage.ts": true,
+    "web/StartupStage.stories.tsx": true,
+    "e2e/startup-lifecycle.spec.ts": true,
+    "playwright.config.ts": true
+  },
+  "retainedVisualSources": {
+    "web/StartupStage.stories.tsx": true,
+    "web/startupStage.ts": true,
+    "web/offline/OfflineAvailability.stories.tsx": true,
+    "web/offline/OfflineAvailability.tsx": true,
+    "web/offline/protection.ts": true,
+    "src/ui/appIcon.ts": true,
+    "src/ui/gemGeometry.ts": true,
+    "src/ui/palette.ts": true,
+    ".storybook/main.ts": true,
+    ".storybook/preview.tsx": true,
+    "scripts/screenshots.ts": false
+  },
+  "deltaPaths": [
+    "docs/implementation/SPN-090.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/README.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/before-type-correction.spec.ts.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/first-account-context.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/first-ready-context.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/negative-context.md",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/negative-visible-line.png",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/receipts.json",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-lifecycle-corrected.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-lifecycle-final.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-lifecycle-first.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-lifecycle-negative.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-lint.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-project-selection.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-timing-unit.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-types-corrected.log.gz",
+    "docs/implementation/evidence/SPN-090-current/guest-startup/spn090-guest-types.log.gz",
+    "e2e/startup-lifecycle.spec.ts",
+    "web/GuestApp.tsx"
+  ],
+  "fullDiffSha256": "d12895fdedb5a773d79a0b1c376dc27b39a84dae04b97357d64139b034c63ee1",
+  "negativeTestSnapshotMatches": true
+}

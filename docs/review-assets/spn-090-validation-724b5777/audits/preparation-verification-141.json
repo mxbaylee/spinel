@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-11-14T18:16:55.533706+00:00",
+  "entriesVerified": 141,
+  "storedAndDecodedHashesVerified": true,
+  "byteExactOriginalReviewReports": 4,
+  "byteExactImmutableOriginalSourceRecords": 6,
+  "candidateUnchanged": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "highConfidenceCredentialPatternHits": [],
+  "selection": "Only source-bound reviews, reports, JSON receipts, logs, audited code/evidence and previous public-source records. No environment dumps, credentials, actual private document content, database/profile, node_modules or full screenshot ZIP payloads included. Task worktree paths in original reports are retained for provenance. Pattern scan supplements this bounded selection; it is not a universal secret detector.",
+  "firstManifestCorrection": "First manifest mislabeled already-compressed input bytes as decoded metadata; all gzip entries now derive decoded fields from actual gunzip. Original files unchanged; first manifest preserved at audits/staging-manifest-first-attempt.json. No source candidate changed."
+}

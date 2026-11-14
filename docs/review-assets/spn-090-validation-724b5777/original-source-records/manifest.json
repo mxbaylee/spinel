@@ -1,0 +1,44 @@
+{
+  "scope": "Manager archival copy; not supplied to fresh independent grading reviewers. All originals byte-exact.",
+  "publishedOriginal": "67111d9c106c6518b813c6f1cf332068526c254c",
+  "publishedArchiveDescendant": "9d89b15d4dda6cf8595e810aa4463bbeee97147a",
+  "prePackagingCandidate": "abe24a24c6fa44e41ff51faef36ca8b907aa5625",
+  "files": [
+    {
+      "source": "67111d9c106c6518b813c6f1cf332068526c254c",
+      "path": "docs/implementation/SPN-090.md",
+      "bytes": 386108,
+      "sha256": "81706f5d85eeb2672a39ea9c0f91e7fbc5e763b2ba1e9cb1e387d419941455e5"
+    },
+    {
+      "source": "67111d9c106c6518b813c6f1cf332068526c254c",
+      "path": "docs/implementation/SPN-090-input-delivery.md",
+      "bytes": 7745,
+      "sha256": "e023975b39c9ce81ebf0d4dae16a0a9c9a41feca6158a19567a330a039ba0be5"
+    },
+    {
+      "source": "67111d9c106c6518b813c6f1cf332068526c254c",
+      "path": "spinel-spn-090-rubric-notes.md",
+      "bytes": 642,
+      "sha256": "02cdeacc25c1e7275f1215acaf92b7232070bb2ff800d6bf1658e5834924e807"
+    },
+    {
+      "source": "abe24a24c6fa44e41ff51faef36ca8b907aa5625",
+      "path": "docs/implementation/SPN-090.md",
+      "bytes": 397491,
+      "sha256": "1d60035c3ddb90b2cc669f7e5b8e3921f7d86a1e58330228c4f8f30da6ee1a8b"
+    },
+    {
+      "source": "abe24a24c6fa44e41ff51faef36ca8b907aa5625",
+      "path": "docs/implementation/SPN-090-input-delivery.md",
+      "bytes": 7745,
+      "sha256": "e023975b39c9ce81ebf0d4dae16a0a9c9a41feca6158a19567a330a039ba0be5"
+    },
+    {
+      "source": "abe24a24c6fa44e41ff51faef36ca8b907aa5625",
+      "path": "spinel-spn-090-rubric-notes.md",
+      "bytes": 642,
+      "sha256": "02cdeacc25c1e7275f1215acaf92b7232070bb2ff800d6bf1658e5834924e807"
+    }
+  ]
+}

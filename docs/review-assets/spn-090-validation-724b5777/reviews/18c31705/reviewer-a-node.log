@@ -1,0 +1,37 @@
+✔ hosted ordinary and opt-in startup owners receive the exact build evidence flag (1.010916ms)
+✔ initial bootstrap evidence distinguishes pending work and failure without mutable or later-operation contamination (0.414417ms)
+✔ bounded evidence keeps overflow/failure explicit and rejects invalid clocks or private payloads (0.232417ms)
+✔ CLI binds same-run immutable plan digest/source and publishes all selected results (66.556208ms)
+✔ CLI failure records survive wrong identity, cancelled gate and missing selected evidence (290.730875ms)
+✔ browser aggregate cannot pass missing, skipped or failed selected sized restore evidence (233.817209ms)
+✔ unit aggregate requires every selected partition to succeed, retaining failed evidence (348.899167ms)
+✔ unit partitions may skip only with proven documentation inapplicability (179.058208ms)
+✔ fixture origin keeps desktop defaults and separates public TLS identity from loopback (1.236291ms)
+✔ fixture origin rejects authority ambiguity, non-root URLs and invalid listener ports (0.318584ms)
+✔ the retained fixture colors must all paint, with the existing count and color tolerance (2.417791ms)
+✔ intact model or stored bytes cannot substitute for absent pixels inside the visible editor (0.941417ms)
+✔ transparent image payloads do not count as painted pixels (0.183667ms)
+✔ malformed raster dimensions, channels, byte counts and crop rectangles reject evidence (0.337833ms)
+✔ missing or malformed color counts cannot become a successful rendering observation (0.078875ms)
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (2.701333ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.208834ms)
+✔ the opt-in SPN-146 A/B stays tested without widening to full or performance coverage (0.319ms)
+✔ sized restore participates in the immutable plan and fails closed (0.587791ms)
+✔ the extracted Doc touch raster keeps every browser owner and the sized restore dependency (0.170916ms)
+✔ shared offline image assertions retain ordinary CI and native desktop coverage (0.23125ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.231625ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.159959ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.165875ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.248ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.258458ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (0.687625ms)
+✔ actual renderer grouping leaves shared startup code outside the lazy renderer and preserves initialization (27.642333ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1216.815958
+{"name":"spn090-review18-a-node","args":["node","--test","scripts/ci/desktop-fixture-origin.test.ts","scripts/ci/offline-image-pixels.test.ts","scripts/ci/bootstrap-evidence.test.ts","scripts/ci/renderer-chunks.test.ts","scripts/ci/plan.test.ts","scripts/ci/coverage-result.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":1305,"peakKiB":394752}

@@ -1,0 +1,8 @@
+{
+  "status": "Corrected preparation audit; no demonstrated collector syntax failure",
+  "earlierObservation": "Root and SPN-098 worker initially raised an escaping concern from nested JSON-rendered tool output. Root later corrected that interpretation: the independently inspected156regex had one actual backslash (codepoints94,92,100,43,36), and no failed SPN-090 run-ID parse was observed. The initial raw SPN-090 bytes are not available to establish a different earlier state.",
+  "correction": "Treat the earlier concern as display-level uncertainty, not confirmed prior090syntax failure or demonstrated repair. The current expanded collector and bounded parser probe are valid. Preserve the initial observation as superseded audit history.",
+  "retainedVersion": "collect-hosted-first-preparation.ts is the first snapshot retained here, already matching the current valid parser; it is not evidence of a malformed prior version.",
+  "probe": "collector-parser-probe.json evaluates actual numeric/newline parser expressions with zero network calls; no full collector execution was part of that probe.",
+  "separateRealDefect": "The already-gzipped staging manifest decoded-metadata defect was real, independently found, corrected and verified; this correction does not alter its disposition."
+}

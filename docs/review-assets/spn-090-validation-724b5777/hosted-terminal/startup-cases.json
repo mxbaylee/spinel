@@ -1,0 +1,152 @@
+[
+  {
+    "environment": "production",
+    "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 81,
+    "status": "unexpected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "timedOut",
+        "duration": 30053
+      },
+      {
+        "retry": 1,
+        "status": "timedOut",
+        "duration": 30103
+      },
+      {
+        "retry": 2,
+        "status": "timedOut",
+        "duration": 30060
+      }
+    ]
+  },
+  {
+    "environment": "production",
+    "title": "guest startup reporting ends for unavailable entry",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 124,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 576
+      }
+    ]
+  },
+  {
+    "environment": "production",
+    "title": "guest startup reporting ends for revoked entry",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 124,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 472
+      }
+    ]
+  },
+  {
+    "environment": "production",
+    "title": "guest startup reporting ends for unsupported entry",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 124,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 475
+      }
+    ]
+  },
+  {
+    "environment": "production",
+    "title": "account startup reporting remains live while actual admission is pending",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 150,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 414
+      }
+    ]
+  },
+  {
+    "environment": "development",
+    "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 81,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 956
+      }
+    ]
+  },
+  {
+    "environment": "development",
+    "title": "guest startup reporting ends for unavailable entry",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 124,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 944
+      }
+    ]
+  },
+  {
+    "environment": "development",
+    "title": "guest startup reporting ends for revoked entry",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 124,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 1072
+      }
+    ]
+  },
+  {
+    "environment": "development",
+    "title": "guest startup reporting ends for unsupported entry",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 124,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 947
+      }
+    ]
+  },
+  {
+    "environment": "development",
+    "title": "account startup reporting remains live while actual admission is pending",
+    "file": "startup-lifecycle.spec.ts",
+    "line": 150,
+    "status": "expected",
+    "results": [
+      {
+        "retry": 0,
+        "status": "passed",
+        "duration": 642
+      }
+    ]
+  }
+]

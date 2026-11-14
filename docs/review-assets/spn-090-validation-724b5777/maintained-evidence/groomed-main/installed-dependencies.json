@@ -1,0 +1,347 @@
+{
+  "node": "v26.13.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "rootScope": "current candidate private installation",
+  "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+  "packages": {
+    "@aws-sdk/client-s3": {
+      "version": "3.1162.0",
+      "workspace": false,
+      "packageSha256": "fd79ffc135cc48643a868c7caba82fb2458032c736730d988ad869128de467f9"
+    },
+    "@base-ui/react": {
+      "version": "1.9.0",
+      "workspace": false,
+      "packageSha256": "29c2b0a1b941bdc5335ed31e31f40231dc0ad3b96343c92715029d18a32e42c3"
+    },
+    "@modelcontextprotocol/sdk": {
+      "version": "1.32.2",
+      "workspace": false,
+      "packageSha256": "7a8d6f79ee52e2bf7cfe23f2d79f7e3c0ab6a3912a340ec345d6ff014534d59d"
+    },
+    "@simplewebauthn/browser": {
+      "version": "14.0.0",
+      "workspace": false,
+      "packageSha256": "f0f4f9233a698a22a6c860ae486fd8fa9b66aa281bb4ac094f3a25e50cf75390"
+    },
+    "@simplewebauthn/server": {
+      "version": "14.0.3",
+      "workspace": false,
+      "packageSha256": "321fb48e43d8b3880b54261835c10dcfdd7c7402515d8b93128b85b7017c9f79"
+    },
+    "@spinel/diagnostics": {
+      "version": "0.0.0",
+      "workspace": true,
+      "packageSha256": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5"
+    },
+    "@spinel/doc-formulas": {
+      "version": "0.0.0",
+      "workspace": true,
+      "packageSha256": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f"
+    },
+    "@spinel/presence-ui": {
+      "version": "0.0.0",
+      "workspace": true,
+      "packageSha256": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810"
+    },
+    "@spinel/print": {
+      "version": "0.0.0",
+      "workspace": true,
+      "packageSha256": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487"
+    },
+    "@spinel/sync-client": {
+      "version": "0.0.0",
+      "workspace": true,
+      "packageSha256": "45b917bd9d85a4b0fb94e49dd033a07ce11c7af295bea54598434b3a2a29f5f6"
+    },
+    "@spinel/sync-server": {
+      "version": "0.0.0",
+      "workspace": true,
+      "packageSha256": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c"
+    },
+    "@univerjs/core": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "2ad9211f2ca22b01be1dae1230578dc9b8527ce0ae1deec88a5d1b948e846749"
+    },
+    "@univerjs/docs": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "aa2117ae5061db70b409842650cb05c94569d996f2b4ed13cafd3b366ffc0870"
+    },
+    "@univerjs/drawing": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "454040109da583e7ec60ea7bb00adc8d9866d2ddf2100cf6e68d5c08d1ff0ca7"
+    },
+    "@univerjs/engine-formula": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "7757c176899a87e414d7cb4eb47f0a75546b4c49dc0855f0b48ad82f46e2899e"
+    },
+    "@univerjs/preset-docs-core": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "dd15bc9740eb49095a19e55e07965e036aed1ede8a37a9ed8b0fedcb132735f2"
+    },
+    "@univerjs/preset-docs-drawing": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "f224f4364104eadda2c47970ed443b01d58c22452c4051dd552c255437368404"
+    },
+    "@univerjs/preset-docs-hyper-link": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "02f61f82b2d63adccaa302afcce8cc9de6d6a47ad90d17e6668764f072ef12e9"
+    },
+    "@univerjs/preset-sheets-core": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "0e6f4b53bdc20e50c9ca1b110126dc7102e7bd972dc21fffa2f7e60d4a48a54f"
+    },
+    "@univerjs/preset-sheets-drawing": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "6f837c6ce9c9a11b453247d44d1b00bbb9442613babe8fc1e7f9a5dd25820034"
+    },
+    "@univerjs/presets": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "4c8577a58ccc546276e517cbc9d1ef57d175bee568c373588e9091500db5e569"
+    },
+    "@univerjs/protocol": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "f73833d2b998af8b71378200065c12c3dba27312d7fc3252d753cd3ba5d2c75c"
+    },
+    "@univerjs/sheets": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "0cee9ec86038dce5c67d7839767262b38255358e8a642928d55a71706be71090"
+    },
+    "@univerjs/sheets-formula": {
+      "version": "1.3.1",
+      "workspace": false,
+      "packageSha256": "7de1057243a9fc2794bae63ae593db5a36394c7c768d76b62131593c1a5e27ae"
+    },
+    "emojibase-data": {
+      "version": "18.0.0",
+      "workspace": false,
+      "packageSha256": "049c893b51aff1cfc77e91a09a0b41806ab244357573a030bce99026e420988e"
+    },
+    "express": {
+      "version": "5.3.0",
+      "workspace": false,
+      "packageSha256": "9645053f08f43135ec21f46ae434e49e10528c9062fde7776b150f38a2335afe"
+    },
+    "libsql": {
+      "version": "0.5.29",
+      "workspace": false,
+      "packageSha256": "2c5b92e04a5c0f41139bfd678e67fc1569d7ba5fd9d35ac285901d122fa3522f"
+    },
+    "lucide": {
+      "version": "1.69.0",
+      "workspace": false,
+      "packageSha256": "503266fa8fcbe0fde3880308a43775d4381fa1606c3be9c20c3253828092f13c"
+    },
+    "react": {
+      "version": "19.3.1",
+      "workspace": false,
+      "packageSha256": "9cc9c3de5441a2eea7f41f52f3f2a15a4fc51f90c0b72741f0d7638643a85e67"
+    },
+    "react-dom": {
+      "version": "19.3.1",
+      "workspace": false,
+      "packageSha256": "89d54f11575c9b0f7819962d9d72a31970dfb4d103f07e8b1d1b37e6d1fc3258"
+    },
+    "sharp": {
+      "version": "0.35.5",
+      "workspace": false,
+      "packageSha256": "ad4a2535d72eb638053a38867b1abf43c328cd1c1dbae5cf4172d498365a8b97"
+    },
+    "ws": {
+      "version": "8.22.1",
+      "workspace": false,
+      "packageSha256": "ac6b2fe23179ebdef3368ecf828f1df1fa361b84f5fb54cca982d716a16df34b"
+    },
+    "yauzl": {
+      "version": "3.4.0",
+      "workspace": false,
+      "packageSha256": "d7d5418b74b185df4ad276b73cf1e36040dd417d22520354e609e2748a29fcbd"
+    },
+    "yazl": {
+      "version": "3.3.1",
+      "workspace": false,
+      "packageSha256": "7b6bb328a96f05a975445488ccd166bfe2de2988fc6d9929045eb9eafdfaee28"
+    },
+    "@napi-rs/canvas": {
+      "version": "1.1.0",
+      "workspace": false,
+      "packageSha256": "d73dc3efb77c1d3895654af96ba8b57269489cb86926d9094089f672dc9ca4a9"
+    },
+    "@playwright/test": {
+      "version": "1.64.1",
+      "workspace": false,
+      "packageSha256": "6b1c8bb530059f2555530e8dcc1b3803565237e17598683b3766c0fa313b3fd6"
+    },
+    "@storybook/react-vite": {
+      "version": "10.6.5",
+      "workspace": false,
+      "packageSha256": "62c64a0ed13b16fb130e32835cc5084e142b75c5c2a4215f8ecf04e3607406db"
+    },
+    "@types/express": {
+      "version": "5.0.6",
+      "workspace": false,
+      "packageSha256": "d409671d7fa9036b9423b5d41a361df7f7a19024ad5d770a9390975a4f46a66e"
+    },
+    "@types/node": {
+      "version": "26.6.6",
+      "workspace": false,
+      "packageSha256": "2520fc33dc754e75d61e6e49c174b439244537c3f2cff1897432806156a054fd"
+    },
+    "@types/react": {
+      "version": "19.3.0",
+      "workspace": false,
+      "packageSha256": "505c0df4cd73d6a02c946bd9b81451584bd9c83ea72d75cff9b826efceaa19c2"
+    },
+    "@types/react-dom": {
+      "version": "19.3.0",
+      "workspace": false,
+      "packageSha256": "4a2052bb362c34f1d39cfe0818b6fe01a9f988b609e8b7e4832aff7dbf2f7180"
+    },
+    "@types/ws": {
+      "version": "8.18.2",
+      "workspace": false,
+      "packageSha256": "f5b7223923b24d17ae264da95d3e35f72c57bc951c63a31c7c5fbd1490fbf94a"
+    },
+    "@types/yauzl": {
+      "version": "3.4.0",
+      "workspace": false,
+      "packageSha256": "3ccc141e21141f3fc2a7e562c39950cad70cb11aeb3f16e8065912c1f38bcc82"
+    },
+    "@types/yazl": {
+      "version": "3.3.1",
+      "workspace": false,
+      "packageSha256": "3e7a2664df4810166b33c8ff0c89d453bb1af2fe06d16a0daea64de144313ca2"
+    },
+    "@vitejs/plugin-react": {
+      "version": "6.2.1",
+      "workspace": false,
+      "packageSha256": "f62de08fb2c523097a9fa74bf1766e977be80d59dcdc8cd2443a603f1b56ae9c"
+    },
+    "oxlint": {
+      "version": "1.91.0",
+      "workspace": false,
+      "packageSha256": "86406da2b37b3437382ac68bacc2c0479013fa5e2ce2f1adba0cd2ce12919bcd"
+    },
+    "pdfjs-dist": {
+      "version": "6.5.438",
+      "workspace": false,
+      "packageSha256": "bf96384ed16c41f33b30f8d7461c3da61c971c17438b6f81e95a225af794db45"
+    },
+    "prettier": {
+      "version": "3.9.10",
+      "workspace": false,
+      "packageSha256": "8cb38508278b3e618eb0fc3df5425c48db1f66202b58cfd430f84bb9dc6a9903"
+    },
+    "storybook": {
+      "version": "10.6.5",
+      "workspace": false,
+      "packageSha256": "e0ddd6d9079d3f9f4144a4f4595b6686e63bb99d69549571e1421c95adc6f1f0"
+    },
+    "typescript": {
+      "version": "7.0.2",
+      "workspace": false,
+      "packageSha256": "3722b30210616a13a3213ded11575ba6b2dbab10c32a5ef67afca8513e27017e"
+    },
+    "typescript-api": {
+      "version": "5.9.3",
+      "workspace": false,
+      "packageSha256": "822ef7ca6452205657b6288b066481ecf508bfbf43455d715cf7d3ec457561e6"
+    },
+    "vite": {
+      "version": "8.3.6",
+      "workspace": false,
+      "packageSha256": "c190c4c3dadb457bedc5d756a2269cd648b134a293da9f4d873c01fc66f4186c"
+    },
+    "vitest": {
+      "version": "5.1.0",
+      "workspace": false,
+      "packageSha256": "cc2979885d9d149c8456128e7ae48038d815352cf1e6d1932eb631057a99f973"
+    }
+  },
+  "workspaces": {
+    "diagnostics": {
+      "relativeTarget": "lib/diagnostics",
+      "packageSha256": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5"
+    },
+    "doc-formulas": {
+      "relativeTarget": "lib/doc-formulas",
+      "packageSha256": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f"
+    },
+    "presence-ui": {
+      "relativeTarget": "lib/presence-ui",
+      "packageSha256": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810"
+    },
+    "print": {
+      "relativeTarget": "lib/print",
+      "packageSha256": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487"
+    },
+    "sync-client": {
+      "relativeTarget": "lib/sync-client",
+      "packageSha256": "45b917bd9d85a4b0fb94e49dd033a07ce11c7af295bea54598434b3a2a29f5f6"
+    },
+    "sync-server": {
+      "relativeTarget": "lib/sync-server",
+      "packageSha256": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c"
+    },
+    "sync-transform": {
+      "relativeTarget": "lib/sync-transform",
+      "packageSha256": "9b18276b297e3948de2e12a7215487d58efbd175d14860c94cfd8c91e387548f"
+    }
+  },
+  "sdk": {
+    "node_modules/@univerjs/core/lib/es/index.js": {
+      "sha256": "c5204e610336e216579c012a21f08273555dc31c7c59aeabaf9ccc40a7d5ad2e",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/core/lib/cjs/index.js": {
+      "sha256": "716a569e1a091a3893f92a12795ad8f2ad26821890ec33f8d52922d280c50e0c",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/docs/lib/es/index.js": {
+      "sha256": "788566fd844ad732f3dce124c64daf9f14a742487b5e11191d96da7c82b0563c",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/docs/lib/cjs/index.js": {
+      "sha256": "f5d9d7a67e528159e16bb1abc341f4efd7b62dcfa29d18d925c7bd60904626a9",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/ui/lib/es/index.js": {
+      "sha256": "0856e19917a08b125b2e1831b9bde9e81eb8a55d65394a9c625d0ec925d2161d",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/ui/lib/cjs/index.js": {
+      "sha256": "b66ae1efa87ca9a670e9e4ecd0caa0895d47544c782318afe8f915d8c52e5333",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/sheets-drawing/lib/es/index.js": {
+      "sha256": "5abe3cdf05ba74f01a09d681a37710cf066135b70c1c03e7f723a0189fb4414c",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/sheets-drawing/lib/cjs/index.js": {
+      "sha256": "416e75fb938190a5266988d01c89e71368e21a6483f43832844ba7f6184a9d8c",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/docs-ui/lib/es/index.js": {
+      "sha256": "5e102d42b6ccafcbbf33bbc58f16e5c1bb20f43dd286c6f2b8520740d73356d4",
+      "alreadyPatched": true
+    },
+    "node_modules/@univerjs/docs-ui/lib/cjs/index.js": {
+      "sha256": "c405e5aa878779ffdd911f16a361c3d965b7ad82f6c14bdf4d0257c6d8122606",
+      "alreadyPatched": true
+    }
+  },
+  "mutations": "No package/install/cache writes; patch functions evaluated in memory and required to leave installed bytes unchanged."
+}

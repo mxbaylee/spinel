@@ -1,0 +1,17 @@
+{
+  "name": "spn090-guest-lifecycle-first",
+  "args": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "e2e/startup-lifecycle.spec.ts",
+    "--project=development",
+    "--workers=1",
+    "--retries=0"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 41694,
+  "peakKiB": 1331072
+}

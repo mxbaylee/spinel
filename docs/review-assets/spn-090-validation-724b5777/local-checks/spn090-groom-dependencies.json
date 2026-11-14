@@ -1,0 +1,12 @@
+{
+  "name": "spn090-groom-dependencies",
+  "args": [
+    "node",
+    "/tmp/spn090-groom-dependencies.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 262,
+  "peakKiB": 173856
+}

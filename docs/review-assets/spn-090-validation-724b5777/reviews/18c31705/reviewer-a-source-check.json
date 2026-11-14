@@ -1,0 +1,29 @@
+{
+  "candidateInputs": {
+    "count": 54,
+    "mismatches": []
+  },
+  "sharedInputs": {
+    "count": 12,
+    "mismatches": []
+  },
+  "visualInputs": {
+    "web/StartupStage.stories.tsx": true,
+    "web/startupStage.ts": true,
+    "web/offline/OfflineAvailability.stories.tsx": true,
+    "web/offline/OfflineAvailability.tsx": true,
+    "web/offline/protection.ts": true,
+    "src/ui/appIcon.ts": true,
+    "src/ui/gemGeometry.ts": true,
+    "src/ui/palette.ts": true,
+    ".storybook/main.ts": true,
+    ".storybook/preview.tsx": true,
+    "scripts/screenshots.ts": false
+  },
+  "diffSha256": "170fb55c6532d559bdcb060e1eb2b015e57838f2b4809968fd020a699913a69c",
+  "packetDiffExact": true,
+  "importedMainInputs": {
+    "count": 16,
+    "mismatches": []
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "at": "2026-11-14T18:09:35.266765+00:00",
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "fullDiffSha256": "d12895fdedb5a773d79a0b1c376dc27b39a84dae04b97357d64139b034c63ee1",
+  "fullDiffExact": true,
+  "finalInputsVerified": 8,
+  "originalNegativeTestSnapshotVerified": true,
+  "rootRead": [
+    "complete runtime/test repair diff",
+    "canonical decision",
+    "guest README",
+    "packet"
+  ],
+  "receiptReaderCorrection": "Initial summary loop assumed checks object; actual array inspected without evidence mutation. Hash checks already completed.",
+  "reviews": {
+    "a": {
+      "report": "/tmp/spn090-review-724b5777/reviewer-a.md",
+      "sha256": "e8670ae00ce49bee01b4032467b1788a0c490be645c9641a538760c7d4cfd2f0",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "root_read_full": true,
+      "visual": "approved agent review only",
+      "findings": "none"
+    },
+    "b": {
+      "report": "/tmp/spn090-review-724b5777/reviewer-b.md",
+      "sha256": "ee13d3d6866f6bbf450797029e673f6096b3e940a304ceb8b6b0235c895a9f75",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "root_read_full": true,
+      "visual": "approved agent review only",
+      "findings": "none"
+    }
+  },
+  "publication": "qualifiedsource/visualreviews;currenthostedpending;no push yet"
+}

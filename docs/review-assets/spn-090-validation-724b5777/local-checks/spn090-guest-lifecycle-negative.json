@@ -1,0 +1,19 @@
+{
+  "name": "spn090-guest-lifecycle-negative",
+  "args": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "e2e/startup-lifecycle.spec.ts",
+    "--project=development",
+    "--workers=1",
+    "--retries=0",
+    "--grep",
+    "ready guest mounts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 8548,
+  "peakKiB": 1307920
+}

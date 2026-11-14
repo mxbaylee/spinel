@@ -1,0 +1,13 @@
+{
+  "name": "spn090-groom-types",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 9018,
+  "peakKiB": 1729472
+}

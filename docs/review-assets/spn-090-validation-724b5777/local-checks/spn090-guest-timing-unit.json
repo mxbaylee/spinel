@@ -1,0 +1,18 @@
+{
+  "name": "spn090-guest-timing-unit",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/startupDeadlines.test.ts",
+    "src/ui/bootstrapFailure.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn090-guest-vitest-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 484,
+  "peakKiB": 289104
+}

@@ -1,0 +1,16 @@
+{
+  "name": "spn090-grade-free-format",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "docs/implementation/SPN-090.md",
+    "docs/implementation/SPN-090-input-delivery.md",
+    "spinel-spn-090-rubric-notes.md"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 489,
+  "peakKiB": 286160
+}
