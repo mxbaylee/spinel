@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "date": "2026-11-14",
+  "kind": "Read-only audit of existing native run; no new tests or retry",
+  "archive": {
+    "commit": "d34f2ff3cf2b33217e6d8959d97ba2af483fd692",
+    "path": "docs/review-assets/spn-098-validation-5e72d33a/",
+    "verifiedPayloads": {
+      "supervisor-original.log.gz": {
+        "storedSha256": "2f233121f79699727bf7c6d3cea7038ad1e81b513d5fd07f5d85d0e0eb12b01a",
+        "decodedSha256": "f5f45fe1b82506c70371cf416dac98d1aa1dc9bd89765f516081f14802bec593"
+      },
+      "recovery-original.log.gz": {
+        "storedSha256": "d8ec3de9252efa6353dfbc35dee3ab836f903839abc147de3cfc5f7494a07e36",
+        "decodedSha256": "5bff837dee2e10592ac3513266e72ac499a7a6e1c2c491035edd9b895716a911"
+      }
+    },
+    "publicationVerifiedBy": "delivery manager; /tmp/spn098-root-validation-d34f2ff3.json"
+  },
+  "remaining": {
+    "job": 132380865589,
+    "run": 43572824567,
+    "attempt": 1,
+    "head": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+    "tested": "c603a21de6446d623145589eca811ab6dfb38152",
+    "conclusion": "success",
+    "rawBytes": 732205,
+    "decodedSha256": "4aae4a2d969c623393a552d7de1e84664d6b0533983449b56ff148fd818bbd65",
+    "relevantLogLines": [393, 394, 395, 396, 397, 838, 841],
+    "nodeSummary": {
+      "pass": 862,
+      "fail": 0,
+      "skipped": 2,
+      "skipMeaning": "Unrelated optional SPN146 ES/CJS wall-clock flush benchmarks; relevant aggregate/plan controls explicitly passed"
+    },
+    "fetch": "gh api --allow-escape-sequences repos/mxbaylee/spinel/actions/jobs/132380865589/logs",
+    "fetchNote": "Initial gh output refused ANSI escape sequences; reretrieval allowed original byte output. This is transport handling, not a test retry."
+  },
+  "files": {
+    "historical-archive-audit.json": {
+      "bytes": 771,
+      "sha256": "1769c3b67cea33071457bd9e129a9e78f3dc7c9aaa1b989b7c03f7fb00c9640a"
+    },
+    "remaining-job.json": {
+      "bytes": 2672,
+      "sha256": "a87d513732891ae08e0af7b9ae05bc70cc8f9f0d068e6493c42e49668a07544f"
+    },
+    "remaining-original.log.gz": {
+      "bytes": 83272,
+      "sha256": "529056c85924f24db50d7d16f56c7cd97d187876aba00f35b136301f41633e9e"
+    },
+    "source-plan-audit.json": {
+      "bytes": 4975,
+      "sha256": "dad2a8fc8eaf11f457b72abecfd00e74526f5962076af1bd1b537168d4071f5d"
+    }
+  }
+}
