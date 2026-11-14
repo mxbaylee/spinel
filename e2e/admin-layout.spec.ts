@@ -176,6 +176,14 @@ test('pending invitations prevent section changes, manual copying works, and lea
     await page.goto('/admin#invites');
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Create invite', exact: true });
+    const creationResponse = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === '/api/auth/invites' &&
+        response.request().method() === 'POST',
+    );
+    // Preserve the primary assertion if fixture cleanup closes this pending wait.
+    // The same promise is still awaited below; an actual response error must fail.
+    void creationResponse.catch(() => {});
     await dialog.getByRole('button', { name: 'Create invite', exact: true }).click();
     await expect(dialog.getByRole('button', { name: 'Creating…' })).toBeDisabled();
     await page.evaluate(() => {
@@ -185,12 +193,30 @@ test('pending invitations prevent section changes, manual copying works, and lea
     await page.keyboard.press('Escape');
     await expect(dialog).toBeVisible();
     release();
+    // Releasing the route permits delivery; it does not complete the mutation.
+    // Observe the real response within the unchanged overall test deadline before
+    // starting the existing five-second UI publication assertion.
+    const response = await creationResponse;
+    expect(response.status()).toBe(201);
+    expect(await response.finished()).toBeNull();
     const address = page.getByRole('textbox', { name: 'New invite link' });
     await expect(address).toBeVisible();
     await expect(address).toBeFocused();
     // The once-only address remains the focus target while a slow readback keeps Create disabled.
     await expect(page.getByRole('button', { name: 'Create invite', exact: true })).toBeDisabled();
+    const healthLink = page.getByRole('link', { name: 'Backups & health', exact: true });
+    await expect(healthLink).toHaveAttribute('aria-disabled', 'true');
+    // Seeing the created link is not completion: the real readback still owns
+    // the navigation fence. Dispatch the disabled anchor's event directly to
+    // exercise its handler; Playwright correctly refuses a user click here.
+    await healthLink.dispatchEvent('click');
+    await expect(page).toHaveURL(/#invites$/);
+    await page.evaluate(() => {
+      location.hash = 'health';
+    });
+    await expect(page).toHaveURL(/#invites$/);
     releaseReadback();
+    await expect(healthLink).not.toHaveAttribute('aria-disabled', 'true');
     await expect(page.getByRole('button', { name: 'Refresh invites', exact: true })).toBeEnabled();
     await expect(address).toBeFocused();
     const secret = await address.inputValue();
@@ -210,6 +236,10 @@ test('pending invitations prevent section changes, manual copying works, and lea
     ).toHaveText('Select the link below and copy it manually.');
     await expect(address).toHaveValue(secret);
     const nav = page.getByRole('navigation', { name: 'Administration sections' });
+    await healthLink.click();
+    await expect(
+      page.getByRole('heading', { name: 'Backups & health', exact: true }),
+    ).toBeVisible();
     await nav.getByRole('link', { name: 'People', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'People', exact: true })).toBeVisible();
     await nav.getByRole('link', { name: 'Invites', exact: true }).click();

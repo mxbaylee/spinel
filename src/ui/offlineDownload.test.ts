@@ -318,6 +318,8 @@ test('only a failed round trip counts as a network failure', () => {
     false,
   );
   expect(isNetworkFailure(new SyntaxError('Unexpected token <'))).toBe(false);
+  expect(isNetworkFailure(new DOMException('timed out', 'TimeoutError'))).toBe(true);
+  expect(isNetworkFailure(new DOMException('cancelled', 'AbortError'))).toBe(false);
 });
 
 test('cover bytes are verified independently and rejected before incomplete offline storage', async () => {

@@ -1,0 +1,318 @@
+{
+  "repairCheckpoint": "e4de84c0",
+  "actualMain": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "checks": [
+    {
+      "name": "spn090-ec42-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1609,
+      "peakKiB": 1132992
+    },
+    {
+      "name": "spn090-ec42-development",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "e2e/admin-layout.spec.ts",
+        "--project=development",
+        "--grep",
+        "startup reporting|pending invitations prevent",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=/tmp/spn090-ec42-integration/development"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 12304,
+      "peakKiB": 1217264
+    },
+    {
+      "name": "spn090-ec42-final-backlog",
+      "args": [
+        "node",
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 145,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-ec42-final-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "e2e/admin-layout.spec.ts",
+        "e2e/maintenance.spec.ts",
+        "e2e/startup-lifecycle.spec.ts",
+        "web/Dashboard.tsx",
+        "docs/implementation/SPN-090.md",
+        "docs/implementation/evidence/SPN-090-current/landed-feedback/README.md",
+        "docs/implementation/evidence/SPN-090-current/hosted-fixture-repair/README.md",
+        "docs/todo/backlog.json"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 719,
+      "peakKiB": 342912
+    },
+    {
+      "name": "spn090-ec42-focused",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/ui/startupDeadlines.test.ts",
+        "src/ui/warmOpen.test.ts",
+        "src/ui/warmCatalog.test.ts",
+        "src/ui/feedbackContext.test.ts",
+        "--cache=false",
+        "--fsModuleCachePath",
+        "/tmp/spn090-ec42-vitest-cache"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 833,
+      "peakKiB": 285184
+    },
+    {
+      "name": "spn090-ec42-index",
+      "args": [
+        "node",
+        "scripts/backlog/cli.ts",
+        "index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 173,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-ec42-invite-diagnostic",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/admin-layout.spec.ts",
+        "--project=development",
+        "--grep",
+        "pending invitations prevent",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=/tmp/spn090-ec42-integration/diagnostic"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 5284,
+      "peakKiB": 1336272
+    },
+    {
+      "name": "spn090-ec42-invite-health-negative",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/admin-layout.spec.ts",
+        "--project=development",
+        "--grep",
+        "pending invitations prevent",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=/tmp/spn090-ec42-integration/invite-health-negative"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 7695,
+      "peakKiB": 1419888
+    },
+    {
+      "name": "spn090-ec42-invite-ready-development",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/admin-layout.spec.ts",
+        "--project=development",
+        "--grep",
+        "pending invitations prevent",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=/tmp/spn090-ec42-integration/invite-response-ready-development"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 5243,
+      "peakKiB": 1400768
+    },
+    {
+      "name": "spn090-ec42-invite-ready-production",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/admin-layout.spec.ts",
+        "--project=production",
+        "--grep",
+        "pending invitations prevent",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=/tmp/spn090-ec42-integration/invite-response-ready-production"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 2470,
+      "peakKiB": 1317872
+    },
+    {
+      "name": "spn090-ec42-production",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "e2e/admin-layout.spec.ts",
+        "--project=production",
+        "--grep",
+        "startup reporting|pending invitations prevent",
+        "--workers=1",
+        "--retries=0",
+        "--reporter=line,json",
+        "--output=/tmp/spn090-ec42-integration/production"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 5811,
+      "peakKiB": 1078048
+    },
+    {
+      "name": "spn090-ec42-quality",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "e2e/admin-layout.spec.ts",
+        "e2e/maintenance.spec.ts",
+        "e2e/startup-lifecycle.spec.ts",
+        "web/Dashboard.tsx"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 119,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-ec42-repaired-lint",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "e2e/admin-layout.spec.ts",
+        "e2e/maintenance.spec.ts",
+        "e2e/startup-lifecycle.spec.ts",
+        "web/Dashboard.tsx"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 118,
+      "peakKiB": 0
+    }
+  ],
+  "finalInputs": {
+    "e2e/admin-layout.spec.ts": "9e3494f02231b8196f006aa3cfc3199071db9375cfd211b02f9d20529342eda2",
+    "e2e/diagnostics.spec.ts": "aa05dfa145fc0d0926d575e58ca239e4ab733ce9078d67453832f0ed69baec63",
+    "e2e/maintenance.spec.ts": "7e4bcec814b49e8fe2326aa4847050fe77243c7027b57185d3bfef3057700873",
+    "e2e/startup-lifecycle.spec.ts": "84cf36c630d692998e193378a65a8c05619965c4d86b72c7c93595e073791d9c",
+    "src/server/diagnostics/errors.ts": "683fdb2cfb4002daa8baf05b69e7de62b9aede42312c1f76c29b5f253879ad95",
+    "src/server/diagnostics/feedback-capacity.test.ts": "e90f205a344a4a7661f8ac7b77ee77b1bd4cf22d1d2eee9fec6bbc922fd3da1d",
+    "src/server/diagnostics/feedback-export-worker.ts": "db18adbb3048f0b79a0bf28470133775a7272d53383fc001b9a620cea4fc313b",
+    "src/server/diagnostics/feedback-exports.ts": "0929c46709d877ce284e25b118f3cf3d4e6a7775ca2ea5ebd439a7d1ed370aef",
+    "src/server/diagnostics/feedback-routes.test.ts": "3b198c32e6b0e80bd887b752af2425e8f50bee3ae1ef457c62602983e129b94f",
+    "src/server/diagnostics/feedback-transfer.test.ts": "55ea87cf467cd21de911a718c85c7ea7c353a801fb6b34ed16f564352d985d7f",
+    "src/server/diagnostics/feedback-transfer.ts": "1a0a9ef0178062626eb4661d9e4eb7adc0f635b819541fe1ff102f1cf43253c5",
+    "src/server/diagnostics/feedback.test.ts": "8f9f3e2a91607cad939d4a8876120962b6b92f7f0ac3a5017b2f8eaff06dbe2d",
+    "src/server/diagnostics/routes.ts": "c963e19937aa2838833f8f2af7cbf59d6a7eacd0c09556fa367c6a789f9caf17",
+    "src/server/diagnostics/store.ts": "13dd7e2ebade188dc60a5d4577eae59eb3b4b6acd686e0f373d1d5ec4e3c09ce",
+    "src/shared/diagnostics.ts": "a955aeaa8bfddb5a33b1fae7aacec283168a02f1af4e112372721a8784846b00",
+    "src/shared/feedback.ts": "2388f1ce6d874868765b179bf8c3e843772bd690fbcd523ae7bed6799ad7f7fe",
+    "src/ui/feedbackContext.test.ts": "72d3efd88bed705702586b53dcda24043930e58937d988c55075af5a76040a2a",
+    "src/ui/redesign/Controls.tsx": "6cbc993b713047a1c71c6bd2351c3dbef439e0a058cd90e261bd0e213965685b",
+    "web/AdminAccountRecovery.stories.tsx": "1130eb0b3f6816abcb77f391bcd3228187eba8fb55854e0e87380f4c920a911d",
+    "web/AdminDiagnostics.tsx": "b4908bb704d6bea41e143a0bd59afc5236b2c3c4e7e17cd2ee1da78334c2e358",
+    "web/AdminFeedback.stories.tsx": "2dbec0523c2dc48b3205dfac470ac90bfb2eb08354bb8764ed39a54daf28216b",
+    "web/AdminFeedback.tsx": "76182a4fd2b8063de44b782c942678ded7927a4ff9638b54ed8f8be62b7a71aa",
+    "web/AdminPage.stories.tsx": "e3e57cfbc556bbd3a022582e958d006b0c4e939f78fcd95fc3f16e2103714bfa",
+    "web/AdminUsers.stories.tsx": "8bd6b7f511836bc8009ae2b4911f58ee5980e19f3469b0a05240b4ff89a51f7c",
+    "web/AdminUsers.tsx": "095a316cc055c2ccf97248d3d1361e44fa46b45c3aba979d900d694e9dd1138d",
+    "web/Dashboard.tsx": "1abd782b8bf9c25a6ee069d66592a2e88a0a95acac8fd9e7c24d4584b4502196",
+    "web/EditorFrame.stories.tsx": "7685f223687e18bae754ccba338c5e76df9849913f81fb6388972784500f6daa",
+    "web/EditorFrame.tsx": "2e05a35862388e88fa470fb5bc5ec06c31c884cb49bb2889e498b49facbf348c",
+    "web/EditorTools.tsx": "24ef24a8611047ce9d97e5fb9bfe0f5e78b4c18f3997d4bc75157090f6e5f0b1",
+    "web/Feedback.stories.tsx": "df000779edab45744d9603e66d7198e924670a2f9ad2bd2b24409121edfa6712",
+    "web/Feedback.tsx": "4a0f38c17de7773c5b953f94af00a8a4cd12bb8d7a2f97fedef7e7c56f864c6d",
+    "web/GuestApp.tsx": "607ee52597344c4fba46e112a6d0a48571890c066718c1c74434e5511ac9168f",
+    "web/Rail.stories.tsx": "04d5ae9a8eedebbd819124caa3ad40f6799fd3dd5338983c2f1c7ca125519c0a",
+    "web/Rail.tsx": "6a86f1460f394c630ec3945fe984c20e648bc355ebda02b6f1a1eb135c34e5b7",
+    "web/Space.stories.tsx": "c038e2162da0a96406b2b2630851ae675fb0bdbe665bafbfbcb188566aa0e5d1",
+    "web/Space.tsx": "30092b1a942c50182855f0a21ea298cfce1a3f820e55ab4f2594f9e9e611ec8c",
+    "web/SpaceGuest.stories.tsx": "e25d8624a399f687c0f2d0961ab868e6bd20a67ca469bb9814b9cca9d569f7ee",
+    "web/SpaceShell.tsx": "a4f24cf82cf99065c2d89022ae5cd1b1e75457aeb6581d86710a07830c7621c5",
+    "web/StartupStage.stories.tsx": "4f43e676d353b03e9323e4c6a548ccafa12745a4c9569a2ab87aff3e973cc968",
+    "web/application.tsx": "d025d087f2a4d8a9a5ae85ec2a6b910f3ed88a2df5ed25a04fa6e460a41ee3b7",
+    "web/feedback.css": "30c86ce5e6a24c6e2aae4841f2fbdbdec0d6c3cfb74f52df70044bc6546dbba2",
+    "web/feedbackContext.ts": "da7294182fa29fd80bffd111c2b47542074c63085ac24f57e8d0ea9aecfbf460",
+    "web/feedbackStoryData.ts": "684a661b5bdf924040f12a84f12d8290a8a08649d23ff0b51a964aa2e498132f",
+    "web/main.tsx": "37e2461eb93e2f5e5803ed8b8d0394e36e19a892118ee86e983277f0239de0f3",
+    "web/offline/OfflineAvailability.stories.tsx": "310adb9c2c44c04aaf5d42ac8e0121a49a3a87bbe9da3e5474d015b99fbece28",
+    "web/offline/OfflineAvailability.tsx": "eb9ac406e5dce2713fef20b49388180959d529cad22f047485efaf477f16d1a5",
+    "web/offline/deadlines.ts": "eee5839a9d203bb559ae8fcb57d01d355ad850d5b9abdb070d5268fac654b646",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49"
+  },
+  "changedAfterInitialCombinedExecution": {
+    "e2e/admin-layout.spec.ts": {
+      "before": "6222b28bc7120d3a75f476ef649d3ef90d46aad21a2b2407850a18506d65fa7c",
+      "after": "9e3494f02231b8196f006aa3cfc3199071db9375cfd211b02f9d20529342eda2"
+    }
+  },
+  "originalDevelopmentFailure": "retained; later diagnosis and repaired passes do not establish original cause",
+  "diagnosticOnlyPass": "not replacement acceptance",
+  "negativeHealthGuard": "expected failure, restored exact ec42 source",
+  "typing": "previous source resource-aborted; unchanged full compiler not retried; current hosted required",
+  "sdkAndDependencies": "incoming main changed no package manifests, lockfile, SDK patches or workspace dependencies",
+  "grooming": {
+    "last": "2026-11-14",
+    "completed_since": [
+      "SPN-098",
+      "SPN-090"
+    ],
+    "next_id": 161
+  },
+  "finalCommittedPrPolicy": "pending external check after final commit"
+}
