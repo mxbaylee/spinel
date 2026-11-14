@@ -7,17 +7,26 @@ import {
 import type { ShellManifest } from '../src/shared/offlineShell.ts';
 import { installRuntimeHost, runtimeRequest } from './offline/runtime.ts';
 import type { RuntimeHost } from './offline/runtime.ts';
+import { startupDone, startupStage } from './startupStage.ts';
+import { createBootstrapJournal } from '../src/shared/bootstrapEvidence.ts';
 
 type Application = {
   compatibility: RuntimeHost['compatibility'];
   startApplication(element: HTMLElement, host: RuntimeHost): () => void;
 };
+const bootstrap =
+  import.meta.env.VITE_SYNC_EVIDENCE === '1'
+    ? createBootstrapJournal(() => performance.now())
+    : null;
+if (bootstrap)
+  Object.defineProperty(window, '__spinelBootstrapEvidence', { value: () => bootstrap.read() });
+bootstrap?.mark('bootstrap-ready');
 const root = document.getElementById('root')!;
 const descriptor = document.getElementById('spinel-runtime')?.textContent;
 const current = descriptor ? parseShellManifest(descriptor) : null;
 let retire: (() => void) | undefined;
 let sequence = 0;
-let startupStage = 'bootstrap';
+let initialStage = 'bootstrap';
 const styles = new Map<string, HTMLLinkElement>();
 
 async function loadStyles(manifest: ShellManifest, verify: () => void) {
@@ -71,6 +80,7 @@ async function start(
   manifest: ShellManifest | null,
   verifyCurrent: () => void,
   stage: (value: string) => void = () => {},
+  initialBoot = false,
 ) {
   const operation = ++sequence;
   const verify = () => {
@@ -78,18 +88,24 @@ async function start(
     if (operation !== sequence) throw new DOMException('App startup changed.', 'AbortError');
   };
   verify();
+  if (initialBoot) bootstrap?.mark('application-import-start');
+  startupStage('app code');
   // The production entry is a public descriptor URL; the bootstrap has no static
   // dependency on React, the application, native editor code, or any private data.
   stage('application-import');
   const application = (
     manifest ? await import(/* @vite-ignore */ manifest.entry) : await import('./application.tsx')
   ) as Application;
+  if (initialBoot) bootstrap?.mark('application-import-end');
   verify();
   stage('compatibility');
   if (manifest && !sameCompatibility(manifest.compatibility, application.compatibility))
     throw new Error('This saved editor does not match its app version.');
+  if (initialBoot) bootstrap?.mark('styles-start');
+  startupStage('styles');
   stage('styles');
   const prepared = manifest ? await loadStyles(manifest, verify) : [];
+  if (initialBoot) bootstrap?.mark('styles-end');
   try {
     verify();
   } catch (error) {
@@ -112,6 +128,7 @@ async function start(
   }
   stage('application-start');
   retire = application.startApplication(root, host);
+  if (initialBoot) bootstrap?.mark('application-start-returned');
   if (manifest) void runtimeRequest('claim', manifest.version).catch(() => {});
 }
 
@@ -126,21 +143,30 @@ async function boot() {
       /* Safe online bootstrap can still render account entry. */
     }
     try {
+      bootstrap?.mark('worker-selection-start');
+      startupStage('service worker');
       const result = await runtimeRequest('bootstrap', current.version, accountId);
       if (result.manifest) selected = result.manifest;
+      bootstrap?.mark('worker-selection-settled');
     } catch {
+      bootstrap?.mark('worker-selection-fallback');
       /* App admission independently checks retained data before exposure. */
     }
-  }
+  } else bootstrap?.mark('worker-selection-skipped');
   await start(
     selected,
     () => {},
     (stage) => {
-      startupStage = stage;
+      initialStage = stage;
     },
+    true,
   );
+  bootstrap?.seal();
 }
 void boot().catch((error: unknown) => {
+  startupDone();
+  bootstrap?.mark('boot-rejected');
+  bootstrap?.seal();
   // Report only bounded public identities: exception text/stack may contain
   // document content, URLs or account identifiers. Keep saved data untouched.
   const names = ['Error', 'TypeError', 'ReferenceError', 'SyntaxError', 'AbortError'];
@@ -148,7 +174,7 @@ void boot().catch((error: unknown) => {
   console.error(
     '[spinel:startup]',
     JSON.stringify({
-      stage: startupStage,
+      stage: initialStage,
       errorName: names.includes(name) ? name : 'UnknownError',
     }),
   );

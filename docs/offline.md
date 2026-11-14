@@ -9,6 +9,11 @@ PRD/grooming ban. Guests and unprepared devices keep a generic offline screen.
 Configured test HTTPS is enough for development; public deployment is
 separate work.
 
+**Mobile acceptance, owner decision 2026-11-13:** phone acceptance runs on the owner's
+own phones ([real-phone verification](#-real-phone-verification)). The product
+requirements below remain intact. Unexplained failures and unrun checks remain
+unresolved.
+
 **What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
 authorized [download bundle](#download-bundle), and SPN-039 offline launch,
 browsing and read-only viewing of downloaded documents ([below](#offline-launch-and-read-only-viewing)).
@@ -30,11 +35,13 @@ one account-authorized Space child at a time, with its verified images.
 [SPN-052](implementation/SPN-052.md) verifies the shared lifecycle in ordinary
 desktop Chrome, Firefox and Safari tabs, with observed persistence outcomes and
 in-place retention guidance ([native verification](#native-desktop-verification)).
-The remaining parts of this contract are open, split by the Owner in chat on 2026-10-19 so
-every unmet requirement stays on a ticket:
+The remaining parts of this contract were split by the Owner in chat on 2026-10-19 so
+every unmet requirement stayed on a ticket:
 
-- [SPN-090](todo/SPN-090.md): actual Android/iPhone installed launches, stable
-  home-screen links and the recorded device/browser verification matrix.
+- [SPN-090](implementation/SPN-090.md) lands phone launch and stable-link behaviour
+  with PR #224. Acceptance was first planned on BrowserStack and, by owner decision
+  on 2026-11-13, moved to the owner's own phones; Android Chrome is checked and iOS
+  Safari is an open gap ([real-phone verification](#-real-phone-verification)).
 
 [Decision #91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion) keeps every
 acceptance requirement below.
@@ -65,13 +72,13 @@ sequence and [#90](implementation/SPN-039.md#legacy-decision-90-public-pro-recov
 
 After an initial online setup in the app context they will use:
 
-| Layer          | Local contents and behavior                                                                                                                                                                                                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                  |
-| Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                 |
-| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                         |
+| Layer          | Local contents and behavior                                                                                                                                                                                                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                                                                    |
+| Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                                                                   |
+| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                                                                           |
 | Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while their document is open and connected. Reopen a retained file to resume its upload. If the live document changed meanwhile, edits become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                    |
+| Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                                                                      |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -116,7 +123,8 @@ Even an unedited new document counts as pending work for removal, sign-out,
 refresh and application updates. Older compatible runtimes conservatively retain
 its unfamiliar queue marker. The separate local metadata survives catalog refresh
 and is fenced to the original account. See [the creation record](implementation/SPN-051.md)
-for receipt, storage and persona decisions; SPN-090 retains physical-phone checks.
+for receipt, storage and persona decisions; SPN-090 retains the phone
+observations and explicit automated coverage for operation limits.
 
 ## Download bundle
 
@@ -244,7 +252,7 @@ requires a separate confirmation and the same writer and account checks. A brows
 without Web Locks cannot edit or safely remove a copy through the application.
 A full device shows "This device is out of space for offline documents."
 Explicit preparation requests browser storage protection and reports the actual
-result separately from download success. A denied/unsupported request does not
+result, once the browser gives one, separately from download success. A denied/unsupported request does not
 mean a complete download failed, and a granted request is not a backup guarantee.
 
 **Local data.** Each account has its own IndexedDB database,
@@ -302,6 +310,18 @@ credentials, verifies response types and the matching descriptor, then writes
 HTML last. Redirects, missing assets and HTML masquerading as code fail the whole
 candidate; a failed refresh preserves previous complete builds.
 
+New prepared runtimes also retain the public installation manifest and the 180,
+192 and 512 pixel PNG app icons. The build emits immutable, SHA-256-addressed
+copies and maps the four fixed public URLs in its runtime descriptor. Preparation
+checks their MIME, size, digest and manifest/PNG shape before publishing. The
+worker serves only those exact, query-free URLs from a published runtime;
+reading them neither creates a cache nor changes document access. Earlier
+descriptors without the mapping keep their original completeness requirements.
+This makes the resources available after offline reopening; it does not establish
+that an operating system installed an icon. The production browser case and the
+bounded physical observation are described in the
+[SPN-090 improvement record](implementation/SPN-090.md#resumed-improvement-pass-public-installation-assets-and-driver-evidence).
+
 SPN-055 bounds retention to two complete published builds plus one candidate.
 Account compatibility holds survive sign-out, and actual browser client IDs pin
 the exact lazy assets needed by live tabs. Uncertain legacy accounts retain a
@@ -320,6 +340,28 @@ also gets the generic page. In the app (`web/App.tsx`), only a network failure
 (`TypeError`) on the session check enters local mode; a 401 still goes to sign-in.
 Local mode reads the prepared account's catalog and downloads, never a cached
 session as fresh authorization.
+
+**🔌 Connection lost on an open Dashboard.** A Dashboard that started online and then
+loses the network opens a downloaded Doc or Sheet from its device copy, shown as
+offline with no server-only actions, and reuses a saved folder listing. Only a
+network failure for the prepared account qualifies: a real server answer (denied,
+missing) still shows the access screen. The item stays on the device copy until the
+person explicitly navigates away. Its existing native binding reconnects and verifies
+server authority in place, preserving unfinished input and its durable queue; Dashboard
+metadata refresh never replaces that mounted editor. The connection indicator reports
+that binding's actual state, independently of the conservative device-copy actions. A request that hangs for 15 s counts as an outage. The decision
+lives in `web/offline/warmOpen.ts`.
+
+**⏱️ Deadlines.** A hang must never leave a start without an answer
+(`web/offline/deadlines.ts`). When the browser reports `onLine === false`, startup and
+page loads skip the wait and take the offline path at once; `onLine === true` proves
+nothing and never short-circuits. A page load slower than 8 s to first byte falls back to
+the saved app (server-only pages such as guest links, setup and invites have no saved copy, so they
+wait for the server), and an item request (the single `/api/items/<id>` fetch, not other Dashboard requests) slower than 15 s
+opens the device copy. On a slow but
+live network this chooses the saved copy over waiting; the native binding reconnects
+in place when the server answers. A start that is still waiting after 8 s names the step it is on
+(`web/startupStage.ts`), so a phone with no inspector can report where it stalled.
 
 **Local mode.** The shared network icon beside the gem reports **Offline**,
 **Reconnecting** or verified **Online**, independently of local durability.
@@ -583,8 +625,12 @@ SPN-058 semantics, independent of the server database; neither an open connectio
 nor a UI status alone proves them. A local-save failure stays visible until resolved.
 
 Sync is attempted on startup, on returning to the foreground and when the
-connection returns, while the app is running. Pending work stays visible until it
-actually succeeds. Background Sync may be an optional enhancement. It is not a
+connection returns, while that document's editor is open. The file list currently does not
+sync pending edits: a document edited offline keeps its changes on the device until
+it is opened again while connected (own-phone run, 2026-11-13). This is a known
+pre-launch gap in the required app-running reconnect contract, tracked by
+[SPN-156](todo/SPN-156.md); SPN-090's closure does not complete it. Pending work stays
+visible until it actually succeeds. Background Sync may be an optional enhancement. It is not a
 requirement for Firefox/Android or Safari/iOS, and not a promise that the sync
 client runs while the app is closed. Follow the existing [history](history.md)
 and [collaboration](collaboration.md) contracts.
@@ -658,23 +704,32 @@ When independent item icons are unsupported, provide the stable link and a clear
 in-app offline collection fallback, recording that limitation. A shortcut
 never implicitly claims the document has been downloaded.
 
-Test installed-context startup as well as a browser tab. On iOS, do not assume
-browser storage is copied into or shared with an installed app: prepare offline
-content in the context that will launch. Verify Android Chrome, Android Firefox
-and iPhone Safari Home Screen on actual devices, recording OS/browser versions,
-supported actions and observed launch behavior. CI's mobile viewport alone cannot
-establish installation, storage-context or native home-screen behavior. SPN-090
-owns these recorded physical-device runs, including install icons and the offline
-manifest; SPN-055 owns the shared lifecycle, and SPN-052 separately verifies
-ordinary macOS Chrome, Firefox and Safari tabs with browser versions and
-persistence results recorded here.
+Test installed-context startup and browser tabs on a real phone. On iOS, do not
+assume browser storage is copied into or shared with an installed app: prepare
+offline content in the context that will launch. Record the OS and browser versions,
+the actions taken and the observed launch behaviour. CI's mobile viewport alone does
+not establish installation, storage-context or native home-screen behaviour; an
+accepted observation limit must stay explicit. SPN-090 owns this mobile evidence,
+including install icons and the offline manifest. SPN-055 owns the shared lifecycle,
+and SPN-052 separately verifies ordinary macOS Chrome, Firefox and Safari tabs with
+browser versions and persistence results recorded here.
 
-SPN-090's [BrowserStack CI plan](implementation/SPN-090.md#browserstack-ci-plan)
-uses Automate real mobile browsers and Local from GitHub Actions, with repository
-secrets `BS_USERNAME` and `BS_ACCESS_KEY`. The bounded HTTP infrastructure smoke
-verifies credentials, mobile allocation and runner reachability. Installed-context
-HTTPS/service-worker, Home Screen restart and offline acceptance remain separate,
-uncompleted work; do not infer those passes from a successful tunnel session.
+### 📱 Real-phone verification
+
+Owner decision, 2026-11-13: phone acceptance for offline behaviour is done on the
+owner's own phones, not BrowserStack ([record](implementation/SPN-090.md#-owner-decision-2026-11-13-real-phones-replace-browserstack-for-spn-090)).
+The earlier BrowserStack harness and workflow were removed; its completed reports stay
+in the [SPN-090 record](implementation/SPN-090.md) as history.
+
+- Run the decisive scenario below on a real phone against a local build behind a
+  tunnel, recording each result and any failure in the SPN-090 findings note
+  ([own-phone findings](implementation/SPN-090-own-phone-findings.md)).
+- Android Chrome is covered. **iOS Safari is not verified on a real phone**; its
+  storage and service-worker behaviour is an open gap until someone runs the same
+  install, go-offline, reopen and edit pass on an iPhone.
+- Deterministic coverage owns replay, access, eviction and conflict permutations; a
+  phone only observes the lifecycle (install, launcher start, airplane mode, reconnect).
+- An unobserved mobile behaviour stays named as unobserved; a failure stays a failure.
 
 The decisive scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
@@ -683,9 +738,27 @@ exactly once), and once after another editor changed it (the live document is
 untouched and one conflicted copy holds the offline version). Compare both views
 and server state. Include existing images, uncached/removed items, lost
 acknowledgements, a crash between replay and outbox clearing, history restore,
-account switching and revoked/read-only shares. Deterministic CI also exercises
-failed writes, partial downloads, eviction, removal with pending work, repeated
-replay and interrupted application/storage updates.
+account switching and revoked/read-only shares. The original ticket assigns
+those replay/access permutations to deterministic coverage; the
+[suite inventory](implementation/SPN-090.md#acceptance-ownership-without-duplicate-paid-permutations)
+keeps their execution evidence separate from physical lifecycle observations.
+Deterministic CI also exercises failed writes, partial downloads, eviction,
+removal with pending work, repeated replay and interrupted application/storage
+updates. Real phones observe the mobile lifecycle, authored edits/reopen, normal and
+conflicted reconnect, creation, stable-link and unavailable-item behaviour;
+deterministic checks own the product permutations. An unexplained failure must
+be resolved; neither implementation alone nor an accepted limitation establishes
+a passing run.
+
+## 🗺️ Where each SPN-090 rule is checked
+
+| Rule                                                  | Owning check                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| A shortcut is not a download                          | `e2e/offline.spec.ts:585`, `:717`; `e2e/offline-recovery.spec.ts:375`                             |
+| Manifest and installation icons offline               | `e2e/offline.spec.ts` (`installationResources`, compares manifest/icon bytes before and after offline reload); `e2e/pwa.spec.ts` separately owns online installability                                                |
+| Stable `/?item=<uuid>` and Space-child `?item=` links | `e2e/offline-recovery.spec.ts:75`; `e2e/offline-editing.spec.ts:1062`, `:1123`                    |
+| Create and edit offline, reconnect once               | `e2e/offline-creation.spec.ts`                                                                    |
+| Real-device observation of the above                  | Owner's own phone, recorded in [own-phone findings](implementation/SPN-090-own-phone-findings.md) |
 
 ## Ordinary desktop browser tabs
 
@@ -696,7 +769,10 @@ tab does not require installing Spinel. Private Browsing/Incognito and another
 profile have different storage lifetimes and do not inherit the prepared copies.
 
 Spinel requests `navigator.storage.persist()` during an explicit download and
-reports its actual result. A denied, unsupported or failed request does not mean
+reports its actual result. The download never waits for that answer: Firefox asks
+through its own prompt, which a person may ignore. If the copy is ready first, the
+result says the browser is still deciding and offers storage help, then shows the
+actual answer once it comes ([owner, 2026-11-03](implementation/SPN-090.md#second-pre-merge-phone-runs-on-00ce6db)). A denied, unsupported or failed request does not mean
 the download failed; it means browser protection was not established. The result's
 **How to keep them** action opens the same **About device storage** guide used in
 Profile, without navigating away from the editor. Pending work remains mounted.
@@ -711,11 +787,11 @@ components under the [migration rule](implementation/storybook-production-migrat
 the [visual record](design/review/spn-052/README.md) preserves light, dark and
 phone evidence and independent agent review. No SPN-052 Redesign example remains.
 
-| Browser | Persistence and eviction rules |
-| --- | --- |
-| Chrome | Chromium grants persistence using browser heuristics rather than a permission prompt. Best-effort origin storage can be evicted under storage pressure. A request can be denied; returning to Spinel and checking the actual protection state is more useful than assuming a grant. [Chrome storage guidance](https://web.dev/articles/persistent-storage). |
-| Firefox | A persistence request can show a permission prompt. The person may allow persistent storage; browsing-data and session-only cleanup settings still matter. Check the site's storage exception and avoid clearing pending work. [Mozilla storage controls](https://support.mozilla.org/en-US/kb/storage). |
-| Safari | WebKit supports the Storage API and decides persistence using heuristics. Origin data may be evicted under quota/storage pressure or inactivity. Its tracking-prevention policy can remove script-writable storage after seven days of Safari use without interaction with the site; this is not seven elapsed calendar days. Do not promise an ordinary tab the exemption documented for Home Screen apps. [WebKit storage policy](https://webkit.org/blog/14403/updates-to-storage-policy/), [tracking prevention](https://webkit.org/tracking-prevention/), and [Safari-use timing](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/). |
+| Browser | Persistence and eviction rules                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chrome  | Chromium grants persistence using browser heuristics rather than a permission prompt. Best-effort origin storage can be evicted under storage pressure. A request can be denied; returning to Spinel and checking the actual protection state is more useful than assuming a grant. [Chrome storage guidance](https://web.dev/articles/persistent-storage).                                                                                                                                                                                                                                                                                                       |
+| Firefox | A persistence request can show a permission prompt. The person may allow persistent storage; browsing-data and session-only cleanup settings still matter. Check the site's storage exception and avoid clearing pending work. [Mozilla storage controls](https://support.mozilla.org/en-US/kb/storage).                                                                                                                                                                                                                                                                                                                                                          |
+| Safari  | WebKit supports the Storage API and decides persistence using heuristics. Origin data may be evicted under quota/storage pressure or inactivity. Its tracking-prevention policy can remove script-writable storage after seven days of Safari use without interaction with the site; this is not seven elapsed calendar days. Do not promise an ordinary tab the exemption documented for Home Screen apps. [WebKit storage policy](https://webkit.org/blog/14403/updates-to-storage-policy/), [tracking prevention](https://webkit.org/tracking-prevention/), and [Safari-use timing](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/). |
 
 These policies are platform documentation, not a measured retention timer or a
 guarantee against user deletion. Keep free disk space and avoid cleanup settings
@@ -733,11 +809,11 @@ application over loopback HTTPS with a synthetic Owner and an invited
 Collaborator holding editor grants. These are ordinary browser tabs with retained
 profiles and real native input.
 
-| Browser | Measured macOS and runner | Observed persistence | Full application result |
-| --- | --- | --- | --- |
-| Chrome 156.0.8078.80 | macOS 26.6.2 (25G83), arm64, `macos-26`, image `20261021.0445.8` | All four requests remained unprotected (`false` before and after); the result and **How to keep them** guide were exercised. Both restarts still reported `false`. | Passed, [native run 8](https://github.com/mxbaylee/spinel/actions/runs/40973885475). |
-| Firefox 159.0 | macOS 26.6.2 (25G83), arm64, `macos-26`, image `20261021.0445.8` | The real `localhost:8176` persistent-storage prompt was allowed: `false` → `true` on the first download. The remaining downloads and both restarts reported `true`. | Passed, [native run 8](https://github.com/mxbaylee/spinel/actions/runs/40973885475). |
-| Safari 27.2 | macOS 15.7.9 (24G830), x86_64, `macos-15-intel`, image `20260824.0482.1` | All four requests remained unprotected (`false` before and after); the result and **How to keep them** guide were exercised. Both restarts still reported `false`. | Passed, [native run 13](https://github.com/mxbaylee/spinel/actions/runs/40979677496). |
+| Browser              | Measured macOS and runner                                                | Observed persistence                                                                                                                                                | Full application result                                                               |
+| -------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Chrome 156.0.8078.80 | macOS 26.6.2 (25G83), arm64, `macos-26`, image `20261021.0445.8`         | All four requests remained unprotected (`false` before and after); the result and **How to keep them** guide were exercised. Both restarts still reported `false`.  | Passed, [native run 8](https://github.com/mxbaylee/spinel/actions/runs/40973885475).  |
+| Firefox 159.0        | macOS 26.6.2 (25G83), arm64, `macos-26`, image `20261021.0445.8`         | The real `localhost:8176` persistent-storage prompt was allowed: `false` → `true` on the first download. The remaining downloads and both restarts reported `true`. | Passed, [native run 8](https://github.com/mxbaylee/spinel/actions/runs/40973885475).  |
+| Safari 27.2          | macOS 15.7.9 (24G830), x86_64, `macos-15-intel`, image `20260824.0482.1` | All four requests remained unprotected (`false` before and after); the result and **How to keep them** guide were exercised. Both restarts still reported `false`.  | Passed, [native run 13](https://github.com/mxbaylee/spinel/actions/runs/40979677496). |
 
 Chrome and Firefox ran from source `68a2ce9980234e292a5e333abca15c9faec271e2`,
 tested as merge `f4f474442372fef7aa28af9e801d9d6377c0da38`. Safari ran from
@@ -780,7 +856,10 @@ persistence grant remains distinct from a backup guarantee.
 SPN-051's offline creation remains the shared delivered implementation. Native
 desktop applications and synchronization while the browser is closed are outside
 this verification. SPN-090 retains the separate physical-phone and installed-app
-checks; desktop completion does not depend on or complete those runs.
+observations made on real phones ([real-phone verification](#-real-phone-verification)).
+Desktop completion does not depend on those mobile runs. Its named results may
+supply approved alternative product coverage, without becoming a native mobile
+observation or silently completing pending phone acceptance.
 
 ## Platform references
 
@@ -798,6 +877,5 @@ Offline copies retain [Formula definitions](formulas.md), never calculated
 source values. They show unavailable results and make no formula requests.
 Reconnect must verify source access before rendering results; queued offline
 edits and recovery copies must preserve definitions without baking in values.
-
 
 Offline creation also saves the chosen icon or emoji and icon color through reload and upload, using the same creation controls and validation as online creation. An automatic icon remains name-derived when no choice is made. The identity belongs to the immutable creation request; existing receipt retries and account/destination checks still apply. See [SPN-086 integration](implementation/SPN-086.md#appearance-on-offline-creation).

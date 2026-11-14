@@ -98,7 +98,7 @@ test('the opt-in SPN-146 A/B stays tested without widening to full or performanc
       assert.equal(alone.suites[id].selected, true, `${path} ${id}`);
   }
   // Neighbouring workflow and CI script paths keep their full-coverage rule.
-  for (const path of ['.github/workflows/browserstack.yml', 'scripts/ci/patch-ab-other.ts'])
+  for (const path of ['.github/workflows/spaces-acceptance.yml', 'scripts/ci/patch-ab-other.ts'])
     assert.equal(coveragePlan('pull_request', pr(), [path], head).mode, 'full', path);
   assert.equal(
     coveragePlan('pull_request', pr(), [...experiment, 'web/App.tsx'], head).mode,
@@ -138,6 +138,69 @@ test('sized restore participates in the immutable plan and fails closed', () => 
   assert.match(workflow, /if: needs.changes.outputs.restore_timing == 'true'/);
   assert.match(workflow, /"restore-timing":"\$\{\{ needs.restore-timing.result \}\}"/);
   assert.match(workflow.slice(workflow.indexOf('  playwright:\n')), /restore-timing,/);
+});
+
+test('the extracted Doc touch raster keeps every browser owner and the sized restore dependency', () => {
+  const original = coveragePlan('pull_request', pr(), ['e2e/doc-touch.ts'], head);
+  const extracted = coveragePlan('pull_request', pr(), ['e2e/doc-touch-raster.ts'], head);
+  assert.equal(extracted.mode, 'targeted');
+  for (const id of suiteIds)
+    assert.equal(extracted.suites[id].selected, original.suites[id].selected, id);
+  for (const id of [
+    'restore-timing',
+    'playwright-run',
+    'doc-responsiveness',
+    'doc-callback-lifetimes',
+    'responsiveness-baseline',
+    'callback-baseline',
+  ] as const)
+    assert.equal(extracted.suites[id].selected, true, id);
+  assert.ok(
+    extracted.suites['restore-timing'].dependencies.some((path) =>
+      path.includes('doc-touch-raster'),
+    ),
+  );
+  assert.throws(
+    () =>
+      verifyCoverage(
+        extracted,
+        'success',
+        { ...all(extracted), 'restore-timing': 'skipped' },
+        suiteIds,
+      ),
+    /Incomplete coverage restore-timing/,
+  );
+  // The immutable diff retains the old dependency when it is deleted or moved
+  // into documentation; only an unrelated similarly named helper stays outside.
+  assert.equal(
+    coveragePlan('pull_request', pr(), ['e2e/doc-touch-raster.ts', 'docs/raster-helper.md'], head)
+      .suites['restore-timing'].selected,
+    true,
+  );
+  for (const path of [
+    'e2e/doc-touch-recorder.ts',
+    'e2e/doc-touch-raster-unrelated.ts',
+    'e2e/doc-touch-raster/notes.ts',
+    'docs/doc-touch-raster.md',
+  ])
+    assert.equal(
+      coveragePlan('pull_request', pr(), [path], head).suites['restore-timing'].selected,
+      false,
+      path,
+    );
+});
+
+test('shared offline image assertions retain ordinary CI and native desktop coverage', () => {
+  const path = 'scripts/ci/offline-image-pixels.ts';
+  const plan = coveragePlan('pull_request', pr(), [path], head);
+  assert.equal(plan.mode, 'full');
+  assert.ok(suiteIds.every((id) => plan.suites[id].selected));
+  const desktop = readFileSync(
+    new URL('../../.github/workflows/desktop-offline.yml', import.meta.url),
+    'utf8',
+  );
+  const paths = desktop.split('    paths:\n')[1].split('  workflow_dispatch:')[0];
+  assert.ok(paths.split('\n').some((line) => line.trim() === `- ${path}`));
 });
 
 test('dependency closure and unknown paths fail closed, including old rename/deleted sides', () => {

@@ -96,7 +96,7 @@ export function SpaceOfflineActions({
       {offline.message && (
         <>
           <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
-          {offline.message.detail && <p>{offline.message.detail}</p>}
+          {offline.message.detail && <p aria-live="polite">{offline.message.detail}</p>}
           <OfflineAvailabilityActions message={offline.message} allowNavigation={allowNavigation} />
         </>
       )}

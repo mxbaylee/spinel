@@ -3,30 +3,22 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import sharp from 'sharp';
 import { CURRENT_SDK_VERSION, shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
-
-// Language layout data must arrive with the renderer, before offline editing.
-// Group the open-source renderer's dynamic dictionaries in both build modes.
-const rendererChunks = {
-  groups: [
-    // Vite may otherwise coalesce this shared helper into the large renderer,
-    // making the tiny bootstrap import native code before runtime selection.
-    { name: 'module-preload', test: /vite\/preload-helper\.js/ },
-    { name: 'univer-renderer', test: /node_modules[\\/]@univerjs[\\/]engine-render[\\/]/ },
-  ],
-};
+import { installationAssetName, installationPaths, pwaManifest } from './src/shared/pwa.ts';
+import { iconSvg } from './src/ui/appIcon.ts';
+import { rendererOutput } from './src/build/rendererChunks.ts';
 
 // Write the offline app shell (docs/offline.md) into the built service worker.
 // Its contents change with every build, so browsers install the new worker.
-function offlineShell(compatibility: RuntimeCompatibility): Plugin {
+function offlineShell(compatibility: RuntimeCompatibility, fixtureFormat?: number): Plugin {
   return {
     name: 'spinel-offline-shell',
     apply: 'build',
     generateBundle: {
       order: 'post',
-      handler(_options, bundle) {
-        const files = shellFiles(Object.keys(bundle));
+      async handler(_options, bundle) {
         const worker = bundle['service-worker.js'];
         // Storybook builds with this config but without the service-worker entry.
         if (!worker) return;
@@ -37,6 +29,30 @@ function offlineShell(compatibility: RuntimeCompatibility): Plugin {
         const html = bundle['index.html'];
         if (!application || application.type !== 'chunk' || !html || html.type !== 'asset')
           return this.error('The offline application entry and public HTML were not built.');
+        const installation = {} as NonNullable<ShellManifest['installation']>;
+        for (const path of installationPaths) {
+          const bytes =
+            path === '/manifest.webmanifest'
+              ? Buffer.from(JSON.stringify(pwaManifest))
+              : await sharp(Buffer.from(iconSvg()))
+                  .resize(Number(path.match(/\d+/)![0]))
+                  .png()
+                  .toBuffer();
+          const file = installationAssetName(
+            path,
+            createHash('sha256').update(bytes).digest('hex'),
+            fixtureFormat,
+          );
+          installation[path] = file;
+          this.emitFile({ type: 'asset', fileName: file.slice(1), source: bytes });
+        }
+        // Stable public URLs resolve to these immutable bytes inside each retained build.
+        const files = shellFiles([
+          ...new Set([
+            ...Object.keys(bundle),
+            ...Object.values(installation).map((file) => file.slice(1)),
+          ]),
+        ]);
         const original =
           typeof html.source === 'string' ? html.source : new TextDecoder().decode(html.source);
         const version = createHash('sha256')
@@ -52,6 +68,7 @@ function offlineShell(compatibility: RuntimeCompatibility): Plugin {
           entry: '/' + application.fileName,
           css: files.filter((file) => file.endsWith('.css')),
           files,
+          installation,
         };
         const token = new RegExp(`(["'\`])${SHELL_PLACEHOLDER}\\1`, 'g');
         const found = worker.code.match(token)?.length ?? 0;
@@ -81,9 +98,12 @@ export default defineConfig(({ mode }) => {
   const fixtureSuffix = mode === 'offline-upgrade' ? `-format${format}` : '';
   return {
     root: fileURLToPath(new URL('./web', import.meta.url)),
-    plugins: [react(), offlineShell(compatibility)],
+    plugins: [
+      react(),
+      offlineShell(compatibility, mode === 'offline-upgrade' ? format : undefined),
+    ],
     define: { __SPINEL_RUNTIME_COMPATIBILITY__: JSON.stringify(compatibility) },
-    optimizeDeps: { rolldownOptions: { output: { codeSplitting: rendererChunks } } },
+    optimizeDeps: { rolldownOptions: { output: rendererOutput } },
     build: {
       outDir: '../dist',
       emptyOutDir: true,
@@ -94,7 +114,7 @@ export default defineConfig(({ mode }) => {
           'service-worker': fileURLToPath(new URL('./web/service-worker.ts', import.meta.url)),
         },
         output: {
-          codeSplitting: rendererChunks,
+          ...rendererOutput,
           entryFileNames: (chunk) =>
             chunk.name === 'service-worker'
               ? 'service-worker.js'

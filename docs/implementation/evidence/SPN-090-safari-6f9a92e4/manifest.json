@@ -1,0 +1,42 @@
+{
+  "source": "6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b",
+  "sessionId": "a4da71c1d9135174dc4dc74b9d2f0eff0d10c7f3",
+  "outcome": "anonymous-readiness-failed; paid allowance closed; driver diagnosis unclassified",
+  "payloads": [
+    {
+      "path": "safari-13410608977.zip",
+      "bytes": 101210,
+      "sha256": "63c2115ab05c0c4012511ae23f019347c674edefb09e7d3062d28be355c4609e"
+    },
+    {
+      "path": "safari-artifacts.json",
+      "bytes": 852,
+      "sha256": "05f4fd6a226b955e085f926d1d44fb62de5790cc02c66443850b193181b40888"
+    },
+    {
+      "path": "safari-diagnostics-13410843308.zip",
+      "bytes": 1045,
+      "sha256": "275beb12f2ac3099da423cabf18f2f7b476ac535a0a43e464589b2577daa2fbf"
+    },
+    {
+      "path": "safari-diagnostics-jobs.json",
+      "bytes": 3387,
+      "sha256": "7a0a4f5beb1ab0a710e0a111933d9130df67138bafe39c6fce549d59f2eb3d4a"
+    },
+    {
+      "path": "safari-diagnostics-run.json",
+      "bytes": 12174,
+      "sha256": "af49d06dc9c9958dc1f19e23903eae0ec5b02a3f4ff2c908ee255274cf7c1212"
+    },
+    {
+      "path": "safari-jobs.json",
+      "bytes": 4633,
+      "sha256": "3aeebef923abb5f57c41ade416ade9137e57fa5a74c6868b068fc4b7dcfbf606"
+    },
+    {
+      "path": "safari-run.json",
+      "bytes": 12186,
+      "sha256": "5f8af03462d09857969ec5b15db8766cf29b10aa049df4c4630c1e0d4a18cd6e"
+    }
+  ]
+}

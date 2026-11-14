@@ -181,7 +181,7 @@ is the backstop, not a substitute for applicable PR coverage. Keep the seven
 stable required check names and isolated edit concurrency. PR edits currently
 run full validation. 🪶 [SPN-129's proposed metadata optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system);
 there is no pending router setup or exception to these gates. Broad soak, retained
-transition, container, BrowserStack and live-provider scopes are not permission
+transition, container and live-provider scopes are not permission
 to narrow additional coverage without equivalent evidence.
 
 ## Verify once at the right scope and preserve the result

@@ -18,6 +18,7 @@ import { AuthStore, COOKIE_NAME } from '../../src/server/auth/store.ts';
 import { WorkspaceStore } from '../../src/server/workspace/store.ts';
 import { docImageSnapshot } from '../../e2e/doc-image-fixture.ts';
 import { offlineSheetImages } from '../../e2e/offline-fixture.ts';
+import { parseFixtureOrigin } from './desktop-fixture-origin.ts';
 
 export type DesktopSnapshot = { unitId: string; revision: number; snapshot: NativeSnapshot };
 export type DesktopItem = {
@@ -52,8 +53,9 @@ export async function createDesktopOfflineFixture(options: {
   keyPath: string;
   certPath: string;
   staticDirectory?: string;
+  origin?: string;
 }) {
-  const origin = 'https://localhost:8176';
+  const { origin, host, port, servername } = parseFixtureOrigin(options.origin);
   const directory = resolve(options.directory);
   await mkdir(directory, { recursive: true });
   const databasePath = join(directory, 'app.sqlite');
@@ -173,6 +175,7 @@ export async function createDesktopOfflineFixture(options: {
         method,
         headers: {
           Cookie: credentials[account],
+          Host: host,
           Origin: origin,
           ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
         },
@@ -286,11 +289,7 @@ export async function createDesktopOfflineFixture(options: {
         return;
       }
       if (request.url === loginPath) {
-        if (
-          counts.logins ||
-          request.method !== 'GET' ||
-          request.headers.host !== new URL(origin).host
-        ) {
+        if (counts.logins || request.method !== 'GET' || request.headers.host !== host) {
           response.writeHead(404, { 'Cache-Control': 'no-store' }).end();
           return;
         }
@@ -321,7 +320,7 @@ export async function createDesktopOfflineFixture(options: {
       new Promise<void>((resolveListen, reject) => {
         const failed = (error: Error) => reject(error);
         tls!.once('error', failed);
-        tls!.listen(8176, '127.0.0.1', () => {
+        tls!.listen(port, '127.0.0.1', () => {
           tls!.off('error', failed);
           resolveListen();
         });
@@ -339,15 +338,15 @@ export async function createDesktopOfflineFixture(options: {
             const outgoing = tlsRequest(
               {
                 hostname: '127.0.0.1',
-                port: 8176,
-                servername: 'localhost',
+                port,
+                servername,
                 ca: certificate,
                 agent: false,
                 path: upgrade
                   ? `/sync-api/items/${items[0].id}/socket?unitId=${items[0].unitId}&ticket=outage-probe`
                   : '/api/health',
                 headers: {
-                  Host: new URL(origin).host,
+                  Host: host,
                   Origin: origin,
                   ...(upgrade
                     ? {
@@ -405,7 +404,7 @@ export async function createDesktopOfflineFixture(options: {
       const socket = new WebSocket(
         `${controlOrigin.replace('http:', 'ws:')}${path}/socket?unitId=${encodeURIComponent(item.unitId)}&ticket=${encodeURIComponent(ticket.ticket)}`,
         {
-          headers: { Cookie: credentials.owner, Origin: origin },
+          headers: { Cookie: credentials.owner, Host: host, Origin: origin },
           handshakeTimeout: 10_000,
         },
       );

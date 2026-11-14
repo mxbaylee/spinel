@@ -23,8 +23,14 @@ import type {
 } from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
 import { isRuntimeCompatible } from './runtime.ts';
-import { readDeviceInventory, removeDeviceCopy, requestPersistence } from './deviceStorage.ts';
+import {
+  readDeviceInventory,
+  removeDeviceCopy,
+  requestPersistence,
+  type PersistenceState,
+} from './deviceStorage.ts';
 import { createOfflineDocument, relocateOfflineCreation } from './creation.ts';
+import { answeredMessage, protectionDetail } from './protection.ts';
 
 export type OfflineMessage = {
   text: string;
@@ -357,22 +363,12 @@ export function useOfflineDownloads(
     setBusy(item.id);
     setMessage(null);
     let outcome: 'prepared' | 'removed' | 'needs-recovery' | undefined;
-    let detail: string | undefined;
-    let storageHelp = false;
+    // Firefox answers persist() through a prompt the person may ignore, and
+    // some browsers never show it at all, so the download never waits for it.
+    // The result reports the answer if it came first, or updates once it comes.
+    let protection: PersistenceState | null = null;
+    const asked = downloaded ? null : requestPersistence().then((state) => (protection = state));
     try {
-      if (!downloaded) {
-        const protection = await requestPersistence();
-        verify(scope)();
-        storageHelp = protection !== 'granted';
-        detail =
-          protection === 'granted'
-            ? 'Your browser granted storage protection. Device copies are not a backup.'
-            : protection === 'denied'
-              ? 'Your browser did not grant storage protection. It may clear offline documents when space runs low.'
-              : protection === 'unsupported'
-                ? 'This browser does not offer storage protection. It may clear offline documents.'
-                : 'Storage protection could not be requested. Offline documents may still be cleared.';
-      }
       await serially(
         scope,
         async (store) => {
@@ -407,8 +403,8 @@ export function useOfflineDownloads(
         !downloaded,
       );
       if (scope.isCurrent()) await refreshSummaries();
-      if (scope.isCurrent())
-        setMessage({
+      if (scope.isCurrent()) {
+        const result: OfflineMessage = {
           text:
             outcome === 'needs-recovery'
               ? 'Changes are saved on this device. Recover them or choose how to remove them in This device.'
@@ -417,8 +413,15 @@ export function useOfflineDownloads(
                 : `${item.name} is available offline on this device.`,
           failed: false,
           ...(outcome === 'needs-recovery' ? { recoveryItemId: item.id } : {}),
-          ...(outcome === 'prepared' ? { detail, storageHelp } : {}),
-        });
+          ...(outcome === 'prepared' ? protectionDetail(protection) : {}),
+        };
+        setMessage(result);
+        if (outcome === 'prepared' && protection === null && asked) {
+          void asked.then((state) =>
+            setMessage((shown) => answeredMessage(shown, result, state, scope.isCurrent())),
+          );
+        }
+      }
     } catch (error) {
       if (scope.isCurrent())
         await serially(scope, (store) => scope.clearIfEmpty(store)).catch(() => {});

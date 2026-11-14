@@ -1,0 +1,98 @@
+{
+  "mode": "quota",
+  "scope": "Seven read-only requests for Plan and the six retained smoke sessions",
+  "status": "passed",
+  "plan": {
+    "outcome": "available",
+    "data": {
+      "parallelSessionsAllowed": 5,
+      "runningSessions": 0,
+      "queuedSessions": 0
+    }
+  },
+  "sessions": [
+    {
+      "sessionId": "b7c91146c925ed5d98567eb41cb43e7eeac5900b",
+      "evidence": {
+        "outcome": "available",
+        "data": {
+          "durationSeconds": 19,
+          "providerStatus": "done",
+          "executionStatus": "done",
+          "createdAt": "2026-10-28T03:28:29.000Z"
+        }
+      }
+    },
+    {
+      "sessionId": "2a80cede7b3faa3d2c0e64eb295b9175c2406b9b",
+      "evidence": {
+        "outcome": "available",
+        "data": {
+          "durationSeconds": 10,
+          "providerStatus": "done",
+          "executionStatus": "done",
+          "createdAt": "2026-10-28T03:28:49.000Z"
+        }
+      }
+    },
+    {
+      "sessionId": "65a1f6569b467ee40f62d591c8a931e7029f7620",
+      "evidence": {
+        "outcome": "available",
+        "data": {
+          "durationSeconds": 20,
+          "providerStatus": "done",
+          "executionStatus": "done",
+          "createdAt": "2026-10-28T03:28:59.000Z"
+        }
+      }
+    },
+    {
+      "sessionId": "12a1af12bf9dfd03d7f62325dda0f784abd1439c",
+      "evidence": {
+        "outcome": "available",
+        "data": {
+          "durationSeconds": 16,
+          "providerStatus": "done",
+          "executionStatus": "done",
+          "createdAt": "2026-10-28T03:34:00.000Z"
+        }
+      }
+    },
+    {
+      "sessionId": "19fe182c1aa612a5db508de9e9593cac2e227cc7",
+      "evidence": {
+        "outcome": "available",
+        "data": {
+          "durationSeconds": 9,
+          "providerStatus": "done",
+          "executionStatus": "done",
+          "createdAt": "2026-10-28T03:34:17.000Z"
+        }
+      }
+    },
+    {
+      "sessionId": "81a4cba3033bb2760f11bbe801b94a569b4ba6f4",
+      "evidence": {
+        "outcome": "available",
+        "data": {
+          "durationSeconds": 22,
+          "providerStatus": "done",
+          "executionStatus": "done",
+          "createdAt": "2026-10-28T03:34:26.000Z"
+        }
+      }
+    }
+  ],
+  "coverage": "six-retained-smoke-sessions-only",
+  "accountWideHistory": "unknown",
+  "chargedDurationMapping": "unverified",
+  "remainingMinutes": null,
+  "completeOfflineMatrixCostMinutes": null,
+  "allocationAllowed": false,
+  "usageReports": "not-requested-report-creation-required-no-documented-Automate-minute-balance",
+  "date": "2026-10-30T01:53:20.118Z",
+  "sourceSha": "7fd447cf3ef75dbffea0ea7e2192de29c632d17d",
+  "testedSha": "7fd447cf3ef75dbffea0ea7e2192de29c632d17d",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/40988439739"
+}

@@ -1,0 +1,406 @@
+{
+  "format": 1,
+  "reviewedPreviousHead": "433092106839493d987668cac1791d548d4c15b1",
+  "testedSourceContentSHA256": {
+    "web/Dashboard.tsx": "775001a174b6decb015b8f65052b2da5f339b5c9a3c798a9187aedeffeebc6f2",
+    "web/service-worker.ts": "35a67aa00cfcdced1c9feb045a209b53853f10561b559854bc5c6fb20ff8d67b",
+    "e2e/offline.spec.ts": "7d49d95d96ed083499dae546710eee8477eeb82536997bec8500605d10eca0bf",
+    "src/shared/serviceWorker.test.ts": "9b5fe9963b3135cd372f15b9a5ad1130f2db98c33f6ab9010bab8bc8a52dfce7",
+    "src/ui/warmCatalog.test.ts": "0551eddfaa5caf45b09177ada5e5479e273a8e152e94a0f70565ef418b8002e7",
+    "web/offline/warmCatalog.ts": "c35782b7860cb58b08409dafd62351cdbe488d549604c57008c21c1c69403685"
+  },
+  "visualSourceUnchanged": {
+    "web/StartupStage.stories.tsx": true,
+    "web/startupStage.ts": true,
+    "web/offline/OfflineAvailability.stories.tsx": true,
+    "web/offline/OfflineAvailability.tsx": true,
+    "web/offline/protection.ts": true,
+    "src/ui/appIcon.ts": true,
+    "src/ui/gemGeometry.ts": true,
+    "src/ui/palette.ts": true,
+    ".storybook/main.ts": true,
+    ".storybook/preview.tsx": true
+  },
+  "checks": [
+    {
+      "name": "spn090-repair-browser-corrected",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--project=production",
+        "e2e/offline.spec.ts",
+        "--grep",
+        "a warm Dashboard and|a warm offline Sheet",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 26042,
+      "peakKiB": 1565680
+    },
+    {
+      "name": "spn090-repair-browser-final",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--project=production",
+        "e2e/offline.spec.ts",
+        "--grep",
+        "a warm Dashboard and|a warm offline Sheet",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 11304,
+      "peakKiB": 1665056
+    },
+    {
+      "name": "spn090-repair-browser",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--project=production",
+        "e2e/offline.spec.ts",
+        "--grep",
+        "a warm Dashboard and|a warm offline Sheet",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 11305,
+      "peakKiB": 1703008
+    },
+    {
+      "name": "spn090-repair-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1914,
+      "peakKiB": 1140304
+    },
+    {
+      "name": "spn090-repair-deep-final-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1343,
+      "peakKiB": 1233904
+    },
+    {
+      "name": "spn090-repair-deep-final",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--project=production",
+        "e2e/offline.spec.ts",
+        "--grep",
+        "a warm Dashboard and",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 6982,
+      "peakKiB": 1524640
+    },
+    {
+      "name": "spn090-repair-deep-probe-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1544,
+      "peakKiB": 1121040
+    },
+    {
+      "name": "spn090-repair-deep-probe",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--project=production",
+        "e2e/offline.spec.ts",
+        "--grep",
+        "a warm Dashboard and",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 12657,
+      "peakKiB": 1610432
+    },
+    {
+      "name": "spn090-repair-final-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1295,
+      "peakKiB": 1255120
+    },
+    {
+      "name": "spn090-repair-fixture-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "src/ui/warmCatalog.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 151,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-repair-fixture-unit",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/ui/warmCatalog.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 420,
+      "peakKiB": 209728
+    },
+    {
+      "name": "spn090-repair-format-complete",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "web/Dashboard.tsx",
+        "e2e/offline.spec.ts",
+        "src/shared/serviceWorker.test.ts",
+        "web/service-worker.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 354,
+      "peakKiB": 224128
+    },
+    {
+      "name": "spn090-repair-format-final",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "web/Dashboard.tsx",
+        "src/shared/serviceWorker.test.ts",
+        "e2e/offline.spec.ts",
+        "web/service-worker.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 369,
+      "peakKiB": 223296
+    },
+    {
+      "name": "spn090-repair-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "web/Dashboard.tsx",
+        "src/shared/serviceWorker.test.ts",
+        "e2e/offline.spec.ts",
+        "docs/todo/SPN-154.md"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 421,
+      "peakKiB": 213632
+    },
+    {
+      "name": "spn090-repair-handoff-negative-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1319,
+      "peakKiB": 1156704
+    },
+    {
+      "name": "spn090-repair-handoff-negative",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "--project=production",
+        "e2e/offline.spec.ts",
+        "--grep",
+        "a warm offline Sheet",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 21465,
+      "peakKiB": 1480304
+    },
+    {
+      "name": "spn090-repair-lint",
+      "args": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 10887,
+      "peakKiB": 797840
+    },
+    {
+      "name": "spn090-repair-restored-build",
+      "args": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1302,
+      "peakKiB": 1248864
+    },
+    {
+      "name": "spn090-repair-typecheck-corrected",
+      "args": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 2190,
+      "peakKiB": 1812240
+    },
+    {
+      "name": "spn090-repair-typecheck",
+      "args": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 2266,
+      "peakKiB": 1735952
+    },
+    {
+      "name": "spn090-repair-unit",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/shared/serviceWorker.test.ts",
+        "src/ui/warmCatalog.test.ts",
+        "src/ui/warmOpen.test.ts",
+        "src/ui/startupDeadlines.test.ts",
+        "src/ui/bootstrapFailure.test.ts",
+        "src/ui/spinelSync.test.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1180,
+      "peakKiB": 358640
+    },
+    {
+      "name": "spn090-repair-worker-corrected",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/shared/serviceWorker.test.ts",
+        "src/shared/offlineShell.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 421,
+      "peakKiB": 293376
+    },
+    {
+      "name": "spn090-repair-worker-negative",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/shared/serviceWorker.test.ts",
+        "-t",
+        "aborts a pending online fetch"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 346,
+      "peakKiB": 206496
+    },
+    {
+      "name": "spn090-repair-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 244,
+      "peakKiB": 251376
+    }
+  ],
+  "finalBrowserRuntimeEqualsFinalSourceBuild": true,
+  "pending": [
+    "Two independent reviews and visual applicability approval on replacement committed head",
+    "All seven current-head hosted gates and other full hosted/native owners"
+  ]
+}

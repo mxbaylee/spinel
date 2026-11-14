@@ -1,0 +1,74 @@
+{
+  "reviewedAt": "2026-11-14T02:41:03.408Z",
+  "durationMs": 1957,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "current-production-startup-status--slow-start"
+  ],
+  "checked": [
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "light",
+      "filename": "current-production-startup-status--slow-start-light.png",
+      "title": "Current production/Startup status / Slow Start"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "dark",
+      "filename": "current-production-startup-status--slow-start-dark.png",
+      "title": "Current production/Startup status / Slow Start"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "phone",
+      "filename": "current-production-startup-status--slow-start-phone.png",
+      "title": "Current production/Startup status / Slow Start"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "phone-dark",
+      "filename": "current-production-startup-status--slow-start-phone-dark.png",
+      "title": "Current production/Startup status / Slow Start"
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "variant": "tablet",
+      "filename": "current-production-startup-status--slow-start-tablet.png",
+      "title": "Current production/Startup status / Slow Start"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}
