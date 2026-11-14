@@ -704,34 +704,26 @@ When independent item icons are unsupported, provide the stable link and a clear
 in-app offline collection fallback, recording that limitation. A shortcut
 never implicitly claims the document has been downloaded.
 
-Test installed-context startup and browser tabs on a real phone. On iOS, do not
-assume browser storage is copied into or shared with an installed app: prepare
-offline content in the context that will launch. Record the OS and browser versions,
-the actions taken and the observed launch behaviour. CI's mobile viewport alone does
-not establish installation, storage-context or native home-screen behaviour; an
-accepted observation limit must stay explicit. SPN-090 owns this mobile evidence,
-including install icons and the offline manifest. SPN-055 owns the shared lifecycle,
-and SPN-052 separately verifies ordinary macOS Chrome, Firefox and Safari tabs with
-browser versions and persistence results recorded here.
+📱 Prepare private offline content in the context that will launch. On iOS,
+do not assume a Safari tab and installed app share storage. The
+[current SPN-090 verification method](implementation/SPN-090.md#-current-phone-verification-method)
+combines targeted Pixel 10/Chrome/Home Screen observations with current
+deterministic/shared native content, persistence, replay and access checks. It
+supersedes the former BrowserStack provider, recurring quota workflow and repeated
+three-platform physical matrix; retained old results stay historical evidence.
+No new paid-device execution is required.
 
-### 📱 Real-phone verification
+Exact phone versions and tested build are unknown; the final known-offline sign-in
+shortcut and every physical edit/reopen/replay/creation permutation are not proved.
+This method accepts lower integrated phone confidence without claiming emulation
+is an installed device. SPN-152 owns deferred real-iPhone verification; SPN-154
+image paste and SPN-156 file-list replay remain pre-launch work. SPN-156 keeps its
+separate bounded repaired-build installed reconnect observation. SPN-055 owns the
+shared lifecycle, and SPN-052 separately verifies ordinary macOS Chrome, Firefox
+and Safari tabs. Neither provider smoke nor later unrelated passes complete a
+missing product assertion.
 
-Owner decision, 2026-11-13: phone acceptance for offline behaviour is done on the
-owner's own phones, not BrowserStack ([record](implementation/SPN-090.md#-owner-decision-2026-11-13-real-phones-replace-browserstack-for-spn-090)).
-The earlier BrowserStack harness and workflow were removed; its completed reports stay
-in the [SPN-090 record](implementation/SPN-090.md) as history.
-
-- Run the decisive scenario below on a real phone against a local build behind a
-  tunnel, recording each result and any failure in the SPN-090 findings note
-  ([own-phone findings](implementation/SPN-090-own-phone-findings.md)).
-- Android Chrome is covered. **iOS Safari is not verified on a real phone**; its
-  storage and service-worker behaviour is an open gap until someone runs the same
-  install, go-offline, reopen and edit pass on an iPhone.
-- Deterministic coverage owns replay, access, eviction and conflict permutations; a
-  phone only observes the lifecycle (install, launcher start, airplane mode, reconnect).
-- An unobserved mobile behaviour stays named as unobserved; a failure stays a failure.
-
-The decisive scenario is: download online, terminate, enable airplane mode, launch
+The retained product scenario is: download online, terminate, enable airplane mode, launch
 from the home screen, open/edit each document type, close and reopen offline,
 then reconnect twice: once with the live document unchanged (the edits sync
 exactly once), and once after another editor changed it (the live document is
@@ -752,13 +744,13 @@ a passing run.
 
 ## 🗺️ Where each SPN-090 rule is checked
 
-| Rule                                                  | Owning check                                                                                      |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| A shortcut is not a download                          | `e2e/offline.spec.ts:585`, `:717`; `e2e/offline-recovery.spec.ts:375`                             |
-| Manifest and installation icons offline               | `e2e/offline.spec.ts` (`installationResources`, compares manifest/icon bytes before and after offline reload); `e2e/pwa.spec.ts` separately owns online installability                                                |
-| Stable `/?item=<uuid>` and Space-child `?item=` links | `e2e/offline-recovery.spec.ts:75`; `e2e/offline-editing.spec.ts:1062`, `:1123`                    |
-| Create and edit offline, reconnect once               | `e2e/offline-creation.spec.ts`                                                                    |
-| Real-device observation of the above                  | Owner's own phone, recorded in [own-phone findings](implementation/SPN-090-own-phone-findings.md) |
+| Rule                                                  | Owning check                                                                                                                                                           |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A shortcut is not a download                          | `e2e/offline.spec.ts:585`, `:717`; `e2e/offline-recovery.spec.ts:375`                                                                                                  |
+| Manifest and installation icons offline               | `e2e/offline.spec.ts` (`installationResources`, compares manifest/icon bytes before and after offline reload); `e2e/pwa.spec.ts` separately owns online installability |
+| Stable `/?item=<uuid>` and Space-child `?item=` links | `e2e/offline-recovery.spec.ts:75`; `e2e/offline-editing.spec.ts:1062`, `:1123`                                                                                         |
+| Create and edit offline, reconnect once               | `e2e/offline-creation.spec.ts`                                                                                                                                         |
+| Real-device observation of the above                  | Owner's own phone, recorded in [own-phone findings](implementation/SPN-090-own-phone-findings.md)                                                                      |
 
 ## Ordinary desktop browser tabs
 

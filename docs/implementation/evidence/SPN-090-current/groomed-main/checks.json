@@ -1,0 +1,207 @@
+{
+  "sourceBefore": "67111d9c106c6518b813c6f1cf332068526c254c",
+  "integratedMain": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "runtimeSourceAudit": "source-audit.json",
+  "checks": [
+    {
+      "receipt": {
+        "name": "spn090-groom-index",
+        "args": ["npm", "run", "backlog:index"],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 329,
+        "peakKiB": 157984
+      },
+      "originalLogSha256": "580aaf84b492a4a1aff5af406e031053ca1b3789dfee68e334f2de86b09d4545",
+      "retainedLog": "spn090-groom-index.log.gz",
+      "retainedLogSha256": "ee8380c8e97b108ebeb5cdab42b97847a7b7dddd6949373cc5cababf8a9bcdfc",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-index-corrected",
+        "args": ["npm", "run", "backlog:index"],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 239,
+        "peakKiB": 251328
+      },
+      "originalLogSha256": "bb4cddbf3c16722391b450f624c26c39f21e2a43c87b106605b5a671e00a5f81",
+      "retainedLog": "spn090-groom-index-corrected.log.gz",
+      "retainedLogSha256": "235dee8a333a6c7897c106b6f1f45c2147c6359f5aa5d1ac9223189ff8e9950e",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-dependencies",
+        "args": ["node", "/tmp/spn090-groom-dependencies.ts"],
+        "code": 1,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 262,
+        "peakKiB": 173856
+      },
+      "originalLogSha256": "87d8e602d1b8caf317e00ac58ac01acad2765e678107ac44d468048ed37ed83d",
+      "retainedLog": "spn090-groom-dependencies.log.gz",
+      "retainedLogSha256": "8ac5dd5bdc9ba41047990adf21c0921b68dab919fc9f50a7b41cf8e263212b62",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-dependencies-corrected",
+        "args": ["node", "/tmp/spn090-groom-dependencies.ts"],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 194,
+        "peakKiB": 0
+      },
+      "originalLogSha256": "0c86f69097775ffa5c12c35de67fbc3218787e4d03170ea8be6a3eedab01a60a",
+      "retainedLog": "spn090-groom-dependencies-corrected.log.gz",
+      "retainedLogSha256": "d75efe1a1836aa474a48bc27caad28b3ca327971ba1ac939a4527934c48ed8f9",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-focused",
+        "args": [
+          "node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--cache=false",
+          "--fsModuleCachePath",
+          "/tmp/spn090-groom-vitest-cache",
+          "src/ui/warmCatalog.test.ts",
+          "src/ui/warmOpen.test.ts",
+          "src/ui/startupDeadlines.test.ts",
+          "src/shared/serviceWorker.test.ts",
+          "src/shared/offlineShell.test.ts",
+          "src/ui/offlineProtection.test.ts",
+          "src/ui/offlineRuntime.test.ts",
+          "src/ui/offlineDownload.test.ts",
+          "src/ui/bootstrapFailure.test.ts",
+          "src/ui/appIcon.test.ts",
+          "src/ui/nativeDrawingResize.test.ts",
+          "src/server/maintenance/http.test.ts",
+          "src/server/maintenance/ownership.test.ts",
+          "src/server/maintenance/supervisor-test-control.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 5978,
+        "peakKiB": 1213808
+      },
+      "originalLogSha256": "1a0102b0acfb99c85c5de57fdf1f433db8c61cbff030eddba176ef9eb9c02bf4",
+      "retainedLog": "spn090-groom-focused.log.gz",
+      "retainedLogSha256": "90f1c559a94e36a4b6ada7baf9d3b780ec3038d783c7285b4b694a36a00bb414",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-script-controls",
+        "args": [
+          "node",
+          "--test",
+          "scripts/ci/desktop-fixture-origin.test.ts",
+          "scripts/ci/offline-image-pixels.test.ts",
+          "scripts/ci/bootstrap-evidence.test.ts",
+          "scripts/ci/renderer-chunks.test.ts",
+          "scripts/ci/plan.test.ts",
+          "scripts/ci/session-revocation.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 219,
+        "peakKiB": 250352
+      },
+      "originalLogSha256": "eb2d017755ea20b7abfa0273e1c57dc316778fe72b330bc3e302b9008c638c78",
+      "retainedLog": "spn090-groom-script-controls.log.gz",
+      "retainedLogSha256": "991a62094f5d2e9945da89761605d5ebb3ca5f6b32b41be48244a2c2f0b38dc4",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-types",
+        "args": ["npm", "run", "typecheck"],
+        "code": 1,
+        "signal": null,
+        "reason": "Resource guard",
+        "elapsedMs": 9018,
+        "peakKiB": 1729472
+      },
+      "originalLogSha256": "093c38ccc6c2df340214432bd7c543e4e7ce6c2eca41d88b18fc2c33506e3ce2",
+      "retainedLog": "spn090-groom-types.log.gz",
+      "retainedLogSha256": "3b6d837af8f8e7674d953b5fa9cd413da52d568e96abad15bd280e056562f466",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-format",
+        "args": [
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "docs/implementation/SPN-090.md",
+          "docs/offline.md",
+          "docs/implementation/evidence/SPN-090-current/groomed-main"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 586,
+        "peakKiB": 286400
+      },
+      "originalLogSha256": "90ff4d6c994748005992b80cd26a31f71cdfec5025d24d0716dbdae0bc675ba1",
+      "retainedLog": "spn090-groom-format.log.gz",
+      "retainedLogSha256": "dfdd79f536ff857bb171f12964b2bfdc6e0a99ed44b40e13489923049308ec9a",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-lint",
+        "args": ["npm", "run", "lint"],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 10997,
+        "peakKiB": 744032
+      },
+      "originalLogSha256": "37aa6768802254f5db7e4fd566464c642fb0ed5493af3c3f835c785346b26601",
+      "retainedLog": "spn090-groom-lint.log.gz",
+      "retainedLogSha256": "d4d1b2d4479ba20d0c848b997fb9bd59e3ebaa4a089b51331c3b641a4e60da1a",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    },
+    {
+      "receipt": {
+        "name": "spn090-groom-backlog",
+        "args": ["npm", "run", "backlog:check"],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 237,
+        "peakKiB": 251632
+      },
+      "originalLogSha256": "79f8e224b6d8119e8b9b98704e1a8caedfe88d5d7b82259dd8d3aca933fe6a77",
+      "retainedLog": "spn090-groom-backlog.log.gz",
+      "retainedLogSha256": "0150a9e30c40c878ba855fc8866bc48b1f0aa580b2ae67cdaf14bc46e75eab41",
+      "redaction": "Candidate absolute home path replaced with <candidate-worktree>; macOS /private/tmp alias normalized to /tmp. No other content changed."
+    }
+  ],
+  "firstAttemptDispositions": {
+    "index": "Command passed but inspection found obsolete candidate-only SPN-157 ticket retained automatically; remove it to match completed main, then regenerate. Main current ticket set otherwise unchanged.",
+    "dependencyAudit": "Incorrect audit associated drawing patch function with @univerjs/drawing; actual script targets @univerjs/sheets-drawing. Correct audit input only; no installed package changed.",
+    "types": "Runtime guard terminated at elevated memory pressure, no compiler verdict or diagnosed type failure. Approved GOMEMLIMIT=640MiB GOGC=50 GOMAXPROCS=2. No repeat.",
+    "cleanup": "After abort pressure2; explicit ps audit showed no owned guard/serial/compiler/test process, only audit shell/rg. Slot released immediately; no unrelated process stopped."
+  },
+  "pending": [
+    "exact committed-head backlog PR check (recorded outside source after commit)",
+    "full hosted typecheck",
+    "both independent exact-head reviews and visual applicability",
+    "all selected current-head hosted acceptance"
+  ],
+  "memorySampling": "Successful commands ending before200ms have0KiB recorded because no sample occurred; not zero actual RSS."
+}

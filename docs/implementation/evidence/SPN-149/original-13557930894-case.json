@@ -1,0 +1,72 @@
+{
+  "title": "revoking one login preserves another login\u2019s queued edit and stops later broadcasts",
+  "file": "collaboration.spec.ts",
+  "line": 362,
+  "column": 1,
+  "id": "960cd46fcfcce4c1b118-dd2e11699054ac42c1e3",
+  "ok": true,
+  "tests": [
+    {
+      "projectName": "production",
+      "expectedStatus": "passed",
+      "status": "flaky",
+      "timeout": 60000,
+      "results": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "duration": 7537,
+          "startTime": "2026-11-07T02:47:43.338Z",
+          "errors": [
+            {
+              "message": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  444 |     const otherClosedBefore = otherClosed;\n  445 |     auth.revokeSession(sessions[0].session.token_hash);\n> 446 |     await expect.poll(() => revokedClosed).toBeGreaterThan(revokedClosedBefore);\n      |                                            ^\n  447 |     expect(otherClosed).toBe(otherClosedBefore);\n  448 |     // The revoked login has no unfinished work, so SPN-053's clean 401 handoff\n  449 |     // closes its editor. The other login's independently queued edit must survive.\n    at e2e/collaboration.spec.ts:446:44",
+              "location": {
+                "file": "e2e/collaboration.spec.ts",
+                "column": 44,
+                "line": 446
+              }
+            }
+          ],
+          "attachments": [
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/test-failed-1.png"
+            },
+            {
+              "name": "screenshot",
+              "contentType": "image/png",
+              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/test-failed-2.png"
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production/error-context.md"
+            }
+          ]
+        },
+        {
+          "status": "passed",
+          "retry": 1,
+          "duration": 6759,
+          "startTime": "2026-11-07T02:47:51.298Z",
+          "errors": [],
+          "attachments": [
+            {
+              "name": "trace",
+              "contentType": "application/zip",
+              "path": "test-results/production/collaboration-revoking-one-97229--and-stops-later-broadcasts-production-retry1/trace.zip"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "provenance": {
+    "original_artifact_id": 13557930894,
+    "artifact_sha256": "8e1582f1d03595d272d95e2686680e474e63bc302590fd366998131f278d6366",
+    "report_member": "playwright-report/production-1-of-2.json",
+    "report_member_sha256": "7ce0aa1f925ef5eaa8fa0cc139fae4ec0ff3d9ae77f269346c8e667cdfa48b85",
+    "extraction": "Exact case fields; error ANSI escapes removed and runner prefix replaced with repository-relative path; no snapshots, storage state, network payloads, cookies or trace bodies copied."
+  }
+}

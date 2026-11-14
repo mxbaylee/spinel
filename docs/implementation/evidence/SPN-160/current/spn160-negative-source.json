@@ -1,0 +1,12 @@
+{
+  "source": "d2a0ae20c8e62fe526a42815d9e8ef8fa0cc9c2a",
+  "contract": "Pre-barrier rejection must retain its contextual cause immediately before the original deadline",
+  "path": "src/server/maintenance/supervisor-test-control.ts",
+  "originalSha256": "8d0cebfe643491dd45dae18f1861ffbdf3c2086ad7e538011cd2484ff57ef295",
+  "mutatedSha256": "0644bfb73eeb92fc61e4cc7466f5248d2e3ad2c6a05a54b0cf6ba3c82cbd4e66",
+  "restoredSha256": "8d0cebfe643491dd45dae18f1861ffbdf3c2086ad7e538011cd2484ff57ef295",
+  "command": "vitest run supervisor-test-control.test.ts -t pre-barrier with private cache",
+  "status": 1,
+  "signal": null,
+  "restored": true
+}

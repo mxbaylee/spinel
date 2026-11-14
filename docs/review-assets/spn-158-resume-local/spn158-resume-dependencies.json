@@ -1,0 +1,29 @@
+{
+  "dependencyCheckout": "/Users/mxbaylee/projects/spinel-spn-098-production",
+  "dependencyHead": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+  "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+  "matchingManifestFields": [
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "peerDependencies",
+    "workspaces",
+    "engines"
+  ],
+  "matchingTrackedPatchLibFiles": 239,
+  "workspaceLinks": {
+    "presence-ui": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/presence-ui",
+    "doc-formulas": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/doc-formulas",
+    "sync-transform": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-transform",
+    "print": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/print",
+    "sync-client": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-client",
+    "diagnostics": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/diagnostics",
+    "sync-server": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-server"
+  },
+  "targetClean": true,
+  "mutation": "none; caches must be private",
+  "matchedSourceRoots": [
+    "lib",
+    "scripts/dependencies"
+  ]
+}

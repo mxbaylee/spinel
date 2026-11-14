@@ -1,0 +1,41 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-160
+
+ ❯ src/server/maintenance/supervisor-test-control.test.ts (4 tests | 2 failed | 2 skipped) 8ms
+   × a pre-barrier control throw preserves action, stage, journal and cause without waiting for timeout 6ms
+   × a pre-barrier control reject preserves action, stage, journal and cause without waiting for timeout 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/server/maintenance/supervisor-test-control.test.ts > a pre-barrier control throw preserves action, stage, journal and cause without waiting for timeout
+ FAIL  src/server/maintenance/supervisor-test-control.test.ts > a pre-barrier control reject preserves action, stage, journal and cause without waiting for timeout
+AssertionError: expected undefined to be Error: Durable phase control failed: {"ph… // Object.is equality
+
+- Expected:
+Error {
+  "message": "Durable phase control failed: {\"phase\":\"running\",\"stage\":\"transition\",\"action\":\"resume\",\"journal\":{\"phase\":\"paused\",\"lastFailure\":\"child-exited\"}}",
+  "cause": Error {
+    "message": "Maintenance could not complete this operation.",
+  },
+}
+
++ Received:
+undefined
+
+ ❯ src/server/maintenance/supervisor-test-control.test.ts:57:21
+     55|     await vi.advanceTimersByTimeAsync(0);
+     56|     const failure = observedFailure as Error;
+     57|     expect(failure).toBe(contextual);
+       |                     ^
+     58|     expect(failure.cause).toBe(original);
+     59|     expect(JSON.parse(failure.message.slice('Durable phase control fai…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 skipped (4)
+   Start at  21:38:56
+   Duration  95ms (transform 49%, tests 26%, import 20%, worker 5%)
+
+{"name":"spn160-swallowed-negative-d2a0ae20","args":["node","/tmp/spn160-detect-swallowed-rejection.ts"],"code":1,"signal":null,"reason":null,"elapsedMs":488,"peakKiB":359648}

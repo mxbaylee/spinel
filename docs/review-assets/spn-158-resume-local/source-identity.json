@@ -1,0 +1,36 @@
+{
+  "previousCandidate": "bfeb0b23953a67aae8afcba8af6eadd8b24f1040",
+  "integratedMain": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "maintenanceSource": [
+    {
+      "path": "src/server/maintenance/restore-http-test-client.ts",
+      "sha256": "44eeb0d2d7ea264bcbdded9a7e49b86841d041cd62b448407377e42f92fc3504",
+      "bytes": 11401,
+      "identicalToBfeb": true
+    },
+    {
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "sha256": "214024d2ba68a45d57ae4e9a5d92c31a9ffff179d2090a4bf2836fa35cea1604",
+      "bytes": 23911,
+      "identicalToBfeb": true
+    },
+    {
+      "path": "src/server/maintenance/http.test.ts",
+      "sha256": "209ec3c1c18d4045ade193aecd375cbf125c80d64a57176545863c77200b44f4",
+      "bytes": 26029,
+      "identicalToBfeb": true
+    }
+  ],
+  "executableChangesFromPreviousCandidate": [
+    "e2e/collaboration.spec.ts",
+    "e2e/session-revocation.ts",
+    "scripts/ci/session-revocation.test.ts"
+  ],
+  "ownExecutableChangesFromCurrentMain": [
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts",
+    "src/server/maintenance/restore-http-test-client.ts"
+  ],
+  "classification": "Exact source audit; resumed HTTP and Typecheck receipts name this integration source. Final evidence-only commit preserves these executable bytes.",
+  "testedIntegrationCommit": "0e32180a77a22466e6bfaa9f4c2a1b6a5769a139"
+}

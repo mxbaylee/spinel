@@ -1,0 +1,21 @@
+{
+  "prior": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "files": [
+    {
+      "path": "e2e/collaboration.spec.ts",
+      "prior": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "current": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c"
+    },
+    {
+      "path": "e2e/session-revocation.ts",
+      "prior": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "current": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a"
+    },
+    {
+      "path": "scripts/ci/session-revocation.test.ts",
+      "prior": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
+      "current": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462"
+    }
+  ]
+}

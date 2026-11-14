@@ -1,0 +1,26 @@
+{
+  "base": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "scope": "Precommit landing bookkeeping checks; runtime unchanged from d2a0ae20. Exact committed PR check is retained separately in final review/validation evidence.",
+  "files": [
+    {
+      "path": "spn160-ecef-backlog.json",
+      "bytes": 192,
+      "sha256": "a288e2d8e2c54e8b2f9d3f84815225c81b2ea14b3ebc7f39ea171333df8e7121"
+    },
+    {
+      "path": "spn160-ecef-backlog.log",
+      "bytes": 2175,
+      "sha256": "9bfeb950102b570dd24715605220b391e2bd05f984f229bfc7f50eccc1db5c7a"
+    },
+    {
+      "path": "spn160-ecef-index.json",
+      "bytes": 190,
+      "sha256": "88554778f1027400e8908f0f3c30991306226d2fe1643e8e22b71361b5b3af98"
+    },
+    {
+      "path": "spn160-ecef-index.log",
+      "bytes": 2171,
+      "sha256": "1259368437984eabe7e478d00f8deec8930033cfca36570368c4a23cf31d139d"
+    }
+  ]
+}

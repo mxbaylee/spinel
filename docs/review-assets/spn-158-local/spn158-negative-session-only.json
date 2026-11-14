@@ -1,0 +1,16 @@
+{
+  "name": "spn158-negative-session-only",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/http.test.ts",
+    "-t",
+    "postcommit readiness"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 427,
+  "peakKiB": 266720
+}
