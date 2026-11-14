@@ -1,0 +1,12 @@
+{
+  "name": "spn120-exact-collection",
+  "args": [
+    "node",
+    "/tmp/spn120-current-collect.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 5051,
+  "peakKiB": 579744
+}

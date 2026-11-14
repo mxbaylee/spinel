@@ -1,0 +1,1 @@
+{"name":"spn120-portable-evidence-lint","args":["./node_modules/.bin/oxlint","--deny-warnings","docs/review-assets/spn-120-current/collection-driver.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":123,"peakKiB":0}

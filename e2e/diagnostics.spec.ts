@@ -10,7 +10,8 @@ import { DatabaseSync, openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { DOC_HISTORY_GROUP_LIMIT } from '../src/ui/boundedDocHistory.ts';
 import { DIAGNOSTIC_SAMPLE_INTERVAL_MS } from '../web/diagnostics.ts';
-import { startApp } from './app-process.ts';
+import { startApp, withFixtureCleanup } from './app-process.ts';
+import type { OwnedAppProcess } from './app-process.ts';
 import { nativeInput } from './offline-fixture.ts';
 import type { FeedbackPair, FeedbackSubmission } from '../src/shared/feedback.ts';
 
@@ -18,65 +19,83 @@ async function fixture(browser: Browser, context: BrowserContext, info: TestInfo
   const directory = await mkdtemp(join(tmpdir(), 'spinel-diagnostics-e2e-'));
   const databasePath = join(directory, 'spinel.sqlite');
   const origin = `http://localhost:${info.project.name === 'development' ? 3298 : 3299}`;
-  const app = await startApp({
-    databasePath,
-    origin,
-    development: info.project.name === 'development',
-  });
-  const database = openDatabase(databasePath);
-  const auth = new AuthStore(database);
-  const operator = auth.createUser('Private Operator Name', true);
-  const owner = auth.createUser('Private Document Owner');
-  const operatorSession = auth.createSession(operator.id);
-  const ownerSession = auth.createSession(owner.id);
-  const cookie = (token: string) => ({
-    name: COOKIE_NAME,
-    value: token,
-    url: origin.replace('http:', 'https:'),
-    httpOnly: true,
-    secure: true,
-    sameSite: 'Strict' as const,
-  });
-  await context.addCookies([cookie(operatorSession.token)]);
-  const member = await browser.newContext({ baseURL: origin });
-  await member.addCookies([cookie(ownerSession.token)]);
-  const headers = { Origin: origin };
-  const create = async (name: string, kind: 'sheet' | 'doc') => {
-    const response = await member.request.post(`${origin}/api/items`, {
-      headers,
-      data: { name, kind, parentId: null },
+  let app: OwnedAppProcess | undefined;
+  let acquiredDatabase: ReturnType<typeof openDatabase> | undefined;
+  let acquiredMember: BrowserContext | undefined;
+  // Every acquired resource is released, retaining the first failure and any
+  // later bounded-process cleanup failure instead of replacing the assertion.
+  const close = () =>
+    withFixtureCleanup(
+      async () => {
+        await acquiredMember?.close();
+      },
+      () =>
+        withFixtureCleanup(
+          async () => {
+            acquiredDatabase?.close();
+          },
+          () =>
+            withFixtureCleanup(
+              async () => {
+                await app?.close();
+              },
+              () => rm(directory, { recursive: true, force: true }),
+            ),
+        ),
+    );
+  try {
+    app = await startApp({
+      databasePath,
+      origin,
+      development: info.project.name === 'development',
     });
-    expect(response.status()).toBe(201);
-    return (await response.json()).item as { id: string; name: string };
-  };
-  return {
-    directory,
-    origin,
-    database,
-    auth,
-    operator,
-    owner,
-    operatorSession,
-    ownerSession,
-    member,
-    headers,
-    create,
-    async close() {
-      try {
-        await member.close();
-      } finally {
-        try {
-          database.close();
-        } finally {
-          try {
-            await app.close();
-          } finally {
-            await rm(directory, { recursive: true, force: true });
-          }
-        }
-      }
-    },
-  };
+    const database = openDatabase(databasePath);
+    acquiredDatabase = database;
+    const auth = new AuthStore(database);
+    const operator = auth.createUser('Private Operator Name', true);
+    const owner = auth.createUser('Private Document Owner');
+    const operatorSession = auth.createSession(operator.id);
+    const ownerSession = auth.createSession(owner.id);
+    const cookie = (token: string) => ({
+      name: COOKIE_NAME,
+      value: token,
+      url: origin.replace('http:', 'https:'),
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict' as const,
+    });
+    await context.addCookies([cookie(operatorSession.token)]);
+    const member = await browser.newContext({ baseURL: origin });
+    acquiredMember = member;
+    await member.addCookies([cookie(ownerSession.token)]);
+    const headers = { Origin: origin };
+    const create = async (name: string, kind: 'sheet' | 'doc') => {
+      const response = await member.request.post(`${origin}/api/items`, {
+        headers,
+        data: { name, kind, parentId: null },
+      });
+      expect(response.status()).toBe(201);
+      return (await response.json()).item as { id: string; name: string };
+    };
+    return {
+      directory,
+      origin,
+      database,
+      auth,
+      operator,
+      owner,
+      operatorSession,
+      ownerSession,
+      member,
+      headers,
+      create,
+      close,
+    };
+  } catch (original) {
+    return withFixtureCleanup(async () => {
+      throw original;
+    }, close);
+  }
 }
 
 async function openClear(page: Page) {
@@ -193,221 +212,227 @@ test('feedback survives a lost acknowledgment and paired user/system downloads p
 }, info) => {
   test.setTimeout(180_000);
   const f = await fixture(browser, context, info);
-  const memberPage = await f.member.newPage();
-  const collaborator = f.auth.createUser('Feedback collaborator');
-  const collaboratorSession = f.auth.createSession(collaborator.id);
-  const other = await browser.newContext({ baseURL: f.origin });
-  await other.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: collaboratorSession.token,
-      url: f.origin.replace('http:', 'https:'),
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Strict',
-    },
-  ]);
-  const otherPage = await other.newPage();
-  const attempts: FeedbackSubmission[] = [];
-  try {
-    const file = await f.create('PRIVATE feedback document title', 'doc');
-    await memberPage.goto(`${f.origin}/?item=${file.id}`);
-    await expect(memberPage.getByRole('status', { name: 'Save status' })).toHaveText(
-      'All changes saved.',
-      { timeout: 30_000 },
-    );
-    let loseAcknowledgment = true;
-    await memberPage.route('**/api/diagnostics/feedback', async (route) => {
-      attempts.push(route.request().postDataJSON() as FeedbackSubmission);
-      if (loseAcknowledgment) {
-        loseAcknowledgment = false;
-        // The real server persists this request. Only its acknowledgment is lost.
-        const saved = await route.fetch();
-        expect(saved.status()).toBe(200);
-        await route.abort('failed');
-      } else await route.continue();
-    });
-    const message = 'The toolbar was slow after opening my document.';
-    const composer = await feedbackComposer(memberPage, message);
-    await composer.getByRole('button', { name: 'Send feedback', exact: true }).click();
-    await expect(composer.getByRole('alert')).toContainText('Sending could not be confirmed.');
-    await expect(composer.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue(
-      message,
-    );
-    await composer.getByRole('button', { name: 'Cancel', exact: true }).click();
-    await openFeedbackComposer(memberPage);
-    const first = await submittedFeedback(memberPage, true);
-    expect(attempts).toHaveLength(2);
-    expect(attempts[1]).toEqual(attempts[0]);
-    expect(attempts[0].context).toMatchObject({ route: '/files/:id', fileId: file.id });
-    expect(JSON.stringify(attempts[0])).not.toContain(file.name);
-    await composer.getByRole('button', { name: 'Done', exact: true }).click();
-
-    await otherPage.goto(f.origin);
-    const otherComposer = await feedbackComposer(
-      otherPage,
-      'A collaborator can report an issue too.',
-    );
-    const middle = await submittedFeedback(otherPage);
-    await otherComposer.getByRole('button', { name: 'Done', exact: true }).click();
-    const lastComposer = await feedbackComposer(
-      memberPage,
-      'The problem stopped after reconnecting.',
-    );
-    const last = await submittedFeedback(memberPage);
-    await lastComposer.getByRole('button', { name: 'Done', exact: true }).click();
-
-    const live = new DatabaseSync(join(f.directory, 'diagnostics.sqlite'));
-    try {
-      expect(
-        live
-          .prepare("SELECT count(*) AS count FROM events WHERE name='feedback' AND id=?")
-          .get(first.id)?.count,
-      ).toBe(1);
-      const stored = live.prepare('SELECT * FROM events WHERE id=?').get(first.id)!;
-      expect(stored.actor_id).toBe(f.owner.id);
-      expect(stored.file_id).toBe(file.id);
-      expect(stored.message).toBe(message);
-      expect(stored.route).toBe('/files/:id');
-
-      await page.clock.install();
-      await page.goto(`${f.origin}/admin`);
-      const account = page.getByRole('region', { name: `${f.owner.name} account`, exact: true });
-      await expect(account.getByText('Feedback available', { exact: true })).toBeVisible();
-      await expect(page.getByText(message, { exact: true })).toHaveCount(0);
-      await expect(page.getByText(file.name, { exact: true })).toHaveCount(0);
-      let preparations = 0;
-      page.on('request', (request) => {
-        if (
-          request.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
-          request.method() === 'POST'
-        )
-          preparations++;
-      });
-      const pairResponse = page.waitForResponse(
-        (value) =>
-          value.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
-          value.request().method() === 'POST',
-      );
-      const user = await feedbackArtifact(
-        page,
-        join(f.directory, 'feedback-user.sqlite'),
-        async () => {
-          await account
-            .getByRole('button', { name: `Feedback downloads for ${f.owner.name}`, exact: true })
-            .click();
-          await page.getByRole('menuitem', { name: 'Download user metrics', exact: true }).click();
-          expect((await pairResponse).status()).toBe(200);
+  let other: BrowserContext | undefined;
+  await withFixtureCleanup(
+    async () => {
+      const memberPage = await f.member.newPage();
+      const collaborator = f.auth.createUser('Feedback collaborator');
+      const collaboratorSession = f.auth.createSession(collaborator.id);
+      other = await browser.newContext({ baseURL: f.origin });
+      await other.addCookies([
+        {
+          name: COOKIE_NAME,
+          value: collaboratorSession.token,
+          url: f.origin.replace('http:', 'https:'),
+          httpOnly: true,
+          secure: true,
+          sameSite: 'Strict',
         },
+      ]);
+      const otherPage = await other.newPage();
+      const attempts: FeedbackSubmission[] = [];
+      const file = await f.create('PRIVATE feedback document title', 'doc');
+      await memberPage.goto(`${f.origin}/?item=${file.id}`);
+      await expect(memberPage.getByRole('status', { name: 'Save status' })).toHaveText(
+        'All changes saved.',
+        { timeout: 30_000 },
       );
-      // Development StrictMode must not send an aborted mount's preparation:
-      // it can still hold the server lease when the surviving mount starts.
-      expect(preparations).toBe(1);
-      const pair = (await (await pairResponse).json()) as FeedbackPair;
-      const downloads = page.getByRole('dialog', { name: 'Feedback diagnostics', exact: true });
-      await expect(downloads.getByLabel('Shared time span', { exact: true })).toBeVisible();
-      expect(user.manifest).toMatchObject({
-        snapshotId: pair.id,
-        generation: pair.generation,
-        selectedActorId: f.owner.id,
-        scope: 'user',
-        window: pair.window,
-        completeRetainedSelection: true,
-        historicalCompleteness: 'unknown',
-        rowCount: pair.counts.user,
+      let loseAcknowledgment = true;
+      await memberPage.route('**/api/diagnostics/feedback', async (route) => {
+        attempts.push(route.request().postDataJSON() as FeedbackSubmission);
+        if (loseAcknowledgment) {
+          loseAcknowledgment = false;
+          // The real server persists this request. Only its acknowledgment is lost.
+          const saved = await route.fetch();
+          expect(saved.status()).toBe(200);
+          await route.abort('failed');
+        } else await route.continue();
       });
-      const expectedUser = live
-        .prepare(
-          'SELECT * FROM events WHERE actor_id=? AND received_at BETWEEN ? AND ? ORDER BY id',
-        )
-        .all(f.owner.id, pair.window.start, pair.window.end);
-      const expectedSystem = live
-        .prepare('SELECT * FROM events WHERE received_at BETWEEN ? AND ? ORDER BY id')
-        .all(pair.window.start, pair.window.end);
-      expect(user.rows).toEqual(expectedUser);
-      expect(user.rows.some((row) => row.id === first.id)).toBe(true);
-      expect(user.rows.some((row) => row.id === last.id)).toBe(true);
-      expect(user.rows.every((row) => row.actor_id === f.owner.id)).toBe(true);
+      const message = 'The toolbar was slow after opening my document.';
+      const composer = await feedbackComposer(memberPage, message);
+      await composer.getByRole('button', { name: 'Send feedback', exact: true }).click();
+      await expect(composer.getByRole('alert')).toContainText('Sending could not be confirmed.');
+      await expect(composer.getByRole('textbox', { name: 'Message', exact: true })).toHaveValue(
+        message,
+      );
+      await composer.getByRole('button', { name: 'Cancel', exact: true }).click();
+      await openFeedbackComposer(memberPage);
+      const first = await submittedFeedback(memberPage, true);
+      expect(attempts).toHaveLength(2);
+      expect(attempts[1]).toEqual(attempts[0]);
+      expect(attempts[0].context).toMatchObject({ route: '/files/:id', fileId: file.id });
+      expect(JSON.stringify(attempts[0])).not.toContain(file.name);
+      await composer.getByRole('button', { name: 'Done', exact: true }).click();
 
-      // New real activity between the buttons must never alter the prepared pair.
-      const boundary = await (
-        await f.member.request.get(`${f.origin}/api/diagnostics/feedback-context`, {
-          headers: { 'X-Spinel-Diagnostic-Account': f.owner.id },
-        })
-      ).json();
-      const laterId = randomUUID();
-      const later = await f.member.request.post(`${f.origin}/api/diagnostics/feedback`, {
-        headers: { ...f.headers, 'X-Spinel-Diagnostic-Account': f.owner.id },
-        data: {
-          id: laterId,
-          generation: boundary.generation,
-          binding: boundary.binding,
-          message: 'This report arrives after the frozen snapshot.',
-          context: { route: '/files' },
-        },
-      });
-      expect(later.status()).toBe(200);
-      const system = await feedbackArtifact(page, join(f.directory, 'feedback-system.sqlite'), () =>
-        downloads.getByRole('button', { name: 'Download system metrics', exact: true }).click(),
+      await otherPage.goto(f.origin);
+      const otherComposer = await feedbackComposer(
+        otherPage,
+        'A collaborator can report an issue too.',
       );
-      expect(system.manifest).toMatchObject({
-        snapshotId: user.manifest.snapshotId,
-        generation: user.manifest.generation,
-        window: user.manifest.window,
-        scope: 'system',
-        rowCount: pair.counts.system,
-      });
-      expect(system.rows).toEqual(expectedSystem);
-      expect(
-        system.rows.some((row) => row.id === middle.id && row.actor_id === collaborator.id),
-      ).toBe(true);
-      expect(system.rows.some((row) => row.id === laterId)).toBe(false);
-      expect(system.manifest.counts).toEqual(user.manifest.counts);
-      // Retain the exact synthetic rows/window after fixture cleanup, so review
-      // can inspect completeness without exporting credentials or a live store.
-      await writeFile(
-        info.outputPath('spn098-feedback-pair.json'),
-        JSON.stringify(
-          {
-            project: info.project.name,
-            attempt: info.retry,
-            initialPreparations: preparations,
-            pairedMembershipVerified: true,
-            user,
-            system,
-            excludedLaterReportId: laterId,
+      const middle = await submittedFeedback(otherPage);
+      await otherComposer.getByRole('button', { name: 'Done', exact: true }).click();
+      const lastComposer = await feedbackComposer(
+        memberPage,
+        'The problem stopped after reconnecting.',
+      );
+      const last = await submittedFeedback(memberPage);
+      await lastComposer.getByRole('button', { name: 'Done', exact: true }).click();
+
+      const live = new DatabaseSync(join(f.directory, 'diagnostics.sqlite'));
+      try {
+        expect(
+          live
+            .prepare("SELECT count(*) AS count FROM events WHERE name='feedback' AND id=?")
+            .get(first.id)?.count,
+        ).toBe(1);
+        const stored = live.prepare('SELECT * FROM events WHERE id=?').get(first.id)!;
+        expect(stored.actor_id).toBe(f.owner.id);
+        expect(stored.file_id).toBe(file.id);
+        expect(stored.message).toBe(message);
+        expect(stored.route).toBe('/files/:id');
+
+        await page.clock.install();
+        await page.goto(`${f.origin}/admin`);
+        const account = page.getByRole('region', { name: `${f.owner.name} account`, exact: true });
+        await expect(account.getByText('Feedback available', { exact: true })).toBeVisible();
+        await expect(page.getByText(message, { exact: true })).toHaveCount(0);
+        await expect(page.getByText(file.name, { exact: true })).toHaveCount(0);
+        let preparations = 0;
+        page.on('request', (request) => {
+          if (
+            request.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
+            request.method() === 'POST'
+          )
+            preparations++;
+        });
+        const pairResponse = page.waitForResponse(
+          (value) =>
+            value.url().endsWith('/api/admin/diagnostics/feedback/prepare') &&
+            value.request().method() === 'POST',
+        );
+        const user = await feedbackArtifact(
+          page,
+          join(f.directory, 'feedback-user.sqlite'),
+          async () => {
+            await account
+              .getByRole('button', { name: `Feedback downloads for ${f.owner.name}`, exact: true })
+              .click();
+            await page
+              .getByRole('menuitem', { name: 'Download user metrics', exact: true })
+              .click();
+            expect((await pairResponse).status()).toBe(200);
           },
-          null,
-          2,
-        ) + '\n',
-      );
-      const denied = await other.request.post(
-        `${f.origin}/api/admin/diagnostics/feedback/${pair.id}/download`,
-        { headers: f.headers, data: { scope: 'system' } },
-      );
-      expect(denied.status()).toBe(404);
-      // Exercise the actual expiry UI without keeping a fixture alive for five minutes.
-      // Store/HTTP tests separately advance the server clock and prove server expiry.
-      await page.clock.fastForward(Math.max(0, pair.expiresAt - Date.now()) + 1000);
-      await expect(
-        downloads.getByText('This pair is no longer available.', { exact: false }),
-      ).toBeVisible();
-      await expect(
-        downloads.getByRole('button', { name: 'Download system metrics', exact: true }),
-      ).toBeDisabled();
-      await expect(
-        downloads.getByRole('button', { name: 'Prepare both downloads', exact: true }),
-      ).toBeEnabled();
-    } finally {
-      live.close();
-    }
-  } finally {
-    try {
-      await other.close();
-    } finally {
-      await f.close();
-    }
-  }
+        );
+        // Development StrictMode must not send an aborted mount's preparation:
+        // it can still hold the server lease when the surviving mount starts.
+        expect(preparations).toBe(1);
+        const pair = (await (await pairResponse).json()) as FeedbackPair;
+        const downloads = page.getByRole('dialog', { name: 'Feedback diagnostics', exact: true });
+        await expect(downloads.getByLabel('Shared time span', { exact: true })).toBeVisible();
+        expect(user.manifest).toMatchObject({
+          snapshotId: pair.id,
+          generation: pair.generation,
+          selectedActorId: f.owner.id,
+          scope: 'user',
+          window: pair.window,
+          completeRetainedSelection: true,
+          historicalCompleteness: 'unknown',
+          rowCount: pair.counts.user,
+        });
+        const expectedUser = live
+          .prepare(
+            'SELECT * FROM events WHERE actor_id=? AND received_at BETWEEN ? AND ? ORDER BY id',
+          )
+          .all(f.owner.id, pair.window.start, pair.window.end);
+        const expectedSystem = live
+          .prepare('SELECT * FROM events WHERE received_at BETWEEN ? AND ? ORDER BY id')
+          .all(pair.window.start, pair.window.end);
+        expect(user.rows).toEqual(expectedUser);
+        expect(user.rows.some((row) => row.id === first.id)).toBe(true);
+        expect(user.rows.some((row) => row.id === last.id)).toBe(true);
+        expect(user.rows.every((row) => row.actor_id === f.owner.id)).toBe(true);
+
+        // New real activity between the buttons must never alter the prepared pair.
+        const boundary = await (
+          await f.member.request.get(`${f.origin}/api/diagnostics/feedback-context`, {
+            headers: { 'X-Spinel-Diagnostic-Account': f.owner.id },
+          })
+        ).json();
+        const laterId = randomUUID();
+        const later = await f.member.request.post(`${f.origin}/api/diagnostics/feedback`, {
+          headers: { ...f.headers, 'X-Spinel-Diagnostic-Account': f.owner.id },
+          data: {
+            id: laterId,
+            generation: boundary.generation,
+            binding: boundary.binding,
+            message: 'This report arrives after the frozen snapshot.',
+            context: { route: '/files' },
+          },
+        });
+        expect(later.status()).toBe(200);
+        const system = await feedbackArtifact(
+          page,
+          join(f.directory, 'feedback-system.sqlite'),
+          () =>
+            downloads.getByRole('button', { name: 'Download system metrics', exact: true }).click(),
+        );
+        expect(system.manifest).toMatchObject({
+          snapshotId: user.manifest.snapshotId,
+          generation: user.manifest.generation,
+          window: user.manifest.window,
+          scope: 'system',
+          rowCount: pair.counts.system,
+        });
+        expect(system.rows).toEqual(expectedSystem);
+        expect(
+          system.rows.some((row) => row.id === middle.id && row.actor_id === collaborator.id),
+        ).toBe(true);
+        expect(system.rows.some((row) => row.id === laterId)).toBe(false);
+        expect(system.manifest.counts).toEqual(user.manifest.counts);
+        // Retain the exact synthetic rows/window after fixture cleanup, so review
+        // can inspect completeness without exporting credentials or a live store.
+        await writeFile(
+          info.outputPath('spn098-feedback-pair.json'),
+          JSON.stringify(
+            {
+              project: info.project.name,
+              attempt: info.retry,
+              initialPreparations: preparations,
+              pairedMembershipVerified: true,
+              user,
+              system,
+              excludedLaterReportId: laterId,
+            },
+            null,
+            2,
+          ) + '\n',
+        );
+        const denied = await other.request.post(
+          `${f.origin}/api/admin/diagnostics/feedback/${pair.id}/download`,
+          { headers: f.headers, data: { scope: 'system' } },
+        );
+        expect(denied.status()).toBe(404);
+        // Exercise the actual expiry UI without keeping a fixture alive for five minutes.
+        // Store/HTTP tests separately advance the server clock and prove server expiry.
+        await page.clock.fastForward(Math.max(0, pair.expiresAt - Date.now()) + 1000);
+        await expect(
+          downloads.getByText('This pair is no longer available.', { exact: false }),
+        ).toBeVisible();
+        await expect(
+          downloads.getByRole('button', { name: 'Download system metrics', exact: true }),
+        ).toBeDisabled();
+        await expect(
+          downloads.getByRole('button', { name: 'Prepare both downloads', exact: true }),
+        ).toBeEnabled();
+      } finally {
+        live.close();
+      }
+    },
+    () =>
+      withFixtureCleanup(async () => {
+        await other?.close();
+      }, f.close),
+  );
 });
 
 test('truncation clears feedback flags and an unconfirmed old report needs deliberate new submission', async ({
@@ -417,8 +442,8 @@ test('truncation clears feedback flags and an unconfirmed old report needs delib
 }, info) => {
   test.setTimeout(120_000);
   const f = await fixture(browser, context, info);
-  const memberPage = await f.member.newPage();
-  try {
+  await withFixtureCleanup(async () => {
+    const memberPage = await f.member.newPage();
     await memberPage.goto(f.origin);
     let drop = true;
     await memberPage.route('**/api/diagnostics/feedback', async (route) => {
@@ -475,9 +500,7 @@ test('truncation clears feedback flags and an unconfirmed old report needs delib
     expect(newReport.generation).not.toBe(before.generation);
     await page.getByRole('button', { name: 'Refresh users', exact: true }).click();
     await expect(owner.getByText('Feedback available', { exact: true })).toBeVisible();
-  } finally {
-    await f.close();
-  }
+  }, f.close);
 });
 
 test('production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export', async ({
@@ -491,8 +514,8 @@ test('production open, search, local persistence and server acknowledgement rema
   );
   test.setTimeout(180_000);
   const f = await fixture(browser, context, info);
-  const member = await f.member.newPage();
-  try {
+  await withFixtureCleanup(async () => {
+    const member = await f.member.newPage();
     const item = await f.create('Private diagnostic diary', 'doc');
     const initialContent = 'Private native content 123';
     const capacityInput = '.'.repeat(DOC_HISTORY_GROUP_LIMIT + 8);
@@ -726,9 +749,7 @@ test('production open, search, local persistence and server acknowledgement rema
     } finally {
       exported.close();
     }
-  } finally {
-    await f.close();
-  }
+  }, f.close);
 });
 
 test('Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation', async ({
@@ -738,8 +759,8 @@ test('Operator downloads real correlated diagnostics without document data and c
 }, info) => {
   test.setTimeout(180_000);
   const f = await fixture(browser, context, info);
-  const memberPage = await f.member.newPage();
-  try {
+  await withFixtureCleanup(async () => {
+    const memberPage = await f.member.newPage();
     const host = await f.create('Private report title', 'doc');
     const source = await f.create('Budget', 'sheet');
     const saved = await f.member.request.put(`${f.origin}/api/items/${source.id}/sheet`, {
@@ -1131,9 +1152,7 @@ test('Operator downloads real correlated diagnostics without document data and c
     expect((await f.member.request.get(`${f.origin}/api/items/${source.id}/sheet`)).status()).toBe(
       200,
     );
-  } finally {
-    await f.close();
-  }
+  }, f.close);
 });
 
 test('diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest', async ({
@@ -1147,128 +1166,132 @@ test('diagnostics failures, cancelled downloads, pending clear navigation and ex
   const panel = page.getByRole('region', { name: 'Diagnostics', exact: true });
   let releaseDownload: (() => void) | undefined;
   let releaseClear: (() => void) | undefined;
-  try {
-    await page.goto(`${f.origin}/admin#health`);
-    await expect(
-      panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
-    ).toBeEnabled();
-    await page.route(`${endpoint}/download`, (route) =>
-      route.fulfill({ status: 503, json: { error: 'PRIVATE_EXPORT_PATH' } }),
-    );
-    await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
-    await expect(panel.getByRole('alert')).toContainText('Diagnostics could not be downloaded.');
-    await expect(page.getByText('PRIVATE_EXPORT_PATH')).toHaveCount(0);
-    await expect(panel.getByText(/snapshot sent/)).toHaveCount(0);
-    await page.unroute(`${endpoint}/download`);
-    await panel.getByRole('button', { name: 'Refresh diagnostics status' }).click();
-    await expect(
-      panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
-    ).toBeEnabled();
+  await withFixtureCleanup(
+    async () => {
+      await page.goto(`${f.origin}/admin#health`);
+      await expect(
+        panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
+      ).toBeEnabled();
+      await page.route(`${endpoint}/download`, (route) =>
+        route.fulfill({ status: 503, json: { error: 'PRIVATE_EXPORT_PATH' } }),
+      );
+      await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
+      await expect(panel.getByRole('alert')).toContainText('Diagnostics could not be downloaded.');
+      await expect(page.getByText('PRIVATE_EXPORT_PATH')).toHaveCount(0);
+      await expect(panel.getByText(/snapshot sent/)).toHaveCount(0);
+      await page.unroute(`${endpoint}/download`);
+      await panel.getByRole('button', { name: 'Refresh diagnostics status' }).click();
+      await expect(
+        panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
+      ).toBeEnabled();
 
-    const heldDownload = new Promise<void>((resolve) => {
-      releaseDownload = resolve;
-    });
-    let enteredDownload!: () => void;
-    const downloadEntered = new Promise<void>((resolve) => {
-      enteredDownload = resolve;
-    });
-    await page.route(`${endpoint}/download`, async (route) => {
-      enteredDownload();
-      await heldDownload;
-      await route.abort().catch(() => {});
-    });
-    let downloads = 0;
-    page.on('download', () => {
-      downloads++;
-    });
-    await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
-    await downloadEntered;
-    const sections = page.getByRole('navigation', { name: 'Administration sections' });
-    await expect(sections.getByRole('link', { name: 'People', exact: true })).toHaveAttribute(
-      'aria-disabled',
-      'true',
-    );
-    await panel.getByRole('button', { name: 'Cancel download' }).click();
-    releaseDownload!();
-    await expect(panel.getByText('Download cancelled.', { exact: false })).toBeVisible();
-    await expect(sections.getByRole('link', { name: 'People', exact: true })).not.toHaveAttribute(
-      'aria-disabled',
-      'true',
-    );
-    expect(downloads).toBe(0);
-    await page.unroute(`${endpoint}/download`);
+      const heldDownload = new Promise<void>((resolve) => {
+        releaseDownload = resolve;
+      });
+      let enteredDownload!: () => void;
+      const downloadEntered = new Promise<void>((resolve) => {
+        enteredDownload = resolve;
+      });
+      await page.route(`${endpoint}/download`, async (route) => {
+        enteredDownload();
+        await heldDownload;
+        await route.abort().catch(() => {});
+      });
+      let downloads = 0;
+      page.on('download', () => {
+        downloads++;
+      });
+      await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
+      await downloadEntered;
+      const sections = page.getByRole('navigation', { name: 'Administration sections' });
+      await expect(sections.getByRole('link', { name: 'People', exact: true })).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+      await panel.getByRole('button', { name: 'Cancel download' }).click();
+      releaseDownload!();
+      await expect(panel.getByText('Download cancelled.', { exact: false })).toBeVisible();
+      await expect(sections.getByRole('link', { name: 'People', exact: true })).not.toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+      expect(downloads).toBe(0);
+      await page.unroute(`${endpoint}/download`);
 
-    await page.route(`${endpoint}/truncate`, (route) =>
-      route.fulfill({ status: 503, json: { error: 'PRIVATE_SQLITE_FAILURE' } }),
-    );
-    const failedDialog = await openClear(page);
-    await failedDialog.getByRole('button', { name: 'Truncate diagnostics', exact: true }).click();
-    await expect(panel.getByRole('alert')).toContainText(
-      'The clear request could not be confirmed.',
-    );
-    await expect(panel.getByText(/Diagnostics cleared/)).toHaveCount(0);
-    await expect(page.getByText('PRIVATE_SQLITE_FAILURE')).toHaveCount(0);
-    await page.unroute(`${endpoint}/truncate`);
-    await panel.getByRole('button', { name: 'Refresh diagnostics status' }).click();
-    const heldClear = new Promise<void>((resolve) => {
-      releaseClear = resolve;
-    });
-    await page.route(`${endpoint}/truncate`, async (route) => {
-      await heldClear;
-      await route.continue();
-    });
-    const pendingDialog = await openClear(page);
-    await pendingDialog.getByRole('button', { name: 'Truncate diagnostics', exact: true }).click();
-    await expect(pendingDialog.getByRole('button', { name: 'Clearing…' })).toBeDisabled();
-    await expect(pendingDialog.getByRole('button', { name: 'Cancel', exact: true })).toBeDisabled();
-    await page.keyboard.press('Escape');
-    await expect(pendingDialog).toBeVisible();
-    await page.evaluate(() => {
-      location.hash = 'people';
-    });
-    await expect(page).toHaveURL(/#health$/);
-    await expect(pendingDialog).toBeVisible();
-    releaseClear!();
-    await expect(panel.getByText('Diagnostics cleared.', { exact: false })).toBeVisible();
-    await page.unroute(`${endpoint}/truncate`);
+      await page.route(`${endpoint}/truncate`, (route) =>
+        route.fulfill({ status: 503, json: { error: 'PRIVATE_SQLITE_FAILURE' } }),
+      );
+      const failedDialog = await openClear(page);
+      await failedDialog.getByRole('button', { name: 'Truncate diagnostics', exact: true }).click();
+      await expect(panel.getByRole('alert')).toContainText(
+        'The clear request could not be confirmed.',
+      );
+      await expect(panel.getByText(/Diagnostics cleared/)).toHaveCount(0);
+      await expect(page.getByText('PRIVATE_SQLITE_FAILURE')).toHaveCount(0);
+      await page.unroute(`${endpoint}/truncate`);
+      await panel.getByRole('button', { name: 'Refresh diagnostics status' }).click();
+      const heldClear = new Promise<void>((resolve) => {
+        releaseClear = resolve;
+      });
+      await page.route(`${endpoint}/truncate`, async (route) => {
+        await heldClear;
+        await route.continue();
+      });
+      const pendingDialog = await openClear(page);
+      await pendingDialog
+        .getByRole('button', { name: 'Truncate diagnostics', exact: true })
+        .click();
+      await expect(pendingDialog.getByRole('button', { name: 'Clearing…' })).toBeDisabled();
+      await expect(
+        pendingDialog.getByRole('button', { name: 'Cancel', exact: true }),
+      ).toBeDisabled();
+      await page.keyboard.press('Escape');
+      await expect(pendingDialog).toBeVisible();
+      await page.evaluate(() => {
+        location.hash = 'people';
+      });
+      await expect(page).toHaveURL(/#health$/);
+      await expect(pendingDialog).toBeVisible();
+      releaseClear!();
+      await expect(panel.getByText('Diagnostics cleared.', { exact: false })).toBeVisible();
+      await page.unroute(`${endpoint}/truncate`);
 
-    // Let clear's refresh finish, then isolate the independent session poll so the
-    // real download denial is observable before the global sign-out takes over.
-    await expect(
-      panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
-    ).toBeEnabled();
-    let healthIntercepted = false;
-    await page.route(`${f.origin}/api/health`, (route) => {
-      healthIntercepted = true;
-      return route.fulfill({ json: { status: 'ok' } });
-    });
-    await expect.poll(() => healthIntercepted).toBe(true);
-    f.auth.revokeSession(f.operatorSession.session.token_hash);
-    const deniedDownload = page.waitForResponse(
-      (response) =>
-        response.url() === `${endpoint}/download` && response.request().method() === 'POST',
-    );
-    await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
-    expect((await deniedDownload).status()).toBe(401);
-    await expect(panel.getByRole('alert')).toContainText('Operator access is unavailable.');
-    await expect(panel.getByRole('link', { name: 'Sign in again' })).toBeVisible();
-    await expect(
-      panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
-    ).toBeDisabled();
-    expect(downloads).toBe(0);
-    expect((await context.request.get(`${f.origin}/api/admin/health`)).status()).toBe(401);
-    await page.unroute(`${f.origin}/api/health`);
-    await expect(
-      page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
-    ).toBeVisible();
-    expect(downloads).toBe(0);
-  } finally {
-    releaseDownload?.();
-    releaseClear?.();
-    try {
-      if (!page.isClosed()) await page.unrouteAll({ behavior: 'wait' });
-    } finally {
-      await f.close();
-    }
-  }
+      // Let clear's refresh finish, then isolate the independent session poll so the
+      // real download denial is observable before the global sign-out takes over.
+      await expect(
+        panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
+      ).toBeEnabled();
+      let healthIntercepted = false;
+      await page.route(`${f.origin}/api/health`, (route) => {
+        healthIntercepted = true;
+        return route.fulfill({ json: { status: 'ok' } });
+      });
+      await expect.poll(() => healthIntercepted).toBe(true);
+      f.auth.revokeSession(f.operatorSession.session.token_hash);
+      const deniedDownload = page.waitForResponse(
+        (response) =>
+          response.url() === `${endpoint}/download` && response.request().method() === 'POST',
+      );
+      await panel.getByRole('button', { name: 'Download diagnostics', exact: true }).click();
+      expect((await deniedDownload).status()).toBe(401);
+      await expect(panel.getByRole('alert')).toContainText('Operator access is unavailable.');
+      await expect(panel.getByRole('link', { name: 'Sign in again' })).toBeVisible();
+      await expect(
+        panel.getByRole('button', { name: 'Download diagnostics', exact: true }),
+      ).toBeDisabled();
+      expect(downloads).toBe(0);
+      expect((await context.request.get(`${f.origin}/api/admin/health`)).status()).toBe(401);
+      await page.unroute(`${f.origin}/api/health`);
+      await expect(
+        page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
+      ).toBeVisible();
+      expect(downloads).toBe(0);
+    },
+    () =>
+      withFixtureCleanup(async () => {
+        releaseDownload?.();
+        releaseClear?.();
+        if (!page.isClosed()) await page.unrouteAll({ behavior: 'wait' });
+      }, f.close),
+  );
 });

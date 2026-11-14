@@ -1,0 +1,13 @@
+{
+  "name": "spn120-current-lint",
+  "args": [
+    "npm",
+    "run",
+    "lint"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 11397,
+  "peakKiB": 670304
+}

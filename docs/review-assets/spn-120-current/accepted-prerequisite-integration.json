@@ -1,0 +1,132 @@
+{
+  "preIntegration": "43846f1d680dc9eab8ca70493bdabe31c10231c9",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "nonDocsChangesDisjoint": true,
+  "retained120Paths": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/fixture-audit.yml",
+    ".gitignore",
+    "e2e/app-process.ts",
+    "e2e/doc-phone-navigation.spec.ts",
+    "e2e/fixture-evidence.ts",
+    "e2e/fixture-session.ts",
+    "e2e/offline-fixture.ts",
+    "e2e/offline-recovery.spec.ts",
+    "e2e/offline-sign-out.spec.ts",
+    "e2e/owned-process.ts",
+    "e2e/passkey-management.spec.ts",
+    "e2e/sync-client.spec.ts",
+    "package.json",
+    "playwright.config.ts",
+    "scripts/ci/app-process.test.ts",
+    "scripts/ci/fixture-audit-reporter.ts",
+    "scripts/ci/fixture-audit.test.ts",
+    "scripts/ci/fixture-audit.ts",
+    "scripts/ci/fixture-evidence.test.ts",
+    "scripts/ci/fixture-session-http.test.ts",
+    "scripts/ci/fixture-session.test.ts",
+    "scripts/e2e-server.ts"
+  ],
+  "acceptedMainPaths": [
+    "THIRD-PARTY-NOTICES.md",
+    "e2e/collaboration.spec.ts",
+    "e2e/session-revocation.ts",
+    "scripts/ci/session-revocation.test.ts",
+    "scripts/screenshots.ts",
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/ownership-fixture.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/ownership.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts",
+    "src/server/maintenance/restore-http-test-client.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "src/server/maintenance/supervisor-test-control.ts",
+    "src/server/maintenance/supervisor.test.ts",
+    "src/ui/nativeDrawingResize.test.ts",
+    "web/SyncNative.stories.tsx",
+    "web/nativeDrawingResize.ts"
+  ],
+  "allChangedNonDocsMatchRespectiveSource": true,
+  "donor": "/Users/mxbaylee/projects/spinel-spn-098-production",
+  "donorHead": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "donorStatus": "",
+  "manifestFields": [
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "overrides",
+    "workspaces",
+    "engines",
+    "packageManager"
+  ],
+  "manifestFieldsIdentical": true,
+  "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+  "note": "Source-only comparison, not runtime acceptance. No dependency installation/cache mutated.",
+  "lockedInputCount": 240,
+  "lockedInputScope": [
+    "package-lock.json",
+    "patches/** (tracked)",
+    "lib/** (tracked)",
+    "scripts/dependencies/** (tracked)"
+  ],
+  "lockedInputMapSha256": "29e2a07aaabcafc0692f1e0ad66e1801e818edd910178bd71de53b205ec849db",
+  "postinstallIdentical": true,
+  "spn117PreservedInputs": [
+    {
+      "path": "e2e/app-process.ts",
+      "sha256": "b54b8359671511cb62a5ee8fc0bb8a639bf4972b842cd14bbe747455175e91c4",
+      "unchangedFromPreIntegration": true
+    },
+    {
+      "path": "e2e/offline-creation-restart.ts",
+      "sha256": "902e249b4aa776003318fa18161590b9a428cda99204932cac2dbc7453aae5bb",
+      "unchangedFromPreIntegration": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "6d5889eeacae9a57c06848bcf2938ef5280ec3cd3c5488a7cf22564814baf5fd",
+      "unchangedFromPreIntegration": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+      "unchangedFromPreIntegration": true
+    },
+    {
+      "path": "server/dev.test.ts",
+      "sha256": "4010452a6d24828fb1a931a1f82dc9e936421cadc845732ebced7d5b08a651ac",
+      "unchangedFromPreIntegration": true
+    }
+  ],
+  "workspaceLinks": [
+    {
+      "name": "diagnostics",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/diagnostics"
+    },
+    {
+      "name": "doc-formulas",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/doc-formulas"
+    },
+    {
+      "name": "presence-ui",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/presence-ui"
+    },
+    {
+      "name": "print",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/print"
+    },
+    {
+      "name": "sync-client",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-client"
+    },
+    {
+      "name": "sync-server",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-server"
+    },
+    {
+      "name": "sync-transform",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-transform"
+    }
+  ],
+  "checksRun": "Read-only Git/blob, file/hash and JSON comparisons only. No local test/build/typecheck/CLI workload."
+}

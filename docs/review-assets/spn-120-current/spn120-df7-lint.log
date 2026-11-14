@@ -1,0 +1,1 @@
+{"name":"spn120-df7-lint","args":["node","node_modules/oxlint/bin/oxlint","--deny-warnings","."],"code":0,"signal":null,"reason":null,"elapsedMs":194,"peakKiB":0}
