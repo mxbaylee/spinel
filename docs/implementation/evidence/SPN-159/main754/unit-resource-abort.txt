@@ -1,0 +1,2 @@
+serial: SIGTERM; killing the run.
+{"name":"spn159-main754-unit","args":["node","node_modules/.bin/vitest","run","src/ui/nativeDrawingResize.test.ts","--cache=false","--fsModuleCachePath","/tmp/spn159-vitest-cache-9ae1964d"],"code":1,"signal":null,"reason":"Resource guard","elapsedMs":235,"peakKiB":166624}

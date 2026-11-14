@@ -1,0 +1,17 @@
+{
+  "name": "spn159-integrated-unit",
+  "args": [
+    "node",
+    "node_modules/.bin/vitest",
+    "run",
+    "src/ui/nativeDrawingResize.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn159-vitest-cache-5108adb5"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 354,
+  "peakKiB": 201536
+}

@@ -1,0 +1,2 @@
+serial: SIGTERM; killing the run.
+{"name":"spn159-typecheck","args":["node","node_modules/.bin/tsc","-p","."],"code":1,"signal":null,"reason":"Resource guard","elapsedMs":1724,"peakKiB":1407376}
