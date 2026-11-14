@@ -316,7 +316,7 @@ self.addEventListener('message', (event) => {
 
 // A page load that cannot reach the server must fall back to the saved app quickly. In
 // airplane mode or on a stalled radio the browser can leave this fetch pending for minutes.
-// Server-only pages (sign-in, invite, setup) have no saved copy to fall back to, so they wait
+// Server-only pages (guest links, invite, setup) have no saved copy to fall back to, so they wait
 // for the server instead of cutting a slow live connection short.
 async function navigate(request: Request, url: URL) {
   try {

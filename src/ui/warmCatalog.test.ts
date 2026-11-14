@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import type { FileItem } from '../shared/workspace.ts';
 import type { OfflineCatalog, OfflineStore } from '../../web/offline/offlineStore.ts';
 import type { DeviceInventory } from '../../web/offline/deviceStorage.ts';
 
@@ -16,8 +17,17 @@ vi.mock('../../web/offline/offlineStore.ts', () => ({
 vi.mock('../../web/offline/deviceStorage.ts', () => ({ readDeviceInventory: boundary.inventory }));
 import { readWarmFailureView } from '../../web/offline/warmCatalog.ts';
 
-const doc = { id: 'doc', name: 'Saved document', kind: 'doc', access: 'owner' };
-const catalog = { syncedAt: 1, items: [doc], shared: [], views: {} } as OfflineCatalog;
+const doc: FileItem = {
+  id: 'doc',
+  name: 'Saved document',
+  kind: 'doc',
+  access: 'owner',
+  parentId: null,
+  createdAt: 1,
+  updatedAt: 1,
+  tags: [],
+};
+const catalog: OfflineCatalog = { syncedAt: 1, items: [doc], shared: [], views: {} };
 let close: ReturnType<typeof vi.fn>;
 beforeEach(() => {
   vi.resetAllMocks();

@@ -1,5 +1,9 @@
 # 🔬 Current SPN-090 integration evidence
 
+> 🔧 The [review repair record](repair/README.md) supersedes this initial checkpoint’s
+> pending local compiler and focused browser status. The visual gallery remains applicable
+> by verified unchanged source hashes, subject to independent replacement-head review.
+
 This is the integration of actual PR head `af7a6cf0562d132be76b251473d917c5cce97bf4`
 with main `ebf0842f51b60d54649cf8a03065914bec0944bf`. It replaces the mistaken
 older-source integration for review. [Receipts](receipts.json) identify exact changed

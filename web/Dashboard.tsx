@@ -432,19 +432,15 @@ export function Dashboard({
     window.addEventListener('popstate', back);
     return () => window.removeEventListener('popstate', back);
   }, []);
-  // Only navigation ends a device-copy open. A refresh keeps it, so the live editor is
-  // not mounted offline while the refetch is in flight; a successful refetch clears it.
+  // The native offline binding reconnects in place. A metadata refetch must not
+  // replace its mounted editor: it may own unfinished input not yet in the outbox.
+  // Explicit navigation is already protected by navigation.allow().
   useEffect(() => setDeviceOpenId(null), [currentId]);
-  // A device copy is open while the connection reads online (the network just came back, or
-  // a slow live request timed out): refetch once. Success returns to the live editor; a
-  // failure keeps the device copy. `deviceOpen` is a dependency, so opening the copy while
-  // online also triggers this single retry.
-  useEffect(() => {
-    if (connection === 'online' && deviceOpen) setRefresh((value) => value + 1);
-  }, [connection, deviceOpen]);
   const latest = useRef({ items, shared: shared.items, downloads: offline.downloads });
   latest.current = { items, shared: shared.items, downloads: offline.downloads };
   useEffect(() => {
+    // Incidental list/metadata refreshes cannot tear down this editor either.
+    if (deviceOpen) return;
     setSharing(null);
     setAccessDetails(null);
     setViewed([]);
@@ -976,7 +972,9 @@ export function Dashboard({
       pendingScroll.current = null;
     });
   }
-  const sharedFailure = shared.error && (
+  // A failed background file list must not cover an admitted device editor.
+  // Keep its error for the next list view; the editor has its own save/access status.
+  const sharedFailure = !deviceOpen && shared.error && (
     <p role="alert">
       {shared.error} <button onClick={() => void shared.refresh()}>Refresh shared items</button>
     </p>
@@ -1228,7 +1226,7 @@ export function Dashboard({
         />
       )}
       {!framedEditor && sharedFailure}
-      {!loaded || viewLoading || currentId !== viewId ? (
+      {(!loaded && !deviceOpen) || viewLoading || currentId !== viewId ? (
         <p role="status">
           {error ? 'Your files could not be loaded. Reload to try again.' : 'Loading your files…'}
         </p>
@@ -1307,7 +1305,7 @@ export function Dashboard({
             offlineAccountId={user.id}
             key={current.id}
             name={current.name}
-            connection={offlineFrame ? 'offline' : connection}
+            connection={connection}
             catalog={connectionCatalog}
             access={
               offlineFrame
@@ -1669,9 +1667,10 @@ export function Dashboard({
       )}
       {/* AccessState already presents this generic failure. Keep distinct
           request errors and their state for network/server failure reporting. */}
-      {error && !action && !(missingView && error === 'This item is not available.') && (
-        <p role="alert">{error}</p>
-      )}
+      {error &&
+        !deviceOpen &&
+        !action &&
+        !(missingView && error === 'This item is not available.') && <p role="alert">{error}</p>}
       {framedEditor && sharedFailure}
     </section>
   );

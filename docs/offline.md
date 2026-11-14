@@ -346,19 +346,21 @@ loses the network opens a downloaded Doc or Sheet from its device copy, shown as
 offline with no server-only actions, and reuses a saved folder listing. Only a
 network failure for the prepared account qualifies: a real server answer (denied,
 missing) still shows the access screen. The item stays on the device copy until the
-network returns, when it refetches once and returns to the live editor; a failed refetch
-keeps the device copy open. A request that hangs for 15 s counts as an outage. The decision
+person explicitly navigates away. Its existing native binding reconnects and verifies
+server authority in place, preserving unfinished input and its durable queue; Dashboard
+metadata refresh never replaces that mounted editor. The connection indicator reports
+that binding's actual state, independently of the conservative device-copy actions. A request that hangs for 15 s counts as an outage. The decision
 lives in `web/offline/warmOpen.ts`.
 
 **⏱️ Deadlines.** A hang must never leave a start without an answer
 (`web/offline/deadlines.ts`). When the browser reports `onLine === false`, startup and
 page loads skip the wait and take the offline path at once; `onLine === true` proves
 nothing and never short-circuits. A page load slower than 8 s to first byte falls back to
-the saved app (server-only pages such as sign-in and invites have no saved copy, so they
+the saved app (server-only pages such as guest links, setup and invites have no saved copy, so they
 wait for the server), and an item request (the single `/api/items/<id>` fetch, not other Dashboard requests) slower than 15 s
 opens the device copy. On a slow but
-live network this chooses the saved copy over waiting; the app refetches once the
-connection answers. A start that is still waiting after 8 s names the step it is on
+live network this chooses the saved copy over waiting; the native binding reconnects
+in place when the server answers. A start that is still waiting after 8 s names the step it is on
 (`web/startupStage.ts`), so a phone with no inspector can report where it stalled.
 
 **Local mode.** The shared network icon beside the gem reports **Offline**,
@@ -753,7 +755,7 @@ a passing run.
 | Rule                                                  | Owning check                                                                                      |
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | A shortcut is not a download                          | `e2e/offline.spec.ts:585`, `:717`; `e2e/offline-recovery.spec.ts:375`                             |
-| Manifest and installation icons offline               | `e2e/pwa.spec.ts:69` (manifest and installability)                                                |
+| Manifest and installation icons offline               | `e2e/offline.spec.ts` (`installationResources`, compares manifest/icon bytes before and after offline reload); `e2e/pwa.spec.ts` separately owns online installability                                                |
 | Stable `/?item=<uuid>` and Space-child `?item=` links | `e2e/offline-recovery.spec.ts:75`; `e2e/offline-editing.spec.ts:1062`, `:1123`                    |
 | Create and edit offline, reconnect once               | `e2e/offline-creation.spec.ts`                                                                    |
 | Real-device observation of the above                  | Owner's own phone, recorded in [own-phone findings](implementation/SPN-090-own-phone-findings.md) |

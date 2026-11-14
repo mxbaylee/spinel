@@ -8,7 +8,15 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
-import { stored } from './offline-fixture.ts';
+import { copy, fixture, selectCell, stored, synced, usableCanvas } from './offline-fixture.ts';
+import {
+  DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
+  DocumentFlavor,
+  LocaleType,
+  getDocsEmptySnapshot,
+  createParagraphId,
+  createSectionId,
+} from '@univerjs/core';
 
 test('hiding preserves a prepared share and its offline discovery preference without bypassing revoke or sign-out cleanup', async ({
   browser,
@@ -1029,60 +1037,144 @@ test('a prepared Space Doc opens natively offline from its normal link and My fi
   }
 });
 
-// Regression contract (SPN-090 own-phone run, item 4): a Dashboard that was online when it
-// listed a downloaded Doc opens that device copy when the connection drops afterwards. It
-// must not show "This item isn't available" or the browser's raw fetch error.
-test('a warm Dashboard that goes offline opens a downloaded Doc from the device', async ({
+// Warm and deep-link opens must restore real native content, not just the frame.
+test('a warm Dashboard and a failed first-list deep link restore the downloaded Doc content', async ({
   browser,
   baseURL,
 }, info) => {
   test.setTimeout(180_000);
-  const context = await browser.newContext({ baseURL, viewport: { width: 1440, height: 1100 } });
-  const page = await context.newPage();
-  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
-  const auth = new AuthStore(db),
-    workspace = new WorkspaceStore(auth);
-  const user = auth.createUser(`Warm ${info.testId}`);
-  const doc = workspace.create(user.id, { name: 'Warm notes', kind: 'doc', parentId: null });
-  await context.addCookies([
-    {
-      name: COOKIE_NAME,
-      value: auth.createSession(user.id).token,
-      url: baseURL!.replace('http:', 'https:'),
-      secure: true,
-      httpOnly: true,
-      sameSite: 'Strict',
-    },
-  ]);
-  try {
-    await page.goto('/');
-    await expect
-      .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
-      .toBe(true);
-    await page.getByRole('button', { name: `More actions for ${doc.name}`, exact: true }).click();
-    await page
-      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-      .click();
-    await expect(page.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
-      `${doc.name} is available offline on this device.`,
-      { timeout: 120_000 },
-    );
-    // Stay on this warm Dashboard: it was not started offline.
-    await context.setOffline(true);
-    await page.getByRole('button', { name: `${doc.name} Doc`, exact: true }).click();
-    await expect(page.locator('.editor-frame')).toBeVisible({ timeout: 30_000 });
+  const text = 'Downloaded Doc 090: every saved word survives a warm open and first-list failure.';
+  const seed = getDocsEmptySnapshot(
+    'warm-doc-090',
+    LocaleType.EN_US,
+    'Warm saved notes',
+    DocumentFlavor.MODERN,
+  );
+  seed.body = {
+    ...seed.body,
+    dataStream: text + '\r\n',
+    paragraphs: [{ startIndex: text.length, paragraphId: createParagraphId(new Set()) }],
+    sectionBreaks: [{ startIndex: text.length + 1, sectionId: createSectionId(new Set()) }],
+  };
+  const f = await fixture(browser, baseURL!, info, 'doc', { seed });
+  const { page, item } = f;
+  const restoredContent = async () => {
+    await usableCanvas(page);
+    const content = await copy(page, 'doc');
+    expect(content.trim()).toBe(text);
     await expect(page.getByText("This item isn't available")).toHaveCount(0);
     await expect(page.getByText('Failed to fetch')).toHaveCount(0);
-    // A fresh Dashboard deep link has no in-memory list yet. Keep session/bootstrap
-    // online, but fail its item/list requests: only the prepared catalog may supply
-    // metadata, and the actual downloaded copy must still be usable.
-    await context.setOffline(false);
+  };
+  try {
+    await f.download();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await f.network.setOffline(true);
+    await page.getByRole('button', { name: `${item.name} Doc`, exact: true }).click();
+    await restoredContent();
+    // A new Dashboard has no in-memory metadata. Its live session succeeds,
+    // but only the prepared catalog can supply the failed list/item request.
+    await f.network.setOffline(false);
     await page.route('**/api/items{,/**}', (route) => route.abort('internetdisconnected'));
-    await page.goto(`/?item=${doc.id}`);
-    await expect(page.locator('.editor-frame')).toBeVisible({ timeout: 30_000 });
-    await expect(page.getByText("This item isn't available")).toHaveCount(0);
+    await page.goto(f.href);
+    await restoredContent();
+    // A real denied response remains authoritative even with the same saved copy.
+    await page.unrouteAll();
+    await page.route(`**/api/items/${item.id}`, (route) =>
+      route.fulfill({
+        status: 403,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Access denied.' }),
+      }),
+    );
+    await page.goto(f.href);
+    await expect(page.getByText("This item isn't available")).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Offline copy', exact: true })).toHaveCount(0);
   } finally {
-    await context.close();
-    db.close();
+    await f.close();
+  }
+});
+
+// A network transition is not permission to dispose a native editor's unfinished
+// input. One real Sheet draft exercises the shared Dashboard/OfflineViewer lifetime.
+test('a warm offline Sheet keeps unfinished native input through reconnect and delayed failed metadata', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(180_000);
+  const f = await fixture(browser, baseURL!, info, 'sheet');
+  const { page, item } = f;
+  let releaseMetadata = () => {};
+  try {
+    await f.download();
+    await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    await f.network.setOffline(true);
+    await page.getByRole('button', { name: `${item.name} Sheet`, exact: true }).click();
+    await usableCanvas(page);
+    await selectCell(page, 'D1');
+    const draft = 'Unfinished warm reconnect cell 090';
+    await page.keyboard.insertText(draft);
+    const input = page.locator(
+      `[id="__editor_${DOCS_NORMAL_EDITOR_UNIT_ID_KEY}"][contenteditable="true"][data-u-comp="editor"]`,
+    );
+    await expect(input).toBeFocused();
+    const canvas = await page.locator('.univer-container canvas').first().elementHandle();
+    const baseline = await f.read();
+    let metadataRequested = false;
+    const metadataGate = new Promise<void>((resolve) => {
+      releaseMetadata = resolve;
+    });
+    await page.route(`**/api/items/${item.id}`, async (route) => {
+      metadataRequested = true;
+      await metadataGate;
+      await route.abort('internetdisconnected');
+    });
+    await f.network.setOffline(false);
+    // The native socket is the connection authority; a background metadata read
+    // can remain pending without replacing the editor or claiming the draft saved.
+    await expect(page.getByRole('status', { name: 'Connection status', exact: true })).toHaveText(
+      'Online',
+    );
+    // The fixed Dashboard issues no replacement metadata fetch. If the old
+    // handoff returns, this route holds it pending and then rejects it; neither
+    // phase may unmount the editor. The native binding owns its separate
+    // /collaboration authority checks and socket reconnect throughout.
+    await page.evaluate(
+      () =>
+        new Promise<void>((done) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => done())),
+        ),
+    );
+    const sameEditor = async () => {
+      expect(
+        await page
+          .locator('.univer-container canvas')
+          .first()
+          .evaluate((node, original) => node === original, canvas!),
+      ).toBe(true);
+      await input.focus();
+      await page.keyboard.press('Control+a');
+      await page.keyboard.press('Control+c');
+      await expect
+        .poll(async () => (await page.evaluate(() => navigator.clipboard.readText())).trim())
+        .toBe(draft);
+      expect((await f.read()).snapshot).toEqual(baseline.snapshot);
+    };
+    await sameEditor();
+    expect(metadataRequested).toBe(false);
+    releaseMetadata();
+    await expect.poll(() => page.locator('.univer-container canvas').count()).toBeGreaterThan(0);
+    await sameEditor();
+    await page.unrouteAll();
+    await page.keyboard.press('Enter');
+    await synced(page);
+    await expect
+      .poll(
+        async () =>
+          (await f.read()).snapshot.sheets[baseline.snapshot.sheetOrder[0]].cellData?.[0]?.[3]?.v,
+      )
+      .toBe(draft);
+  } finally {
+    releaseMetadata();
+    await f.close();
   }
 });
