@@ -1,0 +1,74 @@
+{
+  "preparedAt": "2026-11-14T03:38:57.787692+00:00",
+  "parent": "f416282fd1fcfef21f2888d28de50cc762231578",
+  "source": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+  "merged": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "intendedTag": "archive/delivery-repair-registration-completion-9733de55-20261114",
+  "path": "docs/review-assets/delivery-repair-registration-completion-9733de55",
+  "status": "Actual squash and guarded branch cleanup verified; no runtime repair or production claim",
+  "privacyAudit": "Stored/decoded metadata contains no matched live credential/private key/personal checkout path or user content store.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3707,
+      "sha256": "2e751539c7518a18ff6ce84eb885295e1f521e2600906eb684400baeccdf52a1"
+    },
+    {
+      "path": "active-prs-after.json.gz",
+      "bytes": 1105,
+      "sha256": "f5d28f3d9f2e90b4c6d787c845f1826f52ae9a812a57ec0cd1fbd6c5e0ada993",
+      "decodedSha256": "cadf98734da71347092e75865655d7c94df1b7695eb424f4969d8e127f83e914"
+    },
+    {
+      "path": "active-prs-before.json.gz",
+      "bytes": 1105,
+      "sha256": "f5d28f3d9f2e90b4c6d787c845f1826f52ae9a812a57ec0cd1fbd6c5e0ada993",
+      "decodedSha256": "cadf98734da71347092e75865655d7c94df1b7695eb424f4969d8e127f83e914"
+    },
+    {
+      "path": "cleanup-before.json.gz",
+      "bytes": 431,
+      "sha256": "82d4feccfa34870c6dde2b6f61aab0a774f033c040c7f6a60577a6ecc991d95f",
+      "decodedSha256": "73341f2708643762e851798b499748b932a3055ed3e88cd823533031e90a379b"
+    },
+    {
+      "path": "cleanup-result.json.gz",
+      "bytes": 660,
+      "sha256": "e713db4249aa1e658778268f81b7e9be738e620a1de5cba802caf0bbf2a5e0c2",
+      "decodedSha256": "31a58c0f2f166668eb1c7afc05f200a24ae4c91b803ae26c272a1e68c6c2e227"
+    },
+    {
+      "path": "local-ref-before.txt",
+      "bytes": 87,
+      "sha256": "7440bf614814b1bc826be51a92ce3a959f1d6244b0215a576b399808b73974ed"
+    },
+    {
+      "path": "merge-commit.json.gz",
+      "bytes": 1238,
+      "sha256": "30a9108e9d34288dfb69e756bac0208ae6ff3cfa77e090ffbb9fb5499099e022",
+      "decodedSha256": "b167e1b07a03777f935c4ce1904e7a60e34cfd8d57f4fdf80d7f9b3eeafc56a8"
+    },
+    {
+      "path": "post-cleanup.json.gz",
+      "bytes": 630,
+      "sha256": "746b6497315631cd8022e13caac040c800a9237b2fc1f45e15c4ef6b4a3b3378",
+      "decodedSha256": "aeddfce6bd0133ef1c1df964686c313b40c28b46b59976b66df262cff25b6e20"
+    },
+    {
+      "path": "pr-merged.json.gz",
+      "bytes": 5458,
+      "sha256": "6355cead9d705e89308ae3b28298d9f08cc4350c7c123032a74b83394b0df8a0",
+      "decodedSha256": "28c0ae98e4e59160fe1f1394e10dfafb188e8ece69effd4b9924511f6591bfea"
+    },
+    {
+      "path": "remote-refs-after.txt",
+      "bytes": 174,
+      "sha256": "e0c72395edf8d73f4da4a36257014e19de11f3146c238c4b9f46149e7c98d2e5"
+    },
+    {
+      "path": "remote-refs-before.txt",
+      "bytes": 174,
+      "sha256": "e0c72395edf8d73f4da4a36257014e19de11f3146c238c4b9f46149e7c98d2e5"
+    }
+  ]
+}
