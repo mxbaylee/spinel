@@ -1,0 +1,191 @@
+## 📨 Merged — feedback and paired diagnostics exports
+
+**Merged by guarded squash:** [`ec42f0741415e4e712395fb47c30b911bc4e64ea`](https://github.com/mxbaylee/spinel/commit/ec42f0741415e4e712395fb47c30b911bc4e64ea), 2026-11-14 at19:14:23Z, parent `c525aa933505d6e78b8fdd7a89940d87506d5cb3`. Merge tree `2be9e82d514b424f49baa8dea5672f8f75472685` exactly matches the reviewed source and tested merge. The independently audited validation archive [`a6ad55d7`](https://github.com/mxbaylee/spinel/tree/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191) is published.
+
+**Cleanup completed:** both obsolete local SPN-098 implementation/integration refs and the obsolete remote969 evidence branch were deleted with exact-head guards after fresh complete active-PR head/base checks. The PR head was already deleted by merge. All immutable archive tags remain, including exact unique969 evidence. The donor worktree is detached at7a045191; all37,437 ignored paths, dependency directory identities and package locks remain unchanged. The missing old worktree registration remains safely detached at1183; its original metadata/index are retained and its cached diff was empty. No prune, clean, dependency install or shared-cache mutation occurred. Separate SPN-110 f8c integration and unrelated branches remain intact. [Completion record](https://github.com/mxbaylee/spinel/tree/archive/spn-098-completion-7a045191-20261114/docs/review-assets/spn-098-completion-7a045191) is prepared for independent audit/publication; until published, this paragraph records the observed cleanup without claiming that archive is already online.
+
+Complete candidate **`7a0451917ef38524138fa2eac432d4520fbed008`** integrates actual main **`c525aa933505d6e78b8fdd7a89940d87506d5cb3`**, including merged SPN157 (`78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef`) and November14 full grooming. SPN157 accepted bounded non-recurrence with **historical cause unknown**; no causal repair is claimed. Fresh exact-head independent reviews and visual approvals are complete. The original attempt of all three current-head workflows passed: all33 CI jobs/seven required gates, full Storybook and Desktop. The merge occurred after root verified these current-head gates. This final evidence-only body update follows confirmed merge and is not an open-PR validation run. Main `next_id=161` and November14 grooming reset are preserved; SPN-098 is now the sole completion since that grooming. **9798 counted changed text lines**, below unchanged10000 soft limit.
+
+Full **L** outcome: durable intentional member feedback; server-derived identity and authorized file context; idempotent receipt and truncate fencing; complete user/system SQLite exports from one immutable snapshot and inclusive trusted receipt window; bounded preparation/transfer/expiry/cancellation/cleanup; accessible truthful states. Operator receives private complete correlated exports. Owner and Collaborator retain durable receipts and failed drafts. Link guests gain no feedback/diagnostic authority. No automatic document content, inbox, permission expansion or AI. [Canonical contract/current checkpoint](https://github.com/mxbaylee/spinel/blob/7a0451917ef38524138fa2eac432d4520fbed008/docs/implementation/SPN-098.md) and [exact current-main Rules/Verify retention](https://github.com/mxbaylee/spinel/tree/7a0451917ef38524138fa2eac432d4520fbed008/docs/implementation/evidence/SPN-098-post157-2026-11-14) preserve the complete outcome. SPN110 still owns actual observation expiry and the second-landing integration contract; its narrow canonical note does not implement TTL.
+
+## 🔎 Independent review and visual gate
+
+Two fresh independent nonimplementing full-ticket reviews qualify on exact **`7a0451917ef38524138fa2eac432d4520fbed008`** against **`c525aa933505d6e78b8fdd7a89940d87506d5cb3`**: [A /root/spn098_fresh_a](https://github.com/mxbaylee/spinel/blob/archive/spn-098-validation-7a045191-20261114/docs/review-assets/spn-098-validation-7a045191/reviews/fresh/fresh-reviewer-a.md) **100/100**, [B /root/spn098_fresh_b](https://github.com/mxbaylee/spinel/blob/archive/spn-098-validation-7a045191-20261114/docs/review-assets/spn-098-validation-7a045191/reviews/fresh/fresh-reviewer-b.md) **100/100**, no actionable findings or remaining deductions. Each full rubric is scope35/35, correctness25/25, regression20/20, operations10/10, maintainability10/10. A independently passed71 tests in4517ms/541472KiB; B71 in4206ms/538416KiB, first attempt under shared guards with cleanup. Both individually inspected all16 proposals and16 source-equivalent actual images, verified source/image applicability, and approved the exact-head visual result: **agent review only**. Their full original reports, test logs, guards, bindings and cleanup records are retained at the linked validation paths. Hosted acceptance is independently recorded below, not inferred from a grade.
+
+**Review presentation correction:** the initial packet missed historical unspaced rubric and bare iteration numbers. Initial A saw numerical values; initial B's truncated output made exposure uncertain. Both were stopped **before tests or any grade**, and their nonqualifying [technical handoffs](https://github.com/mxbaylee/spinel/tree/archive/spn-098-validation-7a045191-20261114/docs/review-assets/spn-098-validation-7a045191/reviews/interrupted) are preserved. Root made exactly three presentation replacements, recorded [the correction](https://github.com/mxbaylee/spinel/blob/archive/spn-098-validation-7a045191-20261114/docs/review-assets/spn-098-validation-7a045191/review-packets/root-packet-v2-correction.json), retained both original packet versions/provenance, and assigned the two fresh independent reviewers. They received the corrected packet, not another current review or desired score. This was a blinding repair before assessment, not selection based on a grade. Historical technical findings and original source/review evidence remain intact.
+
+## 🧪 Local verification and source applicability
+
+[Original logs, receipts, audit and image bindings](https://github.com/mxbaylee/spinel/tree/7a0451917ef38524138fa2eac432d4520fbed008/docs/implementation/evidence/SPN-098-post157-2026-11-14) bind tested merge `ec3861f46513bc36e16007c080d2b7f51a2b28de`; final changes are documentation/evidence only. Fresh71 tests/11 diagnostics-context suites passed first attempt in4670ms/557216KiB. Dependency/oxlint/full formatting passed11355ms/797472KiB. Index/backlog/PR policy passed. Final exact-head formatting passed11215ms/621888KiB and exact-base PR policy518ms/259504KiB; final size check158ms ended before first200ms sample, so no peak-memory claim. Manager retains those final receipts for the immutable validation archive. Pinned Node26.13.0, shared serial/normal-pressure/2GiB/eight-minute guards, Go640MiB/50/2, private caches; no reinstall/shared-dependency/cache mutation or retained owned process.
+
+All51 earlier runtime/configuration hashes and26 dependency/build/patch inputs match. Incoming main's four executable paths belong to SPN159 native drawing capture: fixture/helper/test and screenshot diagnostics. The runner change is explicitly audited outside the51; it adds bounded native geometry metadata without changing feedback capture control flow/themes/viewports. No fresh compiler/build/browser/capture result is claimed. Existing direct-store contracts own exact row membership/authorization/races/limits; real development/production browser cases and selected hosted native work own new-head integration acceptance. No manual unchanged rerun, retry/budget relaxation or Linux-on-Mac attempt.
+
+## ✅ First current-head hosted results
+
+**Source `7a0451917ef38524138fa2eac432d4520fbed008`, base `c525aa933505d6e78b8fdd7a89940d87506d5cb3`, tested merge `917741f11dc3f0cb733e0fdfea0b04fb20ca69f9`.** Source and tested tree are identical: `2be9e82d514b424f49baa8dea5672f8f75472685`. [Original terminal receipt](https://github.com/mxbaylee/spinel/blob/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/receipt.json) and full paginated APIs retain exact jobs/timestamps/attempts. No product rerun, cancellation, retry/budget relaxation or source repair occurred.
+
+- [CI43626337966](https://github.com/mxbaylee/spinel/actions/runs/43626337966), attempt1: all33 jobs succeeded, including Backlog, Pull request, Lint, Typecheck, Unit tests, Lib tests and Playwright smoke. Original supervisor131/131, recovery619/619 and remaining2166/2166 logs are retained. All15 suites were selected by the immutable full plan. Successful unit/lib/browser aggregates bind canonical plan SHA `dfef296feac9170c08a37130f148c7c20ec8a44e1fd9b7eb383a6fa84686cda0`; original newline-bearing plan-file SHA is separately `2f8070b2ff61003ea70a884b21cb4f6094c763e54ebbe8af2077cf1ae6e5ffcf`.
+- All four actual diagnostics cases passed **retry0 in production and development**. All four ordinary shard reports have zero unexpected/flaky results; existing explicit skips remain skips. [Original paired-report audit](https://github.com/mxbaylee/spinel/blob/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/storybook-browser-audit.json) verifies one initial preparation, common frozen snapshot/generation/inclusive trusted receipt window, exact user2/system3 rows and later-row exclusion. This browser fixture contains feedback; mixed observations/unattributed membership and raw-byte privacy exclusion remain separate real-SQLite unit contracts. Actual manifest/project/build fields are retained without rewriting.
+- Mobile responsiveness plain1/2/3: inputp95 **52.2/51.5/41ms**, capacity maxima **21.7/21.9/22.3ms** under unchanged100ms, browser-local drain **385.7/385.6/346.8ms** under1000ms. Profile capacity22.8ms is descriptive. Desktop also passed. [Original numerical comparisons](https://github.com/mxbaylee/spinel/blob/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/native-numerical-audit.json) preserve all samples/integrity/late-read limits. Both callback lifetime comparisons accepted; cursor/zoom-init/zoom-update pending high-water4/1/1, end/disposal pending0, callbacks/installations after disposal0. Emulated presets do not claim physical-phone acceptance.
+- [Desktop43626337825](https://github.com/mxbaylee/spinel/actions/runs/43626337825), attempt1: actual ordinary-profile Chrome157.0.8103.79, Firefox160.0 and Safari27.2 passed restart, retained native content/images, reconnect, storage loss and final browser/driver cleanup. Complete original small ZIPs retain actual views and profile/stage evidence.
+- [Storybook43626337816](https://github.com/mxbaylee/spinel/actions/runs/43626337816), attempt1: eight successful jobs and two inapplicable publishing skips. All five variants each checked/captured exactly all1076 original indexed stories: **5380 total, zero failures**. Original build index/sha/source, all five full manifests, exact checked-set proof and16 useful current feedback PNGs are retained. These CI images supplement the independent exact-head approvals on source-equivalent retained actuals; no additional independent review of these CI PNGs is invented.
+
+[Retention and collection provenance](https://github.com/mxbaylee/spinel/tree/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191) bind22 original ZIP digests/sizes/CRCs,10 fully retained small ZIPs,147 original JSON members,44 full job logs,16 new current PNGs,48 parent-source image bindings and18 byte-identical historical first-failure copies. Large full callback/Playwright traces, Storybook build/full catalog screenshots remain scratch/expiring Actions supplements. The original GET collector disappeared without retained terminal status; cause is unknown. Its snapshots and exact partial-file hash/size are retained. Resumption verified/reused complete originals and fetched only missing/partial ZIPs into new paths; the partial remains preserved. This collection interruption is not a CI failure. The earlier parser concern was escaped display output, not an established parser failure or repair.
+
+## 🧾 Retained validation, first failures and limits
+
+- Previous source `5e72d33a`, base754, tested merge `c603a21de6446d623145589eca811ab6dfb38152`: first-attempt CI43572824567 passed all33 jobs/seven gates, Desktop43572824434 passed three actual ordinary profiles, Storybook43572824496 passed5×1076 states with zero failures. [Immutable validation archive d34f2ff3](https://github.com/mxbaylee/spinel/tree/d34f2ff3cf2b33217e6d8959d97ba2af483fd692/docs/review-assets/spn-098-validation-5e72d33a) retains full original supervisor131/131 and recovery619/619 logs, exact4 feedback cases in both browser modes, common-snapshot/download metadata, original numerical/native artifacts and five complete manifests. Those previous-source results remain historical; current integrated-head results are recorded above.
+- Prior canonical plan digest `90b47b80b05d2211d3660bc4f6b7cf7e35dc09c99c1f27f47218ac87b3af8b16` is distinct from original newline-bearing raw-file digest `8f506fb37a01c4e233efea31dcdda6ee54cef158c41de8690b7a2de4d0dd62ea`. The archive binds21 original ZIPs and134 decoded members; large successful callback/Playwright traces and5380 full-catalog PNGs are supplementary, not claimed fully archived. Useful maintained images and their48 bindings are durable.
+- Original source94c6968e CI42023278283 mobile first failure **131.2ms > unchanged100ms** remains failed. [Original failure record](https://github.com/mxbaylee/spinel/tree/e213439aee55d6772858a71cdd7b350134c4465f/docs/review-assets/spn-098-current-outcome-94c6968e) and byte-identical selected originals in d34 remain retained. Later source5e72 mobile measurements passed with capacity36/33/34ms, inputp9584/82/89.7ms; they do not change the first result or establish its cause.
+- Source2204 first successful CI43540593013/Desktop43540593025/Storybook43540593085 is [separately retained](https://github.com/mxbaylee/spinel/tree/32a4694e773e3bcabd6472fd27747b044ee7b0dc). Later metadata CI43544143900 failed two named supervisor scenarios (129passed/2failed), with fail-closed unit/browser aggregates. [Original failure5e1b7a9](https://github.com/mxbaylee/spinel/tree/5e1b7a9fac17c69ff9174caa9da9f8d13713737d) and [terminal/cancellation e8128c36](https://github.com/mxbaylee/spinel/tree/e8128c36b4d017fbcda51820ff634265b4f34d8c) preserve exact jobs/source/attempt and original cause uncertainty. Checkpoint43545634784 was intentionally cancelled, never acceptance. Landed SPN157's full-contract audit accepts bounded non-recurrence without causal attribution.
+- The original actual-connection SQLite probe retains both baseebf and2204 at synchronous2/FULL,wal,busy_timeout0 on identical pinned Mac Node/libsql inputs. It excludes a setting difference on that Mac only, not Linux/timing/history.198ms ended before200ms RSS sampling; connections/temp files cleaned up. Prior CLI setup mistakes and packaging-manifest correction remain in original evidence. This integration caught Git rename inference editing an archived ticket, restored exact bytes before commit, and retained the fresh contract separately.
+
+## 🖼️ Visual evidence — original source captions preserved
+
+The16 post160 actual images below remain source-equivalent to current feedback rendering, captured on runtime23e7553f/final5e72; they are **not recaptured**. Synthetic production components, APIs/accounts/messages and fixed clock2026-10-20T16:00Z; emulated phones, not physical-device evidence. Captions distinguish viewport and full-page PNG dimensions. Both fresh independent reviewers approved this exact head using these source-equivalent images; agent review only. The16 original proposed/reference and16 older actual images retain their separate history.
+
+
+## Historical proposed/reference states
+
+![Current production/Account/Feedback / Draft · light · viewport 1280×900; PNG 1280×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/account-draft-light.png)
+
+![Current production/Account/Feedback / Draft · dark · viewport 1280×900; PNG 1280×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/account-draft-dark.png)
+
+![Current production/Account/Feedback / Draft · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/account-draft-phone.png)
+
+![Current production/Account/Feedback / Failed Draft · phone-dark · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/account-failed-draft-phone-dark.png)
+
+![Current production/Account/Feedback / Long Message · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/account-long-message-phone.png)
+
+![Current production/Account/Feedback / Access Changed · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/account-access-changed-phone.png)
+
+![Current production/Admin/Feedback / Flag · light · viewport 1280×900; PNG 1280×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-feedback-flag-light.png)
+
+![Current production/Admin/Feedback / Paired Downloads · light · viewport 1280×900; PNG 1280×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-paired-downloads-light.png)
+
+![Current production/Admin/Feedback / Paired Downloads · dark · viewport 1280×900; PNG 1280×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-paired-downloads-dark.png)
+
+![Current production/Admin/Feedback / Paired Downloads · phone-dark · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-paired-downloads-phone-dark.png)
+
+![Current production/Admin/Feedback / Download Failed · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-download-failed-phone.png)
+
+![Current production/Admin/Feedback / Expanded Limits · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-expanded-limits-phone.png)
+
+![Current production/Admin/Feedback / Access Changed · phone-dark · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-access-changed-phone-dark.png)
+
+![Current production/Admin/Feedback / Old Feedback Only · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-old-feedback-only-phone.png)
+
+![Current production/Editor/Frame / Guest · phone · viewport 390×900; PNG 390×900 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/editor-guest-phone.png)
+
+![Current production/Admin/Administration / Diagnostics Clear Blocks Navigation · phone · viewport 390×900; PNG 390×4289 · original render source ea6aa741c89b3e52350849b73dbbc41ef3893fbc](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098/admin-diagnostics-clear-phone.png)
+
+
+## Source-equivalent actual feedback states — not recaptured
+
+![Current production/Account/Feedback / Draft · light · viewport 1280×900; PNG 1280×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/account-draft-light.png)
+
+![Current production/Account/Feedback / Draft · dark · viewport 1280×900; PNG 1280×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/account-draft-dark.png)
+
+![Current production/Account/Feedback / Draft · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/account-draft-phone.png)
+
+![Current production/Account/Feedback / Failed Draft · phone-dark · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/account-failed-draft-phone-dark.png)
+
+![Current production/Account/Feedback / Long Message · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/account-long-message-phone.png)
+
+![Current production/Account/Feedback / Access Changed · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/account-access-changed-phone.png)
+
+![Current production/Admin/Feedback / Flag · light · viewport 1280×900; PNG 1280×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-feedback-flag-light.png)
+
+![Current production/Admin/Feedback / Paired Downloads · light · viewport 1280×900; PNG 1280×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-paired-downloads-light.png)
+
+![Current production/Admin/Feedback / Paired Downloads · dark · viewport 1280×900; PNG 1280×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-paired-downloads-dark.png)
+
+![Current production/Admin/Feedback / Paired Downloads · phone-dark · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-paired-downloads-phone-dark.png)
+
+![Current production/Admin/Feedback / Download Failed · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-download-failed-phone.png)
+
+![Current production/Admin/Feedback / Expanded Limits · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-expanded-limits-phone.png)
+
+![Current production/Admin/Feedback / Access Changed · phone-dark · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-access-changed-phone-dark.png)
+
+![Current production/Admin/Feedback / Old Feedback Only · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-old-feedback-only-phone.png)
+
+![Current production/Editor/Frame / Guest · phone · viewport 390×900; PNG 390×900 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/editor-guest-phone.png)
+
+![Current production/Admin/Administration / Diagnostics Clear Blocks Navigation · phone · viewport 390×900; PNG 390×4083 · original render source 23e7553ff4f35f5f03dfe51a644840994e52929e](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-post160/admin-diagnostics-clear-phone.png)
+
+
+## Older actual states — historical only
+
+![Current production/Account/Feedback / Draft · light · viewport 1280×900; PNG 1280×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/account-draft-light.png)
+
+![Current production/Account/Feedback / Draft · dark · viewport 1280×900; PNG 1280×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/account-draft-dark.png)
+
+![Current production/Account/Feedback / Draft · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/account-draft-phone.png)
+
+![Current production/Account/Feedback / Failed Draft · phone-dark · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/account-failed-draft-phone-dark.png)
+
+![Current production/Account/Feedback / Long Message · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/account-long-message-phone.png)
+
+![Current production/Account/Feedback / Access Changed · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/account-access-changed-phone.png)
+
+![Current production/Admin/Feedback / Flag · light · viewport 1280×900; PNG 1280×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-feedback-flag-light.png)
+
+![Current production/Admin/Feedback / Paired Downloads · light · viewport 1280×900; PNG 1280×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-paired-downloads-light.png)
+
+![Current production/Admin/Feedback / Paired Downloads · dark · viewport 1280×900; PNG 1280×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-paired-downloads-dark.png)
+
+![Current production/Admin/Feedback / Paired Downloads · phone-dark · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-paired-downloads-phone-dark.png)
+
+![Current production/Admin/Feedback / Download Failed · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-download-failed-phone.png)
+
+![Current production/Admin/Feedback / Expanded Limits · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-expanded-limits-phone.png)
+
+![Current production/Admin/Feedback / Access Changed · phone-dark · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-access-changed-phone-dark.png)
+
+![Current production/Admin/Feedback / Old Feedback Only · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-old-feedback-only-phone.png)
+
+![Current production/Editor/Frame / Guest · phone · viewport 390×900; PNG 390×900 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/editor-guest-phone.png)
+
+![Current production/Admin/Administration / Diagnostics Clear Blocks Navigation · phone · viewport 390×900; PNG 390×4083 · original render source 8e986617a40977eb96d016be7dc361366003384f](https://raw.githubusercontent.com/mxbaylee/spinel/7a0451917ef38524138fa2eac432d4520fbed008/docs/review-assets/spn-098-current/admin-diagnostics-clear-phone.png)
+
+
+## 📦 Durable validation and completion evidence
+
+[Terminal validation archive](https://github.com/mxbaylee/spinel/tree/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191) preserves exact source/base/tested/run/attempt/results, all original review/provenance records, original first failures and retention limits. [Completion archive](https://github.com/mxbaylee/spinel/tree/archive/spn-098-completion-7a045191-20261114/docs/review-assets/spn-098-completion-7a045191) records the observed authorized merge and cleanup above once root independently audits and publishes it. Its publication remains pending; the merge and cleanup themselves are verified complete.
+
+## 🖼️ Current hosted feedback views — supplemental evidence
+
+Captured by the accepted current-source Storybook run, using synthetic production fixtures and emulated phones. Captions distinguish viewport from full-page dimensions. Existing independent exact-head visual approvals remain as described above.
+
+![current-production-account-feedback--draft · light · viewport1280×900, PNG1280×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/account-draft-light.png)
+
+![current-production-account-feedback--draft · dark · viewport1280×900, PNG1280×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/account-draft-dark.png)
+
+![current-production-account-feedback--draft · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/account-draft-phone.png)
+
+![current-production-account-feedback--failed-draft · phone-dark · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/account-failed-draft-phone-dark.png)
+
+![current-production-account-feedback--long-message · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/account-long-message-phone.png)
+
+![current-production-account-feedback--access-changed · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/account-access-changed-phone.png)
+
+![current-production-admin-feedback--flag · light · viewport1280×900, PNG1280×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-feedback-flag-light.png)
+
+![current-production-admin-feedback--paired-downloads · light · viewport1280×900, PNG1280×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-paired-downloads-light.png)
+
+![current-production-admin-feedback--paired-downloads · dark · viewport1280×900, PNG1280×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-paired-downloads-dark.png)
+
+![current-production-admin-feedback--paired-downloads · phone-dark · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-paired-downloads-phone-dark.png)
+
+![current-production-admin-feedback--download-failed · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-download-failed-phone.png)
+
+![current-production-admin-feedback--expanded-limits · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-expanded-limits-phone.png)
+
+![current-production-admin-feedback--access-changed · phone-dark · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-access-changed-phone-dark.png)
+
+![current-production-admin-feedback--old-feedback-only · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-old-feedback-only-phone.png)
+
+![editor-frame--guest · phone · viewport390×900, PNG390×900 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/editor-guest-phone.png)
+
+![admin-page--diagnostics-clear-blocks-navigation · phone · viewport390×900, PNG390×4311 · source7a045191/tested917741f1](https://raw.githubusercontent.com/mxbaylee/spinel/a6ad55d71be0718ec5304e2157af9ca09a22cba1/docs/review-assets/spn-098-validation-7a045191/current-visual/admin-diagnostics-clear-phone.png)

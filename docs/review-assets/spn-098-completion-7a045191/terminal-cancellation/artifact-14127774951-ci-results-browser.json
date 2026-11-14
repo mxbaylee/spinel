@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "",
+    "error": "Error: Coverage plan digest changed or missing.",
+    "results": "{\"backlog\":\"success\",\"pull-request\":\"cancelled\",\"lint\":\"success\",\"typecheck\":\"skipped\",\"unit-tests\":\"cancelled\",\"lib-test-run\":\"cancelled\",\"playwright-run\":\"cancelled\",\"container-smoke\":\"cancelled\",\"restore-timing\":\"cancelled\",\"sync-transition\":\"cancelled\",\"doc-responsiveness\":\"cancelled\",\"doc-callback-lifetimes\":\"cancelled\"}"
+  }
+}

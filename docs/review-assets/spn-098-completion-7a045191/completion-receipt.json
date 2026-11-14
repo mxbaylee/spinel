@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-11-14T19:25:23.631151+00:00",
+  "merge": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "mergeParent": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+  "identicalTree": "2be9e82d514b424f49baa8dea5672f8f75472685",
+  "validationArchive": "a6ad55d71be0718ec5304e2157af9ca09a22cba1",
+  "acceptedRuns": [
+    43626337966,
+    43626337816,
+    43626337825
+  ],
+  "reviews": "Original freshA/B100/100+exactheadvisualapproval,agentreviewonly; fullreportsretained, no newgrade",
+  "cleanupComplete": true,
+  "cleanupRecord": "cleanup-receipt.json",
+  "postmergeMetadataRun": 43631366297,
+  "postmergeMetadataOutcome": {
+    "status": "completed",
+    "conclusion": "cancelled",
+    "counts": {
+      "cancelled": 10,
+      "failure": 4,
+      "success": 2
+    },
+    "allJobsTerminal": true,
+    "record": "terminal-cancellation/terminal-receipt.json"
+  },
+  "bodyPublication": "body-publication.json",
+  "furtherBodyEdits": false,
+  "intendedParent": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "reservedTag": "archive/spn-098-completion-7a045191-20261114",
+  "publication": "Local evidence-only candidate for root audit; no completion tag pushed."
+}

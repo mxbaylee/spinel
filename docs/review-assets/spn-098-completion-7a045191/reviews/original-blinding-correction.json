@@ -1,0 +1,52 @@
+{
+  "at": "2026-11-14T18:07:28.752789+00:00",
+  "candidate": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "oldPacket": "/tmp/spn098-post157-20261114/review-packet",
+  "newPacket": "/tmp/spn098-post157-20261114/review-packet-v2",
+  "replacementReason": "Numerical input exposure; no grade was assigned by either interrupted reviewer. Fresh reviews required for user blinding instruction, not outcome shopping.",
+  "changes": {
+    "Each rubric is scope35/35, correctness25/25, regression20/20, operations10/10 and maintainability10/10, with no actionable findings or withheld points.": "Historical rubric values are omitted; no actionable findings were reported.",
+    "No unresolved findings or remaining actionable steps to 100.": "No unresolved findings or remaining actionable steps were reported.",
+    "Review iterations: `8e986617` A 100/B 100; evidence candidate `323e3ad4` B 99 with one local evidence-provenance deduction; repaired final `2204b8c4` A 100/B 100.": "Review iterations: `8e986617` was assessed by A and B; evidence candidate `323e3ad4` received a local evidence-provenance finding from B; repaired final `2204b8c4` was reassessed by A and B. Numerical assessments are omitted."
+  },
+  "oldHistorySha256": "c5d86ec46cfd85f39e2a1871cdfa7de34424f6e68f75b7b8c495d29a2e5e1e76",
+  "newHistorySha256": "e7f7810c4e38615357793c67b1da6adb3a832d36b8514946663089f461788bc3",
+  "oldPacketFiles": {
+    "visual-gallery.md": "5875ac2ba759a8d9f6ebe90fee8a6969888c1a49cb1454697377945b9633cca5",
+    "integration-source-audit.json": "0e70f1e31b8356cde87fdeb4d108a4a62791647bb83cc5037125441795dcf0c8",
+    "final-size.log": "afe53bee83add3aa3297406cce273c7250b63f6d0c7d7715467a93689cfb17dc",
+    "full-diff.patch": "bb1a819021ddad7f828966177ff1e99e4d718606ddcbbf55597b7b6b4ac4fe7a",
+    "prior-pr-technical-history.md": "c5d86ec46cfd85f39e2a1871cdfa7de34424f6e68f75b7b8c495d29a2e5e1e76",
+    "checks.json": "e91a9518aab0fbd1a880b67b2dc7838d0158233ce9e79e7f54993d91189a3ad5",
+    "README.md": "a06b7ec54a3f0419f0dbf6c544f59f222e2c64d1095e149639f79fc820df99e5",
+    "visual-binding.json": "c132d6e443bb015682cfa5713883099b05d8a96382f4324dd602805f58c2ec2d",
+    "complete-ticket-main.md": "03fb05be06ac4d40aeb30e1d146b5a1264f22cb691de6ef8a12992562ae4ecd1",
+    "prior-validation-technical-evidence.md": "1f1d29403019b96a4d3ecefe6517494478a3a471250b93a5626d8b527be5bc20",
+    "implementation-SPN-098.md": "59ca056a6bdbfdf2144d5e8e69fa26dba533ce5fb10a7f1a1235aa8369c0fdb3",
+    "packet-provenance.json": "ae179d5df35c808219498f28b99e1393afed49f0cdb874e4571249c38e166634",
+    "landed-SPN-157-contract-audit.md": "29664a67ce0b669934fa7553b7c8fda43a4646d3fc572499db81c77ff457d8a7",
+    "final-format.log": "93e5d7bca7e43a133cf86d9709e590881ac818082acb7ac15403470718d9d08b",
+    "final-pr.log": "00ce406a8f772ecac7674fbeb1fee69529b858b1e0b12853403247920696fdda",
+    "final-checks.json": "67fbf51adcc3bb069f72c9d7fc9993a37ba8ca3e0d6163cc44b118f097f3a6dc",
+    "implementation-SPN-110.md": "8cceeb3f85f7c2aa695139369aad907021baef62ec4bcc69f78b5a20e4cfb07b"
+  },
+  "newPacketFiles": {
+    "visual-gallery.md": "5875ac2ba759a8d9f6ebe90fee8a6969888c1a49cb1454697377945b9633cca5",
+    "integration-source-audit.json": "0e70f1e31b8356cde87fdeb4d108a4a62791647bb83cc5037125441795dcf0c8",
+    "final-size.log": "afe53bee83add3aa3297406cce273c7250b63f6d0c7d7715467a93689cfb17dc",
+    "full-diff.patch": "bb1a819021ddad7f828966177ff1e99e4d718606ddcbbf55597b7b6b4ac4fe7a",
+    "prior-pr-technical-history.md": "e7f7810c4e38615357793c67b1da6adb3a832d36b8514946663089f461788bc3",
+    "checks.json": "e91a9518aab0fbd1a880b67b2dc7838d0158233ce9e79e7f54993d91189a3ad5",
+    "README.md": "4056d6658f979c5fb6b4f41d6a91742a41f6e4a01e34dd1d66605e0012b75b4d",
+    "visual-binding.json": "c132d6e443bb015682cfa5713883099b05d8a96382f4324dd602805f58c2ec2d",
+    "complete-ticket-main.md": "03fb05be06ac4d40aeb30e1d146b5a1264f22cb691de6ef8a12992562ae4ecd1",
+    "prior-validation-technical-evidence.md": "1f1d29403019b96a4d3ecefe6517494478a3a471250b93a5626d8b527be5bc20",
+    "implementation-SPN-098.md": "59ca056a6bdbfdf2144d5e8e69fa26dba533ce5fb10a7f1a1235aa8369c0fdb3",
+    "packet-provenance.json": "e3da3c18be5ae4c914a13b16363225b999167f18e0bd5d0a201b29d258dd3112",
+    "landed-SPN-157-contract-audit.md": "29664a67ce0b669934fa7553b7c8fda43a4646d3fc572499db81c77ff457d8a7",
+    "final-format.log": "93e5d7bca7e43a133cf86d9709e590881ac818082acb7ac15403470718d9d08b",
+    "final-pr.log": "00ce406a8f772ecac7674fbeb1fee69529b858b1e0b12853403247920696fdda",
+    "final-checks.json": "67fbf51adcc3bb069f72c9d7fc9993a37ba8ca3e0d6163cc44b118f097f3a6dc",
+    "implementation-SPN-110.md": "8cceeb3f85f7c2aa695139369aad907021baef62ec4bcc69f78b5a20e4cfb07b"
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "path": "/tmp/spn098-completion-ec42f074/postmerge-cancel-20261114T192203Z",
+  "run": 43631366297,
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "attempt": 1,
+  "status": "queued",
+  "conclusion": null,
+  "updatedAt": "2026-11-14T19:19:26Z",
+  "allJobsTerminal": false,
+  "jobs": [
+    {
+      "id": 132558486099,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558486402,
+      "name": "Classify changes (43631366297)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558785224,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 132558785307,
+      "name": "Typecheck",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 132558785320,
+      "name": "Lint",
+      "status": "in_progress",
+      "conclusion": null
+    },
+    {
+      "id": 132558786344,
+      "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558786562,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558786663,
+      "name": "Unit tests",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 132558786736,
+      "name": "Lib tests",
+      "status": "queued",
+      "conclusion": null
+    },
+    {
+      "id": 132558786863,
+      "name": "Doc responsiveness (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558786962,
+      "name": "Unit tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787017,
+      "name": "Doc callback lifetimes (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787020,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787056,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787107,
+      "name": "Lib tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    }
+  ],
+  "disposition": "Root explicitly cancelled unnecessary postmerge-body metadata run. Cancellation remains pending while jobs queued; not source acceptance or retry. Original33CI/allseven success and guardedmerge unchanged. No further bodyedits."
+}

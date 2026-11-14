@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T19:03:02.388600+00:00",
+  "status": "premerge readonly inventory, no cleanup executed",
+  "localRefs": [
+    "refs/heads/codex/spn-050-fill-toolbar 915542e633ba0d9ec1f721ca5f6f49a36c409808",
+    "refs/heads/codex/spn-098-feedback-diagnostics 1183a71300d9b003960dcdee7f19e5622b982cd4",
+    "refs/heads/codex/spn-098-production-integration 7a0451917ef38524138fa2eac432d4520fbed008"
+  ],
+  "preserveDonor": "/Users/mxbaylee/projects/spinel-spn-098-production must stay at7a with allignored files/node_modules, only detach aftermerge",
+  "uniqueEvidence": "969b98c0 already covered by archive/spn-098-prior-acceptance-969b98c0; verify remote",
+  "original1183": "ancestor of7a verified",
+  "ownership": "all12openPRs use main base; only227owns098head, currentunmerged"
+}

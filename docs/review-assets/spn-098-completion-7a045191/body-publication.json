@@ -1,0 +1,19 @@
+{
+  "bodySha256": "2700ae8dc2579d94ebf8825a2ce2b996b930196781e48bbf7c4ace840d01c413",
+  "bodyExactRemote": true,
+  "merged": true,
+  "mergeSha": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "mergedAt": "2026-11-14T19:14:23Z",
+  "bodyUpdatedAt": "2026-11-14T19:18:19Z",
+  "imageEmbeds": 64,
+  "sourceRunIdsAfterUpdate": [
+    43631366297,
+    43626337825,
+    43626337816,
+    43626337966
+  ],
+  "unexpectedPostmergeRun": 43631366297,
+  "observation": "A new source7a CI run appeared after the confirmed merged PR body edit, contrary to expected no-open-PR trigger. Original merge acceptance remains distinct. No cancellation/rerun attempted.",
+  "initialVerification": "Original assumption asserting onlythree runs failed; raw API preserved.",
+  "tool": "GitHub plugin update_pull_request; merged state verified before mutation"
+}

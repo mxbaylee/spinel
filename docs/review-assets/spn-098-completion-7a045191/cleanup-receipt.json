@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-14T19:17:16.216881+00:00",
+  "merged": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "localBranchesDeleted": [
+    "codex/spn-098-feedback-diagnostics",
+    "codex/spn-098-production-integration"
+  ],
+  "remoteBranchesDeleted": [
+    "evidence/spn-098-acceptance-20261104"
+  ],
+  "remotePrHead": "Already absent after merge; verified before/after; obsolete tracking ref deleted",
+  "uniqueEvidencePreserved": "Remote archive/spn-098-prior-acceptance-969b98c0 exact969b98c0 verified before deletion",
+  "sourceEvidencePreserved": "Published archivea6ad55d7 directchildsource7a; localold1183isancestor",
+  "donor": "Detached at same7a;37437ignoredpathinventory unchanged; package locks, dependency/test-results directory identities unchanged; no package/cache/install/removal performed",
+  "missingWorktree": "Registration retained and detached at1183 after exactheadcheck. Original full metadata/index archived; cached diffempty. No prune/removal; no vanished workingfiles fabricated.",
+  "crossTicketPreserved": "codex/spn-110-feedback-integration f8c4b746 and its archive remain intact for separateSPN110",
+  "activePrGuard": "Fresh complete openPR head/base inventory matched none of deletedrefs",
+  "blockedCleanup": []
+}

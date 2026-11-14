@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "",
+    "error": "Error: Coverage plan digest changed or missing.",
+    "results": "{\"lib-test-run\":\"cancelled\"}"
+  }
+}

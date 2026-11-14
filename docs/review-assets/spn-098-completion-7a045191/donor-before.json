@@ -1,0 +1,34 @@
+{
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "ignoredPathCount": 37437,
+  "ignoredInventorySha256": "a5357d99b4eeacdd46381967640693809c577d6f34eab365a105c830af3aa10f",
+  "keys": [
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+      "device": 16777234,
+      "inode": 125537053,
+      "type": "directory"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/.package-lock.json",
+      "device": 16777234,
+      "inode": 125577922,
+      "type": "file",
+      "sha256": "5ff193c2329bc7bf476eb179f0fe471533d2a7f867fd88c14f8b42bf288fe390"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/package-lock.json",
+      "device": 16777234,
+      "inode": 125536697,
+      "type": "file",
+      "sha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/test-results",
+      "device": 16777234,
+      "inode": 125624822,
+      "type": "directory"
+    }
+  ],
+  "note": "No recursive dependency content hash claimed; exact same-commit detach will not touch working files."
+}

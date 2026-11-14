@@ -1,0 +1,42 @@
+[
+  {
+    "file": "COMMIT_EDITMSG",
+    "bytes": 70,
+    "sha256": "75cb16682805126649f3d50e1e807d043db7b14cbc39928fd9cc1a64d9950f6c"
+  },
+  {
+    "file": "FETCH_HEAD",
+    "bytes": 94,
+    "sha256": "2c62344bcfe5e981662b9751c1e7e9ded090d094449b351505c4f90a49b6cfbb"
+  },
+  {
+    "file": "HEAD",
+    "bytes": 51,
+    "sha256": "6cd4e52cd605a6e5d79067d5e9b38fc9ab6176574eb4e600212f7d95835ab352"
+  },
+  {
+    "file": "ORIG_HEAD",
+    "bytes": 41,
+    "sha256": "4ca19a945a2ae5f4d85fa934716d8b4f20d93ff9e9226edbaf1e05362d36e6ee"
+  },
+  {
+    "file": "commondir",
+    "bytes": 6,
+    "sha256": "340ddcb67a6204f742cd1e28e5b462622dde7daaa8ee36001897196aacdc6d47"
+  },
+  {
+    "file": "gitdir",
+    "bytes": 45,
+    "sha256": "4741c4107bdd5a63c19d4e9a980c25b4e6d5e63abda20277441052e8b9930cb8"
+  },
+  {
+    "file": "index",
+    "bytes": 238636,
+    "sha256": "75a8351ebcefeb81e6d1f66a8f2c50ffd0d99e1bb36ad2a8570df6a6f205b1bd"
+  },
+  {
+    "file": "logs/HEAD",
+    "bytes": 1160,
+    "sha256": "3ac3cb3554a347303eba927db46a3baa0d715835904dda1cfdff7d37ac6a4917"
+  }
+]

@@ -1,0 +1,175 @@
+{
+  "run": 43631366297,
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "cancelled",
+  "updatedAt": "2026-11-14T19:23:06Z",
+  "allJobsTerminal": true,
+  "counts": {
+    "cancelled": 10,
+    "failure": 4,
+    "success": 2
+  },
+  "jobs": [
+    {
+      "id": 132558486099,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558486402,
+      "name": "Classify changes (43631366297)",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558785224,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 132558785307,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132558785320,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 132558786344,
+      "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558786562,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558786663,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132558786736,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 132558786863,
+      "name": "Doc responsiveness (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558786962,
+      "name": "Unit tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787017,
+      "name": "Doc callback lifetimes (${{ matrix.preset }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787020,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787056,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132558787107,
+      "name": "Lib tests (${{ matrix.suite }})",
+      "status": "completed",
+      "conclusion": "cancelled"
+    },
+    {
+      "id": 132559754230,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "observedFailureDisposition": {
+    "typecheck": "Full log and step API show Require complete applicability failed with CLASSIFICATION=cancelled and SELECTED empty; checkout/install/compiler steps skipped.",
+    "unitLibBrowser": "Aggregate checkout/setup and node scripts/ci/coverage-result.ts DID execute. All emitted passed:false with Coverage plan digest changed or missing; cancelled classification/workers and explicit result maps retained in three original ZIPs. These are fail-closed evidence checks, not executed unit/lib/browser contract failures.",
+    "successes": "Backlog and Lint did execute and passed; full original logs retained. The cancelled workflow is not acceptance."
+  },
+  "rootAction": "Root explicitly reported successful cancellation of unnecessary postmerge-body metadata run; no raw cancellation-command stdout was supplied or fabricated.",
+  "standingCorrection": "Merged-PR body edits DO trigger CI here; previous no-trigger assumption disproved. No more body edits. Original33CI/allseven successful acceptance and guardedmerge remain distinct and unchanged.",
+  "aggregateResults": [
+    {
+      "artifactId": 14128755275,
+      "name": "ci-results-lib",
+      "originalMember": "ci-results-lib.json",
+      "sha256": "52b835a22c310751fb75da9596833c2f57b91a3300a552629213d4e678c5151f",
+      "result": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "",
+          "error": "Error: Coverage plan digest changed or missing.",
+          "results": "{\"lib-test-run\":\"cancelled\"}"
+        }
+      },
+      "retainedZip": "artifact-14128755275.zip",
+      "retainedJson": "artifact-14128755275-ci-results-lib.json",
+      "originalMemberBytes": 179,
+      "originalMemberSha256": "456f695e71bd5fafb390d96213ebaaeb96d88120dac4ba5ac469d6b87df3bc3c"
+    },
+    {
+      "artifactId": 14128416605,
+      "name": "ci-results-unit",
+      "originalMember": "ci-results-unit.json",
+      "sha256": "5ee4295f83bdfb8bcbaf5c6a0f1683e0ae3eeb1466a9810aae41d183332b7b47",
+      "result": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "",
+          "error": "Error: Coverage plan digest changed or missing.",
+          "results": "{\"unit-tests\":\"cancelled\"}"
+        }
+      },
+      "retainedZip": "artifact-14128416605.zip",
+      "retainedJson": "artifact-14128416605-ci-results-unit.json",
+      "originalMemberBytes": 177,
+      "originalMemberSha256": "b2777cae312897c12225168197bcd9ac241dac4c215d5b6de83ad669397ca2c7"
+    },
+    {
+      "artifactId": 14127774951,
+      "name": "ci-results-browser",
+      "originalMember": "ci-results-browser.json",
+      "sha256": "9cc145b292e94bfd0f9ece3a56ea12f44a66febb11aadff51aa543036041b7ee",
+      "result": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "",
+          "error": "Error: Coverage plan digest changed or missing.",
+          "results": "{\"backlog\":\"success\",\"pull-request\":\"cancelled\",\"lint\":\"success\",\"typecheck\":\"skipped\",\"unit-tests\":\"cancelled\",\"lib-test-run\":\"cancelled\",\"playwright-run\":\"cancelled\",\"container-smoke\":\"cancelled\",\"restore-timing\":\"cancelled\",\"sync-transition\":\"cancelled\",\"doc-responsiveness\":\"cancelled\",\"doc-callback-lifetimes\":\"cancelled\"}"
+        }
+      },
+      "retainedZip": "artifact-14127774951.zip",
+      "retainedJson": "artifact-14127774951-ci-results-browser.json",
+      "originalMemberBytes": 522,
+      "originalMemberSha256": "ca65d102b55f95687b8800ba7bb7ed55b4874f6b35a6bc3ce908bfa8d1c0d3c8"
+    }
+  ]
+}

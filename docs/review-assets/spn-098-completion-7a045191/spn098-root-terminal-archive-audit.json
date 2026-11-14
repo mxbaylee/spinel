@@ -1,0 +1,22 @@
+{
+  "at": "2026-11-14T19:08:26.182025+00:00",
+  "archive": "a6ad55d71be0718ec5304e2157af9ca09a22cba1",
+  "payloads": 482,
+  "trackedFiles": 483,
+  "decodedHashes": 323,
+  "originalZIPs": 22,
+  "CRCEntries": 7710,
+  "originalJSONMembersCompared": 147,
+  "manifestSha256": "d84fb2c5d3081c5288601ec668f13247ba5a4a86985891a9256c9044cc6cecc4",
+  "rootReadREADME": true,
+  "gitBlobsVerified": 483,
+  "pairedSnapshotsVerified": 2,
+  "rawFirstAttemptFeedbackCasesVerified": 8,
+  "storySetsVerified": 5,
+  "aggregatePayloadsVerified": 3,
+  "publishedTag": "archive/spn-098-validation-7a045191-20261114",
+  "publishedArchive": "a6ad55d71be0718ec5304e2157af9ca09a22cba1",
+  "guardedSquash": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "squashTree": "2be9e82d514b424f49baa8dea5672f8f75472685",
+  "squashParent": "c525aa933505d6e78b8fdd7a89940d87506d5cb3"
+}
