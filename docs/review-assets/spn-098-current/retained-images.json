@@ -50,14 +50,15 @@
     "reducedMotion": "reduce"
   },
   "manifest": {
-    "file": "storybook-manifest.json",
-    "sha256": "a04264d6242a6b29d29d05f5479d04f4d75815dc1b59984ea9a7367f7797686c",
+    "file": "storybook-manifest.json.gz",
+    "sha256": "8da3307e25313179567a5034ff2fa821242f0704f56714d26d1648c4b6f49dd5",
     "requestedStoryCount": 44,
     "checkedStateCount": 220,
     "capturedImageCount": 220,
     "failureCount": 0,
     "retainedImageCount": 16,
-    "note": "The unmodified manifest retains every requested, checked and captured state. Only the selected PNGs listed below are retained in this directory."
+    "note": "Gzip decompression reproduces the unmodified manifest. Only the selected PNGs listed below are retained in this directory.",
+    "decodedSha256": "e697843bc3c38c8372d28500835c19ba77268fb1d541c8cde48faf3810c4ffdf"
   },
   "images": [
     {
