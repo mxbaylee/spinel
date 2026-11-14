@@ -74,44 +74,47 @@ test.describe('downloaded native editors', () => {
         expect(response.status(), await response.text()).toBe(200);
         return await response.json();
       };
-      await f.download();
       const docBefore = await f.read();
       const sheetBefore = await readSheet();
-      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
-      await f.page
-        .getByRole('button', { name: `More actions for ${sheet.name}`, exact: true })
-        .click();
-      await f.page
-        .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-        .click();
-      await expect(
-        f.page.getByRole('status').filter({ hasText: `${sheet.name} is available offline` }),
-      ).toHaveText(`${sheet.name} is available offline on this device.`, { timeout: 120_000 });
-      await f.page.getByRole('button', { name: `${sheet.name} Sheet`, exact: true }).click();
-      await synced(f.page);
+      // Preparing both copies from the real file-list menus avoids constructing
+      // online editors that this offline/reconnect contract does not exercise.
+      await f.page.goto('/');
+      await expect
+        .poll(() => f.page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+        .toBe(true);
+      for (const item of [f.item, sheet]) {
+        await f.page
+          .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
+          .click();
+        await f.page
+          .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+          .click();
+        await expect(
+          f.page.getByRole('status').filter({ hasText: `${item.name} is available offline` }),
+        ).toHaveText(`${item.name} is available offline on this device.`, { timeout: 120_000 });
+      }
       await f.network.setOffline(true);
-      await edit(f.page, 'sheet', '15642');
-      await savedLocally(f.page);
-      await expect
-        .poll(async () =>
-          JSON.stringify((await stored(f.page, f.actor.id, sheet.id))?.outbox?.checkpoint),
-        )
-        .toContain('15642');
-      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
       await f.page.reload();
-      await f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }).click();
-      await expect(f.page.getByRole('region', { name: 'Offline copy', exact: true })).toBeVisible();
-      await savedLocally(f.page);
-      await usableCanvas(f.page);
       const text = `File-list replay ${info.testId}`;
-      await edit(f.page, 'doc', text);
-      await savedLocally(f.page);
-      await expect
-        .poll(async () =>
-          JSON.stringify((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint),
-        )
-        .toContain(text);
-      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      for (const [item, kind, label, authored] of [
+        [f.item, 'doc', 'Doc', text],
+        [sheet, 'sheet', 'Sheet', '15642'],
+      ] as const) {
+        await f.page.getByRole('button', { name: `${item.name} ${label}`, exact: true }).click();
+        await expect(
+          f.page.getByRole('region', { name: 'Offline copy', exact: true }),
+        ).toBeVisible();
+        await savedLocally(f.page);
+        await usableCanvas(f.page);
+        await edit(f.page, kind, authored);
+        await expect
+          .poll(async () =>
+            JSON.stringify((await stored(f.page, f.actor.id, item.id))?.outbox?.checkpoint),
+          )
+          .toContain(authored);
+        await savedLocally(f.page);
+        await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      }
       expect(pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint)).toBe(true);
       expect(pending((await stored(f.page, f.actor.id, sheet.id))?.outbox?.checkpoint)).toBe(true);
       await expect(f.page.locator('.univer-container')).toHaveCount(0);
@@ -149,9 +152,11 @@ test.describe('downloaded native editors', () => {
       await peer.goto(f.href);
       await matchesServer(peer, docSaved);
       expect(await copy(peer, 'doc')).toContain(text);
-      await peer.goto(`/?item=${sheet.id}`);
-      await matchesServer(peer, sheetSaved);
-      expect(await copy(peer, 'sheet')).toBe('15642');
+      await peer.close();
+      const sheetPeer = await f.control.newPage();
+      await sheetPeer.goto(`/?item=${sheet.id}`);
+      await matchesServer(sheetPeer, sheetSaved);
+      expect(await copy(sheetPeer, 'sheet')).toBe('15642');
       await expect(f.page.locator('.univer-container')).toHaveCount(0);
       expect(f.errors).toEqual([]);
     } finally {
