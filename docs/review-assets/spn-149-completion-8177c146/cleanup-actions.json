@@ -1,0 +1,59 @@
+[
+  {
+    "args": [
+      "switch",
+      "--detach",
+      "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "HEAD is now at 8177c146 Retain SPN-149 integration check logs and PR receipt\n",
+    "at": "2026-11-14T05:08:42.440Z"
+  },
+  {
+    "args": [
+      "update-ref",
+      "-d",
+      "refs/heads/codex/spn-149-production-integration",
+      "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "at": "2026-11-14T05:08:42.446Z"
+  },
+  {
+    "ref": "refs/heads/codex/spn-149-revocation-evidence",
+    "result": "already absent after GitHub automatic deletion; no remote deletion attempted",
+    "expectedOldHead": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+  },
+  {
+    "args": [
+      "push",
+      "--force-with-lease=refs/heads/evidence/spn-149-acceptance-20261113:9392210d92f3ae706443ca49803c4ea7122322af",
+      "origin",
+      ":refs/heads/evidence/spn-149-acceptance-20261113"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "To github.com:mxbaylee/spinel.git\n - [deleted]           evidence/spn-149-acceptance-20261113\n",
+    "at": "2026-11-14T05:08:44.255Z"
+  },
+  {
+    "args": [
+      "update-ref",
+      "-d",
+      "refs/remotes/origin/codex/spn-149-revocation-evidence",
+      "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62"
+    ],
+    "status": 0,
+    "stdout": "",
+    "stderr": "",
+    "at": "2026-11-14T05:08:44.277Z"
+  },
+  {
+    "ref": "refs/remotes/origin/evidence/spn-149-acceptance-20261113",
+    "result": "already absent after remote operation",
+    "expectedOldHead": "9392210d92f3ae706443ca49803c4ea7122322af"
+  }
+]

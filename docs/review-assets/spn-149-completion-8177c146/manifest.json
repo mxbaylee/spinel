@@ -1,0 +1,57 @@
+{
+  "source": "8177c1466ace555817cf2dbb9a2e5f2b5abc2c62",
+  "squash": "a3dfc6f3373babecf979d5b851bbbf46c6dbb3b9",
+  "parent": "4002ca987d795c470179a7287b22ee2c732cd168",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3690,
+      "sha256": "838fb9dbd27c91e6a4cfaf4f3eeefd98fe829693840502c332b65f61d428a413"
+    },
+    {
+      "path": "cleanup-actions.json",
+      "bytes": 1655,
+      "sha256": "904aa4b9c9f4038e0a27eba1dd5130ad273ca14fda16eeab5d23570b1de8c4e9"
+    },
+    {
+      "path": "completion.json",
+      "bytes": 2815,
+      "sha256": "8000e187fa5f4c835b08e9d3820efa56b3d23a5514144286286ba7970f2dffc0"
+    },
+    {
+      "path": "open-prs-after.json",
+      "bytes": 2460,
+      "sha256": "e809a8d5dc85046d348f3748d73c28c55e4ff9af3604d7114a8b607f09b4d6e4"
+    },
+    {
+      "path": "open-prs-before.json",
+      "bytes": 2460,
+      "sha256": "e809a8d5dc85046d348f3748d73c28c55e4ff9af3604d7114a8b607f09b4d6e4"
+    },
+    {
+      "path": "pr-merged.json",
+      "bytes": 22168,
+      "sha256": "9e5614b5730a9a8a51fc1faac4ffdd5bef1ac6ac77e375092bafd9a36aa577bb"
+    },
+    {
+      "path": "preserved-prior-commits.json",
+      "bytes": 459,
+      "sha256": "6e645c54bfc031f02e0a94b500c2b60ea6390bc73935f8114423fd1d695c8e13"
+    },
+    {
+      "path": "remote-after.txt",
+      "bytes": 246,
+      "sha256": "4c150aaea39991b756a8a004b4ed4845a2a020ec648c9af3deb8c6221b68c826"
+    },
+    {
+      "path": "remote-before.txt",
+      "bytes": 335,
+      "sha256": "225fc5854edcb9c710a71541ed39fc699dd8d6441a8fd775d39c05a4c1a7197b"
+    },
+    {
+      "path": "squash-commit.json",
+      "bytes": 2310,
+      "sha256": "7a0ace03129335f3f486de202b6d5cf1b061138e089acfb63323c5f8d6964e41"
+    }
+  ]
+}
