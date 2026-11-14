@@ -9,13 +9,14 @@ PRD/grooming ban. Guests and unprepared devices keep a generic offline screen.
 Configured test HTTPS is enough for development; public deployment is
 separate work.
 
-**Mobile acceptance, owner clarification 2026-11-02:**
-[BrowserStack Automate is the available and approved environment](implementation/SPN-090.md#owner-approved-browserstack-acceptance-and-review-rubric).
-The product requirements below remain intact. The accepted verification plan uses
-supported BrowserStack observations and named automated coverage for evidenced
-operation limits; it requires no user-owned phones, manual hardware validation,
-another provider, dedicated lab or additional physical runner. Unexplained
-failures and unrun supported checks remain unresolved.
+📱 **Mobile acceptance, owner clarification 2026-11-13:**
+[BrowserStack is no longer a required provider](implementation/SPN-090.md#provider-independent-verification).
+Retain actual physical observations at their recorded source and context; recurring
+paid-device execution, allocation and quota accounting are not launch prerequisites.
+Shared product regressions keep their native desktop and deterministic owners.
+The [layered verification decision](implementation/SPN-090.md#layered-acceptance-and-residual-mobile-confidence)
+accepts residual phone-specific confidence limits while requiring current shared
+product acceptance. Historical phone testing does not mean every mobile scenario passed.
 
 **What is implemented.** SPN-040 added Sheet-image support, SPN-041 the
 authorized [download bundle](#download-bundle), and SPN-039 offline launch,
@@ -41,12 +42,10 @@ in-place retention guidance ([native verification](#native-desktop-verification)
 The remaining parts of this contract were split by the Owner in chat on 2026-10-19 so
 every unmet requirement stayed on a ticket:
 
-- [SPN-090](implementation/SPN-090.md) lands BrowserStack Android/iPhone launch and
-  stable-link observations with PR #224, once its three BrowserStack scopes have
-  run there (owner, 2026-11-03). The [approved coverage map](#browserstack-coverage-boundaries-and-automated-owners)
-  records observed operation limits, automated alternatives and the phone
-  observations still unobserved. Its rules are kept under
-  [real-phone verification rules](#real-phone-verification-rules).
+- [SPN-090](implementation/SPN-090.md#provider-independent-verification) retains
+  observed Android/iPhone behavior, historical failures and explicitly accepted
+  phone-confidence limits. Its [provider-neutral rules](#real-phone-verification-rules) keep
+  exact source/context evidence and shared automated owners separate.
 
 [Decision #91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion) keeps every
 acceptance requirement below.
@@ -129,7 +128,7 @@ refresh and application updates. Older compatible runtimes conservatively retain
 its unfamiliar queue marker. The separate local metadata survives catalog refresh
 and is fenced to the original account. See [the creation record](implementation/SPN-051.md)
 for receipt, storage and persona decisions; SPN-090 retains the approved
-BrowserStack observations and explicit automated coverage for operation limits.
+physical observations and explicit automated coverage for shared product contracts.
 
 ## Download bundle
 
@@ -683,8 +682,8 @@ When independent item icons are unsupported, provide the stable link and a clear
 in-app offline collection fallback, recording that limitation. A shortcut
 never implicitly claims the document has been downloaded.
 
-Test installed-context startup and browser tabs through the operations available
-in BrowserStack Automate. On iOS, do not assume browser storage is copied into
+Test remaining installed-context startup and browser-tab contracts through an
+available authorized route; BrowserStack is optional. On iOS, do not assume browser storage is copied into
 or shared with an installed app: prepare offline content in the context that
 will launch. Record Android Chrome, Android Firefox and iPhone Safari results
 with requested/actual OS/browser versions, supported actions and observed launch
@@ -697,145 +696,77 @@ manifest. SPN-055 owns the shared lifecycle, and SPN-052 separately verifies
 ordinary macOS Chrome, Firefox and Safari tabs with browser versions and
 persistence results recorded here.
 
-SPN-090's [BrowserStack CI plan](implementation/SPN-090.md#browserstack-ci-plan)
-uses Automate real mobile browsers and Local from GitHub Actions, with repository
-secrets `BS_USERNAME` and `BS_ACCESS_KEY`. The bounded HTTP infrastructure smoke
-verifies credentials, mobile allocation and runner reachability. The later
-capability workflow generates disposable CI HTTPS and separately observes the
-actual secure context, worker, native launch and offline storage. A successful
-tunnel session alone establishes none of those contracts.
+The retained optional BrowserStack infrastructure smoke uses Automate and Local
+with repository secrets `BS_USERNAME` and `BS_ACCESS_KEY`. Its synthetic HTTP
+challenge proves reachability only. The unlanded authored phone harness is kept
+in the [immutable source archive](https://github.com/mxbaylee/spinel/tree/fe1fddd818cf66661c4e43c20dd856d87a685383);
+no provider mechanism is needed for production deployment.
 
 ### BrowserStack coverage boundaries and automated owners
 
-The [owner-approved acceptance and review rubric](implementation/SPN-090.md#owner-approved-browserstack-acceptance-and-review-rubric)
-supersedes earlier instructions to obtain another phone/runner or require an
-unavailable native operation on every browser. This is a verification-environment
-decision: document data, images, edits, restart recovery, reconnect, creation,
-links and access requirements remain unchanged. An accepted limit needs an exact
-observed operation/environment, the behavior left unobserved and a named automated
-owner. An unexplained failed operation is not automatically a provider limitation.
-On 2026-11-02 the owner briefly removed further real-device runs from scope,
-then [corrected that](implementation/SPN-090.md#correction--owner-chat-2026-11-03-browserstack-runs-stay-in-scope) on 2026-11-03: BrowserStack is
-used until the account's BrowserStack time runs out. On 2026-11-04 the owner
-[removed the repository's minute estimate](implementation/SPN-090.md#-budget-estimation-removed-owner-2026-11-04): BrowserStack's own limit
-is the only stop, and the owner adds time when it runs out. Safari authored,
-Android Chrome authored and Android Firefox tab acceptance run on PR #224 before
-it lands, and monthly after that.
+🔎 The [current decision and physical evidence inventory](implementation/SPN-090.md#provider-independent-verification)
+supersede provider-specific prerequisites. Historical Safari capability passed
+installation, standalone preparation, native termination and offline Home Screen
+relaunch at its recorded source. Later Safari authoring failed its exact-content
+oracle; local reproduction repaired that oracle without proving the phone's unknown
+style. Chrome's lost storage after restart remains a context/reset investigation,
+and Firefox's native/offline controls remain observed route limitations. None is
+converted into a full mobile pass. Exact devices, versions, source/tested SHAs,
+contexts, actions, cleanup and immutable evidence are retained in that inventory.
 
-| Boundary and current disposition                                                                                                                                                                                                                                                                                                                                                                                                                                        | Automated owner and remaining evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Firefox native control: accepted observation limit for the exercised route.** Its first Automate session reached a secure, worker-controlled page but native-context access returned HTTP 400. Empty dedicated-inventory responses establish only the inventory returned to that account at those times. Neither observation establishes a general Firefox product limitation.                                                                                        | The explicit `firefox-tab-acceptance` scope uses ordinary web commands, actual tab preparation/input and verified cold page reloads without retrying native-context access. [Run 41733934800](implementation/SPN-090.md#second-pre-merge-phone-runs-on-00ce6db) showed its download held by Firefox's unanswered storage prompt; the download no longer waits for that answer. [Run 41749059341](implementation/SPN-090.md#third-pre-merge-phone-runs-on-7d348d6) then waited 15 s without a worker controller at sign-in, which looks transient. [Run 41773348498](implementation/SPN-090.md#fourth-pre-merge-phone-runs-on-2e266ed) passed sign-in and all four downloads, then its socket still connected right after the network cut; the harness now waits up to 15 s for the cut to reach ordinary requests, pending a re-run. [Run 41779095052](implementation/SPN-090.md#-fifth-pre-merge-phone-runs-on-62c1d20) stopped at the since-removed budget admission before any device. In [run 41783320538](implementation/SPN-090.md#-sixth-pre-merge-phone-runs-on-a993339) `no-network` never reached Firefox in 15 s; its cuts now use BrowserStack's Android `airplane-mode` profile. [Run 41882759778](implementation/SPN-090.md#-seventh-pre-merge-phone-runs-on-038d9b0) stopped before the cut, when the online authenticated socket was refused for the first time. [Run 41900170993](implementation/SPN-090.md#-eighth-pre-merge-phone-runs-on-7535060) found no worker registration at sign-in; on that failure the run now repeats the app's registration once and records only the error name. [Run 41904979072](implementation/SPN-090.md#-ninth-pre-merge-phone-runs-on-7158c69) was again refused the online socket; a refusal now records its close code. In [run 41911483521](implementation/SPN-090.md#-tenth-pre-merge-phone-runs-on-035f2de) the socket opened, then BrowserStack refused `airplane-mode` with HTTP 422; the `no-network` fallback then left [run 41923855981](implementation/SPN-090.md#-eleventh-pre-merge-phone-runs-on-1f91d76) online for 15 s again, so Firefox's cut is now the test server refusing every connection, recorded as such and not as a device cut. [Run 41930403142](implementation/SPN-090.md#-twelfth-pre-merge-phone-runs-on-c21f0ce) stopped before that cut, at sign-in, on a registration with no worker; a stalled registration is now registered once more during the wait. In [run 41939094783](implementation/SPN-090.md#-thirteenth-pre-merge-phone-runs-on-040673c) the server refusal reached the phone as BrowserStack Local's HTTP 502, which Spinel rightly treats as online; Firefox was to go offline through its own privileged switch; in [run 41949596977](implementation/SPN-090.md#-fourteenth-pre-merge-phone-runs-on-bad9403) geckodriver refused it with HTTP 404, so the lane now runs up to the network cut and ends on a maintained blocker citing that run's [committed record](implementation/evidence/SPN-090-capability-41949596977.json). The scope then reports `incomplete`, never a pass, and offline Firefox on phones stays unobserved. The scope re-runs on PR #224 before merge (owner, 2026-11-03). The existing Firefox lane in `scripts/ci/desktop-offline.ts` covers authored Doc/Sheet edits, image retention, process restarts and normal/conflict reconnect in its desktop profile. `e2e/offline-editing.spec.ts`, `offline-recovery.spec.ts`, `offline-creation.spec.ts`, `offline.spec.ts` and `pwa.spec.ts` own the corresponding shared product contracts. Record their actual source/run results separately. The native Firefox Home Screen lifecycle remains unobserved; these alternatives do not claim to have performed it, and another physical runner is not a prerequisite.                                                                                           |
-| **Chrome readiness: diagnosed harness defect, repaired, re-run before merge.** The eighth attempt completed native shortcut launch/authentication and verified navigation, then its first item-readiness script returned HTTP 500 / `unknown error` without an observation. Appium 1.17 had unwrapped the script's empty top-level `status` as a legacy error ([cause and repair](implementation/SPN-090.md#chrome-readiness-http-500-cause-appium-status-unwrapping)). | [Run 41708153563](implementation/SPN-090.md#first-pre-merge-phone-runs-on-dab1d9d) observed the repaired readiness and all four Dashboard downloads on a real phone; its Space preparation step failed in the harness and is repaired. [Run 41733180670](implementation/SPN-090.md#second-pre-merge-phone-runs-on-00ce6db) then stopped at Chrome's ⋮ menu on an en-GB phone; that label is repaired too. [Run 41748283045](implementation/SPN-090.md#third-pre-merge-phone-runs-on-7d348d6) reached the offline relaunch and found only a blank window. [Run 41772261056](implementation/SPN-090.md#fourth-pre-merge-phone-runs-on-2e266ed) waited the full 15 s on that same blank window, so it is not timing; Chrome now reloads the installed window offline before termination and records the error page, pending a re-run. [Run 41779033079](implementation/SPN-090.md#-fifth-pre-merge-phone-runs-on-62c1d20) stopped at the since-removed budget admission before any device. In [run 41783039128](implementation/SPN-090.md#-sixth-pre-merge-phone-runs-on-a993339) the offline reload loaded Spinel from its worker, but the icon relaunch opened Chrome's own page; the run now records that page and relaunches once through the shortcut's intent. [Run 41882414827](implementation/SPN-090.md#-seventh-pre-merge-phone-runs-on-038d9b0) then stopped earlier, when BrowserStack's app close answered HTTP 500 `unknown error`; a close that answers that way is now checked and retried once while the app still runs. In [run 41899303270](implementation/SPN-090.md#-eighth-pre-merge-phone-runs-on-7535060) the shortcut intent opened Spinel, but online and signed out; the offline cut is now applied again before the intent. [Run 41904306797](implementation/SPN-090.md#-ninth-pre-merge-phone-runs-on-7158c69) then reopened Spinel offline under its worker, on a blank `/sign-in` page whose stored read failed; that failure now records the offline account, database and window count. [Run 41911112406](implementation/SPN-090.md#-tenth-pre-merge-phone-runs-on-035f2de) recorded both gone after the relaunch, though the same window had reloaded signed in offline before the close; the same record is now taken just before the close. In [run 41922691566](implementation/SPN-090.md#-eleventh-pre-merge-phone-runs-on-1f91d76) both were present before the close and gone after, with the worker registration kept; both records now add the storage quota, usage and persistence. [Run 41930178262](implementation/SPN-090.md#-twelfth-pre-merge-phone-runs-on-c21f0ce) stopped earlier, with Chrome still in front after Home; Home now waits for the launcher and presses once more. [Run 41938668159](implementation/SPN-090.md#-thirteenth-pre-merge-phone-runs-on-040673c) again had storage before the close and none after, the worker kept and the quota grown by the space freed; both records now add Chrome's per-kind usage and cache count. [Run 41948772457](implementation/SPN-090.md#-fourteenth-pre-merge-phone-runs-on-bad9403) showed every kind gone after the relaunch (IndexedDB 1.4 MB, caches 29 MB, then none, with `persisted: false`); a capability-owned cookie written before the close now tells evicted storage from a reset profile, pending a re-run. The explicit `chrome-acceptance` continuation depends on its installed capability steps; `chrome-tab-acceptance` separately requests the ordinary-tab context. Neither has passed; `chrome-acceptance` re-runs on PR #224 before merge (owner, 2026-11-03), and `chrome-tab-acceptance` stays label-only and unexecuted. Desktop/deterministic results remain useful product evidence, but do not turn these repairs into a pass or an accepted provider limitation.                                                       |
-| **Safari authored continuation: implemented, runs before merge.** The sixth attempt observed the earlier install/authenticate/download/terminate/offline-relaunch capability, with both document types and all six image payloads.                                                                                                                                                                                                                                      | The `safari-acceptance` scope in the BrowserStack harness owns actual authored edits, a second pending-edit restart, exact normal/conflict reconnect, creation, stable links and negatives, including required rendered-image screenshots. [Run 41736478986](implementation/SPN-090.md#second-pre-merge-phone-runs-on-00ce6db) passed installation through the first cached folder, then failed in the harness on the phone-width Shared with me drawer (repaired). [Run 41746157790](implementation/SPN-090.md#third-pre-merge-phone-runs-on-7d348d6) passed the offline relaunch and Sheet reopen, then spent its setup budget on ~13.8 s WebDriver navigations; Safari now navigates in the attached window. [Run 41771504170](implementation/SPN-090.md#fourth-pre-merge-phone-runs-on-2e266ed) then passed every prerequisite in about 130 s and reopened all four items offline, and stopped at a redundant `DELETE /actions` release that Safari answers `unknown command`, now tolerated. [Run 41778562480](implementation/SPN-090.md#-fifth-pre-merge-phone-runs-on-62c1d20) held that repair and stopped at the first Sheet edit, where Univer never saw a double tap; the taps went back to back. [Run 41782555335](implementation/SPN-090.md#-sixth-pre-merge-phone-runs-on-a993339)'s page trace then saw one tap, 62 px above the aim; the harness now calibrates its aim with one tap and restores the 100 ms gap. [Run 41881578804](implementation/SPN-090.md#-seventh-pre-merge-phone-runs-on-038d9b0) reopened offline from the Home Screen, then ran out of its 240 s setup time on slow provider downloads (86 s, earlier 19–26 s) before the calibrated tap. In [run 41898771272](implementation/SPN-090.md#-eighth-pre-merge-phone-runs-on-7535060) the calibrated aim landed on the cell, but one sequence's two taps arrived overlapping; separate single taps then arrived 715 ms apart in [run 41903366803](implementation/SPN-090.md#-ninth-pre-merge-phone-runs-on-7158c69), so the double tap was one sequence again with a 250 ms pause; in [run 41910575626](implementation/SPN-090.md#-tenth-pre-merge-phone-runs-on-035f2de) its two touches still overlapped, so Safari now taps through XCUITest's native `mobile: tap` and `mobile: doubleTap`. In [run 41922024845](implementation/SPN-090.md#-eleventh-pre-merge-phone-runs-on-1f91d76) those produced two clean taps 58 ms apart and the editor still did not open; the trace now records each tap's target, the canvas box and the viewport scale. In [run 41928778203](implementation/SPN-090.md#-twelfth-pre-merge-phone-runs-on-c21f0ce) every tap missed the grid after the calibration tap, aimed at A1, landed on the sheet-tab bar; the sheet now calibrates mid-grid and rechecks its aim. In [run 41938061698](implementation/SPN-090.md#-thirteenth-pre-merge-phone-runs-on-040673c) the editor opened and the edit saved, but only the first of three keys arrived; each key is now its own action and waits for its insertion. In [run 41948360003](implementation/SPN-090.md#-fourteenth-pre-merge-phone-runs-on-bad9403) all three keys arrived and A1 held `731`, but the workbook differed elsewhere, unrecorded; a mismatch now records its differing paths and value types, never values, pending a re-run; its other authored assertions have not run on a phone; local harness tests and the historical capability pass do not stand in for that, so current-source iOS installed authoring stays unobserved and the native desktop and deterministic owners carry the product contracts. The explicit `safari-tab-acceptance` scope separately prepares and reopens in the actual ordinary tab, with no installed-storage-sharing assumption. It uses verified page reloads and is physically unexecuted. |
-| **Installation resources and shared failure/access permutations:** owned at the lowest meaningful automated layer, with supported BrowserStack observations added for mobile context.                                                                                                                                                                                                                                                                                   | `e2e/offline.spec.ts` owns cold-offline manifest/PNG and complete-image checks; descriptor/runtime suites own malformed/incomplete resources. `offline-editing.spec.ts`, `offline-recovery.spec.ts`, `offline-sign-out.spec.ts`, `offline-device.spec.ts`, `offline-creation.spec.ts` and `pwa.spec.ts` own the [specific replay, storage, link and authority contracts](implementation/SPN-090.md#acceptance-ownership-without-duplicate-paid-permutations). Keep actual run evidence distinct from this inventory; the new mobile resource assertion is still unobserved by the historical Safari receipt.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+The product requirements remain Docs/Sheets and image integrity, durable edits,
+restart/reopen, normal/conflicted reconnect, creation, stable links and access.
+The existing [suite inventory](implementation/SPN-090.md#acceptance-ownership-without-duplicate-paid-permutations)
+assigns deterministic persistence/replay/access cases and native desktop restart
+checks. Those executions prove their own environments. The [explicit layered decision](implementation/SPN-090.md#layered-acceptance-and-residual-mobile-confidence)
+accepts unobserved phone permutations as confidence limits, combining historical
+physical installation/retention evidence with current shared/native outcomes. It
+does not waive a current reproducible product defect or failing required test.
 
-The [explicit context routes](implementation/SPN-090.md#second-review-repair-supported-contexts-and-measured-scope-cost)
-select one device per run. Ordinary-tab reports require a newly loaded
-document in the same observed window/URL and explicitly disclose that OS
-termination was not performed. Native installed paths keep their actual
-termination/Home Screen lifecycle. Firefox's recorded native-control limit uses
-the named desktop restart alternative; a page reload is never labeled a native
-phone restart. A route has a result only once it actually executes.
-
-Current BrowserStack reports use `status` for execution of the selected scope and
-`fullMatrixStatus` for the aggregate of the three browser capability lanes. Neither
-field alone establishes whole authored offline acceptance. Preserve historical
-reports with their original schema/meaning, and name unrun lanes and accepted
-observation limits without manufacturing a native pass. The monthly policy
-routes Safari authored acceptance on the 1st, Android Chrome authored acceptance
-on the 2nd and Android Firefox tab acceptance on the 3rd through the same
-account lock, replay guard, idle-account pre-flight and in-run cleanup; its
-first scheduled run is not required before merge. Default manual dispatch reads
-a completed session's diagnostics and allocates no device; the earlier quota-only
-routes are historical. The monthly
-runs do not observe the Chrome or Safari ordinary-tab contexts. The global
-review weights and all current-commit CI, independent-review and merge gates remain
-unchanged.
+Optional reports use `status` for the selected scope and `fullMatrixStatus` for
+three-browser capability aggregation; neither alone establishes authored acceptance.
+A tab reload is not an OS restart, a new provider session is not a retained profile,
+and incomplete/failed/unexecuted results cannot become passes.
 
 ### Dispatching BrowserStack runs
 
-The workflow's account-wide concurrency group keeps at most one pending run, and
-a newer account run replaces it without failing anything
-([why the group stays account-wide](implementation/SPN-090.md#pending-run-replacement)).
-
-1. Before dispatching, list every unfinished run:
-   `gh run list --workflow browserstack.yml --json databaseId,status,event,displayTitle,headBranch --jq '.[] | select(.status != "completed")'`.
-   Each title names the dispatched mode, the PR label or the monthly run.
-   Wait while an account run is `pending`; dispatching now would displace it.
-   Diagnostics (`diagnostics` or `ci-browserstack-logs` in the title) and no-op
-   runs use their own groups and can be ignored.
-2. After dispatching, confirm the expected run reached a job.
-3. 🔎 Nothing flags a displaced run any more. Check for one by hand:
-   `gh run list --workflow browserstack.yml --status cancelled --json databaseId,event,displayTitle,createdAt`.
-   A cancelled `schedule` run means a monthly acceptance run was lost: dispatch
-   the scope its title names (`safari-acceptance`, `chrome-acceptance` or
-   `firefox-tab-acceptance`) by hand, since next month's schedule does not stand
-   in for it. Re-dispatch any other cancelled run that was still needed.
-4. ⚠️ A capability run that fails with `capability-account-busy` found another
-   running or queued session in BrowserStack's `plan.json` and allocated nothing;
-   its report records both counts under `accountSessions`. Wait for that session
-   to finish, then dispatch again. When BrowserStack refuses sessions because the
-   account's time is used up, ask the owner to add more.
+🛠️ Only the pre-existing infrastructure smoke remains. The new provider-native
+orchestration and monthly schedule are retired with their exact source preserved.
+Manual dispatch or the exact `ci-real-devices` label can allocate real devices;
+neither is required for landing or launch, and this backlog request supplies no
+new spending authority. Do not dispatch to validate documentation or replace a
+historical failed run. Its bounded credentials/tunnel/identity checks and cleanup
+remain unchanged. There is no obligation to renew provider time, reconstruct a
+quota ledger or replace a cancelled historical monthly run.
 
 ### Real-phone verification rules
 
-📱 These rules come from [SPN-090's ticket at landing](https://github.com/mxbaylee/spinel/blob/d7761a893c70030477df79577f54b23bc0e88fb4/docs/todo/SPN-090.md),
-whose [record](implementation/SPN-090.md) holds the decisions, evidence and personas.
+📌 The original [ticket](https://github.com/mxbaylee/spinel/blob/ebf0842f51b60d54649cf8a03065914bec0944bf/docs/todo/SPN-090.md) and the
+[canonical decision](implementation/SPN-090.md#provider-independent-verification)
+record the original contract, November 13 provider revision, evidence-owner
+mapping and accepted residual limits.
 
-- **Use BrowserStack until its time runs out** (owner, chat 2026-11-03, [correction](implementation/SPN-090.md#correction--owner-chat-2026-11-03-browserstack-runs-stay-in-scope); 2026-11-04, [estimate removed](implementation/SPN-090.md#-budget-estimation-removed-owner-2026-11-04)).
-  There are no physical phones, so BrowserStack's real phones are the
-  verification. Safari authored, Android Chrome authored and Android Firefox tab
-  acceptance run on a PR before it lands and on the monthly schedule. A phone
-  result is recorded at its exact source, and a failure stays a failure. Native
-  desktop and deterministic owners carry the shared product contracts, and
-  mobile-only observations not yet made stay named as unobserved in the coverage
-  map above.
-- **BrowserStack Automate is the approved mobile environment** (owner, 2026-11-02).
-  No personal phones, manual hardware, other provider, dedicated lab or extra
-  runner is required.
-- **Keep product outcomes intact.** An unavailable operation is recorded with
-  its exact route/device/source evidence, residual limit and named automated
-  owner, never as a pass. The [Firefox native-control limit](implementation/SPN-090.md#firefox-native-control-disposition)
-  is an observed automation boundary, not a Firefox product limitation. Unknown
-  failures stay unresolved; a successful diagnostic never turns a failure into a pass.
-- **Keep access boundaries.** Reuse [SPN-055](implementation/SPN-055.md)'s
-  storage, account and runtime lifecycle and SPN-053/SPN-054's durable edits and
-  recovery. Keep viewer restrictions, account isolation and guest/token exclusion.
-  Include SPN-051's offline Sheet/Doc creation, edited reopen, one server
-  publication and rejected-folder recovery.
-- **Report semantics.** `status` is the selected scope's result and
-  `fullMatrixStatus` the three-browser capability aggregate; neither alone
-  establishes whole authored acceptance. Historical reports keep their schema.
-- **When a phone run happens,** run the [home-screen completion checks](#home-screen-links-and-completion-checks)
-  and record requested/actual OS and browser, install or shortcut actions,
-  persistence and launch context. Prepare downloads in the context that launches;
-  iOS browser tabs and installed apps do not share storage. A CI viewport is not
-  native installation, and a new WebDriver session is not a same-profile restart.
-  Tab scopes prove an exact-window cold page reload, not an OS restart.
-- **Never manufacture retention.** Do not restore browser storage. Observe
-  secure context, worker and authentication in the actual launch context, and keep
-  bootstrap credentials out of the manifest.
-- **Links and icons.** Rename and move keep `/?item=<uuid>` and
+- **Preserve product outcomes.** Physical evidence covers only observed source,
+  device/browser, context and actions. Record failures and unknowns without
+  interpreting a driver limitation as a general product limitation.
+- **Keep access boundaries.** Reuse SPN-055's storage/account/runtime lifecycle,
+  SPN-053/054 durable edits/recovery and SPN-051 creation/rejected-folder recovery.
+  Preserve viewer restrictions, account isolation and guest/token exclusion.
+- **Prepare the actual launch context.** Do not assume browser and installed iOS
+  storage are shared. Record secure origin, worker, authentication, installation,
+  native termination, network control and same-profile relaunch; do not inject
+  storage or credentials into a manifest to manufacture retention.
+- **Keep links precise.** Rename/move retain `/?item=<uuid>` and exact
   `/spaces/<spaceId>?item=<itemId>` targets. An unavailable explicit child never
-  opens another page, and creating a shortcut never implies a download.
-- **Capability before authoring.** Each native operation is established in the
-  bounded [capability spike](implementation/SPN-090.md#installed-context-capability-spike),
-  with actual termination, relaunch and network controls in the same run.
-  Android airplane mode and iOS no-network are different controls.
-- **Credentials and HTTPS.** Repository secrets are exactly `BS_USERNAME` and
-  `BS_ACCESS_KEY`, mapped into official Local. Use the production build, a
-  matching `APP_ORIGIN`, disposable accounts and on-demand self-signed
-  `https://bs-local.com:8176` ([decision](implementation/SPN-090.md#owner-authorized-estimate-and-disposable-ci-https)).
-- **💸 No repository budget.** The owner manages BrowserStack time directly
-  ([decision](implementation/SPN-090.md#-budget-estimation-removed-owner-2026-11-04)); the repository no longer estimates, reserves or reconciles
-  minutes, and BrowserStack's own account limit is the only stop. Runs still
-  serialize on the account lock, and each capability run refuses to allocate
-  while `plan.json` reports a running or queued session. Each run deletes its own
-  sessions and restores each lane's network. An uncertain allocation stays
-  reported as uncertain in the run's report; it is no longer reconciled.
-  Documentation edits never allocate devices.
-- **Cost reporting.** Cost is not measured or forecast. A run's report keeps its
-  session IDs, and BrowserStack's dashboard is the record of time spent.
+  opens another page; a shortcut never implies a complete download.
+- **Separate evidence owners.** Deterministic replay/access and native desktop
+  checks remain required for their product contracts. They do not establish the
+  still-unobserved installed-phone authored lifecycle. The layered decision accepts
+  those confidence limits explicitly; responsive CI is supplementary.
+- **Optional provider execution stays bounded.** Use disposable accounts/data and
+  matching HTTPS `APP_ORIGIN`; retain exact source/run/device identities and
+  first failures, restore networking and release task-owned resources. No automatic
+  recurring run, allocation accounting or paid-provider prerequisite remains.
 
 ### Physical capability checkpoint — 2026-11-02
 
@@ -913,12 +844,12 @@ those replay/access permutations to deterministic coverage; the
 keeps their execution evidence separate from physical lifecycle observations.
 Deterministic CI also exercises failed writes, partial downloads, eviction,
 removal with pending work, repeated replay and interrupted application/storage
-updates. BrowserStack owns supported mobile lifecycle, authored edits/reopen,
-normal/conflicted reconnect, creation, stable-link and unavailable-item observations.
-For evidenced unavailable operations, the coverage map names automated product
-checks and preserves the residual native observation limit. Pending supported
-journeys and unexplained failures must still be resolved; neither implementation
-alone nor an accepted limitation establishes a passing run.
+updates. The provider-independent coverage map assigns shared product behaviors
+to their current native/deterministic owners and retains historical physical
+observations separately. Residual phone confidence is explicitly accepted under
+the layered decision; no historical failure or unexecuted scenario becomes a
+passing run. Current reproducible product defects and failed selected tests remain
+blocking.
 
 ## Ordinary desktop browser tabs
 
@@ -1016,10 +947,10 @@ persistence grant remains distinct from a backup guarantee.
 SPN-051's offline creation remains the shared delivered implementation. Native
 desktop applications and synchronization while the browser is closed are outside
 this verification. SPN-090 retains the separate physical-phone and installed-app
-observations available through BrowserStack and the explicit coverage map above.
+observations and the provider-independent coverage map above.
 Desktop completion does not depend on those mobile runs. Its named results may
 supply approved alternative product coverage, without becoming a native mobile
-observation or silently completing pending supported BrowserStack acceptance.
+observation or silently completing remaining installed-context acceptance.
 
 ## Platform references
 

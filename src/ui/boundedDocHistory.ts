@@ -3,14 +3,15 @@ import { DocStateChangeManagerService, DocStateEmitService } from '@univerjs/doc
 import type { NativeDocFlushManager } from './nativeDocFlush.ts';
 
 // A long uninterrupted burst must not become one quadratic composition task.
-// Both 64- and 44-state candidates missed the paired-flush p95 budget. Smaller
-// native groups keep composition bounded; the public constructor retention
-// option leaves room for the original fixture's 66 capacity-only groups plus
-// additional idle boundaries. Verification replays every actual observed group.
+// A measured 32-state mobile pair exceeded the maximum; smaller native groups
+// bound the synchronous work admitted to each pair. Public constructor retention
+// leaves room for the unchanged fixture's 131 capacity-only groups plus idle
+// boundaries. These counts predict neither latency nor retained bytes.
+// Verification replays every actual observed group and checks finite eviction.
 // Native segment/IME boundaries and finite eviction remain intact. An owned
 // frame checks the same 300 ms quiet interval when SDK timers are delayed.
-export const DOC_HISTORY_GROUP_LIMIT = 32;
-export const DOC_HISTORY_RETENTION_LIMIT = 100;
+export const DOC_HISTORY_GROUP_LIMIT = 16;
+export const DOC_HISTORY_RETENTION_LIMIT = 200;
 // Match the pinned SDK's quiet interval without joining its deferred timer queue.
 export const DOC_HISTORY_IDLE_MS = 300;
 

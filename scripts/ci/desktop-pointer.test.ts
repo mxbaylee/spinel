@@ -28,6 +28,7 @@ function fixture() {
   let obscured = false;
   let focused = true;
   let replaced = false;
+  let missing = false;
   let offset = 0;
   let reads = 0;
   let snapshots = 0;
@@ -50,7 +51,7 @@ function fixture() {
   const context = createContext({
     HTMLElement: Element,
     document: {
-      querySelector: () => (replaced ? new Element() : element),
+      querySelector: () => (missing ? null : replaced ? new Element() : element),
       elementFromPoint: () => (obscured ? {} : element),
       hasFocus: () => focused,
       visibilityState: 'visible',
@@ -95,9 +96,9 @@ function fixture() {
       evidence.posted = mode === 'move' ? 1 : 2;
       emit(mode === 'move' ? 'mousemove' : 'mousedown', point);
     },
-    snapshot: async () => {
+    snapshot: async (phase) => {
       snapshots++;
-      return cursorSnapshot();
+      return cursorSnapshot(phase);
     },
     poll: async (read, accept, label) => {
       // Deterministic withheld-event control; production supplies the existing 30s poll.
@@ -127,6 +128,9 @@ function fixture() {
     },
     replace: () => {
       replaced = true;
+    },
+    missing: () => {
+      missing = true;
     },
     reads: () => reads,
     snapshots: () => snapshots,
@@ -246,6 +250,37 @@ test('changed native identity prevents posting to a different window', async () 
   assert.ok(f.clean());
 });
 
+test('a missing target fails before any native post and still removes its observer marker', async () => {
+  const f = fixture();
+  f.missing();
+  await assert.rejects(f.click(), /target disappeared/);
+  assert.deepEqual(f.posts, []);
+  assert.equal(f.records[0].status, 'failed');
+  assert.equal(f.records[0].observerRemoved, true);
+  assert.ok(f.clean());
+});
+
+test('a failed click post is never replayed or replaced by an observation failure', async () => {
+  const f = fixture(),
+    post = f.boundary.post,
+    first = new Error('native click posting failed');
+  f.boundary.post = async (mode, point, evidence) => {
+    if (mode === 'move') return post(mode, point, evidence);
+    f.posts.push({ mode, point });
+    throw first;
+  };
+  await assert.rejects(f.click(), (error) => error === first);
+  assert.deepEqual(
+    f.posts.map((value) => value.mode),
+    ['move', 'click'],
+  );
+  assert.equal(f.records[0].phase, 'click-post');
+  assert.equal(f.records[0].error, String(first));
+  assert.equal(f.snapshots(), 0);
+  assert.equal(f.reads(), 1);
+  assert.ok(f.clean());
+});
+
 test('page replacement and secondary cleanup failures preserve the first posting error', async () => {
   const f = fixture(),
     first = new Error('native post failed'),
@@ -264,59 +299,124 @@ test('page replacement and secondary cleanup failures preserve the first posting
   assert.equal(f.snapshots(), 0);
 });
 
-for (const diagnostic of ['available', 'unavailable', 'failed', 'malformed'] as const)
-  test(`missing movement retains ${diagnostic} diagnostics without replacing its first cause`, async () => {
-    const f = fixture(),
-      first = new Error('original movement observation failed'),
-      snapshot = f.boundary.snapshot,
-      identity = f.boundary.identity;
-    let identities = 0;
-    f.boundary.post = async (mode, point, evidence) => {
-      f.posts.push({ mode, point });
-      evidence.posted = 1;
-      // The native post returns, but no page mouse event arrives.
-    };
-    f.boundary.poll = async (read) => {
-      await read();
-      throw first;
-    };
-    f.boundary.snapshot = async () => {
-      const value = (await snapshot()) as ReturnType<typeof cursorSnapshot>;
-      if (diagnostic === 'failed') throw new Error('native snapshot command timed out');
-      if (diagnostic === 'unavailable') {
-        return { ...value, point: undefined, available: false, error: 'default event unavailable' };
+for (const mode of ['move', 'click'] as const)
+  for (const diagnostic of ['available', 'unavailable', 'failed', 'malformed'] as const)
+    test(`missing ${mode} retains ${diagnostic} diagnostics without replacing its first cause`, async () => {
+      const f = fixture(),
+        first = new Error(`original ${mode} observation failed`),
+        post = f.boundary.post,
+        snapshot = f.boundary.snapshot,
+        identity = f.boundary.identity;
+      const phase = `${mode}-observation-failure` as const;
+      let identities = 0;
+      f.boundary.post = async (kind, point, evidence) => {
+        if (kind !== mode) return post(kind, point, evidence);
+        f.posts.push({ mode: kind, point });
+        evidence.posted = kind === 'move' ? 1 : 2;
+        // The native post returns, but no page mouse event arrives.
+      };
+      f.boundary.poll = async (read, accept) => {
+        const value = await read();
+        if (accept(value)) return value;
+        throw first;
+      };
+      f.boundary.snapshot = async (requestedPhase) => {
+        assert.equal(requestedPhase, phase);
+        const value = (await snapshot(requestedPhase)) as ReturnType<typeof cursorSnapshot>;
+        if (diagnostic === 'failed') throw new Error('native snapshot command timed out');
+        if (diagnostic === 'unavailable') {
+          return {
+            ...value,
+            point: undefined,
+            available: false,
+            error: 'default event unavailable',
+          };
+        }
+        return diagnostic === 'malformed' ? { ...value, point: { x: Infinity, y: 0 } } : value;
+      };
+      f.boundary.identity = async () => {
+        if (++identities > (mode === 'move' ? 1 : 2) && diagnostic !== 'available')
+          throw new Error('passive native identity unavailable');
+        return identity();
+      };
+      await assert.rejects(f.click(), (error) => error === first);
+      assert.deepEqual(
+        f.posts.map((value) => value.mode),
+        mode === 'move' ? ['move'] : ['move', 'click'],
+      );
+      assert.equal(f.snapshots(), 1);
+      assert.equal(identities, mode === 'move' ? 2 : 3);
+      const record = f.records[0];
+      assert.equal(record.phase, `${mode}-observation`);
+      assert.equal(record.error, String(first));
+      assert.equal(record.status, 'failed');
+      assert.equal(record.observerRemoved, true);
+      assert.equal(
+        (record.finalObservation as { moved: unknown; clicked: unknown })[
+          mode === 'move' ? 'moved' : 'clicked'
+        ],
+        null,
+      );
+      assert.ok(Number.isFinite(Date.parse(String(record.failureAt))));
+      if (diagnostic === 'available') {
+        assert.deepEqual(record.failureCursor, cursorSnapshot(phase));
+        assert.ok(record.failureIdentity);
+      } else {
+        assert.match(String(record.failureIdentityError), /passive native identity unavailable/);
+        if (diagnostic === 'unavailable' || diagnostic === 'failed') {
+          validateSafariCursorSnapshot(record.failureCursor, phase);
+          assert.equal((record.failureCursor as { available: boolean }).available, false);
+        }
+        if (diagnostic === 'failed' || diagnostic === 'malformed')
+          assert.ok(record.failureCursorError);
       }
-      return diagnostic === 'malformed' ? { ...value, point: { x: Infinity, y: 0 } } : value;
-    };
-    f.boundary.identity = async () => {
-      if (++identities > 1 && diagnostic !== 'available')
-        throw new Error('passive native identity unavailable');
-      return identity();
-    };
-    await assert.rejects(f.click(), (error) => error === first);
-    assert.deepEqual(f.posts, [{ mode: 'move', point: { x: 600, y: 500 } }]);
-    assert.equal(f.snapshots(), 1);
-    assert.equal(identities, 2);
-    const record = f.records[0];
-    assert.equal(record.phase, 'move-observation');
-    assert.equal(record.error, String(first));
-    assert.equal(record.status, 'failed');
-    assert.equal(record.observerRemoved, true);
-    assert.equal((record.finalObservation as { moved: unknown }).moved, null);
-    if (diagnostic === 'available') {
-      assert.deepEqual(record.failureCursor, cursorSnapshot());
-      assert.ok(record.failureIdentity);
-    } else {
-      assert.match(String(record.failureIdentityError), /passive native identity unavailable/);
-      if (diagnostic === 'unavailable' || diagnostic === 'failed') {
-        validateSafariCursorSnapshot(record.failureCursor, 'move-observation-failure');
-        assert.equal((record.failureCursor as { available: boolean }).available, false);
-      }
-      if (diagnostic === 'failed' || diagnostic === 'malformed')
-        assert.ok(record.failureCursorError);
+      assert.ok(f.clean());
+    });
+
+test('absent click keeps the original bound, changed failure identity and all secondary errors', async () => {
+  const f = fixture(),
+    post = f.boundary.post,
+    identity = f.boundary.identity,
+    evaluate = f.boundary.evaluate;
+  let failedObservation = false;
+  const poll = f.boundary.poll;
+  f.boundary.post = async (mode, point, evidence) => {
+    if (mode === 'move') return post(mode, point, evidence);
+    f.posts.push({ mode, point });
+  };
+  f.boundary.poll = async (...args) => {
+    try {
+      return await poll(...args);
+    } catch (error) {
+      failedObservation = true;
+      throw error;
     }
-    assert.ok(f.clean());
+  };
+  f.boundary.identity = async () => ({
+    ...(await identity()),
+    windowId: failedObservation ? 8 : 7,
   });
+  f.boundary.evaluate = async (expression) => {
+    if (failedObservation) throw new Error('observer document gone during cleanup');
+    return evaluate(expression);
+  };
+  await assert.rejects(f.click(), /Safari did not receive the native pointer click/);
+  assert.equal(
+    f.reads(),
+    4,
+    'one successful move read plus the original three-read missing-event bound',
+  );
+  assert.deepEqual(
+    f.posts.map((value) => value.mode),
+    ['move', 'click'],
+  );
+  assert.equal((f.records[0].failureIdentity as { windowId: number }).windowId, 8);
+  assert.equal(f.snapshots(), 1);
+  assert.match(String(f.records[0].observationError), /document gone/);
+  assert.match(String(f.records[0].cleanupError), /document gone/);
+  assert.equal(f.records[0].observerRemoved, undefined);
+  assert.equal(f.records[0].status, 'failed');
+});
 
 test('cleanup failure alone cannot report a successful action', async () => {
   const f = fixture(),
@@ -326,6 +426,51 @@ test('cleanup failure alone cannot report a successful action', async () => {
     return evaluate(expression);
   };
   await assert.rejects(f.click(), /cleanup failed/);
+});
+
+test('a click arriving during failure diagnostics cannot pass the expired observation', async () => {
+  const f = fixture(),
+    post = f.boundary.post,
+    poll = f.boundary.poll,
+    snapshot = f.boundary.snapshot;
+  let original: unknown;
+  f.boundary.post = async (mode, point, evidence) => {
+    if (mode === 'move') return post(mode, point, evidence);
+    f.posts.push({ mode, point });
+    evidence.posted = 2;
+  };
+  f.boundary.poll = async (...args) => {
+    try {
+      return await poll(...args);
+    } catch (error) {
+      original = error;
+      throw error;
+    }
+  };
+  f.boundary.snapshot = async (phase) => {
+    assert.equal(phase, 'click-observation-failure');
+    assert.ok(original, 'The original observation must fail before this diagnostic.');
+    // A later matching press is diagnostic evidence, never renewed acceptance.
+    f.emit('mousedown', f.posts[1].point);
+    return snapshot(phase);
+  };
+  await assert.rejects(f.click(), (error) => error === original);
+  const record = f.records[0];
+  assert.equal(record.status, 'failed');
+  assert.equal(record.phase, 'click-observation');
+  assert.equal(record.error, String(original));
+  assert.equal(record.clickObservation, undefined);
+  const late = (record.finalObservation as { clicked: { trusted: boolean; target: boolean } })
+    .clicked;
+  assert.ok(late.trusted && late.target);
+  assert.equal(f.reads(), 4);
+  assert.equal(f.snapshots(), 1);
+  assert.deepEqual(
+    f.posts.map((value) => value.mode),
+    ['move', 'click'],
+  );
+  assert.equal(record.observerRemoved, true);
+  assert.ok(f.clean());
 });
 
 test('bounded observations retain a matching move even after the diagnostic event cap', async () => {
@@ -500,13 +645,22 @@ test('an unavailable pre-post snapshot cannot replace a native posting error', (
   assert.deepEqual(f.operations, ['snapshot', 'post']);
 });
 
-test('failure-only cursor script takes one read-only snapshot', () => {
-  const f = quartzSnapshots();
-  const result = f.execute(safariPointerSnapshotScript, 'run()');
-  validateSafariCursorSnapshot(result, 'move-observation-failure');
-  assert.deepEqual(result.point, { x: 938.25, y: 377.5 });
-  assert.deepEqual(f.operations, ['snapshot']);
-  assert.deepEqual(f.posted, []);
+for (const phase of ['move-observation-failure', 'click-observation-failure'] as const)
+  test(`${phase} cursor script takes one read-only snapshot`, () => {
+    const f = quartzSnapshots();
+    const result = f.execute(safariPointerSnapshotScript, `run([${JSON.stringify(phase)}])`);
+    validateSafariCursorSnapshot(result, phase);
+    assert.deepEqual(result.point, { x: 938.25, y: 377.5 });
+    assert.deepEqual(f.operations, ['snapshot']);
+    assert.deepEqual(f.posted, []);
+  });
+
+test('failure-only cursor script rejects missing or unrelated phases without native reads', () => {
+  for (const call of ['run([])', 'run(["click-post"])']) {
+    const f = quartzSnapshots();
+    assert.throws(() => f.execute(safariPointerSnapshotScript, call), /observation failure phase/);
+    assert.deepEqual(f.operations, []);
+  }
 });
 
 test('cursor evidence validation rejects wrong provenance, missing errors and invalid coordinates', () => {

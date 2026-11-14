@@ -53,9 +53,9 @@ test('native fill picker persists colors in both themes and remains disabled for
     await page.goto(`/?item=${item.id}`);
     await saved();
     await expect(page.getByText('Cell fill presets', { exact: true })).toHaveCount(0);
-    for (const [theme, address, column, color, rgb] of [
-      ['light', 'A1', 0, '#F05252', 'rgb(240, 82, 82)'],
-      ['dark', 'B1', 1, '#0DA471', 'rgb(13, 164, 113)'],
+    for (const [theme, address, column, color] of [
+      ['light', 'A1', 0, '#F05252'],
+      ['dark', 'B1', 1, '#0DA471'],
     ] as const) {
       await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
@@ -64,8 +64,11 @@ test('native fill picker persists colors in both themes and remains disabled for
       await nameBox.press('Enter');
       await expect(fill).toHaveAttribute('aria-disabled', 'false');
       await fill.locator('.univer-toolbar-button-selector-trigger').click();
-      // Native SDK swatches have no accessible names; their visible CSS color identifies them.
-      await page.locator(`[data-u-comp="color-picker-presets"] button[style*="${rgb}"]`).click();
+      // Univer 1.3.1 exposes each swatch's hex value as its accessible name.
+      await page
+        .getByRole('menu', { name: 'Fill color More', exact: true })
+        .getByRole('button', { name: color, exact: true })
+        .click();
       await page.keyboard.press('Escape');
       await expect.poll(() => storedColor(column)).toBe(color);
       await saved();
@@ -121,9 +124,17 @@ test('native fill picker persists colors in both themes and remains disabled for
     }
     await expect(page.getByText('Cell fill presets', { exact: true })).toHaveCount(0);
   } finally {
-    await page.goto('/sign-in');
-    db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
-    db.prepare('DELETE FROM auth_users WHERE id IN (?,?)').run(owner.id, viewer.id);
-    db.close();
+    // A timed-out page may already be closed; teardown must preserve the
+    // original interaction failure and still remove this test's database rows.
+    try {
+      if (!page.isClosed()) await page.goto('/sign-in', { timeout: 5000 }).catch(() => {});
+    } finally {
+      try {
+        db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
+        db.prepare('DELETE FROM auth_users WHERE id IN (?,?)').run(owner.id, viewer.id);
+      } finally {
+        db.close();
+      }
+    }
   }
 });

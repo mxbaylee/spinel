@@ -101,6 +101,21 @@ tool or passing a small retained-data probe does not establish native acceptance
 
 ## Give each browser execution a reason
 
+### 🔄 Offline-upgrade worker ownership
+
+The existing Chromium `offline-upgrade` project owns emitted-worker activation.
+Its SPN-145 response-lifetime comparison uses the actual historical worker's
+`PREPARE_SHELL`/`cache.put` owner and the shared real HTTP proxy; it must not be
+replaced with an injected `waitUntil` or mock worker. The retained-client scenario
+keeps pending content, lazy assets, the missing-asset negative case, strict
+activation, access checks and existing budgets. Passive first-attempt worker
+diagnostics must be complete and owned cleanup must preserve the first failure.
+See [the repair and historical attribution limit](implementation/SPN-145.md#-original-incident-disposition-and-new-evidence).
+Retries and later green runs cannot establish the historical cause or waive a
+failed current-head worker.
+
+### Environment ownership
+
 Before adding a project, tag or duplicate execution, record which contract each
 environment owns: development/production, HTTP/HTTPS, ordinary/instrumented
 build, desktop/phone, and emulation/real device where relevant. Prefer an existing

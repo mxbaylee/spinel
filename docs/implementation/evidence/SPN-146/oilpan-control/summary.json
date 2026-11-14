@@ -1,0 +1,58 @@
+{
+  "measure": "memory V8 counts beyond the old generation (Blink Oilpan heap), allocated between collections, per typed key; 2,086 keys, 4x CPU throttle, v8.gc trace (e2e/doc-responsiveness-gc-trace.ts nonOldGrowth)",
+  "bareContenteditable": {
+    "script": "scripts/ci/patch-ab/oilpan-control.ts",
+    "runs": [
+      13.8,
+      13.5,
+      11.1
+    ],
+    "meanKBPerKey": 12.8,
+    "keysPerSecond": [
+      1042,
+      1166.7,
+      1295.7
+    ],
+    "idleRunGCs": 0
+  },
+  "stockUniverDoc": {
+    "script": "scripts/ci/patch-ab/stock-univer/type.ts",
+    "runs": [
+      79.5,
+      76.5,
+      81.4
+    ],
+    "meanKBPerKey": 79.1,
+    "keysPerSecond": [
+      36,
+      36,
+      36
+    ],
+    "majorsOfAtLeast5ms": [
+      5,
+      4,
+      5
+    ],
+    "note": "desktop UI, no Spinel plugin, sync, presence or phone view"
+  },
+  "spinelDocBeforePresenceThrottle": {
+    "source": "sustained-typing spec plain-1, gcTrace.nonOldGrowth",
+    "runs": [
+      108.7,
+      112.8
+    ],
+    "meanKBPerKey": 110.8,
+    "layoutsPerRun": 12453,
+    "styleWritesOnSelectionContainerPerRun": 16392
+  },
+  "spinelDocAfterPresenceThrottle": {
+    "source": "same",
+    "runs": [
+      87.9,
+      88.5
+    ],
+    "meanKBPerKey": 88.2,
+    "layoutsPerRun": 8335,
+    "styleWritesOnSelectionContainerPerRun": 8368
+  }
+}

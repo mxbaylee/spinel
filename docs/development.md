@@ -5,7 +5,7 @@ collaboration rollout flag. Retained pre-cutover databases need the explicit
 [verified transition](../scripts/sync-transition/README.md) before serving; fresh
 disposable databases initialize normally. See [collaboration](collaboration.md).
 
-Use the Node version in `.nvmrc` (26.12.1). From a fresh checkout:
+Use the Node version in `.nvmrc` (26.13.0). From a fresh checkout:
 
 ```sh
 nvm use

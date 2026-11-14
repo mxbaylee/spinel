@@ -5,12 +5,12 @@ export type { DocDrainRequest, DocDrainWitness } from '../web/docResponsivenessE
 
 export const DOC_RESPONSIVENESS_SCHEMA = 5;
 
-// Candidate policy after the 64- and 44-state experiments missed the unchanged
-// p95 budget. The public Doc constructor retains enough native history groups
-// for the original workload; the uncapped baseline keeps its original default.
+// Candidate policy after a 32-state mobile pair missed the unchanged maximum.
+// The public Doc constructor retains enough native history groups for the same
+// full workload; the uncapped baseline keeps its original default.
 // Keep this explicit in the independent harness, including the uncapped checkout.
-export const DOC_RESPONSIVENESS_GROUP_LIMIT = 32;
-export const DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT = 100;
+export const DOC_RESPONSIVENESS_GROUP_LIMIT = 16;
+export const DOC_RESPONSIVENESS_CANDIDATE_HISTORY_LIMIT = 200;
 export const DOC_RESPONSIVENESS_BASELINE_HISTORY_LIMIT = 50;
 
 // Preregistered before the production fix; all values are milliseconds.

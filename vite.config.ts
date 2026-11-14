@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import sharp from 'sharp';
-import { shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
+import { CURRENT_SDK_VERSION, shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
 import { installationAssetName, installationPaths, pwaManifest } from './src/shared/pwa.ts';
 import { iconSvg } from './src/ui/appIcon.ts';
@@ -91,9 +91,9 @@ export default defineConfig(({ mode }) => {
   const format =
     mode === 'offline-upgrade' ? Number(process.env.SPINEL_TEST_OFFLINE_FORMAT ?? 1) : 1;
   if (![1, 2, 3].includes(format)) throw new Error('Unsupported offline upgrade fixture format.');
-  const compatibility = { format, sdkVersion: '1.1.0' };
-  // The acceptance builds use the same actual SDK. Distinct emitted namespaces
-  // ensure B cannot serve A's unchanged lazy files, without rewriting any bytes
+  const compatibility = { format, sdkVersion: CURRENT_SDK_VERSION };
+  // Each acceptance build declares its actual installed SDK. Distinct namespaces
+  // also keep B from serving any unchanged A lazy files, without rewriting bytes
   // after hashing or pretending that the fixture implements a future converter.
   const fixtureSuffix = mode === 'offline-upgrade' ? `-format${format}` : '';
   return {

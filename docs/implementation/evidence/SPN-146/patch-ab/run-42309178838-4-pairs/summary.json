@@ -1,0 +1,105 @@
+{
+  "budgets": {
+    "flushP95Ms": 50,
+    "flushMaxMs": 100
+  },
+  "rows": [
+    {
+      "variant": "previous",
+      "pair": 1,
+      "exitCode": 0,
+      "flushP95": 25,
+      "flushMax": 40.10000000000582,
+      "pairedFlushMax": 40.10000000000582,
+      "longestTask": 191,
+      "inputP95": 100.80000000004657,
+      "sha": "110890e889ac",
+      "budget": "pass"
+    },
+    {
+      "variant": "patched",
+      "pair": 1,
+      "exitCode": 0,
+      "flushP95": 19.399999999965075,
+      "flushMax": 31.699999999953434,
+      "pairedFlushMax": 31.699999999953434,
+      "longestTask": 176,
+      "inputP95": 100.89999999996508,
+      "sha": "4b30f509d742",
+      "budget": "pass"
+    },
+    {
+      "variant": "previous",
+      "pair": 2,
+      "exitCode": 1,
+      "flushP95": 21.800000000046566,
+      "flushMax": 108.59999999997672,
+      "pairedFlushMax": 108.59999999997672,
+      "longestTask": 184,
+      "inputP95": 104,
+      "sha": "110890e889ac",
+      "budget": "fail"
+    },
+    {
+      "variant": "patched",
+      "pair": 2,
+      "exitCode": 0,
+      "flushP95": 20.800000000046566,
+      "flushMax": 32.20000000006985,
+      "pairedFlushMax": 32.20000000006985,
+      "longestTask": 229,
+      "inputP95": 103.90000000002328,
+      "sha": "4b30f509d742",
+      "budget": "pass"
+    },
+    {
+      "variant": "previous",
+      "pair": 3,
+      "exitCode": 0,
+      "flushP95": 21.199999999953434,
+      "flushMax": 33.29999999993015,
+      "pairedFlushMax": 33.29999999993015,
+      "longestTask": 208,
+      "inputP95": 102.80000000004657,
+      "sha": "110890e889ac",
+      "budget": "pass"
+    },
+    {
+      "variant": "patched",
+      "pair": 3,
+      "exitCode": 0,
+      "flushP95": 18.699999999953434,
+      "flushMax": 32.199999999953434,
+      "pairedFlushMax": 32.199999999953434,
+      "longestTask": 198,
+      "inputP95": 103.5,
+      "sha": "4b30f509d742",
+      "budget": "pass"
+    },
+    {
+      "variant": "previous",
+      "pair": 4,
+      "exitCode": 0,
+      "flushP95": 23,
+      "flushMax": 31.800000000046566,
+      "pairedFlushMax": 31.800000000046566,
+      "longestTask": 240,
+      "inputP95": 100.10000000009313,
+      "sha": "110890e889ac",
+      "budget": "pass"
+    },
+    {
+      "variant": "patched",
+      "pair": 4,
+      "exitCode": 0,
+      "flushP95": 18.9000000001397,
+      "flushMax": 28.800000000046566,
+      "pairedFlushMax": 28.800000000046566,
+      "longestTask": 172,
+      "inputP95": 100.80000000004657,
+      "sha": "4b30f509d742",
+      "budget": "pass"
+    }
+  ],
+  "problems": []
+}

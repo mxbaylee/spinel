@@ -26,6 +26,7 @@ import {
 import { expectNativeSheetValue } from './native-sheet-value.ts';
 import { textPoint } from './doc-touch.ts';
 import { RestoreObserver, containRestoreObserver } from './restore-observer.ts';
+import { restoreHeadroomDiagnostics } from './restore-headroom.ts';
 
 const run = promisify(execFile);
 const configuredImage = process.env.SPINEL_RESTORE_BROWSER_IMAGE;
@@ -601,6 +602,14 @@ async function shutdown() {
             timeout: 5000,
             maxBuffer: 16_384,
           }).catch(() => null);
+          artifact.recoveryHeadroom = logs
+            ? {
+                state: 'collected',
+                scope:
+                  'Up to eight ordered stderr refusals in the final 30-line/16-KiB log tail; earlier events may be absent; not automatic attribution to the canonical failure',
+                ...restoreHeadroomDiagnostics(logs.stderr),
+              }
+            : { state: 'unavailable', reason: 'bounded-log-read-failed' };
           if (logs) {
             const tail = (logs.stderr + logs.stdout).slice(-16_384);
             const errno = /errno:\s*(-?\d{1,8})/.exec(tail)?.[1];

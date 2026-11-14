@@ -361,7 +361,7 @@ test('the configured native retention remains finite and evicts only the oldest 
   try {
     await f.type(value);
     // Smaller flushes need more retained groups; native eviction still bounds
-    // the count at 100 rather than retaining the entire continuous edit forever.
+    // the count at 200 rather than retaining the entire continuous edit forever.
     expect(f.observations).toHaveLength(retained + 1);
     expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: retained, redos: 0 });
     for (let remaining = retained - 1; remaining >= 0; remaining--) {
@@ -577,8 +577,8 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     expect(a.live.snapshot()).toEqual(b.live.snapshot());
     expect((f.reopen() as IDocumentData).body!.dataStream).toBe('0123456789'.repeat(7) + '\r\n');
     const history = a.live.univer.__getInjector().get(IUndoRedoService);
-    // The unchanged 70-character replay now forms 32 + 32 + 6 native changes.
-    expect(history.getUndoRedoStatus('doc').undos).toBe(3);
+    // The unchanged 70-character replay forms four 16-change groups and a tail of six.
+    expect(history.getUndoRedoStatus('doc').undos).toBe(5);
     expect(
       await b.commands.executeCommand('doc.command.insert-text', {
         unitId: 'doc',

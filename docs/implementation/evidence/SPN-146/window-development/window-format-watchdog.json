@@ -1,0 +1,70 @@
+{
+  "root": 85651,
+  "started": 1793885190312,
+  "elapsedMs": 531,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90256,
+  "peakKiB": 244656,
+  "live": [
+    {
+      "pid": 85651,
+      "parent": 85616,
+      "group": 85651,
+      "rssKiB": 88704,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write e2e/doc-responsiveness.spec.ts e2e/doc-responsiveness-native-window.ts e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-runtime/analysis.ts scripts/ci/doc-native-runtime/watchdog.ts scripts/ci/doc-native-runtime/window-analysis.ts scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-responsiveness.test.ts scripts/ci/doc-responsiveness.ts scripts/ci/prepare-doc-native-diagnostic.ts src/ui/nativeDocFlushDiagnostic.ts web/docResponsivenessEvidence.ts .github/workflows/doc-native-diagnostic.yml docs/implementation/SPN-146-fixed-window.md"
+    },
+    {
+      "pid": 85717,
+      "parent": 85651,
+      "group": 85651,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 85651,
+      "parent": 85616,
+      "group": 85651,
+      "rssKiB": 88704,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-format-watchdog.json node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write e2e/doc-responsiveness.spec.ts e2e/doc-responsiveness-native-window.ts e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-runtime/analysis.ts scripts/ci/doc-native-runtime/watchdog.ts scripts/ci/doc-native-runtime/window-analysis.ts scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-responsiveness.test.ts scripts/ci/doc-responsiveness.ts scripts/ci/prepare-doc-native-diagnostic.ts src/ui/nativeDocFlushDiagnostic.ts web/docResponsivenessEvidence.ts .github/workflows/doc-native-diagnostic.yml docs/implementation/SPN-146-fixed-window.md"
+    },
+    {
+      "pid": 85670,
+      "parent": 85651,
+      "group": 85651,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 85696,
+      "parent": 85651,
+      "group": 85651,
+      "rssKiB": 154624,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "node /Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs --write e2e/doc-responsiveness.spec.ts e2e/doc-responsiveness-native-window.ts e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-runtime/analysis.ts scripts/ci/doc-native-runtime/watchdog.ts scripts/ci/doc-native-runtime/window-analysis.ts scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-responsiveness.test.ts scripts/ci/doc-responsiveness.ts scripts/ci/prepare-doc-native-diagnostic.ts src/ui/nativeDocFlushDiagnostic.ts web/docResponsivenessEvidence.ts .github/workflows/doc-native-diagnostic.yml docs/implementation/SPN-146-fixed-window.md"
+    },
+    {
+      "pid": 85704,
+      "parent": 85651,
+      "group": 85651,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 85717,
+      "parent": 85651,
+      "group": 85651,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:26:30 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

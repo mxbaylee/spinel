@@ -4,6 +4,9 @@ import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 
+// Keep the original navigation failure, even when the configured retry passes.
+test.use({ trace: 'retain-on-failure' });
+
 for (const kind of ['sheet', 'doc'] as const) {
   test(`${kind} versions can be named, renamed, unnamed and read by a viewer`, async ({
     page,
@@ -87,9 +90,12 @@ for (const kind of ['sheet', 'doc'] as const) {
       expect(
         db.prepare('SELECT name FROM history_checkpoints WHERE id=?').get(String(stored.id))?.name,
       ).toBeNull();
+      // Unload the owner's access polling before changing the fixture's account.
+      // A late unauthenticated response could otherwise redirect during reload.
+      await page.goto('about:blank');
       await context.clearCookies();
       await context.addCookies([cookie(viewer.id)]);
-      await page.reload();
+      await page.goto(`${baseURL}/?item=${item.id}`);
       await expect(saved).toContainText('View only', { timeout: 30_000 });
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();

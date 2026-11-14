@@ -15,6 +15,7 @@ import {
   installRuntimeHost,
   isRuntimeCompatible,
 } from '../../web/offline/runtime.ts';
+import { CURRENT_SDK_VERSION, LEGACY_COMPATIBILITY } from '../shared/offlineShell.ts';
 import type { ShellManifest } from '../shared/offlineShell.ts';
 import { installationAssetName, installationPaths, pwaManifest } from '../shared/pwa.ts';
 import type { InstallationPath } from '../shared/pwa.ts';
@@ -472,4 +473,10 @@ test('compatible online recovery is independent of cached-public-shell readiness
     kind: 'unavailable',
     reason: 'unknown-format',
   });
+});
+
+test('a missing host uses the installed SDK and refuses legacy offline data', () => {
+  vi.stubGlobal('window', {});
+  expect(isRuntimeCompatible({ format: 1, sdkVersion: CURRENT_SDK_VERSION })).toBe(true);
+  expect(isRuntimeCompatible(LEGACY_COMPATIBILITY)).toBe(false);
 });

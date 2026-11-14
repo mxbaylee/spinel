@@ -1,0 +1,398 @@
+{
+  "note": "Sanitized summary of GitHub run 42110760785 attempt 1 (consumed one-shot Linux component qualification). Derived from analysis.json/observation.json in artifact 13455300311; the full artifact is on GitHub until retention expires. No raw trace events are retained here.",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/42110760785",
+  "artifact": {
+    "id": 13455300311,
+    "name": "spn146-linux-linear-copy-qualification",
+    "bytes": 2486861,
+    "sha256": "e105d8e249b9acf0a3e60aa06e52a1fda8262715070cd70e4edc4a4a2a988508"
+  },
+  "source": "97d0b3203fbddc673d5a9bc729410949eb875523",
+  "platform": {
+    "platform": "linux",
+    "arch": "x64",
+    "release": "7.0.0-1017-azure"
+  },
+  "browserVersion": "156.0.8078.4",
+  "throttle": {
+    "requested": 4,
+    "acknowledged": true
+  },
+  "analysisValid": true,
+  "disposition": "inconclusive",
+  "criterion": "every matched whole-flush comparison reduces by >=20% and >=1 ms",
+  "analysisSha256": "d6a7045fca3ff1a0037eee5716de03df41680a8e80e7367a532077fa40098d76",
+  "comparisons": [
+    {
+      "ids": [
+        0,
+        1
+      ],
+      "format": "es",
+      "completed": 544,
+      "order": "prior-candidate",
+      "priorMs": 44.5,
+      "candidateMs": 15.7,
+      "reductionFraction": 0.647,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        2,
+        3
+      ],
+      "format": "es",
+      "completed": 544,
+      "order": "candidate-prior",
+      "priorMs": 24.5,
+      "candidateMs": 13.8,
+      "reductionFraction": 0.437,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        4,
+        5
+      ],
+      "format": "es",
+      "completed": 672,
+      "order": "prior-candidate",
+      "priorMs": 17.7,
+      "candidateMs": 6,
+      "reductionFraction": 0.661,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        6,
+        7
+      ],
+      "format": "es",
+      "completed": 672,
+      "order": "candidate-prior",
+      "priorMs": 11.8,
+      "candidateMs": 5.4,
+      "reductionFraction": 0.542,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        8,
+        9
+      ],
+      "format": "es",
+      "completed": 1440,
+      "order": "prior-candidate",
+      "priorMs": 16.5,
+      "candidateMs": 5.8,
+      "reductionFraction": 0.648,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        10,
+        11
+      ],
+      "format": "es",
+      "completed": 1440,
+      "order": "candidate-prior",
+      "priorMs": 11,
+      "candidateMs": 13.7,
+      "reductionFraction": -0.245,
+      "meetsCriterion": false
+    },
+    {
+      "ids": [
+        12,
+        13
+      ],
+      "format": "es",
+      "completed": 1984,
+      "order": "prior-candidate",
+      "priorMs": 11.2,
+      "candidateMs": 6.4,
+      "reductionFraction": 0.429,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        14,
+        15
+      ],
+      "format": "es",
+      "completed": 1984,
+      "order": "candidate-prior",
+      "priorMs": 11.1,
+      "candidateMs": 5.9,
+      "reductionFraction": 0.468,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        16,
+        17
+      ],
+      "format": "cjs",
+      "completed": 544,
+      "order": "prior-candidate",
+      "priorMs": 18,
+      "candidateMs": 9.4,
+      "reductionFraction": 0.478,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        18,
+        19
+      ],
+      "format": "cjs",
+      "completed": 544,
+      "order": "candidate-prior",
+      "priorMs": 11.3,
+      "candidateMs": 6.2,
+      "reductionFraction": 0.451,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        20,
+        21
+      ],
+      "format": "cjs",
+      "completed": 672,
+      "order": "prior-candidate",
+      "priorMs": 12.4,
+      "candidateMs": 8.9,
+      "reductionFraction": 0.282,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        22,
+        23
+      ],
+      "format": "cjs",
+      "completed": 672,
+      "order": "candidate-prior",
+      "priorMs": 20.4,
+      "candidateMs": 10.4,
+      "reductionFraction": 0.49,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        24,
+        25
+      ],
+      "format": "cjs",
+      "completed": 1440,
+      "order": "prior-candidate",
+      "priorMs": 8.9,
+      "candidateMs": 7.5,
+      "reductionFraction": 0.157,
+      "meetsCriterion": false
+    },
+    {
+      "ids": [
+        26,
+        27
+      ],
+      "format": "cjs",
+      "completed": 1440,
+      "order": "candidate-prior",
+      "priorMs": 12.7,
+      "candidateMs": 12.4,
+      "reductionFraction": 0.024,
+      "meetsCriterion": false
+    },
+    {
+      "ids": [
+        28,
+        29
+      ],
+      "format": "cjs",
+      "completed": 1984,
+      "order": "prior-candidate",
+      "priorMs": 12.1,
+      "candidateMs": 5.8,
+      "reductionFraction": 0.521,
+      "meetsCriterion": true
+    },
+    {
+      "ids": [
+        30,
+        31
+      ],
+      "format": "cjs",
+      "completed": 1984,
+      "order": "candidate-prior",
+      "priorMs": 14.5,
+      "candidateMs": 4.8,
+      "reductionFraction": 0.669,
+      "meetsCriterion": true
+    }
+  ],
+  "intervalDurationsMs": {
+    "0": {
+      "whole": 44.5,
+      "history": 31.1,
+      "collaboration": 12.8
+    },
+    "1": {
+      "whole": 15.7,
+      "history": 7.2,
+      "collaboration": 7.6
+    },
+    "2": {
+      "whole": 13.8,
+      "history": 6.4,
+      "collaboration": 7.4
+    },
+    "3": {
+      "whole": 24.5,
+      "history": 11.4,
+      "collaboration": 13
+    },
+    "4": {
+      "whole": 17.7,
+      "history": 6.9,
+      "collaboration": 10.4
+    },
+    "5": {
+      "whole": 6,
+      "history": 2.5,
+      "collaboration": 2.8
+    },
+    "6": {
+      "whole": 5.4,
+      "history": 2.9,
+      "collaboration": 2.4
+    },
+    "7": {
+      "whole": 11.8,
+      "history": 6.2,
+      "collaboration": 5.4
+    },
+    "8": {
+      "whole": 16.5,
+      "history": 7.2,
+      "collaboration": 9.3
+    },
+    "9": {
+      "whole": 5.8,
+      "history": 2.7,
+      "collaboration": 3
+    },
+    "10": {
+      "whole": 13.7,
+      "history": 6.1,
+      "collaboration": 7.2
+    },
+    "11": {
+      "whole": 11,
+      "history": 6.1,
+      "collaboration": 4.9
+    },
+    "12": {
+      "whole": 11.2,
+      "history": 5.7,
+      "collaboration": 5.4
+    },
+    "13": {
+      "whole": 6.4,
+      "history": 3.3,
+      "collaboration": 3.1
+    },
+    "14": {
+      "whole": 5.9,
+      "history": 2.9,
+      "collaboration": 2.9
+    },
+    "15": {
+      "whole": 11.1,
+      "history": 5.3,
+      "collaboration": 5.7
+    },
+    "16": {
+      "whole": 18,
+      "history": 8,
+      "collaboration": 8.7
+    },
+    "17": {
+      "whole": 9.4,
+      "history": 5.7,
+      "collaboration": 3.3
+    },
+    "18": {
+      "whole": 6.2,
+      "history": 3.4,
+      "collaboration": 2.8
+    },
+    "19": {
+      "whole": 11.3,
+      "history": 6.2,
+      "collaboration": 5
+    },
+    "20": {
+      "whole": 12.4,
+      "history": 5.7,
+      "collaboration": 6.7
+    },
+    "21": {
+      "whole": 8.9,
+      "history": 4.7,
+      "collaboration": 3.7
+    },
+    "22": {
+      "whole": 10.4,
+      "history": 4.8,
+      "collaboration": 5.6
+    },
+    "23": {
+      "whole": 20.4,
+      "history": 8.4,
+      "collaboration": 12
+    },
+    "24": {
+      "whole": 8.9,
+      "history": 4.3,
+      "collaboration": 4.6
+    },
+    "25": {
+      "whole": 7.5,
+      "history": 3,
+      "collaboration": 4
+    },
+    "26": {
+      "whole": 12.4,
+      "history": 6.8,
+      "collaboration": 5.6
+    },
+    "27": {
+      "whole": 12.7,
+      "history": 6.9,
+      "collaboration": 5.4
+    },
+    "28": {
+      "whole": 12.1,
+      "history": 6.1,
+      "collaboration": 5.9
+    },
+    "29": {
+      "whole": 5.8,
+      "history": 3.2,
+      "collaboration": 2.5
+    },
+    "30": {
+      "whole": 4.8,
+      "history": 2.2,
+      "collaboration": 2.4
+    },
+    "31": {
+      "whole": 14.5,
+      "history": 6.6,
+      "collaboration": 7.8
+    }
+  },
+  "limits": "Linux component only; common instrumentation, controlled sinks/timers and shared ES Core. GC-associated duration spans may nest and are not a total pause accounting. Instant/flow/async records retain unknown duration, including endpoints outside a measured window; no absence-of-GC claim. No pause subtraction, cross-environment pooling or historical-maximum explanation."
+}

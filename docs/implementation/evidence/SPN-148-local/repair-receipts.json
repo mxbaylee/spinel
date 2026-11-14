@@ -1,0 +1,283 @@
+{
+  "priorCandidate": "5ffd7956e9883b319c2bbc3003ac7c41b5fe4d7d",
+  "finalSourceFiles": [
+    {
+      "path": "scripts/ci/desktop-pointer.ts",
+      "gitBlob": "f97dee104170661513688d19efb12acb8afb167a",
+      "sha256": "373ae922328ac00683bee69a386ac4d1498dc1ecd1fcfe40ea9a2e7b70f2e170"
+    },
+    {
+      "path": "scripts/ci/desktop-pointer.test.ts",
+      "gitBlob": "17bbf8c35d4d692689d08b8fbe1cb60cae64b11c",
+      "sha256": "428585992e833256d6560a3dd58e6b1c86d160660194f1bf66501401fd6d6bdb"
+    },
+    {
+      "path": "scripts/ci/desktop-browser.ts",
+      "gitBlob": "870ee927cbfb9477c8378f32a8beca3a8e0452da",
+      "sha256": "ebbfb07c74c932a2c119107e6dc4cb6eb31cfc163acb14ddf12da4ed166bd6ac"
+    }
+  ],
+  "sourceCoverage": "repair-focused, repair-types-final, repair-lint and repair-format bind these files. The other receipts retain the prior-candidate reviews and identical-tree committed PR check; the reviewer-b negative control uses its exact prior-candidate test file with base implementation. The initial two repair-types commands failed for explicitly documented compiler invocation errors, not a source repair.",
+  "checks": [
+    {
+      "startedAt": "2026-11-13T04:00:01.889Z",
+      "finishedAt": "2026-11-13T04:00:02.836Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 947,
+      "peakKiB": 276536,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "repair-format",
+      "outcome": "passed",
+      "logSha256": "df07239d4c7b3d007f79d1050b0308f53cbd35fdcd1df26c63140fc18368c0d8"
+    },
+    {
+      "startedAt": "2026-11-13T04:00:02.934Z",
+      "finishedAt": "2026-11-13T04:00:07.567Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/desktop-pointer.test.ts",
+        "scripts/ci/desktop-safari-identity.test.ts",
+        "scripts/ci/desktop-storage.test.ts",
+        "scripts/ci/plan.test.ts",
+        "scripts/ci/changes.test.ts",
+        "scripts/ci/coverage-result.test.ts"
+      ],
+      "elapsedMs": 4632,
+      "peakKiB": 397688,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "repair-focused",
+      "outcome": "passed",
+      "logSha256": "eb3a444f69512add8db0906eea39f76aa62b50ee9260f21884b6ea862178fa36"
+    },
+    {
+      "startedAt": "2026-11-13T04:00:07.654Z",
+      "finishedAt": "2026-11-13T04:00:07.817Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--target",
+        "es2024",
+        "--module",
+        "nodenext",
+        "--allowImportingTsExtensions",
+        "--erasableSyntaxOnly",
+        "--strict",
+        "--skipLibCheck",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 163,
+      "peakKiB": 197724,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "repair-types",
+      "outcome": "invalid-scoped-compiler-invocation",
+      "logSha256": "5b766b55df5bc15c215149742c8fe88d72a584cb45f5422c7edca1594b6d0cb5"
+    },
+    {
+      "startedAt": "2026-11-13T04:00:29.721Z",
+      "finishedAt": "2026-11-13T04:00:44.410Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--ignoreConfig",
+        "--noEmit",
+        "--target",
+        "es2024",
+        "--module",
+        "nodenext",
+        "--allowImportingTsExtensions",
+        "--erasableSyntaxOnly",
+        "--strict",
+        "--skipLibCheck",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 14689,
+      "peakKiB": 217848,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "repair-types-corrected",
+      "outcome": "invalid-scoped-compiler-invocation",
+      "logSha256": "787af3e31e07310cc07a8d3d06e1d7071d7ee013e1ea445ed2a8d4c4b1e39fc3"
+    },
+    {
+      "startedAt": "2026-11-13T04:00:53.250Z",
+      "finishedAt": "2026-11-13T04:00:57.597Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--ignoreConfig",
+        "--noEmit",
+        "--target",
+        "es2024",
+        "--lib",
+        "es2024,dom,dom.iterable",
+        "--types",
+        "node",
+        "--module",
+        "nodenext",
+        "--allowImportingTsExtensions",
+        "--erasableSyntaxOnly",
+        "--strict",
+        "--skipLibCheck",
+        "--verbatimModuleSyntax",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 4346,
+      "peakKiB": 238516,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "repair-types-final",
+      "outcome": "passed",
+      "logSha256": "60cce5c95f0489928e91074553d0cfc45809e37fdcb9f9b5cbec2810df6795f4"
+    },
+    {
+      "startedAt": "2026-11-13T04:00:57.685Z",
+      "finishedAt": "2026-11-13T04:00:57.872Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 187,
+      "peakKiB": 193296,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "repair-lint",
+      "outcome": "passed",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "startedAt": "2026-11-13T03:55:48.705Z",
+      "finishedAt": "2026-11-13T03:55:49.519Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 813,
+      "peakKiB": 330940,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "reviewer-a-pointer",
+      "outcome": "passed",
+      "logSha256": "4163f191b302bce7f9bc5767c9c730a170516aea3b458fbce4403d504cea9355"
+    },
+    {
+      "startedAt": "2026-11-13T03:57:37.454Z",
+      "finishedAt": "2026-11-13T03:57:37.760Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "../validation/reviewer-a-late-event.ts"
+      ],
+      "elapsedMs": 305,
+      "peakKiB": 270888,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "reviewer-a-late-event",
+      "outcome": "passed",
+      "logSha256": "c7ea212b2faef2c8c33682ea5b624be0cf40c97abbb56ec01109aa380ac7e61e"
+    },
+    {
+      "startedAt": "2026-11-13T03:56:08.902Z",
+      "finishedAt": "2026-11-13T03:56:09.514Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 612,
+      "peakKiB": 328568,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "reviewer-b-pointer",
+      "outcome": "passed",
+      "logSha256": "0c355d274dd2c47022277dfc595f1d3c0a95ceaea9316f56db92e30b44305cf5"
+    },
+    {
+      "startedAt": "2026-11-13T03:57:36.269Z",
+      "finishedAt": "2026-11-13T03:57:37.268Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "../validation/reviewer-b-negative/desktop-pointer.test.ts"
+      ],
+      "elapsedMs": 998,
+      "peakKiB": 333104,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "reviewer-b-negative-control",
+      "outcome": "expected-negative-control-failure",
+      "logSha256": "90d34e1f1411921c934b8d0927d55bef9f86184698e3f7ac31682fecab15fa99"
+    },
+    {
+      "startedAt": "2026-11-13T03:54:08.378Z",
+      "finishedAt": "2026-11-13T03:54:15.377Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/153184cb2826/spinel",
+      "command": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "origin/main",
+        "--title",
+        "\ud83d\uddb1\ufe0f SPN-148 Diagnose recurring native Safari click delivery"
+      ],
+      "elapsedMs": 6999,
+      "peakKiB": 341720,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "committed-backlog-pr",
+      "outcome": "passed",
+      "logSha256": "3f0d98d56c578d4f379a9d94139ed83efe7a4b716a5ddf2884b46a847c759fe8"
+    }
+  ]
+}

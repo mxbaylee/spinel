@@ -1,0 +1,111 @@
+{
+  "source": "5b6453701d877b827c306876274512411f648cfe",
+  "tree": "7f9831badccff36cae881297f4d3fedfc1c03ed1",
+  "base": "04baabd6a68abe7c0b225f8699681532e2205b60",
+  "tested": "64d5f39003ddb3fb0e82cb914b5472450ddf4114",
+  "run": 43370258610,
+  "attempt": 1,
+  "job": 131704482769,
+  "artifact": {
+    "id": 14012820556,
+    "bytes": 22935583,
+    "sha256": "6c76c22354af33ada01bce878e25179f267e7d43a1bc64dc93bfd786ee6dec33"
+  },
+  "planSha256": "e7934b6389ba9ac090d72967f18db849dc27f89d71f5468073a67e8ebe131d4b",
+  "outcome": "Job failed under failOnFlakyTests. Retry-0 real-worker comparison passed; the actual retained-client attempt failed before tracing/legacy-download and passed on retry 1. The second application scenario was skipped on retry 0 and passed only on retry 1.",
+  "historicalAttribution": "Unresolved; the original incident first-attempt trace is missing.",
+  "diagnosticLimitations": [
+    "The first category enumeration list was not retained. Absence was reported by the preflight, but exact contents/runtime ordering are unknown.",
+    "Available Playwright trace ZIPs belong to retry1.",
+    "The successful retry is not a causal repair or current-head acceptance.",
+    "The primary Chromium contract was inspected at current upstream blobs, not the unavailable exact Chromium 156.0.8078.4 source tag."
+  ],
+  "upstreamSources": [
+    {
+      "path": "content/public/browser/tracing_controller.h",
+      "blob": "5e1edc2dfe6828dcb7e866f76a8bb0f701414673",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/content/public/browser/tracing_controller.h"
+    },
+    {
+      "path": "content/browser/devtools/protocol/tracing_handler.cc",
+      "blob": "ee81a452377ef5b0051bc316b306dfd94f6f85a5",
+      "url": "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/content/browser/devtools/protocol/tracing_handler.cc"
+    }
+  ],
+  "files": [
+    {
+      "file": "control-retry-0.json",
+      "source": "hosted-43370258610/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade/spn-055-worker-response-control.json",
+      "sourceBytes": 4989,
+      "sourceSha256": "e48eccdcf7d7d2539e19bc2d17fefc0ed9f90cd530fdc264a7f80b1739413253",
+      "storedSha256": "e48eccdcf7d7d2539e19bc2d17fefc0ed9f90cd530fdc264a7f80b1739413253",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "control-retry-1.json",
+      "source": "hosted-43370258610/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-an-interru-faba7-fore-replacement-activation-offline-upgrade-retry1/spn-055-worker-response-control.json",
+      "sourceBytes": 4987,
+      "sourceSha256": "d7524095f5b2d9ef2d6ee58303271c9be013a0d195133483416a03a92815bc21",
+      "storedSha256": "d7524095f5b2d9ef2d6ee58303271c9be013a0d195133483416a03a92815bc21",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "lifecycle-retry-0.json",
+      "source": "hosted-43370258610/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-the-actual-f165b-es-during-new-host-adoption-offline-upgrade/spn-055-worker-lifecycle.json",
+      "sourceBytes": 1799,
+      "sourceSha256": "54ad9c434c5b1ad8408c46b487a1e14177b24a8965ba8d6f87630cb44e15cfee",
+      "storedSha256": "54ad9c434c5b1ad8408c46b487a1e14177b24a8965ba8d6f87630cb44e15cfee",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "first-failure-context.md",
+      "source": "hosted-43370258610/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-the-actual-f165b-es-during-new-host-adoption-offline-upgrade/error-context.md",
+      "sourceBytes": 8456,
+      "sourceSha256": "8e05936dc8aebf9dc015a51b3fd963ca0b8dbc997a1feeb1682dcb887a45baee",
+      "storedSha256": "8e05936dc8aebf9dc015a51b3fd963ca0b8dbc997a1feeb1682dcb887a45baee",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "first-failure.png",
+      "source": "hosted-43370258610/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-the-actual-f165b-es-during-new-host-adoption-offline-upgrade/test-failed-1.png",
+      "sourceBytes": 7126,
+      "sourceSha256": "ed36dee351e76cb48cb77d6efd20bb53acc53d51bf800b02123ef5a09a1413c4",
+      "storedSha256": "ed36dee351e76cb48cb77d6efd20bb53acc53d51bf800b02123ef5a09a1413c4",
+      "encoding": "unchanged"
+    },
+    {
+      "file": "lifecycle-retry-1-summary.json",
+      "source": "hosted-43370258610/offline-first-failure/extracted/test-results/offline-upgrade/offline-upgrade-the-actual-f165b-es-during-new-host-adoption-offline-upgrade-retry1/spn-055-worker-lifecycle.json",
+      "sourceBytes": 681916,
+      "sourceSha256": "c224ef710fb0eb7d4798dfca2ef345fab1a24760bbae1c25f76aee950b27dec0",
+      "storedSha256": "f88426f950914eb0e0969b44c67a598d54c044c97b551c015bc39608b1326585",
+      "encoding": "normalized JSON",
+      "normalization": "All receipt metadata, trace counts/limits/terminal and request count preserved; raw trace events and individual requests omitted to avoid republishing synthetic fixture URLs. This is retry evidence, not first-attempt acceptance."
+    },
+    {
+      "file": "playwright-results.json",
+      "source": "hosted-43370258610/offline-first-failure/extracted/playwright-report/offline-upgrade.json",
+      "sourceBytes": 1425584,
+      "sourceSha256": "c0e100c37ba209fc601deff7f800f941fd1806d63e9eaf26eb55e11219036f11",
+      "storedSha256": "bc354f290d8fd5c703058807e73b5ee987d30ee180c92fcb5b72c0f50e88fb8b",
+      "encoding": "normalized JSON",
+      "normalization": "Retains result identities, durations, retries, outcomes and original errors. Drops runner configuration, stdout/stderr and embedded attachments; original report hash and artifact identify the full source."
+    },
+    {
+      "file": "offline-job.log.gz",
+      "source": "hosted-43370258610/offline-first-failure/job-131704482769.log",
+      "sourceBytes": 86688,
+      "sourceSha256": "db196e9fd860640dfeaef9b684556d530c18582b1d39f2cda714b89dcc741db9",
+      "storedSha256": "ffa897a404b69509792d04dd2b76d1ff98e71543d18825ef06d23644675db1e3",
+      "encoding": "gzip"
+    },
+    {
+      "file": "ci-plan.json",
+      "source": "hosted-43370258610/ci-plan.compact.json",
+      "sourceBytes": 42435,
+      "sourceSha256": "e7934b6389ba9ac090d72967f18db849dc27f89d71f5468073a67e8ebe131d4b",
+      "storedSha256": "e7934b6389ba9ac090d72967f18db849dc27f89d71f5468073a67e8ebe131d4b",
+      "encoding": "unchanged"
+    }
+  ]
+}

@@ -467,7 +467,7 @@ export class CollaborationStore {
           ? {
               id: unitId,
               name: item.name,
-              appVersion: '1.1.0',
+              appVersion: packageInfo.dependencies['@univerjs/core'],
               locale: LocaleType.EN_US,
               sheetOrder: ['first'],
               styles: {},

@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "startedAt": "2026-11-13T05:15:36.292Z",
+  "finishedAt": "2026-11-13T05:15:36.303Z",
+  "browser": "156.0.8078.4",
+  "identities": {
+    "tested": "64d5f39003ddb3fb0e82cb914b5472450ddf4114",
+    "legacy": "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+    "previous": "3a0e2238fb5be3907d04120eabda2aafd6565d63",
+    "legacyWorker": "9921a49245434c606f1cc250db1d9d3d9b35f1925ca6440c8905173db28e9c11",
+    "previousWorker": "b98c43ee7a2a45ae6d501dcd3af9874da2ddd3b3352ac71fee99d47531a747f8",
+    "candidateWorker": "bfcaf456d56ae11d596c0ee198c9b5fe02c22cce80cbdaf78ec523e81fa42768"
+  },
+  "test": {
+    "id": "8aa810eefa7d23f01644-0a6357f3ed84c6f0c5ca",
+    "project": "offline-upgrade",
+    "retry": 0
+  },
+  "complete": false,
+  "firstFailure": "Error: Chromium has no ServiceWorker trace category.",
+  "collectionFailures": [
+    "Error: Offline-upgrade worker diagnostics are incomplete."
+  ],
+  "limits": {
+    "requests": 1024,
+    "phases": 64,
+    "collectionMs": 5000,
+    "persistenceMs": 2000
+  },
+  "trace": {
+    "limits": {
+      "events": 16384,
+      "bytes": 4194304
+    },
+    "sourceEvents": 0,
+    "retainedEvents": 0,
+    "retainedBytes": 0,
+    "dropped": 0,
+    "malformed": 0,
+    "workerEvents": 0,
+    "complete": false,
+    "terminal": null,
+    "events": []
+  },
+  "maximumBufferUse": 0,
+  "phases": [],
+  "requests": [],
+  "droppedRequests": 0,
+  "droppedPhases": 0,
+  "truncatedPaths": 0,
+  "pendingRequestsAtStop": [],
+  "limitation": "Worker HTTP requests and raw ServiceWorker trace events are separate observations. No JavaScript promise ledger or historical-cause attribution is inferred; clocks are not aligned. Passive request records omit headers, cookies, bodies and URL queries. Raw browser trace arguments may contain synthetic fixture URLs."
+}

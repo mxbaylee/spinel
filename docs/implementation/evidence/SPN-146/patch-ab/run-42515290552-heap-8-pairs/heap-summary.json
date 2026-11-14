@@ -1,0 +1,257 @@
+{
+  "note": "Sampled bytes summed over the runs listed; shares are of the summed total. Only each run top-30 sites are available, so shares are lower bounds.",
+  "groups": {
+    "all/patched": {
+      "runs": ["pair-1-patched", "pair-3-patched", "pair-5-patched", "pair-7-patched"],
+      "meanSampledMB": 9934,
+      "topSites": [
+        {
+          "site": "fz univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 12.7,
+          "caller": "Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30 < rI univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "enqueue nativeCopy-Cn64MZxd.js:0",
+          "sharePct": 10.1,
+          "caller": "onMutation nativeCopy-Cn64MZxd.js:0 < (anon) nativeCopy-Cn64MZxd.js:0 < syncExecuteCommand univer-renderer-Cqyj3Y79.js:4 < handler model-BDtHMKec.js:0"
+        },
+        {
+          "site": "match :-1",
+          "sharePct": 5,
+          "caller": "_d univer-renderer-Cqyj3Y79.js:4 < e univer-renderer-Cqyj3Y79.js:4 < draw univer-renderer-Cqyj3Y79.js:31 < _paintGlyph univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "_drawGlyphGroup univer-renderer-Cqyj3Y79.js:31",
+          "sharePct": 4.1,
+          "caller": "_drawBodySections univer-renderer-Cqyj3Y79.js:31 < draw univer-renderer-Cqyj3Y79.js:31 < _draw univer-renderer-Cqyj3Y79.js:31 < render univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "_d univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 3.7,
+          "caller": "e univer-renderer-Cqyj3Y79.js:4 < draw univer-renderer-Cqyj3Y79.js:31 < _paintGlyph univer-renderer-Cqyj3Y79.js:31 < _drawGlyphGroup univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "flatMap :-1",
+          "sharePct": 3.7,
+          "caller": "WI univer-renderer-Cqyj3Y79.js:30 < FI univer-renderer-Cqyj3Y79.js:30 < IF univer-renderer-Cqyj3Y79.js:30 < RF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "GI univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 3.5,
+          "caller": "WI univer-renderer-Cqyj3Y79.js:30 < FI univer-renderer-Cqyj3Y79.js:30 < IF univer-renderer-Cqyj3Y79.js:30 < RF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "getCustomRange model-BDtHMKec.js:1",
+          "sharePct": 3.4,
+          "caller": "FR univer-renderer-Cqyj3Y79.js:30 < Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "FR univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 3.3,
+          "caller": "Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30 < rI univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "_paintGlyph univer-renderer-Cqyj3Y79.js:31",
+          "sharePct": 3.2,
+          "caller": "_drawGlyphGroup univer-renderer-Cqyj3Y79.js:31 < _drawBodySections univer-renderer-Cqyj3Y79.js:31 < draw univer-renderer-Cqyj3Y79.js:31 < _draw univer-renderer-Cqyj3Y79.js:31"
+        }
+      ],
+      "topScriptsPct": {
+        "univer-renderer-Cqyj3Y79.js": 66,
+        "(native)": 14,
+        "nativeCopy-Cn64MZxd.js": 12,
+        "model-BDtHMKec.js": 4,
+        "floating-ui.react-dom-BtIrzXdr.js": 1
+      }
+    },
+    "all/previous": {
+      "runs": ["pair-1-previous", "pair-3-previous", "pair-5-previous"],
+      "meanSampledMB": 9913.3,
+      "topSites": [
+        {
+          "site": "fz univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 12.8,
+          "caller": "Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30 < rI univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "enqueue nativeCopy-cUoGuRtv.js:0",
+          "sharePct": 9.9,
+          "caller": "onMutation nativeCopy-cUoGuRtv.js:0 < (anon) nativeCopy-cUoGuRtv.js:0 < syncExecuteCommand univer-renderer-Cqyj3Y79.js:4 < handler model-BWCdQWD2.js:0"
+        },
+        {
+          "site": "match :-1",
+          "sharePct": 5,
+          "caller": "_d univer-renderer-Cqyj3Y79.js:4 < e univer-renderer-Cqyj3Y79.js:4 < draw univer-renderer-Cqyj3Y79.js:31 < _paintGlyph univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "_drawGlyphGroup univer-renderer-Cqyj3Y79.js:31",
+          "sharePct": 4,
+          "caller": "_drawBodySections univer-renderer-Cqyj3Y79.js:31 < draw univer-renderer-Cqyj3Y79.js:31 < _draw univer-renderer-Cqyj3Y79.js:31 < render univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "flatMap :-1",
+          "sharePct": 3.7,
+          "caller": "WI univer-renderer-Cqyj3Y79.js:30 < FI univer-renderer-Cqyj3Y79.js:30 < IF univer-renderer-Cqyj3Y79.js:30 < RF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "_d univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 3.7,
+          "caller": "e univer-renderer-Cqyj3Y79.js:4 < draw univer-renderer-Cqyj3Y79.js:31 < _paintGlyph univer-renderer-Cqyj3Y79.js:31 < _drawGlyphGroup univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "GI univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 3.5,
+          "caller": "WI univer-renderer-Cqyj3Y79.js:30 < FI univer-renderer-Cqyj3Y79.js:30 < IF univer-renderer-Cqyj3Y79.js:30 < RF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "getCustomRange model-BWCdQWD2.js:1",
+          "sharePct": 3.4,
+          "caller": "FR univer-renderer-Cqyj3Y79.js:30 < Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "FR univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 3.3,
+          "caller": "Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30 < rI univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "_paintGlyph univer-renderer-Cqyj3Y79.js:31",
+          "sharePct": 3.2,
+          "caller": "_drawGlyphGroup univer-renderer-Cqyj3Y79.js:31 < _drawBodySections univer-renderer-Cqyj3Y79.js:31 < draw univer-renderer-Cqyj3Y79.js:31 < _draw univer-renderer-Cqyj3Y79.js:31"
+        }
+      ],
+      "topScriptsPct": {
+        "univer-renderer-Cqyj3Y79.js": 66,
+        "(native)": 14,
+        "nativeCopy-cUoGuRtv.js": 12,
+        "model-BWCdQWD2.js": 4,
+        "floating-ui.react-dom-BtIrzXdr.js": 1
+      }
+    },
+    "live/patched": {
+      "runs": ["pair-2-patched", "pair-4-patched", "pair-6-patched", "pair-8-patched"],
+      "meanSampledMB": 8.4,
+      "topSites": [
+        {
+          "site": "enqueue nativeCopy-Cn64MZxd.js:0",
+          "sharePct": 14.5,
+          "caller": "onMutation nativeCopy-Cn64MZxd.js:0 < (anon) nativeCopy-Cn64MZxd.js:0 < syncExecuteCommand univer-renderer-Cqyj3Y79.js:4 < handler model-BDtHMKec.js:0"
+        },
+        {
+          "site": "Vl univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 8.5,
+          "caller": "addObject univer-renderer-Cqyj3Y79.js:31 < _createOrUpdateAnchor nativeSyncPermissions-Cs1i_f1A.js:140 < refresh nativeSyncPermissions-Cs1i_f1A.js:140 < UL nativeSyncPermissions-Cs1i_f1A.js:140"
+        },
+        {
+          "site": "deepClone univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 7.5,
+          "caller": "deepClone univer-renderer-Cqyj3Y79.js:4 < deepClone univer-renderer-Cqyj3Y79.js:4 < push univer-renderer-Cqyj3Y79.js:9 < compose univer-renderer-Cqyj3Y79.js:9"
+        },
+        {
+          "site": "fz univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 6.5,
+          "caller": "Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < rI univer-renderer-Cqyj3Y79.js:30 < _createSkeletonPass univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "toHexString univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 5.8,
+          "caller": "draw univer-renderer-Cqyj3Y79.js:31 < _paintGlyph univer-renderer-Cqyj3Y79.js:31 < _drawGlyphGroup univer-renderer-Cqyj3Y79.js:31 < _drawBodySections univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "e.subscribe univer-renderer-Cqyj3Y79.js:2",
+          "sharePct": 4.5,
+          "caller": "subscribeEvent univer-renderer-Cqyj3Y79.js:25 < addObject univer-renderer-Cqyj3Y79.js:31 < _createOrUpdateAnchor nativeSyncPermissions-Cs1i_f1A.js:140 < refresh nativeSyncPermissions-Cs1i_f1A.js:140"
+        },
+        {
+          "site": "MB univer-renderer-Cqyj3Y79.js:31",
+          "sharePct": 3.9,
+          "caller": "_loadPattern univer-renderer-Cqyj3Y79.js:31 < (anon) :-1 < (root) :-1"
+        },
+        {
+          "site": "Q nativeCopy-Cn64MZxd.js:0",
+          "sharePct": 2.3,
+          "caller": "acknowledge nativeCopy-Cn64MZxd.js:0 < receive nativeCopy-Cn64MZxd.js:0 < m nativeCopy-Cn64MZxd.js:0 < Ke.s.onmessage nativeCopy-Cn64MZxd.js:0"
+        },
+        {
+          "site": "get :-1",
+          "sharePct": 1.7,
+          "caller": "kz univer-renderer-Cqyj3Y79.js:30 < Lz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "add :-1",
+          "sharePct": 1.7,
+          "caller": "add univer-renderer-Cqyj3Y79.js:4 < addObject univer-renderer-Cqyj3Y79.js:31 < _createOrUpdateAnchor nativeSyncPermissions-Cs1i_f1A.js:140 < refresh nativeSyncPermissions-Cs1i_f1A.js:140"
+        }
+      ],
+      "topScriptsPct": {
+        "univer-renderer-Cqyj3Y79.js": 54,
+        "nativeCopy-Cn64MZxd.js": 20,
+        "(native)": 11,
+        "floating-ui.react-dom-BtIrzXdr.js": 5,
+        "nativeSyncPermissions-Cs1i_f1A.js": 4
+      }
+    },
+    "live/previous": {
+      "runs": ["pair-2-previous", "pair-4-previous", "pair-6-previous", "pair-8-previous"],
+      "meanSampledMB": 8.1,
+      "topSites": [
+        {
+          "site": "enqueue nativeCopy-cUoGuRtv.js:0",
+          "sharePct": 13.5,
+          "caller": "onMutation nativeCopy-cUoGuRtv.js:0 < (anon) nativeCopy-cUoGuRtv.js:0 < syncExecuteCommand univer-renderer-Cqyj3Y79.js:4 < handler model-BWCdQWD2.js:0"
+        },
+        {
+          "site": "deepClone univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 8.3,
+          "caller": "deepClone univer-renderer-Cqyj3Y79.js:4 < deepClone univer-renderer-Cqyj3Y79.js:4 < push univer-renderer-Cqyj3Y79.js:9 < compose univer-renderer-Cqyj3Y79.js:9"
+        },
+        {
+          "site": "Vl univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 7.4,
+          "caller": "addObject univer-renderer-Cqyj3Y79.js:31 < _createOrUpdateAnchor nativeSyncPermissions-IYBYjb6M.js:140 < refresh nativeSyncPermissions-IYBYjb6M.js:140 < UL nativeSyncPermissions-IYBYjb6M.js:140"
+        },
+        {
+          "site": "toHexString univer-renderer-Cqyj3Y79.js:4",
+          "sharePct": 6.4,
+          "caller": "draw univer-renderer-Cqyj3Y79.js:31 < _paintGlyph univer-renderer-Cqyj3Y79.js:31 < _drawGlyphGroup univer-renderer-Cqyj3Y79.js:31 < _drawBodySections univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "fz univer-renderer-Cqyj3Y79.js:30",
+          "sharePct": 5.8,
+          "caller": "Sz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < rI univer-renderer-Cqyj3Y79.js:30 < _createSkeletonPass univer-renderer-Cqyj3Y79.js:31"
+        },
+        {
+          "site": "MB univer-renderer-Cqyj3Y79.js:31",
+          "sharePct": 5,
+          "caller": "_loadPattern univer-renderer-Cqyj3Y79.js:31 < (anon) :-1 < (root) :-1"
+        },
+        {
+          "site": "e.subscribe univer-renderer-Cqyj3Y79.js:2",
+          "sharePct": 3.6,
+          "caller": "subscribeEvent univer-renderer-Cqyj3Y79.js:25 < addObject univer-renderer-Cqyj3Y79.js:31 < _createOrUpdateAnchor nativeSyncPermissions-IYBYjb6M.js:140 < refresh nativeSyncPermissions-IYBYjb6M.js:140"
+        },
+        {
+          "site": "get :-1",
+          "sharePct": 2.1,
+          "caller": "kz univer-renderer-Cqyj3Y79.js:30 < Lz univer-renderer-Cqyj3Y79.js:30 < Vz univer-renderer-Cqyj3Y79.js:30 < VF univer-renderer-Cqyj3Y79.js:30"
+        },
+        {
+          "site": "add :-1",
+          "sharePct": 2,
+          "caller": "add univer-renderer-Cqyj3Y79.js:4 < addObject univer-renderer-Cqyj3Y79.js:31 < _createOrUpdateAnchor nativeSyncPermissions-IYBYjb6M.js:140 < refresh nativeSyncPermissions-IYBYjb6M.js:140"
+        },
+        {
+          "site": "Q nativeCopy-cUoGuRtv.js:0",
+          "sharePct": 1.6,
+          "caller": "acknowledge nativeCopy-cUoGuRtv.js:0 < receive nativeCopy-cUoGuRtv.js:0 < m nativeCopy-cUoGuRtv.js:0 < Ke.s.onmessage nativeCopy-cUoGuRtv.js:0"
+        }
+      ],
+      "topScriptsPct": {
+        "univer-renderer-Cqyj3Y79.js": 54,
+        "nativeCopy-cUoGuRtv.js": 17,
+        "(native)": 13,
+        "floating-ui.react-dom-BtIrzXdr.js": 5,
+        "nativeSyncPermissions-IYBYjb6M.js": 3
+      }
+    }
+  }
+}

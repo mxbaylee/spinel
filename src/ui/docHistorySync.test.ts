@@ -142,7 +142,7 @@ test.each([false, true])(
       await converge(text.length);
       const originalBody = structuredClone(body(writer));
       const groups = Math.ceil(text.length / DOC_HISTORY_GROUP_LIMIT);
-      expect(groups).toBe(66);
+      expect(groups).toBe(131);
       expect(history.getUndoRedoStatus('doc')).toEqual({ undos: bounded ? groups : 1, redos: 0 });
       if (!bounded) {
         const entry = history.pitchTopUndoElement()!;
