@@ -1,0 +1,132 @@
+{
+  "source": "7fd2b0a655513e628ab682174ae231e6a99b2874",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tree": "a4ed5c252874d5ee7745c4a6e1c1ef7df2412c55",
+  "implementationBranch": "codex/spn-123-production-integration",
+  "packetManifestSha256": "084204230e4ea3d0e86da44a761af52252d27e728508e23741b4a00d4be5d0b0",
+  "sourceManifestSha256": "b9d0bdc9aa089eb5386734ba8222c5a99f561d46c0467cd70ee3cba147588c05",
+  "originalPacketPayloads": 1614,
+  "originalPacketFilesWithManifest": 1615,
+  "copies": [
+    {
+      "original": "/tmp/spn123-review-7fd2b0a6-a.md",
+      "retained": "spn123-review-7fd2b0a6-a.md",
+      "bytes": 13801,
+      "sha256": "ce2a25111555cc7b1b3d7c632c2549a8f06fdfb97f13cf1afd79c1daa66729e7"
+    },
+    {
+      "original": "/tmp/spn123-review-7fd2b0a6-b.md",
+      "retained": "spn123-review-7fd2b0a6-b.md",
+      "bytes": 15512,
+      "sha256": "6fdc2a77d615d59d24cf4ba70d71d2a061b514beef352212d0552570fddb5b84"
+    },
+    {
+      "original": "/tmp/spn123-review-7fd-a.log",
+      "retained": "spn123-review-7fd-a.log",
+      "bytes": 1021,
+      "sha256": "3ebc0b21e11adf6535f54139e5ace3bd772321a3ef9d343e31b21326bfd4f348"
+    },
+    {
+      "original": "/tmp/spn123-review-b-7fd2b0a6.log",
+      "retained": "spn123-review-b-7fd2b0a6.log",
+      "bytes": 1119,
+      "sha256": "f7ba2995cb9c16ab61f93173def623da2ef8608550e4181209be33d29b6d4b65"
+    },
+    {
+      "original": "/tmp/spn123-review-7fd-a-source-audit.json",
+      "retained": "spn123-review-7fd-a-source-audit.json",
+      "bytes": 2492,
+      "sha256": "ff01515ec812a9ecb48c354038dfc7ea99aa0e306a1e524ddaa23f88265670af"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-7fd-a.json",
+      "retained": "spn123-review-7fd-a.json",
+      "bytes": 720,
+      "sha256": "b56ed853c54f085da156d418399ed069028c9f35670124e9b397797068b7f7e2"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-7fd2b0a6.json",
+      "retained": "spn123-review-b-7fd2b0a6.json",
+      "bytes": 837,
+      "sha256": "d84a9787bfad63a01f73aa3a7f68032aa4c5e4d107e44895d661c4d8141648cb"
+    },
+    {
+      "original": "/tmp/spn123-root-packet-audit-7fd2b0a6.json",
+      "retained": "spn123-root-packet-audit-7fd2b0a6.json",
+      "bytes": 491,
+      "sha256": "0d6b284859125777531f33f571b0c63c0106031a9c68482683b6fbaaac957fe8"
+    }
+  ],
+  "reviews": [
+    {
+      "reviewer": "A",
+      "score": 100,
+      "tests": 173,
+      "files": 7,
+      "receipt": {
+        "name": "spn123-review-7fd-a",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts",
+          "--configLoader",
+          "native",
+          "--cache=false",
+          "--bail=1",
+          "src/ui/spinelSync.test.ts",
+          "src/ui/startupDeadlines.test.ts",
+          "src/ui/operationDiagnostics.test.ts",
+          "src/ui/offlinePersistence.test.ts",
+          "src/server/diagnostics/account.test.ts",
+          "src/server/diagnostics/browser.test.ts",
+          "lib/sync-client/tests/diagnostics.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 3140,
+        "peakKiB": 843312
+      }
+    },
+    {
+      "reviewer": "B",
+      "score": 100,
+      "tests": 228,
+      "files": 10,
+      "receipt": {
+        "name": "spn123-review-b-7fd2b0a6",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "src/ui/spinelSync.test.ts",
+          "src/ui/startupDeadlines.test.ts",
+          "src/ui/offlineRuntime.test.ts",
+          "src/ui/offlinePersistence.test.ts",
+          "src/ui/boundedDocHistory.test.ts",
+          "src/server/diagnostics/account.test.ts",
+          "src/server/diagnostics/browser.test.ts",
+          "src/server/diagnostics/routes.test.ts",
+          "src/server/diagnostics/supervisor.test.ts",
+          "lib/sync-client/tests/diagnostics.test.ts",
+          "--config",
+          "/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts",
+          "--configLoader",
+          "native",
+          "--cache=false"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 4641,
+        "peakKiB": 842944
+      }
+    }
+  ],
+  "priorReviewArchive": "b2ca9c9c49f3e4d9949bceb6da176bd1fe7d8999",
+  "originalFailedValidationArchive": "7d4c215d1075d3aa640a029366bddea58f7627ca",
+  "publication": "Root audit and tag publication pending; no source validation push, PR edit or merge authorized.",
+  "hold": "Wait for actual SPN-120 squash, integrate actual new main, and obtain same-reviewer exact-new-head revalidation before validation publication."
+}

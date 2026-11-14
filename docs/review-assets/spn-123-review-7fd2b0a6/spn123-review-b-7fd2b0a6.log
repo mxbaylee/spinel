@@ -1,0 +1,13 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-123-production
+
+
+ Test Files  10 passed (10)
+      Tests  228 passed (228)
+   Start at  13:17:45
+   Duration  4.39s (import 51%, tests 41%, transform 8%)
+
+    Isolate  10 workers spawned · ~56ms startup each (spawn + environment, per file)
+             at least ~506ms faster with isolate: false — reuses workers across files instead of one per file
+
+{"name":"spn123-review-b-7fd2b0a6","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/vitest/vitest.mjs","run","src/ui/spinelSync.test.ts","src/ui/startupDeadlines.test.ts","src/ui/offlineRuntime.test.ts","src/ui/offlinePersistence.test.ts","src/ui/boundedDocHistory.test.ts","src/server/diagnostics/account.test.ts","src/server/diagnostics/browser.test.ts","src/server/diagnostics/routes.test.ts","src/server/diagnostics/supervisor.test.ts","lib/sync-client/tests/diagnostics.test.ts","--config","/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts","--configLoader","native","--cache=false"],"code":0,"signal":null,"reason":null,"elapsedMs":4641,"peakKiB":842944}

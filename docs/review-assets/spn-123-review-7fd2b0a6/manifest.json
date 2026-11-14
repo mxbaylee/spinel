@@ -1,0 +1,71 @@
+{
+  "source": "7fd2b0a655513e628ab682174ae231e6a99b2874",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "kind": "review-preservation",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 5154,
+      "sha256": "adec21b425962c652631643276669d65a7ca0b2b8cdac11fb3835b82153cb3c1"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 4899,
+      "sha256": "f4704c2839072baf52c837b9fcf0d6aec9ffff84dd564e38e57dfafb8000a0b4"
+    },
+    {
+      "path": "spn123-review-7fd-a-source-audit.json",
+      "bytes": 2492,
+      "sha256": "ff01515ec812a9ecb48c354038dfc7ea99aa0e306a1e524ddaa23f88265670af"
+    },
+    {
+      "path": "spn123-review-7fd-a.json",
+      "bytes": 720,
+      "sha256": "b56ed853c54f085da156d418399ed069028c9f35670124e9b397797068b7f7e2"
+    },
+    {
+      "path": "spn123-review-7fd-a.log",
+      "bytes": 1021,
+      "sha256": "3ebc0b21e11adf6535f54139e5ace3bd772321a3ef9d343e31b21326bfd4f348"
+    },
+    {
+      "path": "spn123-review-7fd2b0a6-a.md",
+      "bytes": 13801,
+      "sha256": "ce2a25111555cc7b1b3d7c632c2549a8f06fdfb97f13cf1afd79c1daa66729e7"
+    },
+    {
+      "path": "spn123-review-7fd2b0a6-b.md",
+      "bytes": 15512,
+      "sha256": "6fdc2a77d615d59d24cf4ba70d71d2a061b514beef352212d0552570fddb5b84"
+    },
+    {
+      "path": "spn123-review-archive-7fd2b0a6.tar.gz",
+      "bytes": 822824,
+      "sha256": "7f863fb729494ae8f57510638dd0232a316607267b3727bb348e374c580705ac",
+      "decodedBytes": 3855872,
+      "decodedSha256": "f90ca33f33c9bc373ae7931d96edcb8ab7d2f3749c14d8ec39d134d07563bf13"
+    },
+    {
+      "path": "spn123-review-b-7fd2b0a6.json",
+      "bytes": 837,
+      "sha256": "d84a9787bfad63a01f73aa3a7f68032aa4c5e4d107e44895d661c4d8141648cb"
+    },
+    {
+      "path": "spn123-review-b-7fd2b0a6.log",
+      "bytes": 1119,
+      "sha256": "f7ba2995cb9c16ab61f93173def623da2ef8608550e4181209be33d29b6d4b65"
+    },
+    {
+      "path": "spn123-review-packet-7fd2b0a6.tar.gz",
+      "bytes": 5489887,
+      "sha256": "092b99789238ed0f35963a1fcfa776c8f934a793693acf91265a1ed30ad76aa2",
+      "decodedBytes": 27594752,
+      "decodedSha256": "010f17a1e3f9f6f6fe9082b925ec77644f2029dbef8b10386edd6197a6cdd39a"
+    },
+    {
+      "path": "spn123-root-packet-audit-7fd2b0a6.json",
+      "bytes": 491,
+      "sha256": "0d6b284859125777531f33f571b0c63c0106031a9c68482683b6fbaaac957fe8"
+    }
+  ]
+}

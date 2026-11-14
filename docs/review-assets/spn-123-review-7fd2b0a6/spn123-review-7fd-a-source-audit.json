@@ -1,0 +1,49 @@
+{
+  "sourceInputs": 50,
+  "mismatches": [],
+  "measurements": 12,
+  "nativeHashes": [
+    "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223"
+  ],
+  "d51ToHeadNonDocs": [
+    "docs/implementation/SPN-123.md",
+    "docs/implementation/evidence/SPN-123-c1-integration/manifest.json",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-contracts.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-contracts.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-format.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-format.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-index.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-index.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-lint.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-lint.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead-sample.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-overhead.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy-result.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-policy.ts.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-precommit-whitespace.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-types.json.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/spn123-c1-types.log.gz",
+    "docs/implementation/evidence/SPN-123-c1-integration/tested-source.json.gz"
+  ],
+  "summary": {
+    "offMedianMsPerSave": 0.6667847083333385,
+    "onMedianMsPerSave": 0.7136215416666687,
+    "medianDeltaMsPerSave": 0.04683683333333022,
+    "offRangeMsPerSave": [
+      0.6019653333333395,
+      0.7856354166666696
+    ],
+    "onRangeMsPerSave": [
+      0.6045070000000029,
+      1.4453958333333314
+    ],
+    "warning": "A small in-process sample describes this workload only and does not explain old unprofiled pauses."
+  },
+  "saturatedMeasurements": 2,
+  "allNativeHashes": [
+    "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223"
+  ]
+}

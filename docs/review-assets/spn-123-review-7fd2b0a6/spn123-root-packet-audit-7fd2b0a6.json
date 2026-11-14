@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-14T21:10:57.938Z",
+  "head": "7fd2b0a655513e628ab682174ae231e6a99b2874",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "packetPayloads": 1614,
+  "sourceBindings": 1490,
+  "exactTypeScript": 1238,
+  "maskedDocuments": 6,
+  "gzipSourcesDecoded": 77,
+  "sourceManifestSHA256": "b9d0bdc9aa089eb5386734ba8222c5a99f561d46c0467cd70ee3cba147588c05",
+  "packetManifestSHA256": "084204230e4ea3d0e86da44a761af52252d27e728508e23741b4a00d4be5d0b0",
+  "fullBriefRead": true
+}
