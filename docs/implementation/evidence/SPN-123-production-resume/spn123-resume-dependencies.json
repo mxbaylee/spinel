@@ -1,0 +1,1418 @@
+{
+  "candidateParent": "df87eea0",
+  "main": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "donorHead": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "partialPreservedAt": "/tmp/spinel-dependabot-2026-11-11/spn123-partial-node_modules-aeee6026",
+  "inputHashes": [
+    {
+      "path": "package.json",
+      "candidate": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6",
+      "donor": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6"
+    },
+    {
+      "path": "package-lock.json",
+      "candidate": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2",
+      "donor": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c"
+    },
+    {
+      "path": "lib/presence-ui/package.json",
+      "candidate": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810",
+      "donor": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810"
+    },
+    {
+      "path": "lib/doc-formulas/package.json",
+      "candidate": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f",
+      "donor": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f"
+    },
+    {
+      "path": "lib/sync-transform/package.json",
+      "candidate": "9b18276b297e3948de2e12a7215487d58efbd175d14860c94cfd8c91e387548f",
+      "donor": "9b18276b297e3948de2e12a7215487d58efbd175d14860c94cfd8c91e387548f"
+    },
+    {
+      "path": "lib/print/package.json",
+      "candidate": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487",
+      "donor": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487"
+    },
+    {
+      "path": "lib/sync-client/package.json",
+      "candidate": "09cbce6664acea643d851fd35501cbec976a89bf20c0f6b3124260fa066c7fa0",
+      "donor": "45b917bd9d85a4b0fb94e49dd033a07ce11c7af295bea54598434b3a2a29f5f6"
+    },
+    {
+      "path": "lib/diagnostics/package.json",
+      "candidate": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5",
+      "donor": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5"
+    },
+    {
+      "path": "lib/sync-server/package.json",
+      "candidate": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c",
+      "donor": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs-ui.ts",
+      "candidate": "31b0bfebb8dfde829036c7f3c7d96260184f62203970c9c001ca4dbfcf7f6751",
+      "donor": "31b0bfebb8dfde829036c7f3c7d96260184f62203970c9c001ca4dbfcf7f6751"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-ui.ts",
+      "candidate": "c9412f55d5c144d6cdf0b943f784fedd84d43ac1e1d978b003c847fdd2f9ca51",
+      "donor": "c9412f55d5c144d6cdf0b943f784fedd84d43ac1e1d978b003c847fdd2f9ca51"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs.ts",
+      "candidate": "d05ac1490546fd891dabd0e1583d1b42b0517d32386b76ddc53b1a01a4105608",
+      "donor": "d05ac1490546fd891dabd0e1583d1b42b0517d32386b76ddc53b1a01a4105608"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-core.ts",
+      "candidate": "86a533e500fb40bb874cfcf42220aeb0ad7c5e0f672e23999aea1644be62a938",
+      "donor": "86a533e500fb40bb874cfcf42220aeb0ad7c5e0f672e23999aea1644be62a938"
+    },
+    {
+      "path": "scripts/dependencies/doc-flush-observation.ts",
+      "candidate": "c3c7b8d75b1643868372bc8d1c4cbe7af114a5864b7e9ebc2e7fae6ed4f7ca23",
+      "donor": "c3c7b8d75b1643868372bc8d1c4cbe7af114a5864b7e9ebc2e7fae6ed4f7ca23"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-drawing.ts",
+      "candidate": "2485f3c22626830f40e4cea7e8b6f787aaa8f20549e3956ee26444e3944d13b8",
+      "donor": "2485f3c22626830f40e4cea7e8b6f787aaa8f20549e3956ee26444e3944d13b8"
+    },
+    {
+      "path": "scripts/dependencies/no-univer-pro.ts",
+      "candidate": "f9e5b7e5727bdfe89619c11322e2ae49c86c6ad94f5a2a540bc76daa32b5f8ff",
+      "donor": "f9e5b7e5727bdfe89619c11322e2ae49c86c6ad94f5a2a540bc76daa32b5f8ff"
+    }
+  ],
+  "allowedDifference": "sync-client adds dependency on existing diagnostics workspace; all external locked entries and patch inputs equal",
+  "arrangement": "private node_modules; nonhidden external package entries symlink to unchanged donor; seven @spinel links resolve to candidate libraries; no donor hidden cache symlinks",
+  "externalLinks": [
+    {
+      "name": "pkce-challenge",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pkce-challenge"
+    },
+    {
+      "name": "oxc-resolver",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/oxc-resolver"
+    },
+    {
+      "name": "is-docker",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/is-docker"
+    },
+    {
+      "name": "pend",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pend"
+    },
+    {
+      "name": "tinyglobby",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tinyglobby"
+    },
+    {
+      "name": "is-inside-container",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/is-inside-container"
+    },
+    {
+      "name": "use-callback-ref",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/use-callback-ref"
+    },
+    {
+      "name": "zod",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/zod"
+    },
+    {
+      "name": "obug",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/obug"
+    },
+    {
+      "name": "jsesc",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/jsesc"
+    },
+    {
+      "name": "yazl",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/yazl"
+    },
+    {
+      "name": "@types",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@types"
+    },
+    {
+      "name": "browserslist",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/browserslist"
+    },
+    {
+      "name": "shebang-regex",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/shebang-regex"
+    },
+    {
+      "name": "eventsource",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/eventsource"
+    },
+    {
+      "name": "redent",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/redent"
+    },
+    {
+      "name": "is-wsl",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/is-wsl"
+    },
+    {
+      "name": "@playwright",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@playwright"
+    },
+    {
+      "name": "csstype",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/csstype"
+    },
+    {
+      "name": "toidentifier",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/toidentifier"
+    },
+    {
+      "name": "@rolldown",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@rolldown"
+    },
+    {
+      "name": "strip-ansi",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/strip-ansi"
+    },
+    {
+      "name": "lightningcss-darwin-arm64",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lightningcss-darwin-arm64"
+    },
+    {
+      "name": "tsconfig-paths",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tsconfig-paths"
+    },
+    {
+      "name": "content-type",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/content-type"
+    },
+    {
+      "name": "react-is",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-is"
+    },
+    {
+      "name": "storybook",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/storybook"
+    },
+    {
+      "name": "async-lock",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/async-lock"
+    },
+    {
+      "name": "react-remove-scroll-bar",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-remove-scroll-bar"
+    },
+    {
+      "name": "eventsource-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/eventsource-parser"
+    },
+    {
+      "name": "use-sidecar",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/use-sidecar"
+    },
+    {
+      "name": "es-errors",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/es-errors"
+    },
+    {
+      "name": "bundle-name",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/bundle-name"
+    },
+    {
+      "name": "empathic",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/empathic"
+    },
+    {
+      "name": "quickselect",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/quickselect"
+    },
+    {
+      "name": "ms",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ms"
+    },
+    {
+      "name": "content-disposition",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/content-disposition"
+    },
+    {
+      "name": "math-intrinsics",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/math-intrinsics"
+    },
+    {
+      "name": "playwright-core",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/playwright-core"
+    },
+    {
+      "name": "lodash-es",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lodash-es"
+    },
+    {
+      "name": "min-indent",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/min-indent"
+    },
+    {
+      "name": "node-releases",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/node-releases"
+    },
+    {
+      "name": "trigram-utils",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/trigram-utils"
+    },
+    {
+      "name": "indent-string",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/indent-string"
+    },
+    {
+      "name": "std-env",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/std-env"
+    },
+    {
+      "name": "lru-cache",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lru-cache"
+    },
+    {
+      "name": "use-sync-external-store",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/use-sync-external-store"
+    },
+    {
+      "name": "detect-node-es",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/detect-node-es"
+    },
+    {
+      "name": "require-directory",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/require-directory"
+    },
+    {
+      "name": "proxy-addr",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/proxy-addr"
+    },
+    {
+      "name": "depd",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/depd"
+    },
+    {
+      "name": "estree-walker",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/estree-walker"
+    },
+    {
+      "name": "escalade",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/escalade"
+    },
+    {
+      "name": "@neon-rs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@neon-rs"
+    },
+    {
+      "name": "ip-address",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ip-address"
+    },
+    {
+      "name": "chai",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/chai"
+    },
+    {
+      "name": "range-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/range-parser"
+    },
+    {
+      "name": "side-channel-list",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/side-channel-list"
+    },
+    {
+      "name": "react-docgen-typescript",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-docgen-typescript"
+    },
+    {
+      "name": "detect-libc",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/detect-libc"
+    },
+    {
+      "name": "balanced-match",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/balanced-match"
+    },
+    {
+      "name": "check-error",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/check-error"
+    },
+    {
+      "name": "resolve",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/resolve"
+    },
+    {
+      "name": "bytes",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/bytes"
+    },
+    {
+      "name": "pvutils",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pvutils"
+    },
+    {
+      "name": "call-bind-apply-helpers",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/call-bind-apply-helpers"
+    },
+    {
+      "name": "@typescript",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@typescript"
+    },
+    {
+      "name": "decimal.js",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/decimal.js"
+    },
+    {
+      "name": "define-lazy-prop",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/define-lazy-prop"
+    },
+    {
+      "name": "aria-query",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/aria-query"
+    },
+    {
+      "name": "nanoid",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/nanoid"
+    },
+    {
+      "name": "buffer-crc32",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/buffer-crc32"
+    },
+    {
+      "name": "ast-types",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ast-types"
+    },
+    {
+      "name": "rolldown",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/rolldown"
+    },
+    {
+      "name": "express",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/express"
+    },
+    {
+      "name": "encodeurl",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/encodeurl"
+    },
+    {
+      "name": "wrap-ansi",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/wrap-ansi"
+    },
+    {
+      "name": "y18n",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/y18n"
+    },
+    {
+      "name": "once",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/once"
+    },
+    {
+      "name": "gensync",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/gensync"
+    },
+    {
+      "name": "prettier",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/prettier"
+    },
+    {
+      "name": "collapse-white-space",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/collapse-white-space"
+    },
+    {
+      "name": "asn1js",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/asn1js"
+    },
+    {
+      "name": "vitest",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/vitest"
+    },
+    {
+      "name": "assertion-error",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/assertion-error"
+    },
+    {
+      "name": "@aws-sdk",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@aws-sdk"
+    },
+    {
+      "name": "merge-descriptors",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/merge-descriptors"
+    },
+    {
+      "name": "@hono",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@hono"
+    },
+    {
+      "name": "tslib",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tslib"
+    },
+    {
+      "name": "magic-string",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/magic-string"
+    },
+    {
+      "name": "ajv-formats",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ajv-formats"
+    },
+    {
+      "name": "reselect",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/reselect"
+    },
+    {
+      "name": "picomatch",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/picomatch"
+    },
+    {
+      "name": "function-bind",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/function-bind"
+    },
+    {
+      "name": "recast",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/recast"
+    },
+    {
+      "name": "ee-first",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ee-first"
+    },
+    {
+      "name": "is-fullwidth-code-point",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/is-fullwidth-code-point"
+    },
+    {
+      "name": "typescript",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/typescript"
+    },
+    {
+      "name": "yargs-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/yargs-parser"
+    },
+    {
+      "name": "baseline-browser-mapping",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/baseline-browser-mapping"
+    },
+    {
+      "name": "inherits",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/inherits"
+    },
+    {
+      "name": "iconv-lite",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/iconv-lite"
+    },
+    {
+      "name": "color-name",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/color-name"
+    },
+    {
+      "name": "es-define-property",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/es-define-property"
+    },
+    {
+      "name": "@oxc-resolver",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@oxc-resolver"
+    },
+    {
+      "name": "@hexagon",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@hexagon"
+    },
+    {
+      "name": "postcss",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/postcss"
+    },
+    {
+      "name": "fresh",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/fresh"
+    },
+    {
+      "name": "@rollup",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@rollup"
+    },
+    {
+      "name": "oxlint",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/oxlint"
+    },
+    {
+      "name": "@libsql",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@libsql"
+    },
+    {
+      "name": "get-intrinsic",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/get-intrinsic"
+    },
+    {
+      "name": "@flatten-js",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@flatten-js"
+    },
+    {
+      "name": "zod-to-json-schema",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/zod-to-json-schema"
+    },
+    {
+      "name": "qs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/qs"
+    },
+    {
+      "name": "ot-text-unicode",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ot-text-unicode"
+    },
+    {
+      "name": "call-bound",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/call-bound"
+    },
+    {
+      "name": "franc-min",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/franc-min"
+    },
+    {
+      "name": "scheduler",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/scheduler"
+    },
+    {
+      "name": "strip-indent",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/strip-indent"
+    },
+    {
+      "name": "tinyspy",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tinyspy"
+    },
+    {
+      "name": "dunder-proto",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/dunder-proto"
+    },
+    {
+      "name": "path-to-regexp",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/path-to-regexp"
+    },
+    {
+      "name": "hasown",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/hasown"
+    },
+    {
+      "name": "safer-buffer",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/safer-buffer"
+    },
+    {
+      "name": "side-channel-weakmap",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/side-channel-weakmap"
+    },
+    {
+      "name": "is-promise",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/is-promise"
+    },
+    {
+      "name": "lodash.camelcase",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lodash.camelcase"
+    },
+    {
+      "name": "mime-types",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/mime-types"
+    },
+    {
+      "name": "undici-types",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/undici-types"
+    },
+    {
+      "name": "wsl-utils",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/wsl-utils"
+    },
+    {
+      "name": "tiny-invariant",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tiny-invariant"
+    },
+    {
+      "name": "strip-bom",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/strip-bom"
+    },
+    {
+      "name": "json-schema-traverse",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/json-schema-traverse"
+    },
+    {
+      "name": "type-is",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/type-is"
+    },
+    {
+      "name": "minimist",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/minimist"
+    },
+    {
+      "name": "rbush",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/rbush"
+    },
+    {
+      "name": "fast-diff",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/fast-diff"
+    },
+    {
+      "name": "pathval",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pathval"
+    },
+    {
+      "name": "playwright",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/playwright"
+    },
+    {
+      "name": "@js-sdsl",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@js-sdsl"
+    },
+    {
+      "name": "@wendellhu",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@wendellhu"
+    },
+    {
+      "name": "esutils",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/esutils"
+    },
+    {
+      "name": "@vitejs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@vitejs"
+    },
+    {
+      "name": "deep-eql",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/deep-eql"
+    },
+    {
+      "name": "ansi-regex",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ansi-regex"
+    },
+    {
+      "name": "esprima",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/esprima"
+    },
+    {
+      "name": "aria-hidden",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/aria-hidden"
+    },
+    {
+      "name": "jose",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/jose"
+    },
+    {
+      "name": "@levischuck",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@levischuck"
+    },
+    {
+      "name": "fdir",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/fdir"
+    },
+    {
+      "name": "n-gram",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/n-gram"
+    },
+    {
+      "name": "vary",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/vary"
+    },
+    {
+      "name": "pdfjs-dist",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pdfjs-dist"
+    },
+    {
+      "name": "supports-preserve-symlinks-flag",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/supports-preserve-symlinks-flag"
+    },
+    {
+      "name": "color-convert",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/color-convert"
+    },
+    {
+      "name": "path-key",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/path-key"
+    },
+    {
+      "name": "tinybench",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tinybench"
+    },
+    {
+      "name": "unpipe",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/unpipe"
+    },
+    {
+      "name": "brace-expansion",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/brace-expansion"
+    },
+    {
+      "name": "get-caller-file",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/get-caller-file"
+    },
+    {
+      "name": "react-dom",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-dom"
+    },
+    {
+      "name": "path-parse",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/path-parse"
+    },
+    {
+      "name": "json-schema-typed",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/json-schema-typed"
+    },
+    {
+      "name": "has-symbols",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/has-symbols"
+    },
+    {
+      "name": "clsx",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/clsx"
+    },
+    {
+      "name": "picocolors",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/picocolors"
+    },
+    {
+      "name": "react-remove-scroll",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-remove-scroll"
+    },
+    {
+      "name": "@napi-rs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@napi-rs"
+    },
+    {
+      "name": "emojibase",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/emojibase"
+    },
+    {
+      "name": "sonner",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/sonner"
+    },
+    {
+      "name": "long",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/long"
+    },
+    {
+      "name": "default-browser-id",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/default-browser-id"
+    },
+    {
+      "name": "raw-body",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/raw-body"
+    },
+    {
+      "name": "doctrine",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/doctrine"
+    },
+    {
+      "name": "semver",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/semver"
+    },
+    {
+      "name": "hono",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/hono"
+    },
+    {
+      "name": "http-errors",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/http-errors"
+    },
+    {
+      "name": "vite",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/vite"
+    },
+    {
+      "name": "minimatch",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/minimatch"
+    },
+    {
+      "name": "@modelcontextprotocol",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@modelcontextprotocol"
+    },
+    {
+      "name": "accepts",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/accepts"
+    },
+    {
+      "name": "loupe",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/loupe"
+    },
+    {
+      "name": "class-variance-authority",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/class-variance-authority"
+    },
+    {
+      "name": "ansi-styles",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ansi-styles"
+    },
+    {
+      "name": "is-core-module",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/is-core-module"
+    },
+    {
+      "name": "fast-uri",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/fast-uri"
+    },
+    {
+      "name": "cookie-signature",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/cookie-signature"
+    },
+    {
+      "name": "forwarded",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/forwarded"
+    },
+    {
+      "name": "@joshwooding",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@joshwooding"
+    },
+    {
+      "name": "js-tokens",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/js-tokens"
+    },
+    {
+      "name": "@base-ui",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@base-ui"
+    },
+    {
+      "name": "negotiator",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/negotiator"
+    },
+    {
+      "name": "get-nonce",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/get-nonce"
+    },
+    {
+      "name": "body-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/body-parser"
+    },
+    {
+      "name": "@adobe",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@adobe"
+    },
+    {
+      "name": "@babel",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@babel"
+    },
+    {
+      "name": "express-rate-limit",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/express-rate-limit"
+    },
+    {
+      "name": "@radix-ui",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@radix-ui"
+    },
+    {
+      "name": "@img",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@img"
+    },
+    {
+      "name": "@oxlint",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@oxlint"
+    },
+    {
+      "name": "libsql",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/libsql"
+    },
+    {
+      "name": "side-channel",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/side-channel"
+    },
+    {
+      "name": "protobufjs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/protobufjs"
+    },
+    {
+      "name": "json5",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/json5"
+    },
+    {
+      "name": "cors",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/cors"
+    },
+    {
+      "name": "update-browserslist-db",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/update-browserslist-db"
+    },
+    {
+      "name": "expect-type",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/expect-type"
+    },
+    {
+      "name": "es-module-lexer",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/es-module-lexer"
+    },
+    {
+      "name": "serve-static",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/serve-static"
+    },
+    {
+      "name": "emojibase-data",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/emojibase-data"
+    },
+    {
+      "name": "@univerjs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs"
+    },
+    {
+      "name": "convert-source-map",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/convert-source-map"
+    },
+    {
+      "name": "@peculiar",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@peculiar"
+    },
+    {
+      "name": "cliui",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/cliui"
+    },
+    {
+      "name": "object-assign",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/object-assign"
+    },
+    {
+      "name": "ot-json1",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ot-json1"
+    },
+    {
+      "name": "get-proto",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/get-proto"
+    },
+    {
+      "name": "react-docgen",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-docgen"
+    },
+    {
+      "name": "cross-spawn",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/cross-spawn"
+    },
+    {
+      "name": "lucide",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lucide"
+    },
+    {
+      "name": "yargs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/yargs"
+    },
+    {
+      "name": "oxc-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/oxc-parser"
+    },
+    {
+      "name": "@vitest",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@vitest"
+    },
+    {
+      "name": "rxjs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/rxjs"
+    },
+    {
+      "name": "ipaddr.js",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ipaddr.js"
+    },
+    {
+      "name": "glob",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/glob"
+    },
+    {
+      "name": "kdbush",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/kdbush"
+    },
+    {
+      "name": "cookie",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/cookie"
+    },
+    {
+      "name": "source-map",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/source-map"
+    },
+    {
+      "name": "@smithy",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@smithy"
+    },
+    {
+      "name": "default-browser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/default-browser"
+    },
+    {
+      "name": "pretty-format",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pretty-format"
+    },
+    {
+      "name": "@protobufjs",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@protobufjs"
+    },
+    {
+      "name": "@floating-ui",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@floating-ui"
+    },
+    {
+      "name": "gopd",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/gopd"
+    },
+    {
+      "name": "escape-html",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/escape-html"
+    },
+    {
+      "name": "jsonc-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/jsonc-parser"
+    },
+    {
+      "name": "run-applescript",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/run-applescript"
+    },
+    {
+      "name": "why-is-node-running",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/why-is-node-running"
+    },
+    {
+      "name": "statuses",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/statuses"
+    },
+    {
+      "name": "string-width",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/string-width"
+    },
+    {
+      "name": "esbuild",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/esbuild"
+    },
+    {
+      "name": "minipass",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/minipass"
+    },
+    {
+      "name": "bowser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/bowser"
+    },
+    {
+      "name": "@testing-library",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@testing-library"
+    },
+    {
+      "name": "yallist",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/yallist"
+    },
+    {
+      "name": "@storybook",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@storybook"
+    },
+    {
+      "name": "parseurl",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/parseurl"
+    },
+    {
+      "name": "@jridgewell",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@jridgewell"
+    },
+    {
+      "name": "etag",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/etag"
+    },
+    {
+      "name": "yauzl",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/yauzl"
+    },
+    {
+      "name": "@oxc-parser",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@oxc-parser"
+    },
+    {
+      "name": "wrappy",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/wrappy"
+    },
+    {
+      "name": "@aws",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@aws"
+    },
+    {
+      "name": "unicount",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/unicount"
+    },
+    {
+      "name": "send",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/send"
+    },
+    {
+      "name": "tinyexec",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tinyexec"
+    },
+    {
+      "name": "finalhandler",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/finalhandler"
+    },
+    {
+      "name": "@grpc",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@grpc"
+    },
+    {
+      "name": "css.escape",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/css.escape"
+    },
+    {
+      "name": "caniuse-lite",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/caniuse-lite"
+    },
+    {
+      "name": "@oxc-project",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@oxc-project"
+    },
+    {
+      "name": "dequal",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/dequal"
+    },
+    {
+      "name": "react",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react"
+    },
+    {
+      "name": "pvtsutils",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/pvtsutils"
+    },
+    {
+      "name": "tsyringe",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tsyringe"
+    },
+    {
+      "name": "lz-string",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lz-string"
+    },
+    {
+      "name": "which",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/which"
+    },
+    {
+      "name": "dom-accessibility-api",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/dom-accessibility-api"
+    },
+    {
+      "name": "side-channel-map",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/side-channel-map"
+    },
+    {
+      "name": "ajv",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ajv"
+    },
+    {
+      "name": "cmdk",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/cmdk"
+    },
+    {
+      "name": "typescript-api",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/typescript-api"
+    },
+    {
+      "name": "@webcontainer",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@webcontainer"
+    },
+    {
+      "name": "emoji-regex",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/emoji-regex"
+    },
+    {
+      "name": "open",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/open"
+    },
+    {
+      "name": "object-inspect",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/object-inspect"
+    },
+    {
+      "name": "sharp",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/sharp"
+    },
+    {
+      "name": "tinyrainbow",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/tinyrainbow"
+    },
+    {
+      "name": "ts-dedent",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ts-dedent"
+    },
+    {
+      "name": "on-finished",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/on-finished"
+    },
+    {
+      "name": "fsevents",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/fsevents"
+    },
+    {
+      "name": "ws",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/ws"
+    },
+    {
+      "name": "fast-deep-equal",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/fast-deep-equal"
+    },
+    {
+      "name": "reflect-metadata",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/reflect-metadata"
+    },
+    {
+      "name": "shebang-command",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/shebang-command"
+    },
+    {
+      "name": "electron-to-chromium",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/electron-to-chromium"
+    },
+    {
+      "name": "require-from-string",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/require-from-string"
+    },
+    {
+      "name": "debug",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/debug"
+    },
+    {
+      "name": "lightningcss",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/lightningcss"
+    },
+    {
+      "name": "source-map-js",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/source-map-js"
+    },
+    {
+      "name": "media-typer",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/media-typer"
+    },
+    {
+      "name": "mime-db",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/mime-db"
+    },
+    {
+      "name": "isexe",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/isexe"
+    },
+    {
+      "name": "react-style-singleton",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/react-style-singleton"
+    },
+    {
+      "name": "es-object-atoms",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/es-object-atoms"
+    },
+    {
+      "name": "@esbuild",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@esbuild"
+    },
+    {
+      "name": "@simplewebauthn",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@simplewebauthn"
+    },
+    {
+      "name": "path-scurry",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/path-scurry"
+    },
+    {
+      "name": "router",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/router"
+    },
+    {
+      "name": "setprototypeof",
+      "target": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/setprototypeof"
+    }
+  ],
+  "workspaces": [
+    {
+      "name": "@spinel/diagnostics",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/diagnostics",
+      "manifestSha256": "301cb9b84dfd4c122e0eca5cd0daa51532d8877a26e186cd4193ac10e9d3e7f5"
+    },
+    {
+      "name": "@spinel/doc-formulas",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/doc-formulas",
+      "manifestSha256": "215b521bafd4e592eca4d9fa02faa12abf40d79282d33370ee42acde69de790f"
+    },
+    {
+      "name": "@spinel/presence-ui",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/presence-ui",
+      "manifestSha256": "35dc264857e64740767a9d62ab069eafd87872db8005a341aeafa74375702810"
+    },
+    {
+      "name": "@spinel/print",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/print",
+      "manifestSha256": "443f0c5c050fc7af33c83d633471e322f67810f239b460d3c747c670030c5487"
+    },
+    {
+      "name": "@spinel/sync-client",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-client",
+      "manifestSha256": "09cbce6664acea643d851fd35501cbec976a89bf20c0f6b3124260fa066c7fa0"
+    },
+    {
+      "name": "@spinel/sync-server",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-server",
+      "manifestSha256": "a5e9950773013ef9b887e9eac4cb2c2afe25a94cb231c77487a6d1486236c29c"
+    },
+    {
+      "name": "@spinel/sync-transform",
+      "target": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-transform",
+      "manifestSha256": "9b18276b297e3948de2e12a7215487d58efbd175d14860c94cfd8c91e387548f"
+    }
+  ],
+  "installedSDK": [
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/core/lib/es/index.js",
+      "sha256": "c5204e610336e216579c012a21f08273555dc31c7c59aeabaf9ccc40a7d5ad2e"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/core/lib/cjs/index.js",
+      "sha256": "716a569e1a091a3893f92a12795ad8f2ad26821890ec33f8d52922d280c50e0c"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/docs/lib/es/index.js",
+      "sha256": "788566fd844ad732f3dce124c64daf9f14a742487b5e11191d96da7c82b0563c"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/docs/lib/cjs/index.js",
+      "sha256": "f5d9d7a67e528159e16bb1abc341f4efd7b62dcfa29d18d925c7bd60904626a9"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/ui/lib/es/index.js",
+      "sha256": "0856e19917a08b125b2e1831b9bde9e81eb8a55d65394a9c625d0ec925d2161d"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/ui/lib/cjs/index.js",
+      "sha256": "b66ae1efa87ca9a670e9e4ecd0caa0895d47544c782318afe8f915d8c52e5333"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/drawing/lib/es/index.js",
+      "sha256": "58e7a719576d12552159dddfc6ec00af1c6df8b4aabe9c5d7c08bdfa5eaedef0"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/drawing/lib/cjs/index.js",
+      "sha256": "f72ad794be8acdc818f2ff5817bc70072f722fac230f563ba30a22345d952269"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/docs-ui/lib/es/index.js",
+      "sha256": "5e102d42b6ccafcbbf33bbc58f16e5c1bb20f43dd286c6f2b8520740d73356d4"
+    },
+    {
+      "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@univerjs/docs-ui/lib/cjs/index.js",
+      "sha256": "c405e5aa878779ffdd911f16a361c3d965b7ad82f6c14bdf4d0257c6d8122606"
+    }
+  ],
+  "node": "v26.13.0",
+  "resolutions": [
+    {
+      "name": "@spinel/diagnostics",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/diagnostics/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/diagnostics"
+    },
+    {
+      "name": "@spinel/doc-formulas",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/doc-formulas/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/doc-formulas"
+    },
+    {
+      "name": "@spinel/presence-ui",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/presence-ui/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/presence-ui"
+    },
+    {
+      "name": "@spinel/print",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/print/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/print"
+    },
+    {
+      "name": "@spinel/sync-client",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-client/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-client"
+    },
+    {
+      "name": "@spinel/sync-server",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-server/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-server"
+    },
+    {
+      "name": "@spinel/sync-transform",
+      "url": "file:///Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-transform/index.ts",
+      "real": "/Users/mxbaylee/projects/spinel-spn-123-production/lib/sync-transform"
+    }
+  ],
+  "postCheckDonorVerification": "input hashes, 10 installed SDK hashes, all workspace links, clean tracked status and exact head unchanged"
+}

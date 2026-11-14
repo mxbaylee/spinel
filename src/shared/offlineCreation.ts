@@ -2,6 +2,7 @@ import { getDocsEmptySnapshot, LocaleType } from '@univerjs/core';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
 import type { WorkspaceItem } from './workspace.ts';
 import { validColor, validIdentityIcon } from './appearance.ts';
+import { CURRENT_SDK_VERSION } from './offlineShell.ts';
 
 /** Saved before first editing; native edits remain in the existing checkpoint queue. */
 export interface OfflineCreationRequest {
@@ -80,7 +81,7 @@ export function blankOfflineSnapshot(
   return {
     id: input.itemId,
     name: input.name,
-    appVersion: '1.1.0',
+    appVersion: CURRENT_SDK_VERSION,
     locale: LocaleType.EN_US,
     rev: 1,
     sheetOrder: ['first'],

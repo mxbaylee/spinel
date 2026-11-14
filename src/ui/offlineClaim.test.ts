@@ -11,6 +11,7 @@ import {
 } from '../../web/offline/offlineStore.ts';
 import { readDeviceInventory } from '../../web/offline/deviceStorage.ts';
 import type { OfflineDownload } from '../../web/offline/offlineStore.ts';
+import { CURRENT_SDK_VERSION } from '../shared/offlineShell.ts';
 
 vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
 
@@ -24,7 +25,10 @@ const download: OfflineDownload = {
   revision: 1,
   downloadedAt: 1,
 };
-const retained = { kind: 'retained' as const, compatibility: { format: 1, sdkVersion: '1.1.0' } };
+const retained = {
+  kind: 'retained' as const,
+  compatibility: { format: 1, sdkVersion: CURRENT_SDK_VERSION },
+};
 const catalog = { items: [], shared: [], views: {}, syncedAt: 1 };
 let values: Map<string, string>;
 
@@ -237,6 +241,8 @@ function localFixture() {
 }
 
 test('local startup reads a legacy prepared catalog without writing localStorage', async () => {
+  // Legacy here means the stored account pointer predates the cancellation
+  // nonce; its saved document runtime must still match the active SDK.
   values.clear();
   values.set('spinel.offline.account', user.id);
   const f = localFixture();
@@ -330,21 +336,30 @@ test('a late catalog cannot publish after the host permits online fallback', asy
   expect(preparedAccount()).toBe(user.id);
 });
 
-test('an incompatible same-account runtime cannot claim data or cancel a compatible old tab', async () => {
-  setPreparedAccount(user.id);
-  const f = fixture();
-  f.requirement.mockResolvedValue({
-    kind: 'retained',
-    compatibility: { format: 2, sdkVersion: '2.0.0' },
-  });
-  const oldTab = offlinePreparation(user.id, () => true);
-  const nonce = values.get('spinel.offline.cancellation');
-  await claimDevice(user);
-  expect(preparedAccount()).toBe(user.id);
-  expect(values.get('spinel.offline.cancellation')).toBe(nonce);
-  expect(oldTab.isCurrent()).toBe(true);
-  expect(f.saveCatalog).not.toHaveBeenCalled();
-});
+test.each([
+  { format: 1, sdkVersion: '1.1.0' },
+  { format: 2, sdkVersion: '2.0.0' },
+])(
+  'incompatible runtime $sdkVersion cannot claim data, expose titles or cancel its old tab',
+  async (compatibility) => {
+    setPreparedAccount(user.id);
+    const f = localFixture();
+    f.requirement.mockResolvedValue({
+      kind: 'retained',
+      compatibility,
+    });
+    const oldTab = offlinePreparation(user.id, () => true);
+    const nonce = values.get('spinel.offline.cancellation');
+    await claimDevice(user);
+    expect(preparedAccount()).toBe(user.id);
+    expect(values.get('spinel.offline.cancellation')).toBe(nonce);
+    expect(oldTab.isCurrent()).toBe(true);
+    expect(f.saveCatalog).not.toHaveBeenCalled();
+    expect(await openLocalStart()).toBeNull();
+    expect(readDeviceInventory).not.toHaveBeenCalled();
+    expect(OfflineStore.prototype.catalog).not.toHaveBeenCalled();
+  },
+);
 
 test('unknown retained data cannot expose a local catalog', async () => {
   setPreparedAccount(user.id);

@@ -245,8 +245,13 @@ export async function retainDocCallbackTrace(
   cdp: CDPSession,
   path: string,
   progress: ReturnType<typeof callbackProgress>,
-  ownership: { signal: AbortSignal; interrupt: () => Promise<void> },
+  ownership: { signal: AbortSignal; interrupt: () => Promise<void>; maxBytes?: number },
 ) {
+  // The native-flush diagnostic uses a smaller bound; callback acceptance keeps
+  // its registered 2 GiB ceiling. No caller may enlarge that ceiling.
+  const maxBytes = ownership.maxBytes ?? 2 * 1024 ** 3;
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1 || maxBytes > 2 * 1024 ** 3)
+    throw new Error('Invalid trace transport byte bound.');
   type Completion = {
     stream?: string;
     dataLossOccurred?: boolean;
@@ -259,6 +264,7 @@ export async function retainDocCallbackTrace(
   let failed = false;
   let interruption: Promise<void> | undefined;
   let close: Promise<void> | undefined;
+  const streamClose = { attempted: false, settled: false, error: null as string | null };
   let ownsOutput = false;
   let outputHandle: FileHandle | undefined;
   let rawBytes = 0;
@@ -282,7 +288,17 @@ export async function retainDocCallbackTrace(
     if (!completion?.stream) return;
     if (!close) {
       progress.phase('trace-stream-close', rawBytes);
-      close = cdp.send('IO.close', { handle: completion.stream }).then(() => {}, remember);
+      streamClose.attempted = true;
+      close = cdp.send('IO.close', { handle: completion.stream }).then(
+        () => {
+          streamClose.settled = true;
+        },
+        (error) => {
+          streamClose.settled = true;
+          streamClose.error = String(error);
+          remember(error);
+        },
+      );
     }
     return close;
   };
@@ -313,13 +329,32 @@ export async function retainDocCallbackTrace(
     progress.phase('trace-completion');
     const event = await completed;
     signal.throwIfAborted();
-    if (!event.stream) throw new Error('Tracing completed without its raw stream.');
+    // Preserve the actual failed protocol contract without retaining a stream
+    // handle or mistaking omitted fields for false/default values.
+    const completionFailure = (message: string) =>
+      Object.assign(new Error(message), {
+        traceCompletion: {
+          streamPresent: typeof event.stream === 'string' && event.stream.length > 0,
+          streamClose,
+          fields: Object.fromEntries(
+            (['traceFormat', 'streamCompression', 'dataLossOccurred'] as const).map((key) => [
+              key,
+              {
+                present: Object.hasOwn(event, key),
+                type: typeof event[key],
+                value: event[key] ?? null,
+              },
+            ]),
+          ),
+        },
+      });
+    if (!event.stream) throw completionFailure('Tracing completed without its raw stream.');
     if (
       event.traceFormat !== 'proto' ||
       event.streamCompression !== 'none' ||
       event.dataLossOccurred !== false
     )
-      throw new Error('Tracing did not confirm complete uncompressed protobuf transport.');
+      throw completionFailure('Tracing did not confirm complete uncompressed protobuf transport.');
     progress.phase('trace-stream-open');
     outputHandle = await open(path, 'wx');
     ownsOutput = true;
@@ -334,8 +369,8 @@ export async function retainDocCallbackTrace(
         const value = Buffer.from(chunk.data, chunk.base64Encoded ? 'base64' : 'utf8');
         rawHash.update(value);
         rawBytes += value.length;
-        if (rawBytes > 2 * 1024 ** 3)
-          throw new Error('Captured protobuf exceeds the 2 GiB transport bound.');
+        if (rawBytes > maxBytes)
+          throw new Error('Captured protobuf exceeds the registered transport byte bound.');
         yield value;
         // Logarithmic milestones keep the early phases in the 128-entry journal.
         // Final exact bytes are always retained by stream-close and the manifest.

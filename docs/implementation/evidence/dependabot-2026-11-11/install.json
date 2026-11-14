@@ -1,0 +1,12 @@
+{
+  "name": "install",
+  "args": [
+    "npm",
+    "ci"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 10495,
+  "peakKiB": 1088096
+}

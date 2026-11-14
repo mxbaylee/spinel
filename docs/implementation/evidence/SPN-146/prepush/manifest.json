@@ -1,0 +1,269 @@
+{
+  "diagnosticOnly": true,
+  "sourceAtStart": "e711c7727f892333ea4ccd18b2f534647f23703d",
+  "candidateSources": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "e7322f9092158e3011d85bc4008c1595a6e0e257e0e3426e944cd869a2e3c1e2"
+    },
+    {
+      "path": ".github/workflows/doc-native-diagnostic.yml",
+      "sha256": "e43e72a7dfdf976700e5adc4694c17c5342e00fb1be194ecbf8a9977ef659b9e"
+    },
+    {
+      "path": "e2e/doc-responsiveness-callbacks.spec.ts",
+      "sha256": "d81f4d58084c0f5be249919f1fdce0ce1be6629e5dc7781e15634deda90d5904"
+    },
+    {
+      "path": "e2e/doc-responsiveness-native-trace.ts",
+      "sha256": "c4422bd4ebe28be6051d12d81f88321c492b964c8100d08341dc559ebb038350"
+    },
+    {
+      "path": "e2e/doc-responsiveness.spec.ts",
+      "sha256": "75bd10e9cce4dff8c327f56c3bf7efd20b6c80c34c0fa31a258bf4410d8a83a5"
+    },
+    {
+      "path": "scripts/ci/doc-callback-comparison.test.ts",
+      "sha256": "5a1a669f25e1284503ef9dbb6145dc3b1f234a7d56907ed6e02e8a74eb8770e2"
+    },
+    {
+      "path": "scripts/ci/doc-callback-comparison.ts",
+      "sha256": "1f09da52af86a6472dc9b7dc73c9c7e6c6938fc66050e6b70f5521671dab33e8"
+    },
+    {
+      "path": "scripts/ci/doc-native-flush-diagnostic.test.ts",
+      "sha256": "dfcba05244baa8e864fa0f89ca4f410dbc4586d57bd09577af9630ca120713b7"
+    },
+    {
+      "path": "scripts/ci/doc-native-trace.test.ts",
+      "sha256": "59ccdbe7c4297fa762e9b371dfd9d3b0a45e58f3740556ecbfd9faa1f6cc88ce"
+    },
+    {
+      "path": "scripts/ci/doc-responsiveness.test.ts",
+      "sha256": "4795c7f564d309b23e324e89b8bf776067a1a22b66d85a88d778fe214002a3ff"
+    },
+    {
+      "path": "scripts/ci/doc-responsiveness.ts",
+      "sha256": "4ffdfb61f6d2c173c0683cbe5bb49a445b4104a4c46d1355c0c983032e04bf08"
+    },
+    {
+      "path": "scripts/ci/prepare-doc-native-diagnostic.ts",
+      "sha256": "a074d87c65843eafb5b3ce10313c1711acdc2e8e75a2744b4654acbcbc4a2030"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs.test.ts",
+      "sha256": "2b6408ad3b8af715c1e2221eef46e43781f3171283e9d6f7ac438c29ba1c28de"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-docs.ts",
+      "sha256": "dbc529e75246305a1e12496808e31369dce1b54c9706fdf5e57115dbfa904829"
+    },
+    {
+      "path": "src/ui/nativeDocFlushDiagnostic.ts",
+      "sha256": "01eedff77e4dd47bed5153ae8074351b27c465ddea90e779d924db5db6bf0dee"
+    },
+    {
+      "path": "web/docResponsivenessEvidence.ts",
+      "sha256": "3f464ec520adfa832f6a5e870ddf906a72ccbc8034951651c94aa006707dec05"
+    }
+  ],
+  "payloads": [
+    {
+      "name": "verification-bridge.log.gz",
+      "rawBytes": 53893,
+      "storedBytes": 567,
+      "rawSha256": "c48ddef1bf1a67ef43c9beb6960a699e82357b24662feed55564be7087f8d831",
+      "storedSha256": "b0cc5d0dc2bf96c1dc5e31341ae9613eec71e58955f88b53f9a490dcc5991ae7"
+    },
+    {
+      "name": "verification-bridge-watchdog.json.gz",
+      "rawBytes": 6303,
+      "storedBytes": 1158,
+      "rawSha256": "9dcadd94a3e32e4e4dcafaea942c66e4ded42579c192014dfd89ed6b3b6ba38b",
+      "storedSha256": "e01725796f8d93f8c69c55b051fa22522b557350b2cd803229d16106b181f1bb"
+    },
+    {
+      "name": "diagnostic-observer.log.gz",
+      "rawBytes": 545,
+      "storedBytes": 375,
+      "rawSha256": "d8d8c19086c8ec85842124e047c07d6659e0d14e5004a431895a8e9042d97106",
+      "storedSha256": "b94a5c455e549de2436747a6e1072077bb1874174033ade0678da1f626adf145"
+    },
+    {
+      "name": "diagnostic-observer-watchdog.json.gz",
+      "rawBytes": 1581,
+      "storedBytes": 440,
+      "rawSha256": "63452631bb6ca0052e8e6a49c50a0d3360a963de226d95fa7fa3140d0eed8da8",
+      "storedSha256": "18eba902d6c2421cf8aa8f22d37b09346159357eeac61ce03e9f78a6ab1a8ddd"
+    },
+    {
+      "name": "diagnostic-manager.log.gz",
+      "rawBytes": 708,
+      "storedBytes": 327,
+      "rawSha256": "43e4b614732ef4e007a13fba471308811cf47a5a90d0b2a4df8a0b22da797a8f",
+      "storedSha256": "51e54d883b45081df36f502f056c0c7fa542ff0c92fb388e1de08db61b468dd6"
+    },
+    {
+      "name": "diagnostic-manager-watchdog.json.gz",
+      "rawBytes": 3728,
+      "storedBytes": 1067,
+      "rawSha256": "2572cccd099f09dd9e7a4ce38783157b6e7464bbe9b10d53b23c6bb8a77731c1",
+      "storedSha256": "7306631b0530791339d2c88154d02e08f345c99b482d0a83bd9d5f8611aed9ee"
+    },
+    {
+      "name": "trace-transport.log.gz",
+      "rawBytes": 714,
+      "storedBytes": 332,
+      "rawSha256": "359772138be725c9426b3588ddb49a7dee2202e8dfe6f56283bd653ba8913748",
+      "storedSha256": "9b7a19ecebec5dbf1f828332dafef20f2960d20e56d7d862dd8d7fdc2eecf156"
+    },
+    {
+      "name": "trace-transport-watchdog.json.gz",
+      "rawBytes": 1649,
+      "storedBytes": 470,
+      "rawSha256": "e05d4abf5c61c531fa483d4ba74d0bace717464f0491d8118f01edfbe4f55d13",
+      "storedSha256": "f796b851b19225669e73f526ad773773149459c8653e5a6efaacd0789b68b93f"
+    },
+    {
+      "name": "evidence-contracts.log.gz",
+      "rawBytes": 6955,
+      "storedBytes": 2963,
+      "rawSha256": "090367bc2c50d291c9caf8eaec8db82e8fc3dfa45bde4832deda19cce2519308",
+      "storedSha256": "fd5058f6ae048498b4695a919361a3324e04dba115b5b2bbf4cb3c15fce90a27"
+    },
+    {
+      "name": "evidence-contracts-watchdog.json.gz",
+      "rawBytes": 5240,
+      "storedBytes": 1127,
+      "rawSha256": "ee5e59de3217acd962c44b2616a2d02522bde56e1fa11eae8bc34177ad71b73e",
+      "storedSha256": "dbee5ac41485550a56e0ecc32e3aec376012a060eb39e16d5f9bb60c0f668274"
+    },
+    {
+      "name": "diagnostic-types.log.gz",
+      "rawBytes": 533,
+      "storedBytes": 288,
+      "rawSha256": "48132755b8f94c4235d8696cc1e3752d28a792865155b84983400125ec0407cd",
+      "storedSha256": "ceef7e95dffaf6d6e27cd8d6408010b9078859850003e32af70b6fa2b0fcc9da"
+    },
+    {
+      "name": "diagnostic-types-watchdog.json.gz",
+      "rawBytes": 1673,
+      "storedBytes": 461,
+      "rawSha256": "c3c988408672f787f6a742eb6ee8c14a8fb655f35ebec6540f2f34d3e1a69d0d",
+      "storedSha256": "547fd02949825e339e3936539b74fbf370dcb8c2db1a2d3ab6437d6f4b2e538b"
+    },
+    {
+      "name": "diagnostic-types-resolved.log.gz",
+      "rawBytes": 67,
+      "storedBytes": 87,
+      "rawSha256": "d5b381125ebcd231a6160e927d0ac2e2f3e5724e6c8d8494a43bc775705c01f6",
+      "storedSha256": "86f394f65b7b729dd4500eefebcb840b1435bfb6ed3db2dffe088c90216076b0"
+    },
+    {
+      "name": "diagnostic-types-resolved-watchdog.json.gz",
+      "rawBytes": 1691,
+      "storedBytes": 468,
+      "rawSha256": "ef6a70c8b839a62a619a950ef9beb177c6cd05e89c509a62e47d0b98c00ee21f",
+      "storedSha256": "ba05ca8f9fe248124c1af528f6c3add91aa050d999e5b0b2fad59c21436ae3c9"
+    },
+    {
+      "name": "focused-lint.log.gz",
+      "rawBytes": 279,
+      "storedBytes": 234,
+      "rawSha256": "354f93fbfced237342ea89dd93830fd6efd0c23589266a2713d9571a037fdc28",
+      "storedSha256": "ea30033112256d53f8a484950dc811303fe84d7e1e099dabe93ed4aca5cc53fc"
+    },
+    {
+      "name": "focused-lint-watchdog.json.gz",
+      "rawBytes": 2689,
+      "storedBytes": 618,
+      "rawSha256": "41b71e679915a10c04d70db330f0fe5a32fd3969b2af830d377637785b869d89",
+      "storedSha256": "50b581e1f31002321a2d094e57319b6ef65876128b66e2ba338449939cb73cbd"
+    },
+    {
+      "name": "focused-lint-repair.log.gz",
+      "rawBytes": 67,
+      "storedBytes": 87,
+      "rawSha256": "70cc8718d41c3b8ce4e32fb78092ef1ade3e9a8085a562661286378f9ac6a341",
+      "storedSha256": "32df72520164e2bbbc7a4fc31b838b182922b0e640b2faeb62cea3e19491ef45"
+    },
+    {
+      "name": "focused-lint-repair-watchdog.json.gz",
+      "rawBytes": 1697,
+      "storedBytes": 486,
+      "rawSha256": "7893cc0ffb074fc532dd68b68058fc03e92e5de1f2437ab7095950efe665dcf2",
+      "storedSha256": "a49501d962e05448a1768a431451c8909fce962f7ee30d1c278053afd2f632e9"
+    },
+    {
+      "name": "e2e-lint.log.gz",
+      "rawBytes": 253,
+      "storedBytes": 219,
+      "rawSha256": "52e3ed70546787de400665eee23bfb238bc7ffd621f8ebfda9a87f1d111fb5a3",
+      "storedSha256": "0b3487c34ae62035a124b2d7d5eac6f93fc191a7419c783ed0fa12e480f00570"
+    },
+    {
+      "name": "e2e-lint-watchdog.json.gz",
+      "rawBytes": 1648,
+      "storedBytes": 471,
+      "rawSha256": "cb79e57c2d36e0176e1c6d8e277fe3053d1e56e46a8147d0e5f89bd4e1167380",
+      "storedSha256": "8a8abf19424829cf5c5bebb49b325d4619fef3351d6695be14bd1e901f30720f"
+    },
+    {
+      "name": "e2e-lint-repair.log.gz",
+      "rawBytes": 67,
+      "storedBytes": 87,
+      "rawSha256": "8c13b78a27d010a84c6cdccf370ea8947d7f56de77b74fdea44877bbf4b50afc",
+      "storedSha256": "87e5b22e55935ba2d574bcdf69896118fd5233dd91d5457d4b6c914c6b432efa"
+    },
+    {
+      "name": "e2e-lint-repair-watchdog.json.gz",
+      "rawBytes": 1663,
+      "storedBytes": 480,
+      "rawSha256": "51befa401908aaa15528e6670bebfb5ce06c66c184fc458607ec71c681ec872a",
+      "storedSha256": "360d6cf914e8a7263cf0f4f1c69d548dc4ab392dfe7b002b01f85147528b4836"
+    },
+    {
+      "name": "verification-diagnostic-head.log.gz",
+      "rawBytes": 260805,
+      "storedBytes": 5721,
+      "rawSha256": "167d6c8787ce011a92ac528a44cc41abedee895aead64d57a95202ec81543312",
+      "storedSha256": "44824e943128d35f0a6e0a3ebfd97781511cd6b50106a20a43505f180f9c4209"
+    },
+    {
+      "name": "verification-diagnostic-head-watchdog.json.gz",
+      "rawBytes": 15792,
+      "storedBytes": 1428,
+      "rawSha256": "ed68ddb9212d159c3cb1266bb05c27cdb00f080da1e24eeff4e7e79cb3fc9c0a",
+      "storedSha256": "7c9ca71f8bb5190bb7128936656a4ce2a7641ec527c0316a8ed6ab140670162f"
+    },
+    {
+      "name": "tsconfig-diagnostic.json.gz",
+      "rawBytes": 1916,
+      "storedBytes": 428,
+      "rawSha256": "f8536a67be3374938114d510642db074eb4f6103f991cc73dbe184ca6287331d",
+      "storedSha256": "f6bf0b4452f8f202998d2a9d971fca6b23988798bd05111af7a4464640aae7e2"
+    },
+    {
+      "name": "build-verification.ts.gz",
+      "rawBytes": 805,
+      "storedBytes": 360,
+      "rawSha256": "79894ab6d8385ab4d90c69ed38e66f48aaf9241e8a2375f9789c1aea85f59d3a",
+      "storedSha256": "299d01cab97156de504829290131e9ce5c9b639f4462b9a51615aad45c47aaa2"
+    },
+    {
+      "name": "verification.test.ts.gz",
+      "rawBytes": 85419,
+      "storedBytes": 19882,
+      "rawSha256": "1051bf6542c759113475e02fa9a5dd20c6a78b6b4cc1aef8ec8901e4d9e38df5",
+      "storedSha256": "1f0918f57fad380b4e5db9edef4f4d081193fe7bbed0decf38b9366645f974f7"
+    },
+    {
+      "name": "inspection-b.md.gz",
+      "rawBytes": 6860,
+      "storedBytes": 3154,
+      "rawSha256": "e910013f23dbc05e823c7e3a748da14eed425fed2098d00b7b2abe48b7759e46",
+      "storedSha256": "b8c9932815664ab3febb494869477043db6c75393d6d17b02fce34dd22b1f42e"
+    }
+  ],
+  "limits": "Local source/native-manager checks only; complete clean-install native browser diagnosis, unprofiled acceptance and final independent grades remain pending."
+}

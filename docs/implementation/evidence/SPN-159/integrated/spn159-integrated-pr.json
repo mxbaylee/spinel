@@ -1,0 +1,17 @@
+{
+  "name": "spn159-integrated-pr",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "7c38f7d32e6a55d8000239923113155de6a07c8c",
+    "--title",
+    "📐 SPN-159 Observe completed native drawing resizes"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 441,
+  "peakKiB": 183728
+}

@@ -408,7 +408,7 @@ test('the configured native retention remains finite and evicts only the oldest 
   try {
     await f.type(value);
     // Smaller flushes need more retained groups; native eviction still bounds
-    // the count at 100 rather than retaining the entire continuous edit forever.
+    // the count at 200 rather than retaining the entire continuous edit forever.
     expect(f.observations).toHaveLength(retained + 1);
     expect(f.history.getUndoRedoStatus('doc')).toEqual({ undos: retained, redos: 0 });
     for (let remaining = retained - 1; remaining >= 0; remaining--) {
@@ -638,14 +638,14 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
     expect(a.live.snapshot()).toEqual(b.live.snapshot());
     expect((f.reopen() as IDocumentData).body!.dataStream).toBe('0123456789'.repeat(7) + '\r\n');
     const history = a.live.univer.__getInjector().get(IUndoRedoService);
-    // The unchanged 70-character replay now forms 32 + 32 + 6 native changes.
-    expect(history.getUndoRedoStatus('doc').undos).toBe(3);
+    // The unchanged 70-character replay forms four 16-change groups and a tail of six.
+    expect(history.getUndoRedoStatus('doc').undos).toBe(5);
     const original = '0123456789'.repeat(7);
     // Sync capture adds the paragraph-preservation marker to these real edits.
     // Replaying every actual group must retain exact durable and peer state.
     for (const [command, lengths] of [
-      ['undo', [2 * limit, limit, 0]],
-      ['redo', [limit, 2 * limit, original.length]],
+      ['undo', [4 * limit, 3 * limit, 2 * limit, limit, 0]],
+      ['redo', [limit, 2 * limit, 3 * limit, 4 * limit, original.length]],
     ] as const)
       for (const length of lengths) {
         expect(
@@ -666,7 +666,7 @@ test('bounded groups retain exact lost-ack replay and local undo until a real pe
           endOffset: length,
         });
       }
-    expect(history.getUndoRedoStatus('doc')).toEqual({ undos: 3, redos: 0 });
+    expect(history.getUndoRedoStatus('doc')).toEqual({ undos: 5, redos: 0 });
     expect(
       await b.commands.executeCommand('doc.command.insert-text', {
         unitId: 'doc',

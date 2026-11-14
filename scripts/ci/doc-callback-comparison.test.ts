@@ -174,6 +174,7 @@ function evidence(role: 'baselineObservation' | 'candidate'): LoadedDocCallbackE
         'web/docResponsivenessEvidence.ts',
         'src/ui/docIdleEpisode.ts',
         'src/ui/nativeDocFlush.ts',
+        'src/ui/nativeDocFlushDiagnostic.ts',
         'playwright.config.ts',
         'package-lock.json',
       ].map((path) => [path, hash(path)]),
@@ -524,11 +525,15 @@ test('allows only controlled matched baseline harness copies, including trimmed 
   }
 });
 
-test('CI overlays exactly the declared callback harness, preserving unrelated baseline source', async () => {
+test('CI pins the declared baseline and overlays only the matched callback harness', async () => {
   const workflow = await readFile(
     new URL('../../.github/workflows/ci.yml', import.meta.url),
     'utf8',
   );
+  const checkout = workflow
+    .split('      - name: Immutable merged SPN-108 baseline\n')[1]
+    ?.split('      - name:')[0];
+  assert.equal(checkout?.match(/^          ref: ([a-f0-9]{40})$/m)?.[1], DOC_CALLBACK_BASELINE);
   const overlay = workflow
     .split('      - name: Match callback workload and read-only observations\n')[1]
     ?.split('      - name:')[0];

@@ -1,0 +1,54 @@
+{
+  "root": 86324,
+  "started": 1793885288629,
+  "elapsedMs": 157,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90064,
+  "peakKiB": 90064,
+  "live": [
+    {
+      "pid": 86324,
+      "parent": 86287,
+      "group": 86324,
+      "rssKiB": 88512,
+      "started": "Thu Nov  5 05:28:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-lint-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/oxlint --deny-warnings e2e/doc-responsiveness.spec.ts e2e/doc-responsiveness-native-window.ts e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-runtime scripts/ci/doc-responsiveness.test.ts scripts/ci/doc-responsiveness.ts scripts/ci/prepare-doc-native-diagnostic.ts src/ui/nativeDocFlushDiagnostic.ts web/docResponsivenessEvidence.ts"
+    },
+    {
+      "pid": 86357,
+      "parent": 86324,
+      "group": 86324,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:28:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 86324,
+      "parent": 86287,
+      "group": 86324,
+      "rssKiB": 88512,
+      "started": "Thu Nov  5 05:28:08 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-lint-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/oxlint --deny-warnings e2e/doc-responsiveness.spec.ts e2e/doc-responsiveness-native-window.ts e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-window.test.ts scripts/ci/doc-native-flush-diagnostic.test.ts scripts/ci/doc-native-runtime.test.ts scripts/ci/doc-native-runtime scripts/ci/doc-responsiveness.test.ts scripts/ci/doc-responsiveness.ts scripts/ci/prepare-doc-native-diagnostic.ts src/ui/nativeDocFlushDiagnostic.ts web/docResponsivenessEvidence.ts"
+    },
+    {
+      "pid": 86343,
+      "parent": 86324,
+      "group": 86324,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:28:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 86357,
+      "parent": 86324,
+      "group": 86324,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:28:08 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

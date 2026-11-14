@@ -1,0 +1,13 @@
+{
+  "name": "spn159-integrated-backlog",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 142,
+  "peakKiB": 0
+}

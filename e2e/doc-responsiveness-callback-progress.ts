@@ -38,6 +38,39 @@ export interface CallbackObservation {
   rejectManifest?: () => Promise<void>;
 }
 
+/** Own partial setup and evidence failures outside the timed observation body. */
+export async function runOwnedObservation(
+  work: () => Promise<void>,
+  ownership: {
+    progress: ReturnType<typeof callbackProgress>;
+    primaryFailure: () => unknown;
+    detach: () => Promise<void>;
+    close: () => Promise<void>;
+  },
+) {
+  let failure: unknown;
+  try {
+    await work();
+  } catch (error) {
+    failure = ownership.primaryFailure() ?? error;
+    ownership.progress.failed('operation');
+  }
+  const cleanup = await Promise.allSettled([
+    Promise.resolve().then(ownership.detach),
+    Promise.resolve().then(ownership.close),
+  ]);
+  for (const [index, result] of cleanup.entries())
+    if (result.status === 'rejected') {
+      failure ??= result.reason;
+      ownership.progress.failed(index === 0 ? 'detach' : 'fixture-cleanup');
+    }
+  if (ownership.progress.persistenceFailure)
+    failure ??= new Error('Observation progress persistence failed.');
+  if (ownership.progress.firstFailure)
+    failure ??= new Error(`Observation lifecycle failed: ${ownership.progress.firstFailure.kind}`);
+  if (failure) throw failure;
+}
+
 /** A timeout remains durable even if owned teardown cannot finish. */
 export async function settleCallbackObservation(observation: CallbackObservation, status: string) {
   observation.progress.terminal(status);

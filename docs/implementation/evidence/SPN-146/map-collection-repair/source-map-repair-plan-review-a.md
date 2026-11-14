@@ -1,0 +1,47 @@
+# 🔎 SPN-146 mapless emitted-chunk repair — plan review A
+
+**Disposition: a narrow source-collector repair is justified. A single separately preregistered, changed-source capture-validation attempt can be justified after concrete controls and two exact-head reviews. The consumed `02ef→ab896` allowance remains closed; this review neither executes nor automatically renews it.** Read-only assessment, 2026-11-05. No tests, browser, converter, native workload or source edits.
+
+## Observed outcome and limits
+
+Inspected the current source collector plus retained raw metrics, progress, native-caches and watchdog JSON under `/tmp/spn146-window-hosted/inspection-b`. Run42039152201 used source `ab8966044fdc9c7645d5768956d84852ff308df3` and tree `62cd405485511a8ee13f0cbc4945731acaa11fd7`, with the declared predecessor and prior-native hashes in its preparation receipt.
+
+The primary failure is ENOENT opening `dist/assets/module-preload-BLdHbfdN.js.map`. The source collector unconditionally reads `path + '.map'` for every same-origin emitted JavaScript file before acquiring its executed source. The workflow had installed/built/prepared the prior native implementation, but this prerequisite failed before native observer start/arming, typing, window boundaries, tracing or profiling. Raw native evidence says “Native diagnostic never started”; the final native snapshot has empty queues/history/flushes and a null drain witness. No performance observation or semantic continuation was obtained. This is a concrete collection-contract defect, not a timing criterion failure or proof of overflow.
+
+The progress journal is terminal failed with no dropped events or persistence failure. The report witnesses CDP detached and fixture closed. Its aggregate `nativeDiagnosticCleanup.complete` is false because the primary failure is included in that flag; do not rewrite it to a successful complete diagnostic. The watchdog reports failed process outcome, no resource-failure reason,10,673ms elapsed and1,860,824KiB sampled peak. These observations do not constitute an independent system-wide process-absence audit. Reviewer B owns the full artifact integrity/outcome audit; I read its integrity JSON rather than duplicate ZIP hashing. The original ZIP is reported516,974bytes, SHA-256 `53c103fee6f5a6ab5363e66d7f79e70bddd98514eda3ee18a6c55a3b69ef33c3`.
+
+## Smallest defensible repair
+
+Retain and compare **every observed emitted JavaScript byte sequence** with its corresponding built file, irrespective of map availability. A generated helper without a map may be explicitly `unmapped`, with its actual script ID, URL/path, byte count and digest preserved. That is complete raw-code evidence with limited attribution, not a fabricated source map or a fully mapped program.
+
+Keep map handling a closed, truthful distinction:
+- A present map must be read, parsed, retained and hash/size verified; malformed JSON/schema, wrong embedded source, permissions/I/O errors and digest mismatch must fail. Do not catch arbitrary map-read errors as “unmapped.”
+- Absence at collection may be represented only as actual ENOENT for that corresponding optional map, without inventing an empty map or inferred source location. If a map was declared by build/CDP metadata, retain that fact and fail a missing declared map. If the hidden-map build has no declaration for a generated chunk, record observed absence honestly rather than claiming why the build omitted it.
+- A map retained/declared in the collection receipt must remain mandatory during final revalidation. Deleting it later cannot downgrade the same receipt to unmapped. Unmapped rows must have no contradictory map identity or mapped-module claims.
+- The actual prior Docs and Core mapped closure remains mandatory and exact. An absent map for either required module, missing module binding, duplicate binding, wrong prior/Core hash or incomplete retained closure still fails before the workload. Never replace that requirement with a filename heuristic or old map-format evidence.
+
+This changes optional attribution availability for generated infrastructure chunks. It must not change the source/native identity prerequisite, original JavaScript bytes, native workload,384→448 window,≥80ms event definition, trace categories/buffer/transport, GC control, timing threshold or process budgets. Unknown frames remain unknown. The final analysis should state the unmapped count/identities and attribution limitation instead of saying every executed file is mapped.
+
+The existing collector plus retained-source validator is the right location. A general source-map recovery service, new build pipeline, synthetic mappings or fallback network fetch is unnecessary. Existing hidden-map production inventory showed required native/Core map paths, but did not enumerate and prove a map for every emitted helper; that is why it did not exclude this failure.
+
+## Meaningful local proof before any new attempt
+
+A bounded deterministic test using the **actual collector, fake CDP transport and real temporary emitted/retained files** is sufficient at this layer. Include a mapless generated helper plus properly mapped prior Docs/Core modules in one inventory. Require executed/emitted byte equality and full raw-code retention for all rows; exact native mapped closure; explicit absent-map representation; final receipt/member validation; and listener cleanup.
+
+Negative controls should demonstrate: missing JavaScript still fails; unexpected map read failure is not converted to absence; invalid/present or later-deleted maps fail; tampered executed/retained code fails; an unmapped required native/Core module cannot complete; wrong or duplicate mapped identity fails; altered receipt or absent-member claims cannot be used to bypass retained validation. Reuse existing closure/hash/path limits and original failure preservation. A tiny actual-collector fixture is more discriminating than another full build/browser run just to rediscover the same missing-map branch. It cannot prove current hosted source capture or native behavior; the prospective changed-source capture step owns those.
+
+One diagnostic-quality concern should be addressed or explicitly dispositioned while repairing: the retained progress `firstFailure.phase` currently reads `fixture-cleanup-complete` because the outer owner records operation failure after `execute` has run its finally cleanup. The raw primary metrics correctly identify source collection, so the outcome is not ambiguous, but the journal does not preserve the true failure phase. Mark the source-retention phase and capture the first operation failure before cleanup changes the phase, retaining the same primary and no extra operation. This is a bounded failure-evidence improvement, not a reason to enlarge the runtime experiment.
+
+## Why a prospective superseding decision is warranted
+
+The old decision explicitly forbids re-anchoring after a failed attempt. It must be preserved verbatim as the historical closed allowance, and cannot be reinterpreted to mean “zero samples did not count.” This run consumed an attempt and failed.
+
+A **new explicit superseding decision** is nevertheless supportable: the newly observed first failure identifies a particular startup data-format assumption; a source repair has a deterministic lower-layer negative; and no sample, event threshold or measured candidate result exists to cherry-pick. The unchanged scientific question remains unanswered because the collector never entered it. A changed, source-reviewed collector therefore tests a specific repaired capability and can then perform the originally fixed measurement once. This differs from repeating the two component trials' unfavorable measured results or moving a window to find a convenient event.
+
+The new decision must name the failed run/source/artifact, original consumed allowance, exact repair and tests, new reviewed predecessor/head transition, one run/attempt and unchanged window/budgets/stop conditions. Require two independent qualifying reviews on the complete committed source before publication. Keep ordinary acceptance runs cancelled as the declared diagnostic-only checkpoint policy requires, retaining their terminal status. A second startup failure, incomplete capture, semantic mismatch or inconclusive/no-comparable-event result closes the new allowance; this review provides no automatic chain of renewals. Any later proposal would require genuinely new evidence and a separate decision, not an exception hidden in workflow routing.
+
+## Remaining obligations
+
+The new capture cannot establish historical-cause proof. Even a complete comparable event belongs only to its instrumented execution, with known encoding/trace/profiler/GC perturbations. No event, outside-window maxima, unknown GC duration or invalid CPU clocks may be converted into a favorable result. The prior rejected SPN-146 component criterion and application/native failures remain failed, and the unchanged production candidate remains unaccepted.
+
+The complete XL causal repair or supported measurement disposition, ordinary current-source timing/semantic/access/history acceptance, integration and seven required gates remain necessary for146→141→140→120. All unrelated work stays parked under the user's stop-after-SPN-120 direction. This plan review permits neither an actual dispatch nor expansion beyond that prerequisite chain.

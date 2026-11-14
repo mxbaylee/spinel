@@ -191,18 +191,30 @@ test.skipIf(process.platform !== 'linux').each(cuts)(
       let acknowledgedId: string | undefined;
       if (cut === 'postcommit') {
         await expect.poll(() => record().phase, { timeout: 100_000 }).toBe('candidate-committed');
-        await expect
-          .poll(
-            async () => {
-              try {
-                return (await client.request('/api/auth/session')).status;
-              } catch {
-                return 0;
-              }
-            },
-            { timeout: 20_000 },
-          )
-          .toBe(401);
+        // Session reads deliberately bypass pause. Wait for the application's
+        // writable admission before making the one authentication attempt.
+        const admission = new AbortController();
+        const deadline = setTimeout(() => admission.abort(), 20_000);
+        let observed: Awaited<ReturnType<typeof client.restoredAdmission>> | undefined;
+        try {
+          await expect
+            .poll(
+              async () => {
+                observed = await client.restoredAdmission(admission.signal);
+                return observed.ready;
+              },
+              { timeout: 20_000 },
+            )
+            .toBe(true);
+        } catch (cause) {
+          throw new Error(
+            `Postcommit admission failed: ${JSON.stringify(observed ?? { stage: 'not-started' })}`,
+            { cause },
+          );
+        } finally {
+          clearTimeout(deadline);
+          admission.abort();
+        }
         await ownerClient!.authenticate();
         const acknowledged = await ownerClient!.json<{ item: { id: string; name: string } }>(
           await ownerClient!.request('/api/items', {

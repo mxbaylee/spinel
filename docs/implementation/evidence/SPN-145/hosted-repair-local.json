@@ -1,0 +1,338 @@
+{
+  "parent": "81c070ad8c9763e60fb80d19236be6974d941962",
+  "scope": "Precommit local repair checks. The final-focused/typecheck/lint receipts use the exact implementation bytes hashed below; independent committed-candidate grades follow separately.",
+  "archiveSha256": "330fec4251e25c3d9a78c554906d866f88543b161e815cb0bce7514d9fcb5e2b",
+  "sourceFiles": {
+    "e2e/offline-upgrade-lifetime.ts": "0fe8a11d3f923897144e50d016691c73c1cd29a17cf424777d83c02aaba4cbdd",
+    "e2e/offline-upgrade-worker-state.ts": "cafe7c2e7021cbd558d9728ec317f54b37125cd89e15e516be9f0ff24109e529",
+    "scripts/ci/offline-upgrade-worker-state.test.ts": "e55eaff2b0fea53fff5c084f7c801be2529fb784cd396bbebebb5ec99bc53898",
+    "web/DocMobile.stories.tsx": "72500a0750375e875b208587af390e38f5a0fb703a202c3be51030c375c78626",
+    "web/docMobileStoryLayout.ts": "7b5255c6dceab03b64f3ea5127ee9ff48f6558aef1487ac10ccbb51b86442413",
+    "scripts/ci/doc-mobile-story-layout.test.ts": "78973a04930a6bd5ea38f8d70dc5334c8378770058775efa5c062239182dd487"
+  },
+  "files": {
+    "playwright-polling-diagnostic-watchdog.json": "0d5f7a46517da5e323b5e113cfe417a7b1e871235854eeac0c474542984f88e4",
+    "playwright-polling-diagnostic.json": "84bfb3f41de8c0d1d48cd17a677a47f8e572bdd33727d98d3f5da3c038177386",
+    "playwright-polling-diagnostic.log": "2da0ed3bb99eccc78ae12ed789aa038805f7a1a042f7f091ac085892c9fc51e0",
+    "playwright-polling-diagnostic.ts": "2b8843b3b5493d588ad515131df29abe6967f3e914a8ced385dc30dedf785fb5",
+    "hosted-repair-backlog-check.json": "288fe1cfe10a86dc254adda3df2eff4e05baf2837d1d3635328b97ff150ff1ad",
+    "hosted-repair-backlog-check.log": "99502e0387e62a9b2415ea5bb4dd4a9de0ffc9befbbe6f4ee205c5be4fa619ef",
+    "hosted-repair-bookkeeping.json": "ccd60506bc90543d13974dfa236e3e2db152d900f45d061fff54910e2a692b4d",
+    "hosted-repair-bookkeeping.log": "127f4ec2715765380bcdf605f2014a113de59cd6659cda7309995bad287137df",
+    "hosted-repair-final-focused.json": "8e4608800ca20e984f9927ee3a2b54765c80af3731dfab17bf49a13b273598f8",
+    "hosted-repair-final-focused.log": "03845a96f44f250e3b85881613cc683a3395b399f008bc7b7ae754870da050a0",
+    "hosted-repair-final-lint.json": "bf5bb95d72d537ae223a0d739ffeee322ca0682fc21504382e97e4ec5407c8d1",
+    "hosted-repair-final-lint.log": "b3dfe6dce78963b7cd990b42e483c0d977b655b4fd396188f08ea290ef887a2b",
+    "hosted-repair-final-typecheck.json": "9e17f193fc90f2077f723fb641e57583cb8139a95f8140037bef66215290da2b",
+    "hosted-repair-final-typecheck.log": "2732920d257a8ab8ab40b83bd8b158ade82253efda63777f7d108beddd7d69a6",
+    "hosted-repair-focused.json": "729d307b7f88630b7eefca8e2c0cfc953d231f1906447941fd540ed8b065f164",
+    "hosted-repair-focused.log": "7bb300baf59e9b2d603da5c07a2f6960b01c42bfbf512e65786e1fd0643ec622",
+    "hosted-repair-format.json": "7702a7c3645748b8fa2e67280dfe15ea8d8bf16d31c804ff688e062d15992ff9",
+    "hosted-repair-format.log": "167bb1db3d6b926e6d961de2e7483735116ed38fd2e5c809d6e3f151ef91eea6",
+    "hosted-repair-lint.json": "ee8b61af87f246152472c1d5265adfcf0a877f1eb08bb3efacb864d8fa2a83c6",
+    "hosted-repair-lint.log": "17059f9d77a6763aeb035ac1b5f0fb0af21e152cc96eb279525c5aa8a4663c46",
+    "hosted-repair-pr-check.json": "3b0f168fdf45b8558173f622365b52c09c48e43c3bd9248aa4a6a179b5ead909",
+    "hosted-repair-pr-check.log": "256a201198e25b27acd09ae17ae926d38caf1fc9bad53e598eec724a2136fabb",
+    "hosted-repair-typecheck.json": "6e3f08b5c5a0bcb21e3244ad61718cd42eb67aa0e59ba502849f99f6b66fde59",
+    "hosted-repair-typecheck.log": "790b2b3129defd429f555fe885ae0595503a758bdf3612a228a6ebccb5906f68"
+  },
+  "receipts": {
+    "playwright-polling-diagnostic-watchdog.json": {
+      "startedAt": "2026-11-13T04:59:51.227Z",
+      "finishedAt": "2026-11-13T04:59:54.240Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "timeout",
+        "--signal=TERM",
+        "--kill-after=1s",
+        "12s",
+        "node",
+        "../validation/playwright-polling-diagnostic.ts"
+      ],
+      "elapsedMs": 3006,
+      "initialMemAvailableKiB": 8445056,
+      "peakKiB": 726996,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "playwright-polling-diagnostic.json": {
+      "startedAt": "2026-11-13T04:59:51.504Z",
+      "finishedAt": "2026-11-13T04:59:54.006Z",
+      "elapsedMs": 2501,
+      "node": "v26.13.0",
+      "package": {
+        "name": "playwright-core",
+        "version": "1.64.1"
+      },
+      "bundle": {
+        "path": "/workspace/scratch/cece61e42934/spinel/node_modules/playwright-core/lib/coreBundle.js",
+        "sha256": "829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d"
+      },
+      "extraction": {
+        "method": "Unique AST method and injectedScript.evaluateHandle first-arrow argument",
+        "parser": {
+          "package": "playwright",
+          "version": "1.64.1",
+          "path": "/workspace/scratch/cece61e42934/spinel/node_modules/playwright/lib/transform/babelBundle.js"
+        },
+        "sourceStartLine": 25679,
+        "sourceEndLine": 25722,
+        "sha256": "9c4696114ecb039144a3d0c7d7ee1227b606a78105a0762b99d0b850a090e9b0"
+      },
+      "diagnosticSha256": "2b8843b3b5493d588ad515131df29abe6967f3e914a8ced385dc30dedf785fb5",
+      "bounds": {
+        "vmExecutionMs": 100,
+        "diagnosticDeadlineMs": 10000,
+        "manuallyExecutedCallbacks": 1
+      },
+      "asyncFalse": {
+        "settled": true,
+        "resolvedValue": false,
+        "predicateCalls": 1,
+        "queuedPolls": 0,
+        "callbackKinds": []
+      },
+      "syncFalse": {
+        "settled": false,
+        "predicateCalls": 1,
+        "queuedPolls": 1,
+        "callbackKinds": [
+          "requestAnimationFrame"
+        ]
+      },
+      "syncThenTrue": {
+        "settled": true,
+        "resolvedValue": true,
+        "predicateCalls": 2,
+        "queuedPolls": 0
+      },
+      "conclusion": "The installed poller settles an async false predicate without scheduling another poll; a synchronous false predicate remains pending and repolls until true.",
+      "limitations": "Node VM execution of the exact installed Playwright polling algorithm only. No browser, service worker, network, or activation integration was executed."
+    },
+    "hosted-repair-backlog-check.json": {
+      "startedAt": "2026-11-13T05:01:12.999Z",
+      "finishedAt": "2026-11-13T05:01:13.295Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "elapsedMs": 296,
+      "initialMemAvailableKiB": 8441480,
+      "peakKiB": 237584,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-bookkeeping.json": {
+      "startedAt": "2026-11-13T05:01:12.284Z",
+      "finishedAt": "2026-11-13T05:01:12.694Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "scripts/backlog/cli.ts",
+        "index"
+      ],
+      "elapsedMs": 410,
+      "initialMemAvailableKiB": 8449680,
+      "peakKiB": 217036,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-final-focused.json": {
+      "startedAt": "2026-11-13T05:02:07.572Z",
+      "finishedAt": "2026-11-13T05:02:10.034Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--test",
+        "scripts/ci/offline-upgrade-worker-state.test.ts",
+        "scripts/ci/doc-mobile-story-layout.test.ts",
+        "scripts/ci/offline-upgrade-cleanup.test.ts",
+        "scripts/ci/offline-upgrade-proxy.test.ts",
+        "scripts/ci/offline-upgrade-observation.test.ts",
+        "scripts/ci/offline-upgrade-dependencies.test.ts",
+        "scripts/ci/plan.test.ts",
+        "scripts/ci/changes.test.ts",
+        "scripts/ci/coverage-result.test.ts"
+      ],
+      "elapsedMs": 2462,
+      "initialMemAvailableKiB": 8461716,
+      "peakKiB": 827936,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-final-lint.json": {
+      "startedAt": "2026-11-13T05:02:15.945Z",
+      "finishedAt": "2026-11-13T05:02:38.720Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "lint"
+      ],
+      "elapsedMs": 22775,
+      "initialMemAvailableKiB": 8282468,
+      "peakKiB": 814840,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-final-typecheck.json": {
+      "startedAt": "2026-11-13T05:02:10.339Z",
+      "finishedAt": "2026-11-13T05:02:15.618Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=1536",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "elapsedMs": 5279,
+      "initialMemAvailableKiB": 8241928,
+      "peakKiB": 2072788,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-focused.json": {
+      "startedAt": "2026-11-13T05:00:20.365Z",
+      "finishedAt": "2026-11-13T05:00:22.926Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--test",
+        "scripts/ci/offline-upgrade-worker-state.test.ts",
+        "scripts/ci/doc-mobile-story-layout.test.ts",
+        "scripts/ci/offline-upgrade-cleanup.test.ts",
+        "scripts/ci/offline-upgrade-proxy.test.ts",
+        "scripts/ci/offline-upgrade-observation.test.ts",
+        "scripts/ci/offline-upgrade-dependencies.test.ts",
+        "scripts/ci/plan.test.ts",
+        "scripts/ci/changes.test.ts",
+        "scripts/ci/coverage-result.test.ts"
+      ],
+      "elapsedMs": 2560,
+      "initialMemAvailableKiB": 8430440,
+      "peakKiB": 840760,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-format.json": {
+      "startedAt": "2026-11-13T05:00:14.764Z",
+      "finishedAt": "2026-11-13T05:00:15.443Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "e2e/offline-upgrade-lifetime.ts",
+        "e2e/offline-upgrade-worker-state.ts",
+        "scripts/ci/offline-upgrade-worker-state.test.ts",
+        "web/DocMobile.stories.tsx",
+        "web/docMobileStoryLayout.ts",
+        "scripts/ci/doc-mobile-story-layout.test.ts"
+      ],
+      "elapsedMs": 678,
+      "initialMemAvailableKiB": 8448328,
+      "peakKiB": 284796,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-lint.json": {
+      "startedAt": "2026-11-13T05:00:32.876Z",
+      "finishedAt": "2026-11-13T05:00:55.609Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "lint"
+      ],
+      "elapsedMs": 22733,
+      "initialMemAvailableKiB": 8302440,
+      "peakKiB": 816244,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-pr-check.json": {
+      "startedAt": "2026-11-13T05:03:29.993Z",
+      "finishedAt": "2026-11-13T05:03:30.766Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "04baabd6a68abe7c0b225f8699681532e2205b60",
+        "--title",
+        "\ud83d\udd04 SPN-145 Resolve intermittent offline-upgrade worker activation"
+      ],
+      "elapsedMs": 773,
+      "initialMemAvailableKiB": 8452368,
+      "peakKiB": 342100,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "hosted-repair-typecheck.json": {
+      "startedAt": "2026-11-13T05:00:23.245Z",
+      "finishedAt": "2026-11-13T05:00:29.345Z",
+      "node": "v26.13.0",
+      "cwd": "/workspace/scratch/cece61e42934/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=1536",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "elapsedMs": 6099,
+      "initialMemAvailableKiB": 8209964,
+      "peakKiB": 1951188,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    }
+  }
+}

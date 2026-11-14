@@ -9,6 +9,7 @@ import {
 import { expect, test } from 'vitest';
 import type { DocPrintInput } from './index.ts';
 import { docInput, retainDocPdf, runDocJobs, textDoc } from './doc-native-test-support.ts';
+import { blackTextInkTop } from './raster-text-test-support.ts';
 
 test('same-paragraph image groups preserve both images, styled text and native stacked flow', async () => {
   const images = [];
@@ -248,9 +249,7 @@ test('same-paragraph image groups preserve both images, styled text and native s
     expect(Math.abs(blue - (variant.single ? 0 : 60 * 70 * 0.75 ** 2))).toBeLessThan(60);
     expect(blueTop).toBeGreaterThanOrEqual(redBottom);
     const after = page.items.find((item) => item.str.includes('AFTER-SENTINEL'))!;
-    expect(page.height - after.transform[5] - after.height).toBeGreaterThan(
-      Math.max(redBottom, blueBottom),
-    );
+    expect(blackTextInkTop(page, after)).toBeGreaterThan(Math.max(redBottom, blueBottom));
   }
   for (let index = 0; index < outputs.length; index += 2) {
     const actual = outputs[index][0].pixels,

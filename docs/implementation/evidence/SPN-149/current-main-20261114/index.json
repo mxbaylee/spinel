@@ -1,0 +1,13 @@
+{
+  "name": "spn149-current-index",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "index"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 166,
+  "peakKiB": 0
+}
