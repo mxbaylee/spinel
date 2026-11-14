@@ -1,0 +1,16 @@
+[
+  {
+    "archiveCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "file": "docs/review-assets/spn-098-failure-43544143900/metadata-supervisor-failure.log.gz",
+    "storedSha256": "62907dcd8d58f40a14b81439113075d6bfbb72117bc6f567146cd31be438339c",
+    "decodedSha256": "807a4753b20e2839675028ee23ec8dc974a410dbcde2fc37d7d6062d28087ff0",
+    "identicalToReadLocalLog": true
+  },
+  {
+    "archiveCommit": "5e1b7a9fac17c69ff9174caa9da9f8d13713737d",
+    "file": "docs/review-assets/spn-098-failure-43544143900/original-supervisor-success.log.gz",
+    "storedSha256": "df946e2ed51d83086c9a8d41ea3e128313a6fa2538acbdc21f1ca938a9099134",
+    "decodedSha256": "c25df11a075f0743dcff2c6c0bb3921d42476f8a7ec4cf62ec53fc4f5e99a6ae",
+    "identicalToReadLocalLog": true
+  }
+]
