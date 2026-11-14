@@ -1,0 +1,23 @@
+warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-089.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-090.md: 77 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-098.md: 71 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-099.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-120.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-122.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-147.md: 59 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-154.md: 54 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-156.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-157.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-158.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
+backlog ok: 29 open tickets
+{"name":"spn149-current-backlog","args":["node","scripts/backlog/cli.ts","check"],"code":0,"signal":null,"reason":null,"elapsedMs":140,"peakKiB":0}
