@@ -127,9 +127,24 @@ for (const phone of [false, true])
           // must include native resources/revision without normalizing them away.
           const prepared = await ownerContext.request.post(`/api/items/${item.id}/collaboration`, {
             headers: { Origin: baseURL! },
+            data: {},
           });
-          expect(prepared.ok()).toBe(true);
-          const { unitId } = await prepared.json();
+          const preparation = await prepared.json().catch(() => null);
+          const safeErrors = [
+            'Open Spinel at its configured address and try again.',
+            'Sign in to continue.',
+            'Collaboration is not available.',
+          ];
+          expect(
+            prepared.ok(),
+            JSON.stringify({
+              status: prepared.status(),
+              error: safeErrors.includes(preparation?.error)
+                ? preparation.error
+                : 'No allowlisted preparation error',
+            }),
+          ).toBe(true);
+          const { unitId } = preparation;
           expect(unitId).toBe(item.id);
           const head = () =>
             db.prepare('SELECT * FROM spinel_sync_units WHERE unit_id=?').get(unitId);
