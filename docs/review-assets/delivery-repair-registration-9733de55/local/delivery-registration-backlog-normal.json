@@ -1,0 +1,13 @@
+{
+  "name": "delivery-registration-backlog-normal",
+  "args": [
+    "npm",
+    "run",
+    "backlog:check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 396,
+  "peakKiB": 158112
+}

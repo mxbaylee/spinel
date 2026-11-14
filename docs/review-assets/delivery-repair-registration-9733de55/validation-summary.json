@@ -1,0 +1,127 @@
+{
+  "observedAt": "2026-11-14T03:33:10.802879+00:00",
+  "source": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "tested": "46c22ab1ef0a0fb00ced59e9fb91e0e039ac322c",
+  "sourceAndTestedTree": "60621b2aa9f114667ce69134111abe849e3440f5",
+  "planCanonicalSha256": "0091358bd9cd90269300b3e4bd06d821b1d87266fbec07bb87d00abe7c8be94b",
+  "planFileSha256": "36f2a4037d53b4777f813c2c819e3f8ca50256b91fdf4facd52001812547b93a",
+  "requiredChecks": {
+    "Backlog": {
+      "id": 132315865952,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132315865952",
+      "completed_at": "2026-11-14T03:29:10Z"
+    },
+    "Pull request": {
+      "id": 132315641556,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132315641556",
+      "completed_at": "2026-11-14T03:28:48Z"
+    },
+    "Lint": {
+      "id": 132315865949,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132315865949",
+      "completed_at": "2026-11-14T03:29:37Z"
+    },
+    "Typecheck": {
+      "id": 132315865922,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132315865922",
+      "completed_at": "2026-11-14T03:28:57Z"
+    },
+    "Unit tests": {
+      "id": 132315866411,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132315866411",
+      "completed_at": "2026-11-14T03:29:08Z"
+    },
+    "Lib tests": {
+      "id": 132315866385,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132315866385",
+      "completed_at": "2026-11-14T03:29:12Z"
+    },
+    "Playwright smoke": {
+      "id": 132316060891,
+      "head_sha": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "status": "completed",
+      "conclusion": "success",
+      "details_url": "https://github.com/mxbaylee/spinel/actions/runs/43551775040/job/132316060891",
+      "completed_at": "2026-11-14T03:29:52Z"
+    }
+  },
+  "selectedSuites": [
+    "backlog",
+    "pull-request",
+    "lint"
+  ],
+  "inapplicableSuites": [
+    "typecheck",
+    "unit-tests",
+    "lib-test-run",
+    "playwright-run",
+    "container-smoke",
+    "restore-timing",
+    "sync-transition",
+    "doc-responsiveness",
+    "doc-callback-lifetimes",
+    "responsiveness-baseline",
+    "callback-baseline",
+    "phone-compatibility"
+  ],
+  "CI": {
+    "id": 43551775040,
+    "attempt": 1,
+    "conclusion": "success",
+    "jobs": 16,
+    "success": 8,
+    "inapplicableSkipped": 8
+  },
+  "Storybook": {
+    "id": 43551775005,
+    "attempt": 1,
+    "conclusion": "success",
+    "jobs": 8,
+    "success": 3,
+    "inapplicableSkipped": 5
+  },
+  "reviews": {
+    "A": {
+      "source": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ]
+    },
+    "B": {
+      "source": "9733de55de0333e395361fd3e0b1043e815d6a6a",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ]
+    }
+  },
+  "mergeAndCleanup": "Not performed or claimed by this validation archive"
+}

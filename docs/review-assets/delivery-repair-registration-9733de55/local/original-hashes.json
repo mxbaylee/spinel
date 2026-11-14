@@ -1,0 +1,98 @@
+[
+  {
+    "name": "delivery-registration-allocate-158.json",
+    "originalSha256": "899260e63611ce1263597d35edc7f8266be3158b1a7b394380f2d71450cdd4e4",
+    "storedSha256": "899260e63611ce1263597d35edc7f8266be3158b1a7b394380f2d71450cdd4e4",
+    "normalized": false
+  },
+  {
+    "name": "delivery-registration-backlog-normal.json",
+    "originalSha256": "fa7104657e5b2317c1d2a12f9ab6083908f7aff8d96b9a17bafa737a02a5a5f4",
+    "storedSha256": "fa7104657e5b2317c1d2a12f9ab6083908f7aff8d96b9a17bafa737a02a5a5f4",
+    "normalized": false
+  },
+  {
+    "name": "delivery-registration-index.json",
+    "originalSha256": "7bed14dd6d4be7361e9b7c003df458ff1f18d953b07b12ea431a7400825bc876",
+    "storedSha256": "7bed14dd6d4be7361e9b7c003df458ff1f18d953b07b12ea431a7400825bc876",
+    "normalized": false
+  },
+  {
+    "name": "delivery-registration-pr-3ba30063.json",
+    "originalSha256": "b6d946ded5c4aee95c42864937d3a7f00a1bf32e389f9bae95ac2f4472abf623",
+    "storedSha256": "b6d946ded5c4aee95c42864937d3a7f00a1bf32e389f9bae95ac2f4472abf623",
+    "normalized": false
+  },
+  {
+    "name": "delivery-registration-pr-9733de55.json",
+    "originalSha256": "89a2387931bc8950215cdb8b918990d837409d2467877110f9fbeb4eb456341d",
+    "storedSha256": "89a2387931bc8950215cdb8b918990d837409d2467877110f9fbeb4eb456341d",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-a-9733de55.md",
+    "originalSha256": "d278996dfd1ced77d48f38a83c58258cc74d526440d0b9ea3bb13cd6bfabd58c",
+    "storedSha256": "7f54d6f0c55e7cbe8db406e35f86c9892de73e3fa8f79ec3a519ab8ac2868492",
+    "normalized": true
+  },
+  {
+    "name": "registration-review-a-backlog-9733de55.json",
+    "originalSha256": "285f17fe4537427efca3d3217dab7b6889b533f57deadbc88c6921598ed45c7b",
+    "storedSha256": "285f17fe4537427efca3d3217dab7b6889b533f57deadbc88c6921598ed45c7b",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-a-backlog-9733de55.log",
+    "originalSha256": "1406f60a7e4f2b55c784dc12f5179d211e7c75dc710f239fd1b05d698563b026",
+    "storedSha256": "1406f60a7e4f2b55c784dc12f5179d211e7c75dc710f239fd1b05d698563b026",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-a-pr-9733de55.json",
+    "originalSha256": "25ecc3e11d064566f76757459e33001d764f038a1cf0c7864ef6b21ed6d31f8d",
+    "storedSha256": "25ecc3e11d064566f76757459e33001d764f038a1cf0c7864ef6b21ed6d31f8d",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-a-pr-9733de55.log",
+    "originalSha256": "c652c5629fdeaf72c0a449a1efce717b6fb5dc16e1474125cf62d05c82fd40e7",
+    "storedSha256": "c652c5629fdeaf72c0a449a1efce717b6fb5dc16e1474125cf62d05c82fd40e7",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-b-9733de55.md",
+    "originalSha256": "fb5d4eaa42950ee0440a46d928ede9c093a32afb611b05868e7d371f3db24ea3",
+    "storedSha256": "9d635dfdf5038317d5b75ae7b22bc8440c5cca5243348cc14d3d5e0097660b17",
+    "normalized": true
+  },
+  {
+    "name": "registration-review-b-backlog.json",
+    "originalSha256": "e3c76826dea697d71f9564d87fabce12a95f252257fe10bd700040d82bc26501",
+    "storedSha256": "e3c76826dea697d71f9564d87fabce12a95f252257fe10bd700040d82bc26501",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-b-backlog.log",
+    "originalSha256": "67ca51766f87e06a62f272909a20451f297cbda318f295c5522e1bdb2fcab4a7",
+    "storedSha256": "67ca51766f87e06a62f272909a20451f297cbda318f295c5522e1bdb2fcab4a7",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-b-cleanup.json",
+    "originalSha256": "5def1c11303f12aedc813b6197514227824644d4c2ec526873026951bb9de281",
+    "storedSha256": "5def1c11303f12aedc813b6197514227824644d4c2ec526873026951bb9de281",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-b-pr.json",
+    "originalSha256": "c24d5166d0bfcb07657250165f7a708db6a3bbe7222d7859dccb3d62274e90ce",
+    "storedSha256": "c24d5166d0bfcb07657250165f7a708db6a3bbe7222d7859dccb3d62274e90ce",
+    "normalized": false
+  },
+  {
+    "name": "registration-review-b-pr.log",
+    "originalSha256": "51d25029b1cfd1edd3f9d3e125425787c0d7c5edda9ef4bdb3762c12bdb23adf",
+    "storedSha256": "51d25029b1cfd1edd3f9d3e125425787c0d7c5edda9ef4bdb3762c12bdb23adf",
+    "normalized": false
+  }
+]

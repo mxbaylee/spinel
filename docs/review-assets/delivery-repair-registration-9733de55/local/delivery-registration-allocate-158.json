@@ -1,0 +1,16 @@
+{
+  "name": "delivery-registration-allocate-158",
+  "args": [
+    "npm",
+    "run",
+    "backlog:new",
+    "--",
+    "🛂",
+    "Wait for writable admission after restore"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 314,
+  "peakKiB": 157232
+}
