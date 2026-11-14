@@ -1,0 +1,2 @@
+docs/review-assets/spn-120-current/collection-driver.ts 33ms
+{"name":"spn120-portable-evidence-format","args":["node","node_modules/prettier/bin/prettier.cjs","--write","docs/review-assets/spn-120-current/collection-driver.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":150,"peakKiB":0}
