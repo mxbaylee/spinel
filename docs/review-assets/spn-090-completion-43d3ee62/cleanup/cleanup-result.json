@@ -1,0 +1,100 @@
+{
+  "completedAt": "2026-11-14T20:49:54.585878+00:00",
+  "allTicketImplementationRefsAbsent": true,
+  "worktreesKeptDetachedAtOriginalHeads": true,
+  "all14DirtyUntrackedFilesUnchanged": true,
+  "ignoredDataRetainedInPlace": true,
+  "preservationTags": {
+    "archive/spn-090-preservation-67111d9c": "bc92bbc5948a1e57bb9955bf9887484466929547",
+    "archive/spn-090-original-local-7ffab533": "7ffab5330689abc0f79c2285b37f374bbc5483d5",
+    "archive/spn-090-superseded-integration-9608f783": "9608f78348ab014295cd7b604da4299e3a1ac230"
+  },
+  "operational151BranchUnchanged": true,
+  "noUnrelatedRefsOrWorktreesTouched": true,
+  "noPrune": true,
+  "actions": [
+    {
+      "at": "2026-11-14T20:49:10.111007+00:00",
+      "kind": "before-same-head-detach",
+      "branch": "codex/spn-090-real-devices",
+      "head": "7ffab5330689abc0f79c2285b37f374bbc5483d5"
+    },
+    {
+      "at": "2026-11-14T20:49:10.146095+00:00",
+      "kind": "detached-files-unchanged",
+      "branch": "codex/spn-090-real-devices",
+      "head": "7ffab5330689abc0f79c2285b37f374bbc5483d5"
+    },
+    {
+      "at": "2026-11-14T20:49:10.154120+00:00",
+      "kind": "deleted-local-ref",
+      "ref": "refs/heads/codex/spn-090-real-devices",
+      "expected": "7ffab5330689abc0f79c2285b37f374bbc5483d5"
+    },
+    {
+      "at": "2026-11-14T20:49:10.184134+00:00",
+      "kind": "before-same-head-detach",
+      "branch": "codex/spn-090-production-integration",
+      "head": "9608f78348ab014295cd7b604da4299e3a1ac230"
+    },
+    {
+      "at": "2026-11-14T20:49:10.220111+00:00",
+      "kind": "detached-files-unchanged",
+      "branch": "codex/spn-090-production-integration",
+      "head": "9608f78348ab014295cd7b604da4299e3a1ac230"
+    },
+    {
+      "at": "2026-11-14T20:49:10.226842+00:00",
+      "kind": "deleted-local-ref",
+      "ref": "refs/heads/codex/spn-090-production-integration",
+      "expected": "9608f78348ab014295cd7b604da4299e3a1ac230"
+    },
+    {
+      "at": "2026-11-14T20:49:10.307930+00:00",
+      "kind": "before-same-head-detach",
+      "branch": "codex/spn-090-current-integration",
+      "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "at": "2026-11-14T20:49:10.348060+00:00",
+      "kind": "detached-files-unchanged",
+      "branch": "codex/spn-090-current-integration",
+      "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "at": "2026-11-14T20:49:10.355358+00:00",
+      "kind": "deleted-local-ref",
+      "ref": "refs/heads/codex/spn-090-current-integration",
+      "expected": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "at": "2026-11-14T20:49:11.604773+00:00",
+      "kind": "remote-already-absent",
+      "ref": "refs/heads/codex/spn-090-real-devices"
+    },
+    {
+      "at": "2026-11-14T20:49:12.959825+00:00",
+      "kind": "before-remote-delete",
+      "ref": "refs/heads/codex/spn-090-production-integration",
+      "expected": "5265ab8d26c7c607bef189a1fd720f8bd28d6584"
+    },
+    {
+      "at": "2026-11-14T20:49:15.819688+00:00",
+      "kind": "deleted-remote-ref",
+      "ref": "refs/heads/codex/spn-090-production-integration",
+      "expected": "5265ab8d26c7c607bef189a1fd720f8bd28d6584"
+    },
+    {
+      "at": "2026-11-14T20:49:15.831455+00:00",
+      "kind": "tracking-ref-already-absent",
+      "ref": "refs/remotes/origin/codex/spn-090-production-integration"
+    },
+    {
+      "at": "2026-11-14T20:49:53.331932+00:00",
+      "kind": "deleted-tracking-ref",
+      "ref": "refs/remotes/origin/codex/spn-090-real-devices",
+      "expected": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "disposition": "First final inventory check correctly detected this leftover: the already-absent remote branch path had skipped tracking-ref cleanup. No source data changed; exact expected-SHA removal completes that omitted step."
+    }
+  ]
+}

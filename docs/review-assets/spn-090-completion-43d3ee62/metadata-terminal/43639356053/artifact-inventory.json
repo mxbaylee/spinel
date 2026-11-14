@@ -1,0 +1,32 @@
+[
+  {
+    "id": 14131177642,
+    "name": "ci-results-lib",
+    "originalZipSha256": "3d825ac69e9a08e80f2cb2bdba285e9dd5ee3b72b075dd3b4fb0f2deb7a00e17",
+    "originalZipBytes": 288,
+    "members": [
+      {
+        "originalPath": "ci-results-lib.json",
+        "path": "artifact-14131177642-member-0.gz",
+        "bytes": 179,
+        "sha256": "456f695e71bd5fafb390d96213ebaaeb96d88120dac4ba5ac469d6b87df3bc3c"
+      }
+    ],
+    "allCrcVerified": true
+  },
+  {
+    "id": 14130658321,
+    "name": "ci-results-unit",
+    "originalZipSha256": "dc17f651bc4f1d259decf03009d3b487ab4494bad474001876d8da2228aa49ee",
+    "originalZipBytes": 288,
+    "members": [
+      {
+        "originalPath": "ci-results-unit.json",
+        "path": "artifact-14130658321-member-0.gz",
+        "bytes": 177,
+        "sha256": "b2777cae312897c12225168197bcd9ac241dac4c215d5b6de83ad669397ca2c7"
+      }
+    ],
+    "allCrcVerified": true
+  }
+]

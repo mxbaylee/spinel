@@ -1,0 +1,511 @@
+{
+  "observedAt": "2026-11-14T20:55:31.508560+00:00",
+  "runs": [
+    {
+      "id": 43639356053,
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "createdAt": "2026-11-14T20:47:32Z",
+      "updatedAt": "2026-11-14T20:53:52Z",
+      "counts": {
+        "success": 2,
+        "failure": 3,
+        "cancelled": 11
+      },
+      "jobs": [
+        {
+          "id": 132583174913,
+          "name": "Classify changes (43639356053)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 1000054045,
+          "started_at": "2026-11-14T20:47:35Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583175260,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 1000054046,
+          "started_at": "2026-11-14T20:47:35Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583242588,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success",
+          "runner_id": 1000054047,
+          "started_at": "2026-11-14T20:47:50Z",
+          "completed_at": "2026-11-14T20:48:30Z"
+        },
+        {
+          "id": 132583242664,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success",
+          "runner_id": 1000054048,
+          "started_at": "2026-11-14T20:47:50Z",
+          "completed_at": "2026-11-14T20:48:03Z"
+        },
+        {
+          "id": 132583242689,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "failure",
+          "runner_id": 1000054049,
+          "started_at": "2026-11-14T20:47:50Z",
+          "completed_at": "2026-11-14T20:47:53Z"
+        },
+        {
+          "id": 132583242947,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "failure",
+          "runner_id": 1000054050,
+          "started_at": "2026-11-14T20:47:49Z",
+          "completed_at": "2026-11-14T20:48:02Z"
+        },
+        {
+          "id": 132583243061,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "failure",
+          "runner_id": 1000054051,
+          "started_at": "2026-11-14T20:47:50Z",
+          "completed_at": "2026-11-14T20:48:04Z"
+        },
+        {
+          "id": 132583243827,
+          "name": "Doc responsiveness (${{ matrix.preset }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583243858,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583243960,
+          "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583244038,
+          "name": "Doc callback lifetimes (${{ matrix.preset }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583244177,
+          "name": "Lib tests (${{ matrix.suite }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583244259,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583244387,
+          "name": "Unit tests (${{ matrix.suite }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583244391,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:47:48Z",
+          "completed_at": "2026-11-14T20:47:47Z"
+        },
+        {
+          "id": 132583443090,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 1000054085,
+          "started_at": "2026-11-14T20:53:48Z",
+          "completed_at": "2026-11-14T20:53:51Z"
+        }
+      ],
+      "logs": [
+        {
+          "id": 132583174913,
+          "name": "Classify changes (43639356053)",
+          "file": "job-132583174913.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583175260,
+          "name": "Pull request",
+          "file": "job-132583175260.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583242588,
+          "name": "Lint",
+          "file": "job-132583242588.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583242664,
+          "name": "Backlog",
+          "file": "job-132583242664.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583242689,
+          "name": "Typecheck",
+          "file": "job-132583242689.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583242947,
+          "name": "Unit tests",
+          "file": "job-132583242947.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583243061,
+          "name": "Lib tests",
+          "file": "job-132583243061.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132583243827,
+          "name": "Doc responsiveness (${{ matrix.preset }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583243858,
+          "name": "Retained sync transition",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583243960,
+          "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583244038,
+          "name": "Doc callback lifetimes (${{ matrix.preset }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583244177,
+          "name": "Lib tests (${{ matrix.suite }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583244259,
+          "name": "Sized restore acceptance",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583244387,
+          "name": "Unit tests (${{ matrix.suite }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583244391,
+          "name": "Container smoke",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132583443090,
+          "name": "Playwright smoke",
+          "status": "log-api-unavailable",
+          "exitCode": 1,
+          "stderr": "gh: HTTP 404\n"
+        }
+      ]
+    },
+    {
+      "id": 43639757092,
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "event": "pull_request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "cancelled",
+      "createdAt": "2026-11-14T20:52:08Z",
+      "updatedAt": "2026-11-14T20:53:59Z",
+      "counts": {
+        "failure": 1,
+        "cancelled": 14
+      },
+      "jobs": [
+        {
+          "id": 132584468989,
+          "name": "Classify changes (43639757092)",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 0,
+          "started_at": "2026-11-14T20:52:09Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584469292,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 0,
+          "started_at": "2026-11-14T20:52:09Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584610238,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 1000054087,
+          "started_at": "2026-11-14T20:53:57Z",
+          "completed_at": "2026-11-14T20:53:58Z"
+        },
+        {
+          "id": 132584610244,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "failure",
+          "runner_id": 1000054086,
+          "started_at": "2026-11-14T20:53:53Z",
+          "completed_at": "2026-11-14T20:53:55Z"
+        },
+        {
+          "id": 132584610278,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 0,
+          "started_at": "2026-11-14T20:52:39Z",
+          "completed_at": "2026-11-14T20:53:58Z"
+        },
+        {
+          "id": 132584610334,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 0,
+          "started_at": "2026-11-14T20:52:39Z",
+          "completed_at": "2026-11-14T20:53:58Z"
+        },
+        {
+          "id": 132584610389,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": 0,
+          "started_at": "2026-11-14T20:52:39Z",
+          "completed_at": "2026-11-14T20:53:58Z"
+        },
+        {
+          "id": 132584611164,
+          "name": "Unit tests (${{ matrix.suite }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611246,
+          "name": "Doc callback lifetimes (${{ matrix.preset }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611272,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611278,
+          "name": "Doc responsiveness (${{ matrix.preset }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611315,
+          "name": "Lib tests (${{ matrix.suite }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611432,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611620,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        },
+        {
+          "id": 132584611660,
+          "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "runner_id": null,
+          "started_at": "2026-11-14T20:52:40Z",
+          "completed_at": "2026-11-14T20:52:39Z"
+        }
+      ],
+      "logs": [
+        {
+          "id": 132584468989,
+          "name": "Classify changes (43639757092)",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584469292,
+          "name": "Pull request",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584610238,
+          "name": "Lint",
+          "status": "log-api-unavailable",
+          "exitCode": 1,
+          "stderr": "gh: HTTP 404\n"
+        },
+        {
+          "id": 132584610244,
+          "name": "Typecheck",
+          "file": "job-132584610244.log.gz",
+          "status": "retained"
+        },
+        {
+          "id": 132584610278,
+          "name": "Backlog",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584610334,
+          "name": "Unit tests",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584610389,
+          "name": "Lib tests",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611164,
+          "name": "Unit tests (${{ matrix.suite }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611246,
+          "name": "Doc callback lifetimes (${{ matrix.preset }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611272,
+          "name": "Container smoke",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611278,
+          "name": "Doc responsiveness (${{ matrix.preset }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611315,
+          "name": "Lib tests (${{ matrix.suite }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611432,
+          "name": "Sized restore acceptance",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611620,
+          "name": "Retained sync transition",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        },
+        {
+          "id": 132584611660,
+          "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "status": "cancelled-unallocated-no-steps",
+          "note": "API reports no runner/steps; no execution log asserted. Initial requests for such jobs returned HTTP404."
+        }
+      ]
+    }
+  ],
+  "allTerminal": true,
+  "collectorReadOnly": true
+}

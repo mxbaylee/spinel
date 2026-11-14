@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-14T20:50:09.663873+00:00",
+  "id": 43639356053,
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "status": "queued",
+  "conclusion": null,
+  "attempt": 1,
+  "jobs": 16,
+  "allJobsTerminal": false,
+  "outcomes": {
+    "success": 2,
+    "cancelled": 10,
+    "failure": 3,
+    "null": 1
+  },
+  "active": [
+    {
+      "id": 132583443090,
+      "name": "Playwright smoke",
+      "status": "queued"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-11-14T20:56:15.405Z",
+  "source": "Root manager tool calls in current chat",
+  "runs": [
+    {
+      "id": 43639356053,
+      "createdAt": "2026-11-14T20:47:32Z",
+      "normalCancellation": {
+        "command": "gh run cancel 43639356053 --repo mxbaylee/spinel",
+        "exitCode": 0,
+        "response": "Request to cancel workflow 43639356053 submitted."
+      },
+      "forceCancellation": {
+        "command": "gh run cancel 43639356053 --repo mxbaylee/spinel --force",
+        "exitCode": 0,
+        "response": "Request to force cancel workflow 43639356053 submitted."
+      },
+      "reason": "Normal cancellation left the browser aggregate queued; force cancellation was limited to this redundant closed-PR metadata run."
+    },
+    {
+      "id": 43639757092,
+      "createdAt": "2026-11-14T20:52:08Z",
+      "normalCancellation": {
+        "command": "gh run cancel 43639757092 --repo mxbaylee/spinel",
+        "exitCode": 0,
+        "response": "Request to cancel workflow 43639757092 submitted."
+      },
+      "forceCancellation": {
+        "command": "gh run cancel 43639757092 --repo mxbaylee/spinel --force",
+        "exitCode": 0,
+        "response": "Request to force cancel workflow 43639757092 submitted."
+      },
+      "reason": "Normal cancellation left five follow-on jobs queued; force cancellation limited to this redundant final-body metadata run."
+    }
+  ],
+  "commandTimestamps": "Exact per-command UTC not captured; chronology preserved in root tool call transcript. Do not assign inferred times.",
+  "untouched": {
+    "originalCI": 43634578422,
+    "mainCI": 43639276087,
+    "mainStorybook": 43639276021
+  }
+}

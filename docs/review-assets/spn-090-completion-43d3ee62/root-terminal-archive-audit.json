@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T20:39:28.942938+00:00",
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "archive": "6ead13ac1040dcf8fc0f9d3723f4b41465d594fd",
+  "parentVerified": true,
+  "payloads": 383,
+  "allStoredDecodedHashesAndGitBlobsVerified": true,
+  "actualGzipDecoded": 351,
+  "onlyArchivePathChanged": true,
+  "manifestSHA256": "e257ed61532764b373b02b6dcbd5ae54ec825e61a11fa9c369e3df1072e7eea8",
+  "originalAndContractBindings": {
+    "originalZIPs": 26,
+    "zipMembersCRC": 7974,
+    "retainedJSONMembers": 259,
+    "rawCallbackSupplements": 4,
+    "storyVariantsExact1078": 5,
+    "completedLogsVerified": 44
+  },
+  "bodyRootRead": true,
+  "bodySHA256": "8f638535b5b7437e7fa1ce9e1094ff513ab4c938d6fb842d668a01d15d87f847"
+}

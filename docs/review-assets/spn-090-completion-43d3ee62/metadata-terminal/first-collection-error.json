@@ -1,0 +1,5 @@
+{
+  "error": "Initial collector raised on HTTP404 while fetching logs for cancelled unallocated matrix jobs. It retained seven actual started-job logs; second run had not yet been collected. No workflow mutation or acceptance inference. Corrected collector records missing logs as API unavailability and does not claim those cancelled jobs ran.",
+  "firstKnownJob": 132583243827,
+  "otherMissingRequests": "Four HTTP404 responses appeared before the parallel collector raised; not every ID was returned in that first tool output."
+}
