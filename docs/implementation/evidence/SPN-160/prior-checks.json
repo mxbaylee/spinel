@@ -552,5 +552,7 @@
         "countedAsPass": false
       }
     ]
-  }
+  },
+  "sourcePath": "docs/review-assets/spn-157-local/checks.json",
+  "originalBlobSha256": "92c6583bffe1e3379d3b0d614ba5db4d8002add544193fc61e00623042593aad"
 }
