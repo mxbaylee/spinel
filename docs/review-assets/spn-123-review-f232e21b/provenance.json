@@ -1,0 +1,204 @@
+{
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "tree": "e793569c4a93d2d81cd00dee7922441abc11b9b4",
+  "implementationBranch": "codex/spn-123-production-integration",
+  "packetManifestSha256": "0e58732da86bec31d48ffcc3903f7e151b9039d3c71dbc4cf2b90df6b9734b56",
+  "sourceManifestSha256": "9bf617096424b7a12183d5fd8c7ed7c2898f0c2d94eb5684432b9dd87c00596b",
+  "originalPacketPayloads": 1654,
+  "originalPacketFilesWithManifest": 1655,
+  "copies": [
+    {
+      "original": "/tmp/spn123-review-f232e21b-a.md",
+      "retained": "spn123-review-f232e21b-a.md",
+      "bytes": 14198,
+      "sha256": "1f3a26bd7d4b48d8f950a11cec0eeddc4dc1d90e3c5d9bc8114d0d2a521b875a"
+    },
+    {
+      "original": "/tmp/spn123-review-f232e21b-b.md",
+      "retained": "spn123-review-f232e21b-b.md",
+      "bytes": 16858,
+      "sha256": "e2bcc1a8bcff106f67cc9aa92ea03ba5d3cb2f1c57ee842ffa337e651b11c6b2"
+    },
+    {
+      "original": "/tmp/spn123-review-f232-a.log",
+      "retained": "spn123-review-f232-a.log",
+      "bytes": 6066,
+      "sha256": "aea3203123be65d7b497c35051902ca4beeeb520038da76ccbc1fb429efb556d"
+    },
+    {
+      "original": "/tmp/spn123-review-f232-a-source-audit.json",
+      "retained": "spn123-review-f232-a-source-audit.json",
+      "bytes": 397,
+      "sha256": "a7fe73d392bfc0694542e0c71350b4c2648b75ad1c8b6f1f725e1b8d37a67475"
+    },
+    {
+      "original": "/tmp/spn123-review-b-f232-node.log",
+      "retained": "spn123-review-b-f232-node.log",
+      "bytes": 6058,
+      "sha256": "24115fc9787ae40698eca3621f7980a69246a70d2090d5382552d40f0d6869cd"
+    },
+    {
+      "original": "/tmp/spn123-review-b-f232-vitest.log",
+      "retained": "spn123-review-b-f232-vitest.log",
+      "bytes": 670,
+      "sha256": "ff6046e459f68b3babd5ca07971cb9902872262c89f7d96fc4a98308ca99035b"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-f232-a.json",
+      "retained": "spn123-review-f232-a.json",
+      "bytes": 473,
+      "sha256": "1d1fb796c6642fae43ff6aeecf77ee99c871cb0bd3bf65b1250034aa515f4b85"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-f232-node.json",
+      "retained": "spn123-review-b-f232-node.json",
+      "bytes": 478,
+      "sha256": "0b669a6230a306e92097555d258957271947cf91cba935f137d13a92687beefa"
+    },
+    {
+      "original": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-f232-vitest.json",
+      "retained": "spn123-review-b-f232-vitest.json",
+      "bytes": 555,
+      "sha256": "6b0172a18f3871a41f3b4ebf99cb4f06af172e35560cf37b8f39c2b751dbcff6"
+    },
+    {
+      "original": "/tmp/spn123-root-packet-audit-f232e21b.json",
+      "retained": "spn123-root-packet-audit-f232e21b.json",
+      "bytes": 490,
+      "sha256": "4ddd81579327ee1683d61022f96d59a8a4339eed5af3325dcefbd85498a18e6e"
+    },
+    {
+      "original": "/tmp/spn123-root-integration-audit-f232e21b.json",
+      "retained": "spn123-root-integration-audit-f232e21b.json",
+      "bytes": 1040,
+      "sha256": "27bb4fc99b9fba80d39269c7ea93f11294bb2222541d4655f0ec07e9cb6dd4dc"
+    },
+    {
+      "original": "/tmp/spn123-root-integration-f232-first.ts",
+      "retained": "spn123-root-integration-f232-first.ts",
+      "bytes": 2013,
+      "sha256": "942a7f88fa137cf91d433c7ec8127924ff8797c38b7b002ffe7cbbbb8f145a99"
+    },
+    {
+      "original": "/tmp/spn123-root-integration-f232.ts",
+      "retained": "spn123-root-integration-f232.ts",
+      "bytes": 2276,
+      "sha256": "063064edcbb722828c4cf4cc96d3df9fa1bc973eaab3e1de7e0692e3b9871385"
+    },
+    {
+      "original": "/tmp/spn123-root-packet-f232.ts",
+      "retained": "spn123-root-packet-f232.ts",
+      "bytes": 2130,
+      "sha256": "e949d323af2214f350a0267b1f03631166a06dcfa677377ef9e2516d2630d5fb"
+    }
+  ],
+  "reviews": [
+    {
+      "reviewer": "A",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "checks": [
+        {
+          "tests": 62,
+          "files": 5,
+          "receipt": {
+            "name": "spn123-review-f232-a",
+            "args": [
+              "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+              "--test",
+              "--test-concurrency=1",
+              "scripts/ci/app-process.test.ts",
+              "scripts/ci/fixture-evidence.test.ts",
+              "scripts/ci/fixture-session.test.ts",
+              "scripts/ci/fixture-session-http.test.ts",
+              "scripts/ci/fixture-audit.test.ts"
+            ],
+            "code": 0,
+            "signal": null,
+            "reason": null,
+            "elapsedMs": 6571,
+            "peakKiB": 316400
+          }
+        }
+      ]
+    },
+    {
+      "reviewer": "B",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "checks": [
+        {
+          "tests": 62,
+          "files": 5,
+          "receipt": {
+            "name": "spn123-review-b-f232-node",
+            "args": [
+              "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+              "--test",
+              "--test-concurrency=1",
+              "scripts/ci/app-process.test.ts",
+              "scripts/ci/fixture-evidence.test.ts",
+              "scripts/ci/fixture-session.test.ts",
+              "scripts/ci/fixture-session-http.test.ts",
+              "scripts/ci/fixture-audit.test.ts"
+            ],
+            "code": 0,
+            "signal": null,
+            "reason": null,
+            "elapsedMs": 6516,
+            "peakKiB": 287648
+          }
+        },
+        {
+          "tests": 40,
+          "files": 3,
+          "receipt": {
+            "name": "spn123-review-b-f232-vitest",
+            "args": [
+              "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+              "node_modules/vitest/vitest.mjs",
+              "run",
+              "src/server/diagnostics/routes.test.ts",
+              "src/server/diagnostics/account.test.ts",
+              "lib/sync-client/tests/diagnostics.test.ts",
+              "--config",
+              "/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts",
+              "--configLoader",
+              "native",
+              "--cache=false"
+            ],
+            "code": 0,
+            "signal": null,
+            "reason": null,
+            "elapsedMs": 2337,
+            "peakKiB": 754992
+          }
+        }
+      ]
+    }
+  ],
+  "rootAudits": {
+    "packet": "1654 payloads,1504 source bindings,1249 exact TS; its gzipSourcesDecoded0 describes that reader, not the separate integration audit.",
+    "integration": "1405 tested-source bindings,396 parent paths including deletion,99 original decoded gzip bindings; initial deleted-path reader correction retained."
+  },
+  "historicalArchives": [
+    "38b4b4dba8033701183c00b6d69fa9575f34dd7a",
+    "b2ca9c9c49f3e4d9949bceb6da176bd1fe7d8999",
+    "7d4c215d1075d3aa640a029366bddea58f7627ca"
+  ],
+  "publication": "Prepared only. Root must audit seal, reports and PR body before evidence tag publication or validation push. No remote mutation performed.",
+  "remaining": "Fresh f232 hosted/native/platform/operational acceptance, all seven required gates and guarded merge/cleanup remain pending."
+}

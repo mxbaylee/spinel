@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T22:19:59.798Z",
+  "head": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "tested": "aaac6083a066c2a9f3f394650834eb33b2a270db",
+  "exactNonDocBindings": 1405,
+  "exactParentPaths": 396,
+  "decodedGzipEvidence": 99,
+  "fullSubstantiveFixtureDiffInspected": true,
+  "canonicalIntegrationRecordRead": true,
+  "readerCorrection": "Initial root reader tried reading correctly deleted SPN120 ticket; tree identity had verified both absent. Corrected explicit deletion handling, no source changes.",
+  "sourceAssertionAuditRetained": {
+    "path": "e2e/diagnostics.spec.ts",
+    "beforeSha256": "4f34b5a1765a21921386dea72a2bc4b516fe1d1bdd84dc61a844bd22aa43b7b3",
+    "afterSha256": "1f33dad5ca16d4b8cb47b7ab0ca04b9057a692fa593437440a979910890e6469",
+    "existingAssertionExpressions": 173,
+    "originalAssertionsPreserved": true,
+    "scenarios": 5,
+    "change": "Partial acquisition cleanup and first-error-preserving outer cleanup; no feature assertion change."
+  }
+}
