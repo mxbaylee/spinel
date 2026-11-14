@@ -1,0 +1,5 @@
+{
+  "attempt": "spn158-http-initial",
+  "audit": "Exact worktree cwd plus relevant node/Vitest/serial/watch command; excludes read-only audit shells",
+  "ownedRemaining": []
+}
