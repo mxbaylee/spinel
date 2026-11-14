@@ -309,6 +309,179 @@ test.each(['unmatched', 'malformed', 'conflicting'] as const)(
   },
 );
 
+test.each(['older', 'equal-base', 'replay-bound'] as const)(
+  'a refused client cannot report success for a %s receipt',
+  async (condition) => {
+    const f = fixture();
+    cleanup.push(f.close);
+    let at = 100;
+    const events: DiagnosticEvent[] = [];
+    const source = f.client({
+      diagnostics: observer(events),
+      diagnosticNow: () => at,
+      requireUnchangedResume: condition === 'replay-bound',
+    });
+    // For guarded replay, a different client owns the real durable revisions.
+    // Otherwise these commits establish the request's confirmed base at three.
+    const seed = condition === 'replay-bound' ? f.client() : source;
+    seed.resume();
+    await turns();
+    for (let index = 0; index < 2; index++) {
+      seed.edit([write({ v: `durable-${index}` })]);
+      seed.sync.retry();
+      await turns();
+      const request = seed.submits().at(-1)!;
+      const accepted = await f.accept(request);
+      seed.sync.receive({
+        type: 'ack',
+        mutationId: request.mutationId,
+        duplicate: accepted.duplicate,
+        ...wire(accepted.edit),
+      });
+      await turns();
+    }
+    events.length = 0;
+    at = 200;
+    source.edit([write({ v: 'never accepted by the server' })]);
+    if (condition === 'replay-bound') {
+      // A previously issued resume at revision one sets the immutable replay
+      // bound; the server has since accepted the two other-client writes.
+      source.sync.setConnected(true);
+      source.sync.receive({
+        type: 'resume',
+        version: 1,
+        unitId: 'book',
+        fromRevision: 1,
+        revision: 1,
+        edits: [],
+      });
+    }
+    source.sync.retry();
+    await turns();
+    const request = source.submits().at(-1)!;
+    expect(request.baseRevision).toBe(condition === 'replay-bound' ? 1 : 3);
+    if (condition === 'replay-bound') expect(request.expectedRevision).toBe(1);
+    source.sync.refuse('divergence');
+    expect(source.failures).toEqual([]);
+    const visible = source.live.snapshot();
+    const confirmed = source.sync.checkpoint().snapshot;
+    const durable = structuredClone(f.storage.unit);
+    const receipt = f.storage.history[condition === 'older' ? 0 : 1];
+    const ack = {
+      type: 'ack' as const,
+      mutationId: request.mutationId,
+      duplicate: true,
+      ...wire(receipt),
+    };
+    at = 250;
+    source.sync.receive(ack);
+    source.sync.receive(ack);
+    await turns();
+    expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+      {
+        name: 'operation.result',
+        details: {
+          operation: 'document-save-server-ack',
+          outcome: 'cancelled',
+          durationMs: 50,
+        },
+      },
+    ]);
+    expect(
+      events.some(
+        (event) => event.name === 'operation.count' && event.details.outcome === 'success',
+      ),
+    ).toBe(false);
+    expect(events.some((event) => event.name === 'sync.client.acknowledged')).toBe(false);
+    expect(source.failures).toEqual(['divergence']);
+    expect(source.sync.checkpoint().sent).toBeNull();
+    expect(source.sync.checkpoint().snapshot).toEqual(confirmed);
+    expect(source.live.snapshot()).toEqual(visible);
+    expect(source.sync.state).toMatchObject({ pending: false, resyncing: true });
+    expect(f.storage.unit).toEqual(durable);
+    expect(f.storage.history).toHaveLength(2);
+    expect(f.storage.history.some((edit) => edit.mutationId === request.mutationId)).toBe(false);
+  },
+);
+
+test.each([
+  { guarded: false, duplicate: false },
+  { guarded: false, duplicate: true },
+  { guarded: true, duplicate: false },
+  { guarded: true, duplicate: true },
+])(
+  'a genuine late receipt counts once without native replay: %j',
+  async ({ guarded, duplicate }) => {
+    const f = fixture();
+    cleanup.push(f.close);
+    let at = 100;
+    const events: DiagnosticEvent[] = [];
+    const source = f.client({
+      diagnostics: observer(events),
+      diagnosticNow: () => at,
+      requireUnchangedResume: guarded,
+    });
+    source.edit([write({ v: 'durable before refusal handoff' })]);
+    source.resume();
+    source.sync.retry();
+    await turns();
+    const request = source.submits()[0];
+    expect(request.expectedRevision).toBe(guarded ? 1 : undefined);
+    let accepted = await f.accept(request);
+    if (duplicate) {
+      // Receipt identity excludes the transient replay guard. Re-read the actual
+      // committed receipt without trying to reapply its now-stale server guard.
+      const { expectedRevision: _guard, ...identity } = request;
+      accepted = await f.accept(identity);
+    }
+    expect(accepted.duplicate).toBe(duplicate);
+    expect(f.storage.history).toHaveLength(1);
+    expect(f.storage.history[0].mutationId).toBe(request.mutationId);
+    const visible = source.live.snapshot();
+    expect({ ...visible, rev: accepted.edit.revision }).toEqual(f.storage.unit.snapshot);
+    const confirmed = source.sync.checkpoint().snapshot;
+    const durable = structuredClone(f.storage.unit);
+    source.sync.refuse('divergence');
+    expect(source.failures).toEqual([]);
+    at = 150;
+    const ack = {
+      type: 'ack' as const,
+      mutationId: request.mutationId,
+      duplicate,
+      ...wire(accepted.edit),
+    };
+    source.sync.receive(ack);
+    source.sync.receive(ack);
+    await turns();
+    expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+      {
+        name: 'operation.result',
+        details: {
+          operation: 'document-save-server-ack',
+          outcome: 'success',
+          durationMs: 50,
+        },
+      },
+    ]);
+    expect(events.filter((event) => event.name === 'sync.client.acknowledged')).toEqual([
+      { name: 'sync.client.acknowledged', details: { duplicate } },
+    ]);
+    expect(
+      events.filter(
+        (event) => event.name === 'operation.count' && event.details.outcome === 'success',
+      ),
+    ).toHaveLength(1);
+    expect(source.failures).toEqual(['divergence']);
+    expect(source.sync.checkpoint().sent).toBeNull();
+    expect(source.sync.checkpoint().snapshot).toEqual(confirmed);
+    expect(source.sync.confirmedRevision).toBe(1);
+    expect(source.live.snapshot()).toEqual(visible);
+    expect(source.sync.state).toMatchObject({ pending: false, resyncing: true });
+    expect(f.storage.unit).toEqual(durable);
+    expect(f.storage.history).toHaveLength(1);
+  },
+);
+
 test('resync emits fixed reason, pending count and duration only when its preserved checkpoint settles', async () => {
   const f = fixture();
   cleanup.push(f.close);

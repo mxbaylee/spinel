@@ -682,7 +682,14 @@ export class SyncClient {
     if (!this.sent || ack.mutationId !== this.sent.mutationId) return;
     this.validate(ack);
     if (this.reason) {
-      this.finishSave('success', ack.duplicate);
+      // A terminal receipt ends the existing handoff without native replay.
+      // Shape alone cannot prove durability: even a duplicate must advance its
+      // immutable request and confirmed base, and respect guarded replay.
+      const consistentReceipt =
+        ack.revision > this.sent.baseRevision &&
+        ack.revision > this.revision &&
+        (this.replayBase === undefined || ack.revision === this.replayBase + 1);
+      this.finishSave(consistentReceipt ? 'success' : 'cancelled', ack.duplicate);
       this.sent = null;
       this.inflight = [];
       void this.changed();
