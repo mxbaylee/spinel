@@ -1,0 +1,11 @@
+# 🧪 SPN-098 combined-source local evidence
+
+Runtime source23e7553ff4f35f5f03dfe51a644840994e52929e integrates actual main754e65317744e5ce97ede501935c6586e4875f2a into the complete feedback candidate. source-identity.json binds51 executable/configuration hashes. Original logs are gzip-compressed without content edits; checks.json retains each exact command, duration, process-tree peak and watchdog result. All workloads passed first attempt. Private dependency packages were preserved, with task-private caches.
+
+81 tests in13 files passed: existing71 diagnostics/context contracts and10 landed ownership/control diagnostics contracts. Full TypeScript, dependency/oxlint/format, generated backlog and exact-base PR checks passed. The focused production Storybook build and220 states passed;16 useful original PNGs and full original manifest are in docs/review-assets/spn-098-post160. Existing32 visual references remain unchanged. Independent visual approval and two new exact-head reviews remain pending.
+
+The prior ordinary-build/four actual diagnostics browser flow is retained as historical acceptance; unchanged application/feedback behavior does not justify duplicating those expensive cases locally. Fresh selected hosted browser and Linux supervisor/recovery acceptance remain distinct pending owners. The original failed Linux supervisor outcome and Mac platform refusal remain retained, without replay or weakened guards. SPN-157 remains an explicit merge blocker even after supporting validation passes.
+
+sqlite-comparison-original.zip preserves the actual connection probe, result, exact source/native-module hashes, source copies, command/log/watchdog and cleanup from SPN-157. Baseebf andcandidate2204 both report synchronous2/FULL,wal,busy_timeout0 on pinned Darwin arm64; this excludes a Mac effective-setting difference only. The198ms run ended before its first200ms RSS sample, so peak memory was not sampled. No Linux default/timing or historical cause inference is made.
+
+The packaging step first referenced the wrong manifest property captureFailures; the actual failures field was then used. Original build/capture bytes did not change and no workload was repeated. Cleanup confirms the capture/serial runners exited and the shared lock was absent at slot release.

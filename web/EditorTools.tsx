@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ActionMenu, Modal } from '../src/ui/redesign/Controls.tsx';
@@ -10,6 +10,7 @@ import { FileExports } from './FileExports.tsx';
 import { PdfExport } from './PdfExport.tsx';
 import { guestItemId } from './documentAccess.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
+import { FeedbackDialog } from './Feedback.tsx';
 import './fileDialog.css';
 
 export function EditorTools({
@@ -34,6 +35,9 @@ export function EditorTools({
     null,
   );
   const guest = chrome?.guest ?? Boolean(guestItemId());
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const actionsButton = useRef<HTMLButtonElement>(null);
+  const feedbackAccountId = !guest ? chrome?.feedbackAccountId : undefined;
   const controls = (
     <>
       <Collaborators people={people} />
@@ -66,12 +70,17 @@ export function EditorTools({
       ) : (
         <ActionMenu
           label="Document actions"
+          triggerRef={actionsButton}
+          finalFocus={() => (feedbackOpen ? false : actionsButton.current)}
           actions={[
             ...(chrome?.actions ?? []),
             { label: 'Versions', onClick: () => setPanel('Versions') },
             { label: 'Export', onClick: () => setPanel('Export') },
             ...(insertFormula ? [{ label: 'Insert formula', onClick: insertFormula }] : []),
             ...(formulas ? [{ label: 'Formulas', onClick: () => setPanel('Formulas') }] : []),
+            ...(feedbackAccountId
+              ? [{ label: 'Send feedback…', onClick: () => setFeedbackOpen(true) }]
+              : []),
           ]}
         />
       )}
@@ -80,6 +89,20 @@ export function EditorTools({
   return (
     <>
       {chrome ? chrome.toolsTarget && createPortal(controls, chrome.toolsTarget) : controls}
+      {feedbackAccountId && (
+        <FeedbackDialog
+          key={feedbackAccountId + ':' + id}
+          accountId={feedbackAccountId}
+          open={feedbackOpen}
+          pageContext={
+            spaceId
+              ? { route: '/spaces/:id', fileId: id, spaceId }
+              : { route: '/files/:id', fileId: id }
+          }
+          onOpenChange={setFeedbackOpen}
+          finalFocus={() => actionsButton.current}
+        />
+      )}
       {panel && (
         <Modal
           title={panel}

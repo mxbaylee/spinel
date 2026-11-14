@@ -18,11 +18,16 @@ test('supervisor observations retain truncate fencing, preserve active export fi
   mkdirSync(exportDirectory);
   const exportPath = join(exportDirectory, 'diagnostics.sqlite');
   writeFileSync(exportPath, 'active export');
+  const feedbackDirectory = join(directory, '.diagnostics-feedback-GhIjKl');
+  mkdirSync(feedbackDirectory);
+  const feedbackPath = join(feedbackDirectory, 'user.sqlite');
+  writeFileSync(feedbackPath, 'active paired feedback export');
   const supervisor = supervisorDiagnostics(applicationPath);
   const warn = vi.spyOn(console, 'error').mockImplementation(() => {});
   let reader: DatabaseSync | undefined;
   try {
     expect(existsSync(exportPath)).toBe(true);
+    expect(existsSync(feedbackPath)).toBe(true);
     supervisor.sink(
       { name: 'maintenance.phase', details: { phase: 'running' } },
       { component: 'server' },
@@ -73,6 +78,7 @@ test('supervisor observations retain truncate fencing, preserve active export fi
     );
     expect(application.prepare('SELECT * FROM content').all()).toEqual([{ value: 'kept' }]);
     expect(existsSync(exportPath)).toBe(true);
+    expect(existsSync(feedbackPath)).toBe(true);
   } finally {
     warn.mockRestore();
     reader?.close();

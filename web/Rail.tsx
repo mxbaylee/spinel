@@ -9,6 +9,7 @@ import type { NavigationGuard } from './navigation.ts';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';
+import { FeedbackMenu } from './Feedback.tsx';
 
 /**
  * The gem rail: a column beside the workspace, and a top bar on phones. It must
@@ -26,7 +27,7 @@ export function Rail({
   files,
 }: {
   /** Signed-out visitors see only the brand link. */
-  user: { isAdmin: boolean; name?: string; icon?: string; color?: string } | null;
+  user: { id?: string; isAdmin: boolean; name?: string; icon?: string; color?: string } | null;
   navigation: Pick<NavigationGuard, 'allow'>;
   onSignOut: () => void;
   connection?: ConnectionState;
@@ -77,6 +78,9 @@ export function Rail({
           </span>
           <span className="rail-label">{user.name ?? 'Your profile'}</span>
         </a>
+        {!user.isAdmin && user.id && (
+          <FeedbackMenu key={user.id} accountId={user.id} documentOpen={documentOpen} />
+        )}
         {!compact && (
           <button className="rail-button" onClick={onSignOut}>
             <span aria-hidden="true">↪</span>
